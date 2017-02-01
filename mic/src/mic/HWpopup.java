@@ -3,6 +3,7 @@ package mic;
 import VASSAL.build.*;
 import VASSAL.build.module.*;
 import VASSAL.build.module.Map;
+import VASSAL.build.widget.PieceSlot;
 import VASSAL.command.*;
 import VASSAL.counters.Deck;
 import VASSAL.counters.GamePiece;
@@ -38,10 +39,33 @@ public class HWpopup extends AbstractConfigurable implements CommandEncoder,
     }
 
     private void incrementButtonPressed() {
-        GamePiece gamePiece;
+//attempt to load gpid 0, which is the troll face
+        PieceSlot troll = findSlot("0");
+
+        //issue a vassal command to report what's happening in the vassal chat are
+        GameModule mod = GameModule.getGameModule();
+        Command c = new
+                Chatter.DisplayText(mod.getChatter(),"Attempting to load Troll gpid 0: ");
+        c.execute();
+        mod.sendAndLog(c);
 
     }
 
+    /*Search for a Piece Slot from the module's Pieces collection using its gpid
+    gpids are found in the vassal module's root "Build" file
+
+    attention: needs at least java 5 to support the enhanced version of this for loop
+    */
+    private PieceSlot findSlot(String myGpId){
+        PieceSlot mySlot = null;
+        for(PieceSlot slot:GameModule.getGameModule().getAllDescendantComponentsOf(PieceSlot.class)) {
+            if(slot.getGpId().equals(myGpId)){
+                mySlot = slot;
+                break;
+            }
+        }
+        return mySlot;
+ }
 
     public static final String MIN = "min";
     public static final String MAX = "max";
