@@ -38,7 +38,7 @@ public class HWpopup extends AbstractConfigurable implements CommandEncoder,
     }
 
     private void incrementButtonPressed() {
-        GamePiece blah;
+        GamePiece gamePiece;
 
     }
 
