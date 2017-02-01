@@ -1,7 +1,7 @@
 <component name="libraryTable">
   <library name="Vengine">
     <CLASSES>
-      <root url="jar://C:/Program Files/VASSAL-3.2.17/lib/Vengine.jar!/" />
+      <root url="jar://$PROJECT_DIR$/mic/lib/Vengine.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />
