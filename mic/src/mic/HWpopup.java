@@ -22,7 +22,7 @@ public class HWpopup extends AbstractConfigurable implements CommandEncoder,
     private int maxChange = 0;
     private Random rand = new Random();
     private JButton addButton; // Adds an increment to the tension counter
-    private JButton showButton; // Shows the current total tension
+    private JButton showButton; // Shows the current total tension in mah brain
 
     public void addToIndex(int change) {
         index += change;
