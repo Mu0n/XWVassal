@@ -39,6 +39,6 @@
     </properties>
   </component>
   <component name="ProjectRootManager" version="2" languageLevel="JDK_1_3" default="false" project-jdk-name="1.8" project-jdk-type="JavaSDK">
-    <output url="file://C:/Vassal" />
+    <output url="file://$PROJECT_DIR$/mic/out" />
   </component>
 </project>
