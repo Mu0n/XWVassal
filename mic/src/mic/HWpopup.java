@@ -12,10 +12,7 @@ import VASSAL.counters.GamePiece;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.util.*;
 
 
@@ -75,32 +72,53 @@ public class HWpopup extends AbstractConfigurable implements CommandEncoder,
                 JOptionPane.ERROR_MESSAGE);*/
 
 
+
+
         /*
         Force an already present piece to move around to a specific location on the map
         Usefulness: to make sure a loaded squad won't stack a bunch of cards/ships in the same place
-        */
+
         GamePiece pieces[] = Map.activeMap.getPieces();
         pieces[0].setPosition(new Point(100, 100));
+*/
+
+
+
 
         /*
         We will need to read a text file into java. quick test done here
         */
-        /*String everything;
+        String everything = "";
+try {
+int i=0;
+char c;
+    InputStream is = GameModule.getGameModule().getDataArchive().getInputStream("file.txt");
+
+        while((i=is.read())!=-1)
+        {
+            // converts integer to character
+            c=(char)i;
+            // append char to everything ???
+            everything += c;
+        }
+
+        // releases system resources associated with this stream
+        if(is!=null)
+            is.close();
 
 
-            BufferedReader br = new BufferedReader(new FileReader("file.txt"));
-            StringBuilder sb = new StringBuilder();
-            String line = null;
-            line = br.readLine();
-            while (line != null) {
-                sb.append(line);
-                line = br.readLine();
-            }
-            everything = sb.toString();
-            br.close();
-*/
+    JTextArea msg = new JTextArea(everything);
 
+    msg.setLineWrap(true);
+    msg.setWrapStyleWord(true);
+    JScrollPane scrollPane = new JScrollPane(msg);
+    scrollPane.setPreferredSize(new Dimension(800,450));
+    JOptionPane.showMessageDialog(null, scrollPane, "XWS example", JOptionPane.INFORMATION_MESSAGE);
 
+}catch(Exception e){
+    JOptionPane.showMessageDialog(null,System.getProperty(e.toString()),  "Feedback",
+            JOptionPane.ERROR_MESSAGE);
+}
     }
 
 
