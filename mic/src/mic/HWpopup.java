@@ -3,13 +3,18 @@ package mic;
 import VASSAL.build.*;
 import VASSAL.build.module.*;
 import VASSAL.build.module.Map;
+import VASSAL.build.module.map.boardPicker.Board;
+import VASSAL.build.widget.PieceSlot;
+import VASSAL.build.widget.PieceSlotHack;
 import VASSAL.command.*;
-import VASSAL.counters.Deck;
 import VASSAL.counters.GamePiece;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
+
+
 
 /**
  * HWpopup index class for the VASSAL tutorial
@@ -38,10 +43,41 @@ public class HWpopup extends AbstractConfigurable implements CommandEncoder,
     }
 
     private void incrementButtonPressed() {
-        GamePiece gamePiece;
+       //
+        //
+        //PieceSlot slot = findSlot("0");
+
+        //GamePiece piece = slot.getExpandedPiece();
+
+        /*PieceSlot slot = findSlot("0");
+        PieceSlotHack slot2 = (PieceSlotHack) slot;*/
+        //GamePiece piece = slot2.getExpandedPiece();
+
+        /*JOptionPane.showMessageDialog(null, slot2.toString(), "Feedback",
+                JOptionPane.ERROR_MESSAGE);*/
+
+        GamePiece pieces[] = Map.activeMap.getPieces();
+        pieces[0].setPosition(new Point(100,100));
+
+        //Point pos = new Point (100, 100);
+        /*Map myMap = Map.activeMap;
+
+        JOptionPane.showMessageDialog(null, myMap.toString(), "myMap",
+                JOptionPane.ERROR_MESSAGE);*/
+        //Command place = myMap.placeOrMerge(piece, pos);
 
     }
 
+    private PieceSlot findSlot(String myGpId) {
+        PieceSlot mySlot = null;
+        for (PieceSlot slot : GameModule.getGameModule().getAllDescendantComponentsOf(PieceSlot.class)) {
+            if (slot.getGpId().equals(myGpId)) {
+                mySlot = slot;
+                break;
+            }
+        }
+        return mySlot;
+    }
 
     public static final String MIN = "min";
     public static final String MAX = "max";
