@@ -12,6 +12,10 @@ import VASSAL.counters.GamePiece;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.*;
 
 
@@ -26,8 +30,8 @@ public class HWpopup extends AbstractConfigurable implements CommandEncoder,
     private int minChange = 0;
     private int maxChange = 0;
     private Random rand = new Random();
-    private JButton addButton; // Adds an increment to the tension counter
-    private JButton showButton; // Shows the current total tension in mah brain
+    private JButton experimentalButton; // Used to perform new and aggressive tests
+    private JButton helloWorldButton; // Button that pops a java alert, displays a simple message
 
     public void addToIndex(int change) {
         index += change;
@@ -42,35 +46,80 @@ public class HWpopup extends AbstractConfigurable implements CommandEncoder,
                 + minChange;
     }
 
-    private void incrementButtonPressed() {
-       //
-        //
-        //PieceSlot slot = findSlot("0");
-
-        //GamePiece piece = slot.getExpandedPiece();
-
-        /*PieceSlot slot = findSlot("0");
-        PieceSlotHack slot2 = (PieceSlotHack) slot;*/
-        //GamePiece piece = slot2.getExpandedPiece();
-
-        /*JOptionPane.showMessageDialog(null, slot2.toString(), "Feedback",
-                JOptionPane.ERROR_MESSAGE);*/
-
-        GamePiece pieces[] = Map.activeMap.getPieces();
-        pieces[0].setPosition(new Point(100,100));
-
-        //Point pos = new Point (100, 100);
-        /*Map myMap = Map.activeMap;
-
-        JOptionPane.showMessageDialog(null, myMap.toString(), "myMap",
-                JOptionPane.ERROR_MESSAGE);*/
-        //Command place = myMap.placeOrMerge(piece, pos);
+    private void helloWorldButtonPressed() {
+        //Put simple alert/debug messages to be displayed here in a basic Java popup alert
+        try {
+            GamePiece pieces[] = Map.activeMap.getPieces();
+            JOptionPane.showMessageDialog(null,"Hello World, there are " + Integer.toString(pieces.length) + " pieces on the board right now.",  "Feedback",
+                    JOptionPane.ERROR_MESSAGE);
+        } catch(Exception e){
+            JOptionPane.showMessageDialog(null,"Hello World, there are no pieces on the board right now.",  "Feedback",
+                    JOptionPane.ERROR_MESSAGE);
+        }
 
     }
 
+
+    private void experimentalButtonPressed() {
+
+        //
+        /* This is the failed piece of code to fetch the collection of PieceSlot (shown as the Pieces window
+        in the x-wing module. Dude who helped me in the forums didn't realize he made me use a protected method
+        */
+        //PieceSlot slot = findSlot("0");
+        //GamePiece piece = slot.getExpandedPiece();
+
+
+        // This is java's way to do a simple "Hello World" popup alert. Modify at will for debug and tests
+        /*JOptionPane.showMessageDialog(null,"Hello World",  "Feedback",
+                JOptionPane.ERROR_MESSAGE);*/
+
+
+        /*
+        Force an already present piece to move around to a specific location on the map
+        Usefulness: to make sure a loaded squad won't stack a bunch of cards/ships in the same place
+        */
+        GamePiece pieces[] = Map.activeMap.getPieces();
+        pieces[0].setPosition(new Point(100, 100));
+
+        /*
+        We will need to read a text file into java. quick test done here
+        */
+        /*String everything;
+
+
+            BufferedReader br = new BufferedReader(new FileReader("file.txt"));
+            StringBuilder sb = new StringBuilder();
+            String line = null;
+            line = br.readLine();
+            while (line != null) {
+                sb.append(line);
+                line = br.readLine();
+            }
+            everything = sb.toString();
+            br.close();
+*/
+
+
+    }
+
+
+    //method given to me in the vassal/module design forum, unfortunately it uses a protected method in the class
     private PieceSlot findSlot(String myGpId) {
         PieceSlot mySlot = null;
         for (PieceSlot slot : GameModule.getGameModule().getAllDescendantComponentsOf(PieceSlot.class)) {
+            if (slot.getGpId().equals(myGpId)) {
+                mySlot = slot;
+                break;
+            }
+        }
+        return mySlot;
+    }
+
+    // version using the dervived class in order to use the protected method remade public
+    private PieceSlotHack findSlotHack(String myGpId) {
+        PieceSlotHack mySlot = null;
+        for (PieceSlotHack slot : GameModule.getGameModule().getAllDescendantComponentsOf(PieceSlotHack.class)) {
             if (slot.getGpId().equals(myGpId)) {
                 mySlot = slot;
                 break;
@@ -126,15 +175,23 @@ public class HWpopup extends AbstractConfigurable implements CommandEncoder,
         mod.addCommandEncoder(this);
         mod.getGameState().addGameComponent(this);
 
-        addButton = new JButton("Hello World");
-        addButton.setAlignmentY(0.0F);
-        addButton.addActionListener(new ActionListener() {
+        experimentalButton = new JButton("Test Button");
+        experimentalButton.setAlignmentY(0.0F);
+        experimentalButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
-                incrementButtonPressed();
+                experimentalButtonPressed();
             }
         });
-        mod.getToolBar().add(addButton);
+        mod.getToolBar().add(experimentalButton);
 
+        helloWorldButton = new JButton("Alert popup");
+        helloWorldButton.setAlignmentY(0.0F);
+        helloWorldButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                helloWorldButtonPressed();
+            }
+        });
+        mod.getToolBar().add(helloWorldButton);
     }
 
     public void removeFrom(Buildable parent) {
@@ -143,7 +200,8 @@ public class HWpopup extends AbstractConfigurable implements CommandEncoder,
         mod.removeCommandEncoder(this);
         mod.getGameState().removeGameComponent(this);
 
-        mod.getToolBar().remove(addButton);
+        mod.getToolBar().remove(experimentalButton);
+        mod.getToolBar().remove(helloWorldButton);
     }
 
     public VASSAL.build.module.documentation.HelpFile getHelpFile() {

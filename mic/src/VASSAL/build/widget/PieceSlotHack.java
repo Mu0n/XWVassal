@@ -55,6 +55,14 @@ import org.w3c.dom.Element;
  */
 public class PieceSlotHack extends PieceSlot {
 
+    //a getPieceSlot() method should be added here in order to properly give a hacked version
+    //of a PieceSlot object but with a public getExpandedPiece() method
+
+
+    // INSERT STUFF HERE
+
+
+    //made the method public instead of protected in the parent class
     public GamePiece getExpandedPiece() {
         if(this.expanded == null) {
             GamePiece var1 = this.getPiece();
