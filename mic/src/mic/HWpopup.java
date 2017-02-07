@@ -5,16 +5,18 @@ import VASSAL.build.module.*;
 import VASSAL.build.module.Map;
 import VASSAL.build.module.map.boardPicker.Board;
 import VASSAL.build.widget.PieceSlot;
-import VASSAL.build.widget.PieceSlotHack;
 import VASSAL.command.*;
 import VASSAL.counters.GamePiece;
+import VASSAL.tools.imports.adc2.ADC2Module;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
 import java.util.*;
+import java.util.List;
 
+import static com.sun.org.apache.xalan.internal.xsltc.compiler.util.Type.Int;
 
 
 /**
@@ -29,6 +31,7 @@ public class HWpopup extends AbstractConfigurable implements CommandEncoder,
     private Random rand = new Random();
     private JButton experimentalButton; // Used to perform new and aggressive tests
     private JButton helloWorldButton; // Button that pops a java alert, displays a simple message
+    private JButton readTextButton; // Button that reads a text file inside the module, could be used for XWS spec
 
     public void addToIndex(int change) {
         index += change;
@@ -56,9 +59,44 @@ public class HWpopup extends AbstractConfigurable implements CommandEncoder,
 
     }
 
+    private void readTextButtonPressed() {
+                /*
+        We will need to read a text file into java. quick test done here
+        */
+        String everything = "";
+        try {
+            int i=0;
+            char c;
+            InputStream is = GameModule.getGameModule().getDataArchive().getInputStream("file.txt");
+
+            while((i=is.read())!=-1)
+            {
+                // converts integer to character
+                c=(char)i;
+                // append char to everything ???
+                everything += c;
+            }
+
+            // releases system resources associated with this stream
+            if(is!=null)
+                is.close();
+
+
+            JTextArea msg = new JTextArea(everything);
+
+            msg.setLineWrap(true);
+            msg.setWrapStyleWord(true);
+            JScrollPane scrollPane = new JScrollPane(msg);
+            scrollPane.setPreferredSize(new Dimension(800,450));
+            JOptionPane.showMessageDialog(null, scrollPane, "XWS example", JOptionPane.INFORMATION_MESSAGE);
+
+        }catch(Exception e){
+            JOptionPane.showMessageDialog(null,System.getProperty(e.toString()),  "Feedback",
+                    JOptionPane.ERROR_MESSAGE);
+        }
+    }
 
     private void experimentalButtonPressed() {
-
         //
         /* This is the failed piece of code to fetch the collection of PieceSlot (shown as the Pieces window
         in the x-wing module. Dude who helped me in the forums didn't realize he made me use a protected method
@@ -66,59 +104,49 @@ public class HWpopup extends AbstractConfigurable implements CommandEncoder,
         //PieceSlot slot = findSlot("0");
         //GamePiece piece = slot.getExpandedPiece();
 
-
         // This is java's way to do a simple "Hello World" popup alert. Modify at will for debug and tests
         /*JOptionPane.showMessageDialog(null,"Hello World",  "Feedback",
                 JOptionPane.ERROR_MESSAGE);*/
-
-
-
-
         /*
         Force an already present piece to move around to a specific location on the map
         Usefulness: to make sure a loaded squad won't stack a bunch of cards/ships in the same place
-
         GamePiece pieces[] = Map.activeMap.getPieces();
         pieces[0].setPosition(new Point(100, 100));
-*/
-
-
-
-
-        /*
-        We will need to read a text file into java. quick test done here
         */
-        String everything = "";
-try {
-int i=0;
-char c;
-    InputStream is = GameModule.getGameModule().getDataArchive().getInputStream("file.txt");
+        String listOfPieceSlots = "";
+        PieceSlot biggs = new PieceSlot();
+        GameModule mod = GameModule.getGameModule();
 
-        while((i=is.read())!=-1)
-        {
-            // converts integer to character
-            c=(char)i;
-            // append char to everything ???
-            everything += c;
-        }
+       int counter = 1;
+        for(PieceSlot slot: GameModule.getGameModule().getAllDescendantComponentsOf(PieceSlot.class)) {
+       listOfPieceSlots += "#:" + Integer.toString(counter) + " gpuId:" +slot.getGpId() + " " + slot.getConfigureName() + "\n";
+       if(slot.getGpId().equals("15")) {
+           Point pos = new Point (150, 153);
+           GamePiece biggsGP = slot.getPiece();
 
-        // releases system resources associated with this stream
-        if(is!=null)
-            is.close();
+           List<Map> mapList = Map.getMapList();
+           biggsGP.setMap(mapList.get(0));
+           biggsGP.setPosition(pos);
 
+           JOptionPane.showMessageDialog(null,biggsGP.getName() + " "
+                           + biggsGP.getPosition().toString() + " "
+                            + biggsGP.getMap().getMapName(),  "Biggs checks",
+                   JOptionPane.PLAIN_MESSAGE);
 
-    JTextArea msg = new JTextArea(everything);
+           Command place = mapList.get(0).placeOrMerge(biggsGP,pos);
+           place.execute();
+           mod.sendAndLog(place);
 
-    msg.setLineWrap(true);
-    msg.setWrapStyleWord(true);
-    JScrollPane scrollPane = new JScrollPane(msg);
-    scrollPane.setPreferredSize(new Dimension(800,450));
-    JOptionPane.showMessageDialog(null, scrollPane, "XWS example", JOptionPane.INFORMATION_MESSAGE);
+           break;
+       }
+       counter++;
+       }
 
-}catch(Exception e){
-    JOptionPane.showMessageDialog(null,System.getProperty(e.toString()),  "Feedback",
-            JOptionPane.ERROR_MESSAGE);
-}
+        Command c = new
+                Chatter.DisplayText(mod.getChatter(),listOfPieceSlots);
+        c.execute();
+        mod.sendAndLog(c);
+
     }
 
 
@@ -134,17 +162,6 @@ char c;
         return mySlot;
     }
 
-    // version using the dervived class in order to use the protected method remade public
-    private PieceSlotHack findSlotHack(String myGpId) {
-        PieceSlotHack mySlot = null;
-        for (PieceSlotHack slot : GameModule.getGameModule().getAllDescendantComponentsOf(PieceSlotHack.class)) {
-            if (slot.getGpId().equals(myGpId)) {
-                mySlot = slot;
-                break;
-            }
-        }
-        return mySlot;
-    }
 
     public static final String MIN = "min";
     public static final String MAX = "max";
@@ -210,6 +227,16 @@ char c;
             }
         });
         mod.getToolBar().add(helloWorldButton);
+
+        readTextButton = new JButton("Read text spec");
+        readTextButton.setAlignmentY(0.0F);
+        readTextButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                readTextButtonPressed();
+            }
+        });
+        mod.getToolBar().add(readTextButton);
+
     }
 
     public void removeFrom(Buildable parent) {
