@@ -114,30 +114,31 @@ public class HWpopup extends AbstractConfigurable implements CommandEncoder,
         pieces[0].setPosition(new Point(100, 100));
         */
         String listOfPieceSlots = "";
-        PieceSlot biggs = new PieceSlot();
+        PieceSlot ps = new PieceSlot();
         GameModule mod = GameModule.getGameModule();
+        Point pos = new Point (250, 200);
+        int foundCount=0;
 
        int counter = 1;
         for(PieceSlot slot: GameModule.getGameModule().getAllDescendantComponentsOf(PieceSlot.class)) {
        listOfPieceSlots += "#:" + Integer.toString(counter) + " gpuId:" +slot.getGpId() + " " + slot.getConfigureName() + "\n";
-       if(slot.getGpId().equals("15")) {
-           Point pos = new Point (150, 153);
-           GamePiece biggsGP = slot.getPiece();
+       if(slot.getGpId().equals("15") || slot.getGpId().equals("219") || slot.getGpId().equals("218")) {
+
+
+           GamePiece gp = slot.getPiece();
+           if(!slot.getGpId().equals("15")) pos.setLocation(pos.getX()+gp.boundingBox().getWidth(),pos.getY());
+           
+           foundCount++;
 
            List<Map> mapList = Map.getMapList();
-           biggsGP.setMap(mapList.get(0));
-           biggsGP.setPosition(pos);
+           gp.setMap(mapList.get(0));
+           gp.setPosition(pos);
 
-           JOptionPane.showMessageDialog(null,biggsGP.getName() + " "
-                           + biggsGP.getPosition().toString() + " "
-                            + biggsGP.getMap().getMapName(),  "Biggs checks",
-                   JOptionPane.PLAIN_MESSAGE);
 
-           Command place = mapList.get(0).placeOrMerge(biggsGP,pos);
+           Command place = mapList.get(0).placeOrMerge(gp,pos);
            place.execute();
            mod.sendAndLog(place);
 
-           break;
        }
        counter++;
        }
