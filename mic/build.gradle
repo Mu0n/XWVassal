@@ -29,4 +29,8 @@ task buildVmod(type: Zip) {
     into('lib') {
         from configurations.runtime
     }
+
+    doLast {
+        println "Compiled vmod to ${archivePath}"
+    }
 }
