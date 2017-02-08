@@ -1,1 +1,4 @@
 # Created by .ignore support plugin (hsz.mobi)
+*/*.gradle
+mic/build/
+mic/gradle

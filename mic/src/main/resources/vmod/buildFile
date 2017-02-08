@@ -1,0 +1,267 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<VASSAL.launch.BasicModule VassalVersion="3.2.17" description="" name="java test module" nextPieceSlotId="221" version="0.1">
+    <VASSAL.build.module.BasicCommandEncoder/>
+    <VASSAL.build.module.Documentation>
+        <VASSAL.build.module.documentation.AboutScreen fileName="/images/Splash.png" title="About Module"/>
+        <VASSAL.build.module.documentation.HelpFile fileName="/help/Intro.html" fileType="resource" title="Quick Start"/>
+    </VASSAL.build.module.Documentation>
+    <VASSAL.build.module.PlayerRoster buttonText="Retire" buttonToolTip="Allow another player to take your side in this game"/>
+    <VASSAL.build.module.GlobalOptions autoReport="Always" centerOnMove="Always" nonOwnerUnmaskable="Never" playerIdFormat="$PlayerName$" promptString="Opponents can unmask my pieces">
+        <option name="stepIcon">/images/StepForward16.gif</option>
+        <option name="undoIcon">/images/Undo16.gif</option>
+        <option name="stepHotKey">34,0</option>
+        <option name="serverControlsIcon">/images/connect.gif</option>
+        <option name="serverControlsHotKey">83,520</option>
+    </VASSAL.build.module.GlobalOptions>
+    <VASSAL.build.module.Map allowMultiple="false" backgroundcolor="255,255,255" buttonName="Map" changeFormat="$message$" color="0,0,0" createFormat="$pieceName$ created in $location$" edgeHeight="0" edgeWidth="0" hotkey="" icon="" launch="true" mapName="Main Map" markMoved="Never" markUnmovedIcon="/images/unmoved.gif" markUnmovedText="" markUnmovedTooltip="Mark all pieces on this map as not moved" moveKey="" moveToFormat="$pieceName$ moves $previousLocation$ -&gt; $location$ *" moveWithinFormat="$pieceName$ moves $previousLocation$ -&gt; $location$ *" thickness="3">
+        <VASSAL.build.module.map.BoardPicker addColumnText="Add column" addRowText="Add row" boardPrompt="Select board" slotHeight="125" slotScale="0.2" slotWidth="350" title="Choose Boards">
+            <VASSAL.build.module.map.boardPicker.Board color="0,0,51" height="1000" name="theboard" reversible="false" width="1000"/>
+        </VASSAL.build.module.map.BoardPicker>
+        <VASSAL.build.module.map.StackMetrics bottom="40,0" disabled="false" down="37,0" exSepX="6" exSepY="18" top="38,0" unexSepX="2" unexSepY="4" up="39,0"/>
+        <VASSAL.build.module.map.ForwardToKeyBuffer/>
+        <VASSAL.build.module.map.Scroller/>
+        <VASSAL.build.module.map.ForwardToChatter/>
+        <VASSAL.build.module.map.MenuDisplayer/>
+        <VASSAL.build.module.map.MapCenterer/>
+        <VASSAL.build.module.map.StackExpander/>
+        <VASSAL.build.module.map.PieceMover/>
+        <VASSAL.build.module.map.KeyBufferer/>
+        <VASSAL.build.module.map.ImageSaver buttonText="" hotkey="" icon="/images/camera.gif" tooltip="Save Map as PNG image"/>
+        <VASSAL.build.module.map.CounterDetailViewer borderWidth="0" counterReportFormat="" delay="700" display="from top-most layer only" emptyHexReportForma="$LocationName$" fgColor="0,0,0" fontSize="9" graphicsZoom="1.0" hotkey="32,130" layerList="" minDisplayPieces="2" propertyFilter="" showDeck="false" showMoveSelectde="false" showNoStack="false" showNonMovable="false" showgraph="true" showgraphsingle="false" showtext="false" showtextsingle="false" summaryReportFormat="$LocationName$" unrotatePieces="false" version="" zoomlevel="1.0"/>
+        <VASSAL.build.module.properties.GlobalProperties/>
+        <VASSAL.build.module.map.SelectionHighlighters/>
+        <VASSAL.build.module.map.HighlightLastMoved color="255,0,0" enabled="true" thickness="2"/>
+        <VASSAL.build.module.map.Zoomer inButtonText="" inIconName="/images/zoomIn.gif" inTooltip="Zoom in" outButtonText="" outIconName="/images/zoomOut.gif" outTooltip="Zoom out" pickButtonText="" pickIconName="/images/zoom.png" pickTooltip="Select Zoom" zoomInKey="" zoomLevels="0.390625,0.625,1.0,1.6" zoomOutKey="" zoomPickKey="" zoomStart="2"/>
+    </VASSAL.build.module.Map>
+    <VASSAL.build.module.gamepieceimage.GamePieceImageDefinitions>
+        <VASSAL.build.module.gamepieceimage.ColorManager/>
+        <VASSAL.build.module.gamepieceimage.FontManager>
+            <VASSAL.build.module.gamepieceimage.FontStyle name="Default" style="Dialog,0,12,false"/>
+        </VASSAL.build.module.gamepieceimage.FontManager>
+        <VASSAL.build.module.gamepieceimage.GamePieceLayoutsContainer/>
+    </VASSAL.build.module.gamepieceimage.GamePieceImageDefinitions>
+    <VASSAL.build.module.properties.GlobalProperties/>
+    <VASSAL.build.module.PrototypesContainer/>
+    <VASSAL.build.module.PieceWindow hidden="false" hotkey="" icon="" text="Pieces" tooltip="Show/Hide the Pieces window">
+        <VASSAL.build.widget.PieceSlot entryName="Troll fucker" gpid="0" height="182" width="200">+/null/piece;;;troll.jpg;Troll fucker/null;0;0;0</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Black Sun Vigo" gpid="3" height="418" width="300">+/null/piece;;;Pilot_Black_Sun_Vigo.jpg;Black Sun Vigo/null;0;0;3</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-4_Lom" gpid="4" height="418" width="300">+/null/piece;;;Pilot-4_Lom.jpg;Pilot-4_Lom/null;0;0;4</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Academy_Pilot" gpid="5" height="411" width="298">+/null/piece;;;Pilot-Academy_Pilot.jpg;Pilot-Academy_Pilot/null;0;0;5</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Airen_Cracken" gpid="6" height="418" width="300">+/null/piece;;;Pilot-Airen_Cracken.jpg;Pilot-Airen_Cracken/null;0;0;6</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Alpha_Squadron_Pilot" gpid="7" height="418" width="300">+/null/piece;;;Pilot-Alpha_Squadron_Pilot.jpg;Pilot-Alpha_Squadron_Pilot/null;0;0;7</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Arvel_Crynyd" gpid="8" height="418" width="300">+/null/piece;;;Pilot-Arvel_Crynyd.jpg;Pilot-Arvel_Crynyd/null;0;0;8</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Asajj_Ventress" gpid="9" height="419" width="300">+/null/piece;;;Pilot-Asajj_Ventress.jpg;Pilot-Asajj_Ventress/null;0;0;9</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Avenger_Squadron_Pilot" gpid="10" height="418" width="300">+/null/piece;;;Pilot-Avenger_Squadron_Pilot.jpg;Pilot-Avenger_Squadron_Pilot/null;0;0;10</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Backdraft" gpid="11" height="419" width="300">+/null/piece;;;Pilot-Backdraft.jpg;Pilot-Backdraft/null;0;0;11</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Backstabber" gpid="12" height="411" width="298">+/null/piece;;;Pilot-Backstabber.jpg;Pilot-Backstabber/null;0;0;12</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Bandit_Squadron_Pilot" gpid="13" height="418" width="300">+/null/piece;;;Pilot-Bandit_Squadron_Pilot.jpg;Pilot-Bandit_Squadron_Pilot/null;0;0;13</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Baron_of_the_Empire" gpid="14" height="418" width="300">+/null/piece;;;Pilot-Baron_of_the_Empire.jpg;Pilot-Baron_of_the_Empire/null;0;0;14</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Biggs_Darklighter" gpid="15" height="411" width="298">+/null/clone;Clone;67,130	delete;Delete;68,130\	piece;;;Pilot-Biggs_Darklighter.jpg;Pilot-Biggs_Darklighter/	\	null;0;0;</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Binayre_Pirate" gpid="16" height="418" width="300">+/null/piece;;;Pilot-Binayre_Pirate.jpg;Pilot-Binayre_Pirate/null;0;0;16</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Blackmoon_Squadron_Pilot" gpid="17" height="418" width="300">+/null/piece;;;Pilot-Blackmoon_Squadron_Pilot.jpg;Pilot-Blackmoon_Squadron_Pilot/null;0;0;17</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Black_Eight_Sq_Pilot" gpid="18" height="418" width="300">+/null/piece;;;Pilot-Black_Eight_Sq_Pilot.jpg;Pilot-Black_Eight_Sq_Pilot/null;0;0;18</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Black_Squadron_Pilot" gpid="19" height="418" width="300">+/null/piece;;;Pilot-Black_Squadron_Pilot.jpg;Pilot-Black_Squadron_Pilot/null;0;0;19</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Black_Sun_Ace" gpid="20" height="418" width="300">+/null/piece;;;Pilot-Black_Sun_Ace.jpg;Pilot-Black_Sun_Ace/null;0;0;20</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Black_Sun_Enforcer" gpid="21" height="418" width="300">+/null/piece;;;Pilot-Black_Sun_Enforcer.jpg;Pilot-Black_Sun_Enforcer/null;0;0;21</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Black_Sun_Soldier" gpid="22" height="418" width="300">+/null/piece;;;Pilot-Black_Sun_Soldier.jpg;Pilot-Black_Sun_Soldier/null;0;0;22</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Blue_Ace" gpid="23" height="418" width="300">+/null/piece;;;Pilot-Blue_Ace.jpg;Pilot-Blue_Ace/null;0;0;23</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Blue_Squadron_Novice" gpid="24" height="418" width="300">+/null/piece;;;Pilot-Blue_Squadron_Novice.jpg;Pilot-Blue_Squadron_Novice/null;0;0;24</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Blue_Squadron_Pilot" gpid="25" height="418" width="300">+/null/piece;;;Pilot-Blue_Squadron_Pilot.jpg;Pilot-Blue_Squadron_Pilot/null;0;0;25</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Boba_Fett" gpid="26" height="418" width="300">+/null/piece;;;Pilot-Boba_Fett.jpg;Pilot-Boba_Fett/null;0;0;26</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Boba_Fett_S&amp;V" gpid="27" height="418" width="300">+/null/piece;;;Pilot-Boba_Fett_S&amp;V.jpg;Pilot-Boba_Fett_S&amp;V/null;0;0;27</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Bossk" gpid="28" height="418" width="300">+/null/piece;;;Pilot-Bossk.jpg;Pilot-Bossk/null;0;0;28</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Bounty_Hunter" gpid="29" height="418" width="300">+/null/piece;;;Pilot-Bounty_Hunter.jpg;Pilot-Bounty_Hunter/null;0;0;29</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Braylen_Stramm" gpid="30" height="419" width="300">+/null/piece;;;Pilot-Braylen_Stramm.jpg;Pilot-Braylen_Stramm/null;0;0;30</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Captain_Jonus" gpid="31" height="418" width="300">+/null/piece;;;Pilot-Captain_Jonus.jpg;Pilot-Captain_Jonus/null;0;0;31</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Captain_Kagi" gpid="32" height="418" width="300">+/null/piece;;;Pilot-Captain_Kagi.jpg;Pilot-Captain_Kagi/null;0;0;32</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Captain_Oicunn" gpid="33" height="418" width="300">+/null/piece;;;Pilot-Captain_Oicunn.jpg;Pilot-Captain_Oicunn/null;0;0;33</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Captain_Yorr" gpid="34" height="418" width="300">+/null/piece;;;Pilot-Captain_Yorr.jpg;Pilot-Captain_Yorr/null;0;0;34</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Carnor_Jax" gpid="35" height="418" width="300">+/null/piece;;;Pilot-Carnor_Jax.jpg;Pilot-Carnor_Jax/null;0;0;35</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Cartel_Marauder" gpid="36" height="418" width="300">+/null/piece;;;Pilot-Cartel_Marauder.jpg;Pilot-Cartel_Marauder/null;0;0;36</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Cartel_Spacer" gpid="37" height="418" width="300">+/null/piece;;;Pilot-Cartel_Spacer.jpg;Pilot-Cartel_Spacer/null;0;0;37</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Chaser" gpid="38" height="418" width="300">+/null/piece;;;Pilot-Chaser.jpg;Pilot-Chaser/null;0;0;38</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Chewbacca" gpid="39" height="418" width="300">+/null/piece;;;Pilot-Chewbacca.jpg;Pilot-Chewbacca/null;0;0;39</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Chewbacca_TFA" gpid="40" height="419" width="300">+/null/piece;;;Pilot-Chewbacca_TFA.jpg;Pilot-Chewbacca_TFA/null;0;0;40</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Chopper" gpid="41" height="418" width="300">+/null/piece;;;Pilot-Chopper.jpg;Pilot-Chopper/null;0;0;41</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Colonel_Jendon" gpid="42" height="418" width="300">+/null/piece;;;Pilot-Colonel_Jendon.jpg;Pilot-Colonel_Jendon/null;0;0;42</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Colonel_Vessery" gpid="43" height="418" width="300">+/null/piece;;;Pilot-Colonel_Vessery.jpg;Pilot-Colonel_Vessery/null;0;0;43</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Commander_Alozen" gpid="44" height="418" width="300">+/null/piece;;;Pilot-Commander_Alozen.jpg;Pilot-Commander_Alozen/null;0;0;44</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Commander_Kenkirk" gpid="45" height="418" width="300">+/null/piece;;;Pilot-Commander_Kenkirk.jpg;Pilot-Commander_Kenkirk/null;0;0;45</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Concord_Dawn_Ace" gpid="46" height="419" width="300">+/null/piece;;;Pilot-Concord_Dawn_Ace.jpg;Pilot-Concord_Dawn_Ace/null;0;0;46</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Concord_Dawn_Veteran" gpid="47" height="419" width="300">+/null/piece;;;Pilot-Concord_Dawn_Veteran.jpg;Pilot-Concord_Dawn_Veteran/null;0;0;47</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Contracted_Scout" gpid="48" height="418" width="300">+/null/piece;;;Pilot-Contracted_Scout.jpg;Pilot-Contracted_Scout/null;0;0;48</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Corran_Horn" gpid="49" height="418" width="300">+/null/piece;;;Pilot-Corran_Horn.jpg;Pilot-Corran_Horn/null;0;0;49</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Countess_Ryad" gpid="50" height="418" width="300">+/null/piece;;;Pilot-Countess_Ryad.jpg;Pilot-Countess_Ryad/null;0;0;50</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Cutlass_Squadron_Pilot" gpid="51" height="418" width="300">+/null/piece;;;Pilot-Cutlass_Squadron_Pilot.jpg;Pilot-Cutlass_Squadron_Pilot/null;0;0;51</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Dace_Bonearm" gpid="52" height="418" width="300">+/null/piece;;;Pilot-Dace_Bonearm.jpg;Pilot-Dace_Bonearm/null;0;0;52</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Dagger_Squadron_Pilot" gpid="53" height="411" width="297">+/null/piece;;;Pilot-Dagger_Squadron_Pilot.jpg;Pilot-Dagger_Squadron_Pilot/null;0;0;53</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Dark_Curse" gpid="54" height="411" width="298">+/null/piece;;;Pilot-Dark_Curse.jpg;Pilot-Dark_Curse/null;0;0;54</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Darth_Vader" gpid="55" height="411" width="298">+/null/piece;;;Pilot-Darth_Vader.jpg;Pilot-Darth_Vader/null;0;0;55</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Dash_Rendar" gpid="56" height="418" width="300">+/null/piece;;;Pilot-Dash_Rendar.jpg;Pilot-Dash_Rendar/null;0;0;56</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Deathfire" gpid="57" height="418" width="300">+/null/piece;;;Pilot-Deathfire.jpg;Pilot-Deathfire/null;0;0;57</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Deathrain" gpid="58" height="418" width="300">+/null/piece;;;Pilot-Deathrain.jpg;Pilot-Deathrain/null;0;0;58</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Delta_Squadron_Pilot" gpid="59" height="418" width="300">+/null/piece;;;Pilot-Delta_Squadron_Pilot.jpg;Pilot-Delta_Squadron_Pilot/null;0;0;59</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Dengar" gpid="60" height="418" width="300">+/null/piece;;;Pilot-Dengar.jpg;Pilot-Dengar/null;0;0;60</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Drea_Renthal" gpid="61" height="418" width="300">+/null/piece;;;Pilot-Drea_Renthal.jpg;Pilot-Drea_Renthal/null;0;0;61</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Dutch_Vander" gpid="62" height="411" width="298">+/null/piece;;;Pilot-Dutch_Vander.jpg;Pilot-Dutch_Vander/null;0;0;62</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Eaden_Vrill" gpid="63" height="418" width="300">+/null/piece;;;Pilot-Eaden_Vrill.jpg;Pilot-Eaden_Vrill/null;0;0;63</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Echo" gpid="64" height="418" width="300">+/null/piece;;;Pilot-Echo.jpg;Pilot-Echo/null;0;0;64</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Ello_Asty" gpid="65" height="418" width="300">+/null/piece;;;Pilot-Ello_Asty.jpg;Pilot-Ello_Asty/null;0;0;65</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Emon_Azzameen" gpid="66" height="418" width="300">+/null/piece;;;Pilot-Emon_Azzameen.jpg;Pilot-Emon_Azzameen/null;0;0;66</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Epsilon-Ace" gpid="67" height="418" width="300">+/null/piece;;;Pilot-Epsilon-Ace.jpg;Pilot-Epsilon-Ace/null;0;0;67</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Epsilon_Leader" gpid="68" height="418" width="300">+/null/piece;;;Pilot-Epsilon_Leader.jpg;Pilot-Epsilon_Leader/null;0;0;68</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Epsilon_Squadron_Pilot" gpid="69" height="418" width="300">+/null/piece;;;Pilot-Epsilon_Squadron_Pilot.jpg;Pilot-Epsilon_Squadron_Pilot/null;0;0;69</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Esege_Tuketu" gpid="70" height="418" width="300">+/null/piece;;;Pilot-Esege_Tuketu.jpg;Pilot-Esege_Tuketu/null;0;0;70</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Etahn_Abaht" gpid="71" height="418" width="300">+/null/piece;;;Pilot-Etahn_Abaht.jpg;Pilot-Etahn_Abaht/null;0;0;71</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Ezra_Bridger" gpid="72" height="418" width="300">+/null/piece;;;Pilot-Ezra_Bridger.jpg;Pilot-Ezra_Bridger/null;0;0;72</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Fels_Wrath" gpid="73" height="418" width="300">+/null/piece;;;Pilot-Fels_Wrath.jpg;Pilot-Fels_Wrath/null;0;0;73</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Fenn_Rau" gpid="74" height="419" width="300">+/null/piece;;;Pilot-Fenn_Rau.jpg;Pilot-Fenn_Rau/null;0;0;74</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-First_Order_Back" gpid="75" height="418" width="300">+/null/piece;;;Pilot-First_Order_Back.jpg;Pilot-First_Order_Back/null;0;0;75</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Gamma_Squadron_Pilot" gpid="76" height="418" width="300">+/null/piece;;;Pilot-Gamma_Squadron_Pilot.jpg;Pilot-Gamma_Squadron_Pilot/null;0;0;76</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Gamma_Squadron_Veteran" gpid="77" height="418" width="300">+/null/piece;;;Pilot-Gamma_Squadron_Veteran.jpg;Pilot-Gamma_Squadron_Veteran/null;0;0;77</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Gand_Findsman" gpid="78" height="418" width="300">+/null/piece;;;Pilot-Gand_Findsman.jpg;Pilot-Gand_Findsman/null;0;0;78</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Garven_Dreis" gpid="79" height="411" width="298">+/null/piece;;;Pilot-Garven_Dreis.jpg;Pilot-Garven_Dreis/null;0;0;79</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Gemmer_Sojan" gpid="80" height="418" width="300">+/null/piece;;;Pilot-Gemmer_Sojan.jpg;Pilot-Gemmer_Sojan/null;0;0;80</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Glaive_Squadron_Pilot" gpid="81" height="419" width="300">+/null/piece;;;Pilot-Glaive_Squadron_Pilot.jpg;Pilot-Glaive_Squadron_Pilot/null;0;0;81</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Gold_Squadron_Pilot" gpid="82" height="411" width="298">+/null/piece;;;Pilot-Gold_Squadron_Pilot.jpg;Pilot-Gold_Squadron_Pilot/null;0;0;82</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Gray_Squadron_Pilot" gpid="83" height="411" width="298">+/null/piece;;;Pilot-Gray_Squadron_Pilot.jpg;Pilot-Gray_Squadron_Pilot/null;0;0;83</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Graz_the_Hunter" gpid="84" height="418" width="300">+/null/piece;;;Pilot-Graz_the_Hunter.jpg;Pilot-Graz_the_Hunter/null;0;0;84</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Green_Squadron_Pilot" gpid="85" height="418" width="300">+/null/piece;;;Pilot-Green_Squadron_Pilot.jpg;Pilot-Green_Squadron_Pilot/null;0;0;85</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Guardian_Squadron_Pilot" gpid="86" height="418" width="300">+/null/piece;;;Pilot-Guardian_Squadron_Pilot.jpg;Pilot-Guardian_Squadron_Pilot/null;0;0;86</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Guri" gpid="87" height="418" width="300">+/null/piece;;;Pilot-Guri.jpg;Pilot-Guri/null;0;0;87</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Han_Solo" gpid="88" height="418" width="300">+/null/piece;;;Pilot-Han_Solo.jpg;Pilot-Han_Solo/null;0;0;88</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Han_Solo_TFA" gpid="89" height="419" width="300">+/null/piece;;;Pilot-Han_Solo_TFA.jpg;Pilot-Han_Solo_TFA/null;0;0;89</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Hera_Syndulla" gpid="90" height="418" width="300">+/null/piece;;;Pilot-Hera_Syndulla.jpg;Pilot-Hera_Syndulla/null;0;0;90</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Hera_Syndulla_Shuttle" gpid="91" height="418" width="300">+/null/piece;;;Pilot-Hera_Syndulla_Shuttle.jpg;Pilot-Hera_Syndulla_Shuttle/null;0;0;91</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Hired_Gun" gpid="92" height="419" width="300">+/null/piece;;;Pilot-Hired_Gun.jpg;Pilot-Hired_Gun/null;0;0;92</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Hobbie_Klivian" gpid="93" height="418" width="300">+/null/piece;;;Pilot-Hobbie_Klivian.jpg;Pilot-Hobbie_Klivian/null;0;0;93</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Horton_Salm" gpid="94" height="411" width="298">+/null/piece;;;Pilot-Horton_Salm.jpg;Pilot-Horton_Salm/null;0;0;94</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Howlrunner" gpid="95" height="411" width="298">+/null/piece;;;Pilot-Howlrunner.jpg;Pilot-Howlrunner/null;0;0;95</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Ibtisam" gpid="96" height="414" width="298">+/null/piece;;;Pilot-Ibtisam.jpg;Pilot-Ibtisam/null;0;0;96</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Ig_88a" gpid="97" height="418" width="300">+/null/piece;;;Pilot-Ig_88a.jpg;Pilot-Ig_88a/null;0;0;97</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Ig_88b" gpid="98" height="418" width="300">+/null/piece;;;Pilot-Ig_88b.jpg;Pilot-Ig_88b/null;0;0;98</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Ig_88c" gpid="99" height="418" width="300">+/null/piece;;;Pilot-Ig_88c.jpg;Pilot-Ig_88c/null;0;0;99</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Ig_88d" gpid="100" height="418" width="300">+/null/piece;;;Pilot-Ig_88d.jpg;Pilot-Ig_88d/null;0;0;100</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Inquisitor" gpid="101" height="418" width="300">+/null/piece;;;Pilot-Inquisitor.jpg;Pilot-Inquisitor/null;0;0;101</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Jake_Farrell" gpid="102" height="418" width="300">+/null/piece;;;Pilot-Jake_Farrell.jpg;Pilot-Jake_Farrell/null;0;0;102</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Jan_Ors" gpid="103" height="418" width="298">+/null/piece;;;Pilot-Jan_Ors.jpg;Pilot-Jan_Ors/null;0;0;103</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Jek_Porkins" gpid="104" height="418" width="300">+/null/piece;;;Pilot-Jek_Porkins.jpg;Pilot-Jek_Porkins/null;0;0;104</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Juno_Eclipse" gpid="105" height="418" width="300">+/null/piece;;;Pilot-Juno_Eclipse.jpg;Pilot-Juno_Eclipse/null;0;0;105</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Kaato_Leeachos" gpid="106" height="418" width="300">+/null/piece;;;Pilot-Kaato_Leeachos.jpg;Pilot-Kaato_Leeachos/null;0;0;106</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Kad_Solus" gpid="107" height="419" width="300">+/null/piece;;;Pilot-Kad_Solus.jpg;Pilot-Kad_Solus/null;0;0;107</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Kanan_Jarrus" gpid="108" height="418" width="300">+/null/piece;;;Pilot-Kanan_Jarrus.jpg;Pilot-Kanan_Jarrus/null;0;0;108</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Kath_Scarlet" gpid="109" height="418" width="300">+/null/piece;;;Pilot-Kath_Scarlet.jpg;Pilot-Kath_Scarlet/null;0;0;109</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Kat_Scarlet_Scum" gpid="110" height="418" width="300">+/null/piece;;;Pilot-Kat_Scarlet_Scum.jpg;Pilot-Kat_Scarlet_Scum/null;0;0;110</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Kavil" gpid="111" height="418" width="300">+/null/piece;;;Pilot-Kavil.jpg;Pilot-Kavil/null;0;0;111</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Ketsu_Onyo" gpid="112" height="419" width="300">+/null/piece;;;Pilot-Ketsu_Onyo.jpg;Pilot-Ketsu_Onyo/null;0;0;112</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Keyan_Farlander" gpid="113" height="418" width="300">+/null/piece;;;Pilot-Keyan_Farlander.jpg;Pilot-Keyan_Farlander/null;0;0;113</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Kir_Kanos" gpid="114" height="418" width="300">+/null/piece;;;Pilot-Kir_Kanos.jpg;Pilot-Kir_Kanos/null;0;0;114</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Knave_Squadron_Pilot" gpid="115" height="418" width="300">+/null/piece;;;Pilot-Knave_Squadron_Pilot.jpg;Pilot-Knave_Squadron_Pilot/null;0;0;115</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Krassis_Trelix" gpid="116" height="411" width="298">+/null/piece;;;Pilot-Krassis_Trelix.jpg;Pilot-Krassis_Trelix/null;0;0;116</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Kyle_Katarn" gpid="117" height="418" width="300">+/null/piece;;;Pilot-Kyle_Katarn.jpg;Pilot-Kyle_Katarn/null;0;0;117</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Laetin_Ashera" gpid="118" height="418" width="300">+/null/piece;;;Pilot-Laetin_Ashera.jpg;Pilot-Laetin_Ashera/null;0;0;118</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Lando_Calrissian" gpid="119" height="418" width="300">+/null/piece;;;Pilot-Lando_Calrissian.jpg;Pilot-Lando_Calrissian/null;0;0;119</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Latts_Razzi" gpid="120" height="418" width="300">+/null/piece;;;Pilot-Latts_Razzi.jpg;Pilot-Latts_Razzi/null;0;0;120</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Leebo" gpid="121" height="418" width="300">+/null/piece;;;Pilot-Leebo.jpg;Pilot-Leebo/null;0;0;121</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Lieutenant_Blount" gpid="122" height="418" width="300">+/null/piece;;;Pilot-Lieutenant_Blount.jpg;Pilot-Lieutenant_Blount/null;0;0;122</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Lieutenant_Colzet" gpid="123" height="418" width="300">+/null/piece;;;Pilot-Lieutenant_Colzet.jpg;Pilot-Lieutenant_Colzet/null;0;0;123</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Lieutenant_Lorrir" gpid="124" height="418" width="300">+/null/piece;;;Pilot-Lieutenant_Lorrir.jpg;Pilot-Lieutenant_Lorrir/null;0;0;124</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Lothal_Rebel" gpid="125" height="418" width="300">+/null/piece;;;Pilot-Lothal_Rebel.jpg;Pilot-Lothal_Rebel/null;0;0;125</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Luke_Skywalker" gpid="126" height="411" width="298">+/null/piece;;;Pilot-Luke_Skywalker.jpg;Pilot-Luke_Skywalker/null;0;0;126</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Maarek_Stele" gpid="127" height="411" width="298">+/null/piece;;;Pilot-Maarek_Stele.jpg;Pilot-Maarek_Stele/null;0;0;127</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Maarek_Stele_Defender" gpid="128" height="419" width="300">+/null/piece;;;Pilot-Maarek_Stele_Defender.jpg;Pilot-Maarek_Stele_Defender/null;0;0;128</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Major_Rhymer" gpid="129" height="418" width="300">+/null/piece;;;Pilot-Major_Rhymer.jpg;Pilot-Major_Rhymer/null;0;0;129</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Manaroo" gpid="130" height="418" width="300">+/null/piece;;;Pilot-Manaroo.jpg;Pilot-Manaroo/null;0;0;130</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Mandalorian_Mercenary" gpid="131" height="418" width="300">+/null/piece;;;Pilot-Mandalorian_Mercenary.jpg;Pilot-Mandalorian_Mercenary/null;0;0;131</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Mauler_Mithel" gpid="132" height="411" width="298">+/null/piece;;;Pilot-Mauler_Mithel.jpg;Pilot-Mauler_Mithel/null;0;0;132</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Miranda_Doni" gpid="133" height="418" width="300">+/null/piece;;;Pilot-Miranda_Doni.jpg;Pilot-Miranda_Doni/null;0;0;133</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Moralo_Eval" gpid="134" height="418" width="300">+/null/piece;;;Pilot-Moralo_Eval.jpg;Pilot-Moralo_Eval/null;0;0;134</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Nashtah_Pup_Pilot" gpid="135" height="418" width="300">+/null/piece;;;Pilot-Nashtah_Pup_Pilot.jpg;Pilot-Nashtah_Pup_Pilot/null;0;0;135</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Ndru_Suhlak" gpid="136" height="418" width="300">+/null/piece;;;Pilot-Ndru_Suhlak.jpg;Pilot-Ndru_Suhlak/null;0;0;136</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Nera_Dantels" gpid="137" height="418" width="300">+/null/piece;;;Pilot-Nera_Dantels.jpg;Pilot-Nera_Dantels/null;0;0;137</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Night_Beast" gpid="138" height="411" width="298">+/null/piece;;;Pilot-Night_Beast.jpg;Pilot-Night_Beast/null;0;0;138</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Norra_Wexley" gpid="139" height="419" width="300">+/null/piece;;;Pilot-Norra_Wexley.jpg;Pilot-Norra_Wexley/null;0;0;139</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Obsidian_Squadron_Pilot" gpid="140" height="411" width="298">+/null/piece;;;Pilot-Obsidian_Squadron_Pilot.jpg;Pilot-Obsidian_Squadron_Pilot/null;0;0;140</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Old_Teroch" gpid="141" height="419" width="300">+/null/piece;;;Pilot-Old_Teroch.jpg;Pilot-Old_Teroch/null;0;0;141</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Omega_Ace" gpid="142" height="418" width="300">+/null/piece;;;Pilot-Omega_Ace.jpg;Pilot-Omega_Ace/null;0;0;142</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Omega_Leader" gpid="143" height="418" width="300">+/null/piece;;;Pilot-Omega_Leader.jpg;Pilot-Omega_Leader/null;0;0;143</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Omega_Specialist" gpid="144" height="419" width="300">+/null/piece;;;Pilot-Omega_Specialist.jpg;Pilot-Omega_Specialist/null;0;0;144</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Omega_Squadron_Pilot" gpid="145" height="418" width="300">+/null/piece;;;Pilot-Omega_Squadron_Pilot.jpg;Pilot-Omega_Squadron_Pilot/null;0;0;145</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Omicron_Group_Pilot" gpid="146" height="411" width="298">+/null/piece;;;Pilot-Omicron_Group_Pilot.jpg;Pilot-Omicron_Group_Pilot/null;0;0;146</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Onyx_Squadron_Pilot" gpid="147" height="418" width="300">+/null/piece;;;Pilot-Onyx_Squadron_Pilot.jpg;Pilot-Onyx_Squadron_Pilot/null;0;0;147</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Outer_Rim_Smuggler" gpid="148" height="418" width="300">+/null/piece;;;Pilot-Outer_Rim_Smuggler.jpg;Pilot-Outer_Rim_Smuggler/null;0;0;148</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Palob_Godalhi" gpid="149" height="418" width="300">+/null/piece;;;Pilot-Palob_Godalhi.jpg;Pilot-Palob_Godalhi/null;0;0;149</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Patrol_Leader" gpid="150" height="419" width="300">+/null/piece;;;Pilot-Patrol_Leader.jpg;Pilot-Patrol_Leader/null;0;0;150</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Poe_Dameron" gpid="151" height="418" width="300">+/null/piece;;;Pilot-Poe_Dameron.jpg;Pilot-Poe_Dameron/null;0;0;151</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Poe_Dameron_2" gpid="152" height="419" width="300">+/null/piece;;;Pilot-Poe_Dameron_2.jpg;Pilot-Poe_Dameron_2/null;0;0;152</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Prince_Xizor" gpid="153" height="418" width="300">+/null/piece;;;Pilot-Prince_Xizor.jpg;Pilot-Prince_Xizor/null;0;0;153</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Prototype_Pilot" gpid="154" height="418" width="300">+/null/piece;;;Pilot-Prototype_Pilot.jpg;Pilot-Prototype_Pilot/null;0;0;154</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Quickdraw" gpid="155" height="419" width="300">+/null/piece;;;Pilot-Quickdraw.jpg;Pilot-Quickdraw/null;0;0;155</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Rear_Admiral_Chiraneau" gpid="156" height="418" width="300">+/null/piece;;;Pilot-Rear_Admiral_Chiraneau.jpg;Pilot-Rear_Admiral_Chiraneau/null;0;0;156</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Rebel_Operative" gpid="157" height="411" width="298">+/null/piece;;;Pilot-Rebel_Operative.jpg;Pilot-Rebel_Operative/null;0;0;157</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Redline" gpid="158" height="418" width="300">+/null/piece;;;Pilot-Redline.jpg;Pilot-Redline/null;0;0;158</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Red_Ace" gpid="159" height="418" width="300">+/null/piece;;;Pilot-Red_Ace.jpg;Pilot-Red_Ace/null;0;0;159</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Red_Ace" gpid="160" height="418" width="300">+/null/piece;;;Pilot-Red_Ace.png;Pilot-Red_Ace/null;0;0;160</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Red_Squadron_Pilot" gpid="161" height="411" width="298">+/null/piece;;;Pilot-Red_Squadron_Pilot.jpg;Pilot-Red_Squadron_Pilot/null;0;0;161</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Red_Squadron_Vetera" gpid="162" height="418" width="300">+/null/piece;;;Pilot-Red_Squadron_Vetera.jpg;Pilot-Red_Squadron_Vetera/null;0;0;162</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Resistance_Back" gpid="163" height="418" width="300">+/null/piece;;;Pilot-Resistance_Back.jpg;Pilot-Resistance_Back/null;0;0;163</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Rexler_Brath" gpid="164" height="418" width="300">+/null/piece;;;Pilot-Rexler_Brath.jpg;Pilot-Rexler_Brath/null;0;0;164</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Rey" gpid="165" height="419" width="300">+/null/piece;;;Pilot-Rey.jpg;Pilot-Rey/null;0;0;165</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Roark_Garnet" gpid="166" height="418" width="300">+/null/piece;;;Pilot-Roark_Garnet.jpg;Pilot-Roark_Garnet/null;0;0;166</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Rookie_Pilot" gpid="167" height="411" width="298">+/null/piece;;;Pilot-Rookie_Pilot.jpg;Pilot-Rookie_Pilot/null;0;0;167</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Royal_Guard_Pilot" gpid="168" height="418" width="300">+/null/piece;;;Pilot-Royal_Guard_Pilot.jpg;Pilot-Royal_Guard_Pilot/null;0;0;168</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Ruthless_Freelancer" gpid="169" height="418" width="300">+/null/piece;;;Pilot-Ruthless_Freelancer.jpg;Pilot-Ruthless_Freelancer/null;0;0;169</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Saber_Squadron_Pilot" gpid="170" height="418" width="300">+/null/piece;;;Pilot-Saber_Squadron_Pilot.jpg;Pilot-Saber_Squadron_Pilot/null;0;0;170</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Sabine_Wren_S&amp;V" gpid="171" height="419" width="300">+/null/piece;;;Pilot-Sabine_Wren_S&amp;V.jpg;Pilot-Sabine_Wren_S&amp;V/null;0;0;171</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Sabine_Wren_Shuttle" gpid="172" height="418" width="300">+/null/piece;;;Pilot-Sabine_Wren_Shuttle.jpg;Pilot-Sabine_Wren_Shuttle/null;0;0;172</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Sabine_Wren_TF" gpid="173" height="419" width="300">+/null/piece;;;Pilot-Sabine_Wren_TF.jpg;Pilot-Sabine_Wren_TF/null;0;0;173</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Scimitar_Squadron_Pilot" gpid="174" height="418" width="300">+/null/piece;;;Pilot-Scimitar_Squadron_Pilot.jpg;Pilot-Scimitar_Squadron_Pilot/null;0;0;174</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Scourge" gpid="175" height="418" width="300">+/null/piece;;;Pilot-Scourge.jpg;Pilot-Scourge/null;0;0;175</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Serissu" gpid="176" height="418" width="300">+/null/piece;;;Pilot-Serissu.jpg;Pilot-Serissu/null;0;0;176</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Shadowport_Hunter" gpid="177" height="419" width="300">+/null/piece;;;Pilot-Shadowport_Hunter.jpg;Pilot-Shadowport_Hunter/null;0;0;177</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Shadow_Squadron_Pilot" gpid="178" height="418" width="300">+/null/piece;;;Pilot-Shadow_Squadron_Pilot.jpg;Pilot-Shadow_Squadron_Pilot/null;0;0;178</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Shara_Bey" gpid="179" height="419" width="300">+/null/piece;;;Pilot-Shara_Bey.jpg;Pilot-Shara_Bey/null;0;0;179</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Sienar_Test_Pilot" gpid="180" height="418" width="300">+/null/piece;;;Pilot-Sienar_Test_Pilot.jpg;Pilot-Sienar_Test_Pilot/null;0;0;180</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Sigma_Squadron_Pilot" gpid="181" height="418" width="300">+/null/piece;;;Pilot-Sigma_Squadron_Pilot.jpg;Pilot-Sigma_Squadron_Pilot/null;0;0;181</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Soontir_Fel" gpid="182" height="418" width="300">+/null/piece;;;Pilot-Soontir_Fel.jpg;Pilot-Soontir_Fel/null;0;0;182</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Spice_Runner" gpid="183" height="419" width="300">+/null/piece;;;Pilot-Spice_Runner.jpg;Pilot-Spice_Runner/null;0;0;183</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Storm_Squadron_Pilot" gpid="184" height="411" width="298">+/null/piece;;;Pilot-Storm_Squadron_Pilot.jpg;Pilot-Storm_Squadron_Pilot/null;0;0;184</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Syndicate_Thug" gpid="185" height="418" width="300">+/null/piece;;;Pilot-Syndicate_Thug.jpg;Pilot-Syndicate_Thug/null;0;0;185</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Tala_Squadron_Pilot" gpid="186" height="418" width="300">+/null/piece;;;Pilot-Tala_Squadron_Pilot.jpg;Pilot-Tala_Squadron_Pilot/null;0;0;186</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Talonbane_Cobra" gpid="187" height="418" width="300">+/null/piece;;;Pilot-Talonbane_Cobra.jpg;Pilot-Talonbane_Cobra/null;0;0;187</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Tansarii_Point_Veteran" gpid="188" height="419" width="300">+/null/piece;;;Pilot-Tansarii_Point_Veteran.jpg;Pilot-Tansarii_Point_Veteran/null;0;0;188</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Tarn_Mison" gpid="189" height="418" width="300">+/null/piece;;;Pilot-Tarn_Mison.jpg;Pilot-Tarn_Mison/null;0;0;189</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Tel_Trevura" gpid="190" height="418" width="300">+/null/piece;;;Pilot-Tel_Trevura.jpg;Pilot-Tel_Trevura/null;0;0;190</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Tempest_Squadron_Pilot" gpid="191" height="411" width="298">+/null/piece;;;Pilot-Tempest_Squadron_Pilot.jpg;Pilot-Tempest_Squadron_Pilot/null;0;0;191</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Ten_Numb" gpid="192" height="418" width="300">+/null/piece;;;Pilot-Ten_Numb.jpg;Pilot-Ten_Numb/null;0;0;192</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Tetran_Cowall" gpid="193" height="418" width="300">+/null/piece;;;Pilot-Tetran_Cowall.jpg;Pilot-Tetran_Cowall/null;0;0;193</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Thane_Kyrell" gpid="194" height="419" width="300">+/null/piece;;;Pilot-Thane_Kyrell.jpg;Pilot-Thane_Kyrell/null;0;0;194</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Tomax_Bren" gpid="195" height="418" width="300">+/null/piece;;;Pilot-Tomax_Bren.jpg;Pilot-Tomax_Bren/null;0;0;195</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Torkil_Mux" gpid="196" height="418" width="300">+/null/piece;;;Pilot-Torkil_Mux.jpg;Pilot-Torkil_Mux/null;0;0;196</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Trandoshan_Slaver" gpid="197" height="418" width="300">+/null/piece;;;Pilot-Trandoshan_Slaver.jpg;Pilot-Trandoshan_Slaver/null;0;0;197</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Turr_Phennir" gpid="198" height="418" width="300">+/null/piece;;;Pilot-Turr_Phennir.jpg;Pilot-Turr_Phennir/null;0;0;198</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Tycho_Celchu" gpid="199" height="418" width="300">+/null/piece;;;Pilot-Tycho_Celchu.jpg;Pilot-Tycho_Celchu/null;0;0;199</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Valen_Rudor" gpid="200" height="418" width="300">+/null/piece;;;Pilot-Valen_Rudor.jpg;Pilot-Valen_Rudor/null;0;0;200</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Wampa" gpid="201" height="418" width="300">+/null/piece;;;Pilot-Wampa.jpg;Pilot-Wampa/null;0;0;201</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Warden_Squadron_Pilot" gpid="202" height="418" width="300">+/null/piece;;;Pilot-Warden_Squadron_Pilot.jpg;Pilot-Warden_Squadron_Pilot/null;0;0;202</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Wedge_Antilles" gpid="203" height="411" width="298">+/null/piece;;;Pilot-Wedge_Antilles.jpg;Pilot-Wedge_Antilles/null;0;0;203</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Wes_Janson" gpid="204" height="418" width="300">+/null/piece;;;Pilot-Wes_Janson.jpg;Pilot-Wes_Janson/null;0;0;204</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Whisper" gpid="205" height="418" width="300">+/null/piece;;;Pilot-Whisper.jpg;Pilot-Whisper/null;0;0;205</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Wild_Space_Fringer" gpid="206" height="418" width="300">+/null/piece;;;Pilot-Wild_Space_Fringer.jpg;Pilot-Wild_Space_Fringer/null;0;0;206</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Winged_Gundark" gpid="207" height="411" width="298">+/null/piece;;;Pilot-Winged_Gundark.jpg;Pilot-Winged_Gundark/null;0;0;207</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Youngster" gpid="208" height="418" width="300">+/null/piece;;;Pilot-Youngster.jpg;Pilot-Youngster/null;0;0;208</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Zealous_Recruit" gpid="209" height="419" width="300">+/null/piece;;;Pilot-Zealous_Recruit.jpg;Pilot-Zealous_Recruit/null;0;0;209</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Zeb_Orrelios_Shuttle" gpid="210" height="418" width="300">+/null/piece;;;Pilot-Zeb_Orrelios_Shuttle.jpg;Pilot-Zeb_Orrelios_Shuttle/null;0;0;210</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Zertik_Strom" gpid="211" height="418" width="300">+/null/piece;;;Pilot-Zertik_Strom.jpg;Pilot-Zertik_Strom/null;0;0;211</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Zeta_Ace" gpid="212" height="418" width="300">+/null/piece;;;Pilot-Zeta_Ace.jpg;Pilot-Zeta_Ace/null;0;0;212</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Zeta_Leader" gpid="213" height="418" width="300">+/null/piece;;;Pilot-Zeta_Leader.jpg;Pilot-Zeta_Leader/null;0;0;213</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Zeta_Specialist" gpid="214" height="419" width="300">+/null/piece;;;Pilot-Zeta_Specialist.jpg;Pilot-Zeta_Specialist/null;0;0;214</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Zeta_Squadron_Pilot" gpid="215" height="418" width="300">+/null/piece;;;Pilot-Zeta_Squadron_Pilot.jpg;Pilot-Zeta_Squadron_Pilot/null;0;0;215</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Pilot-Zuckuss" gpid="216" height="418" width="300">+/null/piece;;;Pilot-Zuckuss.jpg;Pilot-Zuckuss/null;0;0;216</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="Adrenaline Rush" gpid="218" height="300" width="194">+/null/piece;;;Up-Adrenaline_rush.jpg;Adrenaline Rush/null;0;0;218</VASSAL.build.widget.PieceSlot>
+        <VASSAL.build.widget.PieceSlot entryName="R2-D2" gpid="219" height="306" width="198">+/null/piece;;;Up-R2-D2.jpg;R2-D2/null;0;0;219</VASSAL.build.widget.PieceSlot>
+    </VASSAL.build.module.PieceWindow>
+    <VASSAL.build.module.Chatter/>
+    <VASSAL.i18n.Language/>
+    <mic.HWpopup max="0" min="0"/>
+</VASSAL.launch.BasicModule>

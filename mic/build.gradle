@@ -1,0 +1,32 @@
+apply plugin: 'java'
+
+
+sourceSets {
+    main {
+        java {
+            srcDirs = ['src/mic'] // Consider moving src/mic to src/main/java
+        }
+    }
+}
+
+repositories {
+    jcenter()
+}
+
+sourceCompatibility = '1.5'
+targetCompatibility = '1.5'
+
+dependencies {
+    compileOnly files('lib/vengine.jar')
+    compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.1.5'
+}
+
+
+task buildVmod(type: Zip) {
+    extension 'vmod'
+    from 'src/main/resources/vmod'
+    from compileJava
+    into('lib') {
+        from configurations.runtime
+    }
+}
