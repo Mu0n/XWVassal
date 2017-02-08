@@ -3,11 +3,10 @@ package mic;
 import VASSAL.build.*;
 import VASSAL.build.module.*;
 import VASSAL.build.module.Map;
-import VASSAL.build.module.map.boardPicker.Board;
 import VASSAL.build.widget.PieceSlot;
 import VASSAL.command.*;
 import VASSAL.counters.GamePiece;
-import VASSAL.tools.imports.adc2.ADC2Module;
+import com.fasterxml.*;
 
 import javax.swing.*;
 import java.awt.*;
@@ -16,7 +15,6 @@ import java.io.*;
 import java.util.*;
 import java.util.List;
 
-import static com.sun.org.apache.xalan.internal.xsltc.compiler.util.Type.Int;
 
 
 /**
@@ -81,6 +79,8 @@ public class HWpopup extends AbstractConfigurable implements CommandEncoder,
             if(is!=null)
                 is.close();
 
+            ObjectMapper mapper = new ObjectMapper();
+            XWSList list = mapper.readValue(xwsJsonStringVal, XWSList.class);
 
             JTextArea msg = new JTextArea(everything);
 
@@ -127,7 +127,7 @@ public class HWpopup extends AbstractConfigurable implements CommandEncoder,
 
            GamePiece gp = slot.getPiece();
            if(!slot.getGpId().equals("15")) pos.setLocation(pos.getX()+gp.boundingBox().getWidth(),pos.getY());
-           
+
            foundCount++;
 
            List<Map> mapList = Map.getMapList();
