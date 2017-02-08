@@ -39,5 +39,6 @@
       </library>
     </orderEntry>
     <orderEntry type="library" name="com.fasterxml.jackson.core:jackson-core:2.0.4" level="project" />
+    <orderEntry type="library" name="com.fasterxml.jackson.core:jackson-databind:2.1.5" level="project" />
   </component>
 </module>

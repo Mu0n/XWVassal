@@ -1,20 +1,26 @@
 package mic;
 
-import VASSAL.build.*;
-import VASSAL.build.module.*;
-import VASSAL.build.module.Map;
-import VASSAL.build.widget.PieceSlot;
-import VASSAL.command.*;
-import VASSAL.counters.GamePiece;
-import com.fasterxml.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.InputStream;
+import java.util.List;
+import java.util.Random;
 
 import javax.swing.*;
-import java.awt.*;
-import java.awt.event.*;
-import java.io.*;
-import java.util.*;
-import java.util.List;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import VASSAL.build.AbstractConfigurable;
+import VASSAL.build.Buildable;
+import VASSAL.build.GameModule;
+import VASSAL.build.module.Chatter;
+import VASSAL.build.module.GameComponent;
+import VASSAL.build.module.Map;
+import VASSAL.build.widget.PieceSlot;
+import VASSAL.command.Command;
+import VASSAL.command.CommandEncoder;
+import VASSAL.counters.GamePiece;
 
 
 /**
@@ -48,10 +54,10 @@ public class HWpopup extends AbstractConfigurable implements CommandEncoder,
         //Put simple alert/debug messages to be displayed here in a basic Java popup alert
         try {
             GamePiece pieces[] = Map.activeMap.getPieces();
-            JOptionPane.showMessageDialog(null,"Hello World, there are " + Integer.toString(pieces.length) + " pieces on the board right now.",  "Feedback",
+            JOptionPane.showMessageDialog(null, "Hello World, there are " + Integer.toString(pieces.length) + " pieces on the board right now.", "Feedback",
                     JOptionPane.ERROR_MESSAGE);
-        } catch(Exception e){
-            JOptionPane.showMessageDialog(null,"Hello World, there are no pieces on the board right now.",  "Feedback",
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Hello World, there are no pieces on the board right now.", "Feedback",
                     JOptionPane.ERROR_MESSAGE);
         }
 
@@ -63,35 +69,36 @@ public class HWpopup extends AbstractConfigurable implements CommandEncoder,
         */
         String everything = "";
         try {
-            int i=0;
+            int i = 0;
             char c;
             InputStream is = GameModule.getGameModule().getDataArchive().getInputStream("file.txt");
 
-            while((i=is.read())!=-1)
-            {
+            while ((i = is.read()) != -1) {
                 // converts integer to character
-                c=(char)i;
+                c = (char) i;
                 // append char to everything ???
                 everything += c;
             }
 
             // releases system resources associated with this stream
-            if(is!=null)
+            if (is != null)
                 is.close();
 
             ObjectMapper mapper = new ObjectMapper();
-            XWSList list = mapper.readValue(xwsJsonStringVal, XWSList.class);
+            XWSList list = mapper.readValue(everything, XWSList.class);
+
+
 
             JTextArea msg = new JTextArea(everything);
 
             msg.setLineWrap(true);
             msg.setWrapStyleWord(true);
             JScrollPane scrollPane = new JScrollPane(msg);
-            scrollPane.setPreferredSize(new Dimension(800,450));
+            scrollPane.setPreferredSize(new Dimension(800, 450));
             JOptionPane.showMessageDialog(null, scrollPane, "XWS example", JOptionPane.INFORMATION_MESSAGE);
 
-        }catch(Exception e){
-            JOptionPane.showMessageDialog(null,System.getProperty(e.toString()),  "Feedback",
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, System.getProperty(e.toString()), "Feedback",
                     JOptionPane.ERROR_MESSAGE);
         }
     }
@@ -116,35 +123,35 @@ public class HWpopup extends AbstractConfigurable implements CommandEncoder,
         String listOfPieceSlots = "";
         PieceSlot ps = new PieceSlot();
         GameModule mod = GameModule.getGameModule();
-        Point pos = new Point (250, 200);
-        int foundCount=0;
+        Point pos = new Point(250, 200);
+        int foundCount = 0;
 
-       int counter = 1;
-        for(PieceSlot slot: GameModule.getGameModule().getAllDescendantComponentsOf(PieceSlot.class)) {
-       listOfPieceSlots += "#:" + Integer.toString(counter) + " gpuId:" +slot.getGpId() + " " + slot.getConfigureName() + "\n";
-       if(slot.getGpId().equals("15") || slot.getGpId().equals("219") || slot.getGpId().equals("218")) {
-
-
-           GamePiece gp = slot.getPiece();
-           if(!slot.getGpId().equals("15")) pos.setLocation(pos.getX()+gp.boundingBox().getWidth(),pos.getY());
-
-           foundCount++;
-
-           List<Map> mapList = Map.getMapList();
-           gp.setMap(mapList.get(0));
-           gp.setPosition(pos);
+        int counter = 1;
+        for (PieceSlot slot : GameModule.getGameModule().getAllDescendantComponentsOf(PieceSlot.class)) {
+            listOfPieceSlots += "#:" + Integer.toString(counter) + " gpuId:" + slot.getGpId() + " " + slot.getConfigureName() + "\n";
+            if (slot.getGpId().equals("15") || slot.getGpId().equals("219") || slot.getGpId().equals("218")) {
 
 
-           Command place = mapList.get(0).placeOrMerge(gp,pos);
-           place.execute();
-           mod.sendAndLog(place);
+                GamePiece gp = slot.getPiece();
+                if (!slot.getGpId().equals("15")) pos.setLocation(pos.getX() + gp.boundingBox().getWidth(), pos.getY());
 
-       }
-       counter++;
-       }
+                foundCount++;
+
+                List<Map> mapList = Map.getMapList();
+                gp.setMap(mapList.get(0));
+                gp.setPosition(pos);
+
+
+                Command place = mapList.get(0).placeOrMerge(gp, pos);
+                place.execute();
+                mod.sendAndLog(place);
+
+            }
+            counter++;
+        }
 
         Command c = new
-                Chatter.DisplayText(mod.getChatter(),listOfPieceSlots);
+                Chatter.DisplayText(mod.getChatter(), listOfPieceSlots);
         c.execute();
         mod.sendAndLog(c);
 
@@ -267,6 +274,7 @@ public class HWpopup extends AbstractConfigurable implements CommandEncoder,
     public Command getRestoreCommand() {
         return new Incr(this, index);
     }
+
     public static final String COMMAND_PREFIX = "TENSION:";
 
     public String encode(Command c) {
