@@ -24,8 +24,9 @@ dependencies {
 
 task buildVmod(type: Zip) {
     extension 'vmod'
-    from 'src/main/resources/vmod'
+    duplicatesStrategy 'exclude'
     from compileJava
+    from zipTree('vassal_module/java_vassal_test_module.vmod')
     into('lib') {
         from configurations.runtime
     }
