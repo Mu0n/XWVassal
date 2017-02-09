@@ -23,10 +23,10 @@ dependencies {
 
 
 task buildVmod(type: Zip) {
-    archiveName 'java_vassal_test_module.vmod'
+    archiveName 'full-xwing-module.vmod'
     duplicatesStrategy 'exclude'
     from compileJava
-    from zipTree('vassal_module/java_vassal_test_module.vmod')
+    from zipTree('vassal_module/full-xwing-module.vmod')
     into('lib') {
         from configurations.runtime
     }

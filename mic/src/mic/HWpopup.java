@@ -36,6 +36,9 @@ public class HWpopup extends AbstractConfigurable implements CommandEncoder,
     private JButton experimentalButton; // Used to perform new and aggressive tests
     private JButton helloWorldButton; // Button that pops a java alert, displays a simple message
     private JButton readTextButton; // Button that reads a text file inside the module, could be used for XWS spec
+    private JButton printPilotPiecesButton; // Button that prints loaded pilot Pieces
+    private JButton printUpgradePiecesButton; // Button that prints loaded pilot Pieces
+    private VassalXWSPieceLoader slotLoader = new VassalXWSPieceLoader();
 
     public void addToIndex(int change) {
         index += change;
@@ -170,6 +173,33 @@ public class HWpopup extends AbstractConfigurable implements CommandEncoder,
         return mySlot;
     }
 
+    private void printUpgradePiecesButtonPressed() {
+        this.slotLoader.loadListFromXWS(null); // only used to populate maps
+        for (String mapKey : this.slotLoader.upgradePieces.keySet()) {
+            PieceSlot upgrade = this.slotLoader.upgradePieces.get(mapKey);
+            logToChat(String.format("upgrade: key=%s, gpid=%s, name=%s", mapKey, upgrade.getGpId(), upgrade.getConfigureName()));
+        }
+    }
+
+    private void printPilotPiecesButtonPressed() {
+
+        this.slotLoader.loadListFromXWS(null); // only used to populate maps
+        logToChat(String.format("Loaded %d pilots", this.slotLoader.pilotPieces.size()));
+        for (String mapKey : this.slotLoader.pilotPieces.keySet()) {
+            VassalXWSPieceLoader.PilotPieces pilot = this.slotLoader.pilotPieces.get(mapKey);
+            logToChat("key=" + mapKey);
+            logToChat(String.format("\tship: gpid=%s, name=%s", pilot.ship.getGpId(), pilot.ship.getConfigureName()));
+            logToChat(String.format("\tdial: gpid=%s, name=%s",  pilot.dial.getGpId(), pilot.dial.getConfigureName()));
+            logToChat(String.format("\tmove: gpid=%s, name=%s",  pilot.movement.getGpId(), pilot.movement.getConfigureName()));
+            logToChat(String.format("\tcard: gpid=%s, name=%s",  pilot.pilot.getGpId(), pilot.pilot.getConfigureName()));
+        }
+    }
+
+    public static void logToChat(String msg) {
+        Command c = new Chatter.DisplayText(GameModule.getGameModule().getChatter(), msg);
+        c.execute();
+        GameModule.getGameModule().sendAndLog(c);
+    }
 
     public static final String MIN = "min";
     public static final String MAX = "max";
@@ -244,6 +274,24 @@ public class HWpopup extends AbstractConfigurable implements CommandEncoder,
             }
         });
         mod.getToolBar().add(readTextButton);
+
+        printPilotPiecesButton = new JButton("Print pilot pieces");
+        printPilotPiecesButton.setAlignmentY(0.0F);
+        printPilotPiecesButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                printPilotPiecesButtonPressed();
+            }
+        });
+        mod.getToolBar().add(printPilotPiecesButton);
+
+        printUpgradePiecesButton = new JButton("Print upgrade pieces");
+        printUpgradePiecesButton.setAlignmentY(0.0F);
+        printUpgradePiecesButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                printUpgradePiecesButtonPressed();
+            }
+        });
+        mod.getToolBar().add(printUpgradePiecesButton);
 
     }
 
