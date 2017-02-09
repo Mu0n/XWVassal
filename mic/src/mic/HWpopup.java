@@ -9,7 +9,6 @@ import java.util.Random;
 
 import javax.swing.*;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import VASSAL.build.AbstractConfigurable;
 import VASSAL.build.Buildable;
@@ -86,11 +85,6 @@ public class HWpopup extends AbstractConfigurable implements CommandEncoder,
             // releases system resources associated with this stream
             if (is != null)
                 is.close();
-
-            ObjectMapper mapper = new ObjectMapper();
-            XWSList list = mapper.readValue(everything, XWSList.class);
-
-
 
             JTextArea msg = new JTextArea(everything);
 
