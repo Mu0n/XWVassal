@@ -15,19 +15,45 @@ import java.util.*;
 public class VassalXWSPieceLoader {
 
     private static String invalidCanonicalCharPattern = "[^a-zA-Z0-9]";
-    Map<String, PilotPieces> pilotPieces = null;
-    Map<String, PieceSlot> upgradePieces = null;
+    Map<String, VassalXWSPilotPieces> pilotPiecesMap = null;
+    Map<String, PieceSlot> upgradePiecesMap = null;
 
     public VassalXWSListPieces loadListFromXWS(XWSList list) {
-        if (pilotPieces == null || upgradePieces == null) {
+        if (pilotPiecesMap == null || upgradePiecesMap == null) {
             loadPieces();
         }
-        return null;
+
+        VassalXWSListPieces pieces = new VassalXWSListPieces();
+        for (XWSList.XWSPilot pilot : list.getPilots()) {
+            String pilotKey = getPilotMapKey(list.getFaction(), pilot.getShip(), pilot.getName());
+            VassalXWSPilotPieces barePieces = this.pilotPiecesMap.get(pilotKey);
+            if (barePieces == null) {
+                Util.logToChat("Could not find pilot: " + pilotKey);
+                continue;
+            }
+
+            VassalXWSPilotPieces pilotPieces = new VassalXWSPilotPieces(barePieces);
+
+            for(String upgradeType: pilot.getUpgrades().keySet()) {
+                for(String upgradeName : pilot.getUpgrades().get(upgradeType)) {
+                    String upgradeKey = getUpgradeMapKey(upgradeType, upgradeName);
+                    PieceSlot upgrade = upgradePiecesMap.get(upgradeKey);
+                    if (upgrade == null) {
+                        Util.logToChat("Could not find upgrade: " + upgradeKey);
+                        continue;
+                    }
+                    pilotPieces.getUpgrades().add(upgrade);
+                }
+            }
+
+            pieces.getShips().add(pilotPieces);
+        }
+        return pieces;
     }
 
     private void loadPieces() {
-        pilotPieces = new HashMap<String, PilotPieces>();
-        upgradePieces = new HashMap<String, PieceSlot>();
+        pilotPiecesMap = new HashMap<String, VassalXWSPilotPieces>();
+        upgradePiecesMap = new HashMap<String, PieceSlot>();
 
         List<ListWidget> listWidgets = GameModule.getGameModule().getAllDescendantComponentsOf(ListWidget.class);
         for (ListWidget listWidget : listWidgets) {
@@ -62,7 +88,7 @@ public class VassalXWSPieceLoader {
             String upgradeName = getCleanedName(upgrade.getConfigureName());
             upgradeName = NameFixes.fixUpgradeName(upgradeType, upgradeName);
             String mapKey = getUpgradeMapKey(upgradeType, upgradeName);
-            upgradePieces.put(mapKey, upgrade);
+            upgradePiecesMap.put(mapKey, upgrade);
         }
     }
 
@@ -120,7 +146,14 @@ public class VassalXWSPieceLoader {
             String pilotName = getCleanedName(pilot.getConfigureName());
             pilotName = NameFixes.fixPilotName(pilotName);
             String mapKey = getPilotMapKey(faction.name(), shipName, pilotName);
-            pilotPieces.put(mapKey, new PilotPieces(dial, movementCard, movementStrip, openDial, ship, pilot));
+            VassalXWSPilotPieces pilotPieces = new VassalXWSPilotPieces();
+            pilotPieces.setDial(dial);
+            pilotPieces.setShip(ship);
+            pilotPieces.setMovementCard(movementCard);
+            pilotPieces.setPilotCard(pilot);
+            pilotPieces.setMovementStrip(movementStrip);
+            pilotPieces.setOpenDial(openDial);
+            pilotPiecesMap.put(mapKey, pilotPieces);
         }
     }
 
@@ -150,7 +183,7 @@ public class VassalXWSPieceLoader {
             for (String shipName : factionPilots.ships.keySet()) {
                 for (String pilotName : factionPilots.ships.get(shipName).pilots.keySet()) {
                     String pieceKey = getPilotMapKey(getCleanedName(factionPilots.name), shipName, pilotName);
-                    if (!this.pilotPieces.containsKey(pieceKey)) {
+                    if (!this.pilotPiecesMap.containsKey(pieceKey)) {
                         missingKeys.add(pieceKey);
                         Util.logToChat("Missing pilot: " + pieceKey);
                     }
@@ -162,7 +195,7 @@ public class VassalXWSPieceLoader {
         for(String upgradeType : masterUpgrades.keySet()) {
             for (String upgradeName : masterUpgrades.get(upgradeType).upgrades.keySet()) {
                 String pieceKey = getUpgradeMapKey(upgradeType, upgradeName);
-                if (!upgradePieces.containsKey(pieceKey)) {
+                if (!upgradePiecesMap.containsKey(pieceKey)) {
                     missingKeys.add(pieceKey);
                     Util.logToChat("Missing upgrade: " + pieceKey);
                 }
@@ -195,24 +228,6 @@ public class VassalXWSPieceLoader {
                 }
             }
             return null;
-        }
-    }
-
-    class PilotPieces {
-        PieceSlot ship;
-        PieceSlot dial;
-        PieceSlot movement;
-        PieceSlot pilot;
-        PieceSlot openDial;
-        PieceSlot movementStrip;
-
-        public PilotPieces(PieceSlot dial, PieceSlot movement, PieceSlot movementStrip, PieceSlot openDial, PieceSlot ship, PieceSlot pilot) {
-            this.dial = dial;
-            this.movement = movement;
-            this.ship = ship;
-            this.pilot = pilot;
-            this.movementStrip = movementStrip;
-            this.openDial = openDial;
         }
     }
 }

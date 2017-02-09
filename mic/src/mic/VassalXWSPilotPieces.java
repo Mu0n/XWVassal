@@ -1,5 +1,6 @@
 package mic;
 
+import VASSAL.build.Widget;
 import VASSAL.build.widget.PieceSlot;
 
 import java.util.ArrayList;
@@ -13,6 +14,30 @@ public class VassalXWSPilotPieces {
     private PieceSlot dial;
     private PieceSlot movementCard;
     private List<PieceSlot> upgrades = new ArrayList<PieceSlot>();
+    private PieceSlot movementStrip;
+    private PieceSlot openDial;
+
+    public PieceSlot getShip() {
+        return ship;
+    }
+
+    public void setShip(PieceSlot ship) {
+        this.ship = ship;
+    }
+
+    private PieceSlot ship;
+
+    public VassalXWSPilotPieces() {
+
+    }
+
+    public VassalXWSPilotPieces(VassalXWSPilotPieces pieces) {
+        this.dial = pieces.dial;
+        this.movementCard = pieces.movementCard;
+        this.movementStrip = pieces.movementStrip;
+        this.openDial = pieces.openDial;
+        this.pilotCard = pieces.pilotCard;
+    }
 
     public PieceSlot getPilotCard() {
         return pilotCard;
@@ -40,5 +65,21 @@ public class VassalXWSPilotPieces {
 
     public List<PieceSlot> getUpgrades() {
         return upgrades;
+    }
+
+    public void setMovementStrip(PieceSlot movementStrip) {
+        this.movementStrip = movementStrip;
+    }
+
+    public void setOpenDial(PieceSlot openDial) {
+        this.openDial = openDial;
+    }
+
+    public PieceSlot getMovementStrip() {
+        return movementStrip;
+    }
+
+    public PieceSlot getOpenDial() {
+        return openDial;
     }
 }

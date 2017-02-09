@@ -1,6 +1,7 @@
 package mic;
 
 import VASSAL.build.widget.PieceSlot;
+import com.google.common.collect.Lists;
 
 import java.util.List;
 
@@ -8,8 +9,8 @@ import java.util.List;
  * Created by amatheny on 2/8/17.
  */
 public class VassalXWSListPieces {
-    private List<VassalXWSPilotPieces> ships;
-    private List<PieceSlot> obstacles;
+    private List<VassalXWSPilotPieces> ships = Lists.newArrayList();
+    private List<PieceSlot> obstacles = Lists.newArrayList();
 
     public List<VassalXWSPilotPieces> getShips() {
         return ships;

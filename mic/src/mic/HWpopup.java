@@ -40,6 +40,7 @@ public class HWpopup extends AbstractConfigurable implements CommandEncoder,
     private JButton printPilotPiecesButton; // Button that prints loaded pilot Pieces
     private JButton printUpgradePiecesButton; // Button that prints loaded pilot Pieces
     private JButton findMissingPiecesButton;
+    private JButton loadFromXwsUrlButton;
     private VassalXWSPieceLoader slotLoader = new VassalXWSPieceLoader();
 
     public void addToIndex(int change) {
@@ -172,9 +173,26 @@ public class HWpopup extends AbstractConfigurable implements CommandEncoder,
 
     private void printUpgradePiecesButtonPressed() {
         this.slotLoader.loadListFromXWS(null); // only used to populate maps
-        for (String mapKey : this.slotLoader.upgradePieces.keySet()) {
-            PieceSlot upgrade = this.slotLoader.upgradePieces.get(mapKey);
+        for (String mapKey : this.slotLoader.upgradePiecesMap.keySet()) {
+            PieceSlot upgrade = this.slotLoader.upgradePiecesMap.get(mapKey);
             logToChat(String.format("upgrade: key=%s, gpid=%s, name=%s", mapKey, upgrade.getGpId(), upgrade.getConfigureName()));
+        }
+    }
+
+    private void loadFromXwsButtonPressed() {
+
+        String url = JOptionPane.showInputDialog("XWS Url");
+        if (url == null || url.length() == 0) {
+            return;
+        }
+
+        VassalXWSListPieces pieces = slotLoader.loadListFromXWS(XWSFetcher.fetchFromUrl(url));
+
+        for (VassalXWSPilotPieces ship : pieces.getShips()) {
+            logToChat(String.format("pilot: %s, gpid=%s", ship.getPilotCard().getConfigureName(), ship.getPilotCard().getGpId()));
+            for (PieceSlot upgrade : ship.getUpgrades()) {
+                logToChat(String.format("\t %s, gpid=%s", upgrade.getConfigureName(), upgrade.getGpId()));
+            }
         }
     }
 
@@ -182,14 +200,16 @@ public class HWpopup extends AbstractConfigurable implements CommandEncoder,
 
         this.slotLoader.loadListFromXWS(null); // only used to populate maps
 
-        logToChat(String.format("Loaded %d pilots", this.slotLoader.pilotPieces.size()));
-        for (String mapKey : this.slotLoader.pilotPieces.keySet()) {
-            VassalXWSPieceLoader.PilotPieces pilot = this.slotLoader.pilotPieces.get(mapKey);
+        logToChat(String.format("Loaded %d pilots", this.slotLoader.pilotPiecesMap.size()));
+        for (String mapKey : this.slotLoader.pilotPiecesMap.keySet()) {
+            VassalXWSPilotPieces pilot = this.slotLoader.pilotPiecesMap.get(mapKey);
             logToChat("key=" + mapKey);
-            logToChat(String.format("\tship: gpid=%s, name=%s", pilot.ship.getGpId(), pilot.ship.getConfigureName()));
-            logToChat(String.format("\tdial: gpid=%s, name=%s",  pilot.dial.getGpId(), pilot.dial.getConfigureName()));
-            logToChat(String.format("\tmove: gpid=%s, name=%s",  pilot.movement.getGpId(), pilot.movement.getConfigureName()));
-            logToChat(String.format("\tcard: gpid=%s, name=%s",  pilot.pilot.getGpId(), pilot.pilot.getConfigureName()));
+            logToChat(String.format("\tship: gpid=%s, name=%s", pilot.getShip().getGpId(), pilot.getShip().getConfigureName()));
+            logToChat(String.format("\tdial: gpid=%s, name=%s",  pilot.getDial().getGpId(), pilot.getDial().getConfigureName()));
+            logToChat(String.format("\tmove: gpid=%s, name=%s",  pilot.getMovementCard().getGpId(), pilot.getMovementCard().getConfigureName()));
+            logToChat(String.format("\tcard: gpid=%s, name=%s",  pilot.getPilotCard().getGpId(), pilot.getPilotCard().getConfigureName()));
+            logToChat(String.format("\topen: gpid=%s, name=%s",  pilot.getOpenDial().getGpId(), pilot.getOpenDial().getConfigureName()));
+            logToChat(String.format("\tstrip: gpid=%s, name=%s",  pilot.getMovementStrip().getGpId(), pilot.getMovementStrip().getConfigureName()));
         }
     }
 
@@ -294,6 +314,15 @@ public class HWpopup extends AbstractConfigurable implements CommandEncoder,
             }
         });
         mod.getToolBar().add(findMissingPiecesButton);
+
+        loadFromXwsUrlButton = new JButton("Load from XWS");
+        loadFromXwsUrlButton.setAlignmentY(0.0F);
+        loadFromXwsUrlButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                loadFromXwsButtonPressed();
+            }
+        });
+        mod.getToolBar().add(loadFromXwsUrlButton);
 
     }
 
