@@ -23,7 +23,7 @@ dependencies {
 
 
 task buildVmod(type: Zip) {
-    extension 'vmod'
+    archiveName 'java_vassal_test_module.vmod'
     duplicatesStrategy 'exclude'
     from compileJava
     from zipTree('vassal_module/java_vassal_test_module.vmod')
@@ -32,6 +32,9 @@ task buildVmod(type: Zip) {
     }
 
     doLast {
-        println "Compiled vmod to ${archivePath}"
+        copy {
+            from archivePath
+            into 'vassal_module'
+        }
     }
 }
