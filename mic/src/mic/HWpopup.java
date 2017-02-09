@@ -21,6 +21,8 @@ import VASSAL.command.Command;
 import VASSAL.command.CommandEncoder;
 import VASSAL.counters.GamePiece;
 
+import static mic.Util.logToChat;
+
 
 /**
  * HWpopup index class for the VASSAL tutorial
@@ -37,6 +39,7 @@ public class HWpopup extends AbstractConfigurable implements CommandEncoder,
     private JButton readTextButton; // Button that reads a text file inside the module, could be used for XWS spec
     private JButton printPilotPiecesButton; // Button that prints loaded pilot Pieces
     private JButton printUpgradePiecesButton; // Button that prints loaded pilot Pieces
+    private JButton findMissingPiecesButton;
     private VassalXWSPieceLoader slotLoader = new VassalXWSPieceLoader();
 
     public void addToIndex(int change) {
@@ -178,6 +181,7 @@ public class HWpopup extends AbstractConfigurable implements CommandEncoder,
     private void printPilotPiecesButtonPressed() {
 
         this.slotLoader.loadListFromXWS(null); // only used to populate maps
+
         logToChat(String.format("Loaded %d pilots", this.slotLoader.pilotPieces.size()));
         for (String mapKey : this.slotLoader.pilotPieces.keySet()) {
             VassalXWSPieceLoader.PilotPieces pilot = this.slotLoader.pilotPieces.get(mapKey);
@@ -187,12 +191,6 @@ public class HWpopup extends AbstractConfigurable implements CommandEncoder,
             logToChat(String.format("\tmove: gpid=%s, name=%s",  pilot.movement.getGpId(), pilot.movement.getConfigureName()));
             logToChat(String.format("\tcard: gpid=%s, name=%s",  pilot.pilot.getGpId(), pilot.pilot.getConfigureName()));
         }
-    }
-
-    public static void logToChat(String msg) {
-        Command c = new Chatter.DisplayText(GameModule.getGameModule().getChatter(), msg);
-        c.execute();
-        GameModule.getGameModule().sendAndLog(c);
     }
 
     public static final String MIN = "min";
@@ -286,6 +284,16 @@ public class HWpopup extends AbstractConfigurable implements CommandEncoder,
             }
         });
         mod.getToolBar().add(printUpgradePiecesButton);
+
+
+        findMissingPiecesButton = new JButton("Find missing pieces");
+        findMissingPiecesButton.setAlignmentY(0.0F);
+        findMissingPiecesButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                slotLoader.validateAgainstRemote();
+            }
+        });
+        mod.getToolBar().add(findMissingPiecesButton);
 
     }
 

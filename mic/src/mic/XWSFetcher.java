@@ -12,14 +12,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class XWSFetcher {
 
     public static XWSList fetchFromUrl(String xwsUrl) {
-        try {
-            InputStream inputStream = new BufferedInputStream(new URL(xwsUrl).openStream());
-            ObjectMapper mapper = new ObjectMapper();
-            return mapper.readValue(inputStream, XWSList.class);
-        } catch (Exception e) {
-            System.out.println("Unhandled error parsing/fetching xws: \n" + e.toString());
-            return null;
-        }
+        return Util.loadRemoteJson(xwsUrl, XWSList.class);
     }
 
     public static void main(String... args) {

@@ -5,6 +5,7 @@ import VASSAL.build.Widget;
 import VASSAL.build.widget.ListWidget;
 import VASSAL.build.widget.PieceSlot;
 import VASSAL.build.widget.TabWidget;
+import com.google.common.collect.Lists;
 
 import java.util.*;
 
@@ -35,6 +36,7 @@ public class VassalXWSPieceLoader {
             }
             ListParentType parentType = ListParentType.fromTab(listWidget.getParent());
             if (parentType == null) {
+                Util.logToChat("Skipping tab widget: " + listWidget.getParent().getConfigureName());
                 continue;
             }
             switch (parentType) {
@@ -53,12 +55,12 @@ public class VassalXWSPieceLoader {
     }
 
     private void loadUpgrades(ListWidget listWidget) {
-        String upgradeType = getCanonicalName(listWidget.getConfigureName());
-        upgradeType = handleUpgradeTypeExceptions(upgradeType);
+        String upgradeType = getCleanedName(listWidget.getConfigureName());
+        upgradeType = NameFixes.fixUpgradeTypeName(upgradeType);
         List<PieceSlot> upgrades = listWidget.getAllDescendantComponentsOf(PieceSlot.class);
         for (PieceSlot upgrade : upgrades) {
-            String upgradeName = getCanonicalName(upgrade.getConfigureName());
-            upgradeName = handleUpgradeNameExceptions(upgradeName);
+            String upgradeName = getCleanedName(upgrade.getConfigureName());
+            upgradeName = NameFixes.fixUpgradeName(upgradeType, upgradeName);
             String mapKey = getUpgradeMapKey(upgradeType, upgradeName);
             upgradePieces.put(mapKey, upgrade);
         }
@@ -69,8 +71,8 @@ public class VassalXWSPieceLoader {
             return;
         }
 
-        String shipName = getCanonicalName(shipList.getConfigureName());
-        shipName = handleShipNameExceptions(shipName);
+        String shipName = getCleanedName(shipList.getConfigureName());
+        shipName = NameFixes.fixShipName(shipName);
 
         if (shipName.equals("gr75transport") || shipName.startsWith("gozanticlasscruiser") || shipName.equals("croccruiser")) {
             // TODO: Make GR75, Gozanti, and croc ship slot name start with 'ship --'
@@ -115,8 +117,8 @@ public class VassalXWSPieceLoader {
         }
 
         for (PieceSlot pilot : pilots) {
-            String pilotName = getCanonicalName(pilot.getConfigureName());
-            pilotName = handlePilotNameExceptions(pilotName);
+            String pilotName = getCleanedName(pilot.getConfigureName());
+            pilotName = NameFixes.fixPilotName(pilotName);
             String mapKey = getPilotMapKey(faction.name(), shipName, pilotName);
             pilotPieces.put(mapKey, new PilotPieces(dial, movementCard, movementStrip, openDial, ship, pilot));
         }
@@ -130,33 +132,44 @@ public class VassalXWSPieceLoader {
         return String.format("%s/%s", upgradeType, upgradeName);
     }
 
-    private String handleShipNameExceptions(String name) {
-        //TODO: Handle cases where ship names end in s (i.e. B-Wings, E-Wings, etc) or change them in module
-        return name;
-    }
 
-    private String handlePilotNameExceptions(String name) {
-        //TODO: Handle duplicate pilots in same ship
-        return name;
-    }
-
-
-    private String handleUpgradeNameExceptions(String name) {
-        //TODO: Handle duplicate upgrade names ie R2D2
-        return name;
-    }
-
-    private String handleUpgradeTypeExceptions(String name) {
-        //TODO: Switch from names like bombs to bomb etc.
-        return name;
-    }
-
-
-    private String getCanonicalName(String name) {
+    private String getCleanedName(String name) {
         if (name == null) {
             return "";
         }
         return name.replaceAll(invalidCanonicalCharPattern, "").toLowerCase();
+    }
+
+    public List<String> validateAgainstRemote() {
+        loadPieces();
+        XWSMasterPilots masterPilots = XWSMasterPilots.loadFromRemote();
+
+        List<String> missingKeys = Lists.newArrayList();
+
+        for (XWSMasterPilots.FactionPilots factionPilots : Lists.newArrayList(masterPilots.rebel, masterPilots.scum, masterPilots.imperial)) {
+            for (String shipName : factionPilots.ships.keySet()) {
+                for (String pilotName : factionPilots.ships.get(shipName).pilots.keySet()) {
+                    String pieceKey = getPilotMapKey(getCleanedName(factionPilots.name), shipName, pilotName);
+                    if (!this.pilotPieces.containsKey(pieceKey)) {
+                        missingKeys.add(pieceKey);
+                        Util.logToChat("Missing pilot: " + pieceKey);
+                    }
+                }
+            }
+        }
+
+        Map<String, XWSMasterUpgrades.UpgradeType> masterUpgrades = XWSMasterUpgrades.loadFromRemote();
+        for(String upgradeType : masterUpgrades.keySet()) {
+            for (String upgradeName : masterUpgrades.get(upgradeType).upgrades.keySet()) {
+                String pieceKey = getUpgradeMapKey(upgradeType, upgradeName);
+                if (!upgradePieces.containsKey(pieceKey)) {
+                    missingKeys.add(pieceKey);
+                    Util.logToChat("Missing upgrade: " + pieceKey);
+                }
+            }
+        }
+
+        return missingKeys;
     }
 
     private enum ListParentType {
@@ -173,11 +186,11 @@ public class VassalXWSPieceLoader {
         }
 
         public static ListParentType fromTab(Widget widget) {
-            if (widget == null) {
+            if (widget == null || widget.getConfigureName() == null) {
                 return null;
             }
             for (ListParentType parent : values()) {
-                if (parent.widgetName.equals(widget.getConfigureName())) {
+                if (widget.getConfigureName().contains(parent.widgetName)) {
                     return parent;
                 }
             }
