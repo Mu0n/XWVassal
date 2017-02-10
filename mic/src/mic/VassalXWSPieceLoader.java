@@ -24,6 +24,8 @@ public class VassalXWSPieceLoader {
         }
 
         VassalXWSListPieces pieces = new VassalXWSListPieces();
+
+        //has to check that at least 1 pilot is in the list
         for (XWSList.XWSPilot pilot : list.getPilots()) {
             String pilotKey = getPilotMapKey(list.getFaction(), pilot.getShip(), pilot.getName());
             VassalXWSPilotPieces barePieces = this.pilotPiecesMap.get(pilotKey);
@@ -34,6 +36,7 @@ public class VassalXWSPieceLoader {
 
             VassalXWSPilotPieces pilotPieces = new VassalXWSPilotPieces(barePieces);
 
+            //has to check that at least 1 upgrade is tied to the pilot
             for(String upgradeType: pilot.getUpgrades().keySet()) {
                 for(String upgradeName : pilot.getUpgrades().get(upgradeType)) {
                     String upgradeKey = getUpgradeMapKey(upgradeType, upgradeName);
