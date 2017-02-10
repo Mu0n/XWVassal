@@ -186,6 +186,68 @@ public class HWpopup extends AbstractConfigurable implements CommandEncoder,
             return;
         }
 
+        GameModule mod = GameModule.getGameModule();
+        Point startPosition = new Point(300,300);
+        int countPilots = 0;
+        int countUpgrades = 0;
+        int pilotWidth = 0;
+        int pilotHeight = 0;
+        int upgradeWidth = 0;
+        int fudgePilotUpgradeFrontier = -50;
+        List<PieceSlot> psList = GameModule.getGameModule().getAllDescendantComponentsOf(PieceSlot.class);
+
+        VassalXWSListPieces pieces = slotLoader.loadListFromXWS(XWSFetcher.fetchFromUrl(url));
+
+        for (VassalXWSPilotPieces ship : pieces.getShips()) {
+            logToChat(String.format("pilot: %s, gpid=%s", ship.getPilotCard().getConfigureName(), ship.getPilotCard().getGpId()));
+
+            countUpgrades = 0;
+            for (PieceSlot slot : psList) {
+                if (slot.getGpId() == ship.getPilotCard().getGpId()) {
+                GamePiece gp = slot.getPiece();
+                    pilotWidth = (int)gp.boundingBox().getWidth();
+                    pilotHeight = (int)gp.boundingBox().getHeight();
+                    Command placePilot = Map.getMapById("Map0").placeOrMerge(gp,
+                            new Point((int)startPosition.getX(),
+                                    (int)startPosition.getY()+(int)countPilots*pilotHeight));
+                    placePilot.execute();
+                    mod.sendAndLog(placePilot);
+                    break;
+                }
+            }
+
+
+            for (PieceSlot upgrade : ship.getUpgrades()) {
+                logToChat(String.format("\t %s, gpid=%s", upgrade.getConfigureName(), upgrade.getGpId()));
+
+                for (PieceSlot slot : psList) {
+                    if (slot.getGpId() == upgrade.getGpId())
+                        {
+                        GamePiece gp = slot.getPiece();
+                        upgradeWidth = (int)gp.boundingBox().getWidth();
+                        Command placeUpgrade = Map.getMapById("Map0").placeOrMerge(gp,
+                                new Point((int)startPosition.getX()+pilotWidth+upgradeWidth*countUpgrades+fudgePilotUpgradeFrontier,
+                                        (int)startPosition.getY()+(int)countPilots*pilotHeight));
+                        placeUpgrade.execute();
+                        mod.sendAndLog(placeUpgrade);
+                        break;
+                        }
+                    }
+                countUpgrades++;
+            } //loop to next upgrade
+            countPilots++;
+        } //loop to next pilot
+
+    }
+
+    /*
+    private void loadFromXwsButtonPressed() {
+
+        String url = JOptionPane.showInputDialog("XWS Url");
+        if (url == null || url.length() == 0) {
+            return;
+        }
+
         VassalXWSListPieces pieces = slotLoader.loadListFromXWS(XWSFetcher.fetchFromUrl(url));
 
         for (VassalXWSPilotPieces ship : pieces.getShips()) {
@@ -195,6 +257,7 @@ public class HWpopup extends AbstractConfigurable implements CommandEncoder,
             }
         }
     }
+*/
 
     private void printPilotPiecesButtonPressed() {
 
