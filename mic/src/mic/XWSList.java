@@ -35,6 +35,7 @@ public class XWSList {
     @JsonProperty("vendor")
     private Map<String, Map<String, String>> vendor;
 
+
     public String getName() {
         return name;
     }
@@ -83,6 +84,9 @@ public class XWSList {
         @JsonProperty("vendor")
         private Map<String, Map<String, String>> vendor;
 
+        @JsonProperty("points")
+        private Integer points;
+
         public Integer getMultisectionId() {
             return multisectionId;
         }
@@ -101,6 +105,10 @@ public class XWSList {
 
         public Map<String, Map<String, String>> getVendor() {
             return vendor;
+        }
+
+        public Integer getPoints() {
+            return points;
         }
     }
 }

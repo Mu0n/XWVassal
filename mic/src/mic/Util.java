@@ -3,6 +3,7 @@ package mic;
 import VASSAL.build.GameModule;
 import VASSAL.build.module.Chatter;
 import VASSAL.command.Command;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.BufferedInputStream;
@@ -13,10 +14,13 @@ import java.net.URL;
  * Created by amatheny on 2/9/17.
  */
 public class Util {
+
+    private static ObjectMapper mapper = new ObjectMapper()
+            .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+
     public static <T> T loadRemoteJson(String url, Class<T> type) {
         try {
             InputStream inputStream = new BufferedInputStream(new URL(url).openStream());
-            ObjectMapper mapper = new ObjectMapper();
             return mapper.readValue(inputStream, type);
         } catch (Exception e) {
             System.out.println("Unhandled error parsing remote json: \n" + e.toString());
