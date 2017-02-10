@@ -7,6 +7,7 @@ import VASSAL.build.widget.PieceSlot;
 import VASSAL.build.widget.TabWidget;
 import com.google.common.collect.Lists;
 
+import javax.swing.*;
 import java.util.*;
 
 /**
@@ -26,31 +27,39 @@ public class VassalXWSPieceLoader {
         VassalXWSListPieces pieces = new VassalXWSListPieces();
 
         //has to check that at least 1 pilot is in the list
-        for (XWSList.XWSPilot pilot : list.getPilots()) {
-            String pilotKey = getPilotMapKey(list.getFaction(), pilot.getShip(), pilot.getName());
-            VassalXWSPilotPieces barePieces = this.pilotPiecesMap.get(pilotKey);
-            if (barePieces == null) {
-                Util.logToChat("Could not find pilot: " + pilotKey);
-                continue;
-            }
-
-            VassalXWSPilotPieces pilotPieces = new VassalXWSPilotPieces(barePieces);
-
-            //has to check that at least 1 upgrade is tied to the pilot
-            for(String upgradeType: pilot.getUpgrades().keySet()) {
-                for(String upgradeName : pilot.getUpgrades().get(upgradeType)) {
-                    String upgradeKey = getUpgradeMapKey(upgradeType, upgradeName);
-                    PieceSlot upgrade = upgradePiecesMap.get(upgradeKey);
-                    if (upgrade == null) {
-                        Util.logToChat("Could not find upgrade: " + upgradeKey);
-                        continue;
-                    }
-                    pilotPieces.getUpgrades().add(upgrade);
+        if (!list.getPilots().isEmpty())
+        {
+            for (XWSList.XWSPilot pilot : list.getPilots()) {
+                String pilotKey = getPilotMapKey(list.getFaction(), pilot.getShip(), pilot.getName());
+                VassalXWSPilotPieces barePieces = this.pilotPiecesMap.get(pilotKey);
+                if (barePieces == null) {
+                    Util.logToChat("Could not find pilot: " + pilotKey);
+                    continue;
                 }
-            }
 
-            pieces.getShips().add(pilotPieces);
+                VassalXWSPilotPieces pilotPieces = new VassalXWSPilotPieces(barePieces);
+
+                //has to check that at least 1 upgrade is tied to the pilot
+                try
+                {
+                    for(String upgradeType: pilot.getUpgrades().keySet()) {
+                        for(String upgradeName : pilot.getUpgrades().get(upgradeType)) {
+                            String upgradeKey = getUpgradeMapKey(upgradeType, upgradeName);
+                            PieceSlot upgrade = upgradePiecesMap.get(upgradeKey);
+                            if (upgrade == null) {
+                                Util.logToChat("Could not find upgrade: " + upgradeKey);
+                                continue;
+                            }
+                            pilotPieces.getUpgrades().add(upgrade);
+                        }
+                    }
+                } catch(Exception e) {
+
+                }
+                pieces.getShips().add(pilotPieces);
+            }
         }
+
         return pieces;
     }
 
