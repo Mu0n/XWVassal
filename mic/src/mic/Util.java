@@ -2,7 +2,10 @@ package mic;
 
 import VASSAL.build.GameModule;
 import VASSAL.build.module.Chatter;
+import VASSAL.build.widget.PieceSlot;
 import VASSAL.command.Command;
+import VASSAL.counters.GamePiece;
+import VASSAL.counters.PieceCloner;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -34,5 +37,9 @@ public class Util {
         Command c = new Chatter.DisplayText(GameModule.getGameModule().getChatter(), msg);
         c.execute();
         GameModule.getGameModule().sendAndLog(c);
+    }
+
+    public static GamePiece newPiece(PieceSlot slot) {
+        return PieceCloner.getInstance().clonePiece(slot.getPiece());
     }
 }

@@ -22,6 +22,7 @@ import VASSAL.command.CommandEncoder;
 import VASSAL.counters.GamePiece;
 
 import static mic.Util.logToChat;
+import static mic.Util.newPiece;
 
 
 /**
@@ -194,7 +195,7 @@ public class HWpopup extends AbstractConfigurable implements CommandEncoder,
         VassalXWSListPieces pieces = slotLoader.loadListFromXWS(XWSFetcher.fetchFromUrl(url));
         for (VassalXWSPilotPieces ship : pieces.getShips()) {
             logToChat(String.format("pilot: %s, gpid=%s", ship.getPilotCard().getConfigureName(), ship.getPilotCard().getGpId()));
-            GamePiece pilotPiece = ship.getPilotCard().getPiece();
+            GamePiece pilotPiece = newPiece(ship.getPilotCard());
             int pilotWidth = (int)pilotPiece.boundingBox().getWidth();
             totalPilotHeight += (int)pilotPiece.boundingBox().getHeight();
             Command placePilot = Map.getMapById("Map0").placeOrMerge(pilotPiece,
@@ -206,7 +207,7 @@ public class HWpopup extends AbstractConfigurable implements CommandEncoder,
             int totalUpgradeWidth = 0;
             for (PieceSlot upgrade : ship.getUpgrades()) {
                 logToChat(String.format("\t %s, gpid=%s", upgrade.getConfigureName(), upgrade.getGpId()));
-                GamePiece upgradePiece = upgrade.getPiece();
+                GamePiece upgradePiece = newPiece(upgrade);
                 Command placeUpgrade = Map.getMapById("Map0").placeOrMerge(upgradePiece,
                         new Point((int)startPosition.getX()+pilotWidth+totalUpgradeWidth+fudgePilotUpgradeFrontier,
                                 (int)startPosition.getY()+totalPilotHeight));
