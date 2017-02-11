@@ -37,6 +37,7 @@ public class VassalXWSPilotPieces {
         this.movementStrip = pieces.movementStrip;
         this.openDial = pieces.openDial;
         this.pilotCard = pieces.pilotCard;
+        this.ship = pieces.ship;
     }
 
     public PieceSlot getPilotCard() {
