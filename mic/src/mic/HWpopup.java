@@ -22,7 +22,6 @@ import VASSAL.command.CommandEncoder;
 import VASSAL.counters.GamePiece;
 
 import static mic.Util.logToChat;
-import static mic.Util.newPiece;
 
 
 /**
@@ -175,8 +174,8 @@ public class HWpopup extends AbstractConfigurable implements CommandEncoder,
     private void printUpgradePiecesButtonPressed() {
         this.slotLoader.loadListFromXWS(null); // only used to populate maps
         for (String mapKey : this.slotLoader.upgradePiecesMap.keySet()) {
-            PieceSlot upgrade = this.slotLoader.upgradePiecesMap.get(mapKey);
-            logToChat(String.format("upgrade: key=%s, gpid=%s, name=%s", mapKey, upgrade.getGpId(), upgrade.getConfigureName()));
+            VassalXWSPilotPieces.Upgrade upgrade = this.slotLoader.upgradePiecesMap.get(mapKey);
+            logToChat(String.format("upgrade: key=%s, gpid=%s, name=%s", mapKey, upgrade.getPieceSlot().getGpId(), upgrade.getPieceSlot().getConfigureName()));
         }
     }
 
@@ -202,7 +201,7 @@ public class HWpopup extends AbstractConfigurable implements CommandEncoder,
         for (VassalXWSPilotPieces ship : pieces.getShips()) {
             logToChat(String.format("pilot: %s, gpid=%s", ship.getPilotCard().getConfigureName(), ship.getPilotCard().getGpId()));
 
-            GamePiece pilotPiece = newPiece(ship.getPilotCard());
+            GamePiece pilotPiece = ship.clonePilotCard();
             int pilotWidth = (int)pilotPiece.boundingBox().getWidth();
             int pilotHeight = (int)pilotPiece.boundingBox().getHeight();
             totalPilotHeight += pilotHeight;
@@ -210,14 +209,14 @@ public class HWpopup extends AbstractConfigurable implements CommandEncoder,
                 (int)startPosition.getX(),
                 (int)startPosition.getY()+totalPilotHeight));
 
-            GamePiece shipPiece = newPiece(ship.getShip());
+            GamePiece shipPiece = ship.cloneShip();
             int shipWidth = (int)shipPiece.boundingBox().getWidth();
             int shipHeight = (int)shipPiece.boundingBox().getHeight();
             spawnPiece(shipPiece, new Point(
                 (int)startPosition.getX()-pilotWidth,
                 (int)startPosition.getY()+totalPilotHeight+20));
 
-            GamePiece dialPiece = newPiece(ship.getDial());
+            GamePiece dialPiece = ship.cloneDial();
             int dialWidth = (int)dialPiece.boundingBox().getWidth();
             int dialHeight = (int)dialPiece.boundingBox().getHeight();
             spawnPiece(dialPiece, new Point(
@@ -225,9 +224,8 @@ public class HWpopup extends AbstractConfigurable implements CommandEncoder,
                 (int)startPosition.getY()+totalPilotHeight-dialHeight));
 
             int totalUpgradeWidth = 0;
-            for (PieceSlot upgrade : ship.getUpgrades()) {
-                logToChat(String.format("\t %s, gpid=%s", upgrade.getConfigureName(), upgrade.getGpId()));
-                GamePiece upgradePiece = newPiece(upgrade);
+            for (VassalXWSPilotPieces.Upgrade upgrade : ship.getUpgrades()) {
+                GamePiece upgradePiece = upgrade.cloneGamePiece();
                 spawnPiece(upgradePiece, new Point(
                     (int)startPosition.getX()+pilotWidth+totalUpgradeWidth+fudgePilotUpgradeFrontier,
                     (int)startPosition.getY()+totalPilotHeight));

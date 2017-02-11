@@ -7,7 +7,6 @@ import VASSAL.build.widget.PieceSlot;
 import VASSAL.build.widget.TabWidget;
 import com.google.common.collect.Lists;
 
-import javax.swing.*;
 import java.util.*;
 
 /**
@@ -17,7 +16,7 @@ public class VassalXWSPieceLoader {
 
     private static String invalidCanonicalCharPattern = "[^a-zA-Z0-9]";
     Map<String, VassalXWSPilotPieces> pilotPiecesMap = null;
-    Map<String, PieceSlot> upgradePiecesMap = null;
+    Map<String, VassalXWSPilotPieces.Upgrade> upgradePiecesMap = null;
 
     public VassalXWSListPieces loadListFromXWS(XWSList list) {
         if (pilotPiecesMap == null || upgradePiecesMap == null) {
@@ -39,7 +38,7 @@ public class VassalXWSPieceLoader {
             for(String upgradeType: pilot.getUpgrades().keySet()) {
                 for(String upgradeName : pilot.getUpgrades().get(upgradeType)) {
                     String upgradeKey = getUpgradeMapKey(upgradeType, upgradeName);
-                    PieceSlot upgrade = upgradePiecesMap.get(upgradeKey);
+                    VassalXWSPilotPieces.Upgrade upgrade = upgradePiecesMap.get(upgradeKey);
                     if (upgrade == null) {
                         Util.logToChat("Could not find upgrade: " + upgradeKey);
                         continue;
@@ -55,7 +54,7 @@ public class VassalXWSPieceLoader {
 
     private void loadPieces() {
         pilotPiecesMap = new HashMap<String, VassalXWSPilotPieces>();
-        upgradePiecesMap = new HashMap<String, PieceSlot>();
+        upgradePiecesMap = new HashMap<String, VassalXWSPilotPieces.Upgrade>();
 
         List<ListWidget> listWidgets = GameModule.getGameModule().getAllDescendantComponentsOf(ListWidget.class);
         for (ListWidget listWidget : listWidgets) {
@@ -64,7 +63,6 @@ public class VassalXWSPieceLoader {
             }
             ListParentType parentType = ListParentType.fromTab(listWidget.getParent());
             if (parentType == null) {
-                Util.logToChat("Skipping tab widget: " + listWidget.getParent().getConfigureName());
                 continue;
             }
             switch (parentType) {
@@ -90,7 +88,7 @@ public class VassalXWSPieceLoader {
             String upgradeName = getCleanedName(upgrade.getConfigureName());
             upgradeName = NameFixes.fixUpgradeName(upgradeType, upgradeName);
             String mapKey = getUpgradeMapKey(upgradeType, upgradeName);
-            upgradePiecesMap.put(mapKey, upgrade);
+            upgradePiecesMap.put(mapKey, new VassalXWSPilotPieces.Upgrade(upgradeName, upgrade));
         }
     }
 
@@ -144,17 +142,24 @@ public class VassalXWSPieceLoader {
             pilots.add(slot);
         }
 
+        MasterShipData.ShipData shipData = MasterShipData.getShipDataByXWSId().get(shipName);
+
         for (PieceSlot pilot : pilots) {
             String pilotName = getCleanedName(pilot.getConfigureName());
             pilotName = NameFixes.fixPilotName(pilotName);
+
+            MasterPilotData.PilotData pilotData = MasterPilotData.getPilotDataByXWSId().get(pilotName);
+
             String mapKey = getPilotMapKey(faction.name(), shipName, pilotName);
             VassalXWSPilotPieces pilotPieces = new VassalXWSPilotPieces();
+            pilotPieces.setShipData(shipData);
             pilotPieces.setDial(dial);
             pilotPieces.setShip(ship);
             pilotPieces.setMovementCard(movementCard);
             pilotPieces.setPilotCard(pilot);
             pilotPieces.setMovementStrip(movementStrip);
             pilotPieces.setOpenDial(openDial);
+            pilotPieces.setPilotData(pilotData);
             pilotPiecesMap.put(mapKey, pilotPieces);
         }
     }
