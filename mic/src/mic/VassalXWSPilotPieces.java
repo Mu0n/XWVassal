@@ -124,6 +124,10 @@ public class VassalXWSPilotPieces {
             int shields = this.shipData.getShields();
             int attack = this.shipData.getAttack();
 
+            if (containsUpgrade("stealthdevice")) {
+                agility++;
+            }
+
             if (containsUpgrade("hullupgrade")) {
                 hull++;
             }
