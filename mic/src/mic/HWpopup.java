@@ -180,6 +180,12 @@ public class HWpopup extends AbstractConfigurable implements CommandEncoder,
         }
     }
 
+    private void spawnPiece(GamePiece piece, Point position) {
+      Command placeCommand = Map.getMapById("Map0").placeOrMerge(piece, position);
+      placeCommand.execute();
+      GameModule.getGameModule().sendAndLog(placeCommand);
+    }
+
     private void loadFromXwsButtonPressed() {
 
         String url = JOptionPane.showInputDialog("XWS Url");
@@ -188,31 +194,44 @@ public class HWpopup extends AbstractConfigurable implements CommandEncoder,
         }
 
         GameModule mod = GameModule.getGameModule();
-        Point startPosition = new Point(300,300);
+        Point startPosition = new Point(500,50);
         int fudgePilotUpgradeFrontier = -50;
         int totalPilotHeight = 0;
 
         VassalXWSListPieces pieces = slotLoader.loadListFromXWS(XWSFetcher.fetchFromUrl(url));
         for (VassalXWSPilotPieces ship : pieces.getShips()) {
             logToChat(String.format("pilot: %s, gpid=%s", ship.getPilotCard().getConfigureName(), ship.getPilotCard().getGpId()));
+
             GamePiece pilotPiece = newPiece(ship.getPilotCard());
             int pilotWidth = (int)pilotPiece.boundingBox().getWidth();
-            totalPilotHeight += (int)pilotPiece.boundingBox().getHeight();
-            Command placePilot = Map.getMapById("Map0").placeOrMerge(pilotPiece,
-                    new Point((int)startPosition.getX(),
-                            (int)startPosition.getY()+totalPilotHeight));
-            placePilot.execute();
-            mod.sendAndLog(placePilot);
+            int pilotHeight = (int)pilotPiece.boundingBox().getHeight();
+            totalPilotHeight += pilotHeight;
+            spawnPiece(pilotPiece, new Point(
+                (int)startPosition.getX(),
+                (int)startPosition.getY()+totalPilotHeight));
+
+            GamePiece shipPiece = newPiece(ship.getShip());
+            int shipWidth = (int)shipPiece.boundingBox().getWidth();
+            int shipHeight = (int)shipPiece.boundingBox().getHeight();
+            spawnPiece(shipPiece, new Point(
+                (int)startPosition.getX()-pilotWidth,
+                (int)startPosition.getY()+totalPilotHeight+20));
+
+            GamePiece dialPiece = newPiece(ship.getDial());
+            int dialWidth = (int)dialPiece.boundingBox().getWidth();
+            int dialHeight = (int)dialPiece.boundingBox().getHeight();
+            spawnPiece(dialPiece, new Point(
+                (int)startPosition.getX()-pilotWidth,
+                (int)startPosition.getY()+totalPilotHeight-dialHeight));
 
             int totalUpgradeWidth = 0;
             for (PieceSlot upgrade : ship.getUpgrades()) {
                 logToChat(String.format("\t %s, gpid=%s", upgrade.getConfigureName(), upgrade.getGpId()));
                 GamePiece upgradePiece = newPiece(upgrade);
-                Command placeUpgrade = Map.getMapById("Map0").placeOrMerge(upgradePiece,
-                        new Point((int)startPosition.getX()+pilotWidth+totalUpgradeWidth+fudgePilotUpgradeFrontier,
-                                (int)startPosition.getY()+totalPilotHeight));
-                placeUpgrade.execute();
-                mod.sendAndLog(placeUpgrade);
+                spawnPiece(upgradePiece, new Point(
+                    (int)startPosition.getX()+pilotWidth+totalUpgradeWidth+fudgePilotUpgradeFrontier,
+                    (int)startPosition.getY()+totalPilotHeight));
+
                 totalUpgradeWidth += upgradePiece.boundingBox().getWidth();
             } //loop to next upgrade
         } //loop to next pilot
