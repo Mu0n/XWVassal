@@ -21,9 +21,7 @@ public class MasterUpgradeData extends ArrayList<MasterUpgradeData.UpgradeData> 
       }
 
       loadedData = Maps.newHashMap();
-      MasterUpgradeData data = Util.loadRemoteJson(
-          "https://raw.githubusercontent.com/guidokessels/xwing-data/master/data/upgrades.js",
-          MasterUpgradeData.class);
+      MasterUpgradeData data = Util.loadClasspathJson("upgrades.json", MasterUpgradeData.class);
 
       for(UpgradeData upgrade : data) {
           loadedData.put(upgrade.getXws(), upgrade);

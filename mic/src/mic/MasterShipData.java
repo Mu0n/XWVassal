@@ -19,7 +19,7 @@ public class MasterShipData extends ArrayList<MasterShipData.ShipData> {
         }
 
         loadedData = Maps.newHashMap();
-        MasterShipData data = Util.loadRemoteJson("https://raw.githubusercontent.com/guidokessels/xwing-data/master/data/ships.js", MasterShipData.class);
+        MasterShipData data = Util.loadClasspathJson("ships.json", MasterShipData.class);
 
         for(ShipData ship : data) {
             loadedData.put(ship.getXws(), ship);

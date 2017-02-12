@@ -19,7 +19,7 @@ public class MasterPilotData extends ArrayList<MasterPilotData.PilotData> {
         }
 
         loadedData = Maps.newHashMap();
-        MasterPilotData data = Util.loadRemoteJson("https://raw.githubusercontent.com/guidokessels/xwing-data/master/data/pilots.js", MasterPilotData.class);
+        MasterPilotData data = Util.loadClasspathJson("pilots.json", MasterPilotData.class);
 
         for(PilotData pilot : data) {
             loadedData.put(pilot.getXws(), pilot);

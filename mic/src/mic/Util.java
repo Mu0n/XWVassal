@@ -34,7 +34,7 @@ public class Util {
 
     public static <T> T loadClasspathJson(String filename, Class<T> type) {
         try {
-            InputStream inputStream = HWpopup.class.getClassLoader().getResourceAsStream(filename);
+            InputStream inputStream = GameModule.getGameModule().getDataArchive().getInputStream(filename);
             if (inputStream == null) {
                 logToChat("couldn't load " + filename);
             }
