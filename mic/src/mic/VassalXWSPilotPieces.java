@@ -2,8 +2,12 @@ package mic;
 
 import VASSAL.build.widget.PieceSlot;
 import VASSAL.counters.GamePiece;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by amatheny on 2/8/17.
@@ -18,6 +22,7 @@ public class VassalXWSPilotPieces {
     private MasterShipData.ShipData shipData;
     private MasterPilotData.PilotData pilotData;
     private Integer shipNumber = null;
+    private Map<Tokens, PieceSlot> tokens = Maps.newHashMap();
 
     public PieceSlot getShip() {
         return ship;
@@ -70,6 +75,22 @@ public class VassalXWSPilotPieces {
 
     public List<Upgrade> getUpgrades() {
         return upgrades;
+    }
+
+    public Map<Tokens, PieceSlot> getTokens() {
+        return tokens;
+    }
+
+    public List<GamePiece> getTokensForDisplay() {
+        List<GamePiece> tokenPieces = Lists.newArrayList();
+        for (Tokens token : tokens.keySet()) {
+            GamePiece piece = Util.newPiece(tokens.get(token));
+            if (token == Tokens.targetlock && pilotData != null) {
+                piece.setProperty("ID", getDisplayPilotName());
+            }
+            tokenPieces.add(piece);
+        }
+        return tokenPieces;
     }
 
     public void setMovementStrip(PieceSlot movementStrip) {
@@ -166,22 +187,33 @@ public class VassalXWSPilotPieces {
     }
 
     private void setPilotShipName(GamePiece piece) {
+        if (pilotData != null) {
+            piece.setProperty("Pilot Name", this.pilotData.getShip());
+        }
+        piece.setProperty("Craft ID #", getDisplayPilotName());
+    }
+
+    private String getDisplayPilotName() {
         String pilotName = "";
         if (pilotData != null) {
-            pilotName = this.pilotData.getName();
-            //do we really need the ship name in the "small tag"?
-           // piece.setProperty("Pilot Name", Acronymizer(this.pilotData.getShip()));
+            pilotName = acronymizer(this.pilotData.getName());
         }
 
         if (shipNumber != null && shipNumber > 0) {
             pilotName += " " + shipNumber;
         }
-
-        piece.setProperty("Craft ID #", Acronymizer(pilotName));
-
+        return pilotName;
     }
 
-    private String Acronymizer(String input){
+    public MasterShipData.ShipData getShipData() {
+        return shipData;
+    }
+
+    public MasterPilotData.PilotData getPilotData() {
+        return pilotData;
+    }
+
+    private String acronymizer(String input) {
         if(input.length() <= 8)  return input;
         else if(input.split("\\w+").length == 1) return input.substring(0, 8);
         else {

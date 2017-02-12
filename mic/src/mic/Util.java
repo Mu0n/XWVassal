@@ -8,10 +8,12 @@ import VASSAL.counters.GamePiece;
 import VASSAL.counters.PieceCloner;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.Lists;
 
 import java.io.BufferedInputStream;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.List;
 
 /**
  * Created by amatheny on 2/9/17.
@@ -45,6 +47,8 @@ public class Util {
             return null;
         }
     }
+
+    public static List<String> none = Lists.newArrayList();
 
 
     public static void logToChat(String msg) {

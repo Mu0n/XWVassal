@@ -5,10 +5,7 @@ import VASSAL.build.Widget;
 import VASSAL.build.widget.ListWidget;
 import VASSAL.build.widget.PieceSlot;
 import VASSAL.build.widget.TabWidget;
-import com.google.common.collect.HashMultiset;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Multiset;
-import com.google.common.collect.Multisets;
+import com.google.common.collect.*;
 
 import java.util.*;
 
@@ -19,9 +16,10 @@ public class VassalXWSPieceLoader {
 
     Map<String, VassalXWSPilotPieces> pilotPiecesMap = null;
     Map<String, VassalXWSPilotPieces.Upgrade> upgradePiecesMap = null;
+    Map<Tokens, PieceSlot> tokenPiecesMap = null;
 
     public VassalXWSListPieces loadListFromXWS(XWSList list) {
-        if (pilotPiecesMap == null || upgradePiecesMap == null) {
+        if (pilotPiecesMap == null || upgradePiecesMap == null || tokenPiecesMap == null) {
             loadPieces();
         }
 
@@ -60,6 +58,15 @@ public class VassalXWSPieceLoader {
                     pilotPieces.getUpgrades().add(upgrade);
                 }
             }
+
+            List<Tokens> tokens = Tokens.loadForPilot(pilotPieces);
+            for (Tokens token : tokens) {
+                PieceSlot tokenSlot = tokenPiecesMap.get(token);
+                if (tokenSlot != null) {
+                    pilotPieces.getTokens().put(token, tokenSlot);
+                }
+            }
+
             pieces.getShips().add(pilotPieces);
         }
 
@@ -67,8 +74,9 @@ public class VassalXWSPieceLoader {
     }
 
     private void loadPieces() {
-        pilotPiecesMap = new HashMap<String, VassalXWSPilotPieces>();
-        upgradePiecesMap = new HashMap<String, VassalXWSPilotPieces.Upgrade>();
+        pilotPiecesMap = Maps.newHashMap();
+        upgradePiecesMap = Maps.newHashMap();
+        tokenPiecesMap = Maps.newHashMap();
 
         List<ListWidget> listWidgets = GameModule.getGameModule().getAllDescendantComponentsOf(ListWidget.class);
         for (ListWidget listWidget : listWidgets) {
@@ -81,16 +89,43 @@ public class VassalXWSPieceLoader {
             }
             switch (parentType) {
                 case chits:
-                    // TODO: implement loading of obstacles/tokens/etc
-                    continue;
+                    loadChits(listWidget);
+                    break;
                 case upgrades:
                     loadUpgrades(listWidget);
+                    break;
                 case imperial:
                 case rebel:
                 case scum:
                     loadPilots(listWidget, parentType);
                     break;
             }
+        }
+    }
+
+    private void loadChits(ListWidget listWidget) {
+        List<ListWidget> chitLists = listWidget.getAllDescendantComponentsOf(ListWidget.class);
+        for (ListWidget chitList : chitLists) {
+            if (chitList.getConfigureName() != null && chitList.getConfigureName().equals("Tokens")) {
+                loadTokens(chitList);
+            }
+        }
+
+    }
+
+    private void loadTokens(ListWidget listWidget) {
+        List<PieceSlot> tokenSlots = listWidget.getAllDescendantComponentsOf(PieceSlot.class);
+        for (PieceSlot tokenSlot : tokenSlots) {
+            String tokenName = Canonicalizer.getCleanedName(tokenSlot.getConfigureName());
+            Tokens token = null;
+            try {
+                token = Tokens.valueOf(tokenName);
+            } catch (Exception e) {
+                Util.logToChat("Couldn't find token: " + tokenName);
+                continue;
+            }
+
+            tokenPiecesMap.put(token, tokenSlot);
         }
     }
 
