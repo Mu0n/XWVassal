@@ -196,7 +196,7 @@ public class VassalXWSPilotPieces {
     private String getDisplayPilotName() {
         String pilotName = "";
         if (pilotData != null) {
-            pilotName = acronymizer(this.pilotData.getName());
+            pilotName = acronymizer(this.pilotData.getName(), this.pilotData.isUnique());
         }
 
         if (shipNumber != null && shipNumber > 0) {
@@ -213,12 +213,16 @@ public class VassalXWSPilotPieces {
         return pilotData;
     }
 
-    private String acronymizer(String input) {
-        if(input.length() <= 8)  return input;
-        else if(input.split("\\w+").length == 1) return input.substring(0, 8);
+    private String acronymizer(String cardName, boolean isUnique) {
+        String name = cardName.replace("\"", "");
+        String firstWord = name.split(" ")[0];
+
+        if(name.length() <= 8) return name;
+        else if (isUnique && name.contains(" ") && firstWord.length() <= 8) return firstWord;
+        else if(name.split("\\w+").length == 1) return name.substring(0, 8);
         else {
             String firstLetters = "";
-            for(String s: input.split(" ")){
+            for(String s: name.split(" ")){
                 if(s.charAt(0)=='\"') firstLetters += s.charAt(1);
                 else firstLetters += s.charAt(0);
             }
