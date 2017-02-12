@@ -1,3 +1,7 @@
+plugins {
+    id "de.undercouch.download" version "3.2.0"
+}
+
 apply plugin: 'java'
 
 
@@ -22,6 +26,21 @@ dependencies {
     compile group: 'com.google.guava', name: 'guava-jdk5', version: '17.0'
 }
 
+
+task downloadXwingData(type: de.undercouch.gradle.tasks.download.Download) {
+    ext.destDir = 'src/main/resources'
+    src([
+        'https://raw.githubusercontent.com/guidokessels/xwing-data/master/data/pilots.js',
+        'https://raw.githubusercontent.com/guidokessels/xwing-data/master/data/ships.js',
+        'https://raw.githubusercontent.com/guidokessels/xwing-data/master/data/upgrades.js'
+    ])
+    dest destDir
+    doLast {
+      file("${destDir}/pilots.js").renameTo(file("${destDir}/pilots.json"))
+      file("${destDir}/ships.js").renameTo(file("${destDir}/ships.json"))
+      file("${destDir}/upgrades.js").renameTo(file("${destDir}/upgrades.json"))
+    }
+}
 
 task buildVmod(type: Zip) {
     archiveName 'full-xwing-module.vmod'
