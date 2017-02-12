@@ -215,9 +215,10 @@ public class VassalXWSPilotPieces {
 
     private String acronymizer(String cardName, boolean isUnique) {
         String name = cardName.replace("\"", "");
+        String firstWord = name.split(" ")[0];
 
         if(name.length() <= 8) return name;
-        else if (isUnique && name.contains(" ")) return name.split(" ")[0];
+        else if (isUnique && name.contains(" ") && firstWord.length() <= 8) return firstWord;
         else if(name.split("\\w+").length == 1) return name.substring(0, 8);
         else {
             String firstLetters = "";
