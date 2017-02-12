@@ -1,0 +1,52 @@
+<!-- Created with Inkscape (http://www.inkscape.org/) --><svg xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" width="1921" xmlns:svg="http://www.w3.org/2000/svg" id="svg2" height="2246" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns="http://www.w3.org/2000/svg" version="1.1">
+  <metadata id="metadata3033">
+    <rdf:RDF>
+      <cc:Work rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+        <dc:title/>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <defs id="defs3031"/>
+
+  <rect x="847.5" width="226" height="847.5" y="0" id="rect3002" style="fill:#ffa500;fill-opacity:0.15"/>
+  <rect x="847.5" width="226" height="565" y="282.5" id="rect3003" style="fill:#ffa500;fill-opacity:0.15"/>
+  <rect x="847.5" width="226" height="282.5" y="565" id="rect3004" style="fill:#ffa500;fill-opacity:0.15"/>
+  
+<rect x="847.5" width="226" height="847.5" y="1398.5" id="rect3000" style="fill:#ffa500;fill-opacity:0.15"/>
+  <rect x="847.5" width="226" height="565" y="1398.5" id="rect3001" style="fill:#ffa500;fill-opacity:0.15"/>
+  <rect x="847.5" width="226" height="282.5" y="1398.5" id="rect3002" style="fill:#ffa500;fill-opacity:0.15"/>
+
+
+<rect x="0" width="847.5" height="551" y="847.5" id="rect3000" style="fill:#ffa500;fill-opacity:0.15"/>
+  <rect x="282.5" width="565" height="551" y="847.5" id="rect3001" style="fill:#ffa500;fill-opacity:0.15"/>
+  <rect x="565" width="282.5" height="551" y="847.5" id="rect3002" style="fill:#ffa500;fill-opacity:0.15"/>
+
+
+<rect x="1073.5" width="847.5" height="551" y="847.5" id="rect3000" style="fill:#ffa500;fill-opacity:0.15"/>
+  <rect x="1073.5" width="565" height="551" y="847.5" id="rect3001" style="fill:#ffa500;fill-opacity:0.15"/>
+  <rect x="1073.5" width="282.5" height="551" y="847.5" id="rect3002" style="fill:#ffa500;fill-opacity:0.15"/>
+
+
+
+	<path style="fill:#ffa500;fill-opacity:0.15" d="M 0,847.5 A 847.5,847.5 0 0 1 847.5 ,0 v 847.5 z" id="path3013"/>
+	<path style="fill:#ffa500;fill-opacity:0.15" d="M 282.5,847.5 A 565,565 0 0 1 847.5,282.5 v 565 z" id="path3014"/>
+	<path style="fill:#ffa500;fill-opacity:0.15" d="M 565,847.5 A 282.5,282.5 0 0 1 847.5,565 v 282.5 z" id="path3015"/>
+	
+
+	<path style="fill:#ffa500;fill-opacity:0.15" d="M 1073.5,0 A 847.5,847.5 0 0 1 1921,847.5 h -847.5 z" id="path3023"/>
+	<path style="fill:#ffa500;fill-opacity:0.15" d="M 1073.5,282.5 A 565,565 0 0 1 1638.5,847.5 h -565 z" id="path3024"/>
+	<path style="fill:#ffa500;fill-opacity:0.15" d="M 1073.5,565 A 282.5,282.5 0 0 1 1356,847.5  h -282.5 z" id="path3025"/>
+	
+
+	<path style="fill:#ffa500;fill-opacity:0.15" d="M 847.5,2246 A 847.5,847.5 0 0 1 0,1398.5 h 847.5 z" id="path3013"/>
+	<path style="fill:#ffa500;fill-opacity:0.15" d="M 847.5,1963.5 A 565,565 0 0 1 282.5,1398.5  h 565 z" id="path3014"/>
+	<path style="fill:#ffa500;fill-opacity:0.15" d="M 847.5,1681 A 282.5,282.5 0 0 1 565,1398.5  h 282.5 z" id="path3015"/>
+
+
+	<path style="fill:#ffa500;fill-opacity:0.15" d="M 1921,1398.5 A 847.5,847.5 0 0 1 1073.5,2246 v -847.5 z" id="path3023"/>
+	<path style="fill:#ffa500;fill-opacity:0.15" d="M 1638.5,1398.5 A 565,565 0 0 1 1073.5,1963.5 v -565 z" id="path3024"/>
+	<path style="fill:#ffa500;fill-opacity:0.15" d="M 1356,1398.5 A 282.5,282.5 0 0 1 1073.5,1681  v -282.5 z" id="path3025"/>
+
+</svg>

@@ -1,0 +1,30 @@
+Quick Start:
+
+The Game Round:
+1) Planning Phase
+	Plan your ship moves using the Move Dials
+2) Activation Phase
+	Each ship moves and performs ONE Action.
+	*If you collide with an obstacle, roll 1 Atk die, 
+		suffer any Damage or Critical hit you roll,
+		lose Action, take Stress
+	*If you collide with another ship, back up to where 
+		you are touching bases, lose Action, take Stress 
+	*Touching ships cannot fire upon each other.
+3) Combat Phase
+	Each ship performs ONE Attack.
+	When attacking Range 1, +1 Atk die, 
+	When attacking Range 3, +1 Def die.
+	If attacking through an obstacle, +1 Def die.  
+		(Measure from closest points of each ship base)
+4) End Phase
+	Clear Action tokens from ships (Target Locks remain) and 
+	resolve "End Phase" abilities on cards.
+
+Activation sequence proceeds in Ascending Order of Pilot Skill 
+(regardless of Faction)
+Combat sequence proceeds in Descending Order of Pilot Skill 
+(regardless of Faction)
+
+So Move: Lowest rank to highest rank.
+   Shoot Highest rank to lowest rank.

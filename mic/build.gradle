@@ -26,9 +26,16 @@ dependencies {
     compile group: 'com.google.guava', name: 'guava-jdk5', version: '17.0'
 }
 
+task unpackVmod(type: Copy) {
+  from zipTree(file('build/distributions/swxwmg.vmod'))
+  exclude '**/*.class', 'META-INF/', 'com/google/**/*', 'com/fasterxml/**/*'
+  includeEmptyDirs = false
+  into file('swxwmg.vmod-unpacked')
+}
+
 
 task downloadXwingData(type: de.undercouch.gradle.tasks.download.Download) {
-    ext.destDir = 'src/main/resources'
+    ext.destDir = 'swxwmg.vmod-unpacked'
     src([
         'https://raw.githubusercontent.com/guidokessels/xwing-data/master/data/pilots.js',
         'https://raw.githubusercontent.com/guidokessels/xwing-data/master/data/ships.js',
@@ -43,22 +50,16 @@ task downloadXwingData(type: de.undercouch.gradle.tasks.download.Download) {
 }
 
 task buildVmod(type: Zip) {
-    archiveName 'full-xwing-module.vmod'
+    archiveName 'swxwmg.vmod'
     duplicatesStrategy 'exclude'
+    from 'swxwmg.vmod-unpacked'
     from compileJava
-    from processResources
-    from zipTree('vassal_module/full-xwing-module.vmod')
     for (dependency in (configurations.compile).files) {
         // Need to extract jars so vassal can find classes
         from zipTree(dependency)
     }
-
-    exclude "*.jar"
-
+    exclude "**/*.jar"
     doLast {
-        copy {
-            from archivePath
-            into 'vassal_module'
-        }
+        println "Compiled vmod at ${archivePath}"
     }
 }

@@ -1,0 +1,249 @@
+-=-=-=- FEBRUARY 2017 UPDATE
+Upsilon is now playable
+Wave 10 cards are now fully in
+C-Roc spoiled cards are in
+Every non-epic ship have ordered open dials and ordered movement strips as aides in their ship tab
+Sabine's TIE Fighter can now deploy bombs
+
+-=-=-=- SECOND DECEMBER 2016 UPDATE
+U-Wing and TIE Striker action icons fixed
+Last cards for those 2 packs are now in
+Dials remade for BoShek
+
+-=-=-=- DECEMBER 2016 UPDATE
+U-Wing is now playable
+TIE Striker is now playable
+New explanation graphics in "How To & Shortcuts" and updates to old ones
+
+-=-=-=- SECOND NOVEMBER 2016 UPDATE
+Exploitation of the crit deck patched out
+Explanation graphic for Kylo Ren's mechanism in Pieces/Conditions
+
+-=-=-=- NOVEMBER 2016 UPDATE
+"Fly Backward" preview cards added
+Quadjumper is now playable
+Players can now pick a specific card in the main damage deck (right click)
+Last 3 Heroes of the Resistance expansion cards added
+
+-=-=-=- OCTOBER 2016 UPDATE
+"Suppressive Fire" preview cards added
+"Fanatical Devotion" preview cards added
+Limiting the YV-666 aux arc to the sides only instead of sides+front
+
+-=-=-=- SEPTEMBER 2016 UPDATE
+Heroes of the Resistance cards added
+New dice window with every added dice results, can now be set, can be rerolled
+
+-=-=-=- AUGUST 2016 UPDATE
+Wave 9 now fully in (Protectorate Starfighter, Lancer-Class Pursuit Craft, ARC-170 fully playable
+Wave 10 card from first preview
+WIP playable-by-pilot-proxy Sabine's TIE Fighter
+
+-=-=-=- SECOND JULY 2016 UPDATE
+Special Forces TIE Fighter now playable (missing ps5 generic)
+5 cards added from "Special Ops" preview
+Epic ships got a huge boost in speed during play
+
+-=-=-=- JULY 2016 UPDATE
+Complete overhaul of ship (small, large) arcs
+Cards from wave 9 preview and ARC-170 preview
+
+-=-=-=- APRIL 2016 UPDATE
+2 cards from Bombs Away preview article (Systems Officer and Deathfire)
+1 official Tomax Bren replacing the placeholder that was here
+
+-=-=-=- FEBRUARY 2016 UPDATE
+JumpMaster5000 now fully playable
+JumpMaster5000 preview cards added
+
+-=-=-=- JANUARY 2016 UPDATE
+G-1A Starfighter now fully playable
+G-1A related preview cards added
+Gozanti Range 1-3 and Range 1-5 now fixed and in green
+
+-=-=-=- SECOND DECEMBER 2015 UPDATE
+TIE Adv. Prototype now fully playable
+Guidance Chips, TIE/V1 title and 2 TAP pilots added
+Gozanti-Class Cruiser is now fully playable
+
+-=-=-=- DECEMBER 2015 UPDATE
+Ghost and Attack Shuttle now fully playable
+lots of t-70, TIE/fo, Gozanti, Ghost, Attack shuttles cards added
+prox, cluster, conner net now have R1 checking (Sabine Crew)
+tractor beam token
+D6, D10 rollers
+
+-=-=-=- OCTOBER 2015 UPDATE
+Few more FA cards revealed
+New dice window add hit,crit,evade buttons
+New ship alt-paint jobs
+Many minor action icon fixes (Shift-A)
+Parallel release of the Heroes of the Aturi Cluster by its creator, it's an extension file that you can tie to the X-Wing Module. Will get its own update schedule.
+
+-=-=-=- SEPTEMBER 2015 UPDATE
+New Core set ships fully playable, 100% in (T-70 X-Wing, TIE/FO fighter)
+New asteroids, flippable, range finding are in
+New damage deck
+Firesprays now have decoupled firing arc: CTRL-F for front, CTRL-V for aux
+Introducing a "set" and "unset" pair of buttons in player windows so you can avoid typing those so many times in a game
+Raider mission tokens
+new core set mission tokens
+
+
+-=-=-=- AUGUST 2015 UPDATE
+K-wing playable, wave 7 100% in
+Raider playable
+Cluster Mines slightly reduced in size
+Conner Net added
+Group selection on the map window is now faster and the selected items are visible with a yellow border
+
+-=-=-=- JULY 2015 UPDATE
+TIE Punisher playable
+Cluster Mines (approximative size) added to all bomb capable ships
+Ion Bombs added to all bomb capable ships
+Deathrain front bombing ability works with Ctrl-Shift-B
+Help from: Radarman5
+
+-=-=-=- JUNE 2015 #2 UPDATE
+Kihraxz playable
+
+-=-=-=- JUNE 2015 #1 UPDATE
+Hound's Tooth playable
+
+-=-=-=- MAY 2015 UPDATE
+Many automatically placed tokens to help reduce the tedium during games.
+Collision management: move your ship, press C. a collision aide will be placed behind the ship
+Bomb management: CTRL-B for ships that support it, then use shortcuts on it to spawn a bomb
+Barrel Roll Management: J, K for midway template placement
+Decloak Management: ctrl-J, ctrl-K for midway decloaks
+Spoiled TIE Advanced pilots added
+Beta YV-666 ship (empty square base) with working special arcs
+Raider now has a graphic, isn't spoiled yet (no dial)
+Help from: Theorist (few tests), Radarman5 (slapped on FFG's preview raider to our existing base graphic)
+
+-=-=-=- FEBRUARY 2015 UPDATE
+Scyk is now playable (dial + ps5 generic pilot card added)
+Calculation EPT is now in
+Large ship's graphics were remade so that their on-ship arc lines are aligned with the toggleable frontal fire arc
+new ship graphics: gray y-wing, green a-wing, Krassis, all 4 rebel z-95s
+Help from: Radarman5, Gabriel Velasquez
+
+-=-=-=- JANUARY 2015 UPDATE
+IG-2000 is now playable (dial + pilot cards added)
+CR90 main turret tweaks
+some PNG arc graphics changed to SVG graphics
+First raider preview cards added (TIE Advanced, Ion Cannon batteries)
+
+-=-=-=- DECEMBER 2014 UPDATE
+new style ship graphics:
+rebel: Y-Wing, Z-95
+S&V: Y-Wing, Z-95 (4 kinds), StarViper, Aggressor, M3-A, FS-31 (3 kinds)
+Better keyboard shortcuts helper cards in How To section
+New action clear shortcuts (shift-Z, ctrl-z, ctrl-shift-Z)
+partial wave 6 is playable (missing aggressor and m3-a dials and pilots)
+collision templates
+Help from: Sigzog, Radarman5, silentubiquity
+
+
+-=-=-=- SECOND AUGUST 2014 UPDATE
+Wave 5 added
+Debris Tokens
+3x6 map format alongside the old 6x3
+wave 6 groundwork done, only very partially added
+Help from: silentubiquity, xwingtoman
+
+-=-=-=- AUGUST 2014 UPDATE
+Asteroids with range finders, more spoilers from Rebel Aces and Wave 5
+Grid toggle no longer usable by observers
+damage decks are now spawned
+Asteroids down to 1 set from 2 flipped sets, but have 4 states (flipped/gray shaded or both)
+
+-=-=-=- JUNE 2014 UPDATE - Huge Ships, CR90 and GR-75 are now playable
+only 1 damage deck per huge ship possible, more spoilers from Rebel Aces
+
+-=-=-=- MAY 2014 UPDATE - functional TIE Phantom, TIE Defender, spoiled cards from May
+(transport, corvette), nubs, 6x3 epic map.
+Main contributors: Mu0n
+Help from: theorist, Klutz, Zach Bunn
+
+-=-=-=- APRIL 2014 UPDATE - functional Z-95 added, spoiled cards from Feb and March
+(rebel aces, transport, corvette), spend focus button in the dice window, various fixes
+Main contributors: Mu0n
+Help from: theorist, Chris B, deviantart user dlamont
+
+corvette graphic used, permission from deviant art user dlamont (his work is awesome): 
+http://dlamont.deviantart.com/
+
+see us on www.teamcovenant.com!
+-=-=-=- -=-=-=- -=-=-=- -=-=-=- -=-=-=- -=-=-=-
+
+-=-=-=- FEBRUARY 2014 UPDATE - Consolidation into 1 file + Dice anti-streak measures -=-=-=-=-
+Main contributors: Mu0n and Theorist
+
+*** Blog Post with changes must be added soon
+see us on www.teamcovenant.com!
+-=-=-=- -=-=-=- -=-=-=- -=-=-=- -=-=-=- -=-=-=-
+
+
+-=-=-=- NOVEMBER 2013 UPDATE - Firing Arcs -=-=-=-
+Issue raising and modules updates: Mu0n
+List of changes here:
+http://teamcovenant.com/mu0n/2013/11/28/the-road-to-4-6-0-and-better-firing-arcs
+
+see us on www.teamcovenant.com!
+-=-=-=- -=-=-=- -=-=-=- -=-=-=- -=-=-=- -=-=-=-
+
+
+-=-=-=- SEPTEMBER 2013 UPDATE - WAVE 3 -=-=-=-
+Wave 3 editor: Mu0n
+helper: kelvantiberius
+
+see us on www.teamcovenant.com!
+-=-=-=- -=-=-=- -=-=-=- -=-=-=- -=-=-=- -=-=-=-
+
+
+
+-=-=-=- ORIGINAL THANKS NOTES -=-=-=-
+
+     * Thanks to Fantasy Flight games for creating this great game (www.FantasyFlightGames.com)
+     * Thanks to VASSAL for making it possible to sit around a table with friends around the world 
+without anyone having to leave their own living rooms.
+
+     * Thanks to all my Beta Testers for their hard work (playing games...Hard work?) and 
+invaluable feedback.  You guys made this module better than the slop I originally threw out there.
+
+Forums:
+http://www.fantasyflightgames.com/edge_foros_temas.asp?efid=254&efcid=6
+http://www.AFewManeuvers.com
+
+Beta Testers: You guys know who you are... some of you, this is the only name I know you by.
+	In NO SPECIFIC ORDER...
+Nextor
+	drkjedi35
+		I. J. Thompson
+			Parakitor
+				Budgernaut
+R5Don4
+	Yagyu
+		Darth Malus
+			FarkonGnome
+				Razrael
+doctormungmung
+	ArcticSnake
+		KarmikazeKidd
+			Harleequin
+				El_Tonio
+
+If I missed anybody, sorry, Thanks for helpin'!, if I duplicated anybody,oops!  Forum names ugh.  =)
+
+ENJOY!!
+
+Support your Local Gaming Store, BUY In Real Life, PLAY In Real Life, Get out of the house.
+Support Fantasy Flight Games, BUY the game!  It's too awesome to miss.  
+
+-=-=-=- -=-=-=- -=-=-=- -=-=-=- -=-=-=- -=-=-=-
+
+
+
+
+

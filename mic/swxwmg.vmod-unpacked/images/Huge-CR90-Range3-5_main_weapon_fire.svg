@@ -1,0 +1,33 @@
+<!-- Created with Inkscape (http://www.inkscape.org/) --><svg xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" width="3051" xmlns:svg="http://www.w3.org/2000/svg" id="svg2" height="3460" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns="http://www.w3.org/2000/svg" version="1.1">
+  <metadata id="metadata3033">
+    <rdf:RDF>
+      <cc:Work rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+        <dc:title/>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <defs id="defs3031"/>
+  <rect x="1412.5" width="226" id="rect3018" y="0" height="847.5" style="fill:#0000ff;fill-opacity:0.25"/>
+  <rect x="1412.5" width="226" id="rect3019" y="282.5" height="565" style="fill:#0000ff;fill-opacity:0.25"/>
+  <rect x="1412.5" width="226" id="rect3020" y="565" height="282.5" style="fill:#0000ff;fill-opacity:0.25"/>
+  <path style="fill:#0000ff;fill-opacity:0.25" id="path3017" d="M 0,1412.5 A 1412.5,1412.5 0 0 1 1412.5,0 v 847.5 A 565 565 0 0 0 847.5,1412.5 z"/>
+  <path style="fill:#0000ff;fill-opacity:0.25" id="path3018" d="M 282.5,1412.5 A 1130,1130 0 0 1 1412.5,282.5 v 565 A 565 565 0 0 0 847.5,1412.5 z"/>
+  <path style="fill:#0000ff;fill-opacity:0.25" id="path3019" d="M 565,1412.5 A 847.5,847.5 0 0 1 1412.5,565 v 282.5 A 565 565 0 0 0 847.5,1412.5 z"/>
+  <path style="fill:#0000ff;fill-opacity:0.25" id="path3020" d="M 1638.5,0 A 1412.5,1412.5 0 0 1 3051,1412.5 h -847.5 A 565 565 0 0 0 1638.5,847.5 z"/>
+  <path style="fill:#0000ff;fill-opacity:0.25" id="path3021" d="M 1638.5,282.5 A 1130,1130 0 0 1 2768.5,1412.5 h -565 A 565 565 0 0 0 1638.5,847.5 z"/>
+  <path style="fill:#0000ff;fill-opacity:0.25" id="path3022" d="M 1638.5,565 A 847.5,847.5 0 0 1 2486,1412.5 h -282.5 A 565 565 0 0 0 1638.5,847.5 z"/>
+  <rect x="0" width="847.5" id="rect3021" y="1412.5" height="226" style="fill:#0000ff;fill-opacity:0.25"/>
+  <rect x="282.5" width="565" id="rect3022" y="1412.5" height="226" style="fill:#0000ff;fill-opacity:0.25"/>
+  <rect x="565" width="282.5" id="rect3023" y="1412.5" height="226" style="fill:#0000ff;fill-opacity:0.25"/>
+  <rect x="2203.5" width="847.5" id="rect3024" y="1412.5" height="226" style="fill:#0000ff;fill-opacity:0.25"/>
+  <rect x="2203.5" width="565" id="rect3025" y="1412.5" height="226" style="fill:#0000ff;fill-opacity:0.25"/>
+  <rect x="2203.5" width="282.5" id="rect3026" y="1412.5" height="226" style="fill:#0000ff;fill-opacity:0.25"/>
+  <path style="fill:#0000ff;fill-opacity:0.25" id="path3024" d="M 0,1638.5 h 847.5 A 565,565 0 0 0 1178.815,2152.908 L 768.423,2895.608 A 1412.5,1412.5 0 0 1 0,1638.5"/>
+  <path style="fill:#0000ff;fill-opacity:0.25" id="path3025" d="M 282.5,1638.5 h 565 A 565,565 0 0 0 1178.815,2152.908 L 905.136,2648.194 A 1130,1130 0 0 1 282.5,1638.5"/>
+  <path style="fill:#0000ff;fill-opacity:0.25" id="path3026" d="M 565,1638.5 h 282.5 A 565,565 0 0 0 1178.815,2152.908 L 1041.905,2400.679 A 847.5,847.5 0 0 1 565,1638.5"/>
+  <path style="fill:#0000ff;fill-opacity:0.25" id="path3027" d="M 2203.5,1638.5 h 847.5 A 1412.5,1412.5 0 0 1 2282.577,2895.608 L 1872.185,2152.908 A 565,565 0 0 0 2203.5,1638.5"/>
+  <path style="fill:#0000ff;fill-opacity:0.25" id="path3028" d="M 2203.5,1638.5 h 565 A 1130,1130 0 0 1 2145.864,2648.194 L 1872.185,2152.908 A 565,565 0 0 0 2203.5,1638.5"/>
+  <path style="fill:#0000ff;fill-opacity:0.25" id="path3028" d="M 2203.5,1638.5 h 282.5 A 847.5,847.5 0 0 1 2009.095,2400.679 L 1872.185,2152.908 A 565,565 0 0 0 2203.5,1638.5"/>
+</svg>
