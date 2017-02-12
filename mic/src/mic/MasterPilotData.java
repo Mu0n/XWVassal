@@ -13,18 +13,22 @@ public class MasterPilotData extends ArrayList<MasterPilotData.PilotData> {
 
     private static Map<String, PilotData> loadedData = null;
 
-    public static Map<String, PilotData> getPilotDataByXWSId() {
-        if (loadedData != null) {
-            return loadedData;
+    public static PilotData getPilotData(String ship, String pilot) {
+        if ( loadedData == null) {
+            loadData();
         }
+        return loadedData.get(ship + "/" + pilot);
+    }
+
+    private static void loadData() {
 
         loadedData = Maps.newHashMap();
         MasterPilotData data = Util.loadClasspathJson("pilots.json", MasterPilotData.class);
 
         for(PilotData pilot : data) {
-            loadedData.put(pilot.getXws(), pilot);
+            String xwsShip = Canonicalizer.getCanonicalShipName(pilot.getShip());
+            loadedData.put(xwsShip + "/" + pilot.getXws(), pilot);
         }
-        return loadedData;
     }
 
     public static class PilotData {

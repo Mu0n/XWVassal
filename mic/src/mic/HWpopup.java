@@ -24,6 +24,7 @@ import VASSAL.command.CommandEncoder;
 import VASSAL.counters.GamePiece;
 
 import static mic.Util.logToChat;
+import static mic.Util.newPiece;
 
 
 /**
@@ -242,9 +243,18 @@ public class HWpopup extends AbstractConfigurable implements CommandEncoder,
 
                 totalUpgradeWidth += upgradePiece.boundingBox().getWidth();
             } //loop to next upgrade
+
+            int totalChitWidth = 0;
+            for (GamePiece token : ship.getTokensForDisplay()) {
+                spawnPiece(token, new Point(
+                        (int)startPosition.getX()+pilotWidth+totalUpgradeWidth+totalChitWidth+fudgePilotUpgradeFrontier,
+                        (int)startPosition.getY()+totalPilotHeight));
+                totalChitWidth += token.boundingBox().getWidth();
+            }
         } //loop to next pilot
 
     }
+
 
     /*
     private void loadFromXwsButtonPressed() {

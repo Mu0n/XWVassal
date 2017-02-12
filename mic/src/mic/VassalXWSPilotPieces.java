@@ -2,8 +2,12 @@ package mic;
 
 import VASSAL.build.widget.PieceSlot;
 import VASSAL.counters.GamePiece;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by amatheny on 2/8/17.
@@ -17,6 +21,8 @@ public class VassalXWSPilotPieces {
     private PieceSlot openDial;
     private MasterShipData.ShipData shipData;
     private MasterPilotData.PilotData pilotData;
+    private Integer shipNumber = null;
+    private Map<Tokens, PieceSlot> tokens = Maps.newHashMap();
 
     public PieceSlot getShip() {
         return ship;
@@ -71,6 +77,22 @@ public class VassalXWSPilotPieces {
         return upgrades;
     }
 
+    public Map<Tokens, PieceSlot> getTokens() {
+        return tokens;
+    }
+
+    public List<GamePiece> getTokensForDisplay() {
+        List<GamePiece> tokenPieces = Lists.newArrayList();
+        for (Tokens token : tokens.keySet()) {
+            GamePiece piece = Util.newPiece(tokens.get(token));
+            if (token == Tokens.targetlock && pilotData != null) {
+                piece.setProperty("ID", getDisplayPilotName());
+            }
+            tokenPieces.add(piece);
+        }
+        return tokenPieces;
+    }
+
     public void setMovementStrip(PieceSlot movementStrip) {
         this.movementStrip = movementStrip;
     }
@@ -91,6 +113,10 @@ public class VassalXWSPilotPieces {
         this.shipData = shipData;
     }
 
+    public void setShipNumber(Integer number) {
+        this.shipNumber = number;
+    }
+
     public void setPilotData(MasterPilotData.PilotData pilotData) {
         this.pilotData = pilotData;
     }
@@ -102,11 +128,7 @@ public class VassalXWSPilotPieces {
     public GamePiece cloneDial() {
         GamePiece piece = Util.newPiece(this.dial);
 
-
-        if (this.pilotData != null) {
-            piece.setProperty("Pilot Name", this.pilotData.getShip());
-            piece.setProperty("Craft ID #", this.pilotData.getName());
-        }
+        setPilotShipName(piece);
 
         return piece;
     }
@@ -157,12 +179,51 @@ public class VassalXWSPilotPieces {
         if (this.pilotData != null) {
             int ps = this.pilotData.getSkill() + skillModifier;
             piece.setProperty("Pilot Skill", ps);
-
-            piece.setProperty("Pilot Name", this.pilotData.getShip());
-            piece.setProperty("Craft ID #", this.pilotData.getName());
         }
 
+        setPilotShipName(piece);
+
         return piece;
+    }
+
+    private void setPilotShipName(GamePiece piece) {
+        if (pilotData != null) {
+            piece.setProperty("Pilot Name", this.pilotData.getShip());
+        }
+        piece.setProperty("Craft ID #", getDisplayPilotName());
+    }
+
+    private String getDisplayPilotName() {
+        String pilotName = "";
+        if (pilotData != null) {
+            pilotName = acronymizer(this.pilotData.getName());
+        }
+
+        if (shipNumber != null && shipNumber > 0) {
+            pilotName += " " + shipNumber;
+        }
+        return pilotName;
+    }
+
+    public MasterShipData.ShipData getShipData() {
+        return shipData;
+    }
+
+    public MasterPilotData.PilotData getPilotData() {
+        return pilotData;
+    }
+
+    private String acronymizer(String input) {
+        if(input.length() <= 8)  return input;
+        else if(input.split("\\w+").length == 1) return input.substring(0, 8);
+        else {
+            String firstLetters = "";
+            for(String s: input.split(" ")){
+                if(s.charAt(0)=='\"') firstLetters += s.charAt(1);
+                else firstLetters += s.charAt(0);
+            }
+            return firstLetters;
+        }
     }
 
     public static class Upgrade {

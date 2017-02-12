@@ -1,9 +1,11 @@
 package mic;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -13,18 +15,20 @@ public class MasterShipData extends ArrayList<MasterShipData.ShipData> {
 
     private static Map<String, ShipData> loadedData = null;
 
-    public static Map<String, ShipData> getShipDataByXWSId() {
-        if (loadedData != null) {
-            return loadedData;
+    public static ShipData getShipData(String shipXwsId) {
+        if (loadedData == null) {
+            loadData();
         }
+        return loadedData.get(shipXwsId);
+    }
 
+    private static void loadData() {
         loadedData = Maps.newHashMap();
         MasterShipData data = Util.loadClasspathJson("ships.json", MasterShipData.class);
 
         for(ShipData ship : data) {
             loadedData.put(ship.getXws(), ship);
         }
-        return loadedData;
     }
 
     public static class ShipData {
@@ -46,6 +50,9 @@ public class MasterShipData extends ArrayList<MasterShipData.ShipData> {
 
         @JsonProperty("xws")
         private String xws;
+
+        @JsonProperty("actions")
+        private List<String> actions = Lists.newArrayList();
 
         public int getAttack() {
             return attack;
@@ -69,6 +76,10 @@ public class MasterShipData extends ArrayList<MasterShipData.ShipData> {
 
         public String getXws() {
             return xws;
+        }
+
+        public List<String> getActions() {
+            return this.actions;
         }
     }
 }

@@ -15,18 +15,20 @@ public class MasterUpgradeData extends ArrayList<MasterUpgradeData.UpgradeData> 
 
   private static Map<String, UpgradeData> loadedData = null;
 
-  public static Map<String, UpgradeData> getUpgradeDataByXWSId() {
-      if (loadedData != null) {
-          return loadedData;
+  public static UpgradeData getUpgradeData(String upgradeXwsId) {
+      if (loadedData == null) {
+          loadData();
       }
+      return loadedData.get(upgradeXwsId);
+  }
 
+  private static void loadData() {
       loadedData = Maps.newHashMap();
       MasterUpgradeData data = Util.loadClasspathJson("upgrades.json", MasterUpgradeData.class);
 
       for(UpgradeData upgrade : data) {
           loadedData.put(upgrade.getXws(), upgrade);
       }
-      return loadedData;
   }
 
   public static class UpgradeData {
