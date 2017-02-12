@@ -190,7 +190,14 @@ public class HWpopup extends AbstractConfigurable implements CommandEncoder,
 
     private void loadFromXwsButtonPressed() {
 
-        String url = JOptionPane.showInputDialog("Please paste in the voidstate, YASB, or FABS list URL");
+        String url = null;
+
+        try {
+            url = JOptionPane.showInputDialog("Please paste a voidstate url or ID, YASB url, or FABS url");
+        }
+        catch ( Exception e ) {
+            logToChat("unable to process url, please try again");
+        }
         if (url == null || url.length() == 0) {
             return;
         }
@@ -198,17 +205,22 @@ public class HWpopup extends AbstractConfigurable implements CommandEncoder,
         URL translatedURL = null;
         try {
             translatedURL = XWSUrlHelper.translate(url);
-        } catch (MalformedURLException e) {
+            if ( translatedURL == null ) {
+                logToChat("Invalid list url detected, please try again");
+                return;
+            }
+        } catch (Exception e) {
             logToChat("unable to translate xws url: \n" + e.toString());
             return;
         }
+
+        VassalXWSListPieces pieces = slotLoader.loadListFromXWS(XWSFetcher.fetchFromUrl(translatedURL.toString()));
 
         GameModule mod = GameModule.getGameModule();
         Point startPosition = new Point(500,50);
         int fudgePilotUpgradeFrontier = -50;
         int totalPilotHeight = 0;
 
-        VassalXWSListPieces pieces = slotLoader.loadListFromXWS(XWSFetcher.fetchFromUrl(translatedURL.toString()));
         for (VassalXWSPilotPieces ship : pieces.getShips()) {
             logToChat(String.format("pilot: %s, gpid=%s", ship.getPilotCard().getConfigureName(), ship.getPilotCard().getGpId()));
 

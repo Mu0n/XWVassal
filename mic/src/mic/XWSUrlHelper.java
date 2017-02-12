@@ -10,7 +10,7 @@ import java.util.regex.Pattern;
  */
 public class XWSUrlHelper {
     static private Pattern yasbPat = Pattern.compile(".*?geordanr.*");
-    static private Pattern voidstatePat = Pattern.compile(".*?xwing-builder\\.co\\.uk\\/build\\/\\d+");
+    static private Pattern voidstatePat = Pattern.compile(".*?xwing-builder\\.co\\.uk.*");
     static private Pattern fabsPat = Pattern.compile(".*?fabpsb.*");
 
     public static boolean isYASB(String url) {
@@ -39,8 +39,9 @@ public class XWSUrlHelper {
     }
 
     public static boolean isVoidstate(String url) {
-        Matcher m = voidstatePat.matcher(url);
-        return m.matches();
+        Matcher m1 = voidstatePat.matcher(url);
+        Matcher m2 = Pattern.compile("^\\d+$").matcher(url);
+        return m1.matches() || m2.matches();
     }
 
 
@@ -49,8 +50,16 @@ public class XWSUrlHelper {
     //should turn into
     //http://xwing-builder.co.uk/xws/649288?raw=1
     private static URL translateVoidstate(String url) throws MalformedURLException {
-        String xwsUrl = url.replace("/build/", "/xws/");
-        return new URL(xwsUrl + "?raw=1");
+
+        Pattern p = Pattern.compile("/?(\\d+)/?");
+        Matcher m = p.matcher(url);
+        if (m.find()) {
+            String voidstateId = m.group(1);
+            return new URL("http://xwing-builder.co.uk/xws/" + voidstateId + "?raw=1");
+        }
+        else {
+            throw new MalformedURLException("Received voidstate url without a voidstate id: " + url );
+        }
     }
 
 
@@ -74,7 +83,8 @@ public class XWSUrlHelper {
 
     public static void main(String...args){
         try {
-            System.out.println(XWSUrlHelper.translate("http://xwing-builder.co.uk/build/649288"));
+            System.out.println(XWSUrlHelper.translate("http://xwing-builder.co.uk/view/648536/rac-n-jax#"));
+            System.out.println(XWSUrlHelper.translate("648536"));
 
         } catch (MalformedURLException e) {
             e.printStackTrace();
