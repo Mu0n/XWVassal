@@ -190,7 +190,7 @@ public class HWpopup extends AbstractConfigurable implements CommandEncoder,
 
     private void loadFromXwsButtonPressed() {
 
-        String url = JOptionPane.showInputDialog("Please paste in the voidstate, YASB, or fabs list URL");
+        String url = JOptionPane.showInputDialog("Please paste in the voidstate, YASB, or FABS list URL");
         if (url == null || url.length() == 0) {
             return;
         }
