@@ -6,6 +6,7 @@ import com.google.common.collect.Maps;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -41,6 +42,13 @@ public class MasterUpgradeData extends ArrayList<MasterUpgradeData.UpgradeData> 
 
       @JsonProperty("grants")
       private ArrayList<UpgradeGrants> grants = Lists.newArrayList();
+
+      @JsonProperty("conditions")
+      private List<String> conditions = Lists.newArrayList();
+
+      public List<String> getConditions() {
+          return conditions;
+      }
 
       public ArrayList<UpgradeGrants> getGrants() {
           return grants;

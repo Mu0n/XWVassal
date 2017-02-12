@@ -42,6 +42,11 @@ public class VassalXWSPieceLoader {
 
             VassalXWSPilotPieces pilotPieces = new VassalXWSPilotPieces(barePieces);
 
+            if (pilotPieces.getPilotData() != null) {
+                List<PieceSlot> foundConditions = getConditionsForCard(pilotPieces.getPilotData().getConditions());
+                pilotPieces.getConditions().addAll(foundConditions);
+            }
+
             if (pilotCounts.count(pilot.getName()) > 1) {
                 genericPilotsAdded.add(pilot.getName());
                 pilotPieces.setShipNumber(genericPilotsAdded.count(pilot.getName()));
@@ -55,6 +60,13 @@ public class VassalXWSPieceLoader {
                         Util.logToChat("Could not find upgrade: " + upgradeKey);
                         continue;
                     }
+
+                    if (upgrade.getUpgradeData() != null) {
+                        List<PieceSlot> foundConditions = getConditionsForCard(upgrade.getUpgradeData().getConditions());
+                        pilotPieces.getConditions().addAll(foundConditions);
+                    }
+
+
                     pilotPieces.getUpgrades().add(upgrade);
                 }
             }
@@ -71,6 +83,22 @@ public class VassalXWSPieceLoader {
         }
 
         return pieces;
+    }
+
+    private List<PieceSlot> getConditionsForCard(List<String> conditions) {
+        List<PieceSlot> conditionSlots = Lists.newArrayList();
+        for(String conditionName : conditions) {
+            String canonicalConditionName = Canonicalizer.getCanonicalUpgradeName(
+                    "conditions", conditionName);
+            String mapKey = getUpgradeMapKey("conditions", canonicalConditionName);
+            VassalXWSPilotPieces.Upgrade condition = this.upgradePiecesMap.get(mapKey);
+            if (condition == null) {
+                Util.logToChat("Unable to load condition: " + conditionName);
+                continue;
+            }
+            conditionSlots.add(condition.getPieceSlot());
+        }
+        return conditionSlots;
     }
 
     private void loadPieces() {

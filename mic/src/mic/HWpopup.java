@@ -256,13 +256,22 @@ public class HWpopup extends AbstractConfigurable implements CommandEncoder,
                 totalUpgradeWidth += upgradePiece.boundingBox().getWidth();
             } //loop to next upgrade
 
+            for (PieceSlot conditionSlot: ship.getConditions()) {
+                GamePiece conditionPiece = newPiece(conditionSlot);
+                spawnPiece(conditionPiece, new Point(
+                        (int)startPosition.getX()+pilotWidth+totalUpgradeWidth+fudgePilotUpgradeFrontier,
+                        (int)startPosition.getY()+totalPilotHeight));
+
+                totalUpgradeWidth += conditionPiece.boundingBox().getWidth();
+            } //loop to next condition
+
             int totalChitWidth = 0;
             for (GamePiece token : ship.getTokensForDisplay()) {
                 spawnPiece(token, new Point(
                         (int)startPosition.getX()+pilotWidth+totalUpgradeWidth+totalChitWidth+fudgePilotUpgradeFrontier,
                         (int)startPosition.getY()+totalPilotHeight));
                 totalChitWidth += token.boundingBox().getWidth();
-            }
+            }// loop to next token
         } //loop to next pilot
 
     }

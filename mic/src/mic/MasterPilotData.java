@@ -1,9 +1,11 @@
 package mic;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -48,6 +50,9 @@ public class MasterPilotData extends ArrayList<MasterPilotData.PilotData> {
         @JsonProperty("unique")
         private boolean unique;
 
+        @JsonProperty("conditions")
+        private List<String> conditions = Lists.newArrayList();
+
         public boolean isUnique() {
             return unique;
         }
@@ -70,6 +75,10 @@ public class MasterPilotData extends ArrayList<MasterPilotData.PilotData> {
 
         public String getName() {
             return name;
+        }
+
+        public List<String> getConditions() {
+            return conditions;
         }
     }
 }

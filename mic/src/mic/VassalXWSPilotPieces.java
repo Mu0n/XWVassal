@@ -2,12 +2,14 @@ package mic;
 
 import VASSAL.build.widget.PieceSlot;
 import VASSAL.counters.GamePiece;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 
 /**
  * Created by amatheny on 2/8/17.
@@ -17,21 +19,13 @@ public class VassalXWSPilotPieces {
     private PieceSlot dial;
     private PieceSlot movementCard;
     private List<Upgrade> upgrades = new ArrayList<Upgrade>();
+    private List<PieceSlot> conditions = new ArrayList<PieceSlot>();
     private PieceSlot movementStrip;
     private PieceSlot openDial;
     private MasterShipData.ShipData shipData;
     private MasterPilotData.PilotData pilotData;
     private Integer shipNumber = null;
     private Map<Tokens, PieceSlot> tokens = Maps.newHashMap();
-
-    public PieceSlot getShip() {
-        return ship;
-    }
-
-    public void setShip(PieceSlot ship) {
-        this.ship = ship;
-    }
-
     private PieceSlot ship;
 
     public VassalXWSPilotPieces() {
@@ -48,6 +42,19 @@ public class VassalXWSPilotPieces {
         this.shipData = pieces.shipData;
         this.pilotData = pieces.pilotData;
     }
+
+    public List<PieceSlot> getConditions() {
+        return this.conditions;
+    }
+
+    public PieceSlot getShip() {
+        return ship;
+    }
+
+    public void setShip(PieceSlot ship) {
+        this.ship = ship;
+    }
+
 
     public PieceSlot getPilotCard() {
         return pilotCard;
