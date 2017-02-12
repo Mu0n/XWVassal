@@ -17,6 +17,7 @@ public class VassalXWSPilotPieces {
     private PieceSlot openDial;
     private MasterShipData.ShipData shipData;
     private MasterPilotData.PilotData pilotData;
+    private Integer shipNumber = null;
 
     public PieceSlot getShip() {
         return ship;
@@ -91,6 +92,10 @@ public class VassalXWSPilotPieces {
         this.shipData = shipData;
     }
 
+    public void setShipNumber(Integer number) {
+        this.shipNumber = number;
+    }
+
     public void setPilotData(MasterPilotData.PilotData pilotData) {
         this.pilotData = pilotData;
     }
@@ -102,11 +107,7 @@ public class VassalXWSPilotPieces {
     public GamePiece cloneDial() {
         GamePiece piece = Util.newPiece(this.dial);
 
-
-        if (this.pilotData != null) {
-            piece.setProperty("Pilot Name", this.pilotData.getShip());
-            piece.setProperty("Craft ID #", this.pilotData.getName());
-        }
+        setPilotShipName(piece);
 
         return piece;
     }
@@ -157,12 +158,26 @@ public class VassalXWSPilotPieces {
         if (this.pilotData != null) {
             int ps = this.pilotData.getSkill() + skillModifier;
             piece.setProperty("Pilot Skill", ps);
-
-            piece.setProperty("Pilot Name", this.pilotData.getShip());
-            piece.setProperty("Craft ID #", this.pilotData.getName());
         }
 
+        setPilotShipName(piece);
+
         return piece;
+    }
+
+    private void setPilotShipName(GamePiece piece) {
+        String pilotName = "";
+        if (pilotData != null) {
+            pilotName = this.pilotData.getName();
+            piece.setProperty("Pilot Name", this.pilotData.getShip());
+        }
+
+        if (shipNumber != null && shipNumber > 0) {
+            pilotName += " " + shipNumber;
+        }
+
+        piece.setProperty("Craft ID #", pilotName);
+
     }
 
     public static class Upgrade {

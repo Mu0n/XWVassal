@@ -5,7 +5,10 @@ import VASSAL.build.Widget;
 import VASSAL.build.widget.ListWidget;
 import VASSAL.build.widget.PieceSlot;
 import VASSAL.build.widget.TabWidget;
+import com.google.common.collect.HashMultiset;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Multiset;
+import com.google.common.collect.Multisets;
 
 import java.util.*;
 
@@ -14,7 +17,6 @@ import java.util.*;
  */
 public class VassalXWSPieceLoader {
 
-    private static String invalidCanonicalCharPattern = "[^a-zA-Z0-9]";
     Map<String, VassalXWSPilotPieces> pilotPiecesMap = null;
     Map<String, VassalXWSPilotPieces.Upgrade> upgradePiecesMap = null;
 
@@ -25,6 +27,13 @@ public class VassalXWSPieceLoader {
 
         VassalXWSListPieces pieces = new VassalXWSListPieces();
 
+        Multiset<String> pilotCounts = HashMultiset.create();
+        for (XWSList.XWSPilot pilot : list.getPilots()) {
+            pilotCounts.add(pilot.getName());
+        }
+
+        Multiset<String> genericPilotsAdded = HashMultiset.create();
+
         for (XWSList.XWSPilot pilot : list.getPilots()) {
             String pilotKey = getPilotMapKey(list.getFaction(), pilot.getShip(), pilot.getName());
             VassalXWSPilotPieces barePieces = this.pilotPiecesMap.get(pilotKey);
@@ -34,6 +43,11 @@ public class VassalXWSPieceLoader {
             }
 
             VassalXWSPilotPieces pilotPieces = new VassalXWSPilotPieces(barePieces);
+
+            if (pilotCounts.count(pilot.getName()) > 1) {
+                genericPilotsAdded.add(pilot.getName());
+                pilotPieces.setShipNumber(genericPilotsAdded.count(pilot.getName()));
+            }
 
             for(String upgradeType: pilot.getUpgrades().keySet()) {
                 for(String upgradeName : pilot.getUpgrades().get(upgradeType)) {
