@@ -81,18 +81,16 @@ public class VassalXWSPieceLoader {
     }
 
     private void loadUpgrades(ListWidget listWidget) {
-        String upgradeType = getCleanedName(listWidget.getConfigureName());
-        upgradeType = NameFixes.fixUpgradeTypeName(upgradeType);
+        String upgradeType = Canonicalizer.getCanonicalUpgradeTypeName(listWidget.getConfigureName());
         List<PieceSlot> upgrades = listWidget.getAllDescendantComponentsOf(PieceSlot.class);
 
         for (PieceSlot upgrade : upgrades) {
-            String upgradeName = getCleanedName(upgrade.getConfigureName());
-            upgradeName = NameFixes.fixUpgradeName(upgradeType, upgradeName);
+            String upgradeName = Canonicalizer.getCanonicalUpgradeName(upgradeType, upgrade.getConfigureName());
 
             String mapKey = getUpgradeMapKey(upgradeType, upgradeName);
             VassalXWSPilotPieces.Upgrade upgradePiece = new VassalXWSPilotPieces.Upgrade(upgradeName, upgrade);
 
-            MasterUpgradeData.UpgradeData upgradeData = MasterUpgradeData.getUpgradeDataByXWSId().get(upgradeName);
+            MasterUpgradeData.UpgradeData upgradeData = MasterUpgradeData.getUpgradeData(upgradeName);
             if (upgradeData != null) {
                 upgradePiece.setUpgradeData(upgradeData);
             }
@@ -106,8 +104,7 @@ public class VassalXWSPieceLoader {
             return;
         }
 
-        String shipName = getCleanedName(shipList.getConfigureName());
-        shipName = NameFixes.fixShipName(shipName);
+        String shipName = Canonicalizer.getCanonicalShipName(shipList.getConfigureName());
 
         if (shipName.equals("gr75transport") || shipName.startsWith("gozanticlasscruiser") || shipName.equals("croccruiser")) {
             // TODO: Make GR75, Gozanti, and croc ship slot name start with 'ship --'
@@ -151,13 +148,12 @@ public class VassalXWSPieceLoader {
             pilots.add(slot);
         }
 
-        MasterShipData.ShipData shipData = MasterShipData.getShipDataByXWSId().get(shipName);
+        MasterShipData.ShipData shipData = MasterShipData.getShipData(shipName);
 
         for (PieceSlot pilot : pilots) {
-            String pilotName = getCleanedName(pilot.getConfigureName());
-            pilotName = NameFixes.fixPilotName(pilotName);
+            String pilotName = Canonicalizer.getCanonicalPilotName(pilot.getConfigureName());
 
-            MasterPilotData.PilotData pilotData = MasterPilotData.getPilotDataByXWSId().get(pilotName);
+            MasterPilotData.PilotData pilotData = MasterPilotData.getPilotData(shipName, pilotName);
 
             String mapKey = getPilotMapKey(faction.name(), shipName, pilotName);
             VassalXWSPilotPieces pilotPieces = new VassalXWSPilotPieces();
@@ -181,14 +177,6 @@ public class VassalXWSPieceLoader {
         return String.format("%s/%s", upgradeType, upgradeName);
     }
 
-
-    private String getCleanedName(String name) {
-        if (name == null) {
-            return "";
-        }
-        return name.replaceAll(invalidCanonicalCharPattern, "").toLowerCase();
-    }
-
     public List<String> validateAgainstRemote() {
         loadPieces();
         XWSMasterPilots masterPilots = XWSMasterPilots.loadFromRemote();
@@ -198,7 +186,7 @@ public class VassalXWSPieceLoader {
         for (XWSMasterPilots.FactionPilots factionPilots : Lists.newArrayList(masterPilots.rebel, masterPilots.scum, masterPilots.imperial)) {
             for (String shipName : factionPilots.ships.keySet()) {
                 for (String pilotName : factionPilots.ships.get(shipName).pilots.keySet()) {
-                    String pieceKey = getPilotMapKey(getCleanedName(factionPilots.name), shipName, pilotName);
+                    String pieceKey = getPilotMapKey(Canonicalizer.getCleanedName(factionPilots.name), shipName, pilotName);
                     if (!this.pilotPiecesMap.containsKey(pieceKey)) {
                         missingKeys.add(pieceKey);
                         Util.logToChat("Missing pilot: " + pieceKey);

@@ -5,9 +5,11 @@ import com.google.common.collect.ImmutableMap;
 import java.util.Map;
 
 /**
- * Created by amatheny on 2/9/17.
+ * Created by amatheny on 2/11/17.
  */
-public class NameFixes {
+public class Canonicalizer {
+
+    private static String invalidCanonicalCharPattern = "[^a-zA-Z0-9]";
 
     static Map<String, String> pilotFixes = ImmutableMap.<String, String>builder()
             .put("raiderclasscorvettefore", "raiderclasscorvfore")
@@ -63,20 +65,32 @@ public class NameFixes {
             .put("turrets", "turret")
             .build();
 
-    public static String fixShipName(String shipName) {
+    public static String getCanonicalShipName(String shipName) {
+        shipName = getCleanedName(shipName);
         return shipFixes.containsKey(shipName) ? shipFixes.get(shipName) : shipName;
     }
 
-    public static String fixPilotName(String pilotName) {
+    public static String getCanonicalPilotName(String pilotName) {
+        pilotName = getCleanedName(pilotName);
         return pilotFixes.containsKey(pilotName) ? pilotFixes.get(pilotName) : pilotName;
     }
 
-    public static String fixUpgradeName(String upgradeType, String upgradeName) {
+    public static String getCanonicalUpgradeName(String upgradeType, String upgradeName) {
+        upgradeType = getCanonicalUpgradeTypeName(upgradeType);
+        upgradeName = getCleanedName(upgradeName);
         String key = upgradeType + "/" + upgradeName;
         return upgradeFixes.containsKey(key) ? upgradeFixes.get(key) : upgradeName;
     }
 
-    public static String fixUpgradeTypeName(String upgradeTypeName) {
+    public static String getCanonicalUpgradeTypeName(String upgradeTypeName) {
+        upgradeTypeName = getCleanedName(upgradeTypeName);
         return upgradeTypeFixes.containsKey(upgradeTypeName) ? upgradeTypeFixes.get(upgradeTypeName) : upgradeTypeName;
+    }
+
+    public static String getCleanedName(String name) {
+        if (name == null) {
+            return "";
+        }
+        return name.replaceAll(invalidCanonicalCharPattern, "").toLowerCase();
     }
 }

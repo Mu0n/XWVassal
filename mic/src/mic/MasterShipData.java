@@ -13,18 +13,20 @@ public class MasterShipData extends ArrayList<MasterShipData.ShipData> {
 
     private static Map<String, ShipData> loadedData = null;
 
-    public static Map<String, ShipData> getShipDataByXWSId() {
-        if (loadedData != null) {
-            return loadedData;
+    public static ShipData getShipData(String shipXwsId) {
+        if (loadedData == null) {
+            loadData();
         }
+        return loadedData.get(shipXwsId);
+    }
 
+    private static void loadData() {
         loadedData = Maps.newHashMap();
         MasterShipData data = Util.loadClasspathJson("ships.json", MasterShipData.class);
 
         for(ShipData ship : data) {
             loadedData.put(ship.getXws(), ship);
         }
-        return loadedData;
     }
 
     public static class ShipData {
