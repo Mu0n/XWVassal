@@ -45,6 +45,13 @@ public class MasterPilotData extends ArrayList<MasterPilotData.PilotData> {
         @JsonProperty("xws")
         private String xws;
 
+        @JsonProperty("unique")
+        private boolean unique;
+
+        public boolean isUnique() {
+            return unique;
+        }
+
         public int getSkill() {
             try {
                 return Integer.parseInt(skill);
