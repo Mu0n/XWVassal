@@ -28,8 +28,8 @@ public enum Tokens {
     ),
     evade(
             Lists.newArrayList("Evade"),
-            Lists.newArrayList("r3astromech", "janors"),
-            none
+            Lists.newArrayList("r3astromech", "janors", "millenniumfalcon"),
+            Lists.newArrayList("t70xwing/redace")
     ),
     crit,
     ion,
@@ -44,7 +44,7 @@ public enum Tokens {
     weaponsdisabled(
             Lists.newArrayList("SLAM"),
             Lists.newArrayList("burnoutslam"),
-            none
+            Lists.newArrayList("ewing/corranhorn")
     ),
     initiative,
     ordnance(
