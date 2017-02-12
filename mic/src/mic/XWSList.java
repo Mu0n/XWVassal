@@ -98,6 +98,9 @@ public class XWSList {
         }
 
         public String getShip() {
+            if (ship.equals("yt2400freighter")) {
+              return "yt2400";
+            }
             return ship;
         }
 
