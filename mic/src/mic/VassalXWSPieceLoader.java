@@ -84,11 +84,20 @@ public class VassalXWSPieceLoader {
         String upgradeType = getCleanedName(listWidget.getConfigureName());
         upgradeType = NameFixes.fixUpgradeTypeName(upgradeType);
         List<PieceSlot> upgrades = listWidget.getAllDescendantComponentsOf(PieceSlot.class);
+
         for (PieceSlot upgrade : upgrades) {
             String upgradeName = getCleanedName(upgrade.getConfigureName());
             upgradeName = NameFixes.fixUpgradeName(upgradeType, upgradeName);
+
             String mapKey = getUpgradeMapKey(upgradeType, upgradeName);
-            upgradePiecesMap.put(mapKey, new VassalXWSPilotPieces.Upgrade(upgradeName, upgrade));
+            VassalXWSPilotPieces.Upgrade upgradePiece = new VassalXWSPilotPieces.Upgrade(upgradeName, upgrade);
+
+            MasterUpgradeData.UpgradeData upgradeData = MasterUpgradeData.getUpgradeDataByXWSId().get(upgradeName);
+            if (upgradeData != null) {
+                upgradePiece.setUpgradeData(upgradeData);
+            }
+
+            upgradePiecesMap.put(mapKey, upgradePiece);
         }
     }
 
