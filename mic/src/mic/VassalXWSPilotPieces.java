@@ -169,15 +169,29 @@ public class VassalXWSPilotPieces {
         String pilotName = "";
         if (pilotData != null) {
             pilotName = this.pilotData.getName();
-            piece.setProperty("Pilot Name", this.pilotData.getShip());
+            //do we really need the ship name in the "small tag"?
+           // piece.setProperty("Pilot Name", Acronymizer(this.pilotData.getShip()));
         }
 
         if (shipNumber != null && shipNumber > 0) {
             pilotName += " " + shipNumber;
         }
 
-        piece.setProperty("Craft ID #", pilotName);
+        piece.setProperty("Craft ID #", Acronymizer(pilotName));
 
+    }
+
+    private String Acronymizer(String input){
+        if(input.length() <= 8)  return input;
+        else if(input.split("\\w+").length == 1) return input.substring(0, 8);
+        else {
+            String firstLetters = "";
+            for(String s: input.split(" ")){
+                if(s.charAt(0)=='\"') firstLetters += s.charAt(1);
+                else firstLetters += s.charAt(0);
+            }
+            return firstLetters;
+        }
     }
 
     public static class Upgrade {
