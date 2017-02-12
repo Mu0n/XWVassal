@@ -5,6 +5,8 @@ import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 /**
  * Created by amatheny on 2/8/17.
@@ -27,13 +29,13 @@ public class XWSList {
     private String description;
 
     @JsonProperty("obstacles")
-    private List<String> obstacles;
+    private List<String> obstacles = Lists.newArrayList();
 
     @JsonProperty("pilots")
-    private List<XWSPilot> pilots;
+    private List<XWSPilot> pilots = Lists.newArrayList();
 
     @JsonProperty("vendor")
-    private Map<String, Map<String, String>> vendor;
+    private Map<String, Map<String, String>> vendor = Maps.newHashMap();
 
 
     public String getName() {
@@ -79,10 +81,10 @@ public class XWSList {
         private String ship;
 
         @JsonProperty("upgrades")
-        private Map<String, List<String>> upgrades;
+        private Map<String, List<String>> upgrades = Maps.newHashMap();
 
         @JsonProperty("vendor")
-        private Map<String, Map<String, String>> vendor;
+        private Map<String, Map<String, String>> vendor = Maps.newHashMap();
 
         @JsonProperty("points")
         private Integer points;

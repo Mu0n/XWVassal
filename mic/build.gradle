@@ -27,6 +27,7 @@ task buildVmod(type: Zip) {
     archiveName 'full-xwing-module.vmod'
     duplicatesStrategy 'exclude'
     from compileJava
+    from processResources
     from zipTree('vassal_module/full-xwing-module.vmod')
     for (dependency in (configurations.compile).files) {
         // Need to extract jars so vassal can find classes
