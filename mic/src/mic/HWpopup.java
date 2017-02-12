@@ -4,6 +4,8 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.List;
 import java.util.Random;
 
@@ -187,8 +189,16 @@ public class HWpopup extends AbstractConfigurable implements CommandEncoder,
 
     private void loadFromXwsButtonPressed() {
 
-        String url = JOptionPane.showInputDialog("XWS Url");
+        String url = JOptionPane.showInputDialog("Please paste in the voidstate, YASB, or fabs list URL");
         if (url == null || url.length() == 0) {
+            return;
+        }
+
+        URL translatedURL = null;
+        try {
+            translatedURL = XWSUrlHelper.translate(url);
+        } catch (MalformedURLException e) {
+            logToChat("unable to translate xws url: \n" + e.toString());
             return;
         }
 
@@ -197,7 +207,7 @@ public class HWpopup extends AbstractConfigurable implements CommandEncoder,
         int fudgePilotUpgradeFrontier = -50;
         int totalPilotHeight = 0;
 
-        VassalXWSListPieces pieces = slotLoader.loadListFromXWS(XWSFetcher.fetchFromUrl(url));
+        VassalXWSListPieces pieces = slotLoader.loadListFromXWS(XWSFetcher.fetchFromUrl(translatedURL.toString()));
         for (VassalXWSPilotPieces ship : pieces.getShips()) {
             logToChat(String.format("pilot: %s, gpid=%s", ship.getPilotCard().getConfigureName(), ship.getPilotCard().getGpId()));
 
