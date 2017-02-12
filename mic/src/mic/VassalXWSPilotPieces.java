@@ -2,10 +2,6 @@ package mic;
 
 import VASSAL.build.widget.PieceSlot;
 import VASSAL.counters.GamePiece;
-import VASSAL.counters.PieceCloner;
-import com.google.common.base.Predicate;
-import com.google.common.collect.Iterables;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -118,77 +114,61 @@ public class VassalXWSPilotPieces {
     public GamePiece cloneShip() {
         GamePiece piece = Util.newPiece(this.ship);
 
+        int skillModifier = 0;
+        int attackModifier = 0;
+        int agilityModifier = 0;
+        int energyModifier = 0;
+        int shieldsModifier = 0;
+        int hullModifier = 0;
+
+        for (Upgrade upgrade : this.upgrades) {
+            for(MasterUpgradeData.UpgradeGrants modifier : upgrade.getUpgradeData().getGrants()) {
+                if (modifier.isStatsModifier()) {
+                    String name = modifier.getName();
+                    int value = modifier.getValue();
+
+                    if (name.equals("attack")) attackModifier += value;
+                    else if (name.equals("agility")) agilityModifier += value;
+                    else if (name.equals("hull")) hullModifier += value;
+                    else if (name.equals("shields")) shieldsModifier += value;
+                    else if (name.equals("skill")) skillModifier += value;
+                    else if (name.equals("energy")) energyModifier += value;
+                }
+            }
+        }
+
         if (this.shipData != null) {
             int agility = this.shipData.getAgility();
             int hull = this.shipData.getHull();
             int shields = this.shipData.getShields();
             int attack = this.shipData.getAttack();
 
-            if (containsUpgrade("stealthdevice")) {
-                agility++;
-            }
-
-            if (containsUpgrade("hullupgrade")) {
-                hull++;
-            }
-
-            if (containsUpgrade("heavyscykinterceptor")) {
-                hull++;
-            }
-
-            if (containsUpgrade("shieldupgrade")) {
-                shields++;
-            }
-
-            if (containsUpgrade("punishingone")) {
-                attack++;
-            }
-
-            if (containsUpgrade("allianceoverhaul")) {
-                attack++;
-            }
-
-            if (containsUpgrade("specialopstraining")) {
-                attack++;
-            }
-
-            piece.setProperty("Defense Rating", agility);
-            piece.setProperty("Hull Rating", hull);
-            piece.setProperty("Attack Rating", attack);
-            piece.setProperty("Shield Rating", shields);
+            piece.setProperty("Defense Rating", agility + agilityModifier);
+            piece.setProperty("Hull Rating", hull + hullModifier);
+            piece.setProperty("Attack Rating", attack + attackModifier);
+            piece.setProperty("Shield Rating", shields + shieldsModifier);
 
             if (this.shipData.getEnergy() > 0) {
-                piece.setProperty("Energy Rating", this.shipData.getEnergy());
+                int energy = this.shipData.getEnergy();
+                piece.setProperty("Energy Rating", energy + energyModifier);
             }
         }
 
         if (this.pilotData != null) {
-            int ps = this.pilotData.getSkill();
-            if (containsUpgrade("veteraninstincts")) {
-                ps += 2;
-            }
+            int ps = this.pilotData.getSkill() + skillModifier;
             piece.setProperty("Pilot Skill", ps);
 
             piece.setProperty("Pilot Name", this.pilotData.getShip());
             piece.setProperty("Craft ID #", this.pilotData.getName());
         }
 
-
         return piece;
     }
-
-    private boolean containsUpgrade(final String upgradeName) {
-        return Iterables.any(this.upgrades, new Predicate<Upgrade>() {
-            public boolean apply(Upgrade input) {
-                return upgradeName.equals(input.getXwsName());
-            }
-        });
-    }
-
 
     public static class Upgrade {
         private String xwsName;
         private PieceSlot pieceSlot;
+        private MasterUpgradeData.UpgradeData upgradeData;
 
         public Upgrade(String xwsName, PieceSlot pieceSlot) {
             this.xwsName = xwsName;
@@ -201,6 +181,14 @@ public class VassalXWSPilotPieces {
 
         public PieceSlot getPieceSlot() {
             return this.pieceSlot;
+        }
+
+        public MasterUpgradeData.UpgradeData getUpgradeData() {
+            return upgradeData;
+        }
+
+        public void setUpgradeData(MasterUpgradeData.UpgradeData upgradeData) {
+            this.upgradeData = upgradeData;
         }
 
         public GamePiece cloneGamePiece() {
