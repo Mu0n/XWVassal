@@ -69,7 +69,7 @@ public class TempSpawnInstructionsPopup extends AbstractConfigurable implements 
             if (slot.getGpId().equals(instructionsGpid))
             {
                 GamePiece gp = slot.getPiece();
-                Point pos = new Point(200, 200);
+                Point pos = new Point(500, 500);
                 Command place = Map.getMapById("Map0").placeOrMerge(gp, pos);
                 place.execute();
                 mod.sendAndLog(place);

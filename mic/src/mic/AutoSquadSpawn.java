@@ -193,7 +193,7 @@ public class AutoSquadSpawn extends AbstractConfigurable implements CommandEncod
         mod.addCommandEncoder(this);
         mod.getGameState().addGameComponent(this);
 
-        loadFromXwsUrlButton = new JButton("Load from XWS");
+        loadFromXwsUrlButton = new JButton("Squad AutoSpawn from web");
         loadFromXwsUrlButton.setAlignmentY(0.0F);
         loadFromXwsUrlButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
