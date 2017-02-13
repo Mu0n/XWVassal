@@ -2,14 +2,12 @@ package mic;
 
 import VASSAL.build.widget.PieceSlot;
 import VASSAL.counters.GamePiece;
-import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
 
 /**
  * Created by amatheny on 2/8/17.
@@ -209,7 +207,10 @@ public class VassalXWSPilotPieces {
     private String getDisplayPilotName() {
         String pilotName = "";
         if (pilotData != null) {
-            pilotName = acronymizer(this.pilotData.getName(), this.pilotData.isUnique());
+            pilotName = acronymizer(
+                this.pilotData.getName(),
+                this.pilotData.isUnique(),
+                this.shipData.hasSmallBase());
         }
 
         if (shipNumber != null && shipNumber > 0) {
@@ -226,21 +227,20 @@ public class VassalXWSPilotPieces {
         return pilotData;
     }
 
-    private String acronymizer(String cardName, boolean isUnique) {
+    private String acronymizer(String cardName, boolean isUnique, boolean shortName) {
+        int maxLength = shortName ? 8 : 14;
         String name = cardName.replace("\"", "");
-        String firstWord = name.split(" ")[0];
+        String[] words = name.split(" ");
 
-        if(name.length() <= 8) return name;
-        else if (isUnique && name.contains(" ") && firstWord.length() <= 8) return firstWord;
-        else if(name.split("\\w+").length == 1) return name.substring(0, 8);
-        else {
-            String firstLetters = "";
-            for(String s: name.split(" ")){
-                if(s.charAt(0)=='\"') firstLetters += s.charAt(1);
-                else firstLetters += s.charAt(0);
-            }
-            return firstLetters;
+        if (name.length() <= maxLength) return name;
+        if (words.length == 1) return name.substring(0, maxLength);
+        if (isUnique && words[0].length() <= maxLength) return words[0];
+
+        String firstLetters = "";
+        for (String s: words){
+            firstLetters += s.charAt(0);
         }
+        return firstLetters;
     }
 
     public static class Upgrade {

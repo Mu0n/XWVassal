@@ -54,6 +54,9 @@ public class MasterShipData extends ArrayList<MasterShipData.ShipData> {
         @JsonProperty("actions")
         private List<String> actions = Lists.newArrayList();
 
+        @JsonProperty("size")
+        private String size;
+
         public int getAttack() {
             return attack;
         }
@@ -80,6 +83,18 @@ public class MasterShipData extends ArrayList<MasterShipData.ShipData> {
 
         public List<String> getActions() {
             return this.actions;
+        }
+
+        public boolean hasSmallBase() {
+            return "small".equals(this.size);
+        }
+
+        public boolean hasLargeBase() {
+            return "large".equals(this.size);
+        }
+
+        public boolean hasHugeBase() {
+            return "huge".equals(this.size);
         }
     }
 }
