@@ -129,7 +129,13 @@ public class VassalXWSPilotPieces {
     }
 
     public GamePiece clonePilotCard() {
-        return Util.newPiece(this.pilotCard);
+        GamePiece piece = Util.newPiece(this.pilotCard);
+        if (shipNumber != null && shipNumber > 0) {
+            piece.setProperty("Pilot ID #", shipNumber);
+        } else {
+            piece.setProperty("Pilot ID #", "");
+        }
+        return piece;
     }
 
     public GamePiece cloneDial() {
