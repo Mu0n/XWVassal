@@ -1,3 +1,7 @@
+-=-=-=- SECOND FEBRUARY 2017 Update
+Squad AutoSpawn feature
+TIE Striker now has missing segnor's loop capability
+
 -=-=-=- FEBRUARY 2017 UPDATE
 Upsilon is now playable
 Wave 10 cards are now fully in
