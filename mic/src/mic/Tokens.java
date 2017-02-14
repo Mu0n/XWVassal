@@ -18,7 +18,7 @@ public enum Tokens {
     ),
     stress(
             none,
-            Lists.newArrayList("zuckuss", "r2a2"),
+            Lists.newArrayList("zuckuss", "r3a2"),
             Lists.newArrayList("awing/tychocelchu")
     ),
     focus(
