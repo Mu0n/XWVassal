@@ -12,6 +12,7 @@ public class XWSUrlHelper {
     static private Pattern yasbPat = Pattern.compile(".*?geordanr.*");
     static private Pattern voidstatePat = Pattern.compile(".*?xwing-builder\\.co\\.uk.*");
     static private Pattern fabsPat = Pattern.compile(".*?fabpsb.*");
+    static private Pattern metaWingPat = Pattern.compile(".*?meta-wing\\.com/squadrons/(\\d+)\\.json");
 
     public static boolean isYASB(String url) {
         Matcher m = yasbPat.matcher(url);
@@ -38,12 +39,16 @@ public class XWSUrlHelper {
         return new URL(url + "&xws=1");
     }
 
+    public static boolean isMetaWing(String url) {
+        Matcher m = metaWingPat.matcher(url);
+        return m.matches();
+    }
+
     public static boolean isVoidstate(String url) {
         Matcher m1 = voidstatePat.matcher(url);
         Matcher m2 = Pattern.compile("^\\d+$").matcher(url);
         return m1.matches() || m2.matches();
     }
-
 
     //example
     //http://xwing-builder.co.uk/build/649288
@@ -62,10 +67,12 @@ public class XWSUrlHelper {
         }
     }
 
-
+    private static URL translateMetaWing(String url) throws MalformedURLException {
+        return new URL(url);
+    }
 
     public static URL translate(String url) throws MalformedURLException {
-        if ( isYASB(url ) ) {
+        if ( isYASB(url)) {
             return translateYasb(url);
         }
         else if ( isVoidstate(url)) {
@@ -73,6 +80,9 @@ public class XWSUrlHelper {
         }
         else if ( isFabs(url)) {
             return translateFabs(url);
+        }
+        else if ( isMetaWing(url)) {
+            return translateMetaWing(url);
         }
         else {
             return null; //throw exception?
