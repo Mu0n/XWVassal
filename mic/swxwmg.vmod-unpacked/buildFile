@@ -2488,5 +2488,6 @@
         </VASSAL.build.widget.BoxWidget>
     </VASSAL.build.module.PieceWindow>
     <mic.AutoSquadSpawn max="0" min="0"/>
+    <mic.AutoBump max="0" min="0"/>
     <mic.TempSpawnInstructionsPopup max="0" min="0"/>
 </VASSAL.launch.BasicModule>
