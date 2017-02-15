@@ -7,9 +7,12 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Area;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 import javax.swing.*;
 
@@ -19,12 +22,11 @@ import VASSAL.build.AbstractBuildable;
 import VASSAL.build.Buildable;
 import VASSAL.build.GameModule;
 import VASSAL.build.module.Map;
-import VASSAL.counters.CalculatedProperty;
 import VASSAL.counters.Decorator;
-import VASSAL.counters.DynamicProperty;
 import VASSAL.counters.FreeRotator;
 import VASSAL.counters.GamePiece;
 import VASSAL.counters.NonRectangular;
+import VASSAL.counters.PieceFinder;
 
 /**
  * Created by amatheny on 2/14/17.
@@ -57,6 +59,46 @@ public class AutoBump extends AbstractBuildable {
 
         final Map map = getMap();
         map.getToolBar().add(mapDebugButton);
+        final AtomicReference<Decorator> selectedShip = new AtomicReference<Decorator>();
+        map.addLocalMouseListenerFirst(new MouseListener() {
+            public void mouseClicked(MouseEvent e) {
+                GamePiece selected = map.findPiece(e.getPoint(), new PieceFinder() {
+                    public GamePiece select(Map map, GamePiece gamePiece, Point point) {
+                        if (gamePiece.getState().contains("Ship")) {
+                            ShipCompareShape compareShape = getShipCompareShape((Decorator) gamePiece);
+                            if (compareShape.compareShape.contains(point)) {
+                                return gamePiece;
+                            }
+                        }
+                        return null;
+                    }
+                });
+                if (selected != null) {
+                    logToChat("Selected " + name(selected));
+                    selectedShip.set((Decorator) selected);
+
+                    for (String propName : ((Decorator) selected).getPropertyNames()) {
+                        logToChat(propName + " : " + selected.getProperty(propName));
+                    }
+                }
+            }
+
+            public void mousePressed(MouseEvent e) {
+
+            }
+
+            public void mouseReleased(MouseEvent e) {
+
+            }
+
+            public void mouseEntered(MouseEvent e) {
+
+            }
+
+            public void mouseExited(MouseEvent e) {
+
+            }
+        });
         map.getView().addKeyListener(new KeyListener() {
             public void keyTyped(KeyEvent e) {
 
@@ -67,72 +109,29 @@ public class AutoBump extends AbstractBuildable {
             }
 
             public void keyReleased(KeyEvent e) {
-                if (e.getKeyChar() == 'c' || e.getKeyChar() == 'C') {
-                    logToChat("C was pressed");
-                    for (GamePiece ship : getShipsOnMap(map)) {
-                        for (String propName : ((Decorator) ship).getPropertyNames()) {
-                            logToChat("ship:" + propName + ":" + ((Decorator) ship).getProperty(propName));
-                        }
+                Decorator movedShip = selectedShip.get();
+                if ((e.getKeyChar() != 'c' && e.getKeyChar() != 'C') || movedShip == null) {
+                    return;
+                }
 
-                        for (DynamicProperty prop : getDecorators(ship, DynamicProperty.class)) {
-                            logToChat("dyn:" + prop.getKey() + ":" + prop.getValue());
-                        }
+                String lastMove = (String) movedShip.getProperty("LastMove");
+                if (lastMove == null || lastMove.length() == 0) {
+                    return;
+                }
 
-                        for (CalculatedProperty prop : getDecorators(ship, CalculatedProperty.class)) {
-                            for (String propName : prop.getPropertyNames()) {
-                                logToChat("calc:" + propName + ":" + prop.getProperty(propName));
-                            }
-                        }
+                ShipCompareShape movedCompareShape = getShipCompareShape(movedShip);
+
+                for (GamePiece ship : getShipsOnMap(map)) {
+                    if (ship.equals(movedShip)) {
+                        continue;
+                    }
+                    ShipCompareShape testCompareShape = getShipCompareShape((Decorator) ship);
+                    if (checkBump(movedCompareShape.compareShape, testCompareShape.compareShape, true, map)) {
+                        logToChat(String.format("Bump between %s and %s", name(movedShip), name(ship)));
                     }
                 }
             }
         });
-
-//        final PieceCollection collection = map.getPieceCollection();
-//        map.setPieceCollection(new PieceCollection() {
-//            public void moveToFront(GamePiece gamePiece) {
-//                collection.moveToFront(gamePiece);
-//            }
-//
-//            public void moveToBack(GamePiece gamePiece) {
-//                collection.moveToBack(gamePiece);
-//            }
-//
-//            public GamePiece[] getPieces() {
-//                return collection.getPieces();
-//            }
-//
-//            public GamePiece[] getAllPieces() {
-//                return collection.getAllPieces();
-//            }
-//
-//            public boolean canMerge(GamePiece gamePiece, GamePiece gamePiece1) {
-//                return collection.canMerge(gamePiece, gamePiece1);
-//            }
-//
-//            public int indexOf(GamePiece gamePiece) {
-//                return collection.indexOf(gamePiece);
-//            }
-//
-//            public void remove(GamePiece gamePiece) {
-//                collection.remove(gamePiece);
-//                if (gamePiece.getState().contains("Ship")) {
-//                    logToChat("Removed ship");
-//                }
-//            }
-//
-//            public void add(GamePiece gamePiece) {
-//                collection.add(gamePiece);
-//                if (gamePiece.getState().contains("Ship")) {
-//                    logToChat("Added ship");
-//                }
-//            }
-//
-//            public void clear() {
-//                logToChat("Clearing all pieces");
-//                collection.clear();
-//            }
-//        });
     }
 
     public static <T extends Decorator> List<T> getDecorators(GamePiece piece, Class<T> decoratorClass) {
@@ -156,13 +155,13 @@ public class AutoBump extends AbstractBuildable {
         return null;
     }
 
-    private List<GamePiece> getShipsOnMap(Map map) {
-        List<GamePiece> ships = Lists.newArrayList();
+    private List<Decorator> getShipsOnMap(Map map) {
+        List<Decorator> ships = Lists.newArrayList();
 
         GamePiece[] pieces = map.getAllPieces();
         for (GamePiece piece : pieces) {
             if (piece.getState().contains("Ship")) {
-                ships.add(piece);
+                ships.add((Decorator) piece);
             }
         }
         return ships;
@@ -194,6 +193,23 @@ public class AutoBump extends AbstractBuildable {
         if (!foundBump) {
             logToChat("No bumps!");
         }
+    }
+
+    private boolean checkBump(Shape shape1, Shape shape2, boolean drawOverlap, Map map) {
+        Area area1 = new Area(shape1);
+        area1.intersect(new Area(shape2));
+        if (!area1.isEmpty()) {
+            if (drawOverlap && map != null) {
+                Shape scaled = AffineTransform.getScaleInstance(map.getZoom(), map.getZoom())
+                        .createTransformedShape(area1);
+
+                Graphics2D graphics = (Graphics2D) map.getView().getGraphics();
+                graphics.setColor(Color.red);
+                graphics.fill(scaled);
+            }
+            return true;
+        }
+        return false;
     }
 
     private void drawComparison(Map map, Shape compareShape) {
@@ -240,7 +256,7 @@ public class AutoBump extends AbstractBuildable {
         return new ShipCompareShape(ship, transformed);
     }
 
-    private String name(Decorator ship) {
+    private String name(GamePiece ship) {
         return (String) ship.getProperty("Craft ID #");
     }
 
