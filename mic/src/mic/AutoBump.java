@@ -5,6 +5,8 @@ import static mic.Util.logToChat;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Area;
 import java.util.List;
@@ -17,7 +19,9 @@ import VASSAL.build.AbstractBuildable;
 import VASSAL.build.Buildable;
 import VASSAL.build.GameModule;
 import VASSAL.build.module.Map;
+import VASSAL.counters.CalculatedProperty;
 import VASSAL.counters.Decorator;
+import VASSAL.counters.DynamicProperty;
 import VASSAL.counters.FreeRotator;
 import VASSAL.counters.GamePiece;
 import VASSAL.counters.NonRectangular;
@@ -51,7 +55,96 @@ public class AutoBump extends AbstractBuildable {
             }
         });
 
-        getMap().getToolBar().add(mapDebugButton);
+        final Map map = getMap();
+        map.getToolBar().add(mapDebugButton);
+        map.getView().addKeyListener(new KeyListener() {
+            public void keyTyped(KeyEvent e) {
+
+            }
+
+            public void keyPressed(KeyEvent e) {
+
+            }
+
+            public void keyReleased(KeyEvent e) {
+                if (e.getKeyChar() == 'c' || e.getKeyChar() == 'C') {
+                    logToChat("C was pressed");
+                    for (GamePiece ship : getShipsOnMap(map)) {
+                        for (String propName : ((Decorator) ship).getPropertyNames()) {
+                            logToChat("ship:" + propName + ":" + ((Decorator) ship).getProperty(propName));
+                        }
+
+                        for (DynamicProperty prop : getDecorators(ship, DynamicProperty.class)) {
+                            logToChat("dyn:" + prop.getKey() + ":" + prop.getValue());
+                        }
+
+                        for (CalculatedProperty prop : getDecorators(ship, CalculatedProperty.class)) {
+                            for (String propName : prop.getPropertyNames()) {
+                                logToChat("calc:" + propName + ":" + prop.getProperty(propName));
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+//        final PieceCollection collection = map.getPieceCollection();
+//        map.setPieceCollection(new PieceCollection() {
+//            public void moveToFront(GamePiece gamePiece) {
+//                collection.moveToFront(gamePiece);
+//            }
+//
+//            public void moveToBack(GamePiece gamePiece) {
+//                collection.moveToBack(gamePiece);
+//            }
+//
+//            public GamePiece[] getPieces() {
+//                return collection.getPieces();
+//            }
+//
+//            public GamePiece[] getAllPieces() {
+//                return collection.getAllPieces();
+//            }
+//
+//            public boolean canMerge(GamePiece gamePiece, GamePiece gamePiece1) {
+//                return collection.canMerge(gamePiece, gamePiece1);
+//            }
+//
+//            public int indexOf(GamePiece gamePiece) {
+//                return collection.indexOf(gamePiece);
+//            }
+//
+//            public void remove(GamePiece gamePiece) {
+//                collection.remove(gamePiece);
+//                if (gamePiece.getState().contains("Ship")) {
+//                    logToChat("Removed ship");
+//                }
+//            }
+//
+//            public void add(GamePiece gamePiece) {
+//                collection.add(gamePiece);
+//                if (gamePiece.getState().contains("Ship")) {
+//                    logToChat("Added ship");
+//                }
+//            }
+//
+//            public void clear() {
+//                logToChat("Clearing all pieces");
+//                collection.clear();
+//            }
+//        });
+    }
+
+    public static <T extends Decorator> List<T> getDecorators(GamePiece piece, Class<T> decoratorClass) {
+        List<T> matches = Lists.newArrayList();
+        piece = Decorator.getOutermost(piece);
+        while (piece instanceof Decorator) {
+            if (decoratorClass.isInstance(piece)) {
+                matches.add((T) piece);
+            }
+            piece = ((Decorator) piece).getInner();
+        }
+        return matches;
     }
 
     private Map getMap() {
