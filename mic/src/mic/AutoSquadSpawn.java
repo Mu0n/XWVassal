@@ -67,7 +67,7 @@ public class AutoSquadSpawn extends AbstractConfigurable implements CommandEncod
             url = JOptionPane.showInputDialog("Please paste a voidstate url or ID, YASB url, or FABS url");
         }
         catch ( Exception e ) {
-            logToChat("unable to process url, please try again");
+            logToChat("Unable to process url, please try again");
         }
         if (url == null || url.length() == 0) {
             return;
@@ -81,18 +81,19 @@ public class AutoSquadSpawn extends AbstractConfigurable implements CommandEncod
                 return;
             }
         } catch (Exception e) {
-            logToChat("unable to translate xws url: \n" + e.toString());
+            logToChat("Unable to translate xws url: \n" + e.toString());
             return;
         }
 
-        VassalXWSListPieces pieces = slotLoader.loadListFromXWS(XWSFetcher.fetchFromUrl(translatedURL.toString()));
+        XWSList xwsList = XWSFetcher.fetchFromUrl(translatedURL.toString());
+        VassalXWSListPieces pieces = slotLoader.loadListFromXWS(xwsList);
 
         Point startPosition = new Point(500,50);
         int fudgePilotUpgradeFrontier = -50;
         int totalPilotHeight = 0;
 
         for (VassalXWSPilotPieces ship : pieces.getShips()) {
-            logToChat(String.format("pilot: %s, gpid=%s", ship.getPilotCard().getConfigureName(), ship.getPilotCard().getGpId()));
+            logToChat(String.format("Spawning pilot: %s", ship.getPilotCard().getConfigureName()));
 
             GamePiece pilotPiece = ship.clonePilotCard();
             int pilotWidth = (int)pilotPiece.boundingBox().getWidth();
@@ -143,6 +144,11 @@ public class AutoSquadSpawn extends AbstractConfigurable implements CommandEncod
                 totalChitWidth += token.boundingBox().getWidth();
             }// loop to next token
         } //loop to next pilot
+
+        String listName = xwsList.getName();
+        logToChat(String.format("List%s loaded from %s",
+                                listName != null ? " " + listName : "",
+                                url));
 
     }
 
