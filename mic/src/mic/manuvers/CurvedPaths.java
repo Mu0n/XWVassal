@@ -7,7 +7,7 @@ import com.google.common.collect.Lists;
 /**
  * Created by amatheny on 2/17/17.
  */
-public enum CurvedPaths implements ManuverPath {
+public enum CurvedPaths implements ManeuverPath {
     LBk1(80 * 5.65, true, true),
     RBk1(80 * 5.65, false, true),
     LBk2(130 * 5.65, true, true),

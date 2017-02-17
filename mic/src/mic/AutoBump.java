@@ -26,7 +26,7 @@ import VASSAL.counters.FreeRotator;
 import VASSAL.counters.GamePiece;
 import VASSAL.counters.NonRectangular;
 import VASSAL.counters.Properties;
-import mic.manuvers.ManuverPaths;
+import mic.manuvers.ManeuverPaths;
 import mic.manuvers.PathPart;
 
 /**
@@ -65,7 +65,7 @@ public class AutoBump extends AbstractBuildable {
         button.setAlignmentY(0.0F);
         button.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
-                performTemplateMove(ManuverPaths.LBk1);
+                performTemplateMove(ManeuverPaths.LBk1);
             }
         });
         map.getToolBar().add(button);
@@ -74,7 +74,7 @@ public class AutoBump extends AbstractBuildable {
         button.setAlignmentY(0.0F);
         button.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
-                performTemplateMove(ManuverPaths.RBk1);
+                performTemplateMove(ManeuverPaths.RBk1);
             }
         });
         map.getToolBar().add(button);
@@ -84,7 +84,7 @@ public class AutoBump extends AbstractBuildable {
         button.setAlignmentY(0.0F);
         button.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
-                performTemplateMove(ManuverPaths.LT1);
+                performTemplateMove(ManeuverPaths.LT1);
             }
         });
         map.getToolBar().add(button);
@@ -93,7 +93,7 @@ public class AutoBump extends AbstractBuildable {
         button.setAlignmentY(0.0F);
         button.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
-                performTemplateMove(ManuverPaths.RT1);
+                performTemplateMove(ManeuverPaths.RT1);
             }
         });
         map.getToolBar().add(button);
@@ -179,7 +179,7 @@ public class AutoBump extends AbstractBuildable {
 
     }
 
-    private void performTemplateMove(final ManuverPaths path) {
+    private void performTemplateMove(final ManeuverPaths path) {
         final Map map = getMap();
 
         final Decorator ship = getSelectedShip(map);

@@ -5,6 +5,6 @@ import java.util.List;
 /**
  * Created by amatheny on 2/17/17.
  */
-public interface ManuverPath {
+public interface ManeuverPath {
     List<PathPart> getPathParts(int numSegments);
 }

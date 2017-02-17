@@ -9,7 +9,7 @@ import com.google.common.collect.Lists;
 /**
  * Created by amatheny on 2/17/17.
  */
-public enum ManuverPaths {
+public enum ManeuverPaths {
     LBk1(CurvedPaths.LBk1),
     RBk1(CurvedPaths.RBk1),
     LT1(CurvedPaths.LT1),
@@ -17,9 +17,9 @@ public enum ManuverPaths {
 
     private static int NUM_PATH_SEGMENTS = 100;
 
-    private final ManuverPath path;
+    private final ManeuverPath path;
 
-    ManuverPaths(ManuverPath path) {
+    ManeuverPaths(ManeuverPath path) {
         this.path = path;
     }
 
@@ -49,7 +49,7 @@ public enum ManuverPaths {
     }
 
     public static void main(String[] args) {
-        List<PathPart> parts = ManuverPaths.LBk1.getTransformedPathParts(0, 0, 0);
+        List<PathPart> parts = ManeuverPaths.LBk1.getTransformedPathParts(0, 0, 0);
 //        List<PathPart> parts = CurvedPaths.LBk1.getPathParts(100);
         for (PathPart part : parts) {
             System.out.println(String.format("%s\t %s", part.getX(), part.getY(), part.getAngle()));
