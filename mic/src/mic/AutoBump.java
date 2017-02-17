@@ -26,6 +26,7 @@ import VASSAL.counters.Decorator;
 import VASSAL.counters.FreeRotator;
 import VASSAL.counters.GamePiece;
 import VASSAL.counters.NonRectangular;
+import VASSAL.counters.Properties;
 import VASSAL.counters.PieceFinder;
 
 /**
@@ -109,7 +110,7 @@ public class AutoBump extends AbstractBuildable {
             }
 
             public void keyReleased(KeyEvent e) {
-                Decorator movedShip = selectedShip.get();
+                final Decorator movedShip = getSelectedShip(map);
                 if ((e.getKeyChar() != 'c' && e.getKeyChar() != 'C') || movedShip == null) {
                     return;
                 }
@@ -165,6 +166,15 @@ public class AutoBump extends AbstractBuildable {
             }
         }
         return ships;
+    }
+
+    Decorator getSelectedShip(Map map) {
+        for (GamePiece ship : getShipsOnMap(map)) {
+            if (Boolean.TRUE.equals(ship.getProperty(Properties.SELECTED))) {
+                return (Decorator) ship;
+            }
+        }
+        return null;
     }
 
     public void mapDebug() {
