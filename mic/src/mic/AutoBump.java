@@ -7,12 +7,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Area;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicReference;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import javax.swing.*;
 
@@ -27,7 +26,8 @@ import VASSAL.counters.FreeRotator;
 import VASSAL.counters.GamePiece;
 import VASSAL.counters.NonRectangular;
 import VASSAL.counters.Properties;
-import VASSAL.counters.PieceFinder;
+import mic.manuvers.ManuverPaths;
+import mic.manuvers.PathPart;
 
 /**
  * Created by amatheny on 2/14/17.
@@ -50,6 +50,8 @@ public class AutoBump extends AbstractBuildable {
 
     public void addTo(Buildable parent) {
 
+        final Map map = getMap();
+
         JButton mapDebugButton = new JButton("Debug map");
         mapDebugButton.setAlignmentY(0.0F);
         mapDebugButton.addActionListener(new ActionListener() {
@@ -57,49 +59,45 @@ public class AutoBump extends AbstractBuildable {
                 mapDebug();
             }
         });
-
-        final Map map = getMap();
         map.getToolBar().add(mapDebugButton);
-        final AtomicReference<Decorator> selectedShip = new AtomicReference<Decorator>();
-        map.addLocalMouseListenerFirst(new MouseListener() {
-            public void mouseClicked(MouseEvent e) {
-                GamePiece selected = map.findPiece(e.getPoint(), new PieceFinder() {
-                    public GamePiece select(Map map, GamePiece gamePiece, Point point) {
-                        if (gamePiece.getState().contains("Ship")) {
-                            ShipCompareShape compareShape = getShipCompareShape((Decorator) gamePiece);
-                            if (compareShape.compareShape.contains(point)) {
-                                return gamePiece;
-                            }
-                        }
-                        return null;
-                    }
-                });
-                if (selected != null) {
-                    logToChat("Selected " + name(selected));
-                    selectedShip.set((Decorator) selected);
 
-                    for (String propName : ((Decorator) selected).getPropertyNames()) {
-                        logToChat(propName + " : " + selected.getProperty(propName));
-                    }
-                }
-            }
-
-            public void mousePressed(MouseEvent e) {
-
-            }
-
-            public void mouseReleased(MouseEvent e) {
-
-            }
-
-            public void mouseEntered(MouseEvent e) {
-
-            }
-
-            public void mouseExited(MouseEvent e) {
-
+        JButton button = new JButton("Left bank 1");
+        button.setAlignmentY(0.0F);
+        button.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                performTemplateMove(ManuverPaths.LBk1);
             }
         });
+        map.getToolBar().add(button);
+
+        button = new JButton("Right bank 1");
+        button.setAlignmentY(0.0F);
+        button.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                performTemplateMove(ManuverPaths.RBk1);
+            }
+        });
+        map.getToolBar().add(button);
+
+
+        button = new JButton("Left turn 1");
+        button.setAlignmentY(0.0F);
+        button.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                performTemplateMove(ManuverPaths.LT1);
+            }
+        });
+        map.getToolBar().add(button);
+
+        button = new JButton("Right turn 1");
+        button.setAlignmentY(0.0F);
+        button.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                performTemplateMove(ManuverPaths.RT1);
+            }
+        });
+        map.getToolBar().add(button);
+
         map.getView().addKeyListener(new KeyListener() {
             public void keyTyped(KeyEvent e) {
 
@@ -115,22 +113,22 @@ public class AutoBump extends AbstractBuildable {
                     return;
                 }
 
-                String lastMove = (String) movedShip.getProperty("LastMove");
+                final String lastMove = (String) movedShip.getProperty("LastMove");
                 if (lastMove == null || lastMove.length() == 0) {
                     return;
                 }
 
-                ShipCompareShape movedCompareShape = getShipCompareShape(movedShip);
+                final ShipCompareShape movedCompareShape = getShipCompareShape(movedShip);
 
-                for (GamePiece ship : getShipsOnMap(map)) {
-                    if (ship.equals(movedShip)) {
-                        continue;
-                    }
-                    ShipCompareShape testCompareShape = getShipCompareShape((Decorator) ship);
-                    if (checkBump(movedCompareShape.compareShape, testCompareShape.compareShape, true, map)) {
-                        logToChat(String.format("Bump between %s and %s", name(movedShip), name(ship)));
-                    }
+                if (checkAllBumps(movedCompareShape, map) == false) {
+                    return; // All safe
                 }
+                logToChat("bump");
+                logToChat(String.format("pos=%s,%s shipBounds=%s compareBounds=%s",
+                        movedCompareShape.ship.getPosition().getX(),
+                        movedCompareShape.ship.getPosition().getY(),
+                        movedCompareShape.ship.boundingBox(),
+                        movedCompareShape.compareShape.getBounds2D()));
             }
         });
     }
@@ -178,31 +176,75 @@ public class AutoBump extends AbstractBuildable {
     }
 
     public void mapDebug() {
+
+    }
+
+    private void performTemplateMove(final ManuverPaths path) {
         Map map = getMap();
-        List<ShipCompareShape> shipAreas = Lists.newArrayList();
-        for (GamePiece ship : getShipsOnMap(map)) {
-            shipAreas.add(getShipCompareShape((Decorator) ship));
+
+        final Decorator ship = getSelectedShip(map);
+        if (ship == null) {
+            return;
         }
 
-        boolean foundBump = false;
-        for (int i = 0; i < shipAreas.size(); i++) {
-            ShipCompareShape iShip = shipAreas.get(i);
-            for (int j = i + 1; j < shipAreas.size(); j++) {
-                ShipCompareShape jShip = shipAreas.get(j);
-                Area iArea = new Area(iShip.compareShape);
-                iArea.intersect(new Area(jShip.compareShape));
-                if (!iArea.isEmpty()) {
-                    foundBump = true;
-                    logToChat(String.format("bump! between %s and %s", name(iShip.ship), name(jShip.ship)));
-                    drawComparison(map, iShip.compareShape);
-                    drawComparison(map, jShip.compareShape);
+        double angle = ((FreeRotator) Decorator.getDecorator(ship, FreeRotator.class)).getAngle();
+        double cumulativeAngle = ((FreeRotator) Decorator.getDecorator(ship, FreeRotator.class)).getCumulativeAngle();
+
+        logToChat(String.format("angle=%f, cumulativeAngle=%s", angle, cumulativeAngle));
+
+        final ShipCompareShape compare = getShipCompareShape(ship);
+
+        ExecutorService pool = Executors.newCachedThreadPool();
+
+        pool.submit(new Runnable() {
+            public void run() {
+                // TODO catch this
+                List<PathPart> parts = path.getTransformedPathParts(
+                        compare.ship.getPosition().getX(),
+                        compare.ship.getPosition().getY(),
+                        compare.angleDegrees);
+                for (PathPart part : parts) {
+
+                    compare.compareShape = AffineTransform
+                            .getTranslateInstance(part.getX(), part.getY())
+                            .createTransformedShape(compare.compareShape);
+                    compare.compareShape = AffineTransform
+                            .getRotateInstance(degToRad(part.getAngle()), part.getX(), part.getY())
+                            .createTransformedShape(compare.compareShape);
+
+                    ship.setPosition(new Point((int) Math.floor(part.getX() + 0.5), (int) Math.floor(part.getX() + 0.5)));
+                    ((FreeRotator) Decorator.getDecorator(ship, FreeRotator.class)).setAngle(part.getAngle());
+                    try {
+                        Thread.sleep(10l);
+                    } catch (InterruptedException e1) {
+                        e1.printStackTrace();
+                    }
+
                 }
+
+//                logToChat(String.format("Trying %f, %f (%f)", coords[0], coords[1], coords[2] * (180 / Math.PI)));
+//                    if (checkAllBumps(movedCompareShape, map) == false) {
+//                        movedShip.setPosition(new Point((int) Math.floor(coords[0] + 0.5), (int) Math.floor(coords[1] + 0.5)));
+//                        ((FreeRotator) Decorator.getDecorator(movedShip, FreeRotator.class)).setAngle(coords[2] * (180 / Math.PI));
+//                        break;
+//                    }
+
+            }
+        });
+    }
+
+
+    private boolean checkAllBumps(ShipCompareShape movedCompareShape, Map map) {
+        for (GamePiece ship : getShipsOnMap(map)) {
+            if (ship.equals(movedCompareShape.ship)) {
+                continue;
+            }
+            ShipCompareShape testCompareShape = getShipCompareShape((Decorator) ship);
+            if (checkBump(movedCompareShape.compareShape, testCompareShape.compareShape, false, map)) {
+                return true;
             }
         }
-
-        if (!foundBump) {
-            logToChat("No bumps!");
-        }
+        return false;
     }
 
     private boolean checkBump(Shape shape1, Shape shape2, boolean drawOverlap, Map map) {
@@ -233,13 +275,13 @@ public class AutoBump extends AbstractBuildable {
 
     private ShipCompareShape getShipCompareShape(Decorator ship) {
         GamePiece inner = null;
-        double radians = 0;
+        double angleDeg = 0;
         Shape rawShape = null;
         Decorator shipIter = ship;
         while (inner == null && shipIter.getInner() != null) {
             GamePiece piece = shipIter.getInner();
             if (piece instanceof FreeRotator) {
-                radians = ((FreeRotator) piece).getAngleInRadians();
+                angleDeg = ((FreeRotator) piece).getAngle();
             }
             if (piece instanceof NonRectangular) {
                 rawShape = piece.getShape();
@@ -251,6 +293,7 @@ public class AutoBump extends AbstractBuildable {
             }
         }
 
+        logToChat(String.format("%s: ", rawShape.getBounds2D()));
         Shape transformed = AffineTransform.getScaleInstance(1.01d, 1.01d).createTransformedShape(rawShape);
 
         transformed = AffineTransform
@@ -260,10 +303,14 @@ public class AutoBump extends AbstractBuildable {
         double centerX = ship.getPosition().getX();
         double centerY = ship.getPosition().getY() + 0.5; // adjust for something?
         transformed = AffineTransform
-                .getRotateInstance(radians, centerX, centerY)
+                .getRotateInstance(degToRad(angleDeg), centerX, centerY)
                 .createTransformedShape(transformed);
 
-        return new ShipCompareShape(ship, transformed);
+        return new ShipCompareShape(ship, transformed, angleDeg);
+    }
+
+    private double degToRad(double deg) {
+        return deg * (Math.PI / 180);
     }
 
     private String name(GamePiece ship) {
@@ -271,11 +318,13 @@ public class AutoBump extends AbstractBuildable {
     }
 
     private static class ShipCompareShape {
-        public ShipCompareShape(Decorator ship, Shape compareShape) {
+        public ShipCompareShape(Decorator ship, Shape compareShape, double angleDegrees) {
             this.ship = ship;
             this.compareShape = compareShape;
+            this.angleDegrees = angleDegrees;
         }
 
+        double angleDegrees;
         Decorator ship;
         Shape compareShape;
     }
