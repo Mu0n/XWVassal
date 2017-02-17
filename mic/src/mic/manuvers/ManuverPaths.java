@@ -27,14 +27,11 @@ public enum ManuverPaths {
         List<PathPart> rawParts = this.path.getPathParts(NUM_PATH_SEGMENTS);
         List<PathPart> transformed = Lists.newArrayList();
 
-        Path2D.Double path = new Path2D.Double();
-        path.moveTo(0, 0);
-
         for (PathPart rawPart : rawParts) {
             Path2D.Double testPath = new Path2D.Double();
             testPath.moveTo(rawPart.getX(), rawPart.getY());
             testPath = (Path2D.Double) AffineTransform
-                    .getRotateInstance(-angleDegrees * 180 / Math.PI, 0, 0)
+                    .getRotateInstance(-angleDegrees * (Math.PI / 180), 0, 0)
                     .createTransformedShape(testPath);
 
             double angle = angleDegrees + rawPart.getAngle();
@@ -46,37 +43,13 @@ public enum ManuverPaths {
                     y + testPath.getCurrentPoint().getY(),
                     angle
             ));
-
-            path.lineTo(rawPart.getX(), rawPart.getY());
         }
 
-//        path = (Path2D.Double) AffineTransform.getRotateInstance(angleDegrees * 180 / Math.PI, 0, 0).createTransformedShape(path);
-//
-//        PathIterator iterator = path.getPathIterator(null);
-//        iterator.next();
-//        int i = 0;
-//        double[] coords = new double[6];
-//        while (!iterator.isDone()) {
-//            PathPart rawPart = rawParts.get(i);
-//            double angle = angleDegrees + rawPart.getAngle();
-//            if (angle > 0) {
-//                angle = angle - 360;
-//            }
-//
-//            iterator.currentSegment(coords);
-//
-//            transformed.add(new PathPart(
-//                    x + coords[0],
-//                    y + coords[1],
-//                    angle
-//            ));
-//            iterator.next();
-//        }
         return transformed;
     }
 
     public static void main(String[] args) {
-        List<PathPart> parts = ManuverPaths.RT1.getTransformedPathParts(0, 0, 0);
+        List<PathPart> parts = ManuverPaths.LBk1.getTransformedPathParts(0, 0, 0);
 //        List<PathPart> parts = CurvedPaths.LBk1.getPathParts(100);
         for (PathPart part : parts) {
             System.out.println(String.format("%s\t %s", part.getX(), part.getY(), part.getAngle()));

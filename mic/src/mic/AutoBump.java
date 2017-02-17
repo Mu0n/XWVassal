@@ -9,12 +9,12 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Area;
+import java.awt.geom.Path2D;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import javax.swing.*;
 
+import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 
 import VASSAL.build.AbstractBuildable;
@@ -180,7 +180,7 @@ public class AutoBump extends AbstractBuildable {
     }
 
     private void performTemplateMove(final ManuverPaths path) {
-        Map map = getMap();
+        final Map map = getMap();
 
         final Decorator ship = getSelectedShip(map);
         if (ship == null) {
@@ -188,49 +188,78 @@ public class AutoBump extends AbstractBuildable {
         }
 
         double angle = ((FreeRotator) Decorator.getDecorator(ship, FreeRotator.class)).getAngle();
-        double cumulativeAngle = ((FreeRotator) Decorator.getDecorator(ship, FreeRotator.class)).getCumulativeAngle();
-
-        logToChat(String.format("angle=%f, cumulativeAngle=%s", angle, cumulativeAngle));
-
         final ShipCompareShape compare = getShipCompareShape(ship);
 
-        ExecutorService pool = Executors.newCachedThreadPool();
+        logToChat(String.format("pos=%f,%f, angle=%f, local_bearing=%s, _Facing=%s, _Degrees=%s",
+                ship.getPosition().getX(),
+                ship.getPosition().getY(),
+                angle,
+                ship.getProperty("local_bearing"),
+                ship.getProperty("_Facing"),
+                ship.getProperty("_Degrees")));
 
-        pool.submit(new Runnable() {
-            public void run() {
-                // TODO catch this
-                List<PathPart> parts = path.getTransformedPathParts(
-                        compare.ship.getPosition().getX(),
-                        compare.ship.getPosition().getY(),
-                        compare.angleDegrees);
-                for (PathPart part : parts) {
 
-                    compare.compareShape = AffineTransform
-                            .getTranslateInstance(part.getX(), part.getY())
-                            .createTransformedShape(compare.compareShape);
-                    compare.compareShape = AffineTransform
-                            .getRotateInstance(degToRad(part.getAngle()), part.getX(), part.getY())
-                            .createTransformedShape(compare.compareShape);
+        List<PathPart> parts = path.getTransformedPathParts(
+                ship.getPosition().getX(),
+                ship.getPosition().getY(),
+                angle);
+        Path2D.Double templatePath = new Path2D.Double();
+        templatePath.moveTo(ship.getPosition().getX(), ship.getPosition().getY());
+        for (PathPart part : parts) {
+            templatePath.lineTo(part.getX(), part.getY());
+        }
 
-                    ship.setPosition(new Point((int) Math.floor(part.getX() + 0.5), (int) Math.floor(part.getX() + 0.5)));
-                    ((FreeRotator) Decorator.getDecorator(ship, FreeRotator.class)).setAngle(part.getAngle());
-                    try {
-                        Thread.sleep(10l);
-                    } catch (InterruptedException e1) {
-                        e1.printStackTrace();
-                    }
+        final Shape renderPath = AffineTransform.getScaleInstance(map.getZoom(), map.getZoom())
+                .createTransformedShape(templatePath);
 
-                }
+        final Graphics2D graphics = (Graphics2D) map.getView().getGraphics();
+        graphics.setColor(Color.orange);
+        graphics.setStroke(new BasicStroke(5.0f));
+        graphics.draw(renderPath);
 
-//                logToChat(String.format("Trying %f, %f (%f)", coords[0], coords[1], coords[2] * (180 / Math.PI)));
-//                    if (checkAllBumps(movedCompareShape, map) == false) {
-//                        movedShip.setPosition(new Point((int) Math.floor(coords[0] + 0.5), (int) Math.floor(coords[1] + 0.5)));
-//                        ((FreeRotator) Decorator.getDecorator(movedShip, FreeRotator.class)).setAngle(coords[2] * (180 / Math.PI));
-//                        break;
+        //For some reason the ship movement is way off from the rendered path
+//        ExecutorService pool = Executors.newCachedThreadPool();
+//        pool.submit(new Runnable() {
+//            public void run() {
+//                List<PathPart> parts = path.getTransformedPathParts(
+//                        compare.ship.getPosition().getX(),
+//                        compare.ship.getPosition().getY(),
+//                        compare.angleDegrees);
+//                for (PathPart part : parts) {
+//
+//                    compare.compareShape = AffineTransform
+//                            .getTranslateInstance(part.getX(), part.getY())
+//                            .createTransformedShape(compare.compareShape);
+//                    compare.compareShape = AffineTransform
+//                            .getRotateInstance(degToRad(part.getAngle()), part.getX(), part.getY())
+//                            .createTransformedShape(compare.compareShape);
+//
+//                    map.removePiece(ship);
+//                    ((FreeRotator) Decorator.getDecorator(ship, FreeRotator.class)).setAngle(part.getAngle());
+//                    ship.setPosition(new Point((int) Math.floor(part.getX() + 0.5), (int) Math.floor(part.getX() + 0.5)));
+//                    map.addPiece(ship);
+//                    //ship.setProperty("_Facing", -part.getAngle() + 1);
+//
+//                    graphics.setColor(Color.orange);
+//                    graphics.setStroke(new BasicStroke(5.0f));
+//                    graphics.draw(renderPath);
+//                    try {
+//                        Thread.sleep(10l);
+//                    } catch (InterruptedException e1) {
+//                        e1.printStackTrace();
 //                    }
-
-            }
-        });
+//
+//                }
+//
+////                logToChat(String.format("Trying %f, %f (%f)", coords[0], coords[1], coords[2] * (180 / Math.PI)));
+////                if (checkAllBumps(movedCompareShape, map) == false) {
+////                    movedShip.setPosition(new Point((int) Math.floor(coords[0] + 0.5), (int) Math.floor(coords[1] + 0.5)));
+////                    ((FreeRotator) Decorator.getDecorator(movedShip, FreeRotator.class)).setAngle(coords[2] * (180 / Math.PI));
+////                    break;
+////                }
+//
+//            }
+//        });
     }
 
 
@@ -293,7 +322,6 @@ public class AutoBump extends AbstractBuildable {
             }
         }
 
-        logToChat(String.format("%s: ", rawShape.getBounds2D()));
         Shape transformed = AffineTransform.getScaleInstance(1.01d, 1.01d).createTransformedShape(rawShape);
 
         transformed = AffineTransform
@@ -311,6 +339,15 @@ public class AutoBump extends AbstractBuildable {
 
     private double degToRad(double deg) {
         return deg * (Math.PI / 180);
+    }
+
+    private void printPropertyNames(GamePiece piece) {
+        List<String> propNames = Lists.newArrayList();
+        while (piece instanceof Decorator) {
+            propNames.addAll(((Decorator) piece).getPropertyNames());
+            piece = ((Decorator) piece).getInner();
+        }
+        logToChat(Joiner.on(',').join(propNames));
     }
 
     private String name(GamePiece ship) {

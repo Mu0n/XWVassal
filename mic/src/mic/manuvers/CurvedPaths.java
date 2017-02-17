@@ -49,8 +49,8 @@ public enum CurvedPaths implements ManuverPath {
         for (int i = 1; i <= numSegments; i++) {
             double arg = (getPartMultipler() * i) / (double) numSegments;
 
-            double x = Math.sin(arg) * radius;
-            double y = (-1 * Math.cos(arg) + 1) * radius;
+            double y = -Math.sin(arg) * radius;
+            double x = (-Math.cos(arg) + 1) * radius;
             double angle = -(i / (double) numSegments) * getFinalAngleOffset();
 
             if (this.left) {
