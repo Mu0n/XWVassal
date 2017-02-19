@@ -198,13 +198,18 @@ public class AutoBump extends AbstractBuildable {
                 ship.getProperty("_Facing"),
                 ship.getProperty("_Degrees")));
 
+        //DETECTION NEEDED: do we have a small or large ship here
+        double startX = ship.getPosition().getX();
+        double startY = ship.getPosition().getY();
 
         List<PathPart> parts = path.getTransformedPathParts(
-                ship.getPosition().getX(),
-                ship.getPosition().getY(),
+                startX,
+                startY,
                 angle);
         Path2D.Double templatePath = new Path2D.Double();
-        templatePath.moveTo(ship.getPosition().getX(), ship.getPosition().getY());
+
+        //angle goes from -0 to -1 to -359 degrees clockwise
+        templatePath.moveTo(startX,startY);
         for (PathPart part : parts) {
             templatePath.lineTo(part.getX(), part.getY());
         }

@@ -8,19 +8,19 @@ import com.google.common.collect.Lists;
  * Created by amatheny on 2/17/17.
  */
 public enum CurvedPaths implements ManeuverPath {
-    LBk1(80 * 5.65, true, true),
-    RBk1(80 * 5.65, false, true),
-    LBk2(130 * 5.65, true, true),
-    RBk2(130 * 5.65, false, true),
-    LBk3(180 * 5.65, true, true),
-    RBk3(180 * 5.65, false, true),
+    LBk1(80 * 2.825, true, true),
+    RBk1(80 * 2.825, false, true),
+    LBk2(130 * 2.825, true, true),
+    RBk2(130 * 2.825, false, true),
+    LBk3(180 * 2.825, true, true),
+    RBk3(180 * 2.825, false, true),
 
-    LT1(35 * 5.65, true, false),
-    RT1(35 * 5.65, false, false),
-    LT2(62.5 * 5.65, true, false),
-    RT2(62.5 * 5.65, false, false),
-    LT3(90 * 5.65, true, false),
-    RT3(90 * 5.65, false, false);
+    LT1(35 * 2.825, true, false),
+    RT1(35 * 2.825, false, false),
+    LT2(62.5 * 2.825, true, false),
+    RT2(62.5 * 2.825, false, false),
+    LT3(90 * 2.825, true, false),
+    RT3(90 * 2.825, false, false);
 
     private final boolean bank;
     private boolean left;
@@ -45,13 +45,39 @@ public enum CurvedPaths implements ManeuverPath {
 
     public List<PathPart> getPathParts(int numSegments) {
 
+
         List<PathPart> parts = Lists.newArrayList();
+        //Extended straight back segment
+
+        for (int i = 1; i <=numSegments; i++) {
+            double angle = 0.0;
+            double x = 0.0;
+            double y = -0.5 * 113.0 + 113.0 * ( i / (double) numSegments);
+
+            parts.add(new PathPart(x, y, angle));
+        }
+
+        //Curved part
         for (int i = 1; i <= numSegments; i++) {
             double arg = (getPartMultipler() * i) / (double) numSegments;
 
-            double y = -Math.sin(arg) * radius;
+            double y = -113.0 * 0.5 - Math.sin(arg) * radius;
             double x = (-Math.cos(arg) + 1) * radius;
             double angle = -(i / (double) numSegments) * getFinalAngleOffset();
+
+            if (this.left) {
+                angle = -angle;
+                x = -x;
+            }
+
+            parts.add(new PathPart(x, y, angle));
+        }
+        //Extended straight front segment
+        for (int i = 1; i <=numSegments; i++) {
+
+            double angle = -getFinalAngleOffset();
+            double x = (-Math.cos(getPartMultipler()) + 1) * radius + Math.sin(getPartMultipler()) * 113.0 * ( i / numSegments);
+            double y = -113.0 * 0.5 - Math.sin(getPartMultipler()) * radius - Math.cos(getPartMultipler()) * 113.0 * (i/numSegments);
 
             if (this.left) {
                 angle = -angle;
