@@ -98,6 +98,35 @@ public class AutoBump extends AbstractBuildable {
         });
         map.getToolBar().add(button);
 
+
+        button = new JButton("Straight 1");
+        button.setAlignmentY(0.0F);
+        button.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                performTemplateMove(ManeuverPaths.Str1);
+            }
+        });
+        map.getToolBar().add(button);
+
+        button = new JButton("Straight 2");
+        button.setAlignmentY(0.0F);
+        button.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                performTemplateMove(ManeuverPaths.Str2);
+            }
+        });
+        map.getToolBar().add(button);
+
+        button = new JButton("Straight 3");
+        button.setAlignmentY(0.0F);
+        button.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                performTemplateMove(ManeuverPaths.Str3);
+            }
+        });
+        map.getToolBar().add(button);
+
+
         map.getView().addKeyListener(new KeyListener() {
             public void keyTyped(KeyEvent e) {
 
