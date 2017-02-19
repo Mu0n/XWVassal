@@ -23,8 +23,8 @@ public enum ManeuverPaths {
         this.path = path;
     }
 
-    public List<PathPart> getTransformedPathParts(double x, double y, double angleDegrees) {
-        List<PathPart> rawParts = this.path.getPathParts(NUM_PATH_SEGMENTS);
+    public List<PathPart> getTransformedPathParts(double x, double y, double angleDegrees, boolean isLargeBase) {
+        List<PathPart> rawParts = this.path.getPathParts(NUM_PATH_SEGMENTS, isLargeBase);
         List<PathPart> transformed = Lists.newArrayList();
 
         for (PathPart rawPart : rawParts) {
@@ -49,7 +49,7 @@ public enum ManeuverPaths {
     }
 
     public static void main(String[] args) {
-        List<PathPart> parts = ManeuverPaths.LBk1.getTransformedPathParts(0, 0, 0);
+        List<PathPart> parts = ManeuverPaths.LBk1.getTransformedPathParts(0, 0, 0, false);
 //        List<PathPart> parts = CurvedPaths.LBk1.getPathParts(100);
         for (PathPart part : parts) {
             System.out.println(String.format("%s\t %s", part.getX(), part.getY(), part.getAngle()));

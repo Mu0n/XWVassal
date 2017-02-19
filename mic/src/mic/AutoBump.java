@@ -190,13 +190,17 @@ public class AutoBump extends AbstractBuildable {
         double angle = ((FreeRotator) Decorator.getDecorator(ship, FreeRotator.class)).getAngle();
         final ShipCompareShape compare = getShipCompareShape(ship);
 
-        logToChat(String.format("pos=%f,%f, angle=%f, local_bearing=%s, _Facing=%s, _Degrees=%s",
+        boolean isLargeBase = compare.rawShape.getBounds().width > 113;
+
+        logToChat(String.format("bbox=%s, pos=%f,%f, angle=%f, local_bearing=%s, _Facing=%s, _Degrees=%s, isLargeBase=%s",
+                compare.rawShape.getBounds2D(),
                 ship.getPosition().getX(),
                 ship.getPosition().getY(),
                 angle,
                 ship.getProperty("local_bearing"),
                 ship.getProperty("_Facing"),
-                ship.getProperty("_Degrees")));
+                ship.getProperty("_Degrees"),
+                isLargeBase));
 
         //DETECTION NEEDED: do we have a small or large ship here
         double startX = ship.getPosition().getX();
@@ -205,7 +209,8 @@ public class AutoBump extends AbstractBuildable {
         List<PathPart> parts = path.getTransformedPathParts(
                 startX,
                 startY,
-                angle);
+                angle,
+                isLargeBase);
         Path2D.Double templatePath = new Path2D.Double();
 
         //angle goes from -0 to -1 to -359 degrees clockwise
@@ -339,7 +344,7 @@ public class AutoBump extends AbstractBuildable {
                 .getRotateInstance(degToRad(angleDeg), centerX, centerY)
                 .createTransformedShape(transformed);
 
-        return new ShipCompareShape(ship, transformed, angleDeg);
+        return new ShipCompareShape(ship, rawShape, transformed, angleDeg);
     }
 
     private double degToRad(double deg) {
@@ -360,12 +365,14 @@ public class AutoBump extends AbstractBuildable {
     }
 
     private static class ShipCompareShape {
-        public ShipCompareShape(Decorator ship, Shape compareShape, double angleDegrees) {
+        public ShipCompareShape(Decorator ship, Shape rawShape, Shape compareShape, double angleDegrees) {
+            this.rawShape = rawShape;
             this.ship = ship;
             this.compareShape = compareShape;
             this.angleDegrees = angleDegrees;
         }
 
+        Shape rawShape;
         double angleDegrees;
         Decorator ship;
         Shape compareShape;

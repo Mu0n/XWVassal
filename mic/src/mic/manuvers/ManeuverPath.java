@@ -6,5 +6,5 @@ import java.util.List;
  * Created by amatheny on 2/17/17.
  */
 public interface ManeuverPath {
-    List<PathPart> getPathParts(int numSegments);
+    List<PathPart> getPathParts(int numSegments, boolean isLargeBase);
 }

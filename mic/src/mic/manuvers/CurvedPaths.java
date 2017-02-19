@@ -43,7 +43,9 @@ public enum CurvedPaths implements ManeuverPath {
         return this.bank ? QTR_PI : HALF_PI;
     }
 
-    public List<PathPart> getPathParts(int numSegments) {
+    public List<PathPart> getPathParts(int numSegments, boolean isLargeBase) {
+
+        double baseOffset = isLargeBase ? 113 : 56.5;
 
 
         List<PathPart> parts = Lists.newArrayList();
@@ -52,7 +54,7 @@ public enum CurvedPaths implements ManeuverPath {
         for (int i = 1; i <=numSegments; i++) {
             double angle = 0.0;
             double x = 0.0;
-            double y = -0.5 * 113.0 + 113.0 * ( i / (double) numSegments);
+            double y = -baseOffset * ( i / (double) numSegments);
 
             parts.add(new PathPart(x, y, angle));
         }
@@ -61,7 +63,7 @@ public enum CurvedPaths implements ManeuverPath {
         for (int i = 1; i <= numSegments; i++) {
             double arg = (getPartMultipler() * i) / (double) numSegments;
 
-            double y = -113.0 * 0.5 - Math.sin(arg) * radius;
+            double y = -baseOffset - Math.sin(arg) * radius;
             double x = (-Math.cos(arg) + 1) * radius;
             double angle = -(i / (double) numSegments) * getFinalAngleOffset();
 
@@ -76,8 +78,8 @@ public enum CurvedPaths implements ManeuverPath {
         for (int i = 1; i <=numSegments; i++) {
 
             double angle = -getFinalAngleOffset();
-            double x = (-Math.cos(getPartMultipler()) + 1) * radius + Math.sin(getPartMultipler()) * 113.0 * ( i / numSegments);
-            double y = -113.0 * 0.5 - Math.sin(getPartMultipler()) * radius - Math.cos(getPartMultipler()) * 113.0 * (i/numSegments);
+            double x = (-Math.cos(getPartMultipler()) + 1) * radius + Math.sin(getPartMultipler()) * baseOffset * ( i / numSegments);
+            double y = -baseOffset - Math.sin(getPartMultipler()) * radius - Math.cos(getPartMultipler()) * baseOffset * (i/numSegments);
 
             if (this.left) {
                 angle = -angle;
