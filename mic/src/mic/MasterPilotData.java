@@ -53,6 +53,13 @@ public class MasterPilotData extends ArrayList<MasterPilotData.PilotData> {
         @JsonProperty("conditions")
         private List<String> conditions = Lists.newArrayList();
 
+        @JsonProperty("ship_override")
+        private ShipOverrides shipOverrides;
+
+        public ShipOverrides getShipOverrides() {
+            return shipOverrides;
+        }
+
         public boolean isUnique() {
             return unique;
         }
@@ -79,6 +86,29 @@ public class MasterPilotData extends ArrayList<MasterPilotData.PilotData> {
 
         public List<String> getConditions() {
             return conditions;
+        }
+    }
+
+    public static class ShipOverrides {
+        private int attack;
+        private int agility;
+        private int hull;
+        private int shields;
+
+        public int getAttack() {
+            return attack;
+        }
+
+        public int getAgility() {
+            return agility;
+        }
+
+        public int getHull() {
+            return hull;
+        }
+
+        public int getShields() {
+            return shields;
         }
     }
 }

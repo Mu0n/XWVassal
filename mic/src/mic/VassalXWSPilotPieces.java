@@ -176,6 +176,14 @@ public class VassalXWSPilotPieces {
             int shields = this.shipData.getShields();
             int attack = this.shipData.getAttack();
 
+            MasterPilotData.ShipOverrides shipOverrides = this.pilotData.getShipOverrides();
+            if (shipOverrides != null) {
+              agility = shipOverrides.getAgility();
+              hull = shipOverrides.getHull();
+              shields = shipOverrides.getShields();
+              attack = shipOverrides.getAttack();
+            }
+
             piece.setProperty("Defense Rating", agility + agilityModifier);
             piece.setProperty("Hull Rating", hull + hullModifier);
             piece.setProperty("Attack Rating", attack + attackModifier);
