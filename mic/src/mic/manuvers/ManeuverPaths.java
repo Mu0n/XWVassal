@@ -1,11 +1,12 @@
 package mic.manuvers;
 
+import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Path2D;
+import java.awt.geom.Point2D;
 import java.util.List;
 
 import com.google.common.collect.Lists;
-
 /**
  * Created by amatheny on 2/17/17.
  */
@@ -84,11 +85,67 @@ public enum ManeuverPaths {
         }
     }
 
-    public static void main(String[] args) {
-        List<PathPart> parts = ManeuverPaths.Str1.getTransformedPathParts(0, 0, 0, false);
-//        List<PathPart> parts = CurvedPaths.LBk1.getPathParts(100);
-        for (PathPart part : parts) {
-            System.out.println(String.format("%s\t %s", part.getX(), part.getY(), part.getAngle()));
+    private static RealCurvedPathData.DataInstance calculateRealPaths(CurvedPaths curvedPath, boolean bigBase) {
+
+        double baseLength = bigBase ? 2*113 : 113;
+
+        RealCurvedPathData.DataInstance data = new RealCurvedPathData.DataInstance();
+
+        List<Point.Double> points = Lists.newArrayList();
+
+        int segments = 30;
+        List<PathPart> parts = curvedPath.getPathParts(segments, baseLength );
+        int minPathIndex = segments / 2;
+        while(minPathIndex < segments*2.5) {
+            PathPart partA = parts.get(minPathIndex);
+            Point.Double pointA = new Point2D.Double(partA.getX(), partA.getY());
+            PathPart closest = partA;
+            double closestDist = 100;
+            for(PathPart partB : parts) {
+                Point.Double pointB = new Point2D.Double(partB.getX(), partB.getY());
+                double distanceDiff = Math.abs(baseLength - pointB.distance(pointA));
+                if (distanceDiff < closestDist) {
+                    closest = partB;
+                    closestDist = distanceDiff;
+                }
+            }
+            minPathIndex++;
+            Point.Double centerOfLine = new Point2D.Double(pointA.getX() + Math.abs(closest.getX() - pointA.getX()) / 2.0, pointA.getY() + Math.abs(closest.getY() - pointA.getY()) / 2.0);
+            points.add(centerOfLine);
         }
+
+        data.parts.add(new RealCurvedPathData.CurvedPathPart());
+        data.parts.get(0).angle = 0;
+        data.parts.get(0).x = points.get(0).getX();
+        data.parts.get(0).y = points.get(0).getY();
+
+        for(int i = 1; i < points.size(); i++) {
+            data.parts.add(new RealCurvedPathData.CurvedPathPart());
+            data.parts.get(i).x = points.get(i).getX();
+            data.parts.get(i).y = points.get(i).getY();
+
+            double dx = points.get(i).getX() - points.get(i - 1).getX();
+            double dy = points.get(i - 1).getY() - points.get(i).getY();
+
+            double rads = Math.atan2(dy, dx);
+            // WHY IS THIS SO WRONG?
+            data.parts.get(i).angle = Math.toDegrees(rads);
+        }
+
+        return data;
+    }
+
+    public static void main(String[] args) {
+
+        RealCurvedPathData.DataInstance dataInstance = calculateRealPaths(CurvedPaths.RT1, false);
+        for (RealCurvedPathData.CurvedPathPart part : dataInstance.parts) {
+            System.out.println(String.format("%s\t%s\t%s", part.x, part.y, part.angle));
+        }
+
+//        for(CurvedPaths curve : CurvedPaths.values()) {
+//            for (Boolean isBigBase : Lists.newArrayList(true, false)) {
+//
+//            }
+//        }
     }
 }

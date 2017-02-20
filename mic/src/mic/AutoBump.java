@@ -304,7 +304,7 @@ public class AutoBump extends AbstractBuildable {
                 isLargeBase));
     }
 
-    private void setShipPosition(Map map, Decorator ship, PathPart part) {
+    private void setShipPosition(Map map, Decorator ship, PathPart part) { 
         Point point = new Point((int) Math.floor(part.getX() + 0.5), (int) Math.floor(part.getY() + 0.5));
 
         map.removePiece(ship);
