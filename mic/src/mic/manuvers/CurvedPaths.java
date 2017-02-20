@@ -23,7 +23,7 @@ public enum CurvedPaths implements ManeuverPath {
     RT3(90 * 2.825, false, false);
 
     private final boolean bank;
-    private boolean left;
+    boolean left;
     private double radius;
 
     private static double QTR_PI = Math.PI / 4.0;
@@ -35,7 +35,7 @@ public enum CurvedPaths implements ManeuverPath {
         this.bank = bank;
     }
 
-    private double getFinalAngleOffset() {
+    public double getFinalAngleOffset() {
         return this.bank ? 45 : 90;
     }
 

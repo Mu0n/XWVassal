@@ -93,25 +93,32 @@ public enum ManeuverPaths {
 
         List<Point.Double> points = Lists.newArrayList();
 
-        int segments = 30;
+        int segments = 100;
         List<PathPart> parts = curvedPath.getPathParts(segments, baseLength );
         int minPathIndex = segments / 2;
         while(minPathIndex < segments*2.5) {
             PathPart partA = parts.get(minPathIndex);
             Point.Double pointA = new Point2D.Double(partA.getX(), partA.getY());
             PathPart closest = partA;
-            double closestDist = 100;
-            for(PathPart partB : parts) {
+            double closestDist = Double.MAX_VALUE;
+            int closestIndex = minPathIndex;
+            for(int i = minPathIndex + 1; i < parts.size(); i++) {
+                PathPart partB = parts.get(i);
                 Point.Double pointB = new Point2D.Double(partB.getX(), partB.getY());
-                double distanceDiff = Math.abs(baseLength - pointB.distance(pointA));
+                double distanceDiff = Math.abs(baseLength - Math.abs(pointB.distance(pointA)));
                 if (distanceDiff < closestDist) {
                     closest = partB;
                     closestDist = distanceDiff;
+                    closestIndex = i;
                 }
             }
             minPathIndex++;
-            Point.Double centerOfLine = new Point2D.Double(pointA.getX() + Math.abs(closest.getX() - pointA.getX()) / 2.0, pointA.getY() + Math.abs(closest.getY() - pointA.getY()) / 2.0);
+            Point.Double centerOfLine = new Point2D.Double(
+                    pointA.getX() + closest.getX() - pointA.getX() / 2.0,
+                    pointA.getY() + closest.getY() - pointA.getY() / 2.0);
             points.add(centerOfLine);
+
+            System.out.println(String.format("%s\t%s\t%s\t%s", centerOfLine.x, centerOfLine.y, pointA.distance(closest.getX(), closest.getY()), closestIndex));
         }
 
         data.parts.add(new RealCurvedPathData.CurvedPathPart());
@@ -124,12 +131,28 @@ public enum ManeuverPaths {
             data.parts.get(i).x = points.get(i).getX();
             data.parts.get(i).y = points.get(i).getY();
 
-            double dx = points.get(i).getX() - points.get(i - 1).getX();
-            double dy = points.get(i - 1).getY() - points.get(i).getY();
+            if (i + 1 >= points.size()) {
+                if (curvedPath.left) {
+                    data.parts.get(i).angle = -(360 - curvedPath.getFinalAngleOffset());
+                } else {
+                    data.parts.get(i).angle = -curvedPath.getFinalAngleOffset();
+                }
+                continue;
+            }
+
+            double dx = points.get(i - 1).getX() - points.get(i + 1).getX();
+            double dy = points.get(i + 1).getY() - points.get(i - 1).getY();
 
             double rads = Math.atan2(dy, dx);
+
+            rads += Math.PI / 2;
+
             // WHY IS THIS SO WRONG?
             data.parts.get(i).angle = Math.toDegrees(rads);
+
+            if (data.parts.get(i).angle > 0) {
+                data.parts.get(i).angle = data.parts.get(i).angle - 360;
+            }
         }
 
         return data;
