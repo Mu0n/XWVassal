@@ -54,7 +54,7 @@ public class AutoSquadSpawn extends AbstractConfigurable implements CommandEncod
 
 
     private void spawnPiece(GamePiece piece, Point position) {
-        Command placeCommand = Map.getMapById("Map0").placeOrMerge(piece, position);
+        Command placeCommand = getMap().placeOrMerge(piece, position);
         placeCommand.execute();
         GameModule.getGameModule().sendAndLog(placeCommand);
     }
@@ -195,28 +195,28 @@ public class AutoSquadSpawn extends AbstractConfigurable implements CommandEncod
 
     public void addTo(Buildable parent) {
         GameModule mod = (GameModule) parent;
+        final Map map = getMap();
 
         mod.addCommandEncoder(this);
         mod.getGameState().addGameComponent(this);
 
-        loadFromXwsUrlButton = new JButton("Squad AutoSpawn from web");
+        loadFromXwsUrlButton = new JButton("Squad Spawn");
         loadFromXwsUrlButton.setAlignmentY(0.0F);
         loadFromXwsUrlButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
                 loadFromXwsButtonPressed();
             }
         });
-        mod.getToolBar().add(loadFromXwsUrlButton);
-
+        map.getToolBar().add(loadFromXwsUrlButton);
     }
 
     public void removeFrom(Buildable parent) {
         GameModule mod = (GameModule) parent;
-
+        final Map map = getMap();
         mod.removeCommandEncoder(this);
         mod.getGameState().removeGameComponent(this);
 
-        mod.getToolBar().remove(loadFromXwsUrlButton);
+        map.getToolBar().remove(loadFromXwsUrlButton);
     }
 
     public VASSAL.build.module.documentation.HelpFile getHelpFile() {
@@ -254,6 +254,15 @@ public class AutoSquadSpawn extends AbstractConfigurable implements CommandEncod
         } else {
             return null;
         }
+    }
+
+    private Map getMap() {
+        for (Map loopMap : GameModule.getGameModule().getComponentsOf(Map.class)) {
+            if ("Contested Sector".equals(loopMap.getMapName())) {
+                return loopMap;
+            }
+        }
+        return null;
     }
 
     public static class Incr2 extends Command {
