@@ -89,8 +89,16 @@ public class AutoSquadSpawn extends AbstractConfigurable implements CommandEncod
         VassalXWSListPieces pieces = slotLoader.loadListFromXWS(xwsList);
 
         Point startPosition = new Point(500,50);
+        Point tokensStartPosition = new Point(500,170);
+        Point dialstartPosition = new Point(500,70);
+        Point shipsStartPosition = new Point(150,300);
+        Point tlStartPosition = new Point (500,200);
+
         int fudgePilotUpgradeFrontier = -50;
         int totalPilotHeight = 0;
+        int totalDialsWidth = 0;
+        int totalTokenWidth = 0;
+        int totalTLWidth = 0;
 
         for (VassalXWSPilotPieces ship : pieces.getShips()) {
             logToChat(String.format("Spawning pilot: %s", ship.getPilotCard().getConfigureName()));
@@ -105,7 +113,6 @@ public class AutoSquadSpawn extends AbstractConfigurable implements CommandEncod
 
             GamePiece shipPiece = ship.cloneShip();
             int shipWidth = (int)shipPiece.boundingBox().getWidth();
-            int shipHeight = (int)shipPiece.boundingBox().getHeight();
             spawnPiece(shipPiece, new Point(
                     (int)startPosition.getX()-pilotWidth,
                     (int)startPosition.getY()+totalPilotHeight+20));
@@ -114,8 +121,9 @@ public class AutoSquadSpawn extends AbstractConfigurable implements CommandEncod
             int dialWidth = (int)dialPiece.boundingBox().getWidth();
             int dialHeight = (int)dialPiece.boundingBox().getHeight();
             spawnPiece(dialPiece, new Point(
-                    (int)startPosition.getX()-pilotWidth,
-                    (int)startPosition.getY()+totalPilotHeight-dialHeight));
+                    (int)dialstartPosition.getX()+totalDialsWidth,
+                    (int)dialstartPosition.getY()));
+            totalDialsWidth += dialWidth;
 
             int totalUpgradeWidth = 0;
             for (VassalXWSPilotPieces.Upgrade upgrade : ship.getUpgrades()) {
@@ -136,13 +144,21 @@ public class AutoSquadSpawn extends AbstractConfigurable implements CommandEncod
                 totalUpgradeWidth += conditionPiece.boundingBox().getWidth();
             } //loop to next condition
 
-            int totalChitWidth = 0;
+
             for (GamePiece token : ship.getTokensForDisplay()) {
-                spawnPiece(token, new Point(
-                        (int)startPosition.getX()+pilotWidth+totalUpgradeWidth+totalChitWidth+fudgePilotUpgradeFrontier,
-                        (int)startPosition.getY()+totalPilotHeight));
-                totalChitWidth += token.boundingBox().getWidth();
-            }// loop to next token
+                if(new String("518").equals(token.getId())) {//if a target lock token, place elsewhere
+                    spawnPiece(token, new Point(
+                            (int)tokensStartPosition.getX()+totalTLWidth,
+                            (int)tlStartPosition.getY()));
+                    totalTLWidth += token.boundingBox().getWidth();
+                }
+                else {
+                    spawnPiece(token, new Point(
+                            (int)tokensStartPosition.getX()+totalTokenWidth,
+                            (int)tokensStartPosition.getY()));
+                    totalTokenWidth += token.boundingBox().getWidth();
+                }
+            }// loop to next token*/
         } //loop to next pilot
 
         String listName = xwsList.getName();
