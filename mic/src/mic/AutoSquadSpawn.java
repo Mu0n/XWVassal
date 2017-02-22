@@ -88,11 +88,11 @@ public class AutoSquadSpawn extends AbstractConfigurable implements CommandEncod
         XWSList xwsList = XWSFetcher.fetchFromUrl(translatedURL.toString());
         VassalXWSListPieces pieces = slotLoader.loadListFromXWS(xwsList);
 
-        Point startPosition = new Point(500,50);
-        Point tokensStartPosition = new Point(500,170);
-        Point dialstartPosition = new Point(500,70);
+        Point startPosition = new Point(500,60);
+        Point tokensStartPosition = new Point(500,180);
+        Point dialstartPosition = new Point(500,80);
         Point shipsStartPosition = new Point(150,300);
-        Point tlStartPosition = new Point (500,200);
+        Point tlStartPosition = new Point (500,240);
 
         int fudgePilotUpgradeFrontier = -50;
         int totalPilotHeight = 0;
@@ -146,7 +146,8 @@ public class AutoSquadSpawn extends AbstractConfigurable implements CommandEncod
 
 
             for (GamePiece token : ship.getTokensForDisplay()) {
-                if(new String("518").equals(token.getId())) {//if a target lock token, place elsewhere
+                PieceSlot pieceSlot = new PieceSlot(token);
+                if("Target Lock".equals(pieceSlot.getConfigureName())) {//if a target lock token, place elsewhere
                     spawnPiece(token, new Point(
                             (int)tokensStartPosition.getX()+totalTLWidth,
                             (int)tlStartPosition.getY()));
