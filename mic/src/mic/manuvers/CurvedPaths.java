@@ -43,7 +43,7 @@ public enum CurvedPaths implements ManeuverPath {
         return this.bank ? QTR_PI : HALF_PI;
     }
 
-    public List<PathPart> getPathParts(int numSegments, double baseOffset) {
+    public List<PathPart> getPathParts(int numSegments, double baseOffset, boolean isLargeBase) {
         List<PathPart> parts = Lists.newArrayList();
         //Extended straight back segment
 
