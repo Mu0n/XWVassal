@@ -100,6 +100,8 @@ public class AutoSquadSpawn extends AbstractConfigurable implements CommandEncod
         int totalTokenWidth = 0;
         int totalTLWidth = 0;
 
+        int totalSquadPoints = 0;
+
         for (VassalXWSPilotPieces ship : pieces.getShips()) {
             logToChat(String.format("Spawning pilot: %s", ship.getPilotCard().getConfigureName()));
 
@@ -110,12 +112,12 @@ public class AutoSquadSpawn extends AbstractConfigurable implements CommandEncod
             spawnPiece(pilotPiece, new Point(
                     (int)startPosition.getX(),
                     (int)startPosition.getY()+totalPilotHeight));
-
             GamePiece shipPiece = ship.cloneShip();
             int shipWidth = (int)shipPiece.boundingBox().getWidth();
             spawnPiece(shipPiece, new Point(
                     (int)startPosition.getX()-pilotWidth,
                     (int)startPosition.getY()+totalPilotHeight+20));
+            totalSquadPoints += ship.getPilotData().getPoints();
 
             GamePiece dialPiece = ship.cloneDial();
             int dialWidth = (int)dialPiece.boundingBox().getWidth();
@@ -133,6 +135,8 @@ public class AutoSquadSpawn extends AbstractConfigurable implements CommandEncod
                         (int)startPosition.getY()+totalPilotHeight));
 
                 totalUpgradeWidth += upgradePiece.boundingBox().getWidth();
+
+                totalSquadPoints += upgrade.getUpgradeData().getPoints();
             } //loop to next upgrade
 
             for (PieceSlot conditionSlot: ship.getConditions()) {
@@ -163,7 +167,7 @@ public class AutoSquadSpawn extends AbstractConfigurable implements CommandEncod
         } //loop to next pilot
 
         String listName = xwsList.getName();
-        logToChat(String.format("List%s loaded from %s",
+        logToChat(String.format("%s points list%s loaded from %s", Integer.toString(totalSquadPoints),
                                 listName != null ? " " + listName : "",
                                 url));
 

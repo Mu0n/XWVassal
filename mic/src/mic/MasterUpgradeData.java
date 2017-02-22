@@ -37,6 +37,9 @@ public class MasterUpgradeData extends ArrayList<MasterUpgradeData.UpgradeData> 
       @JsonProperty("name")
       private String name;
 
+      @JsonProperty("points")
+      private String points = "0";
+
       @JsonProperty("xws")
       private String xws;
 
@@ -60,6 +63,14 @@ public class MasterUpgradeData extends ArrayList<MasterUpgradeData.UpgradeData> 
 
       public String getName() {
           return name;
+      }
+
+      public int getPoints() {
+          try {
+              return Integer.parseInt(points);
+          } catch (Exception e) {
+              return 0;
+          }
       }
   }
 

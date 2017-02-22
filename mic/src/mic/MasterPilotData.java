@@ -44,6 +44,9 @@ public class MasterPilotData extends ArrayList<MasterPilotData.PilotData> {
         @JsonProperty("name")
         private String name;
 
+        @JsonProperty("points")
+        private String points = "0";
+
         @JsonProperty("xws")
         private String xws;
 
@@ -67,6 +70,14 @@ public class MasterPilotData extends ArrayList<MasterPilotData.PilotData> {
         public int getSkill() {
             try {
                 return Integer.parseInt(skill);
+            } catch (Exception e) {
+                return 0;
+            }
+        }
+
+        public int getPoints() {
+            try {
+                return Integer.parseInt(points);
             } catch (Exception e) {
                 return 0;
             }
