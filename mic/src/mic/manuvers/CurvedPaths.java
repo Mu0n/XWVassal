@@ -26,65 +26,135 @@ public enum CurvedPaths implements ManeuverPath {
     boolean left;
     private double radius;
 
-    private static double QTR_PI = Math.PI / 4.0;
-    private static double HALF_PI = Math.PI / 2.0;
-
     CurvedPaths(double radius, boolean left, boolean bank) {
         this.radius = radius;
         this.left = left;
         this.bank = bank;
     }
-
     public double getFinalAngleOffset() {
         return this.bank ? 45 : 90;
     }
+    private class Vector {
+        public double x, y;
+        Vector(double x, double y) { this.x = x; this.y = y; }
+    }
 
-    private double getPartMultipler() {
-        return this.bank ? QTR_PI : HALF_PI;
+    // ------- //
+    //  banks
+    // ------- //
+
+    private PathPart getBankPart(double percentage, double baseLength, double arcLength) {
+        double currentDistance = percentage * (baseLength + arcLength);
+        Vector frontPosition = getBankFrontPosition(currentDistance, baseLength, arcLength);
+        Vector backPosition = getBankBackPosition(currentDistance, baseLength, arcLength);
+        double angle = 270 - (calcAngle(backPosition, frontPosition) / (Math.PI * 2) * 360.0);
+        double x = (frontPosition.x + backPosition.x) / 2;
+        double y = (frontPosition.y + backPosition.y) / 2;
+        if (this.left) {
+            return new PathPart(-x, y, -angle);
+        } else {
+            return new PathPart(x, y, angle);
+        }
+    }
+    private Vector getBankFrontPosition(double currentDistance, double baseLength, double arcLength) {
+        if (currentDistance < arcLength) {
+            double alpha = currentDistance / arcLength * (Math.PI / 4.0);
+            double x = this.radius - (Math.cos(alpha) * this.radius);
+            double y = (Math.sin(alpha) * this.radius) + (baseLength / 2); // upwards
+            return new Vector(x, -y);
+        } else {
+            double startX = this.radius - (Math.cos(Math.PI / 4.0) * this.radius);
+            double startY = (Math.sin(Math.PI / 4.0) * this.radius) + (baseLength / 2); // upwards
+            double x = startX + ((currentDistance - arcLength) / Math.sqrt(2));
+            double y = startY + ((currentDistance - arcLength) / Math.sqrt(2)); // upwards
+            return new Vector(x, -y);
+        }
+    }
+    private Vector getBankBackPosition(double currentDistance, double baseLength, double arcLength) {
+        if (currentDistance < baseLength) {
+            double x = 0;
+            double y = -(baseLength / 2) + currentDistance; // upwards
+            return new Vector(x, -y);
+        } else {
+            double alpha = (currentDistance - baseLength) / arcLength * (Math.PI / 4.0);
+            double x = this.radius - (Math.cos(alpha) * this.radius);
+            double y = (baseLength / 2) + (Math.sin(alpha) * this.radius); // upwards
+            return new Vector(x, -y);
+        }
+    }
+
+    // ------- //
+    //  turns  //
+    // ------- //
+
+    private PathPart getTurnPart(double percentage, double baseLength, double arcLength) {
+        double currentDistance = percentage * (baseLength + arcLength);
+        Vector frontPosition = getTurnFrontPosition(currentDistance, baseLength, arcLength);
+        Vector backPosition = getTurnBackPosition(currentDistance, baseLength, arcLength);
+        double angle = 270 - (calcAngle(backPosition, frontPosition) / (Math.PI * 2) * 360.0);
+        double x = (frontPosition.x + backPosition.x) / 2;
+        double y = (frontPosition.y + backPosition.y) / 2;
+        if (this.left) {
+            return new PathPart(-x, y, -angle);
+        } else {
+            return new PathPart(x, y, angle);
+        }
+    }
+    private Vector getTurnFrontPosition(double currentDistance, double baseLength, double arcLength) {
+        if (currentDistance < arcLength) {
+            double alpha = currentDistance / arcLength * (Math.PI / 2.0);
+            double x = this.radius - (Math.cos(alpha) * this.radius);
+            double y = (Math.sin(alpha) * this.radius) + (baseLength / 2); // upwards
+            return new Vector(x, -y);
+        } else {
+            double x = (currentDistance - arcLength) + this.radius;
+            double y = this.radius + (baseLength / 2); // upwards
+            return new Vector(x, -y);
+        }
+    }
+    private Vector getTurnBackPosition(double currentDistance, double baseLength, double arcLength) {
+        if (currentDistance < baseLength) {
+            double x = 0;
+            double y = -(baseLength / 2) + currentDistance; // upwards
+            return new Vector(x, -y);
+        } else {
+            double alpha = (currentDistance - baseLength) / arcLength * (Math.PI / 2.0);
+            double x = this.radius - (Math.cos(alpha) * this.radius);
+            double y = (baseLength / 2) + (Math.sin(alpha) * this.radius); // upwards
+            return new Vector(x, -y);
+        }
+    }
+
+    // ---------------------------------------- //
+    //  use banks and turns to calculate paths  //
+    // ---------------------------------------- //
+
+    private double calcArcLength() {
+        return 2 * Math.PI * this.radius / (this.bank ? 8.0 : 4.0);
+    }
+    private double calcAngle(Vector origin, Vector target) {
+        if (target.x > origin.x) {
+            return Math.atan((target.y - origin.y) / (target.x - origin.x));
+        } else {
+            return Math.PI + Math.atan((target.y - origin.y) / (target.x - origin.x));
+        }
     }
 
     public List<PathPart> getPathParts(int numSegments, double baseOffset, boolean isLargeBase) {
+        // init
         List<PathPart> parts = Lists.newArrayList();
-        //Extended straight back segment
-
-        for (int i = 1; i <=numSegments; i++) {
-            double angle = 0.0;
-            double x = 0.0;
-            double y = -baseOffset * ( i / (double) numSegments);
-
-            parts.add(new PathPart(x, y, angle));
-        }
-
-        //Curved part
-        for (int i = 1; i <= numSegments; i++) {
-            double arg = (getPartMultipler() * i) / (double) numSegments;
-
-            double y = -baseOffset - Math.sin(arg) * radius;
-            double x = (-Math.cos(arg) + 1) * radius;
-            double angle = -(i / (double) numSegments) * getFinalAngleOffset();
-
-            if (this.left) {
-                angle = -angle;
-                x = -x;
+        double baseLength = isLargeBase ? 2.0 * 113.0 : 113.0;
+        double arcLength = calcArcLength();
+        // calculate
+        for (int i = 0; i < numSegments; i++) {
+            double percentage = (double)i / (double)numSegments;
+            if (this.bank) {
+                parts.add(getBankPart(percentage, baseLength, arcLength));
+            } else {
+                parts.add(getTurnPart(percentage, baseLength, arcLength));
             }
-
-            parts.add(new PathPart(x, y, angle));
         }
-        //Extended straight front segment
-        for (int i = 1; i <=numSegments; i++) {
-
-            double angle = -getFinalAngleOffset();
-            double x = (-Math.cos(getPartMultipler()) + 1) * radius + Math.sin(getPartMultipler()) * baseOffset * ( i / numSegments);
-            double y = -baseOffset - Math.sin(getPartMultipler()) * radius - Math.cos(getPartMultipler()) * baseOffset * (i/numSegments);
-
-            if (this.left) {
-                angle = -angle;
-                x = -x;
-            }
-
-            parts.add(new PathPart(x, y, angle));
-        }
-
+        // done
         return parts;
     }
 }
