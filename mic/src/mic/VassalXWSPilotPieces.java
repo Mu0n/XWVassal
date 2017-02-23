@@ -241,8 +241,19 @@ public class VassalXWSPilotPieces {
         String[] words = name.split(" ");
 
         if (name.length() <= maxLength) return name;
-        if (words.length == 1) return name.substring(0, maxLength);
-        if (isUnique && words[0].length() <= maxLength) return words[0];
+        if (words.length == 1) {
+            return name.substring(0, maxLength);
+        } else if (words.length > 1 && isUnique) {
+            if (XWConstants.SHIP_NAME_PREFIXES.contains(words[0])) {
+                if (words[1].length() <= maxLength) {
+                    return words[1];
+                } else {
+                    return words[1].substring(0, maxLength);
+                }
+            } else {
+                return words[0];
+            }
+        }
 
         String firstLetters = "";
         for (String s: words){
