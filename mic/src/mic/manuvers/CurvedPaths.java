@@ -8,28 +8,29 @@ import com.google.common.collect.Lists;
  * Created by amatheny on 2/17/17.
  */
 public enum CurvedPaths implements ManeuverPath {
-    LBk1(80 * 2.825, true, true),
-    RBk1(80 * 2.825, false, true),
-    LBk2(130 * 2.825, true, true),
-    RBk2(130 * 2.825, false, true),
-    LBk3(180 * 2.825, true, true),
-    RBk3(180 * 2.825, false, true),
+    LBk1(80 * 2.825, true, true, 0.95),
+    RBk1(80 * 2.825, false, true, 0.95),
+    LBk2(130 * 2.825, true, true, 0.98),
+    RBk2(130 * 2.825, false, true, 0.98),
+    LBk3(180 * 2.825, true, true, 1.0),
+    RBk3(180 * 2.825, false, true, 1.0),
 
-    LT1(35 * 2.825, true, false),
-    RT1(35 * 2.825, false, false),
-    LT2(62.5 * 2.825, true, false),
-    RT2(62.5 * 2.825, false, false),
-    LT3(90 * 2.825, true, false),
-    RT3(90 * 2.825, false, false);
+    LT1(35 * 2.825, true, false, 0.85),
+    RT1(35 * 2.825, false, false, 0.85),
+    LT2(62.5 * 2.825, true, false, 0.95),
+    RT2(62.5 * 2.825, false, false, 0.95),
+    LT3(90 * 2.825, true, false, 1.0),
+    RT3(90 * 2.825, false, false, 1.0);
 
     private final boolean bank;
     boolean left;
-    private double radius;
+    private double radius, approximationMultiplier;
 
-    CurvedPaths(double radius, boolean left, boolean bank) {
+    CurvedPaths(double radius, boolean left, boolean bank, double approximationMultiplier) {
         this.radius = radius;
         this.left = left;
         this.bank = bank;
+        this.approximationMultiplier = approximationMultiplier;
     }
     public double getFinalAngleOffset() {
         return this.bank ? 45 : 90;
@@ -39,14 +40,46 @@ public enum CurvedPaths implements ManeuverPath {
         Vector(double x, double y) { this.x = x; this.y = y; }
     }
 
+    // --------- //
+    //  utility
+    // --------- //
+
+    private double calcArcLength() {
+        return 2 * Math.PI * this.radius / (this.bank ? 8.0 : 4.0);
+    }
+    private double calcAngle(Vector origin, Vector target) {
+        if (target.x > origin.x) {
+            return Math.atan((target.y - origin.y) / (target.x - origin.x));
+        } else {
+            return Math.PI + Math.atan((target.y - origin.y) / (target.x - origin.x));
+        }
+    }
+    private double frontPercentage(double percentage) {
+        // front goes faster in the first half, slower in the second
+        if (percentage < 0.5) {
+            return (2 - this.approximationMultiplier) * percentage;
+        } else {
+            return ((2 - this.approximationMultiplier) * 0.5) + (this.approximationMultiplier * (percentage - 0.5));
+        }
+    }
+    private double backPercentage(double percentage) {
+        // front goes slower in the first half, faster in the second
+        if (percentage < 0.5) {
+            return this.approximationMultiplier * percentage;
+        } else {
+            return (this.approximationMultiplier * 0.5) + ((2 - this.approximationMultiplier) * (percentage - 0.5));
+        }
+    }
+
     // ------- //
     //  banks
     // ------- //
 
     private PathPart getBankPart(double percentage, double baseLength, double arcLength) {
-        double currentDistance = percentage * (baseLength + arcLength);
-        Vector frontPosition = getBankFrontPosition(currentDistance, baseLength, arcLength);
-        Vector backPosition = getBankBackPosition(currentDistance, baseLength, arcLength);
+        double currentFrontDistance = frontPercentage(percentage) * (baseLength + arcLength);
+        double currentBackDistance = backPercentage(percentage) * (baseLength + arcLength);
+        Vector frontPosition = getBankFrontPosition(currentFrontDistance, baseLength, arcLength);
+        Vector backPosition = getBankBackPosition(currentBackDistance, baseLength, arcLength);
         double angle = 270 - (calcAngle(backPosition, frontPosition) / (Math.PI * 2) * 360.0);
         double x = (frontPosition.x + backPosition.x) / 2;
         double y = (frontPosition.y + backPosition.y) / 2;
@@ -88,9 +121,10 @@ public enum CurvedPaths implements ManeuverPath {
     // ------- //
 
     private PathPart getTurnPart(double percentage, double baseLength, double arcLength) {
-        double currentDistance = percentage * (baseLength + arcLength);
-        Vector frontPosition = getTurnFrontPosition(currentDistance, baseLength, arcLength);
-        Vector backPosition = getTurnBackPosition(currentDistance, baseLength, arcLength);
+        double currentFrontDistance = frontPercentage(percentage) * (baseLength + arcLength);
+        double currentBackDistance = backPercentage(percentage) * (baseLength + arcLength);
+        Vector frontPosition = getTurnFrontPosition(currentFrontDistance, baseLength, arcLength);
+        Vector backPosition = getTurnBackPosition(currentBackDistance, baseLength, arcLength);
         double angle = 270 - (calcAngle(backPosition, frontPosition) / (Math.PI * 2) * 360.0);
         double x = (frontPosition.x + backPosition.x) / 2;
         double y = (frontPosition.y + backPosition.y) / 2;
@@ -128,17 +162,6 @@ public enum CurvedPaths implements ManeuverPath {
     // ---------------------------------------- //
     //  use banks and turns to calculate paths  //
     // ---------------------------------------- //
-
-    private double calcArcLength() {
-        return 2 * Math.PI * this.radius / (this.bank ? 8.0 : 4.0);
-    }
-    private double calcAngle(Vector origin, Vector target) {
-        if (target.x > origin.x) {
-            return Math.atan((target.y - origin.y) / (target.x - origin.x));
-        } else {
-            return Math.PI + Math.atan((target.y - origin.y) / (target.x - origin.x));
-        }
-    }
 
     public List<PathPart> getPathParts(int numSegments, double baseOffset, boolean isLargeBase) {
         // init
