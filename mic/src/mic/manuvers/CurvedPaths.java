@@ -54,20 +54,22 @@ public enum CurvedPaths implements ManeuverPath {
             return Math.PI + Math.atan((target.y - origin.y) / (target.x - origin.x));
         }
     }
-    private double frontPercentage(double percentage) {
+    private double frontPercentage(double percentage, boolean isLargeBase) {
         // front goes faster in the first half, slower in the second
+        double adjustedApproximationMultiplier = isLargeBase ? this.approximationMultiplier : Math.sqrt(this.approximationMultiplier);
         if (percentage < 0.5) {
-            return (2 - this.approximationMultiplier) * percentage;
+            return (2 - adjustedApproximationMultiplier) * percentage;
         } else {
-            return ((2 - this.approximationMultiplier) * 0.5) + (this.approximationMultiplier * (percentage - 0.5));
+            return ((2 - adjustedApproximationMultiplier) * 0.5) + (adjustedApproximationMultiplier * (percentage - 0.5));
         }
     }
-    private double backPercentage(double percentage) {
+    private double backPercentage(double percentage, boolean isLargeBase) {
         // front goes slower in the first half, faster in the second
+        double adjustedApproximationMultiplier = isLargeBase ? this.approximationMultiplier : Math.sqrt(this.approximationMultiplier);
         if (percentage < 0.5) {
-            return this.approximationMultiplier * percentage;
+            return adjustedApproximationMultiplier * percentage;
         } else {
-            return (this.approximationMultiplier * 0.5) + ((2 - this.approximationMultiplier) * (percentage - 0.5));
+            return (adjustedApproximationMultiplier * 0.5) + ((2 - adjustedApproximationMultiplier) * (percentage - 0.5));
         }
     }
 
@@ -75,9 +77,9 @@ public enum CurvedPaths implements ManeuverPath {
     //  banks
     // ------- //
 
-    private PathPart getBankPart(double percentage, double baseLength, double arcLength) {
-        double currentFrontDistance = frontPercentage(percentage) * (baseLength + arcLength);
-        double currentBackDistance = backPercentage(percentage) * (baseLength + arcLength);
+    private PathPart getBankPart(double percentage, double baseLength, double arcLength, boolean isLargeBase) {
+        double currentFrontDistance = frontPercentage(percentage, isLargeBase) * (baseLength + arcLength);
+        double currentBackDistance = backPercentage(percentage, isLargeBase) * (baseLength + arcLength);
         Vector frontPosition = getBankFrontPosition(currentFrontDistance, baseLength, arcLength);
         Vector backPosition = getBankBackPosition(currentBackDistance, baseLength, arcLength);
         double angle = 270 - (calcAngle(backPosition, frontPosition) / (Math.PI * 2) * 360.0);
@@ -120,9 +122,9 @@ public enum CurvedPaths implements ManeuverPath {
     //  turns  //
     // ------- //
 
-    private PathPart getTurnPart(double percentage, double baseLength, double arcLength) {
-        double currentFrontDistance = frontPercentage(percentage) * (baseLength + arcLength);
-        double currentBackDistance = backPercentage(percentage) * (baseLength + arcLength);
+    private PathPart getTurnPart(double percentage, double baseLength, double arcLength, boolean isLargeBase) {
+        double currentFrontDistance = frontPercentage(percentage, isLargeBase) * (baseLength + arcLength);
+        double currentBackDistance = backPercentage(percentage, isLargeBase) * (baseLength + arcLength);
         Vector frontPosition = getTurnFrontPosition(currentFrontDistance, baseLength, arcLength);
         Vector backPosition = getTurnBackPosition(currentBackDistance, baseLength, arcLength);
         double angle = 270 - (calcAngle(backPosition, frontPosition) / (Math.PI * 2) * 360.0);
@@ -172,9 +174,9 @@ public enum CurvedPaths implements ManeuverPath {
         for (int i = 0; i < numSegments; i++) {
             double percentage = (double)i / (double)numSegments;
             if (this.bank) {
-                parts.add(getBankPart(percentage, baseLength, arcLength));
+                parts.add(getBankPart(percentage, baseLength, arcLength, isLargeBase));
             } else {
-                parts.add(getTurnPart(percentage, baseLength, arcLength));
+                parts.add(getTurnPart(percentage, baseLength, arcLength, isLargeBase));
             }
         }
         // done
