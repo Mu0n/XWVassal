@@ -19,6 +19,9 @@ public enum ManeuverPaths {
     RBk2(CurvedPaths.RBk2, CurvedPaths.LBk2),
     RBk3(CurvedPaths.RBk3, CurvedPaths.LBk3),
 
+    RevLB1(CurvedPaths.RevLB1, CurvedPaths.RevRB1),
+    RevRB1(CurvedPaths.RevRB1, CurvedPaths.RevLB1),
+
     LT1(CurvedPaths.LT1, CurvedPaths.RT1),
     LT2(CurvedPaths.LT2, CurvedPaths.RT2),
     LT3(CurvedPaths.LT3, CurvedPaths.RT3),
