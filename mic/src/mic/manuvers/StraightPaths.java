@@ -24,7 +24,7 @@ public enum StraightPaths implements ManeuverPath {
         return 0;
     }
 
-    public List<PathPart> getPathParts(int numSegments, double baseOffset) {
+    public List<PathPart> getPathParts(int numSegments, double baseOffset, boolean isLargeBase) {
         List<PathPart> parts = Lists.newArrayList();
 
         //Extended straight back segment

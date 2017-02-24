@@ -19,6 +19,9 @@ public enum ManeuverPaths {
     RBk2(CurvedPaths.RBk2, CurvedPaths.LBk2),
     RBk3(CurvedPaths.RBk3, CurvedPaths.LBk3),
 
+    RevLB1(CurvedPaths.RevLB1, CurvedPaths.RevRB1),
+    RevRB1(CurvedPaths.RevRB1, CurvedPaths.RevLB1),
+
     LT1(CurvedPaths.LT1, CurvedPaths.RT1),
     LT2(CurvedPaths.LT2, CurvedPaths.RT2),
     LT3(CurvedPaths.LT3, CurvedPaths.RT3),
@@ -45,7 +48,7 @@ public enum ManeuverPaths {
 
     private List<PathPart> getTransformedPathPartsInternal(ManeuverPath workingPath, double x, double y, double angleDegrees, boolean isLargeBase) {
         double baseOffset = isLargeBase ? 113 : 56.5;
-        List<PathPart> rawParts = workingPath.getPathParts(NUM_PATH_SEGMENTS, baseOffset);
+        List<PathPart> rawParts = workingPath.getPathParts(NUM_PATH_SEGMENTS, baseOffset, isLargeBase);
         List<PathPart> transformed = Lists.newArrayList();
 
         for (PathPart rawPart : rawParts) {
@@ -94,7 +97,7 @@ public enum ManeuverPaths {
         List<Point.Double> points = Lists.newArrayList();
 
         int segments = 100;
-        List<PathPart> parts = curvedPath.getPathParts(segments, baseLength );
+        List<PathPart> parts = curvedPath.getPathParts(segments, baseLength, bigBase);
         int minPathIndex = segments / 2;
         while(minPathIndex < segments*2.5) {
             PathPart partA = parts.get(minPathIndex);
