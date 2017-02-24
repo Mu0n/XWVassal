@@ -1,14 +1,10 @@
 package mic;
 
 import java.awt.*;
-import java.io.IOException;
 import java.util.Map;
 
 import javax.swing.*;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
 
 import VASSAL.build.module.documentation.HelpFile;
@@ -28,8 +24,7 @@ import mic.manuvers.ManeuverPaths;
 public class AutoBumpDecorator extends Decorator implements EditablePiece {
     public static final String ID = "auto-bump;";
 
-    private MyState state = new MyState();
-    private String type;
+    private ShipPositionState prevPosition = new ShipPositionState();
 
     private Map<String, ManeuverPaths> keyStrokeToManeuver = ImmutableMap.<String, ManeuverPaths>builder()
             .put("SHIFT 1", ManeuverPaths.Str1)
@@ -82,15 +77,12 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
 
     @Override
     public void mySetState(String s) {
-        if (Strings.isNullOrEmpty(s)) {
-            return;
-        }
-        this.state = MyState.fromJson(s);
+
     }
 
     @Override
     public String myGetState() {
-        return this.state == null ? "" : this.state.toJson();
+        return "";
     }
 
     @Override
@@ -101,13 +93,34 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
     @Override
     public Command keyEvent(KeyStroke stroke) {
         ManeuverPaths path = getKeystrokePath(stroke);
+        Command innerCommand = piece.keyEvent(stroke);
         if (path == null) {
             // Ignore key event
-            return piece.keyEvent(stroke);
+            return innerCommand;
         }
-        Util.logToChat(String.format("Exectued %s via keystroke", path.name()));
-        Util.logToChat(String.format("Current pos = (%s,%s) %s deg", getPosition().getX(), getPosition().getY(), getAngle()));
-        return piece.keyEvent(stroke);
+        Command bumpCommand = null;
+        // We know we're dealing with a maneuver keystroke
+        if (stroke.isOnKeyRelease() == false) {
+            this.prevPosition = getCurrentState();
+        } else {
+            Util.logToChat(String.format("Exectued %s via keystroke", path.name()));
+            Util.logToChat(String.format("Current pos = (%s,%s) %s deg",
+                    getPosition().getX(), getPosition().getY(), getAngle()));
+            Util.logToChat(String.format("Prev pos = (%s,%s) %s deg",
+                    this.prevPosition.x, this.prevPosition.y, this.prevPosition.angle));
+            bumpCommand = checkAndResolveBump(path);
+        }
+
+        return bumpCommand == null ? innerCommand : innerCommand.append(bumpCommand);
+    }
+
+    private Command checkAndResolveBump(ManeuverPaths path) {
+        //TODO: Check bumps against other ships on map
+
+        // If bumping, change a dynamic property that is bound to
+        // an action button that allows the user to execute the bump resolution
+
+        return null;
     }
 
     @Override
@@ -152,11 +165,11 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
         return ((FreeRotator) Decorator.getDecorator(getOutermost(this), FreeRotator.class)).getAngle();
     }
 
-    private MyState getCurrentState() {
-        MyState shipState = new MyState();
-        shipState.prevX = getPosition().getX();
-        shipState.prevY = getPosition().getY();
-        shipState.prevAngle = getAngle();
+    private ShipPositionState getCurrentState() {
+        ShipPositionState shipState = new ShipPositionState();
+        shipState.x = getPosition().getX();
+        shipState.y = getPosition().getY();
+        shipState.angle = getAngle();
         return shipState;
     }
 
@@ -168,39 +181,18 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
         return null;
     }
 
-    private static class MyState {
-        @JsonProperty("prevX")
-        double prevX;
-
-        @JsonProperty("prevY")
-        double prevY;
-
-        @JsonProperty("prevAngle")
-        double prevAngle;
+    private static class ShipPositionState {
+        double x;
+        double y;
+        double angle;
 
         @Override
         public boolean equals(Object obj) {
-            if (!(obj instanceof MyState)) {
+            if (!(obj instanceof ShipPositionState)) {
                 return false;
             }
-            MyState that = (MyState) obj;
-            return this.prevX == that.prevX && this.prevY == that.prevY && this.prevAngle == that.prevAngle;
-        }
-
-        public String toJson() {
-            try {
-                return new ObjectMapper().writeValueAsString(this);
-            } catch (Exception e) {
-                return "";
-            }
-        }
-
-        public static MyState fromJson(String jsonStr) {
-            try {
-                return new ObjectMapper().readValue(jsonStr, MyState.class);
-            } catch (IOException e) {
-                return new MyState();
-            }
+            ShipPositionState that = (ShipPositionState) obj;
+            return this.x == that.x && this.y == that.y && this.angle == that.angle;
         }
     }
 }
