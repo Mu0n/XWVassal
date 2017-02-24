@@ -334,9 +334,7 @@ public class AutoBump extends AbstractBuildable {
 
         graphics.setColor(Color.orange);
         graphics.setStroke(new BasicStroke(2.0f));
-        for (int i = 0; i < 50000; i++) {
-            graphics.draw(renderPath);
-        }
+        graphics.draw(renderPath);
     }
 
     private void performTemplateMove(final ManeuverPaths path) {
