@@ -44,6 +44,9 @@ public class MasterPilotData extends ArrayList<MasterPilotData.PilotData> {
         @JsonProperty("name")
         private String name;
 
+        @JsonProperty("points")
+        private String points = "0";
+
         @JsonProperty("xws")
         private String xws;
 
@@ -53,6 +56,13 @@ public class MasterPilotData extends ArrayList<MasterPilotData.PilotData> {
         @JsonProperty("conditions")
         private List<String> conditions = Lists.newArrayList();
 
+        @JsonProperty("ship_override")
+        private ShipOverrides shipOverrides;
+
+        public ShipOverrides getShipOverrides() {
+            return shipOverrides;
+        }
+
         public boolean isUnique() {
             return unique;
         }
@@ -60,6 +70,14 @@ public class MasterPilotData extends ArrayList<MasterPilotData.PilotData> {
         public int getSkill() {
             try {
                 return Integer.parseInt(skill);
+            } catch (Exception e) {
+                return 0;
+            }
+        }
+
+        public int getPoints() {
+            try {
+                return Integer.parseInt(points);
             } catch (Exception e) {
                 return 0;
             }
@@ -79,6 +97,29 @@ public class MasterPilotData extends ArrayList<MasterPilotData.PilotData> {
 
         public List<String> getConditions() {
             return conditions;
+        }
+    }
+
+    public static class ShipOverrides {
+        private int attack;
+        private int agility;
+        private int hull;
+        private int shields;
+
+        public int getAttack() {
+            return attack;
+        }
+
+        public int getAgility() {
+            return agility;
+        }
+
+        public int getHull() {
+            return hull;
+        }
+
+        public int getShields() {
+            return shields;
         }
     }
 }

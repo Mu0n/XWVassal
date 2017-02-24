@@ -54,7 +54,7 @@ public class AutoSquadSpawn extends AbstractConfigurable implements CommandEncod
 
 
     private void spawnPiece(GamePiece piece, Point position) {
-        Command placeCommand = Map.getMapById("Map0").placeOrMerge(piece, position);
+        Command placeCommand = getMap().placeOrMerge(piece, position);
         placeCommand.execute();
         GameModule.getGameModule().sendAndLog(placeCommand);
     }
@@ -67,7 +67,7 @@ public class AutoSquadSpawn extends AbstractConfigurable implements CommandEncod
             url = JOptionPane.showInputDialog("Please paste a voidstate url or ID, YASB url, or FABS url");
         }
         catch ( Exception e ) {
-            logToChat("unable to process url, please try again");
+            logToChat("Unable to process url, please try again");
         }
         if (url == null || url.length() == 0) {
             return;
@@ -81,18 +81,29 @@ public class AutoSquadSpawn extends AbstractConfigurable implements CommandEncod
                 return;
             }
         } catch (Exception e) {
-            logToChat("unable to translate xws url: \n" + e.toString());
+            logToChat("Unable to translate xws url: \n" + e.toString());
             return;
         }
 
-        VassalXWSListPieces pieces = slotLoader.loadListFromXWS(XWSFetcher.fetchFromUrl(translatedURL.toString()));
+        XWSList xwsList = XWSFetcher.fetchFromUrl(translatedURL.toString());
+        VassalXWSListPieces pieces = slotLoader.loadListFromXWS(xwsList);
 
-        Point startPosition = new Point(500,50);
+        Point startPosition = new Point(500,60);
+        Point tokensStartPosition = new Point(500,180);
+        Point dialstartPosition = new Point(500,80);
+        Point shipsStartPosition = new Point(150,300);
+        Point tlStartPosition = new Point (500,240);
+
         int fudgePilotUpgradeFrontier = -50;
         int totalPilotHeight = 0;
+        int totalDialsWidth = 0;
+        int totalTokenWidth = 0;
+        int totalTLWidth = 0;
+
+        int totalSquadPoints = 0;
 
         for (VassalXWSPilotPieces ship : pieces.getShips()) {
-            logToChat(String.format("pilot: %s, gpid=%s", ship.getPilotCard().getConfigureName(), ship.getPilotCard().getGpId()));
+            logToChat(String.format("Spawning pilot: %s", ship.getPilotCard().getConfigureName()));
 
             GamePiece pilotPiece = ship.clonePilotCard();
             int pilotWidth = (int)pilotPiece.boundingBox().getWidth();
@@ -101,20 +112,20 @@ public class AutoSquadSpawn extends AbstractConfigurable implements CommandEncod
             spawnPiece(pilotPiece, new Point(
                     (int)startPosition.getX(),
                     (int)startPosition.getY()+totalPilotHeight));
-
             GamePiece shipPiece = ship.cloneShip();
             int shipWidth = (int)shipPiece.boundingBox().getWidth();
-            int shipHeight = (int)shipPiece.boundingBox().getHeight();
             spawnPiece(shipPiece, new Point(
                     (int)startPosition.getX()-pilotWidth,
                     (int)startPosition.getY()+totalPilotHeight+20));
+            totalSquadPoints += ship.getPilotData().getPoints();
 
             GamePiece dialPiece = ship.cloneDial();
             int dialWidth = (int)dialPiece.boundingBox().getWidth();
             int dialHeight = (int)dialPiece.boundingBox().getHeight();
             spawnPiece(dialPiece, new Point(
-                    (int)startPosition.getX()-pilotWidth,
-                    (int)startPosition.getY()+totalPilotHeight-dialHeight));
+                    (int)dialstartPosition.getX()+totalDialsWidth,
+                    (int)dialstartPosition.getY()));
+            totalDialsWidth += dialWidth;
 
             int totalUpgradeWidth = 0;
             for (VassalXWSPilotPieces.Upgrade upgrade : ship.getUpgrades()) {
@@ -124,6 +135,8 @@ public class AutoSquadSpawn extends AbstractConfigurable implements CommandEncod
                         (int)startPosition.getY()+totalPilotHeight));
 
                 totalUpgradeWidth += upgradePiece.boundingBox().getWidth();
+
+                totalSquadPoints += upgrade.getUpgradeData().getPoints();
             } //loop to next upgrade
 
             for (PieceSlot conditionSlot: ship.getConditions()) {
@@ -135,14 +148,28 @@ public class AutoSquadSpawn extends AbstractConfigurable implements CommandEncod
                 totalUpgradeWidth += conditionPiece.boundingBox().getWidth();
             } //loop to next condition
 
-            int totalChitWidth = 0;
+
             for (GamePiece token : ship.getTokensForDisplay()) {
-                spawnPiece(token, new Point(
-                        (int)startPosition.getX()+pilotWidth+totalUpgradeWidth+totalChitWidth+fudgePilotUpgradeFrontier,
-                        (int)startPosition.getY()+totalPilotHeight));
-                totalChitWidth += token.boundingBox().getWidth();
-            }// loop to next token
+                PieceSlot pieceSlot = new PieceSlot(token);
+                if("Target Lock".equals(pieceSlot.getConfigureName())) {//if a target lock token, place elsewhere
+                    spawnPiece(token, new Point(
+                            (int)tokensStartPosition.getX()+totalTLWidth,
+                            (int)tlStartPosition.getY()));
+                    totalTLWidth += token.boundingBox().getWidth();
+                }
+                else {
+                    spawnPiece(token, new Point(
+                            (int)tokensStartPosition.getX()+totalTokenWidth,
+                            (int)tokensStartPosition.getY()));
+                    totalTokenWidth += token.boundingBox().getWidth();
+                }
+            }// loop to next token*/
         } //loop to next pilot
+
+        String listName = xwsList.getName();
+        logToChat(String.format("%s points list%s loaded from %s", Integer.toString(totalSquadPoints),
+                                listName != null ? " " + listName : "",
+                                url));
 
     }
 
@@ -189,28 +216,28 @@ public class AutoSquadSpawn extends AbstractConfigurable implements CommandEncod
 
     public void addTo(Buildable parent) {
         GameModule mod = (GameModule) parent;
+        final Map map = getMap();
 
         mod.addCommandEncoder(this);
         mod.getGameState().addGameComponent(this);
 
-        loadFromXwsUrlButton = new JButton("Squad AutoSpawn from web");
+        loadFromXwsUrlButton = new JButton("Squad Spawn");
         loadFromXwsUrlButton.setAlignmentY(0.0F);
         loadFromXwsUrlButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
                 loadFromXwsButtonPressed();
             }
         });
-        mod.getToolBar().add(loadFromXwsUrlButton);
-
+        map.getToolBar().add(loadFromXwsUrlButton);
     }
 
     public void removeFrom(Buildable parent) {
         GameModule mod = (GameModule) parent;
-
+        final Map map = getMap();
         mod.removeCommandEncoder(this);
         mod.getGameState().removeGameComponent(this);
 
-        mod.getToolBar().remove(loadFromXwsUrlButton);
+        map.getToolBar().remove(loadFromXwsUrlButton);
     }
 
     public VASSAL.build.module.documentation.HelpFile getHelpFile() {
@@ -248,6 +275,15 @@ public class AutoSquadSpawn extends AbstractConfigurable implements CommandEncod
         } else {
             return null;
         }
+    }
+
+    private Map getMap() {
+        for (Map loopMap : GameModule.getGameModule().getComponentsOf(Map.class)) {
+            if ("Contested Sector".equals(loopMap.getMapName())) {
+                return loopMap;
+            }
+        }
+        return null;
     }
 
     public static class Incr2 extends Command {
