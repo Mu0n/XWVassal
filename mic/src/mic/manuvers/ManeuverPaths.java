@@ -7,6 +7,7 @@ import java.awt.geom.Point2D;
 import java.util.List;
 
 import com.google.common.collect.Lists;
+
 /**
  * Created by amatheny on 2/17/17.
  */
@@ -34,7 +35,33 @@ public enum ManeuverPaths {
     Str2(StraightPaths.Str2, StraightPaths.Str2),
     Str3(StraightPaths.Str3, StraightPaths.Str3),
     Str4(StraightPaths.Str4, StraightPaths.Str4),
-    Str5(StraightPaths.Str5, StraightPaths.Str5);
+    Str5(StraightPaths.Str5, StraightPaths.Str5),
+
+    K1(StraightPaths.Str1, StraightPaths.Str1), // TODO: Fix this
+    K2(StraightPaths.Str2, StraightPaths.Str2), // TODO: Fix this
+    K3(StraightPaths.Str3, StraightPaths.Str3), // TODO: Fix this
+    K4(StraightPaths.Str4, StraightPaths.Str4), // TODO: Fix this
+    K5(StraightPaths.Str5, StraightPaths.Str5), // TODO: Fix this
+
+    RevStr1(CurvedPaths.LT1, CurvedPaths.RT1),  // TODO: Fix this
+    RevLbk1(CurvedPaths.LT2, CurvedPaths.RT2),  // TODO: Fix this
+    RevRbk1(CurvedPaths.LT3, CurvedPaths.RT3),  // TODO: Fix this
+
+    SloopL1(CurvedPaths.LT1, CurvedPaths.RT1),  // TODO: Fix this
+    SloopL2(CurvedPaths.LT2, CurvedPaths.RT2),  // TODO: Fix this
+    SloopL3(CurvedPaths.LT3, CurvedPaths.RT3),  // TODO: Fix this
+
+    SloopR1(CurvedPaths.LT1, CurvedPaths.RT1),  // TODO: Fix this
+    SloopR2(CurvedPaths.LT2, CurvedPaths.RT2),  // TODO: Fix this
+    SloopR3(CurvedPaths.LT3, CurvedPaths.RT3),  // TODO: Fix this
+
+    SloopL3Turn(CurvedPaths.LT3, CurvedPaths.RT3),  // TODO: Fix this
+    SloopR3Turn(CurvedPaths.LT3, CurvedPaths.RT3),  // TODO: Fix this
+
+    TrollL2(CurvedPaths.LT3, CurvedPaths.RT3),  // TODO: Fix this
+    TrollL3(CurvedPaths.LT3, CurvedPaths.RT3),  // TODO: Fix this
+    TrollR2(CurvedPaths.LT3, CurvedPaths.RT3),  // TODO: Fix this
+    TrollR3(CurvedPaths.LT3, CurvedPaths.RT3);  // TODO: Fix this
 
     private static int NUM_PATH_SEGMENTS = 60;
 
@@ -90,7 +117,7 @@ public enum ManeuverPaths {
 
     private static RealCurvedPathData.DataInstance calculateRealPaths(CurvedPaths curvedPath, boolean bigBase) {
 
-        double baseLength = bigBase ? 2*113 : 113;
+        double baseLength = bigBase ? 2 * 113 : 113;
 
         RealCurvedPathData.DataInstance data = new RealCurvedPathData.DataInstance();
 
@@ -99,13 +126,13 @@ public enum ManeuverPaths {
         int segments = 100;
         List<PathPart> parts = curvedPath.getPathParts(segments, baseLength, bigBase);
         int minPathIndex = segments / 2;
-        while(minPathIndex < segments*2.5) {
+        while (minPathIndex < segments * 2.5) {
             PathPart partA = parts.get(minPathIndex);
             Point.Double pointA = new Point2D.Double(partA.getX(), partA.getY());
             PathPart closest = partA;
             double closestDist = Double.MAX_VALUE;
             int closestIndex = minPathIndex;
-            for(int i = minPathIndex + 1; i < parts.size(); i++) {
+            for (int i = minPathIndex + 1; i < parts.size(); i++) {
                 PathPart partB = parts.get(i);
                 Point.Double pointB = new Point2D.Double(partB.getX(), partB.getY());
                 double distanceDiff = Math.abs(baseLength - Math.abs(pointB.distance(pointA)));
@@ -129,7 +156,7 @@ public enum ManeuverPaths {
         data.parts.get(0).x = points.get(0).getX();
         data.parts.get(0).y = points.get(0).getY();
 
-        for(int i = 1; i < points.size(); i++) {
+        for (int i = 1; i < points.size(); i++) {
             data.parts.add(new RealCurvedPathData.CurvedPathPart());
             data.parts.get(i).x = points.get(i).getX();
             data.parts.get(i).y = points.get(i).getY();
