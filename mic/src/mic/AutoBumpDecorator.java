@@ -40,14 +40,14 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
     // ship and press x to remove it.
     private static boolean DRAW_COLLISIONS = false;
 
-    private ShipPositionState prevPosition = null;
-    private ManeuverPaths lastManeuver = null;
-
     private final FreeRotator testRotator;
 
-    private CollisionVisualization collisionVisualization;
+    private ShipPositionState prevPosition = null;
+    private ManeuverPaths lastManeuver = null;
+    private FreeRotator myRotator = null;
+    private CollisionVisualization collisionVisualization = null;
 
-    private Map<String, ManeuverPaths> keyStrokeToManeuver = ImmutableMap.<String, ManeuverPaths>builder()
+    private static Map<String, ManeuverPaths> keyStrokeToManeuver = ImmutableMap.<String, ManeuverPaths>builder()
             .put("SHIFT 1", ManeuverPaths.Str1)
             .put("SHIFT 2", ManeuverPaths.Str2)
             .put("SHIFT 3", ManeuverPaths.Str3)
@@ -166,14 +166,14 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
             return null;
         }
 
+        Shape rawShape = getRawShape(this);
         final List<PathPart> parts = this.lastManeuver.getTransformedPathParts(
                 this.prevPosition.x,
                 this.prevPosition.y,
                 this.prevPosition.angle,
-                getRawShape(this).getBounds().width > 114
+                rawShape.getBounds().width > 114
         );
 
-        Shape rawShape = getRawShape(this);
         Shape lastBumpedShip = null;
         for (int i = parts.size() - 1; i >= 0; i--) {
             PathPart part = parts.get(i);
@@ -207,7 +207,7 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
      * @return
      */
     private Command buildTranslateCommand(PathPart part) {
-        //Copypasta from VASSAL.counters.Pivot
+        // Copypasta from VASSAL.counters.Pivot
         ChangeTracker changeTracker = new ChangeTracker(this);
         getRotator().setAngle(part.getAngle());
         setProperty("Moved", Boolean.TRUE);
@@ -233,8 +233,8 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
     }
 
     /**
-     * Returns the comparision shape of the first ship colliding with the provided ship.  This is
-     * primarily of use for collision visualization
+     * Returns the comparision shape of the first ship colliding with the provided ship.  Returns null if there
+     * are no collisions
      *
      * @param myTestShape
      * @return
@@ -300,7 +300,10 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
      * @return
      */
     private FreeRotator getRotator() {
-        return ((FreeRotator) Decorator.getDecorator(getOutermost(this), FreeRotator.class));
+        if (this.myRotator == null) {
+            this.myRotator = ((FreeRotator) Decorator.getDecorator(getOutermost(this), FreeRotator.class));
+        }
+        return this.myRotator;
     }
 
     /**
