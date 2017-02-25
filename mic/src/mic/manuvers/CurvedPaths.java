@@ -37,12 +37,18 @@ public enum CurvedPaths implements ManeuverPath {
         this.reverse = reverse;
         this.approximationMultiplier = approximationMultiplier;
     }
+
     public double getFinalAngleOffset() {
         return this.bank ? 45 : 90;
     }
+
     private class Vector {
         public double x, y;
-        Vector(double x, double y) { this.x = x; this.y = y; }
+
+        Vector(double x, double y) {
+            this.x = x;
+            this.y = y;
+        }
     }
 
     // --------- //
@@ -52,9 +58,10 @@ public enum CurvedPaths implements ManeuverPath {
     /**
      * length of bank and turn arcs
      */
-    private double calcArcLength() {
+    public double getPathLength() {
         return 2 * Math.PI * this.radius / (this.bank ? 8.0 : 4.0);
     }
+
     /**
      * angle that a vector from origin to target has in the Vassal map space
      */
@@ -65,6 +72,7 @@ public enum CurvedPaths implements ManeuverPath {
             return Math.PI + Math.atan((target.y - origin.y) / (target.x - origin.x));
         }
     }
+
     /**
      * scaling function for the input parameters to the position calculation methods - improves approximation by
      * reducing the errors introduced by bases getting "shorter" through Pythagoras; version for the front edge of the base
@@ -79,6 +87,7 @@ public enum CurvedPaths implements ManeuverPath {
             return ((2 - adjustedApproximationMultiplier) * 0.5) + (adjustedApproximationMultiplier * (percentage - 0.5));
         }
     }
+
     /**
      * scaling function for the input parameters to the position calculation methods - improves approximation by
      * reducing the errors introduced by bases getting "shorter" through Pythagoras; version for the back edge of the base
@@ -100,9 +109,10 @@ public enum CurvedPaths implements ManeuverPath {
 
     /**
      * calculate the position and angle of a bit of path; uses getBankFrontPosition and getBankBackPosition
-     * @param percentage at what percentage (from 0 to 1) of the entire path should the position be calculated?
-     * @param baseLength length of the base to calculate
-     * @param arcLength pre-computed length of the arc that the template's center forms
+     *
+     * @param percentage  at what percentage (from 0 to 1) of the entire path should the position be calculated?
+     * @param baseLength  length of the base to calculate
+     * @param arcLength   pre-computed length of the arc that the template's center forms
      * @param isLargeBase small and large bases need different computation
      * @return a PathPart with x, y and angle (degrees)
      */
@@ -121,6 +131,7 @@ public enum CurvedPaths implements ManeuverPath {
             return new PathPart(x, y, angle);
         }
     }
+
     /**
      * actual computation of x and y values of a bit of path for banks, for the front of the base
      */
@@ -140,6 +151,7 @@ public enum CurvedPaths implements ManeuverPath {
             return new Vector(x, this.reverse ? y : -y);
         }
     }
+
     /**
      * actual computation of x and y values of a bit of path for banks, for the back of the base
      */
@@ -164,9 +176,10 @@ public enum CurvedPaths implements ManeuverPath {
 
     /**
      * calculate the position and angle of a bit of path; uses getTurnFrontPosition and getTurnBackPosition
-     * @param percentage at what percentage (from 0 to 1) of the entire path should the position be calculated?
-     * @param baseLength length of the base to calculate
-     * @param arcLength pre-computed length of the arc that the template's center forms
+     *
+     * @param percentage  at what percentage (from 0 to 1) of the entire path should the position be calculated?
+     * @param baseLength  length of the base to calculate
+     * @param arcLength   pre-computed length of the arc that the template's center forms
      * @param isLargeBase small and large bases need different computation
      * @return a PathPart with x, y and angle (degrees)
      */
@@ -185,6 +198,7 @@ public enum CurvedPaths implements ManeuverPath {
             return new PathPart(x, y, angle);
         }
     }
+
     /**
      * actual computation of x and y values of a bit of path for turns, for the front of the base
      */
@@ -202,6 +216,7 @@ public enum CurvedPaths implements ManeuverPath {
             return new Vector(x, this.reverse ? y : -y);
         }
     }
+
     /**
      * actual computation of x and y values of a bit of path for turns, for the back of the base
      */
@@ -231,10 +246,10 @@ public enum CurvedPaths implements ManeuverPath {
         // init
         List<PathPart> parts = Lists.newArrayList();
         double baseLength = isLargeBase ? 2.0 * 113.0 : 113.0;
-        double arcLength = calcArcLength();
+        double arcLength = getPathLength();
         // calculate
         for (int i = 0; i < numSegments; i++) {
-            double percentage = (double)i / (double)numSegments;
+            double percentage = (double) i / (double) numSegments;
             if (this.bank) {
                 parts.add(getBankPart(percentage, baseLength, arcLength, isLargeBase));
             } else {

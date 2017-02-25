@@ -7,4 +7,6 @@ import java.util.List;
  */
 public interface ManeuverPath {
     List<PathPart> getPathParts(int numSegments, double baseOffset, boolean isLargeBase);
+
+    double getPathLength();
 }
