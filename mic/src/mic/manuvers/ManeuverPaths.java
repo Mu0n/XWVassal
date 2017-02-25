@@ -66,7 +66,7 @@ public enum ManeuverPaths {
     }
 
     private static int getNumPathSegments(ManeuverPath path) {
-        return (int) Math.floor((path.getPathLength() / CurvedPaths.RT3.getPathLength()) * 300);
+        return (int) Math.floor((path.getPathLength() / CurvedPaths.RT3.getPathLength()) * 500);
     }
 
     private List<PathPart> getTransformedPathPartsInternal(ManeuverPath workingPath, double x, double y, double angleDegrees, boolean isLargeBase) {
