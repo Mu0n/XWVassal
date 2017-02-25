@@ -14,9 +14,9 @@ import java.util.Map;
  */
 public class MasterUpgradeData extends ArrayList<MasterUpgradeData.UpgradeData> {
 
-  private static Map<String, UpgradeData> loadedData = null;
+  private static Map<String, List<UpgradeData>> loadedData = null;
 
-  public static UpgradeData getUpgradeData(String upgradeXwsId) {
+  public static List<UpgradeData> getUpgradeData(String upgradeXwsId) {
       if (loadedData == null) {
           loadData();
       }
@@ -28,7 +28,14 @@ public class MasterUpgradeData extends ArrayList<MasterUpgradeData.UpgradeData> 
       MasterUpgradeData data = Util.loadClasspathJson("upgrades.json", MasterUpgradeData.class);
 
       for(UpgradeData upgrade : data) {
-          loadedData.put(upgrade.getXws(), upgrade);
+          String key = upgrade.getXws();
+          List<UpgradeData> upgradeData = loadedData.get(key);
+          if (upgradeData == null)
+          {
+              upgradeData = new ArrayList<UpgradeData>();
+          }
+          upgradeData.add(upgrade);
+          loadedData.put(key, upgradeData);
       }
   }
 

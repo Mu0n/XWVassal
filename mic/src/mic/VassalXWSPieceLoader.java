@@ -61,8 +61,8 @@ public class VassalXWSPieceLoader {
                         continue;
                     }
 
-                    if (upgrade.getUpgradeData() != null) {
-                        List<PieceSlot> foundConditions = getConditionsForCard(upgrade.getUpgradeData().getConditions());
+                    if (upgrade.getUpgradeDataDefault() != null) {
+                        List<PieceSlot> foundConditions = getConditionsForCard(upgrade.getUpgradeDataDefault().getConditions());
                         pilotPieces.getConditions().addAll(foundConditions);
                     }
 
@@ -167,12 +167,18 @@ public class VassalXWSPieceLoader {
             String mapKey = getUpgradeMapKey(upgradeType, upgradeName);
             VassalXWSPilotPieces.Upgrade upgradePiece = new VassalXWSPilotPieces.Upgrade(upgradeName, upgrade);
 
-            MasterUpgradeData.UpgradeData upgradeData = MasterUpgradeData.getUpgradeData(upgradeName);
+            List<MasterUpgradeData.UpgradeData> upgradeData = MasterUpgradeData.getUpgradeData(upgradeName);
             if (upgradeData != null) {
                 upgradePiece.setUpgradeData(upgradeData);
             }
-
-            upgradePiecesMap.put(mapKey, upgradePiece);
+            VassalXWSPilotPieces.Upgrade existingUpgradePiece = upgradePiecesMap.get(mapKey);
+            if (existingUpgradePiece == null) {
+                existingUpgradePiece = upgradePiece;
+            }
+            else {
+                existingUpgradePiece.addUpgradeData(upgradePiece.getUpgradeData());
+            }
+            upgradePiecesMap.put(mapKey, existingUpgradePiece);
         }
     }
 
