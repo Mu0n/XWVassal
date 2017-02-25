@@ -171,7 +171,7 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
                 this.prevPosition.x,
                 this.prevPosition.y,
                 this.prevPosition.angle,
-                rawShape.getBounds().width > 114
+                isLargeShip(this)
         );
 
         Shape lastBumpedShip = null;
@@ -390,7 +390,8 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
      */
     private Shape getShipCompareShape(Decorator ship) {
         Shape rawShape = getRawShape(ship);
-        Shape transformed = AffineTransform.getScaleInstance(1.01d, 1.01d).createTransformedShape(rawShape);
+        double scaleFactor = isLargeShip(ship) ? 1.01d : 1.025d;
+        Shape transformed = AffineTransform.getScaleInstance(scaleFactor, scaleFactor).createTransformedShape(rawShape);
 
         transformed = AffineTransform
                 .getTranslateInstance(ship.getPosition().getX(), ship.getPosition().getY())
@@ -404,6 +405,10 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
                 .createTransformedShape(transformed);
 
         return transformed;
+    }
+
+    private boolean isLargeShip(Decorator ship) {
+        return getRawShape(ship).getBounds().getWidth() > 114;
     }
 
     private static class CollisionVisualization implements Drawable {
