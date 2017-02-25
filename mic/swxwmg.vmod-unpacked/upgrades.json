@@ -2663,22 +2663,35 @@
     "id": 231
   },
   {
-    "image": "upgrades/Elite/adaptability-decrease.png",
-    "text": "Decrease your pilot skill value by 1.",
-    "name": "Adaptability (-1)",
-    "xws": "adaptability",
-    "points": 0,
-    "slot": "Elite",
-    "id": 232
-  },
-  {
     "image": "upgrades/Elite/adaptability-increase.png",
     "text": "Increase your pilot skill value by 1.",
     "name": "Adaptability (+1)",
     "xws": "adaptability",
     "points": 0,
     "slot": "Elite",
-    "id": 233
+    "id": 232,"grants": [
+    {
+      "type": "stats",
+      "name": "skill",
+      "value": 1
+    }
+  ]
+  },
+  {
+    "image": "upgrades/Elite/adaptability-decrease.png",
+    "text": "Decrease your pilot skill value by 1.",
+    "name": "Adaptability (-1)",
+    "xws": "adaptability",
+    "points": 0,
+    "slot": "Elite",
+    "id": 233,
+    "grants": [
+      {
+        "type": "stats",
+        "name": "skill",
+        "value": -1
+      }
+    ]
   },
   {
     "image": "upgrades/System/electronic-baffle.png",
@@ -3115,7 +3128,14 @@
     "ship": [
       "U-Wing"
     ],
-    "id": 271
+    "id": 271,
+    "grants": [
+      {
+        "type": "stats",
+        "name": "agility",
+        "value": 1
+      }
+    ]
   },
   {
     "image": "upgrades/Title/pivot-wing-landing.png",

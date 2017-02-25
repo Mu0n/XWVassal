@@ -3,10 +3,7 @@ package mic;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.InputStream;
-import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.List;
 import java.util.Random;
 
 import javax.swing.*;
@@ -15,7 +12,6 @@ import javax.swing.*;
 import VASSAL.build.AbstractConfigurable;
 import VASSAL.build.Buildable;
 import VASSAL.build.GameModule;
-import VASSAL.build.module.Chatter;
 import VASSAL.build.module.GameComponent;
 import VASSAL.build.module.Map;
 import VASSAL.build.widget.PieceSlot;
@@ -136,7 +132,7 @@ public class AutoSquadSpawn extends AbstractConfigurable implements CommandEncod
 
                 totalUpgradeWidth += upgradePiece.boundingBox().getWidth();
 
-                totalSquadPoints += upgrade.getUpgradeData().getPoints();
+                totalSquadPoints += upgrade.getUpgradeDataDefault().getPoints();
             } //loop to next upgrade
 
             for (PieceSlot conditionSlot: ship.getConditions()) {

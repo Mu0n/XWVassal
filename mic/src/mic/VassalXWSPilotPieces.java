@@ -155,7 +155,7 @@ public class VassalXWSPilotPieces {
         int hullModifier = 0;
 
         for (Upgrade upgrade : this.upgrades) {
-            for(MasterUpgradeData.UpgradeGrants modifier : upgrade.getUpgradeData().getGrants()) {
+            for(MasterUpgradeData.UpgradeGrants modifier : upgrade.getUpgradeDataDefault().getGrants()) {
                 if (modifier.isStatsModifier()) {
                     String name = modifier.getName();
                     int value = modifier.getValue();
@@ -241,8 +241,19 @@ public class VassalXWSPilotPieces {
         String[] words = name.split(" ");
 
         if (name.length() <= maxLength) return name;
-        if (words.length == 1) return name.substring(0, maxLength);
-        if (isUnique && words[0].length() <= maxLength) return words[0];
+        if (words.length == 1) {
+            return name.substring(0, maxLength);
+        } else if (isUnique) {
+            if (XWConstants.SHIP_NAME_PREFIXES.contains(words[0])) {
+                if (words[1].length() <= maxLength) {
+                    return words[1];
+                } else {
+                    return words[1].substring(0, maxLength);
+                }
+            } else {
+                return words[0];
+            }
+        }
 
         String firstLetters = "";
         for (String s: words){
@@ -254,7 +265,7 @@ public class VassalXWSPilotPieces {
     public static class Upgrade {
         private String xwsName;
         private PieceSlot pieceSlot;
-        private MasterUpgradeData.UpgradeData upgradeData;
+        private List<MasterUpgradeData.UpgradeData> upgradeData;
 
         public Upgrade(String xwsName, PieceSlot pieceSlot) {
             this.xwsName = xwsName;
@@ -269,12 +280,20 @@ public class VassalXWSPilotPieces {
             return this.pieceSlot;
         }
 
-        public MasterUpgradeData.UpgradeData getUpgradeData() {
+        public MasterUpgradeData.UpgradeData getUpgradeDataDefault() {
+            return upgradeData.get(0);
+        }
+
+        public List<MasterUpgradeData.UpgradeData> getUpgradeData() {
             return upgradeData;
         }
 
-        public void setUpgradeData(MasterUpgradeData.UpgradeData upgradeData) {
+        public void setUpgradeData(List<MasterUpgradeData.UpgradeData> upgradeData) {
             this.upgradeData = upgradeData;
+        }
+
+        public void addUpgradeData(List<MasterUpgradeData.UpgradeData> upgradeData) {
+            this.upgradeData.addAll(upgradeData);
         }
 
         public GamePiece cloneGamePiece() {
