@@ -188,6 +188,9 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
             Shape bumpedShip = findCollidingShip(movedShape, otherShipShapes);
             if (bumpedShip == null) {
                 if (DRAW_COLLISIONS) {
+                    if (this.collisionVisualization != null) {
+                        getMap().removeDrawComponent(this.collisionVisualization);
+                    }
                     this.collisionVisualization = new CollisionVisualization(movedShape, lastBumpedShip);
                     getMap().addDrawComponent(this.collisionVisualization);
                 }
