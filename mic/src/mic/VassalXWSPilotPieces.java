@@ -215,7 +215,7 @@ public class VassalXWSPilotPieces {
     private String getDisplayPilotName() {
         String pilotName = "";
         if (pilotData != null) {
-            pilotName = acronymizer(
+            pilotName = Acronymizer.acronymizer(
                 this.pilotData.getName(),
                 this.pilotData.isUnique(),
                 this.shipData.hasSmallBase());
@@ -233,22 +233,6 @@ public class VassalXWSPilotPieces {
 
     public MasterPilotData.PilotData getPilotData() {
         return pilotData;
-    }
-
-    private String acronymizer(String cardName, boolean isUnique, boolean shortName) {
-        int maxLength = shortName ? 8 : 14;
-        String name = cardName.replace("\"", "");
-        String[] words = name.split(" ");
-
-        if (name.length() <= maxLength) return name;
-        if (words.length == 1) return name.substring(0, maxLength);
-        if (isUnique && words[0].length() <= maxLength) return words[0];
-
-        String firstLetters = "";
-        for (String s: words){
-            firstLetters += s.charAt(0);
-        }
-        return firstLetters;
     }
 
     public static class Upgrade {

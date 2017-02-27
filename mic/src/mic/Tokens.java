@@ -13,7 +13,7 @@ public enum Tokens {
     shield,
     targetlock(
             Lists.newArrayList("Target Lock"),
-            Lists.newArrayList("targetingcomputer"),
+            Lists.newArrayList("targetingcomputer", "firecontrolsystem"),
             none
     ),
     stress(
