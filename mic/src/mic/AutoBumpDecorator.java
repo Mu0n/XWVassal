@@ -146,10 +146,6 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
         if (stroke.isOnKeyRelease() == false) {
             this.prevPosition = getCurrentState();
             this.lastManeuver = path;
-        } else {
-            if (findCollidingShip(getShipCompareShape(this), getOtherShipShapes()) != null) {
-                Util.logToChat("Bump! Select overlapping ship and press ‘c’ to resolve");
-            }
         }
 
         return piece.keyEvent(stroke);
