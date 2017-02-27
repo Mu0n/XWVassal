@@ -66,7 +66,7 @@ public enum CurvedPaths implements ManeuverPath {
      * angle that a vector from origin to target has in the Vassal map space
      */
     private double calcAngle(Vector origin, Vector target) {
-        if (target.x > origin.x) {
+        if (target.x >= origin.x) {
             return Math.atan((target.y - origin.y) / (target.x - origin.x));
         } else {
             return Math.PI + Math.atan((target.y - origin.y) / (target.x - origin.x));
