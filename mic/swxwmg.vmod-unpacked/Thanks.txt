@@ -1,3 +1,8 @@
+-=-=-=- THIRD FEBRUARY 2017 Update
+Autobumping feature for ships that overlap, press 'c'
+Squad AutoSpawn improved in many ways
+Sabine's TIE Fighter bomb capability has been added
+
 -=-=-=- SECOND FEBRUARY 2017 Update
 Squad AutoSpawn feature
 TIE Striker now has missing segnor's loop capability
