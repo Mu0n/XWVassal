@@ -188,7 +188,8 @@ public class VassalXWSPieceLoader {
             return;
         }
 
-        PieceSlot ship = null;
+        PieceSlot defaultShip = null;
+        Map<String, PieceSlot> altArtShips = Maps.newHashMap();
         PieceSlot dial = null;
         PieceSlot movementCard = null;
         PieceSlot movementStrip = null;
@@ -200,9 +201,12 @@ public class VassalXWSPieceLoader {
             if (slotName.startsWith("=")) {
                 continue;
             }
-            if (slotName.startsWith("ship")) {
-                // TODO: figure out how to determine which ship model to load
-                ship = slot;
+            if (slotName.startsWith("ship") && defaultShip == null) {
+                defaultShip = slot;
+                continue;
+            }
+            if (slotName.startsWith("ship") && defaultShip != null) {
+                altArtShips.put(slotName, slot);
                 continue;
             }
             if (slotName.startsWith("dial")) {
@@ -236,7 +240,7 @@ public class VassalXWSPieceLoader {
             VassalXWSPilotPieces pilotPieces = new VassalXWSPilotPieces();
             pilotPieces.setShipData(shipData);
             pilotPieces.setDial(dial);
-            pilotPieces.setShip(ship);
+            pilotPieces.setShip(AltArtShipPicker.getAltArtShip(pilotName, altArtShips, defaultShip));
             pilotPieces.setMovementCard(movementCard);
             pilotPieces.setPilotCard(pilot);
             pilotPieces.setMovementStrip(movementStrip);
