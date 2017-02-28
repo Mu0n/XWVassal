@@ -1,9 +1,11 @@
 package mic;
 
-import VASSAL.build.widget.PieceSlot;
+import java.util.List;
+
 import com.google.common.collect.Lists;
 
-import java.util.List;
+import VASSAL.build.widget.PieceSlot;
+import VASSAL.counters.GamePiece;
 
 /**
  * Created by amatheny on 2/8/17.
@@ -26,5 +28,13 @@ public class VassalXWSListPieces {
 
     public void setObstacles(List<PieceSlot> obstacles) {
         this.obstacles = obstacles;
+    }
+
+    public List<GamePiece> getObstaclesForDisplay() {
+        List<GamePiece> pieces = Lists.newArrayList();
+        for (PieceSlot slot : getObstacles()) {
+            pieces.add(Util.newPiece(slot));
+        }
+        return pieces;
     }
 }
