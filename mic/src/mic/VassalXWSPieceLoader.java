@@ -1,25 +1,37 @@
 package mic;
 
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+
+import com.google.common.collect.HashMultiset;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Multiset;
+
 import VASSAL.build.GameModule;
 import VASSAL.build.Widget;
 import VASSAL.build.widget.ListWidget;
 import VASSAL.build.widget.PieceSlot;
 import VASSAL.build.widget.TabWidget;
-import com.google.common.collect.*;
-
-import java.util.*;
 
 /**
  * Created by amatheny on 2/8/17.
  */
 public class VassalXWSPieceLoader {
 
+    private static List<String> obstacleTabNames = Lists.newArrayList(
+            "Asteroids", "New Asteroids", "Debris"
+    );
+
     Map<String, VassalXWSPilotPieces> pilotPiecesMap = null;
     Map<String, VassalXWSPilotPieces.Upgrade> upgradePiecesMap = null;
     Map<Tokens, PieceSlot> tokenPiecesMap = null;
+    Map<Obstacles, PieceSlot> obstaclesPiecesMap = null;
 
     public VassalXWSListPieces loadListFromXWS(XWSList list) {
-        if (pilotPiecesMap == null || upgradePiecesMap == null || tokenPiecesMap == null) {
+        if (pilotPiecesMap == null || upgradePiecesMap == null
+                || tokenPiecesMap == null || obstaclesPiecesMap == null) {
             loadPieces();
         }
 
@@ -52,8 +64,8 @@ public class VassalXWSPieceLoader {
                 pilotPieces.setShipNumber(genericPilotsAdded.count(pilot.getName()));
             }
 
-            for(String upgradeType: pilot.getUpgrades().keySet()) {
-                for(String upgradeName : pilot.getUpgrades().get(upgradeType)) {
+            for (String upgradeType : pilot.getUpgrades().keySet()) {
+                for (String upgradeName : pilot.getUpgrades().get(upgradeType)) {
                     String upgradeKey = getUpgradeMapKey(upgradeType, upgradeName);
                     VassalXWSPilotPieces.Upgrade upgrade = upgradePiecesMap.get(upgradeKey);
                     if (upgrade == null) {
@@ -82,12 +94,21 @@ public class VassalXWSPieceLoader {
             pieces.getShips().add(pilotPieces);
         }
 
+        for (String xwsObstacleName : list.getObstacles()) {
+            Obstacles obstacle = Obstacles.forXwsName(xwsObstacleName);
+            if (!obstaclesPiecesMap.containsKey(obstacle)) {
+                Util.logToChat("Unable to find vassal obstacle for xws obstacle '" + xwsObstacleName + "'");
+                continue;
+            }
+            pieces.getObstacles().add(obstaclesPiecesMap.get(obstacle));
+        }
+
         return pieces;
     }
 
     private List<PieceSlot> getConditionsForCard(List<String> conditions) {
         List<PieceSlot> conditionSlots = Lists.newArrayList();
-        for(String conditionName : conditions) {
+        for (String conditionName : conditions) {
             String canonicalConditionName = Canonicalizer.getCanonicalUpgradeName(
                     "conditions", conditionName);
             String mapKey = getUpgradeMapKey("conditions", canonicalConditionName);
@@ -105,6 +126,7 @@ public class VassalXWSPieceLoader {
         pilotPiecesMap = Maps.newHashMap();
         upgradePiecesMap = Maps.newHashMap();
         tokenPiecesMap = Maps.newHashMap();
+        obstaclesPiecesMap = Maps.newHashMap();
 
         List<ListWidget> listWidgets = GameModule.getGameModule().getAllDescendantComponentsOf(ListWidget.class);
         for (ListWidget listWidget : listWidgets) {
@@ -134,11 +156,32 @@ public class VassalXWSPieceLoader {
     private void loadChits(ListWidget listWidget) {
         List<ListWidget> chitLists = listWidget.getAllDescendantComponentsOf(ListWidget.class);
         for (ListWidget chitList : chitLists) {
-            if (chitList.getConfigureName() != null && chitList.getConfigureName().equals("Tokens")) {
+            if (chitList.getConfigureName() == null) {
+                continue;
+            }
+
+            String name = chitList.getConfigureName().trim();
+
+            if (name.equals("Tokens")) {
                 loadTokens(chitList);
+            } else if (obstacleTabNames.contains(name)) {
+                loadObstacles(chitList);
             }
         }
 
+    }
+
+    private void loadObstacles(ListWidget chitList) {
+        List<PieceSlot> tokenSlots = chitList.getAllDescendantComponentsOf(PieceSlot.class);
+        for (PieceSlot tokenSlot : tokenSlots) {
+            if (tokenSlot.getConfigureName() == null) {
+                continue;
+            }
+
+            String obstacleName = tokenSlot.getConfigureName().trim();
+            Obstacles obstacle = Obstacles.forVassalName(obstacleName);
+            obstaclesPiecesMap.put(obstacle, tokenSlot);
+        }
     }
 
     private void loadTokens(ListWidget listWidget) {
@@ -273,7 +316,7 @@ public class VassalXWSPieceLoader {
         }
 
         Map<String, XWSMasterUpgrades.UpgradeType> masterUpgrades = XWSMasterUpgrades.loadFromRemote();
-        for(String upgradeType : masterUpgrades.keySet()) {
+        for (String upgradeType : masterUpgrades.keySet()) {
             for (String upgradeName : masterUpgrades.get(upgradeType).upgrades.keySet()) {
                 String pieceKey = getUpgradeMapKey(upgradeType, upgradeName);
                 if (!upgradePiecesMap.containsKey(pieceKey)) {

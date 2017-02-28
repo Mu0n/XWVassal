@@ -1,30 +1,25 @@
 package mic;
 
+import static mic.Util.logToChat;
+import static mic.Util.newPiece;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.InputStream;
-import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.List;
 import java.util.Random;
 
 import javax.swing.*;
 
-
 import VASSAL.build.AbstractConfigurable;
 import VASSAL.build.Buildable;
 import VASSAL.build.GameModule;
-import VASSAL.build.module.Chatter;
 import VASSAL.build.module.GameComponent;
 import VASSAL.build.module.Map;
 import VASSAL.build.widget.PieceSlot;
 import VASSAL.command.Command;
 import VASSAL.command.CommandEncoder;
 import VASSAL.counters.GamePiece;
-
-import static mic.Util.logToChat;
-import static mic.Util.newPiece;
 
 /**
  * Created by Mic on 12/02/2017.
@@ -65,8 +60,7 @@ public class AutoSquadSpawn extends AbstractConfigurable implements CommandEncod
 
         try {
             url = JOptionPane.showInputDialog("Please paste a voidstate url or ID, YASB url, or FABS url");
-        }
-        catch ( Exception e ) {
+        } catch (Exception e) {
             logToChat("Unable to process url, please try again");
         }
         if (url == null || url.length() == 0) {
@@ -76,7 +70,7 @@ public class AutoSquadSpawn extends AbstractConfigurable implements CommandEncod
         URL translatedURL = null;
         try {
             translatedURL = XWSUrlHelper.translate(url);
-            if ( translatedURL == null ) {
+            if (translatedURL == null) {
                 logToChat("Invalid list url detected, please try again");
                 return;
             }
@@ -88,11 +82,11 @@ public class AutoSquadSpawn extends AbstractConfigurable implements CommandEncod
         XWSList xwsList = XWSFetcher.fetchFromUrl(translatedURL.toString());
         VassalXWSListPieces pieces = slotLoader.loadListFromXWS(xwsList);
 
-        Point startPosition = new Point(500,60);
-        Point tokensStartPosition = new Point(500,180);
-        Point dialstartPosition = new Point(500,80);
-        Point shipsStartPosition = new Point(150,300);
-        Point tlStartPosition = new Point (500,240);
+        Point startPosition = new Point(500, 60);
+        Point tokensStartPosition = new Point(500, 180);
+        Point dialstartPosition = new Point(500, 80);
+        Point shipsStartPosition = new Point(150, 300);
+        Point tlStartPosition = new Point(500, 240);
 
         int fudgePilotUpgradeFrontier = -50;
         int totalPilotHeight = 0;
@@ -106,44 +100,44 @@ public class AutoSquadSpawn extends AbstractConfigurable implements CommandEncod
             logToChat(String.format("Spawning pilot: %s", ship.getPilotCard().getConfigureName()));
 
             GamePiece pilotPiece = ship.clonePilotCard();
-            int pilotWidth = (int)pilotPiece.boundingBox().getWidth();
-            int pilotHeight = (int)pilotPiece.boundingBox().getHeight();
+            int pilotWidth = (int) pilotPiece.boundingBox().getWidth();
+            int pilotHeight = (int) pilotPiece.boundingBox().getHeight();
             totalPilotHeight += pilotHeight;
             spawnPiece(pilotPiece, new Point(
-                    (int)startPosition.getX(),
-                    (int)startPosition.getY()+totalPilotHeight));
+                    (int) startPosition.getX(),
+                    (int) startPosition.getY() + totalPilotHeight));
             GamePiece shipPiece = ship.cloneShip();
-            int shipWidth = (int)shipPiece.boundingBox().getWidth();
+            int shipWidth = (int) shipPiece.boundingBox().getWidth();
             spawnPiece(shipPiece, new Point(
-                    (int)startPosition.getX()-pilotWidth,
-                    (int)startPosition.getY()+totalPilotHeight+20));
+                    (int) startPosition.getX() - pilotWidth,
+                    (int) startPosition.getY() + totalPilotHeight + 20));
             totalSquadPoints += ship.getPilotData().getPoints();
 
             GamePiece dialPiece = ship.cloneDial();
-            int dialWidth = (int)dialPiece.boundingBox().getWidth();
-            int dialHeight = (int)dialPiece.boundingBox().getHeight();
+            int dialWidth = (int) dialPiece.boundingBox().getWidth();
+            int dialHeight = (int) dialPiece.boundingBox().getHeight();
             spawnPiece(dialPiece, new Point(
-                    (int)dialstartPosition.getX()+totalDialsWidth,
-                    (int)dialstartPosition.getY()));
+                    (int) dialstartPosition.getX() + totalDialsWidth,
+                    (int) dialstartPosition.getY()));
             totalDialsWidth += dialWidth;
 
             int totalUpgradeWidth = 0;
             for (VassalXWSPilotPieces.Upgrade upgrade : ship.getUpgrades()) {
                 GamePiece upgradePiece = upgrade.cloneGamePiece();
                 spawnPiece(upgradePiece, new Point(
-                        (int)startPosition.getX()+pilotWidth+totalUpgradeWidth+fudgePilotUpgradeFrontier,
-                        (int)startPosition.getY()+totalPilotHeight));
+                        (int) startPosition.getX() + pilotWidth + totalUpgradeWidth + fudgePilotUpgradeFrontier,
+                        (int) startPosition.getY() + totalPilotHeight));
 
                 totalUpgradeWidth += upgradePiece.boundingBox().getWidth();
 
                 totalSquadPoints += upgrade.getUpgradeData().getPoints();
             } //loop to next upgrade
 
-            for (PieceSlot conditionSlot: ship.getConditions()) {
+            for (PieceSlot conditionSlot : ship.getConditions()) {
                 GamePiece conditionPiece = newPiece(conditionSlot);
                 spawnPiece(conditionPiece, new Point(
-                        (int)startPosition.getX()+pilotWidth+totalUpgradeWidth+fudgePilotUpgradeFrontier,
-                        (int)startPosition.getY()+totalPilotHeight));
+                        (int) startPosition.getX() + pilotWidth + totalUpgradeWidth + fudgePilotUpgradeFrontier,
+                        (int) startPosition.getY() + totalPilotHeight));
 
                 totalUpgradeWidth += conditionPiece.boundingBox().getWidth();
             } //loop to next condition
@@ -151,25 +145,31 @@ public class AutoSquadSpawn extends AbstractConfigurable implements CommandEncod
 
             for (GamePiece token : ship.getTokensForDisplay()) {
                 PieceSlot pieceSlot = new PieceSlot(token);
-                if("Target Lock".equals(pieceSlot.getConfigureName())) {//if a target lock token, place elsewhere
+                if ("Target Lock".equals(pieceSlot.getConfigureName())) {//if a target lock token, place elsewhere
                     spawnPiece(token, new Point(
-                            (int)tokensStartPosition.getX()+totalTLWidth,
-                            (int)tlStartPosition.getY()));
+                            (int) tokensStartPosition.getX() + totalTLWidth,
+                            (int) tlStartPosition.getY()));
                     totalTLWidth += token.boundingBox().getWidth();
-                }
-                else {
+                } else {
                     spawnPiece(token, new Point(
-                            (int)tokensStartPosition.getX()+totalTokenWidth,
-                            (int)tokensStartPosition.getY()));
+                            (int) tokensStartPosition.getX() + totalTokenWidth,
+                            (int) tokensStartPosition.getY()));
                     totalTokenWidth += token.boundingBox().getWidth();
                 }
             }// loop to next token*/
         } //loop to next pilot
 
+        int totalObstacleWidth = (int) dialstartPosition.getX() + totalDialsWidth + 150;
+        int obstacleStartY = (int) dialstartPosition.getY();
+        for (GamePiece obstacle : pieces.getObstaclesForDisplay()) {
+            spawnPiece(obstacle, new Point(totalObstacleWidth, obstacleStartY));
+            totalObstacleWidth += obstacle.getShape().getBounds().getWidth();
+        }
+
         String listName = xwsList.getName();
         logToChat(String.format("%s points list%s loaded from %s", Integer.toString(totalSquadPoints),
-                                listName != null ? " " + listName : "",
-                                url));
+                listName != null ? " " + listName : "",
+                url));
 
     }
 
