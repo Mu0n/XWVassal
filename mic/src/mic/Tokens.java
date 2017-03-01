@@ -10,7 +10,11 @@ import static mic.Util.none;
  * Created by amatheny on 2/11/17.
  */
 public enum Tokens {
-    shield,
+    shield(
+            none,
+            Lists.newArrayList("gonk"),
+            none
+    ),
     targetlock(
             Lists.newArrayList("Target Lock"),
             Lists.newArrayList("targetingcomputer", "firecontrolsystem"),
