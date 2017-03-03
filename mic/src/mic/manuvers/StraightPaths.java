@@ -40,7 +40,7 @@ public enum StraightPaths implements ManeuverPath {
         for (int i = 1; i <= numSegments; i++) {
             parts.add(new PathPart(
                     0,
-                    -baseOffset * (i / (double) numSegments) * revModifier,
+                    (-baseOffset * (i / (double) numSegments) )* revModifier,
                     0.0
             ));
         }
@@ -49,7 +49,7 @@ public enum StraightPaths implements ManeuverPath {
         for (int i = 1; i <= numSegments; i++) {
             parts.add(new PathPart(
                     0.0,
-                    -this.length * (i / (double) numSegments) * revModifier,
+                    (-baseOffset - this.length * (i / (double) numSegments) ) * revModifier,
                     0.0
             ));
         }
