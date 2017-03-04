@@ -95,6 +95,15 @@ public class AutoSquadSpawn extends AbstractConfigurable implements CommandEncod
         int totalTLWidth = 0;
 
         int totalSquadPoints = 0;
+        boolean wantCalculateSquadPoints = true;
+        //temp fix for letting the squad points be known during the XWS fetch
+        try {
+            totalSquadPoints = xwsList.getPoints();
+            wantCalculateSquadPoints = false;
+        } catch (Exception e)
+        {
+
+        }
 
         for (VassalXWSPilotPieces ship : pieces.getShips()) {
             logToChat(String.format("Spawning pilot: %s", ship.getPilotCard().getConfigureName()));
@@ -111,7 +120,7 @@ public class AutoSquadSpawn extends AbstractConfigurable implements CommandEncod
             spawnPiece(shipPiece, new Point(
                     (int) startPosition.getX() - pilotWidth,
                     (int) startPosition.getY() + totalPilotHeight + 20));
-            totalSquadPoints += ship.getPilotData().getPoints();
+            if(wantCalculateSquadPoints) totalSquadPoints += ship.getPilotData().getPoints();
 
             GamePiece dialPiece = ship.cloneDial();
             int dialWidth = (int) dialPiece.boundingBox().getWidth();
@@ -130,7 +139,7 @@ public class AutoSquadSpawn extends AbstractConfigurable implements CommandEncod
 
                 totalUpgradeWidth += upgradePiece.boundingBox().getWidth();
 
-                totalSquadPoints += upgrade.getUpgradeData().getPoints();
+                if(wantCalculateSquadPoints) totalSquadPoints += upgrade.getUpgradeData().getPoints();
             } //loop to next upgrade
 
             for (PieceSlot conditionSlot : ship.getConditions()) {
