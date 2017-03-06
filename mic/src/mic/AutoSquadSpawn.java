@@ -98,11 +98,6 @@ public class AutoSquadSpawn extends AbstractConfigurable implements CommandEncod
         int totalSquadPoints = 0;
         boolean wantCalculateSquadPoints = true;
 
-        //prepare the special case of a TIE/x1 title reducing the amount of points if a system upgrade is also found
-        //ugh, yeah, I know.
-        boolean isTIEx1Here = false;
-        int systemTotalCost = 0;
-
         for (VassalXWSPilotPieces ship : pieces.getShips()) {
             logToChat(String.format("Spawning pilot: %s", ship.getPilotCard().getConfigureName()));
 
@@ -137,21 +132,10 @@ public class AutoSquadSpawn extends AbstractConfigurable implements CommandEncod
 
                 totalUpgradeWidth += upgradePiece.boundingBox().getWidth();
 
-                //ugly custom code just for that damn TIE/x1 card PART 1
-                if(isTIEx1Here == false) isTIEx1Here = checkTIEX1(upgrade);
-                if(isSystem(upgrade)) systemTotalCost = upgrade.getUpgradeData().getPoints();
-
                 if(wantCalculateSquadPoints) totalSquadPoints += upgrade.getUpgradeData().getPoints();
             } //loop to next upgrade
 
-            //ugly custom code just for that damn TIE/x1 card PART 2
-            if(isTIEx1Here) {
-                logToChat("Points reduced by " + Integer.toString(Math.min(4,systemTotalCost)));
-                totalSquadPoints -= Math.min(4,systemTotalCost);
-            }
-            //reset flags to false for next ships
-            isTIEx1Here = false;
-            systemTotalCost = 0;
+            totalSquadPoints = pieces.getSquadPoints();
 
             for (PieceSlot conditionSlot : ship.getConditions()) {
                 GamePiece conditionPiece = newPiece(conditionSlot);

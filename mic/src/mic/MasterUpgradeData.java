@@ -49,6 +49,9 @@ public class MasterUpgradeData extends ArrayList<MasterUpgradeData.UpgradeData> 
       @JsonProperty("conditions")
       private List<String> conditions = Lists.newArrayList();
 
+      @JsonProperty("slot")
+      private String slot;
+
       public List<String> getConditions() {
           return conditions;
       }
@@ -65,6 +68,7 @@ public class MasterUpgradeData extends ArrayList<MasterUpgradeData.UpgradeData> 
           return name;
       }
 
+      public String getSlot() { return slot; }
       public int getPoints() {
           try {
               return Integer.parseInt(points);

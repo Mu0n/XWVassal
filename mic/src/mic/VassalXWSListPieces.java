@@ -7,6 +7,8 @@ import com.google.common.collect.Lists;
 import VASSAL.build.widget.PieceSlot;
 import VASSAL.counters.GamePiece;
 
+import static mic.Util.logToChat;
+
 /**
  * Created by amatheny on 2/8/17.
  */
@@ -36,5 +38,26 @@ public class VassalXWSListPieces {
             pieces.add(Util.newPiece(slot));
         }
         return pieces;
+    }
+
+    public int getSquadPoints() {
+        int total = 0;
+        boolean isTIEx1Here = false;
+        int systemCost = 0;
+
+        if(!ships.isEmpty()) {
+            for(VassalXWSPilotPieces ship : ships){
+                total += ship.getPilotData().getPoints();
+                for(VassalXWSPilotPieces.Upgrade upgrade : ship.getUpgrades()) {
+                    total += upgrade.getUpgradeData().getPoints();
+                    if("tiex1".equals(upgrade.getXwsName())) isTIEx1Here = true;
+                    if("System".equals(upgrade.getUpgradeData().getSlot())) systemCost += upgrade.getUpgradeData().getPoints();
+                }
+                if(isTIEx1Here) total -= Math.min(4,systemCost);
+                isTIEx1Here = false;
+                systemCost = 0;
+            }
+        }
+        return total;
     }
 }
