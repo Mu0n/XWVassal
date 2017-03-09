@@ -1,19 +1,22 @@
 package mic;
 
-import static mic.Util.logToChat;
-import static mic.Util.newPiece;
+import static mic.Util.*;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.net.URL;
+import java.util.List;
 
 import javax.swing.*;
+
+import com.google.common.collect.Lists;
 
 import VASSAL.build.AbstractConfigurable;
 import VASSAL.build.Buildable;
 import VASSAL.build.GameModule;
 import VASSAL.build.module.Map;
+import VASSAL.build.module.documentation.HelpFile;
 import VASSAL.build.widget.PieceSlot;
 import VASSAL.command.Command;
 import VASSAL.counters.GamePiece;
@@ -23,24 +26,35 @@ import VASSAL.counters.GamePiece;
  */
 public class AutoSquadSpawn extends AbstractConfigurable {
 
-    private JButton loadFromXwsUrlButton;
     private VassalXWSPieceLoader slotLoader = new VassalXWSPieceLoader();
+    private List<JButton> spawnButtons = Lists.newArrayList();
 
-    private void spawnPiece(GamePiece piece, Point position) {
-        Command placeCommand = getMap().placeOrMerge(piece, position);
+    private void spawnPiece(GamePiece piece, Point position, Map playerMap) {
+        Command placeCommand = playerMap.placeOrMerge(piece, position);
         placeCommand.execute();
         GameModule.getGameModule().sendAndLog(placeCommand);
     }
 
-    private void loadFromXwsButtonPressed() {
+    private void spawnForPlayer(int playerIndex) {
+        Map playerMap = getPlayerMap(playerIndex);
+        if (playerMap == null) {
+            logToChat("Unexpected error, couldn't find map for player side " + playerIndex);
+            return;
+        }
+
+        XWPlayerInfo playerInfo = getCurrentPlayer();
+        if (playerInfo.getSide() != playerIndex) {
+            JOptionPane.showMessageDialog(playerMap.getView(), "Cannot spawn squads for other players");
+            return;
+        }
 
         String url = null;
-
         try {
             url = JOptionPane.showInputDialog("Please paste a voidstate url or ID, YASB url, or FABS url");
         } catch (Exception e) {
             logToChat("Unable to process url, please try again");
         }
+
         if (url == null || url.length() == 0) {
             return;
         }
@@ -79,52 +93,52 @@ public class AutoSquadSpawn extends AbstractConfigurable {
             int pilotHeight = (int) pilotPiece.boundingBox().getHeight();
             totalPilotHeight += pilotHeight;
             spawnPiece(pilotPiece, new Point(
-                    (int) startPosition.getX(),
-                    (int) startPosition.getY() + totalPilotHeight));
+                            (int) startPosition.getX(),
+                            (int) startPosition.getY() + totalPilotHeight),
+                    playerMap);
             GamePiece shipPiece = ship.cloneShip();
             spawnPiece(shipPiece, new Point(
-                    (int) startPosition.getX() - pilotWidth,
-                    (int) startPosition.getY() + totalPilotHeight + 20));
+                            (int) startPosition.getX() - pilotWidth,
+                            (int) startPosition.getY() + totalPilotHeight + 20),
 
+                    playerMap);
             GamePiece dialPiece = ship.cloneDial();
             int dialWidth = (int) dialPiece.boundingBox().getWidth();
             spawnPiece(dialPiece, new Point(
-                    (int) dialstartPosition.getX() + totalDialsWidth,
-                    (int) dialstartPosition.getY()));
+                            (int) dialstartPosition.getX() + totalDialsWidth,
+                            (int) dialstartPosition.getY()),
+                    playerMap);
             totalDialsWidth += dialWidth;
 
             int totalUpgradeWidth = 0;
             for (VassalXWSPilotPieces.Upgrade upgrade : ship.getUpgrades()) {
                 GamePiece upgradePiece = upgrade.cloneGamePiece();
                 spawnPiece(upgradePiece, new Point(
-                        (int) startPosition.getX() + pilotWidth + totalUpgradeWidth + fudgePilotUpgradeFrontier,
-                        (int) startPosition.getY() + totalPilotHeight));
-
-                totalUpgradeWidth += upgradePiece.boundingBox().getWidth();
+                                (int) startPosition.getX() + pilotWidth + totalUpgradeWidth + fudgePilotUpgradeFrontier,
+                                (int) startPosition.getY() + totalPilotHeight),
+                        playerMap);
             } //loop to next upgrade
 
             for (PieceSlot conditionSlot : ship.getConditions()) {
                 GamePiece conditionPiece = newPiece(conditionSlot);
                 spawnPiece(conditionPiece, new Point(
-                        (int) startPosition.getX() + pilotWidth + totalUpgradeWidth + fudgePilotUpgradeFrontier,
-                        (int) startPosition.getY() + totalPilotHeight));
-
-                totalUpgradeWidth += conditionPiece.boundingBox().getWidth();
+                                (int) startPosition.getX() + pilotWidth + totalUpgradeWidth + fudgePilotUpgradeFrontier,
+                                (int) startPosition.getY() + totalPilotHeight),
+                        playerMap);
             } //loop to next condition
-
 
             for (GamePiece token : ship.getTokensForDisplay()) {
                 PieceSlot pieceSlot = new PieceSlot(token);
                 if ("Target Lock".equals(pieceSlot.getConfigureName())) {//if a target lock token, place elsewhere
                     spawnPiece(token, new Point(
-                            (int) tokensStartPosition.getX() + totalTLWidth,
-                            (int) tlStartPosition.getY()));
-                    totalTLWidth += token.boundingBox().getWidth();
+                                    (int) tokensStartPosition.getX() + totalTLWidth,
+                                    (int) tlStartPosition.getY()),
+                            playerMap);
                 } else {
                     spawnPiece(token, new Point(
-                            (int) tokensStartPosition.getX() + totalTokenWidth,
-                            (int) tokensStartPosition.getY()));
-                    totalTokenWidth += token.boundingBox().getWidth();
+                                    (int) tokensStartPosition.getX() + totalTokenWidth,
+                                    (int) tokensStartPosition.getY()),
+                            playerMap);
                 }
             }// loop to next token*/
         } //loop to next pilot
@@ -132,7 +146,7 @@ public class AutoSquadSpawn extends AbstractConfigurable {
         int totalObstacleWidth = (int) dialstartPosition.getX() + totalDialsWidth + 150;
         int obstacleStartY = (int) dialstartPosition.getY();
         for (GamePiece obstacle : pieces.getObstaclesForDisplay()) {
-            spawnPiece(obstacle, new Point(totalObstacleWidth, obstacleStartY));
+            spawnPiece(obstacle, new Point(totalObstacleWidth, obstacleStartY), playerMap);
             totalObstacleWidth += obstacle.getShape().getBounds().getWidth();
         }
 
@@ -140,30 +154,34 @@ public class AutoSquadSpawn extends AbstractConfigurable {
         logToChat(String.format("%s point list '%s' loaded from %s", pieces.getSquadPoints(),
                 listName != null ? " " + listName : "",
                 url));
+    }
 
+    public void addTo(Buildable parent) {
+        for (int i = 1; i <= 8; i++) {
+            final int playerId = i;
+
+            JButton b = new JButton("Squad Spawn");
+            b.setAlignmentY(0.0F);
+            b.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent evt) {
+                    spawnForPlayer(playerId);
+                }
+            });
+            spawnButtons.add(b);
+
+            getPlayerMap(i).getToolBar().add(b);
+        }
     }
 
     public void removeFrom(Buildable parent) {
-        final Map map = getMap();
-        map.getToolBar().remove(loadFromXwsUrlButton);
+        for (int i = 1; i <= 8; i++) {
+            getPlayerMap(i).getToolBar().remove(spawnButtons.get(i - 1));
+        }
     }
 
-
-    public void addTo(Buildable parent) {
-        final Map map = getMap();
-        loadFromXwsUrlButton = new JButton("Squad Spawn");
-        loadFromXwsUrlButton.setAlignmentY(0.0F);
-        loadFromXwsUrlButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
-                loadFromXwsButtonPressed();
-            }
-        });
-        map.getToolBar().add(loadFromXwsUrlButton);
-    }
-
-    private Map getMap() {
+    private Map getPlayerMap(int playerIndex) {
         for (Map loopMap : GameModule.getGameModule().getComponentsOf(Map.class)) {
-            if ("Contested Sector".equals(loopMap.getMapName())) {
+            if (("Player " + Integer.toString(playerIndex)).equals(loopMap.getMapName())) {
                 return loopMap;
             }
         }
@@ -200,7 +218,7 @@ public class AutoSquadSpawn extends AbstractConfigurable {
         return new Class[0];
     }
 
-    public VASSAL.build.module.documentation.HelpFile getHelpFile() {
+    public HelpFile getHelpFile() {
         return null;
     }
     // </editor-fold>
