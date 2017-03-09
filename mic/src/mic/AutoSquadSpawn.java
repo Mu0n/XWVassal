@@ -7,9 +7,11 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.net.URL;
-import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.*;
+
+import com.google.common.collect.Lists;
 
 import VASSAL.build.AbstractConfigurable;
 import VASSAL.build.Buildable;
@@ -25,7 +27,7 @@ import VASSAL.counters.GamePiece;
 public class AutoSquadSpawn extends AbstractConfigurable {
 
     private VassalXWSPieceLoader slotLoader = new VassalXWSPieceLoader();
-    private ArrayList<JButton> spawnButtons;
+    private List<JButton> spawnButtons = Lists.newArrayList();
 
     private void spawnPiece(GamePiece piece, Point position, int playerIndex) {
         Command placeCommand = getPlayerMap(playerIndex).placeOrMerge(piece, position);
@@ -34,7 +36,6 @@ public class AutoSquadSpawn extends AbstractConfigurable {
     }
 
     private void spawnForPlayer(int playerIndex) {
-
         String url = null;
 
         try {
@@ -117,7 +118,6 @@ public class AutoSquadSpawn extends AbstractConfigurable {
                 totalUpgradeWidth += conditionPiece.boundingBox().getWidth();
             } //loop to next condition
 
-
             for (GamePiece token : ship.getTokensForDisplay()) {
                 PieceSlot pieceSlot = new PieceSlot(token);
                 if ("Target Lock".equals(pieceSlot.getConfigureName())) {//if a target lock token, place elsewhere
@@ -147,46 +147,29 @@ public class AutoSquadSpawn extends AbstractConfigurable {
         logToChat(String.format("%s point list '%s' loaded from %s", pieces.getSquadPoints(),
                 listName != null ? " " + listName : "",
                 url));
-
     }
-
 
     public void addTo(Buildable parent) {
-        GameModule mod = (GameModule) parent;
+        for (int i = 1; i <= 8; i++) {
+            final int playerId = i;
 
-        spawnButtons = new ArrayList<JButton>();
-        ActionListener aListen = new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
-                logToChat(evt.toString());
-                spawnForPlayer(1);
-            }
-        };
-
-        for (int i = 0; i <= 7; i++) {
-
-            final Map map = getMap();
             JButton b = new JButton("Squad Spawn");
             b.setAlignmentY(0.0F);
-            b.addActionListener(aListen);
+            b.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent evt) {
+                    logToChat(evt.toString());
+                    spawnForPlayer(playerId);
+                }
+            });
             spawnButtons.add(b);
 
-            getPlayerMap(i + 1).getToolBar().add(spawnButtons.get(i));
+            getPlayerMap(i).getToolBar().add(b);
         }
-
-    }
-
-    private Map getMap() {
-        for (Map loopMap : GameModule.getGameModule().getComponentsOf(Map.class)) {
-            if ("Contested Sector".equals(loopMap.getMapName())) {
-                return loopMap;
-            }
-        }
-        return null;
     }
 
     public void removeFrom(Buildable parent) {
-        for (int i = 0; i <= 7; i++) {
-            getPlayerMap(i + 1).getToolBar().remove(spawnButtons.get(i));
+        for (int i = 1; i <= 8; i++) {
+            getPlayerMap(i).getToolBar().remove(spawnButtons.get(i - 1));
         }
     }
 
@@ -198,7 +181,6 @@ public class AutoSquadSpawn extends AbstractConfigurable {
         }
         return null;
     }
-
 
     // <editor-fold desc="unused vassal hooks">
     @Override
