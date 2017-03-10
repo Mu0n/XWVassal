@@ -1,102 +1,86 @@
 package mic;
 
+import static mic.Util.getCurrentPlayer;
+
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.List;
+
+import javax.swing.*;
+
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Multimap;
+
 import VASSAL.build.AbstractConfigurable;
 import VASSAL.build.Buildable;
 import VASSAL.build.GameModule;
 import VASSAL.build.module.Map;
-import VASSAL.build.module.PlayerHand;
 import VASSAL.build.module.documentation.HelpFile;
-import VASSAL.build.module.map.DrawPile;
-import VASSAL.build.module.map.SetupStack;
-import VASSAL.counters.GamePiece;
+import VASSAL.build.module.map.boardPicker.Board;
 import VASSAL.counters.Deck;
-import com.google.common.collect.Lists;
-
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.Iterator;
-import java.util.List;
-
-import static mic.Util.getCurrentPlayer;
-import static mic.Util.logToChat;
+import VASSAL.counters.GamePiece;
 
 /**
  * Created by mjuneau on 2017-03-09.
  */
 public class EpicDeckTrayToggle extends AbstractConfigurable {
 
-    private List<JButton> toggleButtons =  Lists.newArrayList();
-    private boolean[] isHiding = new boolean[8];
+    private List<JButton> toggleButtons = Lists.newArrayList();
+    private Multimap<Integer, GamePiece> removedPlayerEpicPieces = HashMultimap.create();
 
-    private void EpicMaskToggle(int playerId) {
-    //playerId goes from 1 to 8, boolean array goes from 0 to 7
-
+    private synchronized void epicMaskToggle(int playerId) {
         mic.Util.XWPlayerInfo playerInfo = getCurrentPlayer();
-        if (playerInfo.getSide() != playerId) return;
-
-        if(isHiding[playerId-1]){
-            ShowOnePlayerEpic(playerId);
-            isHiding[playerId-1] = false;
+        if (playerInfo.getSide() != playerId) {
+            return;
         }
-        else {
-            HideOnePlayerEpic(playerId);
-            isHiding[playerId-1] = true;
+
+        if (removedPlayerEpicPieces.get(playerId).size() > 0) {
+            showOnePlayerEpic(playerId);
+        } else {
+            hideOnePlayerEpic(playerId);
         }
-}
-
-    private void HideOnePlayerEpic(int playerId) {
-        toggleButtons.get(playerId-1).setText("Activate Epic");
-        String nbPlayer = Integer.toString(playerId);
-        String pString = "Player " + nbPlayer;
-        PlayerHand.getMapById(pString).getBoardByName(pString).setAttribute("image","player_hand_background_mask.png");
-
-        repaintTrayOutlines(pString, false);
-        repaintTrayCounters(pString, Color.WHITE);
-
-        logToChat("Must find a way to force refresh the background image change to player_hand_background_mask.png");
-        PlayerHand.getMapById(pString).getBoardByName(pString).getMap().repaint();
     }
 
+    private void hideOnePlayerEpic(int playerId) {
+        toggleButtons.get(playerId - 1).setText("Activate Epic");
 
-    private void ShowOnePlayerEpic(int playerId) {
-        toggleButtons.get(playerId-1).setText("Disable Epic");
-        String nbPlayer = Integer.toString(playerId);
-        String pString = "Player " + nbPlayer;
-        PlayerHand.getMapById(pString).getBoardByName(pString).setAttribute("image","player_hand_background.jpg");
-
-        repaintTrayOutlines(pString, true);
-        repaintTrayCounters(pString, Color.BLACK);
-
-        logToChat("Must find a way to force refresh the background image change to player_hand_background.jpg");
-        PlayerHand.getMapById(pString).getBoardByName(pString).getMap().repaint();
-    }
-
-    private void repaintTrayCounters(String pString, Color color) {
-        GameModule mod = GameModule.getGameModule();
-            List<GamePiece> gamePieces = mod.getAllDescendantComponentsOf(GamePiece.class);
-            Iterator<GamePiece> myIter = gamePieces.iterator();
-            while(myIter.hasNext()) {
-                GamePiece gp = myIter.next();
-                if(!gp.getName().contains("cnt")) continue;
-                logToChat(myIter.next().getName() + "/n");
-                //gpI.setPosition(new Point(-500,-500));
+        Map playerMap = getPlayerMap(playerId);
+        for (GamePiece piece : playerMap.getAllPieces()) {
+            if (piece instanceof Deck) {
+                Deck deck = (Deck) piece;
+                if (deck.getDeckName() != null && deck.getDeckName().contains("Huge")) {
+                    removedPlayerEpicPieces.put(playerId, piece);
+                    continue;
+                }
+            } else if (piece instanceof VASSAL.counters.Stack) {
+                if (piece.getName() != null && piece.getName().contains("/ 10)")) {
+                    removedPlayerEpicPieces.put(playerId, piece);
+                    continue;
+                }
             }
-
-
-    }
-
-    private void repaintTrayOutlines(String pString, boolean choice) {
-        List<DrawPile> dps = PlayerHand.getMapById(pString).getAllDescendantComponentsOf(DrawPile.class);
-        Iterator<DrawPile> myIter = dps.iterator();
-        String dontTouchThis = pString + " Std Damage Deck Tray";
-        while(myIter.hasNext()) {
-            Deck deck = myIter.next().getDeck();
-            if(dontTouchThis.equals(deck.getDeckName())) continue;
-            deck.setDrawOutline(choice);
+        }
+        Board board = playerMap.getBoardByName("Player " + playerId);
+        board.setAttribute("image", "observer_hand_background.jpg");
+        playerMap.setBoards(Lists.newArrayList(board.copy()));
+        for (GamePiece piece : removedPlayerEpicPieces.get(playerId)) {
+            playerMap.removePiece(piece);
         }
     }
+
+    private void showOnePlayerEpic(int playerId) {
+        Map playerMap = getPlayerMap(playerId);
+        Board board = playerMap.getBoardByName("Player " + playerId);
+        board.setAttribute("image", "player_hand_background.jpg");
+        playerMap.setBoards(Lists.newArrayList(board.copy()));
+        for (GamePiece piece : removedPlayerEpicPieces.get(playerId)) {
+            playerMap.addPiece(piece);
+        }
+        removedPlayerEpicPieces.get(playerId).clear();
+        toggleButtons.get(playerId - 1).setText("Disable Epic");
+    }
+
+
     public void addTo(Buildable parent) {
         for (int i = 1; i <= 8; i++) {
             final int playerId = i;
@@ -105,19 +89,22 @@ public class EpicDeckTrayToggle extends AbstractConfigurable {
             b.setAlignmentY(0.0F);
             b.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent evt) {
-                    EpicMaskToggle(playerId);
+                    epicMaskToggle(playerId);
                 }
             });
             toggleButtons.add(b);
 
-            getPlayerMap(i).getToolBar().add(b);
+            Map playerMap = getPlayerMap(i);
+            playerMap.getToolBar().add(b);
         }
     }
+
     public void removeFrom(Buildable parent) {
         for (int i = 1; i <= 8; i++) {
             getPlayerMap(i).getToolBar().remove(toggleButtons.get(i - 1));
         }
     }
+
     private Map getPlayerMap(int playerIndex) {
         for (Map loopMap : GameModule.getGameModule().getComponentsOf(Map.class)) {
             if (("Player " + Integer.toString(playerIndex)).equals(loopMap.getMapName())) {
