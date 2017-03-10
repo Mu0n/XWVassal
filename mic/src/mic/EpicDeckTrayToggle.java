@@ -53,7 +53,7 @@ public class EpicDeckTrayToggle extends AbstractConfigurable {
         String pString = "Player " + nbPlayer;
         PlayerHand.getMapById(pString).getBoardByName(pString).setAttribute("image","player_hand_background_mask.png");
 
-        repaintTrayOutlines(pString, Color.WHITE);
+        repaintTrayOutlines(pString, false);
         repaintTrayCounters(pString, Color.WHITE);
 
         logToChat("Must find a way to force refresh the background image change to player_hand_background_mask.png");
@@ -67,7 +67,7 @@ public class EpicDeckTrayToggle extends AbstractConfigurable {
         String pString = "Player " + nbPlayer;
         PlayerHand.getMapById(pString).getBoardByName(pString).setAttribute("image","player_hand_background.jpg");
 
-        repaintTrayOutlines(pString, Color.BLACK);
+        repaintTrayOutlines(pString, true);
         repaintTrayCounters(pString, Color.BLACK);
 
         logToChat("Must find a way to force refresh the background image change to player_hand_background.jpg");
@@ -89,14 +89,14 @@ public class EpicDeckTrayToggle extends AbstractConfigurable {
         }
     }
 
-    private void repaintTrayOutlines(String pString, Color color) {
+    private void repaintTrayOutlines(String pString, boolean choice) {
         List<DrawPile> dps = PlayerHand.getMapById(pString).getAllDescendantComponentsOf(DrawPile.class);
         Iterator<DrawPile> myIter = dps.iterator();
         String dontTouchThis = pString + " Std Damage Deck Tray";
         while(myIter.hasNext()) {
             Deck deck = myIter.next().getDeck();
             if(dontTouchThis.equals(deck.getDeckName())) continue;
-            deck.setOutlineColor(color);
+            deck.setDrawOutline(choice);
         }
     }
     public void addTo(Buildable parent) {
