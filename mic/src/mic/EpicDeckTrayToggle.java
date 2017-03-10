@@ -6,11 +6,10 @@ import VASSAL.build.GameModule;
 import VASSAL.build.module.Map;
 import VASSAL.build.module.PlayerHand;
 import VASSAL.build.module.documentation.HelpFile;
-import VASSAL.build.module.gamepieceimage.TextItem;
 import VASSAL.build.module.map.DrawPile;
 import VASSAL.build.module.map.SetupStack;
-import VASSAL.counters.Deck;
 import VASSAL.counters.GamePiece;
+import VASSAL.counters.Deck;
 import com.google.common.collect.Lists;
 
 import javax.swing.*;
@@ -75,18 +74,17 @@ public class EpicDeckTrayToggle extends AbstractConfigurable {
     }
 
     private void repaintTrayCounters(String pString, Color color) {
-        List<SetupStack> setupStacks = PlayerHand.getMapById(pString).getAllDescendantComponentsOf(SetupStack.class);
-        Iterator<SetupStack> myIter = setupStacks.iterator();
-        String dontTouchThis = "Std Dam Counter";
-        while(myIter.hasNext()) {
-            SetupStack ss = myIter.next();
-            if(dontTouchThis.equals(ss.getConfigureName())) continue;
-            if(!ss.getConfigureName().contains("Counter")) continue;
+        GameModule mod = GameModule.getGameModule();
+            List<GamePiece> gamePieces = mod.getAllDescendantComponentsOf(GamePiece.class);
+            Iterator<GamePiece> myIter = gamePieces.iterator();
+            while(myIter.hasNext()) {
+                GamePiece gp = myIter.next();
+                if(!gp.getName().contains("cnt")) continue;
+                logToChat(myIter.next().getName() + "/n");
+                //gpI.setPosition(new Point(-500,-500));
+            }
 
-            //Must access gamepiece's Text Label decorator and modify its color
-            logToChat("Must access " + ss.getConfigureName() + "'s text label and paint it " + color.toString());
 
-        }
     }
 
     private void repaintTrayOutlines(String pString, boolean choice) {
