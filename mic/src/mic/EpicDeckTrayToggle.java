@@ -57,6 +57,7 @@ public class EpicDeckTrayToggle extends AbstractConfigurable {
         repaintTrayCounters(pString, Color.WHITE);
 
         logToChat("Must find a way to force refresh the background image change to player_hand_background_mask.png");
+        PlayerHand.getMapById(pString).getBoardByName(pString).getMap().repaint();
     }
 
 
@@ -70,6 +71,7 @@ public class EpicDeckTrayToggle extends AbstractConfigurable {
         repaintTrayCounters(pString, Color.BLACK);
 
         logToChat("Must find a way to force refresh the background image change to player_hand_background.jpg");
+        PlayerHand.getMapById(pString).getBoardByName(pString).getMap().repaint();
     }
 
     private void repaintTrayCounters(String pString, Color color) {
