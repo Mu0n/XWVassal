@@ -54,7 +54,10 @@ public class Util {
     public static List<String> none = Lists.newArrayList();
 
 
-    public static void logToChat(String msg) {
+    public static void logToChat(String msg, Object... args) {
+        if (args != null && args.length > 0) {
+            msg = String.format(msg, args);
+        }
         Command c = new Chatter.DisplayText(GameModule.getGameModule().getChatter(), msg);
         c.execute();
         GameModule.getGameModule().sendAndLog(c);

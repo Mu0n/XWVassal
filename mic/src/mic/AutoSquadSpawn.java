@@ -86,7 +86,7 @@ public class AutoSquadSpawn extends AbstractConfigurable {
         int totalTLWidth = 0;
 
         for (VassalXWSPilotPieces ship : pieces.getShips()) {
-            logToChat(String.format("Spawning pilot: %s", ship.getPilotCard().getConfigureName()));
+            logToChat("Spawning pilot: %s", ship.getPilotCard().getConfigureName());
 
             GamePiece pilotPiece = ship.clonePilotCard();
             int pilotWidth = (int) pilotPiece.boundingBox().getWidth();
@@ -151,9 +151,8 @@ public class AutoSquadSpawn extends AbstractConfigurable {
         }
 
         String listName = xwsList.getName();
-        logToChat(String.format("%s point list '%s' loaded from %s", pieces.getSquadPoints(),
-                listName != null ? " " + listName : "",
-                url));
+        logToChat("%s point list%s loaded from %s", pieces.getSquadPoints(),
+                listName == null ? "'" + listName + "'" : "", url);
     }
 
     public void addTo(Buildable parent) {
