@@ -74,10 +74,11 @@ public class AutoSquadSpawn extends AbstractConfigurable {
         XWSList xwsList = XWSFetcher.fetchFromUrl(translatedURL.toString());
         VassalXWSListPieces pieces = slotLoader.loadListFromXWS(xwsList);
 
-        Point startPosition = new Point(500, 60);
-        Point tokensStartPosition = new Point(500, 180);
-        Point dialstartPosition = new Point(500, 80);
-        Point tlStartPosition = new Point(500, 240);
+        Point startPosition = new Point(150, 150);
+        Point dialstartPosition = new Point(300, 100);
+        Point tokensStartPosition = new Point(300, 220);
+        Point tlStartPosition = new Point(300, 290);
+        int shipBaseY = 110;
 
         int fudgePilotUpgradeFrontier = -50;
         int totalPilotHeight = 0;
@@ -85,8 +86,10 @@ public class AutoSquadSpawn extends AbstractConfigurable {
         int totalTokenWidth = 0;
         int totalTLWidth = 0;
 
+        List<GamePiece> shipBases = Lists.newArrayList();
         for (VassalXWSPilotPieces ship : pieces.getShips()) {
             logToChat("Spawning pilot: %s", ship.getPilotCard().getConfigureName());
+            shipBases.add(ship.cloneShip());
 
             GamePiece pilotPiece = ship.clonePilotCard();
             int pilotWidth = (int) pilotPiece.boundingBox().getWidth();
@@ -96,12 +99,7 @@ public class AutoSquadSpawn extends AbstractConfigurable {
                             (int) startPosition.getX(),
                             (int) startPosition.getY() + totalPilotHeight),
                     playerMap);
-            GamePiece shipPiece = ship.cloneShip();
-            spawnPiece(shipPiece, new Point(
-                            (int) startPosition.getX() - pilotWidth,
-                            (int) startPosition.getY() + totalPilotHeight + 20),
 
-                    playerMap);
             GamePiece dialPiece = ship.cloneDial();
             int dialWidth = (int) dialPiece.boundingBox().getWidth();
             spawnPiece(dialPiece, new Point(
@@ -117,7 +115,9 @@ public class AutoSquadSpawn extends AbstractConfigurable {
                                 (int) startPosition.getX() + pilotWidth + totalUpgradeWidth + fudgePilotUpgradeFrontier,
                                 (int) startPosition.getY() + totalPilotHeight),
                         playerMap);
+                totalUpgradeWidth += upgradePiece.boundingBox().getWidth();
             } //loop to next upgrade
+
 
             for (PieceSlot conditionSlot : ship.getConditions()) {
                 GamePiece conditionPiece = newPiece(conditionSlot);
@@ -125,6 +125,7 @@ public class AutoSquadSpawn extends AbstractConfigurable {
                                 (int) startPosition.getX() + pilotWidth + totalUpgradeWidth + fudgePilotUpgradeFrontier,
                                 (int) startPosition.getY() + totalPilotHeight),
                         playerMap);
+                totalUpgradeWidth += conditionPiece.boundingBox().getWidth();
             } //loop to next condition
 
             for (GamePiece token : ship.getTokensForDisplay()) {
@@ -134,20 +135,30 @@ public class AutoSquadSpawn extends AbstractConfigurable {
                                     (int) tokensStartPosition.getX() + totalTLWidth,
                                     (int) tlStartPosition.getY()),
                             playerMap);
+                    totalTLWidth += token.boundingBox().getWidth();
                 } else {
                     spawnPiece(token, new Point(
                                     (int) tokensStartPosition.getX() + totalTokenWidth,
                                     (int) tokensStartPosition.getY()),
                             playerMap);
+                    totalTokenWidth += token.boundingBox().getWidth();
                 }
             }// loop to next token*/
         } //loop to next pilot
 
-        int totalObstacleWidth = (int) dialstartPosition.getX() + totalDialsWidth + 150;
-        int obstacleStartY = (int) dialstartPosition.getY();
+        int shipBaseX = (int) dialstartPosition.getX() + totalDialsWidth - 30;
+        for (GamePiece piece : shipBases) {
+            int halfBase = (int) (piece.boundingBox().getWidth() / 2.0);
+            spawnPiece(piece, new Point(shipBaseX + halfBase, shipBaseY), playerMap);
+            shipBaseX += piece.boundingBox().getWidth();
+        }
+
+        int obstacleX = (int) dialstartPosition.getX() + totalDialsWidth - 30;
+        int obstacleStartY = shipBaseY + 200;
         for (GamePiece obstacle : pieces.getObstaclesForDisplay()) {
-            spawnPiece(obstacle, new Point(totalObstacleWidth, obstacleStartY), playerMap);
-            totalObstacleWidth += obstacle.getShape().getBounds().getWidth();
+            int halfSize = (int) (obstacle.boundingBox().getWidth() / 2.0);
+            spawnPiece(obstacle, new Point(obstacleX + halfSize, obstacleStartY), playerMap);
+            obstacleX += obstacle.getShape().getBounds().getWidth();
         }
 
         String listName = xwsList.getName();
