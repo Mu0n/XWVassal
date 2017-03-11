@@ -143,6 +143,7 @@ public class AutoSquadSpawn extends AbstractConfigurable {
             }// loop to next token*/
         } //loop to next pilot
 
+        UserInformer.informUser();
         int totalObstacleWidth = (int) dialstartPosition.getX() + totalDialsWidth + 150;
         int obstacleStartY = (int) dialstartPosition.getY();
         for (GamePiece obstacle : pieces.getObstaclesForDisplay()) {
