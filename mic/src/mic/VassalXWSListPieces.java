@@ -7,8 +7,6 @@ import com.google.common.collect.Lists;
 import VASSAL.build.widget.PieceSlot;
 import VASSAL.counters.GamePiece;
 
-import static mic.Util.logToChat;
-
 /**
  * Created by amatheny on 2/8/17.
  */
@@ -41,21 +39,33 @@ public class VassalXWSListPieces {
     }
 
     public int getSquadPoints() {
-        int total = 0;
-        boolean isTIEx1Here = false;
-        int systemCost = 0;
+        if (ships.isEmpty()) {
+            return 0;
+        }
 
-        if(!ships.isEmpty()) {
-            for(VassalXWSPilotPieces ship : ships){
-                total += ship.getPilotData().getPoints();
-                for(VassalXWSPilotPieces.Upgrade upgrade : ship.getUpgrades()) {
-                    total += upgrade.getUpgradeData().getPoints();
-                    if("tiex1".equals(upgrade.getXwsName())) isTIEx1Here = true;
-                    if("System".equals(upgrade.getUpgradeData().getSlot())) systemCost += upgrade.getUpgradeData().getPoints();
+        int total = 0;
+        for (VassalXWSPilotPieces ship : ships) {
+            if (ship.getPilotData() == null) {
+                Util.logToChat("Unable to calculate points for " + ship.getPilotCard().getConfigureName());
+                continue;
+            }
+            total += ship.getPilotData().getPoints();
+            int systemCost = 0;
+            boolean isTIEx1Here = false;
+            for (VassalXWSPilotPieces.Upgrade upgrade : ship.getUpgrades()) {
+                if (upgrade.getUpgradeData() == null) {
+                    Util.logToChat("Unable to calculate points for " + upgrade.getXwsName());
+                    continue;
                 }
-                if(isTIEx1Here) total -= Math.min(4,systemCost);
-                isTIEx1Here = false;
-                systemCost = 0;
+                total += upgrade.getUpgradeData().getPoints();
+                if ("tiex1".equals(upgrade.getXwsName())) {
+                    isTIEx1Here = true;
+                }
+                if ("System".equals(upgrade.getUpgradeData().getSlot()))
+                    systemCost += upgrade.getUpgradeData().getPoints();
+            }
+            if (isTIEx1Here) {
+                total -= Math.min(4, systemCost);
             }
         }
         return total;

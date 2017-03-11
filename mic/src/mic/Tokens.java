@@ -1,10 +1,10 @@
 package mic;
 
-import com.google.common.collect.Lists;
+import static mic.Util.none;
 
 import java.util.List;
 
-import static mic.Util.none;
+import com.google.common.collect.Lists;
 
 /**
  * Created by amatheny on 2/11/17.
@@ -47,8 +47,8 @@ public enum Tokens {
     idtoken,
     weaponsdisabled(
             Lists.newArrayList("SLAM"),
-            Lists.newArrayList("burnoutslam"),
-            Lists.newArrayList("ewing/corranhorn")
+            Lists.newArrayList("burnoutslam", "arccaster"),
+            Lists.newArrayList("ewing/corranhorn", "m3ainterceptor/quinnjast")
     ),
     initiative,
     ordnance(
@@ -69,7 +69,8 @@ public enum Tokens {
     private List<String> upgrades = Lists.newArrayList();
     private List<String> pilots = Lists.newArrayList();
 
-    Tokens() { }
+    Tokens() {
+    }
 
     Tokens(List<String> actions, List<String> upgrades, List<String> pilots) {
         this.actions = actions;

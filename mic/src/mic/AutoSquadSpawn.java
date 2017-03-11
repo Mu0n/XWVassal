@@ -145,6 +145,7 @@ public class AutoSquadSpawn extends AbstractConfigurable {
                 }
             }// loop to next token*/
         } //loop to next pilot
+        UserInformer.informUser();
 
         int shipBaseX = (int) dialstartPosition.getX() + totalDialsWidth - 30;
         for (GamePiece piece : shipBases) {
