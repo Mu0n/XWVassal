@@ -155,7 +155,18 @@ public class VassalXWSPilotPieces {
         int hullModifier = 0;
 
         for (Upgrade upgrade : this.upgrades) {
-            for(MasterUpgradeData.UpgradeGrants modifier : upgrade.getUpgradeData().getGrants()) {
+
+            MasterUpgradeData.UpgradeGrants doubleSideCardStats = DoubleSideCardPriorityPicker.getDoubleSideCardStats(upgrade.getXwsName());
+            ArrayList<MasterUpgradeData.UpgradeGrants> grants = new ArrayList<MasterUpgradeData.UpgradeGrants>();
+            if (doubleSideCardStats != null) {
+                grants.add(doubleSideCardStats);
+            }
+            else
+            {
+                grants.addAll(upgrade.getUpgradeData().getGrants());
+            }
+
+            for(MasterUpgradeData.UpgradeGrants modifier : grants) {
                 if (modifier.isStatsModifier()) {
                     String name = modifier.getName();
                     int value = modifier.getValue();
