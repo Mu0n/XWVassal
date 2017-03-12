@@ -1,3 +1,11 @@
+-=-=-=- MARCH 2017 Update
+Cards from Hit and Run preview article added
+AutoSpawn migrated to player windows
+Epic card trays are now disabled first, toggle-activated later
+2 bugs related to autobump fixed
+Points properly calculated on autospawn with TIE/x1
+Dual cards that affect stats now have a forced choice with reminder on how to change
+
 -=-=-=- THIRD FEBRUARY 2017 Update
 Autobumping feature for ships that overlap, press 'c'
 Squad AutoSpawn improved in many ways
