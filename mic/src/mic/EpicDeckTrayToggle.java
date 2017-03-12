@@ -8,10 +8,7 @@ import java.awt.Point;
 import java.util.List;
 
 import javax.swing.*;
-
-import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Multimap;
 
 import VASSAL.build.AbstractConfigurable;
 import VASSAL.build.Buildable;
@@ -24,7 +21,12 @@ import VASSAL.counters.GamePiece;
 
 /**
  * Created by mjuneau on 2017-03-09.
+ * epic trays are initially at y=-1000, can be toggled to y=75
+ * epic tray counters are initially at y=-210, can be toggled to y=210
  */
+
+
+
 public class EpicDeckTrayToggle extends AbstractConfigurable {
 
     private List<JButton> toggleButtons = Lists.newArrayList();
