@@ -4,6 +4,7 @@ import static mic.Util.getCurrentPlayer;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.Point;
 import java.util.List;
 
 import javax.swing.*;
@@ -27,7 +28,6 @@ import VASSAL.counters.GamePiece;
 public class EpicDeckTrayToggle extends AbstractConfigurable {
 
     private List<JButton> toggleButtons = Lists.newArrayList();
-    private Multimap<Integer, GamePiece> removedPlayerEpicPieces = HashMultimap.create();
 
     private synchronized void epicMaskToggle(int playerId) {
         mic.Util.XWPlayerInfo playerInfo = getCurrentPlayer();
@@ -35,57 +35,46 @@ public class EpicDeckTrayToggle extends AbstractConfigurable {
             return;
         }
 
-        if (removedPlayerEpicPieces.get(playerId).size() > 0) {
-            showOnePlayerEpic(playerId);
-        } else {
-            hideOnePlayerEpic(playerId);
-        }
-    }
-
-    private void hideOnePlayerEpic(int playerId) {
-        toggleButtons.get(playerId - 1).setText("Activate Epic");
-
         Map playerMap = getPlayerMap(playerId);
+        Board board = playerMap.getBoardByName("Player " + playerId);
+
         for (GamePiece piece : playerMap.getAllPieces()) {
             if (piece instanceof Deck) {
                 Deck deck = (Deck) piece;
                 if (deck.getDeckName() != null && deck.getDeckName().contains("Huge")) {
-                    removedPlayerEpicPieces.put(playerId, piece);
+                    if(deck.getPosition().getY() == -1000)
+                    {
+                        deck.setPosition(new Point((int)deck.getPosition().getX(),75));
+                        toggleButtons.get(playerId - 1).setText("Disable Epic");
+                        board.setAttribute("image", "player_hand_background.jpg");
+                    }
+                    else
+                    {
+                        deck.setPosition(new Point((int)deck.getPosition().getX(),-1000));
+                        toggleButtons.get(playerId - 1).setText("Activate Epic");
+                        board.setAttribute("image", "observer_hand_background.jpg");
+                    }
                     continue;
                 }
             } else if (piece instanceof VASSAL.counters.Stack) {
                 if (piece.getName() != null && piece.getName().contains("/ 10)")) {
-                    removedPlayerEpicPieces.put(playerId, piece);
+                    if(piece.getPosition().getY() == -210) piece.setPosition(new Point((int)piece.getPosition().getX(),210));
+                    else piece.setPosition(new Point((int)piece.getPosition().getX(),-210));
                     continue;
                 }
             }
         }
-        Board board = playerMap.getBoardByName("Player " + playerId);
-        board.setAttribute("image", "observer_hand_background.jpg");
-        playerMap.setBoards(Lists.newArrayList(board.copy()));
-        for (GamePiece piece : removedPlayerEpicPieces.get(playerId)) {
-            playerMap.removePiece(piece);
-        }
-    }
 
-    private void showOnePlayerEpic(int playerId) {
-        Map playerMap = getPlayerMap(playerId);
-        Board board = playerMap.getBoardByName("Player " + playerId);
-        board.setAttribute("image", "player_hand_background.jpg");
         playerMap.setBoards(Lists.newArrayList(board.copy()));
-        for (GamePiece piece : removedPlayerEpicPieces.get(playerId)) {
-            playerMap.addPiece(piece);
-        }
-        removedPlayerEpicPieces.get(playerId).clear();
-        toggleButtons.get(playerId - 1).setText("Disable Epic");
-    }
 
+
+    }
 
     public void addTo(Buildable parent) {
         for (int i = 1; i <= 8; i++) {
             final int playerId = i;
 
-            JButton b = new JButton("Disable Epic");
+            JButton b = new JButton("Activate Epic");
             b.setAlignmentY(0.0F);
             b.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent evt) {
