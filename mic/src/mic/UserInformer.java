@@ -22,7 +22,7 @@ public class UserInformer {
             informUserAboutUWingPivotWing = false;
         }
         if (informUserAboutAdaptability) {
-            Util.logToChat("Remember to set Adaptability to desired side during Setup. +1 Pilot skill is chosen by default. Ctrl+Alt+P on ship to switch. Ctrl-F on Adaptability to flip.");
+            Util.logToChat("Remember to set Adaptability to desired side during Setup. +1 Pilot skill is chosen by default. Alt-P on the ship to +1 Pilot Skill. Ctrl-Alt-P to -1 Pilot Skill. Ctrl-F on Adaptability to flip.");
             informUserAboutAdaptability = false;
         }
     }
