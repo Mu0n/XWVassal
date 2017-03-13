@@ -43,9 +43,10 @@ task downloadXwingData(type: de.undercouch.gradle.tasks.download.Download) {
     ])
     dest destDir
     doLast {
-      file("${destDir}/pilots.js").renameTo(file("${destDir}/pilots.json"))
-      file("${destDir}/ships.js").renameTo(file("${destDir}/ships.json"))
-      file("${destDir}/upgrades.js").renameTo(file("${destDir}/upgrades.json"))
+      for (f in ['pilots', 'ships', 'upgrades']) {
+        file("${destDir}/${f}.json").delete();
+        file("${destDir}/${f}.js").renameTo(file("${destDir}/${f}.json"))
+      }
     }
 }
 
