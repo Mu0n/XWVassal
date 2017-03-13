@@ -1,8 +1,8 @@
 package mic;
 
-import com.google.common.collect.ImmutableMap;
-
 import java.util.Map;
+
+import com.google.common.collect.ImmutableMap;
 
 /**
  * Created by amatheny on 2/11/17.
@@ -45,11 +45,9 @@ public class Canonicalizer {
 
     static Map<String, String> upgradeFixes = ImmutableMap.<String, String>builder()
             .put("crew/r2d2", "r2d2-swx22")
-            .put("ept/adaptabilityflippable", "adaptability")
             .put("title/milleniumfalcon", "millenniumfalcon")
             .put("title/milleniumfalcon2", "millenniumfalcon-swx57")
             .put("title/adaptativeailerons", "adaptiveailerons")
-            .put("title/pivotwingflippable", "pivotwing")
             .build();
 
     static Map<String, String> upgradeTypeFixes = ImmutableMap.<String, String>builder()
@@ -91,6 +89,8 @@ public class Canonicalizer {
         if (name == null) {
             return "";
         }
-        return name.replaceAll(invalidCanonicalCharPattern, "").toLowerCase();
+        name = name.replaceAll(invalidCanonicalCharPattern, "").toLowerCase();
+        name = name.replaceAll("flippable", "");
+        return name;
     }
 }
