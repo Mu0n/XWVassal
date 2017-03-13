@@ -164,7 +164,7 @@ public class AutoSquadSpawn extends AbstractConfigurable {
 
         String listName = xwsList.getName();
         logToChat("%s point list%s loaded from %s", pieces.getSquadPoints(),
-                listName == null ? "'" + listName + "'" : "", url);
+                listName != null ? " '" + listName + "'" : "", url);
     }
 
     public void addTo(Buildable parent) {
