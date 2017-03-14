@@ -1,13 +1,14 @@
 package mic;
 
-import VASSAL.build.widget.PieceSlot;
-import VASSAL.counters.GamePiece;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+
+import VASSAL.build.widget.PieceSlot;
+import VASSAL.counters.GamePiece;
 
 /**
  * Created by amatheny on 2/8/17.
@@ -160,13 +161,11 @@ public class VassalXWSPilotPieces {
             ArrayList<MasterUpgradeData.UpgradeGrants> grants = new ArrayList<MasterUpgradeData.UpgradeGrants>();
             if (doubleSideCardStats != null) {
                 grants.add(doubleSideCardStats);
-            }
-            else
-            {
+            } else {
                 grants.addAll(upgrade.getUpgradeData().getGrants());
             }
 
-            for(MasterUpgradeData.UpgradeGrants modifier : grants) {
+            for (MasterUpgradeData.UpgradeGrants modifier : grants) {
                 if (modifier.isStatsModifier()) {
                     String name = modifier.getName();
                     int value = modifier.getValue();
@@ -187,12 +186,12 @@ public class VassalXWSPilotPieces {
             int shields = this.shipData.getShields();
             int attack = this.shipData.getAttack();
 
-            MasterPilotData.ShipOverrides shipOverrides = this.pilotData.getShipOverrides();
-            if (shipOverrides != null) {
-              agility = shipOverrides.getAgility();
-              hull = shipOverrides.getHull();
-              shields = shipOverrides.getShields();
-              attack = shipOverrides.getAttack();
+            if (this.pilotData != null && this.pilotData.getShipOverrides() != null) {
+                MasterPilotData.ShipOverrides shipOverrides = this.pilotData.getShipOverrides();
+                agility = shipOverrides.getAgility();
+                hull = shipOverrides.getHull();
+                shields = shipOverrides.getShields();
+                attack = shipOverrides.getAttack();
             }
 
             piece.setProperty("Defense Rating", agility + agilityModifier);
@@ -227,9 +226,9 @@ public class VassalXWSPilotPieces {
         String pilotName = "";
         if (pilotData != null) {
             pilotName = Acronymizer.acronymizer(
-                this.pilotData.getName(),
-                this.pilotData.isUnique(),
-                this.shipData.hasSmallBase());
+                    this.pilotData.getName(),
+                    this.pilotData.isUnique(),
+                    this.shipData.hasSmallBase());
         }
 
         if (shipNumber != null && shipNumber > 0) {
