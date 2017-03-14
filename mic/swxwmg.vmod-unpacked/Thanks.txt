@@ -1,3 +1,9 @@
+-=-=-=- SECOND MARCH 2017 Update
+autospawn fixed for newest 6 cards from Hit and Run preview article
+U-Wing now autospawns with focus
+dual card potential bug future proof patched
+squad name autospawn fixed
+
 -=-=-=- MARCH 2017 Update
 Cards from Hit and Run preview article added
 AutoSpawn migrated to player windows
