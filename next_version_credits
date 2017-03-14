@@ -1,11 +1,13 @@
 Work-in-progress credits for the next version
 
+Vassal X-Wing Module v6.5.3
+
 @Mu0n
+-repaired the xws-data spec that did not load properly, preventing "hit and run" cards to work with autospawn.
 
 @ajmath
-
-@GuidoKessels
-
-@haslo
-
-@TerTer
+Bug fixes:
+-repaired the project compile script for Windows machines
+-future proofing dual cards
+-U-Wing now spawns with focus
+-showing squad name bug in autospawn output
