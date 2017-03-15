@@ -22,7 +22,7 @@ public enum Tokens {
     ),
     stress(
             none,
-            Lists.newArrayList("zuckuss", "r3a2"),
+            Lists.newArrayList("zuckuss", "r3a2","elusiveness","overclockedr4"),
             Lists.newArrayList("awing/tychocelchu")
     ),
     focus(
@@ -32,7 +32,7 @@ public enum Tokens {
     ),
     evade(
             Lists.newArrayList("Evade"),
-            Lists.newArrayList("r3astromech", "janors", "millenniumfalcon"),
+            Lists.newArrayList("r3astromech", "janors", "millenniumfalcon","coolhand"),
             Lists.newArrayList("t70xwing/redace")
     ),
     crit,
