@@ -32,7 +32,6 @@ public class Util {
             return mapper.readValue(inputStream, type);
         } catch (Exception e) {
             System.out.println("Unhandled error parsing remote json: \n" + e.toString());
-            logToChat("Unhandled error parsing remote json: \n" + e.toString());
             return null;
         }
     }

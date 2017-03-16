@@ -13,20 +13,25 @@ import java.util.Map;
  */
 public class MasterPilotData extends ArrayList<MasterPilotData.PilotData> {
 
+    private static String REMOTE_URL = "https://raw.githubusercontent.com/guidokessels/xwing-data/master/data/pilots.js";
+
     private static Map<String, PilotData> loadedData = null;
 
     public static PilotData getPilotData(String ship, String pilot) {
-        if ( loadedData == null) {
+        if (loadedData == null) {
             loadData();
         }
         return loadedData.get(ship + "/" + pilot);
     }
 
-    private static void loadData() {
+    protected static void loadData() {
+        MasterPilotData data = Util.loadRemoteJson(REMOTE_URL, MasterPilotData.class);
+        if (data == null) {
+            Util.logToChat("Unable to load xwing-data for pilots from the web, falling back to local copy");
+            data = Util.loadClasspathJson("pilots.json", MasterPilotData.class);
+        }
 
         loadedData = Maps.newHashMap();
-        MasterPilotData data = Util.loadClasspathJson("pilots.json", MasterPilotData.class);
-
         for(PilotData pilot : data) {
             String xwsShip = Canonicalizer.getCanonicalShipName(pilot.getShip());
             loadedData.put(xwsShip + "/" + pilot.getXws(), pilot);
