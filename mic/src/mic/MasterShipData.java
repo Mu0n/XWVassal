@@ -13,6 +13,8 @@ import java.util.Map;
  */
 public class MasterShipData extends ArrayList<MasterShipData.ShipData> {
 
+    private static String REMOTE_URL = "https://raw.githubusercontent.com/guidokessels/xwing-data/master/data/ships.js";
+
     private static Map<String, ShipData> loadedData = null;
 
     public static ShipData getShipData(String shipXwsId) {
@@ -22,10 +24,14 @@ public class MasterShipData extends ArrayList<MasterShipData.ShipData> {
         return loadedData.get(shipXwsId);
     }
 
-    private static void loadData() {
-        loadedData = Maps.newHashMap();
-        MasterShipData data = Util.loadClasspathJson("ships.json", MasterShipData.class);
+    protected static void loadData() {
+        MasterShipData data = Util.loadRemoteJson(REMOTE_URL, MasterShipData.class);
+        if (data == null) {
+            Util.logToChat("Unable to load xwing-data for ships from the web, falling back to local copy");
+            data = Util.loadClasspathJson("ships.json", MasterShipData.class);
+        }
 
+        loadedData = Maps.newHashMap();
         for(ShipData ship : data) {
             loadedData.put(ship.getXws(), ship);
         }

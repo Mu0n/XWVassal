@@ -168,6 +168,8 @@ public class AutoSquadSpawn extends AbstractConfigurable {
     }
 
     public void addTo(Buildable parent) {
+        loadRemoteData();
+
         for (int i = 1; i <= 8; i++) {
             final int playerId = i;
 
@@ -197,6 +199,12 @@ public class AutoSquadSpawn extends AbstractConfigurable {
             }
         }
         return null;
+    }
+
+    private void loadRemoteData() {
+        MasterPilotData.loadData();
+        MasterUpgradeData.loadData();
+        MasterShipData.loadData();
     }
 
     // <editor-fold desc="unused vassal hooks">

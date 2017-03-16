@@ -14,6 +14,8 @@ import java.util.Map;
  */
 public class MasterUpgradeData extends ArrayList<MasterUpgradeData.UpgradeData> {
 
+    private static String REMOTE_URL = "https://raw.githubusercontent.com/guidokessels/xwing-data/master/data/upgrades.js";
+
     private static Map<String, UpgradeData> loadedData = null;
 
     public static UpgradeData getUpgradeData(String upgradeXwsId) {
@@ -23,10 +25,14 @@ public class MasterUpgradeData extends ArrayList<MasterUpgradeData.UpgradeData> 
         return loadedData.get(upgradeXwsId);
     }
 
-    private static void loadData() {
-        loadedData = Maps.newHashMap();
-        MasterUpgradeData data = Util.loadClasspathJson("upgrades.json", MasterUpgradeData.class);
+    protected static void loadData() {
+        MasterUpgradeData data = Util.loadRemoteJson(REMOTE_URL, MasterUpgradeData.class);
+        if (data == null) {
+            Util.logToChat("Unable to load xwing-data for upgrades from the web, falling back to local copy");
+            data = Util.loadClasspathJson("upgrades.json", MasterUpgradeData.class);
+        }
 
+        loadedData = Maps.newHashMap();
         for(UpgradeData upgrade : data) {
             loadedData.put(upgrade.getXws(), upgrade);
         }
