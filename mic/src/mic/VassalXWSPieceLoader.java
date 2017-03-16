@@ -24,14 +24,14 @@ public class VassalXWSPieceLoader {
             "Asteroids", "New Asteroids", "Debris"
     );
 
-    Map<String, VassalXWSPilotPieces> pilotPiecesMap = null;
-    Map<String, VassalXWSPilotPieces.Upgrade> upgradePiecesMap = null;
-    Map<Tokens, PieceSlot> tokenPiecesMap = null;
-    Map<Obstacles, PieceSlot> obstaclesPiecesMap = null;
+    Map<String, VassalXWSPilotPieces> pilotPiecesMap = Maps.newHashMap();
+    Map<String, VassalXWSPilotPieces.Upgrade> upgradePiecesMap = Maps.newHashMap();
+    Map<Tokens, PieceSlot> tokenPiecesMap = Maps.newHashMap();
+    Map<Obstacles, PieceSlot> obstaclesPiecesMap = Maps.newHashMap();
 
     public VassalXWSListPieces loadListFromXWS(XWSList list) {
-        if (pilotPiecesMap == null || upgradePiecesMap == null
-                || tokenPiecesMap == null || obstaclesPiecesMap == null) {
+        if (pilotPiecesMap.isEmpty() || upgradePiecesMap.isEmpty()
+                || tokenPiecesMap.isEmpty()|| obstaclesPiecesMap.isEmpty()) {
             loadPieces();
         }
 
@@ -122,7 +122,7 @@ public class VassalXWSPieceLoader {
         return conditionSlots;
     }
 
-    private void loadPieces() {
+    public void loadPieces() {
         pilotPiecesMap = Maps.newHashMap();
         upgradePiecesMap = Maps.newHashMap();
         tokenPiecesMap = Maps.newHashMap();

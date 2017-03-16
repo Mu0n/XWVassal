@@ -168,7 +168,7 @@ public class AutoSquadSpawn extends AbstractConfigurable {
     }
 
     public void addTo(Buildable parent) {
-        loadRemoteData();
+        loadData();
 
         for (int i = 1; i <= 8; i++) {
             final int playerId = i;
@@ -201,7 +201,8 @@ public class AutoSquadSpawn extends AbstractConfigurable {
         return null;
     }
 
-    private void loadRemoteData() {
+    private void loadData() {
+        this.slotLoader.loadPieces();
         MasterPilotData.loadData();
         MasterUpgradeData.loadData();
         MasterShipData.loadData();
