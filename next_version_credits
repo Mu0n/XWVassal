@@ -1,5 +1,17 @@
 Work-in-progress credits for the next version
 
+Vassal X-Wing Module v6.5.4
+
+@Mu0n
+Added new cards:
+-Havoc (Scurrg title)
+-Unguided Rockets (missile)
+-Synced Turret (turret)
+
+@ajmath
+Project related:
+-prefetch the x-wing specs on loading the module so that the module always knows what the online builders work with at all times
+
 Vassal X-Wing Module v6.5.3
 
 @Mu0n
