@@ -14,95 +14,94 @@ import java.util.Map;
  */
 public class MasterUpgradeData extends ArrayList<MasterUpgradeData.UpgradeData> {
 
-  private static Map<String, UpgradeData> loadedData = null;
+    private static Map<String, UpgradeData> loadedData = null;
 
-  public static UpgradeData getUpgradeData(String upgradeXwsId) {
-      if (loadedData == null) {
-          loadData();
-      }
-      return loadedData.get(upgradeXwsId);
-  }
+    public static UpgradeData getUpgradeData(String upgradeXwsId) {
+        if (loadedData == null) {
+            loadData();
+        }
+        return loadedData.get(upgradeXwsId);
+    }
 
-  private static void loadData() {
-      loadedData = Maps.newHashMap();
-      MasterUpgradeData data = Util.loadClasspathJson("upgrades.json", MasterUpgradeData.class);
+    private static void loadData() {
+        loadedData = Maps.newHashMap();
+        MasterUpgradeData data = Util.loadClasspathJson("upgrades.json", MasterUpgradeData.class);
 
-      for(UpgradeData upgrade : data) {
-          loadedData.put(upgrade.getXws(), upgrade);
-      }
-  }
+        for(UpgradeData upgrade : data) {
+            loadedData.put(upgrade.getXws(), upgrade);
+        }
+    }
 
-  public static class UpgradeData {
+    public static class UpgradeData {
 
-      @JsonProperty("name")
-      private String name;
+        @JsonProperty("name")
+        private String name;
 
-      @JsonProperty("points")
-      private String points = "0";
+        @JsonProperty("points")
+        private Integer points = 0;
 
-      @JsonProperty("xws")
-      private String xws;
+        @JsonProperty("xws")
+        private String xws;
 
-      @JsonProperty("grants")
-      private ArrayList<UpgradeGrants> grants = Lists.newArrayList();
+        @JsonProperty("grants")
+        private ArrayList<UpgradeGrants> grants = Lists.newArrayList();
 
-      @JsonProperty("conditions")
-      private List<String> conditions = Lists.newArrayList();
+        @JsonProperty("conditions")
+        private List<String> conditions = Lists.newArrayList();
 
-      @JsonProperty("slot")
-      private String slot;
+        @JsonProperty("slot")
+        private String slot;
 
-      public List<String> getConditions() {
-          return conditions;
-      }
+        public List<String> getConditions() {
+            return conditions;
+        }
 
-      public ArrayList<UpgradeGrants> getGrants() {
-          return grants;
-      }
+        public ArrayList<UpgradeGrants> getGrants() {
+            return grants;
+        }
 
-      public String getXws() {
-          return xws;
-      }
+        public String getXws() {
+            return xws;
+        }
 
-      public String getName() {
-          return name;
-      }
+        public String getName() {
+            return name;
+        }
 
-      public String getSlot() { return slot; }
-      public int getPoints() {
-          try {
-              return Integer.parseInt(points);
-          } catch (Exception e) {
-              return 0;
-          }
-      }
-  }
+        public String getSlot() {
+            return slot;
+        }
 
-  public static class UpgradeGrants {
+        public int getPoints() {
+            return points;
+        }
+    }
 
-      @JsonProperty("name")
-      private String name;
+    public static class UpgradeGrants {
 
-      @JsonProperty("type")
-      private String type;
+        @JsonProperty("name")
+        private String name;
 
-      @JsonProperty("value")
-      private int value;
+        @JsonProperty("type")
+        private String type;
 
-      public String getName() {
-          return name;
-      }
+        @JsonProperty("value")
+        private int value;
 
-      public String getType() {
-          return type;
-      }
+        public String getName() {
+            return name;
+        }
 
-      public int getValue() {
-          return value;
-      }
+        public String getType() {
+            return type;
+        }
 
-      public boolean isStatsModifier() {
-          return type.equals("stats");
-      }
-  };
+        public int getValue() {
+            return value;
+        }
+
+        public boolean isStatsModifier() {
+            return type.equals("stats");
+        }
+    };
 }
