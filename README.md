@@ -1,4 +1,5 @@
-# HWpopup
+# HWpopup 
+(X-Wing Vassal module with its proof-of-concept git name: Hello World Popup)
 
 ## Distance and geometry specs:
 
