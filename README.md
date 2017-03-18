@@ -20,20 +20,20 @@
 
 ## Updating the module
 
-# Adding pilot and upgrade cards
+### Adding pilot and upgrade cards
 1. Vassal editor
 2. gradlew unpackVmod
 3. gradlew downloadXwingData
 4. push
 
-# Adding new ships with dials
+### Adding new ships with dials
 1. Vassal editor, create a ship-specific Protytpe for its actions, await Radarman5's ship art and combine it in a deep-layered photoshop file  (save as png), create a new ship-specific tab in the Pieces window, create its dial
 2. create ordered, open dial+strip for the new ship here: http://s93768914.onlinehome.us/xwing/dialgen/dialgen.html
 3. gradlew unpackVmod
 4. gradlew downloadXwingData
 5. push
 
-# Adding code
+### Adding code
 1. Your IDE of choice
 2. gradlew downloadXwingData
 3. gradlew buildVmod
