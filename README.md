@@ -18,6 +18,10 @@
 * Large ship forward arc: 84.05 degrees
 * Large ship stardboard/port mobile turret arc: 95.95 degrees
 
+(to help locate the coordinates of the forward arc's intersection to the forward edge)
+* Small ship corner to intersection of forward arc to front edge: 8.3296 px
+* Large ship corner to intersection of forward arc to front edge: 11.1650 px
+
 
 ## Updating the module
 
