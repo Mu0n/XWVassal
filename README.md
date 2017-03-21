@@ -3,8 +3,8 @@
 
 ## Distance and geometry specs:
 
-* Small base ship: 113 px ^2 
-* Large base ship: 226 px ^2
+* Small base ship: 113 px² 
+* Large base ship: 226 px²
 * GR-75 / Gozanti / C-ROC Huge ship:  226 px by 551 px
 * CR90 / Raider / ? Huge ship: 226 px by 635 px
 
