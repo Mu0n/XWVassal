@@ -4,7 +4,6 @@ plugins {
 
 apply plugin: 'java'
 
-
 sourceSets {
     main {
         java {
@@ -27,26 +26,25 @@ dependencies {
 }
 
 task unpackVmod(type: Copy) {
-  from zipTree(file('build/distributions/swxwmg.vmod'))
-  exclude '**/*.class', 'META-INF/', 'com/google/**/*', 'com/fasterxml/**/*'
-  includeEmptyDirs = false
-  into file('swxwmg.vmod-unpacked')
+    from zipTree(file('build/distributions/swxwmg.vmod'))
+    exclude '**/*.class', 'META-INF/', 'com/google/**/*', 'com/fasterxml/**/*'
+    includeEmptyDirs = false
+    into file('swxwmg.vmod-unpacked')
 }
-
 
 task downloadXwingData(type: de.undercouch.gradle.tasks.download.Download) {
     ext.destDir = 'swxwmg.vmod-unpacked'
     src([
-        'https://raw.githubusercontent.com/guidokessels/xwing-data/master/data/pilots.js',
-        'https://raw.githubusercontent.com/guidokessels/xwing-data/master/data/ships.js',
-        'https://raw.githubusercontent.com/guidokessels/xwing-data/master/data/upgrades.js'
+            'https://raw.githubusercontent.com/guidokessels/xwing-data/master/data/pilots.js',
+            'https://raw.githubusercontent.com/guidokessels/xwing-data/master/data/ships.js',
+            'https://raw.githubusercontent.com/guidokessels/xwing-data/master/data/upgrades.js'
     ])
     dest destDir
     doLast {
-      for (f in ['pilots', 'ships', 'upgrades']) {
-        file("${destDir}/${f}.json").delete();
-        file("${destDir}/${f}.js").renameTo(file("${destDir}/${f}.json"))
-      }
+        for (f in ['pilots', 'ships', 'upgrades']) {
+            file("${destDir}/${f}.json").delete();
+            file("${destDir}/${f}.js").renameTo(file("${destDir}/${f}.json"))
+        }
     }
 }
 
