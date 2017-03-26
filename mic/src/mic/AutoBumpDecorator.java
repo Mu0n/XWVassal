@@ -28,6 +28,8 @@ import VASSAL.counters.NonRectangular;
 import mic.manuvers.ManeuverPaths;
 import mic.manuvers.PathPart;
 
+import static mic.Util.logToChat;
+
 
 /**
  * Created by amatheny on 2/14/17.
@@ -38,7 +40,7 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
     // Set to true to enable visualizations of collision objects.
     // They will be drawn after a collision resolution, select the colliding
     // ship and press x to remove it.
-    private static boolean DRAW_COLLISIONS = false;
+    private static boolean DRAW_COLLISIONS = true;
 
     private final FreeRotator testRotator;
 
@@ -127,30 +129,95 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
             getMap().removeDrawComponent(this.collisionVisualization);
         }
 
-        if (isAutobumpTrigger(stroke)) {
-            List<Shape> otherShipShapes = getOtherShipShapes();
-            if (findCollidingShip(getShipCompareShape(this), otherShipShapes) != null) {
-                Command innerCommand = piece.keyEvent(stroke);
-                Command bumpResolveCommand = resolveBump(otherShipShapes);
-                return bumpResolveCommand == null ? innerCommand : innerCommand.append(bumpResolveCommand);
-            }
-        }
-
         ManeuverPaths path = getKeystrokePath(stroke);
-        // Is this a keystroke for a maneuver?
+        // Is this a keystroke for a maneuver? Deal with the 'no' cases first
         if (path == null) {
-            return piece.keyEvent(stroke);
+            //check to see if you want to delete the piece, if so, then remove the collision orange graphic first
+            if(KeyStroke.getKeyStroke(KeyEvent.VK_D, KeyEvent.CTRL_DOWN_MASK,false).equals(stroke)
+                    && DRAW_COLLISIONS
+                    && this.collisionVisualization != null)
+            {
+                getMap().removeDrawComponent(this.collisionVisualization);
+            }
+            if(isAutobumpTrigger(stroke)) //check to see if 'c' was pressed
+            {
+                List<Shape> otherShipShapes = getOtherShipShapes();
+                boolean isCollisionOccuring = findCollidingShip(getShipCompareShape(this), otherShipShapes) != null ? true : false;
+
+                //backtracking requested with a detected ship overlap, deal with it
+                if(isCollisionOccuring)
+                {
+                    Command innerCommand = piece.keyEvent(stroke);
+                    Command bumpResolveCommand = resolveBump(otherShipShapes);
+                    return bumpResolveCommand == null ? innerCommand : innerCommand.append(bumpResolveCommand);
+                }
+            }
+            return piece.keyEvent(stroke); // not a maneuver, not collsion backtracking either, deal with keystroke as usual
         }
 
         // We know we're dealing with a maneuver keystroke
         if (stroke.isOnKeyRelease() == false) {
+
+            if(this.collisionVisualization != null)
+            {
+                getMap().removeDrawComponent(this.collisionVisualization);
+            }
+
+            // find the list of other ships
+            List<Shape> otherShipShapes = getOtherShipShapes();
+
+            //safeguard old position and path before sending off the keystroke to the regular Vassal command
+
             this.prevPosition = getCurrentState();
             this.lastManeuver = path;
-        }
 
+            announceBumpAndPaint(otherShipShapes,path);
+        }
         return piece.keyEvent(stroke);
     }
 
+
+    private void announceBumpAndPaint(List<Shape> otherShipShapes, ManeuverPaths path) {
+
+        Shape rawShape = getRawShape(this);
+
+
+        final List<PathPart> parts = path.getTransformedPathParts(
+                this.getCurrentState().x,
+                this.getCurrentState().y,
+                this.getCurrentState().angle,
+                isLargeShip(this)
+        );
+
+            PathPart part = parts.get(parts.size()-1);
+            Shape movedShape = AffineTransform
+                    .getTranslateInstance(part.getX(), part.getY())
+                    .createTransformedShape(rawShape);
+            double roundedAngle = convertAngleToGameLimits(part.getAngle());
+            movedShape = AffineTransform
+                    .getRotateInstance(Math.toRadians(-roundedAngle), part.getX(), part.getY())
+                    .createTransformedShape(movedShape);
+
+            Shape bumpedShip = findCollidingShip(movedShape, otherShipShapes);
+            if (bumpedShip != null) {
+                if (DRAW_COLLISIONS) {
+                    String bumpAlertString = "Overlap detected with "
+                            + this.getProperty("Craft ID #").toString()
+                            + " (" + this.getProperty("Pilot Name").toString() + ") and "
+                            + "TODO: find other bumped ship name. Resolve this by hitting the 'c' key.";
+
+                    logToChat(bumpAlertString);
+                    this.collisionVisualization = new CollisionVisualization(movedShape, bumpedShip);
+                    getMap().addDrawComponent(this.collisionVisualization);
+                }
+            }
+            else
+            {
+                if (this.collisionVisualization != null) {
+                    getMap().removeDrawComponent(this.collisionVisualization);
+                }
+            }
+    }
     /**
      * Iterate in reverse over path of last maneuver and return a command that
      * will move the ship to a non-overlapping position and rotation
@@ -161,7 +228,6 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
         if (this.lastManeuver == null || this.prevPosition == null) {
             return null;
         }
-
         Shape rawShape = getRawShape(this);
         final List<PathPart> parts = this.lastManeuver.getTransformedPathParts(
                 this.prevPosition.x,
@@ -187,8 +253,6 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
                     if (this.collisionVisualization != null) {
                         getMap().removeDrawComponent(this.collisionVisualization);
                     }
-                    this.collisionVisualization = new CollisionVisualization(movedShape, lastBumpedShip);
-                    getMap().addDrawComponent(this.collisionVisualization);
                 }
                 return buildTranslateCommand(part);
             }
@@ -422,8 +486,8 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
 
         public void draw(Graphics graphics, VASSAL.build.module.Map map) {
             Graphics2D graphics2D = (Graphics2D) graphics;
-            graphics2D.setColor(Color.orange);
-
+            Color myO = new Color(255,99,71,150);
+            graphics2D.setColor(myO);
             AffineTransform scaler = AffineTransform.getScaleInstance(map.getZoom(), map.getZoom());
             graphics2D.fill(scaler.createTransformedShape(ship1));
             if (ship2 != null) {

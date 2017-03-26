@@ -23,20 +23,15 @@ import java.util.*;
 /**
  * Created by Mic on 23/03/2017.
  */
-public class AutoRangeFinder {
+public class AutoRangeFinder extends Decorator implements EditablePiece {
     public static final String ID = "auto-range-finder";
-
-    // Set to true to enable visualizations of collision objects.
-    // They will be drawn after a collision resolution, select the colliding
-    // ship and press x to remove it.
-    private static boolean DRAW_COLLISIONS = false;
 
     private final FreeRotator testRotator;
 
-    private AutoBumpDecorator.ShipPositionState prevPosition = null;
+    private ShipPositionState prevPosition = null;
     private ManeuverPaths lastManeuver = null;
     private FreeRotator myRotator = null;
-    private AutoBumpDecorator.CollisionVisualization collisionVisualization = null;
+    private CollisionVisualization collisionVisualization = null;
 
     private static Map<String, ManeuverPaths> keyStrokeToManeuver = ImmutableMap.<String, ManeuverPaths>builder()
             .put("SHIFT 1", ManeuverPaths.Str1)
@@ -78,11 +73,11 @@ public class AutoRangeFinder {
             .put("ALT T", ManeuverPaths.TrollR3)
             .build();
 
-    public AutoBumpDecorator() {
+    public AutoRangeFinder() {
         this(null);
     }
 
-    public AutoBumpDecorator(GamePiece piece) {
+    public AutoRangeFinder(GamePiece piece) {
         setInner(piece);
         this.testRotator = new FreeRotator("rotate;360;;;;;;;", null);
     }
@@ -111,6 +106,9 @@ public class AutoRangeFinder {
         return KeyStroke.getAWTKeyStroke(KeyEvent.VK_C, 0, false).equals(stroke);
     }
 
+    private boolean isSuperFiringArcCheck(KeyStroke stroke) {
+        return KeyStroke.getKeyStroke(KeyEvent.VK_F, KeyEvent.CTRL_DOWN_MASK,false).equals(stroke);
+    }
     @Override
     public Command keyEvent(KeyStroke stroke) {
 
@@ -174,13 +172,6 @@ public class AutoRangeFinder {
 
             Shape bumpedShip = findCollidingShip(movedShape, otherShipShapes);
             if (bumpedShip == null) {
-                if (DRAW_COLLISIONS) {
-                    if (this.collisionVisualization != null) {
-                        getMap().removeDrawComponent(this.collisionVisualization);
-                    }
-                    this.collisionVisualization = new AutoBumpDecorator.CollisionVisualization(movedShape, lastBumpedShip);
-                    getMap().addDrawComponent(this.collisionVisualization);
-                }
                 return buildTranslateCommand(part);
             }
             lastBumpedShip = bumpedShip;
@@ -301,8 +292,8 @@ public class AutoRangeFinder {
      *
      * @return
      */
-    private AutoBumpDecorator.ShipPositionState getCurrentState() {
-        AutoBumpDecorator.ShipPositionState shipState = new AutoBumpDecorator.ShipPositionState();
+    private ShipPositionState getCurrentState() {
+        ShipPositionState shipState = new ShipPositionState();
         shipState.x = getPosition().getX();
         shipState.y = getPosition().getY();
         shipState.angle = getRotator().getAngle();
