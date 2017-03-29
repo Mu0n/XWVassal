@@ -20,6 +20,8 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Area;
 import java.util.*;
 
+import static mic.Util.logToChat;
+
 /**
  * Created by Mic on 23/03/2017.
  */
@@ -33,45 +35,6 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
     private FreeRotator myRotator = null;
     private CollisionVisualization collisionVisualization = null;
 
-    private static Map<String, ManeuverPaths> keyStrokeToManeuver = ImmutableMap.<String, ManeuverPaths>builder()
-            .put("SHIFT 1", ManeuverPaths.Str1)
-            .put("SHIFT 2", ManeuverPaths.Str2)
-            .put("SHIFT 3", ManeuverPaths.Str3)
-            .put("SHIFT 4", ManeuverPaths.Str4)
-            .put("SHIFT 5", ManeuverPaths.Str5)
-            .put("CTRL SHIFT 1", ManeuverPaths.LT1)
-            .put("CTRL SHIFT 2", ManeuverPaths.LT2)
-            .put("CTRL SHIFT 3", ManeuverPaths.LT3)
-            .put("ALT SHIFT 1", ManeuverPaths.RT1)
-            .put("ALT SHIFT 2", ManeuverPaths.RT2)
-            .put("ALT SHIFT 3", ManeuverPaths.RT3)
-            .put("CTRL 1", ManeuverPaths.LBk1)
-            .put("CTRL 2", ManeuverPaths.LBk2)
-            .put("CTRL 3", ManeuverPaths.LBk3)
-            .put("ALT 1", ManeuverPaths.RBk1)
-            .put("ALT 2", ManeuverPaths.RBk2)
-            .put("ALT 3", ManeuverPaths.RBk3)
-            .put("ALT CTRL 1", ManeuverPaths.K1)
-            .put("ALT CTRL 2", ManeuverPaths.K2)
-            .put("ALT CTRL 3", ManeuverPaths.K3)
-            .put("ALT CTRL 4", ManeuverPaths.K4)
-            .put("ALT CTRL 5", ManeuverPaths.K5)
-            .put("CTRL 6", ManeuverPaths.RevLbk1)
-            .put("SHIFT 6", ManeuverPaths.RevStr1)
-            .put("ALT 6", ManeuverPaths.RevRbk1)
-            .put("CTRL Q", ManeuverPaths.SloopL1)
-            .put("CTRL W", ManeuverPaths.SloopL2)
-            .put("CTRL E", ManeuverPaths.SloopL3)
-            .put("ALT Q", ManeuverPaths.SloopR1)
-            .put("ALT W", ManeuverPaths.SloopR2)
-            .put("ALT E", ManeuverPaths.SloopR3)
-            .put("CTRL SHIFT E", ManeuverPaths.SloopL3Turn)
-            .put("ALT SHIFT E", ManeuverPaths.SloopR3Turn)
-            .put("CTRL Y", ManeuverPaths.TrollL2)
-            .put("CTRL T", ManeuverPaths.TrollL3)
-            .put("ALT Y", ManeuverPaths.TrollR2)
-            .put("ALT T", ManeuverPaths.TrollR3)
-            .build();
 
     public AutoRangeFinder() {
         this(null);
@@ -106,36 +69,34 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
         return KeyStroke.getAWTKeyStroke(KeyEvent.VK_C, 0, false).equals(stroke);
     }
 
-    private boolean isSuperFiringArcCheck(KeyStroke stroke) {
-        return KeyStroke.getKeyStroke(KeyEvent.VK_F, KeyEvent.CTRL_DOWN_MASK,false).equals(stroke);
-    }
-    @Override
     public Command keyEvent(KeyStroke stroke) {
 
-        if (stroke.getKeyChar() == 'x' && this.collisionVisualization != null) {
-            getMap().removeDrawComponent(this.collisionVisualization);
+        //Firing Arc command activated CTRL-F
+        if (KeyStroke.getKeyStroke(KeyEvent.VK_F, KeyEvent.CTRL_DOWN_MASK,false).equals(stroke)) {
+           logToChat("FORWARD ARC CTRL-F has been activated");
         }
 
-        if (isAutobumpTrigger(stroke)) {
-            java.util.List<Shape> otherShipShapes = getOtherShipShapes();
-            if (findCollidingShip(getShipCompareShape(this), otherShipShapes) != null) {
-                Command innerCommand = piece.keyEvent(stroke);
-                Command bumpResolveCommand = resolveBump(otherShipShapes);
-                return bumpResolveCommand == null ? innerCommand : innerCommand.append(bumpResolveCommand);
-            }
+        //Auxiliary firing Arc command activated CTRL-V
+        if (KeyStroke.getKeyStroke(KeyEvent.VK_V, KeyEvent.CTRL_DOWN_MASK,false).equals(stroke)) {
+            logToChat("BACKWARD AUXILIARY ARC CTRL-V has been activated");
         }
 
-        ManeuverPaths path = getKeystrokePath(stroke);
-        // Is this a keystroke for a maneuver?
-        if (path == null) {
-            return piece.keyEvent(stroke);
+        //Left mobile firing Arc command activated CTRL-Shift-V
+        if (KeyStroke.getKeyStroke(KeyEvent.VK_V, KeyEvent.CTRL_DOWN_MASK & KeyEvent.SHIFT_DOWN_MASK,false).equals(stroke)) {
+            logToChat("LEFT MOBILE ARC CTRL-SHIFT-V has been activated");
         }
 
-        // We know we're dealing with a maneuver keystroke
-        if (stroke.isOnKeyRelease() == false) {
-            this.prevPosition = getCurrentState();
-            this.lastManeuver = path;
+        //Right mobile firing Arc command activated ALT-Shift-V
+        if (KeyStroke.getKeyStroke(KeyEvent.VK_V, KeyEvent.SHIFT_DOWN_MASK & KeyEvent.ALT_DOWN_MASK,false).equals(stroke)) {
+            logToChat("RIGHT MOBILE ARC ALT-SHIFT-F has been activated");
         }
+        //180 Auxiliary firing Arc command activated CTRL-N
+        if (KeyStroke.getKeyStroke(KeyEvent.VK_N, KeyEvent.CTRL_DOWN_MASK,false).equals(stroke)) {
+            logToChat("180 DEGREES AUXILIARY ARC CTRL-N has been activated");
+        }
+
+
+
 
         return piece.keyEvent(stroke);
     }
@@ -300,20 +261,6 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
         return shipState;
     }
 
-    /**
-     * Finds any maneuver paths related to the keystroke based on the map
-     * keyStrokeToManeuver map
-     *
-     * @param keyStroke
-     * @return
-     */
-    private ManeuverPaths getKeystrokePath(KeyStroke keyStroke) {
-        String hotKey = HotKeyConfigurer.getString(keyStroke);
-        if (keyStrokeToManeuver.containsKey(hotKey)) {
-            return keyStrokeToManeuver.get(hotKey);
-        }
-        return null;
-    }
 
     private java.util.List<Shape> getOtherShipShapes() {
         java.util.List<Shape> shapes = Lists.newLinkedList();
