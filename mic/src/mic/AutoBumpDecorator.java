@@ -4,6 +4,7 @@ import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Area;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -47,7 +48,7 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
     private ShipPositionState prevPosition = null;
     private ManeuverPaths lastManeuver = null;
     private FreeRotator myRotator = null;
-    private CollisionVisualization collisionVisualization = null;
+    private CollisionVisualization previousCollisionVisualization = null;
 
     private static Map<String, ManeuverPaths> keyStrokeToManeuver = ImmutableMap.<String, ManeuverPaths>builder()
             .put("SHIFT 1", ManeuverPaths.Str1)
@@ -125,8 +126,8 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
     @Override
     public Command keyEvent(KeyStroke stroke) {
 
-        if (stroke.getKeyChar() == 'x' && this.collisionVisualization != null) {
-            getMap().removeDrawComponent(this.collisionVisualization);
+        if (stroke.getKeyChar() == 'x' && this.previousCollisionVisualization != null) {
+            getMap().removeDrawComponent(this.previousCollisionVisualization);
         }
 
         ManeuverPaths path = getKeystrokePath(stroke);
@@ -135,16 +136,16 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
             //check to see if you want to delete the piece, if so, then remove the collision orange graphic first
             if(KeyStroke.getKeyStroke(KeyEvent.VK_D, KeyEvent.CTRL_DOWN_MASK,false).equals(stroke)
                     && DRAW_COLLISIONS
-                    && this.collisionVisualization != null)
+                    && this.previousCollisionVisualization != null)
             {
-                getMap().removeDrawComponent(this.collisionVisualization);
+                getMap().removeDrawComponent(this.previousCollisionVisualization);
             }
             if(isAutobumpTrigger(stroke)) //check to see if 'c' was pressed
             {
-                List<Shape> otherShipShapes = getOtherShipShapes();
-                boolean isCollisionOccuring = findCollidingShip(getShipCompareShape(this), otherShipShapes) != null ? true : false;
+                List<BumpableWithShape> otherShipShapes = getShipsWithShapes();
+                boolean isCollisionOccuring = findCollidingEntity(getBumpableCompareShape(this), otherShipShapes) != null ? true : false;
 
-                //backtracking requested with a detected ship overlap, deal with it
+                //backtracking requested with a detected bumpable overlap, deal with it
                 if(isCollisionOccuring)
                 {
                     Command innerCommand = piece.keyEvent(stroke);
@@ -158,30 +159,27 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
         // We know we're dealing with a maneuver keystroke
         if (stroke.isOnKeyRelease() == false) {
 
-            if(this.collisionVisualization != null)
+            if(this.previousCollisionVisualization != null)
             {
-                getMap().removeDrawComponent(this.collisionVisualization);
+                getMap().removeDrawComponent(this.previousCollisionVisualization);
             }
 
-            // find the list of other ships
-            List<Shape> otherShipShapes = getOtherShipShapes();
+            // find the list of other bumpables
+            List<BumpableWithShape> otherBumpableShapes = getBumpablesWithShapes();
 
             //safeguard old position and path before sending off the keystroke to the regular Vassal command
 
             this.prevPosition = getCurrentState();
             this.lastManeuver = path;
 
-            announceBumpAndPaint(otherShipShapes,path);
+            announceBumpAndPaint(otherBumpableShapes,path);
         }
         return piece.keyEvent(stroke);
     }
 
 
-    private void announceBumpAndPaint(List<Shape> otherShipShapes, ManeuverPaths path) {
-
+    private void announceBumpAndPaint(List<BumpableWithShape> otherBumpableShapes, ManeuverPaths path) {
         Shape rawShape = getRawShape(this);
-
-
         final List<PathPart> parts = path.getTransformedPathParts(
                 this.getCurrentState().x,
                 this.getCurrentState().y,
@@ -189,34 +187,50 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
                 isLargeShip(this)
         );
 
-            PathPart part = parts.get(parts.size()-1);
-            Shape movedShape = AffineTransform
-                    .getTranslateInstance(part.getX(), part.getY())
-                    .createTransformedShape(rawShape);
-            double roundedAngle = convertAngleToGameLimits(part.getAngle());
-            movedShape = AffineTransform
-                    .getRotateInstance(Math.toRadians(-roundedAngle), part.getX(), part.getY())
-                    .createTransformedShape(movedShape);
+        PathPart part = parts.get(parts.size()-1);
+        Shape movedShape = AffineTransform
+                .getTranslateInstance(part.getX(), part.getY())
+                .createTransformedShape(rawShape);
+        double roundedAngle = convertAngleToGameLimits(part.getAngle());
+        movedShape = AffineTransform
+                .getRotateInstance(Math.toRadians(-roundedAngle), part.getX(), part.getY())
+                .createTransformedShape(movedShape);
 
-            Shape bumpedShip = findCollidingShip(movedShape, otherShipShapes);
-            if (bumpedShip != null) {
-                if (DRAW_COLLISIONS) {
-                    String bumpAlertString = "Overlap detected with "
-                            + this.getProperty("Craft ID #").toString()
-                            + " (" + this.getProperty("Pilot Name").toString() + ") and "
-                            + "TODO: find other bumped ship name. Resolve this by hitting the 'c' key.";
-
+        List<BumpableWithShape> collidingEntities = findCollidingEntities(movedShape, otherBumpableShapes);
+        CollisionVisualization collisionVisualization = new CollisionVisualization(movedShape);
+        for (BumpableWithShape bumpedBumpable : collidingEntities) {
+            if (DRAW_COLLISIONS) {
+                String yourShipName = "your ship";
+                if (this.getProperty("Craft ID #").toString().length() > 0) { yourShipName += " " + this.getProperty("Craft ID #").toString(); }
+                if (this.getProperty("Pilot Name").toString().length() > 0) { yourShipName += " (" + this.getProperty("Pilot Name").toString() + ")"; }
+                if (bumpedBumpable.type.equals("Ship")) {
+                    String otherShipName = "another ship";
+                    if (bumpedBumpable.bumpable.getProperty("Craft ID #").toString().length() > 0) { otherShipName += " " + bumpedBumpable.bumpable.getProperty("Craft ID #").toString(); }
+                    if (bumpedBumpable.bumpable.getProperty("Pilot Name").toString().length() > 0) { otherShipName += " (" + bumpedBumpable.bumpable.getProperty("Pilot Name").toString() + ")"; }
+                    String bumpAlertString = "Overlap detected with " + yourShipName + " and " + otherShipName + ". Resolve this by hitting the 'c' key.";
                     logToChat(bumpAlertString);
-                    this.collisionVisualization = new CollisionVisualization(movedShape, bumpedShip);
-                    getMap().addDrawComponent(this.collisionVisualization);
+                } else if (bumpedBumpable.type.equals("Asteroid")) {
+                    String bumpAlertString = "Overlap detected with " + yourShipName + " and an asteroid.";
+                    logToChat(bumpAlertString);
+                } else if (bumpedBumpable.type.equals("Debris")) {
+                    String bumpAlertString = "Overlap detected with " + yourShipName + " and a debris cloud.";
+                    logToChat(bumpAlertString);
+                } else if (bumpedBumpable.type.equals("Bomb")) {
+                    String bumpAlertString = "Overlap detected with " + yourShipName + " and a bomb.";
+                    logToChat(bumpAlertString);
                 }
+                collisionVisualization.add(bumpedBumpable.shape);
             }
-            else
-            {
-                if (this.collisionVisualization != null) {
-                    getMap().removeDrawComponent(this.collisionVisualization);
-                }
-            }
+        }
+        if (this.previousCollisionVisualization != null) {
+            getMap().removeDrawComponent(this.previousCollisionVisualization);
+        }
+        if (collidingEntities.size() > 0) {
+            getMap().addDrawComponent(collisionVisualization);
+            this.previousCollisionVisualization = collisionVisualization;
+        } else {
+            this.previousCollisionVisualization = null;
+        }
     }
     /**
      * Iterate in reverse over path of last maneuver and return a command that
@@ -224,7 +238,7 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
      *
      * @return
      */
-    private Command resolveBump(List<Shape> otherShipShapes) {
+    private Command resolveBump(List<BumpableWithShape> otherBumpableShapes) {
         if (this.lastManeuver == null || this.prevPosition == null) {
             return null;
         }
@@ -236,7 +250,6 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
                 isLargeShip(this)
         );
 
-        Shape lastBumpedShip = null;
         for (int i = parts.size() - 1; i >= 0; i--) {
             PathPart part = parts.get(i);
             Shape movedShape = AffineTransform
@@ -247,16 +260,15 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
                     .getRotateInstance(Math.toRadians(-roundedAngle), part.getX(), part.getY())
                     .createTransformedShape(movedShape);
 
-            Shape bumpedShip = findCollidingShip(movedShape, otherShipShapes);
-            if (bumpedShip == null) {
+            BumpableWithShape bumpedBumpable = findCollidingEntity(movedShape, otherBumpableShapes);
+            if (bumpedBumpable == null) {
                 if (DRAW_COLLISIONS) {
-                    if (this.collisionVisualization != null) {
-                        getMap().removeDrawComponent(this.collisionVisualization);
+                    if (this.previousCollisionVisualization != null) {
+                        getMap().removeDrawComponent(this.previousCollisionVisualization);
                     }
                 }
                 return buildTranslateCommand(part);
             }
-            lastBumpedShip = bumpedShip;
         }
 
         // Could not find a position that wasn't bumping, bring it back to where it was before
@@ -296,19 +308,36 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
     }
 
     /**
-     * Returns the comparision shape of the first ship colliding with the provided ship.  Returns null if there
+     * Returns the comparision shape of the first bumpable colliding with the provided ship.  Returns null if there
      * are no collisions
      *
      * @param myTestShape
      * @return
      */
-    private Shape findCollidingShip(Shape myTestShape, List<Shape> otherShapes) {
-        for (Shape otherShipShape : otherShapes) {
-            if (shapesOverlap(myTestShape, otherShipShape)) {
-                return otherShipShape;
+    private BumpableWithShape findCollidingEntity(Shape myTestShape, List<BumpableWithShape> otherShapes) {
+        List<BumpableWithShape> allCollidingEntities = findCollidingEntities(myTestShape, otherShapes);
+        if (allCollidingEntities.size() > 0) {
+            return allCollidingEntities.get(0);
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * Returns a list of all bumpables colliding with the provided ship.  Returns an empty list if there
+     * are no collisions
+     *
+     * @param myTestShape
+     * @return
+     */
+    private List<BumpableWithShape> findCollidingEntities(Shape myTestShape, List<BumpableWithShape> otherShapes) {
+        List<BumpableWithShape> shapes = Lists.newLinkedList();
+        for (BumpableWithShape otherBumpableShape : otherShapes) {
+            if (shapesOverlap(myTestShape, otherBumpableShape.shape)) {
+                shapes.add(otherBumpableShape);
             }
         }
-        return null;
+        return shapes;
     }
 
     /**
@@ -397,27 +426,57 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
         return null;
     }
 
-    private List<Shape> getOtherShipShapes() {
-        List<Shape> shapes = Lists.newLinkedList();
-        for (Decorator ship : getShipsOnMap()) {
-            if (getId().equals(ship.getId())) {
+    private List<BumpableWithShape> getShipsWithShapes() {
+        List<BumpableWithShape> ships = Lists.newLinkedList();
+        for (BumpableWithShape ship : getShipsOnMap()) {
+            if (getId().equals(ship.bumpable.getId())) {
                 continue;
             }
-            shapes.add(getShipCompareShape(ship));
+            ships.add(ship);
         }
-        return shapes;
+        return ships;
     }
 
-    private List<Decorator> getShipsOnMap() {
-        List<Decorator> ships = Lists.newArrayList();
+    private List<BumpableWithShape> getBumpablesWithShapes() {
+        List<BumpableWithShape> bumpables = Lists.newLinkedList();
+        for (BumpableWithShape bumpable : getBumpablesOnMap()) {
+            if (getId().equals(bumpable.bumpable.getId())) {
+                continue;
+            }
+            bumpables.add(bumpable);
+        }
+        return bumpables;
+    }
+
+    private List<BumpableWithShape> getShipsOnMap() {
+        List<BumpableWithShape> ships = Lists.newArrayList();
 
         GamePiece[] pieces = getMap().getAllPieces();
         for (GamePiece piece : pieces) {
             if (piece.getState().contains("Ship")) {
-                ships.add((Decorator) piece);
+                ships.add(new BumpableWithShape((Decorator)piece, getBumpableCompareShape((Decorator)piece), "Ship"));
             }
         }
         return ships;
+    }
+
+    private List<BumpableWithShape> getBumpablesOnMap() {
+        List<BumpableWithShape> bumpables = Lists.newArrayList();
+
+        GamePiece[] pieces = getMap().getAllPieces();
+        for (GamePiece piece : pieces) {
+            if (piece.getState().contains("Ship")) {
+                bumpables.add(new BumpableWithShape((Decorator)piece, getBumpableCompareShape((Decorator)piece), "Ship"));
+            } else if (piece.getState().contains("Asteroid")) {
+                // comment out this line and the next three that add to bumpables if bumps other than with ships shouldn't be detected yet
+                bumpables.add(new BumpableWithShape((Decorator)piece, getBumpableCompareShape((Decorator)piece), "Asteroid"));
+            } else if (piece.getState().contains("Debris")) {
+                bumpables.add(new BumpableWithShape((Decorator)piece, getBumpableCompareShape((Decorator)piece), "Debris"));
+            } else if (piece.getState().contains("Bomb")) {
+                bumpables.add(new BumpableWithShape((Decorator)piece, getBumpableCompareShape((Decorator)piece), "Bomb"));
+            }
+        }
+        return bumpables;
     }
 
     /**
@@ -437,32 +496,32 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
      * Finds non-rectangular mask layer of provided ship.  This is the shape with only the base
      * and nubs
      *
-     * @param ship
+     * @param bumpable
      * @return
      */
-    private Shape getRawShape(Decorator ship) {
-        return Decorator.getDecorator(Decorator.getOutermost(ship), NonRectangular.class).getShape();
+    private Shape getRawShape(Decorator bumpable) {
+        return Decorator.getDecorator(Decorator.getOutermost(bumpable), NonRectangular.class).getShape();
     }
 
     /**
      * Finds raw ship mask and translates and rotates it to the current position and heading
      * of the ship
      *
-     * @param ship
+     * @param bumpable
      * @return Translated ship mask
      */
-    private Shape getShipCompareShape(Decorator ship) {
-        Shape rawShape = getRawShape(ship);
-        double scaleFactor = isLargeShip(ship) ? 1.01d : 1.025d;
+    private Shape getBumpableCompareShape(Decorator bumpable) {
+        Shape rawShape = getRawShape(bumpable);
+        double scaleFactor = isLargeShip(bumpable) ? 1.01d : 1.025d;
         Shape transformed = AffineTransform.getScaleInstance(scaleFactor, scaleFactor).createTransformedShape(rawShape);
 
         transformed = AffineTransform
-                .getTranslateInstance(ship.getPosition().getX(), ship.getPosition().getY())
+                .getTranslateInstance(bumpable.getPosition().getX(), bumpable.getPosition().getY())
                 .createTransformedShape(transformed);
 
-        FreeRotator rotator = (FreeRotator) (Decorator.getDecorator(Decorator.getOutermost(ship), FreeRotator.class));
-        double centerX = ship.getPosition().getX();
-        double centerY = ship.getPosition().getY();
+        FreeRotator rotator = (FreeRotator) (Decorator.getDecorator(Decorator.getOutermost(bumpable), FreeRotator.class));
+        double centerX = bumpable.getPosition().getX();
+        double centerY = bumpable.getPosition().getY();
         transformed = AffineTransform
                 .getRotateInstance(rotator.getAngleInRadians(), centerX, centerY)
                 .createTransformedShape(transformed);
@@ -476,12 +535,15 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
 
     private static class CollisionVisualization implements Drawable {
 
-        private final Shape ship1;
-        private final Shape ship2;
+        private final List<Shape> shapes;
 
-        CollisionVisualization(Shape ship1, Shape ship2) {
-            this.ship1 = ship1;
-            this.ship2 = ship2;
+        CollisionVisualization(Shape shipShape) {
+            this.shapes = new ArrayList<Shape>();
+            this.shapes.add(shipShape);
+        }
+
+        public void add(Shape bumpable) {
+            this.shapes.add(bumpable);
         }
 
         public void draw(Graphics graphics, VASSAL.build.module.Map map) {
@@ -489,9 +551,8 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
             Color myO = new Color(255,99,71,150);
             graphics2D.setColor(myO);
             AffineTransform scaler = AffineTransform.getScaleInstance(map.getZoom(), map.getZoom());
-            graphics2D.fill(scaler.createTransformedShape(ship1));
-            if (ship2 != null) {
-                graphics2D.fill(scaler.createTransformedShape(ship2));
+            for (Shape shape : shapes) {
+                graphics2D.fill(scaler.createTransformedShape(shape));
             }
         }
 
@@ -504,5 +565,16 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
         double x;
         double y;
         double angle;
+    }
+
+    public class BumpableWithShape {
+        Shape shape;
+        Decorator bumpable;
+        String type;
+        BumpableWithShape(Decorator bumpable, Shape shape, String type) {
+            this.bumpable = bumpable;
+            this.shape = shape;
+            this.type = type;
+        }
     }
 }
