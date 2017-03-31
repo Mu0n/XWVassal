@@ -201,22 +201,22 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
         for (BumpableWithShape bumpedBumpable : collidingEntities) {
             if (DRAW_COLLISIONS) {
                 String yourShipName = "your ship";
-                if (this.getProperty("Craft ID #").toString().length() > 0) { yourShipName += " " + this.getProperty("Craft ID #").toString(); }
-                if (this.getProperty("Pilot Name").toString().length() > 0) { yourShipName += " (" + this.getProperty("Pilot Name").toString() + ")"; }
+                if (this.getProperty("Pilot Name").toString().length() > 0) { yourShipName += " " + this.getProperty("Pilot Name").toString(); }
+                if (this.getProperty("Craft ID #").toString().length() > 0) { yourShipName += " (" + this.getProperty("Craft ID #").toString() + ")"; }
                 if (bumpedBumpable.type.equals("Ship")) {
                     String otherShipName = "another ship";
-                    if (bumpedBumpable.bumpable.getProperty("Craft ID #").toString().length() > 0) { otherShipName += " " + bumpedBumpable.bumpable.getProperty("Craft ID #").toString(); }
-                    if (bumpedBumpable.bumpable.getProperty("Pilot Name").toString().length() > 0) { otherShipName += " (" + bumpedBumpable.bumpable.getProperty("Pilot Name").toString() + ")"; }
-                    String bumpAlertString = "Overlap detected with " + yourShipName + " and " + otherShipName + ". Resolve this by hitting the 'c' key.";
+                    if (bumpedBumpable.bumpable.getProperty("Pilot Name").toString().length() > 0) { otherShipName += " " + bumpedBumpable.bumpable.getProperty("Pilot Name").toString(); }
+                    if (bumpedBumpable.bumpable.getProperty("Craft ID #").toString().length() > 0) { otherShipName += " (" + bumpedBumpable.bumpable.getProperty("Craft ID #").toString() + ")"; }
+                    String bumpAlertString = "* --- Overlap detected with " + yourShipName + " and " + otherShipName + ". Resolve this by hitting the 'c' key.";
                     logToChat(bumpAlertString);
                 } else if (bumpedBumpable.type.equals("Asteroid")) {
-                    String bumpAlertString = "Overlap detected with " + yourShipName + " and an asteroid.";
+                    String bumpAlertString = "* --- Overlap detected with " + yourShipName + " and an asteroid.";
                     logToChat(bumpAlertString);
                 } else if (bumpedBumpable.type.equals("Debris")) {
-                    String bumpAlertString = "Overlap detected with " + yourShipName + " and a debris cloud.";
+                    String bumpAlertString = "* --- Overlap detected with " + yourShipName + " and a debris cloud.";
                     logToChat(bumpAlertString);
                 } else if (bumpedBumpable.type.equals("Bomb")) {
-                    String bumpAlertString = "Overlap detected with " + yourShipName + " and a bomb.";
+                    String bumpAlertString = "* --- Overlap detected with " + yourShipName + " and a bomb.";
                     logToChat(bumpAlertString);
                 }
                 collisionVisualization.add(bumpedBumpable.shape);
