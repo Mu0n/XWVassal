@@ -5,11 +5,13 @@ import java.awt.event.KeyEvent;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Area;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import javax.swing.*;
 
+import VASSAL.build.module.map.boardPicker.Board;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 
@@ -172,9 +174,58 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
             this.prevPosition = getCurrentState();
             this.lastManeuver = path;
 
+            checkIfOutOfBounds(path);
             announceBumpAndPaint(otherBumpableShapes,path);
         }
         return piece.keyEvent(stroke);
+    }
+
+    private void checkIfOutOfBounds(ManeuverPaths path) {
+        int x=0;
+        int y=0;
+        Rectangle mapArea = new Rectangle(0,0,0,0);
+        try{
+            Board b = getMap().getBoards().iterator().next();
+            mapArea = b.bounds();
+            String name = b.getName();
+            x = Character.getNumericValue(name.charAt(0));
+            y = Character.getNumericValue(name.charAt(3));
+        }catch(Exception e)
+        {
+            logToChat("Board name isn't formatted right, change to #'x#' Description");
+        }
+        logToChat(Integer.toString(x) + " by " + Integer.toString(y) + " is "
+                + Integer.toString(x*861) +  " pixels wide by " + Integer.toString(y*861) + " pixels high.");
+
+        Shape rawShape = getRawShape(this);
+        final List<PathPart> parts = path.getTransformedPathParts(
+                this.getCurrentState().x,
+                this.getCurrentState().y,
+                this.getCurrentState().angle,
+                isLargeShip(this)
+        );
+
+        PathPart part = parts.get(parts.size()-1);
+        Shape movedShape = AffineTransform
+                .getTranslateInstance(part.getX(), part.getY())
+                .createTransformedShape(rawShape);
+        double roundedAngle = convertAngleToGameLimits(part.getAngle());
+        movedShape = AffineTransform
+                .getRotateInstance(Math.toRadians(-roundedAngle), part.getX(), part.getY())
+                .createTransformedShape(movedShape);
+
+        if(movedShape.getBounds().getMaxX() > mapArea.getBounds().getMaxX()  || // too far to the right
+                movedShape.getBounds().getMaxY() > mapArea.getBounds().getMaxY() || // too far to the bottom
+                movedShape.getBounds().getX() < mapArea.getBounds().getX() || //too far to the left
+                movedShape.getBounds().getY() < mapArea.getBounds().getY()) // too far to the top
+        {
+            CollisionVisualization collisionVisualization = new CollisionVisualization(movedShape);
+            if (DRAW_COLLISIONS) {
+                collisionVisualization.add(movedShape);
+                logToChat("ship flew out of bounds");
+            }
+        }
+
     }
 
 
