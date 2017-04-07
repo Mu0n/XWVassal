@@ -39,6 +39,8 @@ import static mic.Util.logToChat;
  */
 public class AutoBumpDecorator extends Decorator implements EditablePiece {
     public static final String ID = "auto-bump;";
+    static final double SMALLSHAPEFUDGE = 1.01d;
+    static final double LARGESHAPEFUDGE = 1.025d;
 
     // Set to true to enable visualizations of collision objects.
     // They will be drawn after a collision resolution, select the colliding
@@ -174,8 +176,8 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
             this.prevPosition = getCurrentState();
             this.lastManeuver = path;
 
-            checkIfOutOfBounds(path);
             announceBumpAndPaint(otherBumpableShapes,path);
+            checkIfOutOfBounds(path);
         }
         return piece.keyEvent(stroke);
     }
@@ -198,6 +200,11 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
                 + Integer.toString(x*861) +  " pixels wide by " + Integer.toString(y*861) + " pixels high.");
 
         Shape rawShape = getRawShape(this);
+
+        double scaleFactor = isLargeShip(this) ? SMALLSHAPEFUDGE : LARGESHAPEFUDGE;
+        rawShape = AffineTransform.getScaleInstance(scaleFactor, scaleFactor).createTransformedShape(rawShape);
+
+
         final List<PathPart> parts = path.getTransformedPathParts(
                 this.getCurrentState().x,
                 this.getCurrentState().y,
@@ -221,8 +228,21 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
         {
             CollisionVisualization collisionVisualization = new CollisionVisualization(movedShape);
             if (DRAW_COLLISIONS) {
+
+                if (this.previousCollisionVisualization != null) {
+                    getMap().removeDrawComponent(this.previousCollisionVisualization);
+                }
+
                 collisionVisualization.add(movedShape);
-                logToChat("ship flew out of bounds");
+                getMap().addDrawComponent(collisionVisualization);
+                this.previousCollisionVisualization = collisionVisualization;
+
+                String yourShipName = "";
+                if (this.getProperty("Pilot Name").toString().length() > 0) { yourShipName += " " + this.getProperty("Pilot Name").toString(); }
+                if (this.getProperty("Craft ID #").toString().length() > 0) { yourShipName += " (" + this.getProperty("Craft ID #").toString() + ")"; }
+
+                if("".equals(yourShipName)) yourShipName = "Your ship";
+                logToChat("* -- " + yourShipName + " flew out of bounds");
             }
         }
 
@@ -563,7 +583,7 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
      */
     private Shape getBumpableCompareShape(Decorator bumpable) {
         Shape rawShape = getRawShape(bumpable);
-        double scaleFactor = isLargeShip(bumpable) ? 1.01d : 1.025d;
+        double scaleFactor = isLargeShip(bumpable) ? SMALLSHAPEFUDGE : LARGESHAPEFUDGE;
         Shape transformed = AffineTransform.getScaleInstance(scaleFactor, scaleFactor).createTransformedShape(rawShape);
 
         transformed = AffineTransform
