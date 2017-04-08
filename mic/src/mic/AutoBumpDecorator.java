@@ -183,22 +183,15 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
     }
 
     private void checkIfOutOfBounds(ManeuverPaths path) {
-        int x=0;
-        int y=0;
         Rectangle mapArea = new Rectangle(0,0,0,0);
         try{
             Board b = getMap().getBoards().iterator().next();
             mapArea = b.bounds();
             String name = b.getName();
-            x = Character.getNumericValue(name.charAt(0));
-            y = Character.getNumericValue(name.charAt(3));
         }catch(Exception e)
         {
             logToChat("Board name isn't formatted right, change to #'x#' Description");
         }
-        logToChat(Integer.toString(x) + " by " + Integer.toString(y) + " is "
-                + Integer.toString(x*861) +  " pixels wide by " + Integer.toString(y*861) + " pixels high.");
-
         Shape rawShape = getRawShape(this);
 
         double scaleFactor = isLargeShip(this) ? SMALLSHAPEFUDGE : LARGESHAPEFUDGE;
