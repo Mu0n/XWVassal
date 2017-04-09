@@ -165,6 +165,7 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
         }
 
         // We know we're dealing with a maneuver keystroke
+        // TO DO include decloaks, barrel rolls
         if (stroke.isOnKeyRelease() == false) {
 
             if(this.previousCollisionVisualization != null)
@@ -179,8 +180,23 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
 
             this.prevPosition = getCurrentState();
             this.lastManeuver = path;
+//perform the move ourselves here first
 
+            //This PathPart list will be used everywhere: moving, bumping, out of boundsing
+            //maybe fetch it for both 'c' behavior and movement
+            final List<PathPart> parts = path.getTransformedPathParts(
+                    this.getCurrentState().x,
+                    this.getCurrentState().y,
+                    this.getCurrentState().angle,
+                    isLargeShip(this)
+            );
+
+            //this is the final ship position post-move
+            PathPart part = parts.get(parts.size()-1);
+            moveShipOurselves(part);
             announceBumpAndPaint(otherBumpableShapes,path);
+
+            /* will have to rewrite how fleeing battlefield is handled
             if(checkIfOutOfBounds(path)) {
 
                 String yourShipName = "";
@@ -188,17 +204,25 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
                 if (this.getProperty("Craft ID #").toString().length() > 0) { yourShipName += " (" + this.getProperty("Craft ID #").toString() + ")"; }
 
                 if("".equals(yourShipName)) yourShipName = "Your ship";
-                //logToChat("* -- " + yourShipName + " flew out of bounds");
-                String fleeingMessage = "* -- " + yourShipName + " flew out of bounds";
+                logToChat("* -- " + yourShipName + " flew out of bounds");
+
                 Command innerCommand = piece.keyEvent(stroke);
 
-                Command c = new
-                        Chatter.DisplayText(GameModule.getGameModule().getChatter(),fleeingMessage);
-                innerCommand.append(c);
                 return innerCommand;
             }
+            */
         }
+        //should now practically send it off to do nothing
         return piece.keyEvent(stroke);
+    }
+
+    private void moveShipOurselves(PathPart finalPosition) {
+        double x = finalPosition.getX();
+        double y = finalPosition.getY();
+        double angle = finalPosition.getAngle();
+
+        this.setPosition(new Point((int)x,(int)y));
+        this.getRotator().setAngle(angle);
     }
 
     private boolean checkIfOutOfBounds(ManeuverPaths path) {
