@@ -2,16 +2,16 @@ package mic;
 
 import VASSAL.build.AbstractConfigurable;
 import VASSAL.build.Buildable;
-import VASSAL.build.GameModule;
-import VASSAL.build.module.Map;
 import VASSAL.build.module.documentation.HelpFile;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.BufferedInputStream;
-import java.io.InputStream;
-import java.io.StringWriter;
+import java.io.BufferedReader;
+
 import java.net.URL;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.MalformedURLException;
+
+import static mic.Util.logToChat;
 
 /**
  * Created by Mic on 09/04/2017.
@@ -19,17 +19,34 @@ import java.net.URL;
  */
 public class AnnouncementOnLog extends AbstractConfigurable {
 
-    private static String defaultURL = "https://raw.githubusercontent.com/Mu0n/HWpopup/master/README.md";
+    private static String defaultURL = "https://raw.githubusercontent.com/Mu0n/HWpopup/AnnouncementOnLog/VassalNews";
     private synchronized void AnnouncementOnLog() {
 
     }
 
     public void addTo(Buildable parent) {
 
-//TO DO import some text from a web address and display it
+try {
+    URL url = new URL(defaultURL);
+
+    BufferedReader in = new BufferedReader(new InputStreamReader(url.openStream()));
+
+    String line;
+
+    while ((line = in.readLine()) != null) {
+        logToChat("* " + line);
     }
+    in.close();
+        }
+        catch (MalformedURLException e) {
+     System.out.println("Malformed URL: " + e.getMessage());
 
+        }
+        catch (IOException e) {
+         System.out.println("I/O Error: " + e.getMessage());
+        }
 
+    }
 
     public void removeFrom(Buildable parent) {
     }
