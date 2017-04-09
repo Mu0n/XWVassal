@@ -38,6 +38,8 @@ import static mic.Util.logToChat;
 
 /**
  * Created by amatheny on 2/14/17.
+ *
+ * Second role: to completely intercept every maneuver shortcut and deal with movement AND autobump AND out of bound detection
  */
 public class AutoBumpDecorator extends Decorator implements EditablePiece {
     public static final String ID = "auto-bump;";
