@@ -11,6 +11,7 @@ import java.util.Map;
 
 import javax.swing.*;
 
+import VASSAL.build.GameModule;
 import VASSAL.build.module.map.boardPicker.Board;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
@@ -18,6 +19,7 @@ import com.google.common.collect.Lists;
 import VASSAL.build.module.documentation.HelpFile;
 import VASSAL.build.module.map.Drawable;
 import VASSAL.build.module.map.MovementReporter;
+import VASSAL.build.module.Chatter;
 import VASSAL.command.ChangeTracker;
 import VASSAL.command.Command;
 import VASSAL.command.MoveTracker;
@@ -52,7 +54,7 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
     private ShipPositionState prevPosition = null;
     private ManeuverPaths lastManeuver = null;
     private FreeRotator myRotator = null;
-    private CollisionVisualization previousCollisionVisualization = null;
+    public CollisionVisualization previousCollisionVisualization = null;
 
     private static Map<String, ManeuverPaths> keyStrokeToManeuver = ImmutableMap.<String, ManeuverPaths>builder()
             .put("SHIFT 1", ManeuverPaths.Str1)
@@ -177,12 +179,27 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
             this.lastManeuver = path;
 
             announceBumpAndPaint(otherBumpableShapes,path);
-            checkIfOutOfBounds(path);
+            if(checkIfOutOfBounds(path)) {
+
+                String yourShipName = "";
+                if (this.getProperty("Pilot Name").toString().length() > 0) { yourShipName += " " + this.getProperty("Pilot Name").toString(); }
+                if (this.getProperty("Craft ID #").toString().length() > 0) { yourShipName += " (" + this.getProperty("Craft ID #").toString() + ")"; }
+
+                if("".equals(yourShipName)) yourShipName = "Your ship";
+                //logToChat("* -- " + yourShipName + " flew out of bounds");
+                String fleeingMessage = "* -- " + yourShipName + " flew out of bounds";
+                Command innerCommand = piece.keyEvent(stroke);
+
+                Command c = new
+                        Chatter.DisplayText(GameModule.getGameModule().getChatter(),fleeingMessage);
+                innerCommand.append(c);
+                return innerCommand;
+            }
         }
         return piece.keyEvent(stroke);
     }
 
-    private void checkIfOutOfBounds(ManeuverPaths path) {
+    private boolean checkIfOutOfBounds(ManeuverPaths path) {
         Rectangle mapArea = new Rectangle(0,0,0,0);
         try{
             Board b = getMap().getBoards().iterator().next();
@@ -229,15 +246,10 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
                 collisionVisualization.add(movedShape);
                 getMap().addDrawComponent(collisionVisualization);
                 this.previousCollisionVisualization = collisionVisualization;
-
-                String yourShipName = "";
-                if (this.getProperty("Pilot Name").toString().length() > 0) { yourShipName += " " + this.getProperty("Pilot Name").toString(); }
-                if (this.getProperty("Craft ID #").toString().length() > 0) { yourShipName += " (" + this.getProperty("Craft ID #").toString() + ")"; }
-
-                if("".equals(yourShipName)) yourShipName = "Your ship";
-                logToChat("* -- " + yourShipName + " flew out of bounds");
+                return true;
             }
         }
+        return false;
 
     }
 
