@@ -250,7 +250,7 @@ public enum CurvedPaths implements ManeuverPath {
         double baseLength = isLargeBase ? 2.0 * 113.0 : 113.0;
         double arcLength = getPathLength();
         // calculate
-        for (int i = 0; i < numSegments; i++) {
+        for (int i = 1; i <= numSegments; i++) {
             double percentage = (double) i / (double) numSegments;
             if (this.bank) {
                 parts.add(getBankPart(percentage, baseLength, arcLength, isLargeBase));
