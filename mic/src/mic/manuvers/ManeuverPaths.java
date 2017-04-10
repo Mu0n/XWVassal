@@ -65,6 +65,91 @@ public enum ManeuverPaths {
         this.path = path;
     }
 
+    public String getFullName() {
+        switch(this)
+        {
+            case LBk1:
+                return "Left Bank 1";
+            case LBk2:
+                return "Left Bank 2";
+            case LBk3:
+                return "Left Bank 3";
+            case RBk1:
+                return "Right Bank 1";
+            case RBk2:
+                return "Right Bank 2";
+            case RBk3:
+                return "Right Bank 3";
+
+            case LT1:
+                return "Left Turn 1";
+            case LT2:
+                return "Left Turn 2";
+            case LT3:
+                return "Left Turn 3";
+            case RT1:
+                return "Right Turn 1";
+            case RT2:
+                return "Right Turn 2";
+            case RT3:
+                return "Right Turn 3";
+
+            case Str1:
+                return "Forward 1";
+            case Str2:
+                return "Forward 2";
+            case Str3:
+                return "Forward 3";
+            case Str4:
+                return "Forward 4";
+            case Str5:
+                return "Forward 5";
+
+            case K1:
+                return "K-Turn 1";
+            case K2:
+                return "K-Turn 2";
+            case K3:
+                return "K-Turn 3";
+            case K4:
+                return "K-Turn 4";
+            case K5:
+                return "K-Turn 5";
+
+            case RevStr1:
+                return "Reverse 1";
+            case RevLbk1:
+                return "Reverse Left Bank 1";
+            case RevRbk1:
+                return "Reverse Right Bank 1";
+
+            case SloopL1:
+                return "Segnor's Loop Left 1";
+            case SloopL2:
+                return "Segnor's Loop Left 2";
+            case SloopL3:
+                return "Segnor's Loop Left 3";
+
+            case SloopR1:
+                return "Segnor's Loop Right 1";
+            case SloopR2:
+                return "Segnor's Loop Right 2";
+            case SloopR3:
+                return "Segnor's Loop Right 3";
+
+            case TrollL2:
+                return "Tallon Roll Left 2";
+            case TrollL3:
+                return "Tallon Roll Left 3";
+            case TrollR2:
+                return "Tallon Roll Right 2";
+            case TrollR3:
+                return "Tallon Roll Right 3";
+
+            default:
+                return "Unknown Move";
+        }
+    }
     private static int getNumPathSegments(ManeuverPath path) {
         return (int) Math.floor((path.getPathLength() / CurvedPaths.RT3.getPathLength()) * 500);
     }

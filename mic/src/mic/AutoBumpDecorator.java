@@ -5,21 +5,17 @@ import java.awt.event.KeyEvent;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Area;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import javax.swing.*;
 
-import VASSAL.build.GameModule;
 import VASSAL.build.module.map.boardPicker.Board;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 
 import VASSAL.build.module.documentation.HelpFile;
 import VASSAL.build.module.map.Drawable;
-import VASSAL.build.module.map.MovementReporter;
-import VASSAL.build.module.Chatter;
 import VASSAL.command.ChangeTracker;
 import VASSAL.command.Command;
 import VASSAL.command.MoveTracker;
@@ -30,7 +26,6 @@ import VASSAL.counters.FreeRotator;
 import VASSAL.counters.GamePiece;
 import VASSAL.counters.KeyCommand;
 import VASSAL.counters.NonRectangular;
-import mic.manuvers.ManeuverPath;
 import mic.manuvers.ManeuverPaths;
 import mic.manuvers.PathPart;
 
@@ -195,22 +190,20 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
             //this is the final ship position post-move
             PathPart part = parts.get(parts.size()-1);
 
+            //Get the ship name string for announcements
+            String yourShipName = getShipStringForReports(true);
 
+            //Start the Command chain
+            Command innerCommand = piece.keyEvent(stroke);
 
-            moveShipOurselves(part, checkForKTurn(path));
-            announceBumpAndPaint(otherBumpableShapes,path);
+            innerCommand.append(buildTranslateCommand(part, checkFlipNeed(path)));
+            logToChat("* --- " + yourShipName + " performs move: " + path.getFullName());
+            announceBumpAndPaint(otherBumpableShapes);
 
             /* will have to rewrite how fleeing battlefield is handled*/
             if(checkIfOutOfBounds()) {
 
-                String yourShipName = "";
-                if (this.getProperty("Pilot Name").toString().length() > 0) { yourShipName += " " + this.getProperty("Pilot Name").toString(); }
-                if (this.getProperty("Craft ID #").toString().length() > 0) { yourShipName += " (" + this.getProperty("Craft ID #").toString() + ")"; }
-
-                if("".equals(yourShipName)) yourShipName = "Your ship";
                 logToChat("* -- " + yourShipName + " flew out of bounds");
-
-                Command innerCommand = piece.keyEvent(stroke);
 
                 return innerCommand;
             }
@@ -220,23 +213,23 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
         return piece.keyEvent(stroke);
     }
 
-    private boolean checkForKTurn(ManeuverPaths path) {
+    private boolean checkFlipNeed(ManeuverPaths path) {
         if(ManeuverPaths.K1.equals(path) ||
                 ManeuverPaths.K2.equals(path) ||
                 ManeuverPaths.K3.equals(path) ||
                 ManeuverPaths.K4.equals(path) ||
-                ManeuverPaths.K5.equals(path)) return true;
+                ManeuverPaths.K5.equals(path) ||
+                ManeuverPaths.SloopL1.equals(path) ||
+                ManeuverPaths.SloopL2.equals(path) ||
+                ManeuverPaths.SloopL3.equals(path) ||
+                ManeuverPaths.SloopR1.equals(path) ||
+                ManeuverPaths.SloopR2.equals(path) ||
+                ManeuverPaths.SloopR3.equals(path) ||
+                ManeuverPaths.TrollL2.equals(path) ||
+                ManeuverPaths.TrollL3.equals(path) ||
+                ManeuverPaths.TrollR2.equals(path) ||
+                ManeuverPaths.TrollR3.equals(path)) return true;
         return false;
-    }
-
-    private void moveShipOurselves(PathPart finalPosition, boolean isKTurn) {
-        double x = finalPosition.getX();
-        double y = finalPosition.getY();
-        double angle = finalPosition.getAngle();
-
-        angle += (isKTurn ? 180.0f : 0.0f);
-        this.setPosition(new Point((int)x,(int)y));
-        this.getRotator().setAngle(angle);
     }
 
     private boolean checkIfOutOfBounds() {
@@ -249,64 +242,39 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
         {
             logToChat("Board name isn't formatted right, change to #'x#' Description");
         }
-        Shape rawShape = getRawShape(this);
+        Shape theShape = getBumpableCompareShape(this);
 
-        double scaleFactor = isLargeShip(this) ? SMALLSHAPEFUDGE : LARGESHAPEFUDGE;
-        rawShape = AffineTransform.getScaleInstance(scaleFactor, scaleFactor).createTransformedShape(rawShape);
-
-
-        if(rawShape.getBounds().getMaxX() > mapArea.getBounds().getMaxX()  || // too far to the right
-                rawShape.getBounds().getMaxY() > mapArea.getBounds().getMaxY() || // too far to the bottom
-                rawShape.getBounds().getX() < mapArea.getBounds().getX() || //too far to the left
-                rawShape.getBounds().getY() < mapArea.getBounds().getY()) // too far to the top
+        if(theShape.getBounds().getMaxX() > mapArea.getBounds().getMaxX()  || // too far to the right
+                theShape.getBounds().getMaxY() > mapArea.getBounds().getMaxY() || // too far to the bottom
+                theShape.getBounds().getX() < mapArea.getBounds().getX() || //too far to the left
+                theShape.getBounds().getY() < mapArea.getBounds().getY()) // too far to the top
         {
-            CollisionVisualization collisionVisualization = new CollisionVisualization(rawShape);
+            CollisionVisualization collisionVisualization = new CollisionVisualization(theShape);
             if (DRAW_COLLISIONS) {
 
                 if (this.previousCollisionVisualization != null) {
                     getMap().removeDrawComponent(this.previousCollisionVisualization);
                 }
 
-                collisionVisualization.add(rawShape);
+                collisionVisualization.add(theShape);
                 getMap().addDrawComponent(collisionVisualization);
                 this.previousCollisionVisualization = collisionVisualization;
                 return true;
             }
         }
         return false;
-
     }
 
+    private void announceBumpAndPaint(List<BumpableWithShape> otherBumpableShapes) {
+        Shape theShape = getBumpableCompareShape(this);
 
-    private void announceBumpAndPaint(List<BumpableWithShape> otherBumpableShapes, ManeuverPaths path) {
-        Shape rawShape = getRawShape(this);
-        final List<PathPart> parts = path.getTransformedPathParts(
-                this.getCurrentState().x,
-                this.getCurrentState().y,
-                this.getCurrentState().angle,
-                isLargeShip(this)
-        );
-
-        PathPart part = parts.get(parts.size()-1);
-        Shape movedShape = AffineTransform
-                .getTranslateInstance(part.getX(), part.getY())
-                .createTransformedShape(rawShape);
-        double roundedAngle = convertAngleToGameLimits(part.getAngle());
-        movedShape = AffineTransform
-                .getRotateInstance(Math.toRadians(-roundedAngle), part.getX(), part.getY())
-                .createTransformedShape(movedShape);
-
-        List<BumpableWithShape> collidingEntities = findCollidingEntities(movedShape, otherBumpableShapes);
-        CollisionVisualization collisionVisualization = new CollisionVisualization(movedShape);
+        List<BumpableWithShape> collidingEntities = findCollidingEntities(theShape, otherBumpableShapes);
+        CollisionVisualization collisionVisualization = new CollisionVisualization(theShape);
         for (BumpableWithShape bumpedBumpable : collidingEntities) {
             if (DRAW_COLLISIONS) {
-                String yourShipName = "your ship";
-                if (this.getProperty("Pilot Name").toString().length() > 0) { yourShipName += " " + this.getProperty("Pilot Name").toString(); }
-                if (this.getProperty("Craft ID #").toString().length() > 0) { yourShipName += " (" + this.getProperty("Craft ID #").toString() + ")"; }
+                String yourShipName = getShipStringForReports(true);
                 if (bumpedBumpable.type.equals("Ship")) {
-                    String otherShipName = "another ship";
-                    if (bumpedBumpable.bumpable.getProperty("Pilot Name").toString().length() > 0) { otherShipName += " " + bumpedBumpable.bumpable.getProperty("Pilot Name").toString(); }
-                    if (bumpedBumpable.bumpable.getProperty("Craft ID #").toString().length() > 0) { otherShipName += " (" + bumpedBumpable.bumpable.getProperty("Craft ID #").toString() + ")"; }
+                    String otherShipName = getShipStringForReports(false);
                     String bumpAlertString = "* --- Overlap detected with " + yourShipName + " and " + otherShipName + ". Resolve this by hitting the 'c' key.";
                     logToChat(bumpAlertString);
                 } else if (bumpedBumpable.type.equals("Asteroid")) {
@@ -331,6 +299,15 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
         } else {
             this.previousCollisionVisualization = null;
         }
+    }
+
+    private String getShipStringForReports(boolean isYours)
+    {
+        String yourShipName = (isYours ? "your ship" : "another ship");
+        if (this.getProperty("Pilot Name").toString().length() > 0) { yourShipName += " " + this.getProperty("Pilot Name").toString(); }
+        if (this.getProperty("Craft ID #").toString().length() > 0) { yourShipName += " (" + this.getProperty("Craft ID #").toString() + ")"; }
+
+        return yourShipName;
     }
     /**
      * Iterate in reverse over path of last maneuver and return a command that
@@ -367,12 +344,12 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
                         getMap().removeDrawComponent(this.previousCollisionVisualization);
                     }
                 }
-                return buildTranslateCommand(part);
+                return buildTranslateCommand(part,false);
             }
         }
 
         // Could not find a position that wasn't bumping, bring it back to where it was before
-        return buildTranslateCommand(new PathPart(this.prevPosition.x, this.prevPosition.y, this.prevPosition.angle));
+        return buildTranslateCommand(new PathPart(this.prevPosition.x, this.prevPosition.y, this.prevPosition.angle), false);
     }
 
     /**
@@ -381,10 +358,10 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
      * @param part
      * @return
      */
-    private Command buildTranslateCommand(PathPart part) {
+    private Command buildTranslateCommand(PathPart part, boolean isKTurn) {
         // Copypasta from VASSAL.counters.Pivot
         ChangeTracker changeTracker = new ChangeTracker(this);
-        getRotator().setAngle(part.getAngle());
+        getRotator().setAngle(part.getAngle() + (isKTurn ? 180.0f : 0.0f));
         setProperty("Moved", Boolean.TRUE);
         Command result = changeTracker.getChangeCommand();
 
@@ -394,7 +371,8 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
         // ^^ There be dragons here ^^ - vassals gives positions as doubles but only lets them be set as ints :(
         this.getMap().placeOrMerge(outermost, point);
         result = result.append(moveTracker.getMoveCommand());
-        MovementReporter reporter = new MovementReporter(result);
+
+        /*MovementReporter reporter = new MovementReporter(result);
 
         Command reportCommand = reporter.getReportCommand();
         if (reportCommand != null) {
@@ -403,7 +381,7 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
         }
 
         result = result.append(reporter.markMovedPieces());
-
+*/
         return result;
     }
 
