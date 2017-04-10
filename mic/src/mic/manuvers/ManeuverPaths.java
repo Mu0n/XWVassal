@@ -137,6 +137,11 @@ public enum ManeuverPaths {
             case SloopR3:
                 return "Segnor's Loop Right 3";
 
+            case SloopL3Turn:
+                return "Segnor's Loop Hard Left 3";
+            case SloopR3Turn:
+                return "Segnor's Loop Hard Right 3";
+
             case TrollL2:
                 return "Tallon Roll Left 2";
             case TrollL3:
