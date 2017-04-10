@@ -30,6 +30,7 @@ import VASSAL.counters.FreeRotator;
 import VASSAL.counters.GamePiece;
 import VASSAL.counters.KeyCommand;
 import VASSAL.counters.NonRectangular;
+import mic.manuvers.ManeuverPath;
 import mic.manuvers.ManeuverPaths;
 import mic.manuvers.PathPart;
 
@@ -193,11 +194,14 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
 
             //this is the final ship position post-move
             PathPart part = parts.get(parts.size()-1);
-            moveShipOurselves(part);
+
+
+
+            moveShipOurselves(part, checkForKTurn(path));
             announceBumpAndPaint(otherBumpableShapes,path);
 
-            /* will have to rewrite how fleeing battlefield is handled
-            if(checkIfOutOfBounds(path)) {
+            /* will have to rewrite how fleeing battlefield is handled*/
+            if(checkIfOutOfBounds()) {
 
                 String yourShipName = "";
                 if (this.getProperty("Pilot Name").toString().length() > 0) { yourShipName += " " + this.getProperty("Pilot Name").toString(); }
@@ -210,22 +214,32 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
 
                 return innerCommand;
             }
-            */
+            /**/
         }
         //should now practically send it off to do nothing
         return piece.keyEvent(stroke);
     }
 
-    private void moveShipOurselves(PathPart finalPosition) {
+    private boolean checkForKTurn(ManeuverPaths path) {
+        if(ManeuverPaths.K1.equals(path) ||
+                ManeuverPaths.K2.equals(path) ||
+                ManeuverPaths.K3.equals(path) ||
+                ManeuverPaths.K4.equals(path) ||
+                ManeuverPaths.K5.equals(path)) return true;
+        return false;
+    }
+
+    private void moveShipOurselves(PathPart finalPosition, boolean isKTurn) {
         double x = finalPosition.getX();
         double y = finalPosition.getY();
         double angle = finalPosition.getAngle();
 
+        angle += (isKTurn ? 180.0f : 0.0f);
         this.setPosition(new Point((int)x,(int)y));
         this.getRotator().setAngle(angle);
     }
 
-    private boolean checkIfOutOfBounds(ManeuverPaths path) {
+    private boolean checkIfOutOfBounds() {
         Rectangle mapArea = new Rectangle(0,0,0,0);
         try{
             Board b = getMap().getBoards().iterator().next();
@@ -241,35 +255,19 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
         rawShape = AffineTransform.getScaleInstance(scaleFactor, scaleFactor).createTransformedShape(rawShape);
 
 
-        final List<PathPart> parts = path.getTransformedPathParts(
-                this.getCurrentState().x,
-                this.getCurrentState().y,
-                this.getCurrentState().angle,
-                isLargeShip(this)
-        );
-
-        PathPart part = parts.get(parts.size()-1);
-        Shape movedShape = AffineTransform
-                .getTranslateInstance(part.getX(), part.getY())
-                .createTransformedShape(rawShape);
-        double roundedAngle = convertAngleToGameLimits(part.getAngle());
-        movedShape = AffineTransform
-                .getRotateInstance(Math.toRadians(-roundedAngle), part.getX(), part.getY())
-                .createTransformedShape(movedShape);
-
-        if(movedShape.getBounds().getMaxX() > mapArea.getBounds().getMaxX()  || // too far to the right
-                movedShape.getBounds().getMaxY() > mapArea.getBounds().getMaxY() || // too far to the bottom
-                movedShape.getBounds().getX() < mapArea.getBounds().getX() || //too far to the left
-                movedShape.getBounds().getY() < mapArea.getBounds().getY()) // too far to the top
+        if(rawShape.getBounds().getMaxX() > mapArea.getBounds().getMaxX()  || // too far to the right
+                rawShape.getBounds().getMaxY() > mapArea.getBounds().getMaxY() || // too far to the bottom
+                rawShape.getBounds().getX() < mapArea.getBounds().getX() || //too far to the left
+                rawShape.getBounds().getY() < mapArea.getBounds().getY()) // too far to the top
         {
-            CollisionVisualization collisionVisualization = new CollisionVisualization(movedShape);
+            CollisionVisualization collisionVisualization = new CollisionVisualization(rawShape);
             if (DRAW_COLLISIONS) {
 
                 if (this.previousCollisionVisualization != null) {
                     getMap().removeDrawComponent(this.previousCollisionVisualization);
                 }
 
-                collisionVisualization.add(movedShape);
+                collisionVisualization.add(rawShape);
                 getMap().addDrawComponent(collisionVisualization);
                 this.previousCollisionVisualization = collisionVisualization;
                 return true;
