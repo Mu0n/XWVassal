@@ -147,8 +147,10 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
             if(isAutobumpTrigger(stroke)) //check to see if 'c' was pressed
             {
                 List<BumpableWithShape> otherShipShapes = getShipsWithShapes();
-                boolean isCollisionOccuring = findCollidingEntity(getBumpableCompareShape(this), otherShipShapes) != null ? true : false;
 
+//TO DO place an extended template here
+
+                boolean isCollisionOccuring = findCollidingEntity(getBumpableCompareShape(this), otherShipShapes) != null ? true : false;
                 //backtracking requested with a detected bumpable overlap, deal with it
                 if(isCollisionOccuring)
                 {
@@ -161,7 +163,7 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
         }
 
         // We know we're dealing with a maneuver keystroke
-        // TO DO include decloaks, barrel rolls
+// TO DO include decloaks, barrel rolls
         if (stroke.isOnKeyRelease() == false) {
 
             if(this.previousCollisionVisualization != null)
@@ -172,11 +174,10 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
             // find the list of other bumpables
             List<BumpableWithShape> otherBumpableShapes = getBumpablesWithShapes();
 
-            //safeguard old position and path before sending off the keystroke to the regular Vassal command
+            //safeguard old position and path
 
             this.prevPosition = getCurrentState();
             this.lastManeuver = path;
-//perform the move ourselves here first
 
             //This PathPart list will be used everywhere: moving, bumping, out of boundsing
             //maybe fetch it for both 'c' behavior and movement
@@ -198,9 +199,13 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
 
             innerCommand.append(buildTranslateCommand(part, checkAdditionalAngleNeed(path)));
             logToChat("* --- " + yourShipName + " performs move: " + path.getFullName());
+
+
+//TO DO have to find the move's real template, check for collisions with obstacles and mines
+//if a collision is found, display the template, paint it orange?
+
             announceBumpAndPaint(otherBumpableShapes);
 
-            /* will have to rewrite how fleeing battlefield is handled*/
             if(checkIfOutOfBounds()) {
 
                 logToChat("* -- " + yourShipName + " flew out of bounds");
@@ -209,7 +214,7 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
             }
             /**/
         }
-        //should now practically send it off to do nothing
+        //sends it off to do nothing
         return piece.keyEvent(stroke);
     }
 
