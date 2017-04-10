@@ -196,7 +196,7 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
             //Start the Command chain
             Command innerCommand = piece.keyEvent(stroke);
 
-            innerCommand.append(buildTranslateCommand(part, checkFlipNeed(path)));
+            innerCommand.append(buildTranslateCommand(part, checkAdditionalAngleNeed(path)));
             logToChat("* --- " + yourShipName + " performs move: " + path.getFullName());
             announceBumpAndPaint(otherBumpableShapes);
 
@@ -213,7 +213,7 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
         return piece.keyEvent(stroke);
     }
 
-    private boolean checkFlipNeed(ManeuverPaths path) {
+    private double checkAdditionalAngleNeed(ManeuverPaths path) {
         if(ManeuverPaths.K1.equals(path) ||
                 ManeuverPaths.K2.equals(path) ||
                 ManeuverPaths.K3.equals(path) ||
@@ -225,11 +225,18 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
                 ManeuverPaths.SloopR1.equals(path) ||
                 ManeuverPaths.SloopR2.equals(path) ||
                 ManeuverPaths.SloopR3.equals(path) ||
-                ManeuverPaths.TrollL2.equals(path) ||
-                ManeuverPaths.TrollL3.equals(path) ||
-                ManeuverPaths.TrollR2.equals(path) ||
-                ManeuverPaths.TrollR3.equals(path)) return true;
-        return false;
+                ManeuverPaths.SloopL3Turn.equals(path) ||
+                ManeuverPaths.SloopR3Turn.equals(path))
+            return 180.0f;
+
+        if(ManeuverPaths.TrollL2.equals(path) ||
+                ManeuverPaths.TrollL3.equals(path))
+            return 90.0f;
+        if(ManeuverPaths.TrollR2.equals(path) ||
+                ManeuverPaths.TrollR3.equals(path))
+            return 270.0f;
+
+        return 0.0f;
     }
 
     private boolean checkIfOutOfBounds() {
@@ -344,12 +351,12 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
                         getMap().removeDrawComponent(this.previousCollisionVisualization);
                     }
                 }
-                return buildTranslateCommand(part,false);
+                return buildTranslateCommand(part,0.0f);
             }
         }
 
         // Could not find a position that wasn't bumping, bring it back to where it was before
-        return buildTranslateCommand(new PathPart(this.prevPosition.x, this.prevPosition.y, this.prevPosition.angle), false);
+        return buildTranslateCommand(new PathPart(this.prevPosition.x, this.prevPosition.y, this.prevPosition.angle), 0.0f);
     }
 
     /**
@@ -358,10 +365,10 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
      * @param part
      * @return
      */
-    private Command buildTranslateCommand(PathPart part, boolean isKTurn) {
+    private Command buildTranslateCommand(PathPart part, double additionalAngle) {
         // Copypasta from VASSAL.counters.Pivot
         ChangeTracker changeTracker = new ChangeTracker(this);
-        getRotator().setAngle(part.getAngle() + (isKTurn ? 180.0f : 0.0f));
+        getRotator().setAngle(part.getAngle() + additionalAngle);
         setProperty("Moved", Boolean.TRUE);
         Command result = changeTracker.getChangeCommand();
 
