@@ -1,9 +1,12 @@
 package mic.manuvers;
 
+import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Path2D;
 import java.util.List;
 
+import VASSAL.counters.Decorator;
+import VASSAL.counters.FreeRotator;
 import com.google.common.collect.Lists;
 
 /**
@@ -64,7 +67,9 @@ public enum ManeuverPaths {
     ManeuverPaths(ManeuverPath path) {
         this.path = path;
     }
-
+public double getPathLength(){
+        return this.getPathLength();
+}
     public String getFullName() {
         switch(this)
         {
@@ -155,6 +160,57 @@ public enum ManeuverPaths {
                 return "Unknown Move";
         }
     }
+
+    public int getSpeedInt() {
+        switch(this)
+        {
+            case LBk1:
+            case RBk1:
+            case LT1:
+            case RT1:
+            case Str1:
+            case K1:
+            case RevStr1:
+            case RevLbk1:
+            case RevRbk1:
+            case SloopL1:
+            case SloopR1:
+                return 1;
+            case LBk2:
+            case RBk2:
+            case LT2:
+            case RT2:
+            case Str2:
+            case K2:
+            case SloopL2:
+            case SloopR2:
+            case TrollL2:
+            case TrollR2:
+                return 2;
+            case LBk3:
+            case RBk3:
+            case LT3:
+            case RT3:
+            case Str3:
+            case K3:
+            case SloopL3:
+            case SloopR3:
+            case SloopL3Turn:
+            case SloopR3Turn:
+            case TrollL3:
+            case TrollR3:
+                return 3;
+            case Str4:
+            case K4:
+                return 4;
+            case Str5:
+            case K5:
+                return 5;
+            default:
+                return 1;
+        }
+    }
+
     private static int getNumPathSegments(ManeuverPath path) {
         return (int) Math.floor((path.getPathLength() / CurvedPaths.RT3.getPathLength()) * 500);
     }

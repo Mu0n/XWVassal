@@ -10,7 +10,9 @@ import java.util.Map;
 
 import javax.swing.*;
 
+import VASSAL.build.GameModule;
 import VASSAL.build.module.map.boardPicker.Board;
+import VASSAL.build.widget.PieceSlot;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 
@@ -150,6 +152,18 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
 
 //TO DO place an extended template here
 
+                /*
+                String collisionAideName = "";
+                if(ManeuverPaths.LBk1.equals(path))
+                    collisionAideName = "Prolonged Bank 1";
+PieceSlot ps = new PieceSlot();
+                GamePiece piece = Util.newPiece(this.ship);
+
+                spawnPiece(GamePiece piece, new Point(), getMap());
+*/
+
+
+
                 boolean isCollisionOccuring = findCollidingEntity(getBumpableCompareShape(this), otherShipShapes) != null ? true : false;
                 //backtracking requested with a detected bumpable overlap, deal with it
                 if(isCollisionOccuring)
@@ -204,6 +218,10 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
 //TO DO have to find the move's real template, check for collisions with obstacles and mines
 //if a collision is found, display the template, paint it orange?
 
+
+            CollisionVisualization collisionVisualization = new CollisionVisualization(getTransformedTemplateShape(path));
+            getMap().addDrawComponent(collisionVisualization);
+
             announceBumpAndPaint(otherBumpableShapes);
 
             if(checkIfOutOfBounds()) {
@@ -216,6 +234,13 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
         }
         //sends it off to do nothing
         return piece.keyEvent(stroke);
+    }
+
+
+    private void spawnPiece(GamePiece piece, Point position, VASSAL.build.module.Map map) {
+        Command placeCommand = map.placeOrMerge(piece, position);
+        placeCommand.execute();
+        GameModule.getGameModule().sendAndLog(placeCommand);
     }
 
     private double checkAdditionalAngleNeed(ManeuverPaths path) {
@@ -619,6 +644,21 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
         return transformed;
     }
 
+    private Shape getTransformedTemplateShape(ManeuverPaths path){
+        Shape rawShape = new Rectangle(57, (int)path.getSpeedInt()* 113);
+        Shape transformed = AffineTransform
+                .getTranslateInstance(this.getPosition().getX()-57/2.0f, this.getPosition().getY()+(isLargeShip(this)?+113:113/2.0f))
+                .createTransformedShape(rawShape);
+        FreeRotator rotator = (FreeRotator) (Decorator.getDecorator(Decorator.getOutermost(this), FreeRotator.class));
+        double centerX = this.getPosition().getX();
+        double centerY = this.getPosition().getY();
+        transformed = AffineTransform
+                .getRotateInstance(rotator.getAngleInRadians(), centerX, centerY)
+                .createTransformedShape(transformed);
+
+        return transformed;
+
+    }
     private boolean isLargeShip(Decorator ship) {
         return getRawShape(ship).getBounds().getWidth() > 114;
     }
