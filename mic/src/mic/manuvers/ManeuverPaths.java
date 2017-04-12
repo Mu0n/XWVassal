@@ -13,203 +13,71 @@ import com.google.common.collect.Lists;
  * Created by amatheny on 2/17/17.
  */
 public enum ManeuverPaths {
-    LBk1(CurvedPaths.LBk1),
-    LBk2(CurvedPaths.LBk2),
-    LBk3(CurvedPaths.LBk3),
+    LBk1(CurvedPaths.LBk1, "Left Bank 1", 1, 0.0f),
+    LBk2(CurvedPaths.LBk2, "Left Bank 2", 2, 0.0f),
+    LBk3(CurvedPaths.LBk3, "Left Bank 3", 3, 0.0f),
 
-    RBk1(CurvedPaths.RBk1),
-    RBk2(CurvedPaths.RBk2),
-    RBk3(CurvedPaths.RBk3),
+    RBk1(CurvedPaths.RBk1, "Right Bank 1", 1, 0.0f),
+    RBk2(CurvedPaths.RBk2, "Right Bank 2", 2, 0.0f),
+    RBk3(CurvedPaths.RBk3, "Right Bank 3", 3, 0.0f),
 
 
-    LT1(CurvedPaths.LT1),
-    LT2(CurvedPaths.LT2),
-    LT3(CurvedPaths.LT3),
+    LT1(CurvedPaths.LT1, "Left Turn 1", 1, 0.0f),
+    LT2(CurvedPaths.LT2, "Left Turn 2", 2, 0.0f),
+    LT3(CurvedPaths.LT3, "Left Turn 3", 3, 0.0f),
 
-    RT1(CurvedPaths.RT1),
-    RT2(CurvedPaths.RT2),
-    RT3(CurvedPaths.RT3),
+    RT1(CurvedPaths.RT1, "Right Turn 1", 1, 0.0f),
+    RT2(CurvedPaths.RT2, "Right Turn 2", 2, 0.0f),
+    RT3(CurvedPaths.RT3, "Right Turn 3", 3, 0.0f),
 
-    Str1(StraightPaths.Str1),
-    Str2(StraightPaths.Str2),
-    Str3(StraightPaths.Str3),
-    Str4(StraightPaths.Str4),
-    Str5(StraightPaths.Str5),
+    Str1(StraightPaths.Str1, "Forward 1", 1, 0.0f),
+    Str2(StraightPaths.Str2, "Forward 2", 2, 0.0f),
+    Str3(StraightPaths.Str3, "Forward 3", 3, 0.0f),
+    Str4(StraightPaths.Str4, "Forward 4", 4, 0.0f),
+    Str5(StraightPaths.Str5, "Forward 5", 5, 0.0f),
 
-    K1(StraightPaths.Str1),
-    K2(StraightPaths.Str2),
-    K3(StraightPaths.Str3),
-    K4(StraightPaths.Str4),
-    K5(StraightPaths.Str5),
+    K1(StraightPaths.Str1, "K-Turn 1", 1, 180.0f),
+    K2(StraightPaths.Str2, "K-Turn 2", 2, 180.0f),
+    K3(StraightPaths.Str3, "K-Turn 3", 3, 180.0f),
+    K4(StraightPaths.Str4 ,"K-Turn 4", 4, 180.0f),
+    K5(StraightPaths.Str5, "K-Turn 5", 5, 180.0f),
 
-    RevStr1(StraightPaths.Rev1),
-    RevLbk1(CurvedPaths.RevLB1),
-    RevRbk1(CurvedPaths.RevRB1),
+    RevStr1(StraightPaths.Rev1, "Reverse 1", 1, 0.0f),
+    RevLbk1(CurvedPaths.RevLB1, "Reverse Left Bank 1", 1, 0.0f),
+    RevRbk1(CurvedPaths.RevRB1, "Reverse Right Bank 1", 1, 0.0f),
 
-    SloopL1(CurvedPaths.LBk1),
-    SloopL2(CurvedPaths.LBk2),
-    SloopL3(CurvedPaths.LBk3),
+    SloopL1(CurvedPaths.LBk1, "Segnor's Loop Left 1", 1, 180.0f),
+    SloopL2(CurvedPaths.LBk2, "Segnor's Loop Left 2", 2, 180.0f),
+    SloopL3(CurvedPaths.LBk3, "Segnor's Loop Left 3", 3, 180.0f),
 
-    SloopR1(CurvedPaths.RBk1),
-    SloopR2(CurvedPaths.RBk2),
-    SloopR3(CurvedPaths.RBk3),
+    SloopR1(CurvedPaths.RBk1, "Segnor's Loop Right 1", 1, 180.0f),
+    SloopR2(CurvedPaths.RBk2, "Segnor's Loop Right 2", 2, 180.0f),
+    SloopR3(CurvedPaths.RBk3, "Segnor's Loop Right 3", 3, 180.0f),
 
-    SloopL3Turn(CurvedPaths.LT3),
-    SloopR3Turn(CurvedPaths.RT3),
+    SloopL3Turn(CurvedPaths.LT3, "Segnor's Loop Hard Left 3", 3, 180.0f),
+    SloopR3Turn(CurvedPaths.RT3, "Segnor's Loop Hard Right 3", 3, 180.0f),
 
-    TrollL2(CurvedPaths.LT2),
-    TrollL3(CurvedPaths.LT3),
-    TrollR2(CurvedPaths.RT2),
-    TrollR3(CurvedPaths.RT3);
+    TrollL2(CurvedPaths.LT2, "Tallon Roll Left 2", 2, 90.0f),
+    TrollL3(CurvedPaths.LT3, "Tallon Roll Left 3", 2, 90.0f),
+    TrollR2(CurvedPaths.RT2, "Tallon Roll Right 2", 2, 270.0f),
+    TrollR3(CurvedPaths.RT3, "Tallon Roll Right 3", 2, 270.0f);
 
     private final ManeuverPath path;
+    private final String fullName;
+    private final int speedInt;
+    private final double additionalAngleForMove;
 
-    ManeuverPaths(ManeuverPath path) {
+    ManeuverPaths(ManeuverPath path, String fullName, int speedInt, double additionalAngleForMove) {
         this.path = path;
-    }
-public double getPathLength(){
-        return this.getPathLength();
-}
-    public String getFullName() {
-        switch(this)
-        {
-            case LBk1:
-                return "Left Bank 1";
-            case LBk2:
-                return "Left Bank 2";
-            case LBk3:
-                return "Left Bank 3";
-            case RBk1:
-                return "Right Bank 1";
-            case RBk2:
-                return "Right Bank 2";
-            case RBk3:
-                return "Right Bank 3";
-
-            case LT1:
-                return "Left Turn 1";
-            case LT2:
-                return "Left Turn 2";
-            case LT3:
-                return "Left Turn 3";
-            case RT1:
-                return "Right Turn 1";
-            case RT2:
-                return "Right Turn 2";
-            case RT3:
-                return "Right Turn 3";
-
-            case Str1:
-                return "Forward 1";
-            case Str2:
-                return "Forward 2";
-            case Str3:
-                return "Forward 3";
-            case Str4:
-                return "Forward 4";
-            case Str5:
-                return "Forward 5";
-
-            case K1:
-                return "K-Turn 1";
-            case K2:
-                return "K-Turn 2";
-            case K3:
-                return "K-Turn 3";
-            case K4:
-                return "K-Turn 4";
-            case K5:
-                return "K-Turn 5";
-
-            case RevStr1:
-                return "Reverse 1";
-            case RevLbk1:
-                return "Reverse Left Bank 1";
-            case RevRbk1:
-                return "Reverse Right Bank 1";
-
-            case SloopL1:
-                return "Segnor's Loop Left 1";
-            case SloopL2:
-                return "Segnor's Loop Left 2";
-            case SloopL3:
-                return "Segnor's Loop Left 3";
-
-            case SloopR1:
-                return "Segnor's Loop Right 1";
-            case SloopR2:
-                return "Segnor's Loop Right 2";
-            case SloopR3:
-                return "Segnor's Loop Right 3";
-
-            case SloopL3Turn:
-                return "Segnor's Loop Hard Left 3";
-            case SloopR3Turn:
-                return "Segnor's Loop Hard Right 3";
-
-            case TrollL2:
-                return "Tallon Roll Left 2";
-            case TrollL3:
-                return "Tallon Roll Left 3";
-            case TrollR2:
-                return "Tallon Roll Right 2";
-            case TrollR3:
-                return "Tallon Roll Right 3";
-
-            default:
-                return "Unknown Move";
-        }
+        this.fullName = fullName;
+        this.speedInt = speedInt;
+        this.additionalAngleForMove = additionalAngleForMove;
     }
 
-    public int getSpeedInt() {
-        switch(this)
-        {
-            case LBk1:
-            case RBk1:
-            case LT1:
-            case RT1:
-            case Str1:
-            case K1:
-            case RevStr1:
-            case RevLbk1:
-            case RevRbk1:
-            case SloopL1:
-            case SloopR1:
-                return 1;
-            case LBk2:
-            case RBk2:
-            case LT2:
-            case RT2:
-            case Str2:
-            case K2:
-            case SloopL2:
-            case SloopR2:
-            case TrollL2:
-            case TrollR2:
-                return 2;
-            case LBk3:
-            case RBk3:
-            case LT3:
-            case RT3:
-            case Str3:
-            case K3:
-            case SloopL3:
-            case SloopR3:
-            case SloopL3Turn:
-            case SloopR3Turn:
-            case TrollL3:
-            case TrollR3:
-                return 3;
-            case Str4:
-            case K4:
-                return 4;
-            case Str5:
-            case K5:
-                return 5;
-            default:
-                return 1;
-        }
-    }
+public double getPathLength(){ return this.getPathLength(); }
+public String getFullName() { return this.fullName; }
+public int getSpeedInt() { return this.speedInt; }
+public double getAdditionalAngleForMove() { return this.additionalAngleForMove; }
 
     private static int getNumPathSegments(ManeuverPath path) {
         return (int) Math.floor((path.getPathLength() / CurvedPaths.RT3.getPathLength()) * 500);

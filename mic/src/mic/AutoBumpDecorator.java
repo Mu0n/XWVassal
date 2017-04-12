@@ -211,7 +211,7 @@ PieceSlot ps = new PieceSlot();
             //Start the Command chain
             Command innerCommand = piece.keyEvent(stroke);
 
-            innerCommand.append(buildTranslateCommand(part, checkAdditionalAngleNeed(path)));
+            innerCommand.append(buildTranslateCommand(part, path.getAdditionalAngleForMove()));
             logToChat("* --- " + yourShipName + " performs move: " + path.getFullName());
 
 
@@ -243,31 +243,6 @@ PieceSlot ps = new PieceSlot();
         GameModule.getGameModule().sendAndLog(placeCommand);
     }
 
-    private double checkAdditionalAngleNeed(ManeuverPaths path) {
-        if(ManeuverPaths.K1.equals(path) ||
-                ManeuverPaths.K2.equals(path) ||
-                ManeuverPaths.K3.equals(path) ||
-                ManeuverPaths.K4.equals(path) ||
-                ManeuverPaths.K5.equals(path) ||
-                ManeuverPaths.SloopL1.equals(path) ||
-                ManeuverPaths.SloopL2.equals(path) ||
-                ManeuverPaths.SloopL3.equals(path) ||
-                ManeuverPaths.SloopR1.equals(path) ||
-                ManeuverPaths.SloopR2.equals(path) ||
-                ManeuverPaths.SloopR3.equals(path) ||
-                ManeuverPaths.SloopL3Turn.equals(path) ||
-                ManeuverPaths.SloopR3Turn.equals(path))
-            return 180.0f;
-
-        if(ManeuverPaths.TrollL2.equals(path) ||
-                ManeuverPaths.TrollL3.equals(path))
-            return 90.0f;
-        if(ManeuverPaths.TrollR2.equals(path) ||
-                ManeuverPaths.TrollR3.equals(path))
-            return 270.0f;
-
-        return 0.0f;
-    }
 
     private boolean checkIfOutOfBounds() {
         Rectangle mapArea = new Rectangle(0,0,0,0);
