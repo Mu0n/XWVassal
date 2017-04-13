@@ -211,15 +211,18 @@ PieceSlot ps = new PieceSlot();
             //Start the Command chain
             Command innerCommand = piece.keyEvent(stroke);
 
-            innerCommand.append(buildTranslateCommand(part, path.getAdditionalAngleForMove()));
+            innerCommand.append(buildTranslateCommand(part, path.getAdditionalAngleForShip()));
             logToChat("* --- " + yourShipName + " performs move: " + path.getFullName());
 
 
 //TO DO have to find the move's real template, check for collisions with obstacles and mines
 //if a collision is found, display the template, paint it orange?
 
-
-            CollisionVisualization collisionVisualization = new CollisionVisualization(getTransformedTemplateShape(path));
+            FreeRotator rotator = (FreeRotator) (Decorator.getDecorator(Decorator.getOutermost(this), FreeRotator.class));
+            CollisionVisualization collisionVisualization = new CollisionVisualization(path.getTransformedTemplateShape(this.getPosition().getX(),
+                    this.getPosition().getY(),
+                    isLargeShip(this),
+                   rotator));
             getMap().addDrawComponent(collisionVisualization);
 
             announceBumpAndPaint(otherBumpableShapes);
@@ -619,21 +622,7 @@ PieceSlot ps = new PieceSlot();
         return transformed;
     }
 
-    private Shape getTransformedTemplateShape(ManeuverPaths path){
-        Shape rawShape = new Rectangle(57, (int)path.getSpeedInt()* 113);
-        Shape transformed = AffineTransform
-                .getTranslateInstance(this.getPosition().getX()-57/2.0f, this.getPosition().getY()+(isLargeShip(this)?+113:113/2.0f))
-                .createTransformedShape(rawShape);
-        FreeRotator rotator = (FreeRotator) (Decorator.getDecorator(Decorator.getOutermost(this), FreeRotator.class));
-        double centerX = this.getPosition().getX();
-        double centerY = this.getPosition().getY();
-        transformed = AffineTransform
-                .getRotateInstance(rotator.getAngleInRadians(), centerX, centerY)
-                .createTransformedShape(transformed);
 
-        return transformed;
-
-    }
     private boolean isLargeShip(Decorator ship) {
         return getRawShape(ship).getBounds().getWidth() > 114;
     }
