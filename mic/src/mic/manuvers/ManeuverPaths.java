@@ -23,9 +23,8 @@ public enum ManeuverPaths {
     LBk3(CurvedPaths.LBk3, "Left Bank 3", 3, 0.0f, "520", 45.0f, -64.0f, 232.5f, -64.0f, 289.0f),
 
     RBk1(CurvedPaths.RBk1, "Right Bank 1", 1, 0.0f, "517", 180.0f, 29.0f, 147.0f, 29.0f, 203.5f),
-    RBk2(CurvedPaths.RBk2, "Right Bank 2", 2, 0.0f, "519", 180.0f, 43.6f, 183.0f, 43.6f, 239.5f),
-    RBk3(CurvedPaths.RBk3, "Right Bank 3", 3, 0.0f, "520", 180.0f, 64.0f, 232.5f, 64.0f, 289.0f),
-
+    RBk2(CurvedPaths.RBk2, "Right Bank 2", 2, 0.0f, "519", 180.0f, 51.6f, 197.0f, 51.6f, 253.5f),
+    RBk3(CurvedPaths.RBk3, "Right Bank 3", 3, 0.0f, "520", 180.0f, 72.0f, 246.5f, 72.0f, 303.0f),
 
     LT1(CurvedPaths.LT1, "Left Turn 1", 1, 0.0f, "521", 90.0f, -35.0f, 120.0f, -35.0f, 176.5f),
     LT2(CurvedPaths.LT2, "Left Turn 2", 2, 0.0f, "522", 90.0f, -74.0f, 159.0f, -74.0f, 215.5f),
@@ -47,17 +46,17 @@ public enum ManeuverPaths {
     K4(StraightPaths.Str4 ,"K-Turn 4", 4, 180.0f, "527", 0.0f, 0.0f, -282.5f, 0.0f, 0.0f),
     K5(StraightPaths.Str5, "K-Turn 5", 5, 180.0f, "528", 0.0f, 0.0f, -339.0f, 0.0f, 0.0f),
 
-    RevStr1(StraightPaths.Rev1, "Reverse 1", 1, 0.0f, "524", 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
-    RevLbk1(CurvedPaths.RevLB1, "Reverse Left Bank 1", 1, 0.0f, "517", 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
-    RevRbk1(CurvedPaths.RevRB1, "Reverse Right Bank 1", 1, 0.0f, "517", 135.0f, 0.0f, 0.0f, 0.0f, 0.0f),
+    RevStr1(StraightPaths.Rev1, "Reverse 1", 1, 0.0f, "524", 0.0f, 0.0f, -113.0f, 0.0f, -169.5f),
+    RevLbk1(CurvedPaths.RevLB1, "Reverse Left Bank 1", 1, 0.0f, "517", 0.0f, -28.0f, -146.5f, -28.0f, -249.0f),
+    RevRbk1(CurvedPaths.RevRB1, "Reverse Right Bank 1", 1, 0.0f, "517", 225.0f, 24.0f, -133.0f, 24.0f, -190.0f),
 
     SloopL1(CurvedPaths.LBk1, "Segnor's Loop Left 1", 1, 180.0f, "517", 225.0f, 23.0f, -133.0f, 23.0f, -189.5f),
     SloopL2(CurvedPaths.LBk2, "Segnor's Loop Left 2", 2, 180.0f, "519", 225.0f, 43.6f, -183.0f, 43.6f, -239.5f),
     SloopL3(CurvedPaths.LBk3, "Segnor's Loop Left 3", 3, 180.0f, "520", 225.0f, 64.0f, -232.5f, 64.0f, -289.0f),
 
-    SloopR1(CurvedPaths.RBk1, "Segnor's Loop Right 1", 1, 180.0f, "517", 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
-    SloopR2(CurvedPaths.RBk2, "Segnor's Loop Right 2", 2, 180.0f, "519", 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
-    SloopR3(CurvedPaths.RBk3, "Segnor's Loop Right 3", 3, 180.0f, "520", 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
+    SloopR1(CurvedPaths.RBk1, "Segnor's Loop Right 1", 1, 180.0f, "517", 0.0f, -29.0f, -147.0f, -29.0f, -203.5f),
+    SloopR2(CurvedPaths.RBk2, "Segnor's Loop Right 2", 2, 180.0f, "519", 0.0f, -51.6f, -197.0f, -51.6f, -253.5f),
+    SloopR3(CurvedPaths.RBk3, "Segnor's Loop Right 3", 3, 180.0f, "520", 0.0f, -72.0f, -246.5f, -72.0f, -303.0f),
 
     SloopL3Turn(CurvedPaths.LT3, "Segnor's Loop Hard Left 3", 3, 180.0f, "523", 270.0f, 0.0f, 0.0f, 0.0f, 0.0f),
     SloopR3Turn(CurvedPaths.RT3, "Segnor's Loop Hard Right 3", 3, 180.0f, "523", 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
