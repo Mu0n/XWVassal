@@ -18,54 +18,54 @@ import static mic.Util.logToChat;
  * Created by amatheny on 2/17/17.
  */
 public enum ManeuverPaths {
-    LBk1(CurvedPaths.LBk1, "Left Bank 1", 1, 0.0f, "517", 45.0f),
-    LBk2(CurvedPaths.LBk2, "Left Bank 2", 2, 0.0f, "519", 45.0f),
-    LBk3(CurvedPaths.LBk3, "Left Bank 3", 3, 0.0f, "520", 45.0f),
+    LBk1(CurvedPaths.LBk1, "Left Bank 1", 1, 0.0f, "517", 45.0f, -23.0f, 133.0f, -23.0f, 189.5f),
+    LBk2(CurvedPaths.LBk2, "Left Bank 2", 2, 0.0f, "519", 45.0f, -43.6f, 183.0f, -43.6f, 239.5f),
+    LBk3(CurvedPaths.LBk3, "Left Bank 3", 3, 0.0f, "520", 45.0f, -64.0f, 232.5f, -64.0f, 289.0f),
 
-    RBk1(CurvedPaths.RBk1, "Right Bank 1", 1, 0.0f, "517", 180.0f),
-    RBk2(CurvedPaths.RBk2, "Right Bank 2", 2, 0.0f, "519", 180.0f),
-    RBk3(CurvedPaths.RBk3, "Right Bank 3", 3, 0.0f, "520", 180.0f),
+    RBk1(CurvedPaths.RBk1, "Right Bank 1", 1, 0.0f, "517", 180.0f, 29.0f, 147.0f, 29.0f, 203.5f),
+    RBk2(CurvedPaths.RBk2, "Right Bank 2", 2, 0.0f, "519", 180.0f, 43.6f, 183.0f, 43.6f, 239.5f),
+    RBk3(CurvedPaths.RBk3, "Right Bank 3", 3, 0.0f, "520", 180.0f, 64.0f, 232.5f, 64.0f, 289.0f),
 
 
-    LT1(CurvedPaths.LT1, "Left Turn 1", 1, 0.0f, "521", 90.0f),
-    LT2(CurvedPaths.LT2, "Left Turn 2", 2, 0.0f, "522", 90.0f),
-    LT3(CurvedPaths.LT3, "Left Turn 3", 3, 0.0f, "523", 90.0f),
+    LT1(CurvedPaths.LT1, "Left Turn 1", 1, 0.0f, "521", 90.0f, -35.0f, 120.0f, -35.0f, 176.5f),
+    LT2(CurvedPaths.LT2, "Left Turn 2", 2, 0.0f, "522", 90.0f, -74.0f, 159.0f, -74.0f, 215.5f),
+    LT3(CurvedPaths.LT3, "Left Turn 3", 3, 0.0f, "523", 90.0f, -113.0f, 198.0f, -113.0f, 254.5f),
 
-    RT1(CurvedPaths.RT1, "Right Turn 1", 1, 0.0f, "521", 180.0f),
-    RT2(CurvedPaths.RT2, "Right Turn 2", 2, 0.0f, "522", 180.0f),
-    RT3(CurvedPaths.RT3, "Right Turn 3", 3, 0.0f, "523", 180.0f),
+    RT1(CurvedPaths.RT1, "Right Turn 1", 1, 0.0f, "521", 180.0f, 35.0f, 120.0f, 35.0f, 176.5f),
+    RT2(CurvedPaths.RT2, "Right Turn 2", 2, 0.0f, "522", 180.0f, 74.0f, 159.0f, 74.0f, 215.5f),
+    RT3(CurvedPaths.RT3, "Right Turn 3", 3, 0.0f, "523", 180.0f, 113.0f, 198.0f, 113.0f, 254.5f),
 
-    Str1(StraightPaths.Str1, "Forward 1", 1, 0.0f, "524", 0.0f),
-    Str2(StraightPaths.Str2, "Forward 2", 2, 0.0f, "525", 0.0f),
-    Str3(StraightPaths.Str3, "Forward 3", 3, 0.0f, "526", 0.0f),
-    Str4(StraightPaths.Str4, "Forward 4", 4, 0.0f, "527", 0.0f),
-    Str5(StraightPaths.Str5, "Forward 5", 5, 0.0f, "528", 0.0f),
+    Str1(StraightPaths.Str1, "Forward 1", 1, 0.0f, "524", 0.0f, 0.0f, 113.0f, 0.0f, 0.0f),
+    Str2(StraightPaths.Str2, "Forward 2", 2, 0.0f, "525", 0.0f, 0.0f, 169.5f, 0.0f, 0.0f),
+    Str3(StraightPaths.Str3, "Forward 3", 3, 0.0f, "526", 0.0f, 0.0f, 226.0f, 0.0f, 0.0f),
+    Str4(StraightPaths.Str4, "Forward 4", 4, 0.0f, "527", 0.0f, 0.0f, 282.5f, 0.0f, 0.0f),
+    Str5(StraightPaths.Str5, "Forward 5", 5, 0.0f, "528", 0.0f, 0.0f, 339.0f, 0.0f, 0.0f),
 
-    K1(StraightPaths.Str1, "K-Turn 1", 1, 180.0f, "524", 0.0f),
-    K2(StraightPaths.Str2, "K-Turn 2", 2, 180.0f, "525", 0.0f),
-    K3(StraightPaths.Str3, "K-Turn 3", 3, 180.0f, "526", 0.0f),
-    K4(StraightPaths.Str4 ,"K-Turn 4", 4, 180.0f, "527", 0.0f),
-    K5(StraightPaths.Str5, "K-Turn 5", 5, 180.0f, "528", 0.0f),
+    K1(StraightPaths.Str1, "K-Turn 1", 1, 180.0f, "524", 0.0f, 0.0f, -113.0f, 0.0f, 0.0f),
+    K2(StraightPaths.Str2, "K-Turn 2", 2, 180.0f, "525", 0.0f, 0.0f, -169.5f, 0.0f, 0.0f),
+    K3(StraightPaths.Str3, "K-Turn 3", 3, 180.0f, "526", 0.0f, 0.0f, -226.0f, 0.0f, 0.0f),
+    K4(StraightPaths.Str4 ,"K-Turn 4", 4, 180.0f, "527", 0.0f, 0.0f, -282.5f, 0.0f, 0.0f),
+    K5(StraightPaths.Str5, "K-Turn 5", 5, 180.0f, "528", 0.0f, 0.0f, -339.0f, 0.0f, 0.0f),
 
-    RevStr1(StraightPaths.Rev1, "Reverse 1", 1, 0.0f, "524", 0.0f),
-    RevLbk1(CurvedPaths.RevLB1, "Reverse Left Bank 1", 1, 0.0f, "517", 0.0f),
-    RevRbk1(CurvedPaths.RevRB1, "Reverse Right Bank 1", 1, 0.0f, "517", 135.0f),
+    RevStr1(StraightPaths.Rev1, "Reverse 1", 1, 0.0f, "524", 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
+    RevLbk1(CurvedPaths.RevLB1, "Reverse Left Bank 1", 1, 0.0f, "517", 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
+    RevRbk1(CurvedPaths.RevRB1, "Reverse Right Bank 1", 1, 0.0f, "517", 135.0f, 0.0f, 0.0f, 0.0f, 0.0f),
 
-    SloopL1(CurvedPaths.LBk1, "Segnor's Loop Left 1", 1, 180.0f, "517", 225.0f),
-    SloopL2(CurvedPaths.LBk2, "Segnor's Loop Left 2", 2, 180.0f, "519", 225.0f),
-    SloopL3(CurvedPaths.LBk3, "Segnor's Loop Left 3", 3, 180.0f, "520", 225.0f),
+    SloopL1(CurvedPaths.LBk1, "Segnor's Loop Left 1", 1, 180.0f, "517", 225.0f, 23.0f, -133.0f, 23.0f, -189.5f),
+    SloopL2(CurvedPaths.LBk2, "Segnor's Loop Left 2", 2, 180.0f, "519", 225.0f, 43.6f, -183.0f, 43.6f, -239.5f),
+    SloopL3(CurvedPaths.LBk3, "Segnor's Loop Left 3", 3, 180.0f, "520", 225.0f, 64.0f, -232.5f, 64.0f, -289.0f),
 
-    SloopR1(CurvedPaths.RBk1, "Segnor's Loop Right 1", 1, 180.0f, "517", 0.0f),
-    SloopR2(CurvedPaths.RBk2, "Segnor's Loop Right 2", 2, 180.0f, "519", 0.0f),
-    SloopR3(CurvedPaths.RBk3, "Segnor's Loop Right 3", 3, 180.0f, "520", 0.0f),
+    SloopR1(CurvedPaths.RBk1, "Segnor's Loop Right 1", 1, 180.0f, "517", 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
+    SloopR2(CurvedPaths.RBk2, "Segnor's Loop Right 2", 2, 180.0f, "519", 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
+    SloopR3(CurvedPaths.RBk3, "Segnor's Loop Right 3", 3, 180.0f, "520", 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
 
-    SloopL3Turn(CurvedPaths.LT3, "Segnor's Loop Hard Left 3", 3, 180.0f, "523", 270.0f),
-    SloopR3Turn(CurvedPaths.RT3, "Segnor's Loop Hard Right 3", 3, 180.0f, "523", 0.0f),
+    SloopL3Turn(CurvedPaths.LT3, "Segnor's Loop Hard Left 3", 3, 180.0f, "523", 270.0f, 0.0f, 0.0f, 0.0f, 0.0f),
+    SloopR3Turn(CurvedPaths.RT3, "Segnor's Loop Hard Right 3", 3, 180.0f, "523", 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
 
-    TrollL2(CurvedPaths.LT2, "Tallon Roll Left 2", 2, 90.0f, "522", 180.0f),
-    TrollL3(CurvedPaths.LT3, "Tallon Roll Left 3", 2, 90.0f, "523", 180.0f),
-    TrollR2(CurvedPaths.RT2, "Tallon Roll Right 2", 2, 270.0f, "522", 90.0f),
-    TrollR3(CurvedPaths.RT3, "Tallon Roll Right 3", 2, 270.0f, "523", 90.0f);
+    TrollL2(CurvedPaths.LT2, "Tallon Roll Left 2", 2, 90.0f, "522", 180.0f, 0.0f, 0.0f, 0.0f, 0.0f),
+    TrollL3(CurvedPaths.LT3, "Tallon Roll Left 3", 2, 90.0f, "523", 180.0f, 0.0f, 0.0f, 0.0f, 0.0f),
+    TrollR2(CurvedPaths.RT2, "Tallon Roll Right 2", 2, 270.0f, "522", 90.0f, 0.0f, 0.0f, 0.0f, 0.0f),
+    TrollR3(CurvedPaths.RT3, "Tallon Roll Right 3", 2, 270.0f, "523", 90.0f, 0.0f, 0.0f, 0.0f, 0.0f);
 
     private final ManeuverPath path;
     private final String fullName;
@@ -73,16 +73,25 @@ public enum ManeuverPaths {
     private final double additionalAngleForShip;
     private final double templateAngle;
     private final String gpID;
+    private final double offsetX, offsetY;
+    private final double offsetXLarge, offsetYLarge;
 
     final static double MMTOV = 2.825; // mm to vassal pixel size
 
-    ManeuverPaths(ManeuverPath path, String fullName, int speedInt, double additionalAngleForShip, String gpID, double templateAngle) {
+    ManeuverPaths(ManeuverPath path, String fullName, int speedInt,
+                  double additionalAngleForShip, String gpID, double templateAngle,
+                  double offsetX, double offsetY,
+                  double offsetXLarge, double offsetYLarge) {
         this.path = path;
         this.fullName = fullName;
         this.speedInt = speedInt;
         this.additionalAngleForShip = additionalAngleForShip;
         this.gpID = gpID;
         this.templateAngle = templateAngle;
+        this.offsetX = offsetX;
+        this.offsetY = offsetY;
+        this.offsetXLarge = offsetXLarge;
+        this.offsetYLarge = offsetYLarge;
     }
 
 public String getFullName() { return this.fullName; }
@@ -90,10 +99,15 @@ public int getSpeedInt() { return this.speedInt; }
 public double getAdditionalAngleForShip() { return this.additionalAngleForShip; }
 public String getTemplateGpID() { return this.gpID; }
 public double getTemplateAngle() { return this.templateAngle; }
+public double getOffsetX() { return this.offsetX; }
+public double getOffsetY() { return this.offsetY; }
+public double getOffsetXLarge() { return this.offsetXLarge; }
+public double getOffsetYLarge() { return this.offsetYLarge; }
 
 public Shape getTransformedTemplateShape(double x, double y, boolean isLargeShip, FreeRotator rotator){
     Shape rawShape = new Rectangle(0,0);
     Shape transformed = new Rectangle(0,0);
+    int speed = getSpeedInt();
 
        for(PieceSlot ps : GameModule.getGameModule().getAllDescendantComponentsOf(PieceSlot.class)){
            if(getTemplateGpID().equals(ps.getGpId())) rawShape =  ps.getPiece().getShape();
@@ -103,7 +117,7 @@ public Shape getTransformedTemplateShape(double x, double y, boolean isLargeShip
             .createTransformedShape(rawShape);
 
        transformed = AffineTransform
-               .getTranslateInstance(x - 57 / 2.0f, y + (isLargeShip ? +113 : 113 / 2.0f))
+               .getTranslateInstance(x + (isLargeShip? offsetXLarge : offsetX), y + (isLargeShip? offsetYLarge : offsetY))
                .createTransformedShape(transformed);
        transformed = AffineTransform
                .getRotateInstance(rotator.getAngleInRadians(), x, y)
