@@ -18,7 +18,6 @@ public enum StraightPaths implements ManeuverPath {
 
     private boolean reverse;
     private double length;
-    private static int TEMPLATEFATNESS = 57;
 
     StraightPaths(double length) {
         this(length, false);
@@ -27,10 +26,6 @@ public enum StraightPaths implements ManeuverPath {
     StraightPaths(double length, boolean reverse) {
         this.length = length;
         this.reverse = reverse;
-    }
-
-    public static Shape getRawTemplateShape(int speed){
-        return new Rectangle(TEMPLATEFATNESS, (int)(speed * 282.5f));
     }
 
     public double getPathLength() {
