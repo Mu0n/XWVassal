@@ -132,21 +132,21 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
     @Override
     public Command keyEvent(KeyStroke stroke) {
 
-        if (stroke.getKeyChar() == 'x' && this.previousCollisionVisualization != null) {
+        //Any keystroke made on a ship will remove the orange shades
+        if (this.previousCollisionVisualization != null) {
+            logToChat("should delete previous orange shapes here.");
             getMap().removeDrawComponent(this.previousCollisionVisualization);
         }
+
+        //Start a new batch of potential CollisionVisualization, give it an empty rectangle so it
+        //at least as a non-null value
+        CollisionVisualization cvSaveList = new CollisionVisualization(new Rectangle(0,0,0,0));
 
         ManeuverPaths path = getKeystrokePath(stroke);
         // Is this a keystroke for a maneuver? Deal with the 'no' cases first
         if (path == null) {
-            //check to see if you want to delete the piece, if so, then remove the collision orange graphic first
-            if(KeyStroke.getKeyStroke(KeyEvent.VK_D, KeyEvent.CTRL_DOWN_MASK,false).equals(stroke)
-                    && DRAW_COLLISIONS
-                    && this.previousCollisionVisualization != null)
-            {
-                getMap().removeDrawComponent(this.previousCollisionVisualization);
-            }
-            if(isAutobumpTrigger(stroke)) //check to see if 'c' was pressed
+            //check to see if 'c' was pressed
+            if(KeyStroke.getKeyStroke(KeyEvent.VK_C, 0, false).equals(stroke))
             {
                 List<BumpableWithShape> otherShipShapes = getShipsWithShapes();
 
@@ -161,9 +161,6 @@ PieceSlot ps = new PieceSlot();
 
                 spawnPiece(GamePiece piece, new Point(), getMap());
 */
-
-
-
                 boolean isCollisionOccuring = findCollidingEntity(getBumpableCompareShape(this), otherShipShapes) != null ? true : false;
                 //backtracking requested with a detected bumpable overlap, deal with it
                 if(isCollisionOccuring)
@@ -173,17 +170,13 @@ PieceSlot ps = new PieceSlot();
                     return bumpResolveCommand == null ? innerCommand : innerCommand.append(bumpResolveCommand);
                 }
             }
-            return piece.keyEvent(stroke); // not a maneuver, not collsion backtracking either, deal with keystroke as usual
+            // 'c' keystroke has finished here, leave the method altogether
+            return piece.keyEvent(stroke);
         }
 
         // We know we're dealing with a maneuver keystroke
 // TO DO include decloaks, barrel rolls
         if (stroke.isOnKeyRelease() == false) {
-
-            if(this.previousCollisionVisualization != null)
-            {
-                getMap().removeDrawComponent(this.previousCollisionVisualization);
-            }
 
             // find the list of other bumpables
             List<BumpableWithShape> otherBumpableShapes = getBumpablesWithShapes();
@@ -225,27 +218,28 @@ PieceSlot ps = new PieceSlot();
                     this.getPosition().getY(),
                     isLargeShip(this),
                     rotator);
+//Check for template shape overlap with mines, asteroids, debris
+            checkTemplateOverlap(lastMoveShapeUsed, otherBumpableShapes, cvSaveList);
+//Check for ship bumping other ships, mines, asteroids, debris
+            announceBumpAndPaint(otherBumpableShapes, cvSaveList);
+//Check if a ship becomes out of bounds
+            checkIfOutOfBounds(yourShipName, cvSaveList);
 
-            checkTemplateOverlap(lastMoveShapeUsed, otherBumpableShapes);
-
-            announceBumpAndPaint(otherBumpableShapes);
-
-            if(checkIfOutOfBounds()) {
-
-                logToChat("* -- " + yourShipName + " flew out of bounds");
-
-                return innerCommand;
-            }
-            /**/
+            //keep track of a backup of all cv's for termination next keystroke.
+            this.previousCollisionVisualization = cvSaveList;
         }
-        //sends it off to do nothing
+
+
+
+        //the maneuver has finished. return control of the event to vassal to do nothing
         return piece.keyEvent(stroke);
     }
 
-    private void checkTemplateOverlap(Shape lastMoveShapeUsed, List<BumpableWithShape> otherBumpableShapes) {
+    private void checkTemplateOverlap(Shape lastMoveShapeUsed, List<BumpableWithShape> otherBumpableShapes,
+                                      CollisionVisualization cvSaveList) {
 
         List<BumpableWithShape> collidingEntities = findCollidingEntities(lastMoveShapeUsed, otherBumpableShapes);
-        CollisionVisualization collisionVisualization = new CollisionVisualization(lastMoveShapeUsed);
+        CollisionVisualization cvFoundHere = new CollisionVisualization(lastMoveShapeUsed);
         for (BumpableWithShape bumpedBumpable : collidingEntities) {
             if (DRAW_COLLISIONS) {
                 String yourShipName = getShipStringForReports(true);
@@ -259,17 +253,15 @@ PieceSlot ps = new PieceSlot();
                     String bumpAlertString = "* --- Overlap detected with " + yourShipName + "'s maneuver template and a bomb.";
                     logToChat(bumpAlertString);
                 }
-                collisionVisualization.add(bumpedBumpable.shape);
+                cvFoundHere.add(bumpedBumpable.shape);
+                cvSaveList.add(bumpedBumpable.shape);
             }
         }
-        if (this.previousCollisionVisualization != null) {
-            getMap().removeDrawComponent(this.previousCollisionVisualization);
-        }
         if (collidingEntities.size() > 0) {
-            getMap().addDrawComponent(collisionVisualization);
-            this.previousCollisionVisualization = collisionVisualization;
-        } else {
-            this.previousCollisionVisualization = null;
+            cvFoundHere.add(lastMoveShapeUsed);
+            cvSaveList.add(lastMoveShapeUsed);
+
+            getMap().addDrawComponent(cvFoundHere);
         }
     }
 
@@ -281,7 +273,7 @@ PieceSlot ps = new PieceSlot();
     }
 
 
-    private boolean checkIfOutOfBounds() {
+    private void checkIfOutOfBounds(String yourShipName, CollisionVisualization cvSaveList) {
         Rectangle mapArea = new Rectangle(0,0,0,0);
         try{
             Board b = getMap().getBoards().iterator().next();
@@ -298,27 +290,20 @@ PieceSlot ps = new PieceSlot();
                 theShape.getBounds().getX() < mapArea.getBounds().getX() || //too far to the left
                 theShape.getBounds().getY() < mapArea.getBounds().getY()) // too far to the top
         {
+
+            logToChat("* -- " + yourShipName + " flew out of bounds");
             CollisionVisualization collisionVisualization = new CollisionVisualization(theShape);
-            if (DRAW_COLLISIONS) {
+            cvSaveList.add(theShape);
 
-                if (this.previousCollisionVisualization != null) {
-                    getMap().removeDrawComponent(this.previousCollisionVisualization);
-                }
-
-                collisionVisualization.add(theShape);
-                getMap().addDrawComponent(collisionVisualization);
-                this.previousCollisionVisualization = collisionVisualization;
-                return true;
-            }
+            getMap().addDrawComponent(collisionVisualization);
         }
-        return false;
     }
 
-    private void announceBumpAndPaint(List<BumpableWithShape> otherBumpableShapes) {
+    private void announceBumpAndPaint(List<BumpableWithShape> otherBumpableShapes, CollisionVisualization cvSaveList) {
         Shape theShape = getBumpableCompareShape(this);
 
         List<BumpableWithShape> collidingEntities = findCollidingEntities(theShape, otherBumpableShapes);
-        CollisionVisualization collisionVisualization = new CollisionVisualization(theShape);
+        CollisionVisualization cvFoundHere = new CollisionVisualization(theShape);
         for (BumpableWithShape bumpedBumpable : collidingEntities) {
             if (DRAW_COLLISIONS) {
                 String yourShipName = getShipStringForReports(true);
@@ -336,18 +321,12 @@ PieceSlot ps = new PieceSlot();
                     String bumpAlertString = "* --- Overlap detected with " + yourShipName + " and a bomb.";
                     logToChat(bumpAlertString);
                 }
-                collisionVisualization.add(bumpedBumpable.shape);
+                cvFoundHere.add(bumpedBumpable.shape);
+                cvSaveList.add(bumpedBumpable.shape);
             }
         }
-        if (this.previousCollisionVisualization != null) {
-            getMap().removeDrawComponent(this.previousCollisionVisualization);
-        }
-        if (collidingEntities.size() > 0) {
-            getMap().addDrawComponent(collisionVisualization);
-            this.previousCollisionVisualization = collisionVisualization;
-        } else {
-            this.previousCollisionVisualization = null;
-        }
+        if (collidingEntities.size() > 0) getMap().addDrawComponent(cvFoundHere);
+
     }
 
     private String getShipStringForReports(boolean isYours)
