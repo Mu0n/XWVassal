@@ -214,16 +214,19 @@ PieceSlot ps = new PieceSlot();
             innerCommand.append(buildTranslateCommand(part, path.getAdditionalAngleForShip()));
             logToChat("* --- " + yourShipName + " performs move: " + path.getFullName());
 
+//DONE: find move's real template shape
+//TO DO: check for collisions with obstacles and mines
+//TO DO: if a collision is found, display the template
 
-//TO DO have to find the move's real template, check for collisions with obstacles and mines
-//if a collision is found, display the template, paint it orange?
 
+            //These lines fetch the Shape of the last movement template used
             FreeRotator rotator = (FreeRotator) (Decorator.getDecorator(Decorator.getOutermost(this), FreeRotator.class));
-            CollisionVisualization collisionVisualization = new CollisionVisualization(path.getTransformedTemplateShape(this.getPosition().getX(),
+            Shape lastMoveShapeUsed = path.getTransformedTemplateShape(this.getPosition().getX(),
                     this.getPosition().getY(),
                     isLargeShip(this),
-                   rotator));
-            getMap().addDrawComponent(collisionVisualization);
+                    rotator);
+
+            checkTemplateOverlap(lastMoveShapeUsed, otherBumpableShapes);
 
             announceBumpAndPaint(otherBumpableShapes);
 
@@ -237,6 +240,37 @@ PieceSlot ps = new PieceSlot();
         }
         //sends it off to do nothing
         return piece.keyEvent(stroke);
+    }
+
+    private void checkTemplateOverlap(Shape lastMoveShapeUsed, List<BumpableWithShape> otherBumpableShapes) {
+
+        List<BumpableWithShape> collidingEntities = findCollidingEntities(lastMoveShapeUsed, otherBumpableShapes);
+        CollisionVisualization collisionVisualization = new CollisionVisualization(lastMoveShapeUsed);
+        for (BumpableWithShape bumpedBumpable : collidingEntities) {
+            if (DRAW_COLLISIONS) {
+                String yourShipName = getShipStringForReports(true);
+                if (bumpedBumpable.type.equals("Asteroid")) {
+                    String bumpAlertString = "* --- Overlap detected with " + yourShipName + "'s maneuver template and an asteroid.";
+                    logToChat(bumpAlertString);
+                } else if (bumpedBumpable.type.equals("Debris")) {
+                    String bumpAlertString = "* --- Overlap detected with " + yourShipName + "'s maneuver template and a debris cloud.";
+                    logToChat(bumpAlertString);
+                } else if (bumpedBumpable.type.equals("Bomb")) {
+                    String bumpAlertString = "* --- Overlap detected with " + yourShipName + "'s maneuver template and a bomb.";
+                    logToChat(bumpAlertString);
+                }
+                collisionVisualization.add(bumpedBumpable.shape);
+            }
+        }
+        if (this.previousCollisionVisualization != null) {
+            getMap().removeDrawComponent(this.previousCollisionVisualization);
+        }
+        if (collidingEntities.size() > 0) {
+            getMap().addDrawComponent(collisionVisualization);
+            this.previousCollisionVisualization = collisionVisualization;
+        } else {
+            this.previousCollisionVisualization = null;
+        }
     }
 
 
@@ -605,7 +639,7 @@ PieceSlot ps = new PieceSlot();
      */
     private Shape getBumpableCompareShape(Decorator bumpable) {
         Shape rawShape = getRawShape(bumpable);
-        double scaleFactor = isLargeShip(bumpable) ? SMALLSHAPEFUDGE : LARGESHAPEFUDGE;
+        double scaleFactor = isLargeShip(bumpable) ? LARGESHAPEFUDGE : SMALLSHAPEFUDGE;
         Shape transformed = AffineTransform.getScaleInstance(scaleFactor, scaleFactor).createTransformedShape(rawShape);
 
         transformed = AffineTransform
