@@ -33,6 +33,7 @@ import mic.manuvers.ManeuverPaths;
 import mic.manuvers.PathPart;
 
 import static mic.Util.logToChat;
+import static mic.Util.logToChatWithTime;
 
 
 /**
@@ -207,7 +208,7 @@ PieceSlot ps = new PieceSlot();
             Command innerCommand = piece.keyEvent(stroke);
 
             innerCommand.append(buildTranslateCommand(part, path.getAdditionalAngleForShip()));
-            logToChat("* --- " + yourShipName + " performs move: " + path.getFullName());
+            logToChatWithTime("* --- " + yourShipName + " performs move: " + path.getFullName());
 
             //These lines fetch the Shape of the last movement template used
             FreeRotator rotator = (FreeRotator) (Decorator.getDecorator(Decorator.getOutermost(this), FreeRotator.class));
@@ -242,19 +243,19 @@ PieceSlot ps = new PieceSlot();
                 String yourShipName = getShipStringForReports(true);
                 if (bumpedBumpable.type.equals("Asteroid")) {
                     String bumpAlertString = "* --- Overlap detected with " + yourShipName + "'s maneuver template and an asteroid.";
-                    logToChat(bumpAlertString);
+                    logToChatWithTime(bumpAlertString);
                     cvFoundHere.add(bumpedBumpable.shape);
                     this.previousCollisionVisualization.add(bumpedBumpable.shape);
                     howManyBumped++;
                 } else if (bumpedBumpable.type.equals("Debris")) {
                     String bumpAlertString = "* --- Overlap detected with " + yourShipName + "'s maneuver template and a debris cloud.";
-                    logToChat(bumpAlertString);
+                    logToChatWithTime(bumpAlertString);
                     cvFoundHere.add(bumpedBumpable.shape);
                     this.previousCollisionVisualization.add(bumpedBumpable.shape);
                     howManyBumped++;
                 } else if (bumpedBumpable.type.equals("Mine")) {
                     String bumpAlertString = "* --- Overlap detected with " + yourShipName + "'s maneuver template and a mine.";
-                    logToChat(bumpAlertString);
+                    logToChatWithTime(bumpAlertString);
                     cvFoundHere.add(bumpedBumpable.shape);
                     this.previousCollisionVisualization.add(bumpedBumpable.shape);
                     howManyBumped++;
@@ -263,10 +264,6 @@ PieceSlot ps = new PieceSlot();
         }
         if (howManyBumped > 0) {
             this.previousCollisionVisualization.add(lastMoveShapeUsed);
-
-            logToChat("Adding template shape, count at: " +
-                    Integer.toString(this.previousCollisionVisualization.getCount()));
-
         }
     }
 
@@ -296,7 +293,7 @@ PieceSlot ps = new PieceSlot();
                 theShape.getBounds().getY() < mapArea.getBounds().getY()) // too far to the top
         {
 
-            logToChat("* -- " + yourShipName + " flew out of bounds");
+            logToChatWithTime("* -- " + yourShipName + " flew out of bounds");
             CollisionVisualization collisionVisualization = new CollisionVisualization(theShape);
             this.previousCollisionVisualization.add(theShape);
         }
@@ -315,25 +312,25 @@ PieceSlot ps = new PieceSlot();
                 if (bumpedBumpable.type.equals("Ship")) {
                     String otherShipName = getShipStringForReports(false);
                     String bumpAlertString = "* --- Overlap detected with " + yourShipName + " and " + otherShipName + ". Resolve this by hitting the 'c' key.";
-                    logToChat(bumpAlertString);
+                    logToChatWithTime(bumpAlertString);
                     cvFoundHere.add(bumpedBumpable.shape);
                     this.previousCollisionVisualization.add(bumpedBumpable.shape);
                     howManyBumped++;
                 } else if (bumpedBumpable.type.equals("Asteroid")) {
                     String bumpAlertString = "* --- Overlap detected with " + yourShipName + " and an asteroid.";
-                    logToChat(bumpAlertString);
+                    logToChatWithTime(bumpAlertString);
                     cvFoundHere.add(bumpedBumpable.shape);
                     this.previousCollisionVisualization.add(bumpedBumpable.shape);
                     howManyBumped++;
                 } else if (bumpedBumpable.type.equals("Debris")) {
                     String bumpAlertString = "* --- Overlap detected with " + yourShipName + " and a debris cloud.";
-                    logToChat(bumpAlertString);
+                    logToChatWithTime(bumpAlertString);
                     cvFoundHere.add(bumpedBumpable.shape);
                     this.previousCollisionVisualization.add(bumpedBumpable.shape);
                     howManyBumped++;
                 } else if (bumpedBumpable.type.equals("Mine")) {
                     String bumpAlertString = "* --- Overlap detected with " + yourShipName + " and a mine.";
-                    logToChat(bumpAlertString);
+                    logToChatWithTime(bumpAlertString);
                     cvFoundHere.add(bumpedBumpable.shape);
                     this.previousCollisionVisualization.add(bumpedBumpable.shape);
                     howManyBumped++;
