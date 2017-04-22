@@ -633,7 +633,8 @@ PieceSlot ps = new PieceSlot();
     private Shape getBumpableCompareShape(Decorator bumpable) {
         Shape rawShape = getRawShape(bumpable);
         double scaleFactor = 1.0f;
-        
+
+        //only apply the scale fudge for ship types, it was being applied for other bumpables as well. Is this even needed?
         if (bumpable.getType().contains("Ship")) scaleFactor = isLargeShip(bumpable) ? LARGESHAPEFUDGE : SMALLSHAPEFUDGE;
         Shape transformed = AffineTransform.getScaleInstance(scaleFactor, scaleFactor).createTransformedShape(rawShape);
 
