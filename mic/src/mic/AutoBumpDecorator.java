@@ -592,7 +592,7 @@ PieceSlot ps = new PieceSlot();
                 bumpables.add(new BumpableWithShape((Decorator)piece, getBumpableCompareShape((Decorator)piece), "Asteroid"));
             } else if (piece.getState().contains("Debris")) {
                 bumpables.add(new BumpableWithShape((Decorator)piece, getBumpableCompareShape((Decorator)piece), "Debris"));
-            } else if (piece.getState().contains("Mine")) {
+            } else if (piece.getState().contains("Bomb")) {
                 bumpables.add(new BumpableWithShape((Decorator)piece, getBumpableCompareShape((Decorator)piece), "Mine"));
             }
         }
@@ -632,7 +632,9 @@ PieceSlot ps = new PieceSlot();
      */
     private Shape getBumpableCompareShape(Decorator bumpable) {
         Shape rawShape = getRawShape(bumpable);
-        double scaleFactor = isLargeShip(bumpable) ? LARGESHAPEFUDGE : SMALLSHAPEFUDGE;
+        double scaleFactor = 1.0f;
+        
+        if (bumpable.getType().contains("Ship")) scaleFactor = isLargeShip(bumpable) ? LARGESHAPEFUDGE : SMALLSHAPEFUDGE;
         Shape transformed = AffineTransform.getScaleInstance(scaleFactor, scaleFactor).createTransformedShape(rawShape);
 
         transformed = AffineTransform
