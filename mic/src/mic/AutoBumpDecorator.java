@@ -4,10 +4,9 @@ import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Area;
-import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
+import java.util.Timer;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -228,9 +227,18 @@ PieceSlot ps = new PieceSlot();
                         checkIfOutOfBounds(yourShipName);
 
             //Add all the detected overlapping shapes to the map drawn components here
-        if(this.previousCollisionVisualization != null &&  this.previousCollisionVisualization.getCount() > 0)
-            getMap().addDrawComponent(this.previousCollisionVisualization);
+        if(this.previousCollisionVisualization != null &&  this.previousCollisionVisualization.getCount() > 0){
 
+            Timer timer = new Timer();
+            timer.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    previousCollisionVisualization.draw(getMap().getView().getGraphics(),getMap());
+                }
+            }, 0,500);
+        }
+
+/*
             Executors.newCachedThreadPool().submit(new Runnable() {
                 public void run() {
                     try {
@@ -247,6 +255,7 @@ PieceSlot ps = new PieceSlot();
                     getMap().removeDrawComponent(previousCollisionVisualization);
                 }
             });
+            */
         }
         //the maneuver has finished. return control of the event to vassal to do nothing
         return piece.keyEvent(stroke);
@@ -680,7 +689,8 @@ PieceSlot ps = new PieceSlot();
     private static class CollisionVisualization implements Drawable {
 
         private final List<Shape> shapes;
-        private int lastAlpha = 150;
+        private boolean tictoc = false;
+        Color myO = new Color(255,99,71, 150);
 
         CollisionVisualization() {
             this.shapes = new ArrayList<Shape>();
@@ -703,11 +713,19 @@ PieceSlot ps = new PieceSlot();
             }
             return count;
         }
+
         public void draw(Graphics graphics, VASSAL.build.module.Map map) {
             Graphics2D graphics2D = (Graphics2D) graphics;
-            if(lastAlpha == 150) lastAlpha = 0;
-            else lastAlpha = 150;
-            Color myO = new Color(255,99,71, lastAlpha);
+            if(tictoc == false)
+            {
+                myO = new Color(255,99,71, 150);
+                tictoc = true;
+            }
+            else {
+                myO = new Color(40,140,140, 150);
+                tictoc = false;
+            }
+
             graphics2D.setColor(myO);
             AffineTransform scaler = AffineTransform.getScaleInstance(map.getZoom(), map.getZoom());
             for (Shape shape : shapes) {
