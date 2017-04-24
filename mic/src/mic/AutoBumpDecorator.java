@@ -7,15 +7,11 @@ import java.awt.geom.Area;
 import java.util.*;
 import java.util.List;
 import java.util.Timer;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 import javax.swing.*;
 
 import VASSAL.build.GameModule;
 import VASSAL.build.module.map.boardPicker.Board;
-import VASSAL.build.widget.PieceSlot;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 
@@ -47,6 +43,8 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
     public static final String ID = "auto-bump;";
     static final double SMALLSHAPEFUDGE = 1.01d;
     static final double LARGESHAPEFUDGE = 1.025d;
+    static final int NBOVERLAPFLASHES = 5;
+    static final int MSDELAYBETWEENFLASHES = 150;
 
     // Set to true to enable visualizations of collision objects.
     // They will be drawn after a collision resolution, select the colliding
@@ -229,13 +227,21 @@ PieceSlot ps = new PieceSlot();
             //Add all the detected overlapping shapes to the map drawn components here
         if(this.previousCollisionVisualization != null &&  this.previousCollisionVisualization.getCount() > 0){
 
-            Timer timer = new Timer();
+            final Timer timer = new Timer();
             timer.schedule(new TimerTask() {
+                int count = 1;
                 @Override
                 public void run() {
-                    previousCollisionVisualization.draw(getMap().getView().getGraphics(),getMap());
+                    try{
+                        previousCollisionVisualization.draw(getMap().getView().getGraphics(),getMap());
+                        count++;
+                        if(count == NBOVERLAPFLASHES*2) timer.cancel();
+                    } catch(Exception e){
+                        //this might still run if the object is deleted before the end of the animation
+                    }
+
                 }
-            }, 0,500);
+            }, 0,MSDELAYBETWEENFLASHES);
         }
 
 /*
@@ -715,22 +721,27 @@ PieceSlot ps = new PieceSlot();
         }
 
         public void draw(Graphics graphics, VASSAL.build.module.Map map) {
-            Graphics2D graphics2D = (Graphics2D) graphics;
-            if(tictoc == false)
-            {
-                myO = new Color(255,99,71, 150);
-                tictoc = true;
-            }
-            else {
-                myO = new Color(40,140,140, 150);
-                tictoc = false;
+            try{
+                if(tictoc == false)
+                {
+                    map.removeDrawComponent(this);
+                    map.getView().repaint();
+                    tictoc = true;
+                }
+                else { // will paint
+                    Graphics2D graphics2D = (Graphics2D) graphics;
+                    graphics2D.setColor(myO);
+                    AffineTransform scaler = AffineTransform.getScaleInstance(map.getZoom(), map.getZoom());
+                    for (Shape shape : shapes) {
+                        graphics2D.fill(scaler.createTransformedShape(shape));
+                    }
+                    tictoc = false;
+                }
+            } catch (Exception e){
+                // do nothink like da goggles
             }
 
-            graphics2D.setColor(myO);
-            AffineTransform scaler = AffineTransform.getScaleInstance(map.getZoom(), map.getZoom());
-            for (Shape shape : shapes) {
-                graphics2D.fill(scaler.createTransformedShape(shape));
-            }
+
         }
 
         public boolean drawAboveCounters() {
