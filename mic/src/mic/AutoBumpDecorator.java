@@ -36,6 +36,7 @@ import mic.manuvers.PathPart;
 
 import static mic.Util.logToChat;
 import static mic.Util.logToChatWithTime;
+import static mic.Util.newPiece;
 
 
 /**
@@ -136,6 +137,13 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
         return KeyStroke.getAWTKeyStroke(KeyEvent.VK_C, 0, false).equals(stroke);
     }
 
+    private PieceSlot findPieceSlotByID(String gpID) {
+        for(PieceSlot ps : GameModule.getGameModule().getAllDescendantComponentsOf(PieceSlot.class)){
+            if(gpID.equals(ps.getGpId())) return ps;
+        }
+        return null;
+    }
+
     @Override
     public Command keyEvent(KeyStroke stroke) {
         //Any keystroke made on a ship will remove the orange shades
@@ -148,25 +156,26 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
         // Is this a keystroke for a maneuver? Deal with the 'no' cases first
         if (path == null) {
             //check to see if 'c' was pressed
-            if(KeyStroke.getKeyStroke(KeyEvent.VK_C, 0, false).equals(stroke))
-            {
+            if(KeyStroke.getKeyStroke(KeyEvent.VK_C, 0, false).equals(stroke) && lastManeuver != null) {
                 List<BumpableWithShape> otherShipShapes = getShipsWithShapes();
 
-//TO DO place an extended template here
+                GamePiece aideTemplate = newPiece(findPieceSlotByID(lastManeuver.getAide_gpID()));
 
-                /*
-                String collisionAideName = "";
-                if(ManeuverPaths.LBk1.equals(path))
-                    collisionAideName = "Prolonged Bank 1";
-PieceSlot ps = new PieceSlot();
-                GamePiece piece = Util.newPiece(this.ship);
+                    if(aideTemplate != null) {
+                    double x = isLargeShip(this) ? lastManeuver.getAide_xLarge() : lastManeuver.getAide_x() + this.getPosition().getX();
+                    double y = isLargeShip(this) ? lastManeuver.getAide_yLarge() : lastManeuver.getAide_y() + this.getPosition().getY();
+                    PathPart aidePart = new PathPart(x, y, lastManeuver.getTemplateAngle());
+                        spawnPiece(aideTemplate,
+                                new Point((int)(x),(int)(y)),
+                                getMap());
+                    }
 
-                spawnPiece(GamePiece piece, new Point(), getMap());
-*/
+
+
+
                 boolean isCollisionOccuring = findCollidingEntity(getBumpableCompareShape(this), otherShipShapes) != null ? true : false;
                 //backtracking requested with a detected bumpable overlap, deal with it
-                if(isCollisionOccuring)
-                {
+                if (isCollisionOccuring) {
                     Command innerCommand = piece.keyEvent(stroke);
                     Command bumpResolveCommand = resolveBump(otherShipShapes);
                     return bumpResolveCommand == null ? innerCommand : innerCommand.append(bumpResolveCommand);

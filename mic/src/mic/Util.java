@@ -65,6 +65,15 @@ public class Util {
         GameModule.getGameModule().sendAndLog(c);
     }
 
+    public static void logToChatWithoutUndo(String msg, Object... args) {
+        if (args != null && args.length > 0) {
+            msg = String.format(msg, args);
+        }
+        Command c = new Chatter.DisplayText(GameModule.getGameModule().getChatter(), msg);
+        c.execute();
+        GameModule.getGameModule().sendAndLog(c);
+    }
+
     public static void logToChatWithTime(String msg, Object... args) {
         if (args != null && args.length > 0) {
             msg = String.format(msg, args);
