@@ -7,11 +7,15 @@ import java.awt.geom.Area;
 import java.util.*;
 import java.util.List;
 import java.util.Timer;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import javax.swing.*;
 
 import VASSAL.build.GameModule;
 import VASSAL.build.module.map.boardPicker.Board;
+import VASSAL.build.widget.PieceSlot;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 
@@ -32,6 +36,7 @@ import mic.manuvers.PathPart;
 
 import static mic.Util.logToChat;
 import static mic.Util.logToChatWithTime;
+import static mic.Util.newPiece;
 
 
 /**
@@ -43,8 +48,8 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
     public static final String ID = "auto-bump;";
     static final double SMALLSHAPEFUDGE = 1.01d;
     static final double LARGESHAPEFUDGE = 1.025d;
-    static final int NBOVERLAPFLASHES = 5;
-    static final int MSDELAYBETWEENFLASHES = 150;
+    static final int NBFLASHES = 5;
+    static final int DELAYBETWEENFLASHES = 150;
 
     // Set to true to enable visualizations of collision objects.
     // They will be drawn after a collision resolution, select the colliding
@@ -132,6 +137,13 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
         return KeyStroke.getAWTKeyStroke(KeyEvent.VK_C, 0, false).equals(stroke);
     }
 
+    private PieceSlot findPieceSlotByID(String gpID) {
+        for(PieceSlot ps : GameModule.getGameModule().getAllDescendantComponentsOf(PieceSlot.class)){
+            if(gpID.equals(ps.getGpId())) return ps;
+        }
+        return null;
+    }
+
     @Override
     public Command keyEvent(KeyStroke stroke) {
         //Any keystroke made on a ship will remove the orange shades
@@ -144,25 +156,26 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
         // Is this a keystroke for a maneuver? Deal with the 'no' cases first
         if (path == null) {
             //check to see if 'c' was pressed
-            if(KeyStroke.getKeyStroke(KeyEvent.VK_C, 0, false).equals(stroke))
-            {
+            if(KeyStroke.getKeyStroke(KeyEvent.VK_C, 0, false).equals(stroke) && lastManeuver != null) {
                 List<BumpableWithShape> otherShipShapes = getShipsWithShapes();
 
-//TO DO place an extended template here
+                GamePiece aideTemplate = newPiece(findPieceSlotByID(lastManeuver.getAide_gpID()));
 
-                /*
-                String collisionAideName = "";
-                if(ManeuverPaths.LBk1.equals(path))
-                    collisionAideName = "Prolonged Bank 1";
-PieceSlot ps = new PieceSlot();
-                GamePiece piece = Util.newPiece(this.ship);
+                    if(aideTemplate != null) {
+                    double x = isLargeShip(this) ? lastManeuver.getAide_xLarge() : lastManeuver.getAide_x() + this.getPosition().getX();
+                    double y = isLargeShip(this) ? lastManeuver.getAide_yLarge() : lastManeuver.getAide_y() + this.getPosition().getY();
+                    PathPart aidePart = new PathPart(x, y, lastManeuver.getTemplateAngle());
+                        spawnPiece(aideTemplate,
+                                new Point((int)(x),(int)(y)),
+                                getMap());
+                    }
 
-                spawnPiece(GamePiece piece, new Point(), getMap());
-*/
+
+
+
                 boolean isCollisionOccuring = findCollidingEntity(getBumpableCompareShape(this), otherShipShapes) != null ? true : false;
                 //backtracking requested with a detected bumpable overlap, deal with it
-                if(isCollisionOccuring)
-                {
+                if (isCollisionOccuring) {
                     Command innerCommand = piece.keyEvent(stroke);
                     Command bumpResolveCommand = resolveBump(otherShipShapes);
                     return bumpResolveCommand == null ? innerCommand : innerCommand.append(bumpResolveCommand);
@@ -235,13 +248,15 @@ PieceSlot ps = new PieceSlot();
                     try{
                         previousCollisionVisualization.draw(getMap().getView().getGraphics(),getMap());
                         count++;
-                        if(count == NBOVERLAPFLASHES*2) timer.cancel();
-                    } catch(Exception e){
-                        //this might still run if the object is deleted before the end of the animation
-                    }
+                        if(count == NBFLASHES * 2) {
+                            getMap().removeDrawComponent(previousCollisionVisualization);
+                            timer.cancel();
+                        }
+                    } catch (Exception e) {
 
+                    }
                 }
-            }, 0,MSDELAYBETWEENFLASHES);
+            }, 0,DELAYBETWEENFLASHES);
         }
 
 /*
@@ -721,24 +736,19 @@ PieceSlot ps = new PieceSlot();
         }
 
         public void draw(Graphics graphics, VASSAL.build.module.Map map) {
-            try{
-                if(tictoc == false)
-                {
-                    map.removeDrawComponent(this);
-                    map.getView().repaint();
-                    tictoc = true;
+            Graphics2D graphics2D = (Graphics2D) graphics;
+            if(tictoc == false)
+            {
+                graphics2D.setColor(myO);
+                AffineTransform scaler = AffineTransform.getScaleInstance(map.getZoom(), map.getZoom());
+                for (Shape shape : shapes) {
+                    graphics2D.fill(scaler.createTransformedShape(shape));
                 }
-                else { // will paint
-                    Graphics2D graphics2D = (Graphics2D) graphics;
-                    graphics2D.setColor(myO);
-                    AffineTransform scaler = AffineTransform.getScaleInstance(map.getZoom(), map.getZoom());
-                    for (Shape shape : shapes) {
-                        graphics2D.fill(scaler.createTransformedShape(shape));
-                    }
-                    tictoc = false;
-                }
-            } catch (Exception e){
-                // do nothink like da goggles
+                tictoc = true;
+            }
+            else {
+                map.getView().repaint();
+                tictoc = false;
             }
 
 
