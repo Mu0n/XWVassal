@@ -4,13 +4,9 @@ import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Area;
-import java.awt.geom.Point2D;
 import java.util.*;
 import java.util.List;
 import java.util.Timer;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 import javax.swing.*;
 
@@ -35,6 +31,7 @@ import VASSAL.counters.NonRectangular;
 import mic.manuvers.ManeuverPaths;
 import mic.manuvers.PathPart;
 
+import static java.awt.event.InputEvent.ALT_DOWN_MASK;
 import static mic.Util.logToChat;
 import static mic.Util.logToChatWithTime;
 import static mic.Util.newPiece;
@@ -188,14 +185,13 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
                 List<BumpableWithShape> otherShipShapes = getShipsWithShapes();
 
 
-
-
+/*
                     if(lastManeuver != null) {
                         Command placeCollisionAide = spawnRotatedPiece();
                         placeCollisionAide.execute();
                         GameModule.getGameModule().sendAndLog(placeCollisionAide);
                     }
-
+*/
 
                 boolean isCollisionOccuring = findCollidingEntity(getBumpableCompareShape(this), otherShipShapes) != null ? true : false;
                 //backtracking requested with a detected bumpable overlap, deal with it
@@ -206,6 +202,10 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
                 }
             }
             // 'c' keystroke has finished here, leave the method altogether
+            if(KeyStroke.getKeyStroke(KeyEvent.VK_8, ALT_DOWN_MASK, false).equals(stroke)){
+                logToChat("do a barrel roll");
+            }
+
             return piece.keyEvent(stroke);
         }
 
