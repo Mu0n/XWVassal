@@ -4,6 +4,7 @@ import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Area;
+import java.awt.geom.Point2D;
 import java.util.*;
 import java.util.List;
 import java.util.Timer;
@@ -144,6 +145,33 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
         return null;
     }
 
+
+    private Command spawnRotatedPiece() {
+
+        GamePiece piece = newPiece(findPieceSlotByID(lastManeuver.getAide_gpID()));
+
+        double shipx = this.getPosition().getX();
+        double shipy = this.getPosition().getY();
+        Point shipPt = new Point((int) shipx, (int) shipy);
+
+        double x = isLargeShip(this) ? lastManeuver.getAide_xLarge() : lastManeuver.getAide_x();
+        double y = isLargeShip(this) ? lastManeuver.getAide_yLarge() : lastManeuver.getAide_y();
+        int posx =  (int)x;
+        int posy =  (int)y;
+        Point tOff = new Point(posx, posy);
+
+        FreeRotator fR = (FreeRotator)Decorator.getDecorator(piece, FreeRotator.class);
+
+        fR.setAngle(lastManeuver.getTemplateAngle());
+        piece.setPosition(tOff);
+        fR.setAngle(fR.getAngle() + this.getRotator().getAngle());
+
+        Command placeCommand = getMap().placeOrMerge(piece, new Point((int)piece.getPosition().getX(), (int)piece.getPosition().getY()));
+
+
+        return placeCommand;
+    }
+
     @Override
     public Command keyEvent(KeyStroke stroke) {
         //Any keystroke made on a ship will remove the orange shades
@@ -159,18 +187,14 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
             if(KeyStroke.getKeyStroke(KeyEvent.VK_C, 0, false).equals(stroke) && lastManeuver != null) {
                 List<BumpableWithShape> otherShipShapes = getShipsWithShapes();
 
-                GamePiece aideTemplate = newPiece(findPieceSlotByID(lastManeuver.getAide_gpID()));
 
-                    if(aideTemplate != null) {
-                    double x = isLargeShip(this) ? lastManeuver.getAide_xLarge() : lastManeuver.getAide_x() + this.getPosition().getX();
-                    double y = isLargeShip(this) ? lastManeuver.getAide_yLarge() : lastManeuver.getAide_y() + this.getPosition().getY();
-                    PathPart aidePart = new PathPart(x, y, lastManeuver.getTemplateAngle());
-                        spawnPiece(aideTemplate,
-                                new Point((int)(x),(int)(y)),
-                                getMap());
+
+
+                    if(lastManeuver != null) {
+                        Command placeCollisionAide = spawnRotatedPiece();
+                        placeCollisionAide.execute();
+                        GameModule.getGameModule().sendAndLog(placeCollisionAide);
                     }
-
-
 
 
                 boolean isCollisionOccuring = findCollidingEntity(getBumpableCompareShape(this), otherShipShapes) != null ? true : false;
