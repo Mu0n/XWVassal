@@ -100,7 +100,7 @@ public class TemplateOverlapCheckDecorator extends Decorator implements Editable
         }
 
             //check to see if 'c' was pressed
-            if(KeyStroke.getKeyStroke(KeyEvent.VK_C, 0, false).equals(stroke)) {
+        if(KeyStroke.getKeyStroke(KeyEvent.VK_C, 0, false).equals(stroke)) {
                 java.util.List<BumpableWithShape> otherShipShapes = getShipsWithShapes();
 
                 boolean isCollisionOccuring = findCollidingEntity(getBumpableCompareShape(this), otherShipShapes) != null ? true : false;
@@ -112,15 +112,8 @@ public class TemplateOverlapCheckDecorator extends Decorator implements Editable
 
                     return bumpResolveCommand == null ? innerCommand : innerCommand.append(bumpResolveCommand);
                 }
-            }
-            // 'c' keystroke has finished here, leave the method altogether
-
-            return piece.keyEvent(stroke);
 
 
-        // We know we're dealing with a maneuver keystroke
-// TO DO include decloaks, barrel rolls
-        if (stroke.isOnKeyRelease() == false) {
 
 
             if (this.previousCollisionVisualization != null && this.previousCollisionVisualization.getCount() > 0) {
@@ -192,26 +185,7 @@ public class TemplateOverlapCheckDecorator extends Decorator implements Editable
                 }, 0,DELAYBETWEENFLASHES);
             }
 
-/*
-            Executors.newCachedThreadPool().submit(new Runnable() {
-                public void run() {
-                    try {
-                        for(int i=0; i < 8; i++) {
-                            previousCollisionVisualization.draw(getMap().getView().getGraphics(),getMap());
-                            getMap().getView().revalidate();
-                            getMap().getView().repaint();
-                            Thread.sleep(500);
-                        }
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    previousCollisionVisualization.shapes.clear();
-                    getMap().removeDrawComponent(previousCollisionVisualization);
-                }
-            });
-            */
         }
-        //the maneuver has finished. return control of the event to vassal to do nothing
         return piece.keyEvent(stroke);
     }
 
