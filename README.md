@@ -43,3 +43,9 @@
 2. gradlew downloadXwingData
 3. gradlew buildVmod
 4. push
+
+### Adding an importable class
+1. Add it to the XWCounterFactory
+2. gradlew buildVmod
+3. Import through the Vassal editor
+4. gradlew unpackVmod
