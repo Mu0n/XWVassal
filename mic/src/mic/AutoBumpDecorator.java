@@ -131,10 +131,6 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
         return null;
     }
 
-    private boolean isAutobumpTrigger(KeyStroke stroke) {
-        return KeyStroke.getAWTKeyStroke(KeyEvent.VK_C, 0, false).equals(stroke);
-    }
-
     private PieceSlot findPieceSlotByID(String gpID) {
         for(PieceSlot ps : GameModule.getGameModule().getAllDescendantComponentsOf(PieceSlot.class)){
             if(gpID.equals(ps.getGpId())) return ps;
@@ -379,7 +375,6 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
         Shape theShape = getBumpableCompareShape(this);
 
         List<BumpableWithShape> collidingEntities = findCollidingEntities(theShape, otherBumpableShapes);
-        CollisionVisualization cvFoundHere = new CollisionVisualization(theShape);
 
         int howManyBumped = 0;
         for (BumpableWithShape bumpedBumpable : collidingEntities) {
@@ -389,25 +384,21 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
                     String otherShipName = getShipStringForReports(false);
                     String bumpAlertString = "* --- Overlap detected with " + yourShipName + " and " + otherShipName + ". Resolve this by hitting the 'c' key.";
                     logToChatWithTime(bumpAlertString);
-                    cvFoundHere.add(bumpedBumpable.shape);
                     this.previousCollisionVisualization.add(bumpedBumpable.shape);
                     howManyBumped++;
                 } else if (bumpedBumpable.type.equals("Asteroid")) {
                     String bumpAlertString = "* --- Overlap detected with " + yourShipName + " and an asteroid.";
                     logToChatWithTime(bumpAlertString);
-                    cvFoundHere.add(bumpedBumpable.shape);
                     this.previousCollisionVisualization.add(bumpedBumpable.shape);
                     howManyBumped++;
                 } else if (bumpedBumpable.type.equals("Debris")) {
                     String bumpAlertString = "* --- Overlap detected with " + yourShipName + " and a debris cloud.";
                     logToChatWithTime(bumpAlertString);
-                    cvFoundHere.add(bumpedBumpable.shape);
                     this.previousCollisionVisualization.add(bumpedBumpable.shape);
                     howManyBumped++;
                 } else if (bumpedBumpable.type.equals("Mine")) {
                     String bumpAlertString = "* --- Overlap detected with " + yourShipName + " and a mine.";
                     logToChatWithTime(bumpAlertString);
-                    cvFoundHere.add(bumpedBumpable.shape);
                     this.previousCollisionVisualization.add(bumpedBumpable.shape);
                     howManyBumped++;
                 }

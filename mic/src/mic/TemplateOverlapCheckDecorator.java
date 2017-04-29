@@ -8,27 +8,18 @@ package mic;
 import VASSAL.build.GameModule;
 import VASSAL.build.module.documentation.HelpFile;
 import VASSAL.build.module.map.Drawable;
-import VASSAL.build.module.map.boardPicker.Board;
 import VASSAL.build.widget.PieceSlot;
-import VASSAL.command.ChangeTracker;
 import VASSAL.command.Command;
-import VASSAL.command.MoveTracker;
-import VASSAL.configure.HotKeyConfigurer;
-import VASSAL.counters.*;
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
-import mic.manuvers.ManeuverPaths;
-import mic.manuvers.PathPart;
 
 import javax.swing.*;
-import javax.swing.Timer;
 import java.awt.*;
-import java.awt.List;
 import java.awt.event.KeyEvent;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Area;
 import java.util.*;
 
+import static mic.Util.logToChat;
 import static mic.Util.logToChatWithTime;
 
 import VASSAL.counters.Decorator;
@@ -60,7 +51,7 @@ public class TemplateOverlapCheckDecorator extends Decorator implements Editable
 
     public TemplateOverlapCheckDecorator(GamePiece piece) {
         setInner(piece);
-        this.testRotator = new FreeRotator("rotate;360;;;;;;;", null);
+        this.testRotator = getRotator();
         previousCollisionVisualization = new CollisionVisualization();
     }
 
@@ -101,164 +92,70 @@ public class TemplateOverlapCheckDecorator extends Decorator implements Editable
 
             //check to see if 'c' was pressed
         if(KeyStroke.getKeyStroke(KeyEvent.VK_C, 0, false).equals(stroke)) {
-                java.util.List<BumpableWithShape> otherShipShapes = getShipsWithShapes();
+                java.util.List<BumpableWithShape> otherBumpableShapes = getBumpablesWithShapes();
 
-                boolean isCollisionOccuring = findCollidingEntity(getBumpableCompareShape(this), otherShipShapes) != null ? true : false;
+                boolean isCollisionOccuring = findCollidingEntity(getBumpableCompareShape(this), otherBumpableShapes) != null ? true : false;
                 //backtracking requested with a detected bumpable overlap, deal with it
                 if (isCollisionOccuring) {
                     Command innerCommand = piece.keyEvent(stroke);
 
                     //paint the template orange and the culprits too
+                    announceBumpAndPaint(otherBumpableShapes);
 
-                    return bumpResolveCommand == null ? innerCommand : innerCommand.append(bumpResolveCommand);
-                }
+                    //Add all the detected overlapping shapes to the map drawn components here
+                    if(this.previousCollisionVisualization != null &&  this.previousCollisionVisualization.getCount() > 0){
 
+                        final java.util.Timer timer = new java.util.Timer();
+                        timer.schedule(new TimerTask() {
+                            int count = 1;
+                            @Override
+                            public void run() {
+                                try{
+                                    previousCollisionVisualization.draw(getMap().getView().getGraphics(),getMap());
+                                    count++;
+                                    if(count == NBFLASHES * 2) {
+                                        getMap().removeDrawComponent(previousCollisionVisualization);
+                                        previousCollisionVisualization.shapes.clear();
+                                        timer.cancel();
+                                    }
+                                } catch (Exception e) {
 
-
-
-            if (this.previousCollisionVisualization != null && this.previousCollisionVisualization.getCount() > 0) {
-                getMap().removeDrawComponent(this.previousCollisionVisualization);
-                this.previousCollisionVisualization.shapes.clear();
-            }
-            // find the list of other bumpables
-            java.util.List<BumpableWithShape> otherBumpableShapes = getBumpablesWithShapes();
-
-            //safeguard old position and path
-
-            this.prevPosition = getCurrentState();
-            this.lastManeuver = path;
-
-            //This PathPart list will be used everywhere: moving, bumping, out of boundsing
-            //maybe fetch it for both 'c' behavior and movement
-            final java.util.List<PathPart> parts = path.getTransformedPathParts(
-                    this.getCurrentState().x,
-                    this.getCurrentState().y,
-                    this.getCurrentState().angle,
-                    isLargeShip(this)
-            );
-
-            //this is the final ship position post-move
-            PathPart part = parts.get(parts.size()-1);
-
-            //Get the ship name string for announcements
-            String yourShipName = getShipStringForReports(true);
-
-            //Start the Command chain
-            Command innerCommand = piece.keyEvent(stroke);
-
-            innerCommand.append(buildTranslateCommand(part, path.getAdditionalAngleForShip()));
-            logToChatWithTime("* --- " + yourShipName + " performs move: " + path.getFullName());
-
-            //These lines fetch the Shape of the last movement template used
-            FreeRotator rotator = (FreeRotator) (Decorator.getDecorator(Decorator.getOutermost(this), FreeRotator.class));
-            Shape lastMoveShapeUsed = path.getTransformedTemplateShape(this.getPosition().getX(),
-                    this.getPosition().getY(),
-                    isLargeShip(this),
-                    rotator);
-
-            //Check for template shape overlap with mines, asteroids, debris
-            checkTemplateOverlap(lastMoveShapeUsed, otherBumpableShapes);
-            //Check for ship bumping other ships, mines, asteroids, debris
-            announceBumpAndPaint(otherBumpableShapes);
-            //Check if a ship becomes out of bounds
-            checkIfOutOfBounds(yourShipName);
-
-            //Add all the detected overlapping shapes to the map drawn components here
-            if(this.previousCollisionVisualization != null &&  this.previousCollisionVisualization.getCount() > 0){
-
-                final java.util.Timer timer = new java.util.Timer();
-                timer.schedule(new TimerTask() {
-                    int count = 1;
-                    @Override
-                    public void run() {
-                        try{
-                            previousCollisionVisualization.draw(getMap().getView().getGraphics(),getMap());
-                            count++;
-                            if(count == NBFLASHES * 2) {
-                                getMap().removeDrawComponent(previousCollisionVisualization);
-                                timer.cancel();
+                                }
                             }
-                        } catch (Exception e) {
-
-                        }
+                        }, 0,DELAYBETWEENFLASHES);
                     }
-                }, 0,DELAYBETWEENFLASHES);
-            }
 
+
+
+                    return innerCommand;
+                }
         }
+
         return piece.keyEvent(stroke);
     }
-
-    private void checkTemplateOverlap(Shape lastMoveShapeUsed, java.util.List<BumpableWithShape> otherBumpableShapes) {
-
-        java.util.List<BumpableWithShape> collidingEntities = findCollidingEntities(lastMoveShapeUsed, otherBumpableShapes);
-        CollisionVisualization cvFoundHere = new CollisionVisualization(lastMoveShapeUsed);
-
-        int howManyBumped = 0;
-        for (BumpableWithShape bumpedBumpable : collidingEntities) {
-            if (DRAW_COLLISIONS) {
-                String yourShipName = getShipStringForReports(true);
-                if (bumpedBumpable.type.equals("Asteroid")) {
-                    String bumpAlertString = "* --- Overlap detected with " + yourShipName + "'s maneuver template and an asteroid.";
-                    logToChatWithTime(bumpAlertString);
-                    cvFoundHere.add(bumpedBumpable.shape);
-                    this.previousCollisionVisualization.add(bumpedBumpable.shape);
-                    howManyBumped++;
-                } else if (bumpedBumpable.type.equals("Debris")) {
-                    String bumpAlertString = "* --- Overlap detected with " + yourShipName + "'s maneuver template and a debris cloud.";
-                    logToChatWithTime(bumpAlertString);
-                    cvFoundHere.add(bumpedBumpable.shape);
-                    this.previousCollisionVisualization.add(bumpedBumpable.shape);
-                    howManyBumped++;
-                } else if (bumpedBumpable.type.equals("Mine")) {
-                    String bumpAlertString = "* --- Overlap detected with " + yourShipName + "'s maneuver template and a mine.";
-                    logToChatWithTime(bumpAlertString);
-                    cvFoundHere.add(bumpedBumpable.shape);
-                    this.previousCollisionVisualization.add(bumpedBumpable.shape);
-                    howManyBumped++;
-                }
-            }
-        }
-        if (howManyBumped > 0) {
-            this.previousCollisionVisualization.add(lastMoveShapeUsed);
-        }
-    }
-
 
 
     private void announceBumpAndPaint(java.util.List<BumpableWithShape> otherBumpableShapes) {
         Shape theShape = getBumpableCompareShape(this);
 
         java.util.List<BumpableWithShape> collidingEntities = findCollidingEntities(theShape, otherBumpableShapes);
-        CollisionVisualization cvFoundHere = new CollisionVisualization(theShape);
 
         int howManyBumped = 0;
         for (BumpableWithShape bumpedBumpable : collidingEntities) {
             if (DRAW_COLLISIONS) {
-                String yourShipName = getShipStringForReports(true);
-                if (bumpedBumpable.type.equals("Ship")) {
-                    String otherShipName = getShipStringForReports(false);
-                    String bumpAlertString = "* --- Overlap detected with " + yourShipName + " and " + otherShipName + ". Resolve this by hitting the 'c' key.";
+                if (bumpedBumpable.type.equals("Asteroid")) {
+                    String bumpAlertString = "* --- Overlap detected with your template and an asteroid.";
                     logToChatWithTime(bumpAlertString);
-                    cvFoundHere.add(bumpedBumpable.shape);
-                    this.previousCollisionVisualization.add(bumpedBumpable.shape);
-                    howManyBumped++;
-                } else if (bumpedBumpable.type.equals("Asteroid")) {
-                    String bumpAlertString = "* --- Overlap detected with " + yourShipName + " and an asteroid.";
-                    logToChatWithTime(bumpAlertString);
-                    cvFoundHere.add(bumpedBumpable.shape);
                     this.previousCollisionVisualization.add(bumpedBumpable.shape);
                     howManyBumped++;
                 } else if (bumpedBumpable.type.equals("Debris")) {
-                    String bumpAlertString = "* --- Overlap detected with " + yourShipName + " and a debris cloud.";
+                    String bumpAlertString = "* --- Overlap detected with your template and a debris cloud.";
                     logToChatWithTime(bumpAlertString);
-                    cvFoundHere.add(bumpedBumpable.shape);
                     this.previousCollisionVisualization.add(bumpedBumpable.shape);
                     howManyBumped++;
                 } else if (bumpedBumpable.type.equals("Mine")) {
-                    String bumpAlertString = "* --- Overlap detected with " + yourShipName + " and a mine.";
+                    String bumpAlertString = "* --- Overlap detected with your template and a mine.";
                     logToChatWithTime(bumpAlertString);
-                    cvFoundHere.add(bumpedBumpable.shape);
                     this.previousCollisionVisualization.add(bumpedBumpable.shape);
                     howManyBumped++;
                 }
@@ -368,29 +265,7 @@ public class TemplateOverlapCheckDecorator extends Decorator implements Editable
         return this.myRotator;
     }
 
-    /**
-     * Returns a new ShipPositionState based on the current position and angle of this ship
-     *
-     * @return
-     */
-    private ShipPositionState getCurrentState() {
-        ShipPositionState shipState = new ShipPositionState();
-        shipState.x = getPosition().getX();
-        shipState.y = getPosition().getY();
-        shipState.angle = getRotator().getAngle();
-        return shipState;
-    }
 
-    private java.util.List<BumpableWithShape> getShipsWithShapes() {
-        java.util.List<BumpableWithShape> ships = Lists.newLinkedList();
-        for (BumpableWithShape ship : getShipsOnMap()) {
-            if (getId().equals(ship.bumpable.getId())) {
-                continue;
-            }
-            ships.add(ship);
-        }
-        return ships;
-    }
 
     private java.util.List<BumpableWithShape> getBumpablesWithShapes() {
         java.util.List<BumpableWithShape> bumpables = Lists.newLinkedList();
@@ -456,13 +331,11 @@ public class TemplateOverlapCheckDecorator extends Decorator implements Editable
         Shape rawShape = getRawShape(bumpable);
         double scaleFactor = 1.0f;
 
-
         Shape transformed = AffineTransform.getScaleInstance(scaleFactor, scaleFactor).createTransformedShape(rawShape);
 
         transformed = AffineTransform
                 .getTranslateInstance(bumpable.getPosition().getX(), bumpable.getPosition().getY())
                 .createTransformedShape(transformed);
-
         FreeRotator rotator = (FreeRotator) (Decorator.getDecorator(Decorator.getOutermost(bumpable), FreeRotator.class));
         double centerX = bumpable.getPosition().getX();
         double centerY = bumpable.getPosition().getY();
