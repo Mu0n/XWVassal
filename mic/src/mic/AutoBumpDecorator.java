@@ -45,7 +45,7 @@ import static mic.Util.newPiece;
 public class AutoBumpDecorator extends Decorator implements EditablePiece {
     public static final String ID = "auto-bump;";
     static final double SMALLSHAPEFUDGE = 1.01d;
-    static final double LARGESHAPEFUDGE = 1.025d;
+    static final double LARGESHAPEFUDGE = 1.01d;
     static final int NBFLASHES = 5;
     static final int DELAYBETWEENFLASHES = 150;
 
