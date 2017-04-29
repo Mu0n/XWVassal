@@ -1,5 +1,6 @@
 package mic.manuvers;
 
+import java.awt.*;
 import java.util.List;
 
 import com.google.common.collect.Lists;
@@ -34,7 +35,7 @@ public enum StraightPaths implements ManeuverPath {
     public List<PathPart> getPathParts(int numSegments, double baseOffset, boolean isLargeBase) {
         List<PathPart> parts = Lists.newArrayList();
 
-        double revModifier = this.reverse ? -1 : 1;
+        double revModifier = this.reverse ? -1.0f : 1.0f;
 
         //Extended straight back segment
         for (int i = 1; i <= numSegments; i++) {

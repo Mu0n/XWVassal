@@ -3,7 +3,10 @@ package mic;
 import java.io.BufferedInputStream;
 import java.io.InputStream;
 import java.net.URL;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -58,6 +61,33 @@ public class Util {
             msg = String.format(msg, args);
         }
         Command c = new Chatter.DisplayText(GameModule.getGameModule().getChatter(), msg);
+        c.execute();
+        GameModule.getGameModule().sendAndLog(c);
+    }
+
+    public static void logToChatWithoutUndo(String msg, Object... args) {
+        if (args != null && args.length > 0) {
+            msg = String.format(msg, args);
+        }
+        Command c = new Chatter.DisplayText(GameModule.getGameModule().getChatter(), msg);
+        c.execute();
+        GameModule.getGameModule().sendAndLog(c);
+    }
+
+    public static void logToChatWithTime(String msg, Object... args) {
+        if (args != null && args.length > 0) {
+            msg = String.format(msg, args);
+        }
+        final Date currentTime = new Date();
+
+        final SimpleDateFormat sdf =
+                new SimpleDateFormat("MMM d, hh:mm:ss a z");
+
+// Give it to me in GMT time.
+        sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
+        String theTime = sdf.format(currentTime);
+
+        Command c = new Chatter.DisplayText(GameModule.getGameModule().getChatter(), "* ("+ theTime + ")" + msg);
         c.execute();
         GameModule.getGameModule().sendAndLog(c);
     }
