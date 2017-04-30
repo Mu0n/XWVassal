@@ -19,7 +19,7 @@ import static mic.Util.logToChat;
  */
 public class AnnouncementOnLog extends AbstractConfigurable {
 
-    private static String defaultURL = "https://raw.githubusercontent.com/Mu0n/HWpopup/master/VassalNews";
+    private static String defaultURL = "https://raw.githubusercontent.com/Mu0n/HWpopup/AnnouncementOnLog/VassalNews";
     private synchronized void AnnouncementOnLog() {
 
     }
