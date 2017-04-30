@@ -45,7 +45,7 @@ import static mic.Util.newPiece;
 public class AutoBumpDecorator extends Decorator implements EditablePiece {
     public static final String ID = "auto-bump;";
     static final double SMALLSHAPEFUDGE = 1.01d;
-    static final double LARGESHAPEFUDGE = 1.025d;
+    static final double LARGESHAPEFUDGE = 1.015d;
     static final int NBFLASHES = 5;
     static final int DELAYBETWEENFLASHES = 150;
 
@@ -191,7 +191,7 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
                     }
 */
 
-                boolean isCollisionOccuring = findCollidingEntity(getBumpableCompareShape(this), otherShipShapes) != null ? true : false;
+                boolean isCollisionOccuring = findCollidingEntity(getBumpableCompareShape(this, false), otherShipShapes) != null ? true : false;
                 //backtracking requested with a detected bumpable overlap, deal with it
                 if (isCollisionOccuring) {
                     Command innerCommand = piece.keyEvent(stroke);
@@ -357,7 +357,7 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
         {
             logToChat("Board name isn't formatted right, change to #'x#' Description");
         }
-        Shape theShape = getBumpableCompareShape(this);
+        Shape theShape = getBumpableCompareShape(this, true);
 
         if(theShape.getBounds().getMaxX() > mapArea.getBounds().getMaxX()  || // too far to the right
                 theShape.getBounds().getMaxY() > mapArea.getBounds().getMaxY() || // too far to the bottom
@@ -372,7 +372,7 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
     }
 
     private void announceBumpAndPaint(List<BumpableWithShape> otherBumpableShapes) {
-        Shape theShape = getBumpableCompareShape(this);
+        Shape theShape = getBumpableCompareShape(this, true);
 
         List<BumpableWithShape> collidingEntities = findCollidingEntities(theShape, otherBumpableShapes);
 
@@ -436,11 +436,17 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
                 isLargeShip(this)
         );
 
+
+
         for (int i = parts.size() - 1; i >= 0; i--) {
+            double scaleFactor = isLargeShip(this) ? LARGESHAPEFUDGE : SMALLSHAPEFUDGE;
+            Shape movedShape = AffineTransform.getScaleInstance(scaleFactor, scaleFactor).createTransformedShape(rawShape);
+
+
             PathPart part = parts.get(i);
-            Shape movedShape = AffineTransform
+            movedShape = AffineTransform
                     .getTranslateInstance(part.getX(), part.getY())
-                    .createTransformedShape(rawShape);
+                    .createTransformedShape(movedShape);
             double roundedAngle = convertAngleToGameLimits(part.getAngle());
             movedShape = AffineTransform
                     .getRotateInstance(Math.toRadians(-roundedAngle), part.getX(), part.getY())
@@ -641,7 +647,7 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
         GamePiece[] pieces = getMap().getAllPieces();
         for (GamePiece piece : pieces) {
             if (piece.getState().contains("Ship")) {
-                ships.add(new BumpableWithShape((Decorator)piece, getBumpableCompareShape((Decorator)piece), "Ship"));
+                ships.add(new BumpableWithShape((Decorator)piece, getBumpableCompareShape((Decorator)piece, true), "Ship"));
             }
         }
         return ships;
@@ -653,14 +659,14 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
         GamePiece[] pieces = getMap().getAllPieces();
         for (GamePiece piece : pieces) {
             if (piece.getState().contains("Ship")) {
-                bumpables.add(new BumpableWithShape((Decorator)piece, getBumpableCompareShape((Decorator)piece), "Ship"));
+                bumpables.add(new BumpableWithShape((Decorator)piece, getBumpableCompareShape((Decorator)piece, true), "Ship"));
             } else if (piece.getState().contains("Asteroid")) {
                 // comment out this line and the next three that add to bumpables if bumps other than with ships shouldn't be detected yet
-                bumpables.add(new BumpableWithShape((Decorator)piece, getBumpableCompareShape((Decorator)piece), "Asteroid"));
+                bumpables.add(new BumpableWithShape((Decorator)piece, getBumpableCompareShape((Decorator)piece, true), "Asteroid"));
             } else if (piece.getState().contains("Debris")) {
-                bumpables.add(new BumpableWithShape((Decorator)piece, getBumpableCompareShape((Decorator)piece), "Debris"));
+                bumpables.add(new BumpableWithShape((Decorator)piece, getBumpableCompareShape((Decorator)piece, true), "Debris"));
             } else if (piece.getState().contains("Bomb")) {
-                bumpables.add(new BumpableWithShape((Decorator)piece, getBumpableCompareShape((Decorator)piece), "Mine"));
+                bumpables.add(new BumpableWithShape((Decorator)piece, getBumpableCompareShape((Decorator)piece, true), "Mine"));
             }
         }
         return bumpables;
@@ -697,12 +703,13 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
      * @param bumpable
      * @return Translated ship mask
      */
-    private Shape getBumpableCompareShape(Decorator bumpable) {
+    private Shape getBumpableCompareShape(Decorator bumpable, Boolean wantPrecise) {
         Shape rawShape = getRawShape(bumpable);
         double scaleFactor = 1.0f;
 
         //only apply the scale fudge for ship types, it was being applied for other bumpables as well. Is this even needed?
-        if (bumpable.getType().contains("Ship")) scaleFactor = isLargeShip(bumpable) ? LARGESHAPEFUDGE : SMALLSHAPEFUDGE;
+        if (bumpable.getType().contains("Ship") && wantPrecise == false) scaleFactor = isLargeShip(bumpable) ? LARGESHAPEFUDGE : SMALLSHAPEFUDGE;
+
         Shape transformed = AffineTransform.getScaleInstance(scaleFactor, scaleFactor).createTransformedShape(rawShape);
 
         transformed = AffineTransform
