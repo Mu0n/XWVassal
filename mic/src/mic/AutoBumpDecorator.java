@@ -237,8 +237,7 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
             PathPart part = parts.get(parts.size()-1);
 
             //Get the ship name string for announcements
-            String yourShipName = getShipStringForReports(true);
-
+            String yourShipName = getShipStringForReports(true, this.getProperty("Pilot Name").toString(), this.getProperty("Craft ID #").toString());
             //Start the Command chain
             Command innerCommand = piece.keyEvent(stroke);
 
@@ -312,7 +311,7 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
         int howManyBumped = 0;
         for (BumpableWithShape bumpedBumpable : collidingEntities) {
             if (DRAW_COLLISIONS) {
-                String yourShipName = getShipStringForReports(true);
+                String yourShipName = getShipStringForReports(true, this.getProperty("Pilot Name").toString(), this.getProperty("Craft ID #").toString());
                 if (bumpedBumpable.type.equals("Asteroid")) {
                     String bumpAlertString = "* --- Overlap detected with " + yourShipName + "'s maneuver template and an asteroid.";
                     logToChatWithTime(bumpAlertString);
@@ -379,9 +378,9 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
         int howManyBumped = 0;
         for (BumpableWithShape bumpedBumpable : collidingEntities) {
             if (DRAW_COLLISIONS) {
-                String yourShipName = getShipStringForReports(true);
+                String yourShipName = getShipStringForReports(true, this.getProperty("Pilot Name").toString(), this.getProperty("Craft ID #").toString());
                 if (bumpedBumpable.type.equals("Ship")) {
-                    String otherShipName = getShipStringForReports(false);
+                    String otherShipName = getShipStringForReports(false, bumpedBumpable.pilotName, bumpedBumpable.shipName);
                     String bumpAlertString = "* --- Overlap detected with " + yourShipName + " and " + otherShipName + ". Resolve this by hitting the 'c' key.";
                     logToChatWithTime(bumpAlertString);
                     this.previousCollisionVisualization.add(bumpedBumpable.shape);
@@ -410,11 +409,17 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
 
     }
 
-    private String getShipStringForReports(boolean isYours)
+    private String getShipStringForReports(boolean isYours, String pilotName, String shipName)
     {
         String yourShipName = (isYours ? "your ship" : "another ship");
-        if (this.getProperty("Pilot Name").toString().length() > 0) { yourShipName += " " + this.getProperty("Pilot Name").toString(); }
-        if (this.getProperty("Craft ID #").toString().length() > 0) { yourShipName += " (" + this.getProperty("Craft ID #").toString() + ")"; }
+
+        if (!pilotName.equals("")) { yourShipName += " " + pilotName; }
+        if (!shipName.equals("")) { yourShipName += " (" + shipName + ")"; }
+
+        /*
+        if (this.getProperty("Pilot Name").toString().length() > 0) { yourShipName += " " + b.getProperty("Pilot Name").toString(); }
+        if (this.getProperty("Craft ID #").toString().length() > 0) { yourShipName += " (" + b.getProperty("Craft ID #").toString() + ")"; }
+        */
 
         return yourShipName;
     }
@@ -659,7 +664,8 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
         GamePiece[] pieces = getMap().getAllPieces();
         for (GamePiece piece : pieces) {
             if (piece.getState().contains("Ship")) {
-                bumpables.add(new BumpableWithShape((Decorator)piece, getBumpableCompareShape((Decorator)piece, true), "Ship"));
+                bumpables.add(new BumpableWithShape((Decorator)piece, getBumpableCompareShape((Decorator)piece, true), "Ship",
+                        piece.getProperty("Pilot Name").toString(), piece.getProperty("Craft ID #").toString()));
             } else if (piece.getState().contains("Asteroid")) {
                 // comment out this line and the next three that add to bumpables if bumps other than with ships shouldn't be detected yet
                 bumpables.add(new BumpableWithShape((Decorator)piece, getBumpableCompareShape((Decorator)piece, true), "Asteroid"));
@@ -793,10 +799,20 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
         Shape shape;
         Decorator bumpable;
         String type;
+        String shipName = "";
+        String pilotName = "";
+
         BumpableWithShape(Decorator bumpable, Shape shape, String type) {
             this.bumpable = bumpable;
             this.shape = shape;
             this.type = type;
+        }
+        BumpableWithShape(Decorator bumpable, Shape shape, String type, String pilotName, String shipName) {
+            this.bumpable = bumpable;
+            this.shape = shape;
+            this.type = type;
+            this.pilotName = pilotName;
+            this.shipName = shipName;
         }
     }
 }
