@@ -199,7 +199,7 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
             }
             // 'c' keystroke has finished here, leave the method altogether
             if(KeyStroke.getKeyStroke(KeyEvent.VK_8, ALT_DOWN_MASK, false).equals(stroke)){
-                logToChat("do a barrel roll");
+
             }
 
             return piece.keyEvent(stroke);
