@@ -242,6 +242,7 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
             Command innerCommand = piece.keyEvent(stroke);
 
             innerCommand.append(buildTranslateCommand(part, path.getAdditionalAngleForShip()));
+
             logToChatWithTime("* --- " + yourShipName + " performs move: " + path.getFullName());
 
             //These lines fetch the Shape of the last movement template used
@@ -298,6 +299,7 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
                 }
             });
             */
+return innerCommand;
         }
         //the maneuver has finished. return control of the event to vassal to do nothing
         return piece.keyEvent(stroke);
@@ -482,7 +484,9 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
         // Copypasta from VASSAL.counters.Pivot
         ChangeTracker changeTracker = new ChangeTracker(this);
         getRotator().setAngle(part.getAngle() + additionalAngle);
+
         setProperty("Moved", Boolean.TRUE);
+
         Command result = changeTracker.getChangeCommand();
 
         GamePiece outermost = Decorator.getOutermost(this);
@@ -491,8 +495,8 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
         // ^^ There be dragons here ^^ - vassals gives positions as doubles but only lets them be set as ints :(
         this.getMap().placeOrMerge(outermost, point);
         result = result.append(moveTracker.getMoveCommand());
-
-        /*MovementReporter reporter = new MovementReporter(result);
+/*
+        MovementReporter reporter = new MovementReporter(result);
 
         Command reportCommand = reporter.getReportCommand();
         if (reportCommand != null) {
