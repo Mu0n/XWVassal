@@ -3,6 +3,7 @@ package mic;
 import java.util.List;
 import java.util.Map;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.collect.Lists;
@@ -37,6 +38,9 @@ public class XWSList {
     @JsonProperty("vendor")
     private Map<String, Map<String, String>> vendor = Maps.newHashMap();
 
+    @JsonIgnore
+    private String xwsSource;
+
 
     public String getName() {
         return name;
@@ -70,6 +74,14 @@ public class XWSList {
         return vendor;
     }
 
+    public String getXwsSource() {
+        return this.xwsSource;
+    }
+
+    public void setXwsSource(String xwsSource) {
+        this.xwsSource = xwsSource;
+    }
+
     public static class XWSPilot {
         @JsonProperty("multisection_id")
         private Integer multisectionId;
@@ -99,7 +111,7 @@ public class XWSList {
 
         public String getShip() {
             if ("yt2400freighter".equals(ship)) {
-              return "yt2400";
+                return "yt2400";
             }
             return ship;
         }
