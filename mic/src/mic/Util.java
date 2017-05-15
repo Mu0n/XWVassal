@@ -2,6 +2,7 @@ package mic;
 
 import java.io.BufferedInputStream;
 import java.io.InputStream;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -31,7 +32,15 @@ public class Util {
 
     public static <T> T loadRemoteJson(String url, Class<T> type) {
         try {
-            InputStream inputStream = new BufferedInputStream(new URL(url).openStream());
+            return loadRemoteJson(new URL(url), type);
+        } catch (MalformedURLException e) {
+            return null;
+        }
+    }
+
+    public static <T> T loadRemoteJson(URL url, Class<T> type) {
+        try {
+            InputStream inputStream = new BufferedInputStream(url.openStream());
             return mapper.readValue(inputStream, type);
         } catch (Exception e) {
             System.out.println("Unhandled error parsing remote json: \n" + e.toString());
@@ -51,6 +60,10 @@ public class Util {
             logToChat("Unhandled error parsing classpath json: \n" + e.toString());
             return null;
         }
+    }
+
+    public static ObjectMapper getMapper() {
+        return mapper;
     }
 
     public static List<String> none = Lists.newArrayList();
@@ -87,7 +100,7 @@ public class Util {
         sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
         String theTime = sdf.format(currentTime);
 
-        Command c = new Chatter.DisplayText(GameModule.getGameModule().getChatter(), "* ("+ theTime + ")" + msg);
+        Command c = new Chatter.DisplayText(GameModule.getGameModule().getChatter(), "* (" + theTime + ")" + msg);
         c.execute();
         GameModule.getGameModule().sendAndLog(c);
     }

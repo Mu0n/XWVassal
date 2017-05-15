@@ -48,30 +48,12 @@ public class AutoSquadSpawn extends AbstractConfigurable {
             return;
         }
 
-        String url = null;
-        try {
-            url = JOptionPane.showInputDialog("Please paste a voidstate url or ID, YASB url, or FABS url");
-        } catch (Exception e) {
-            logToChat("Unable to process url, please try again");
-        }
-
-        if (url == null || url.length() == 0) {
+        String userInput = JOptionPane.showInputDialog("Please paste a voidstate url or ID, YASB url, FABS url, or raw XWS JSON");
+        XWSList xwsList = loadListFromUserInput(userInput);
+        if (xwsList == null) {
             return;
         }
 
-        URL translatedURL = null;
-        try {
-            translatedURL = XWSUrlHelper.translate(url);
-            if (translatedURL == null) {
-                logToChat("Invalid list url detected, please try again");
-                return;
-            }
-        } catch (Exception e) {
-            logToChat("Unable to translate xws url: \n" + e.toString());
-            return;
-        }
-
-        XWSList xwsList = XWSFetcher.fetchFromUrl(translatedURL.toString());
         VassalXWSListPieces pieces = slotLoader.loadListFromXWS(xwsList);
 
         Point startPosition = new Point(150, 150);
@@ -164,7 +146,7 @@ public class AutoSquadSpawn extends AbstractConfigurable {
 
         String listName = xwsList.getName();
         logToChat("%s point list%s loaded from %s", pieces.getSquadPoints(),
-                listName != null ? " '" + listName + "'" : "", url);
+                listName != null ? " '" + listName + "'" : "", xwsList.getXwsSource());
     }
 
     public void addTo(Buildable parent) {
@@ -206,6 +188,45 @@ public class AutoSquadSpawn extends AbstractConfigurable {
         MasterPilotData.loadData();
         MasterUpgradeData.loadData();
         MasterShipData.loadData();
+    }
+
+    private XWSList loadListFromUrl(String userInput) {
+        try {
+            URL translatedURL = XWSUrlHelper.translate(userInput);
+            if (translatedURL == null) {
+                logToChat("Invalid list url detected, please try again");
+                return null;
+            }
+            XWSList xwsList = loadRemoteJson(translatedURL, XWSList.class);
+            xwsList.setXwsSource(translatedURL.toString());
+            return xwsList;
+
+        } catch (Exception e) {
+            logToChat("Unable to translate xws url '%s': %s", userInput, e.toString());
+            return null;
+        }
+    }
+
+    private XWSList loadListFromRawJson(String userInput) {
+        try {
+            XWSList list = getMapper().readValue(userInput, XWSList.class);
+            list.setXwsSource("JSON");
+            return list;
+        } catch (Exception e) {
+            logToChat("Unable to load raw JSON list '%s': %s", userInput, e.toString());
+            return null;
+        }
+    }
+
+    private XWSList loadListFromUserInput(String userInput) {
+        if (userInput == null || userInput.length() == 0) {
+            return null;
+        }
+        userInput = userInput.trim();
+        if (userInput.startsWith("{")) {
+            return loadListFromRawJson(userInput);
+        }
+        return loadListFromUrl(userInput);
     }
 
     // <editor-fold desc="unused vassal hooks">
