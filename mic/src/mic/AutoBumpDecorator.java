@@ -241,14 +241,17 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
 
             innerCommand.append(buildTranslateCommand(part, path.getAdditionalAngleForShip()));
 
-            logToChatWithTime("* --- " + yourShipName + " performs move: " + path.getFullName());
-
             //These lines fetch the Shape of the last movement template used
             FreeRotator rotator = (FreeRotator) (Decorator.getDecorator(Decorator.getOutermost(this), FreeRotator.class));
             Shape lastMoveShapeUsed = path.getTransformedTemplateShape(this.getPosition().getX(),
                     this.getPosition().getY(),
                     isLargeShip(this),
                     rotator);
+
+            //don't check for collisions in windows other than the main map
+            if(!"Contested Sector".equals(getMap().getMapName())) return innerCommand;
+
+            logToChatWithTime("* --- " + yourShipName + " performs move: " + path.getFullName());
 
             //Check for template shape overlap with mines, asteroids, debris
             checkTemplateOverlap(lastMoveShapeUsed, otherBumpableShapes);
@@ -278,25 +281,7 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
                     }
                 }, 0,DELAYBETWEENFLASHES);
             }
-
-/*
-            Executors.newCachedThreadPool().submit(new Runnable() {
-                public void run() {
-                    try {
-                        for(int i=0; i < 8; i++) {
-                            previousCollisionVisualization.draw(getMap().getView().getGraphics(),getMap());
-                            getMap().getView().revalidate();
-                            getMap().getView().repaint();
-                            Thread.sleep(500);
-                        }
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    previousCollisionVisualization.shapes.clear();
-                    getMap().removeDrawComponent(previousCollisionVisualization);
-                }
-            });
-            */
+            
 return innerCommand;
         }
         //the maneuver has finished. return control of the event to vassal to do nothing
