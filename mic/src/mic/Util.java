@@ -104,7 +104,23 @@ public class Util {
         c.execute();
         GameModule.getGameModule().sendAndLog(c);
     }
+    public static Command logToChatWithTimeCommand(String msg, Object... args) {
+        if (args != null && args.length > 0) {
+            msg = String.format(msg, args);
+        }
+        final Date currentTime = new Date();
 
+        final SimpleDateFormat sdf =
+                new SimpleDateFormat("MMM d, hh:mm:ss a z");
+
+// Give it to me in GMT time.
+        sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
+        String theTime = sdf.format(currentTime);
+
+        Command c = new Chatter.DisplayText(GameModule.getGameModule().getChatter(), "* (" + theTime + ")" + msg);
+        c.execute();
+        return c;
+    }
     public static GamePiece newPiece(PieceSlot slot) {
         return PieceCloner.getInstance().clonePiece(slot.getPiece());
     }
