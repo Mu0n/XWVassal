@@ -638,15 +638,16 @@ return innerCommand;
 
         GamePiece[] pieces = getMap().getAllPieces();
         for (GamePiece piece : pieces) {
-            if (piece.getState().contains("Ship")) {
+            String pieceTabOrigin = piece.getState().substring(0,10);
+            if (pieceTabOrigin.contains("Ship")) {
                 bumpables.add(new BumpableWithShape((Decorator)piece, getBumpableCompareShape((Decorator)piece), "Ship",
                         piece.getProperty("Pilot Name").toString(), piece.getProperty("Craft ID #").toString()));
-            } else if (piece.getState().contains("Asteroid")) {
+            } else if (pieceTabOrigin.contains("Asteroid")) {
                 // comment out this line and the next three that add to bumpables if bumps other than with ships shouldn't be detected yet
                 bumpables.add(new BumpableWithShape((Decorator)piece, getBumpableCompareShape((Decorator)piece), "Asteroid"));
-            } else if (piece.getState().contains("Debris")) {
+            } else if (pieceTabOrigin.contains("Debris")) {
                 bumpables.add(new BumpableWithShape((Decorator)piece, getBumpableCompareShape((Decorator)piece), "Debris"));
-            } else if (piece.getState().contains("Bomb")) {
+            } else if (pieceTabOrigin.contains("Bomb")) {
                 bumpables.add(new BumpableWithShape((Decorator)piece, getBumpableCompareShape((Decorator)piece), "Mine"));
             }
         }
