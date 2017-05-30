@@ -11,6 +11,7 @@ import java.util.Timer;
 import javax.swing.*;
 
 import VASSAL.build.GameModule;
+import VASSAL.build.module.GlobalOptions;
 import VASSAL.build.module.map.boardPicker.Board;
 import VASSAL.build.widget.PieceSlot;
 import com.google.common.collect.ImmutableMap;
@@ -393,7 +394,8 @@ return innerCommand;
 
     private String getShipStringForReports(boolean isYours, String pilotName, String shipName)
     {
-        String yourShipName = (isYours ? "your ship" : "another ship");
+
+        String yourShipName = (isYours ? GlobalOptions.getInstance().getPlayerId() : "another ship");
 
         if (!pilotName.equals("")) { yourShipName += " " + pilotName; }
         if (!shipName.equals("")) { yourShipName += " (" + shipName + ")"; }
