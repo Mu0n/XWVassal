@@ -26,7 +26,7 @@ import static mic.Util.logToChat;
  */
 public class AnnouncementOnLog extends AbstractConfigurable {
 
-    private static String defaultURL = "https://raw.githubusercontent.com/Mu0n/HWpopup/master/VassalNews";
+    private static String defaultURL =        "https://raw.githubusercontent.com/Mu0n/HWpopup/master/VassalNews";
     private static String currentVersionURL = "https://raw.githubusercontent.com/Mu0n/HWpopup/master/currentVersion";
     private static String vassalDownloadURL = "http://www.vassalengine.org/wiki/Module:Star_Wars:_X-Wing_Miniatures_Game";
 
@@ -71,7 +71,9 @@ public class AnnouncementOnLog extends AbstractConfigurable {
             line = in.readLine();
             in.close();
 
-            if (!currentVersionURL.equals(line)) {
+            logToChat(userVersion);
+            logToChat(line);
+            if (!userVersion.equals(line)) {
                 String msg = "You currently have version " + userVersion + " of the X-Wing Vassal module.\n"
                     + "A new version " + line + " is available!\n";
 
