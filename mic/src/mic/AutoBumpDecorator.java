@@ -395,10 +395,12 @@ return innerCommand;
     private String getShipStringForReports(boolean isYours, String pilotName, String shipName)
     {
 
-        String yourShipName = (isYours ? GlobalOptions.getInstance().getPlayerId() : "another ship");
+        String yourShipName = (isYours ? GlobalOptions.getInstance().getPlayerId() + "'s" : "another ship");
 
         if (!pilotName.equals("")) { yourShipName += " " + pilotName; }
+        else yourShipName += " ship";
         if (!shipName.equals("")) { yourShipName += " (" + shipName + ")"; }
+        else yourShipName += " ";
 
         return yourShipName;
     }
