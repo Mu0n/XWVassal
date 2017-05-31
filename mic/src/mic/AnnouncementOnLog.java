@@ -67,12 +67,8 @@ public class AnnouncementOnLog extends AbstractConfigurable {
             BufferedReader in = new BufferedReader(new InputStreamReader(url.openStream()));
 
             String line;
-
             line = in.readLine();
             in.close();
-
-            logToChat(userVersion);
-            logToChat(line);
             if (!userVersion.equals(line)) {
                 String msg = "You currently have version " + userVersion + " of the X-Wing Vassal module.\n"
                     + "A new version " + line + " is available!\n";
