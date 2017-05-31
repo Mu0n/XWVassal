@@ -52,20 +52,29 @@ public class VassalXWSListPieces {
             total += ship.getPilotData().getPoints();
             int systemCost = 0;
             boolean isTIEx1Here = false;
+            boolean isVaksaiHere = false;
+            int vaksaiAccumulatedRebate = 0;
             for (VassalXWSPilotPieces.Upgrade upgrade : ship.getUpgrades()) {
                 if (upgrade.getUpgradeData() == null) {
                     Util.logToChat("Unable to calculate points for " + upgrade.getXwsName());
                     continue;
                 }
                 total += upgrade.getUpgradeData().getPoints();
+                if(upgrade.getUpgradeData().getPoints() > 0) vaksaiAccumulatedRebate++;
                 if ("tiex1".equals(upgrade.getXwsName())) {
                     isTIEx1Here = true;
+                }
+                if("vaksai".equals(upgrade.getXwsName())) {
+                    isVaksaiHere = true;
                 }
                 if ("System".equals(upgrade.getUpgradeData().getSlot()))
                     systemCost += upgrade.getUpgradeData().getPoints();
             }
             if (isTIEx1Here) {
                 total -= Math.min(4, systemCost);
+            }
+            if(isVaksaiHere) {
+                total -= vaksaiAccumulatedRebate;
             }
         }
         return total;
