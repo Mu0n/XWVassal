@@ -643,7 +643,8 @@ return innerCommand;
         GamePiece[] pieces = getMap().getAllPieces();
         for (GamePiece piece : pieces) {
             String pieceTabOrigin = piece.getState().substring(0,10);
-            if (pieceTabOrigin.contains("Ship")) {
+
+            if (piece.getState().contains("Ship")) {
                 bumpables.add(new BumpableWithShape((Decorator)piece, getBumpableCompareShape((Decorator)piece), "Ship",
                         piece.getProperty("Pilot Name").toString(), piece.getProperty("Craft ID #").toString()));
             } else if (pieceTabOrigin.contains("Asteroid")) {
