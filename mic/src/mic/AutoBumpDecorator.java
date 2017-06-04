@@ -14,6 +14,7 @@ import VASSAL.build.GameModule;
 import VASSAL.build.module.GlobalOptions;
 import VASSAL.build.module.map.boardPicker.Board;
 import VASSAL.build.widget.PieceSlot;
+import VASSAL.counters.*;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 
@@ -23,12 +24,6 @@ import VASSAL.command.ChangeTracker;
 import VASSAL.command.Command;
 import VASSAL.command.MoveTracker;
 import VASSAL.configure.HotKeyConfigurer;
-import VASSAL.counters.Decorator;
-import VASSAL.counters.EditablePiece;
-import VASSAL.counters.FreeRotator;
-import VASSAL.counters.GamePiece;
-import VASSAL.counters.KeyCommand;
-import VASSAL.counters.NonRectangular;
 import mic.manuvers.ManeuverPaths;
 import mic.manuvers.PathPart;
 
@@ -649,9 +644,13 @@ return innerCommand;
                         piece.getProperty("Pilot Name").toString(), piece.getProperty("Craft ID #").toString()));
             } else if (pieceTabOrigin.contains("Asteroid")) {
                 // comment out this line and the next three that add to bumpables if bumps other than with ships shouldn't be detected yet
-                bumpables.add(new BumpableWithShape((Decorator)piece, getBumpableCompareShape((Decorator)piece), "Asteroid"));
+                if("2".equals(((Decorator) piece).getDecorator(piece,piece.getClass()).getProperty("whichShape").toString()))
+                    bumpables.add(new BumpableWithShape((Decorator)piece, getBumpableCompareShapeButFlip((Decorator)piece), "Asteroid"));
+                else bumpables.add(new BumpableWithShape((Decorator)piece, getBumpableCompareShape((Decorator)piece), "Asteroid"));
             } else if (pieceTabOrigin.contains("Debris")) {
-                bumpables.add(new BumpableWithShape((Decorator)piece, getBumpableCompareShape((Decorator)piece), "Debris"));
+                if("2".equals(((Decorator) piece).getDecorator(piece,piece.getClass()).getProperty("whichShape").toString()))
+                    bumpables.add(new BumpableWithShape((Decorator)piece, getBumpableCompareShapeButFlip((Decorator)piece),"Debris"));
+                else bumpables.add(new BumpableWithShape((Decorator)piece, getBumpableCompareShape((Decorator)piece), "Debris"));
             } else if (pieceTabOrigin.contains("Bomb")) {
                 bumpables.add(new BumpableWithShape((Decorator)piece, getBumpableCompareShape((Decorator)piece), "Mine"));
             }
@@ -705,6 +704,23 @@ return innerCommand;
 
         return transformed;
     }
+    private Shape getBumpableCompareShapeButFlip(Decorator bumpable) {
+        Shape rawShape = getRawShape(bumpable);
+        Shape transformed = AffineTransform.getScaleInstance(-1, 1).createTransformedShape(rawShape);
+        transformed = AffineTransform
+                .getTranslateInstance(bumpable.getPosition().getX(), bumpable.getPosition().getY())
+                .createTransformedShape(transformed);
+
+        FreeRotator rotator = (FreeRotator) (Decorator.getDecorator(Decorator.getOutermost(bumpable), FreeRotator.class));
+        double centerX = bumpable.getPosition().getX();
+        double centerY = bumpable.getPosition().getY();
+        transformed = AffineTransform
+                .getRotateInstance(rotator.getAngleInRadians(), centerX, centerY)
+                .createTransformedShape(transformed);
+
+        return transformed;
+    }
+
 
 
     private boolean isLargeShip(Decorator ship) {
