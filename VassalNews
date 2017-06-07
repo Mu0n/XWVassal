@@ -1,6 +1,10 @@
 June 6th, 2017 X-Wing Vassal news
 
-The latest 7.0.5 X-Wing module seems to be bugged with ship movement. Please revert back to (or stay with) 7.0.3.
+The latest 7.0.5 X-Wing module has been released: patch notes are here - https://teamcovenant.com/star-wars-x-wing/x-wing-module-7-0-5-available
+IMPORTANT, if you encounter a bug while trying to move a ship, it needs the following:
+-A player with 7.0.5 moves a ship
+-His opponent uses 7.0.3 and has spawned a few rocks on the map
+To resolve: both players need 7.0.5
 
 Signups:
 
