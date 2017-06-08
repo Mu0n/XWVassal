@@ -679,57 +679,6 @@ return innerCommand;
         return this.testRotator.getAngle();
     }
 
-    /**
-     * Finds non-rectangular mask layer of provided ship.  This is the shape with only the base
-     * and nubs
-     *
-     * @param bumpable
-     * @return
-     */
-    private Shape getRawShape(Decorator bumpable) {
-        return Decorator.getDecorator(Decorator.getOutermost(bumpable), NonRectangular.class).getShape();
-    }
-
-    /**
-     * Finds raw ship mask and translates and rotates it to the current position and heading
-     * of the ship
-     *
-     * @param bumpable
-     * @return Translated ship mask
-     */
-    private Shape getBumpableCompareShape(Decorator bumpable) {
-        Shape rawShape = getRawShape(bumpable);
-        Shape transformed = AffineTransform
-                .getTranslateInstance(bumpable.getPosition().getX(), bumpable.getPosition().getY())
-                .createTransformedShape(rawShape);
-
-        FreeRotator rotator = (FreeRotator) (Decorator.getDecorator(Decorator.getOutermost(bumpable), FreeRotator.class));
-        double centerX = bumpable.getPosition().getX();
-        double centerY = bumpable.getPosition().getY();
-        transformed = AffineTransform
-                .getRotateInstance(rotator.getAngleInRadians(), centerX, centerY)
-                .createTransformedShape(transformed);
-
-        return transformed;
-    }
-    private Shape getBumpableCompareShapeButFlip(Decorator bumpable) {
-        Shape rawShape = getRawShape(bumpable);
-        Shape transformed = AffineTransform.getScaleInstance(-1, 1).createTransformedShape(rawShape);
-        transformed = AffineTransform
-                .getTranslateInstance(bumpable.getPosition().getX(), bumpable.getPosition().getY())
-                .createTransformedShape(transformed);
-
-        FreeRotator rotator = (FreeRotator) (Decorator.getDecorator(Decorator.getOutermost(bumpable), FreeRotator.class));
-        double centerX = bumpable.getPosition().getX();
-        double centerY = bumpable.getPosition().getY();
-        transformed = AffineTransform
-                .getRotateInstance(rotator.getAngleInRadians(), centerX, centerY)
-                .createTransformedShape(transformed);
-
-        return transformed;
-    }
-
-
 
     private boolean isLargeShip(Decorator ship) {
         return getRawShape(ship).getBounds().getWidth() > 114;
@@ -792,25 +741,4 @@ return innerCommand;
         double y;
         double angle;
     }
-
-  /*  public class BumpableWithShape {
-        Shape shape;
-        Decorator bumpable;
-        String type;
-        String shipName = "";
-        String pilotName = "";
-
-        BumpableWithShape(Decorator bumpable, Shape shape, String type) {
-            this.bumpable = bumpable;
-            this.shape = shape;
-            this.type = type;
-        }
-        BumpableWithShape(Decorator bumpable, Shape shape, String type, String pilotName, String shipName) {
-            this.bumpable = bumpable;
-            this.shape = shape;
-            this.type = type;
-            this.pilotName = pilotName;
-            this.shipName = shipName;
-        }
-    }*/
 }
