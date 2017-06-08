@@ -77,12 +77,6 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
         //Full Range Options CTRL-O
         if (KeyStroke.getKeyStroke(KeyEvent.VK_O, KeyEvent.CTRL_DOWN_MASK,false).equals(stroke)) {
 
-
-            List<Shape> otherShips = getOtherShipShapes();
-            for(Shape ship: otherShips) {
-
-            }
-            logToChat("There are " + Integer.toString(otherShips.size()) + " ships present around");
         }
 
         //Firing Arc command activated CTRL-F
@@ -169,36 +163,6 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
         shipState.y = getPosition().getY();
         shipState.angle = getRotator().getAngle();
         return shipState;
-    }
-
-
-    private java.util.List<Shape> getOtherShipShapes() {
-        java.util.List<Shape> shapes = Lists.newLinkedList();
-        for (Decorator ship : getShipsOnMap()) {
-            if (getId().equals(ship.getId())) {
-                continue;
-            }
-            shapes.add(getShipCompareShape(ship));
-        }
-        return shapes;
-    }
-
-    private java.util.List<Decorator> getShipsOnMap() {
-        java.util.List<Decorator> ships = Lists.newArrayList();
-
-        GamePiece[] pieces = getMap().getAllPieces();
-        for (GamePiece piece : pieces) {
-            if (piece.getState().contains("Ship")) {
-                Point centerPos = piece.getPosition();
-                boolean isLarge = isLargeShip((Decorator)Decorator.getInnermost(piece));
-                Rectangle rect;
-                if(isLarge) rect = new Rectangle(226,226);
-                else rect = new Rectangle(113,113);
-
-                //ships.add(rect);
-            }
-        }
-        return ships;
     }
 
     /**

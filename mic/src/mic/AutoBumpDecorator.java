@@ -641,7 +641,7 @@ return innerCommand;
 
             if (piece.getState().contains("Ship")) {
                 bumpables.add(new BumpableWithShape((Decorator)piece, getBumpableCompareShape((Decorator)piece), "Ship",
-                        piece.getProperty("Pilot Name").toString(), piece.getProperty("Craft ID #").toString()));
+                        piece.getProperty("Pilot Name").toString(), piece.getProperty("Craft ID #").toString(),(Shape)null));
             } else if (pieceTabOrigin.contains("Asteroid")) {
                 // comment out this line and the next three that add to bumpables if bumps other than with ships shouldn't be detected yet
                 String testFlipString = "";
@@ -793,7 +793,7 @@ return innerCommand;
         double angle;
     }
 
-    public class BumpableWithShape {
+  /*  public class BumpableWithShape {
         Shape shape;
         Decorator bumpable;
         String type;
@@ -812,5 +812,5 @@ return innerCommand;
             this.pilotName = pilotName;
             this.shipName = shipName;
         }
-    }
+    }*/
 }
