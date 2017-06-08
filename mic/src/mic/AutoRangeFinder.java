@@ -18,6 +18,7 @@ import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Area;
+import java.awt.geom.RectangularShape;
 import java.util.*;
 import java.util.List;
 
@@ -78,6 +79,9 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
 
 
             List<Shape> otherShips = getOtherShipShapes();
+            for(Shape ship: otherShips) {
+
+            }
             logToChat("There are " + Integer.toString(otherShips.size()) + " ships present around");
         }
 
@@ -185,7 +189,13 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
         GamePiece[] pieces = getMap().getAllPieces();
         for (GamePiece piece : pieces) {
             if (piece.getState().contains("Ship")) {
-                ships.add((Decorator) piece);
+                Point centerPos = piece.getPosition();
+                boolean isLarge = isLargeShip((Decorator)Decorator.getInnermost(piece));
+                Rectangle rect;
+                if(isLarge) rect = new Rectangle(226,226);
+                else rect = new Rectangle(113,113);
+
+                //ships.add(rect);
             }
         }
         return ships;
