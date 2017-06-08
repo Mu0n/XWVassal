@@ -14,6 +14,8 @@ public class XWCounterFactory extends BasicCommandEncoder {
             piece = new AutoBumpDecorator(inner);
         } else if (type.startsWith(TemplateOverlapCheckDecorator.ID)) {
             piece = new TemplateOverlapCheckDecorator(inner);
+        } else if (type.startsWith(AutoRangeFinder.ID)) {
+            piece = new AutoRangeFinder(inner);
         } else {
             piece = super.createDecorator(type, inner);
         }

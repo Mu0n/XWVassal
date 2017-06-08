@@ -19,6 +19,7 @@ import java.awt.event.KeyEvent;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Area;
 import java.util.*;
+import java.util.List;
 
 import static mic.Util.logToChat;
 
@@ -71,6 +72,15 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
 
     public Command keyEvent(KeyStroke stroke) {
 
+
+        //Full Range Options CTRL-O
+        if (KeyStroke.getKeyStroke(KeyEvent.VK_O, KeyEvent.CTRL_DOWN_MASK,false).equals(stroke)) {
+
+
+            List<Shape> otherShips = getOtherShipShapes();
+            logToChat("There are " + Integer.toString(otherShips.size()) + " ships present around");
+        }
+
         //Firing Arc command activated CTRL-F
         if (KeyStroke.getKeyStroke(KeyEvent.VK_F, KeyEvent.CTRL_DOWN_MASK,false).equals(stroke)) {
            logToChat("FORWARD ARC CTRL-F has been activated");
@@ -94,114 +104,10 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
         if (KeyStroke.getKeyStroke(KeyEvent.VK_N, KeyEvent.CTRL_DOWN_MASK,false).equals(stroke)) {
             logToChat("180 DEGREES AUXILIARY ARC CTRL-N has been activated");
         }
-
-
-
-
         return piece.keyEvent(stroke);
     }
 
-    /**
-     * Iterate in reverse over path of last maneuver and return a command that
-     * will move the ship to a non-overlapping position and rotation
-     *
-     * @return
-     */
-    private Command resolveBump(java.util.List<Shape> otherShipShapes) {
-        if (this.lastManeuver == null || this.prevPosition == null) {
-            return null;
-        }
 
-        Shape rawShape = getRawShape(this);
-        final java.util.List<PathPart> parts = this.lastManeuver.getTransformedPathParts(
-                this.prevPosition.x,
-                this.prevPosition.y,
-                this.prevPosition.angle,
-                isLargeShip(this)
-        );
-
-        Shape lastBumpedShip = null;
-        for (int i = parts.size() - 1; i >= 0; i--) {
-            PathPart part = parts.get(i);
-            Shape movedShape = AffineTransform
-                    .getTranslateInstance(part.getX(), part.getY())
-                    .createTransformedShape(rawShape);
-            double roundedAngle = convertAngleToGameLimits(part.getAngle());
-            movedShape = AffineTransform
-                    .getRotateInstance(Math.toRadians(-roundedAngle), part.getX(), part.getY())
-                    .createTransformedShape(movedShape);
-
-            Shape bumpedShip = findCollidingShip(movedShape, otherShipShapes);
-            if (bumpedShip == null) {
-                return buildTranslateCommand(part);
-            }
-            lastBumpedShip = bumpedShip;
-        }
-
-        // Could not find a position that wasn't bumping, bring it back to where it was before
-        return buildTranslateCommand(new PathPart(this.prevPosition.x, this.prevPosition.y, this.prevPosition.angle));
-    }
-
-    /**
-     * Builds vassal command to transform the current ship to the given PathPart
-     *
-     * @param part
-     * @return
-     */
-    private Command buildTranslateCommand(PathPart part) {
-        // Copypasta from VASSAL.counters.Pivot
-        ChangeTracker changeTracker = new ChangeTracker(this);
-        getRotator().setAngle(part.getAngle());
-        setProperty("Moved", Boolean.TRUE);
-        Command result = changeTracker.getChangeCommand();
-
-        GamePiece outermost = Decorator.getOutermost(this);
-        MoveTracker moveTracker = new MoveTracker(outermost);
-        Point point = new Point((int) Math.floor(part.getX() + 0.5), (int) Math.floor(part.getY() + 0.5));
-        // ^^ There be dragons here ^^ - vassals gives positions as doubles but only lets them be set as ints :(
-        this.getMap().placeOrMerge(outermost, point);
-        result = result.append(moveTracker.getMoveCommand());
-        MovementReporter reporter = new MovementReporter(result);
-
-        Command reportCommand = reporter.getReportCommand();
-        if (reportCommand != null) {
-            reportCommand.execute();
-            result = result.append(reportCommand);
-        }
-
-        result = result.append(reporter.markMovedPieces());
-
-        return result;
-    }
-
-    /**
-     * Returns the comparision shape of the first ship colliding with the provided ship.  Returns null if there
-     * are no collisions
-     *
-     * @param myTestShape
-     * @return
-     */
-    private Shape findCollidingShip(Shape myTestShape, java.util.List<Shape> otherShapes) {
-        for (Shape otherShipShape : otherShapes) {
-            if (shapesOverlap(myTestShape, otherShipShape)) {
-                return otherShipShape;
-            }
-        }
-        return null;
-    }
-
-    /**
-     * Returns true if the two provided shapes areas have any intersection
-     *
-     * @param shape1
-     * @param shape2
-     * @return
-     */
-    private boolean shapesOverlap(Shape shape1, Shape shape2) {
-        Area a1 = new Area(shape1);
-        a1.intersect(new Area(shape2));
-        return !a1.isEmpty();
-    }
 
     public void draw(Graphics graphics, int i, int i1, Component component, double v) {
         this.piece.draw(graphics, i, i1, component, v);
@@ -225,7 +131,7 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
     }
 
     public String getDescription() {
-        return "Custom auto-bump resolution (mic.AutoBumpDecorator)";
+        return "Custom auto-range finder (mic.AutoRangeFinder)";
     }
 
     public void mySetType(String s) {

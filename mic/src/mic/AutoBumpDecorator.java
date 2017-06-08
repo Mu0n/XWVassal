@@ -644,11 +644,19 @@ return innerCommand;
                         piece.getProperty("Pilot Name").toString(), piece.getProperty("Craft ID #").toString()));
             } else if (pieceTabOrigin.contains("Asteroid")) {
                 // comment out this line and the next three that add to bumpables if bumps other than with ships shouldn't be detected yet
-                if("2".equals(((Decorator) piece).getDecorator(piece,piece.getClass()).getProperty("whichShape").toString()))
+                String testFlipString = "";
+                try{
+                    testFlipString = ((Decorator) piece).getDecorator(piece,piece.getClass()).getProperty("whichShape").toString();
+                } catch (Exception e) {}
+                if("2".equals(testFlipString))
                     bumpables.add(new BumpableWithShape((Decorator)piece, getBumpableCompareShapeButFlip((Decorator)piece), "Asteroid"));
                 else bumpables.add(new BumpableWithShape((Decorator)piece, getBumpableCompareShape((Decorator)piece), "Asteroid"));
             } else if (pieceTabOrigin.contains("Debris")) {
-                if("2".equals(((Decorator) piece).getDecorator(piece,piece.getClass()).getProperty("whichShape").toString()))
+                String testFlipString = "";
+                try{
+                    testFlipString = ((Decorator) piece).getDecorator(piece,piece.getClass()).getProperty("whichShape").toString();
+                } catch (Exception e) {}
+                if("2".equals(testFlipString))
                     bumpables.add(new BumpableWithShape((Decorator)piece, getBumpableCompareShapeButFlip((Decorator)piece),"Debris"));
                 else bumpables.add(new BumpableWithShape((Decorator)piece, getBumpableCompareShape((Decorator)piece), "Debris"));
             } else if (pieceTabOrigin.contains("Bomb")) {
