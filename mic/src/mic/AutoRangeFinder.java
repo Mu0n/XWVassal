@@ -81,26 +81,21 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
 
         //Firing Arc command activated CTRL-F
         if (KeyStroke.getKeyStroke(KeyEvent.VK_F, KeyEvent.CTRL_DOWN_MASK,false).equals(stroke)) {
-           logToChat("FORWARD ARC CTRL-F has been activated");
         }
 
         //Auxiliary firing Arc command activated CTRL-V
         if (KeyStroke.getKeyStroke(KeyEvent.VK_V, KeyEvent.CTRL_DOWN_MASK,false).equals(stroke)) {
-            logToChat("BACKWARD AUXILIARY ARC CTRL-V has been activated");
         }
 
         //Left mobile firing Arc command activated CTRL-Shift-V
         if (KeyStroke.getKeyStroke(KeyEvent.VK_V, KeyEvent.CTRL_DOWN_MASK & KeyEvent.SHIFT_DOWN_MASK,false).equals(stroke)) {
-            logToChat("LEFT MOBILE ARC CTRL-SHIFT-V has been activated");
         }
 
         //Right mobile firing Arc command activated ALT-Shift-V
         if (KeyStroke.getKeyStroke(KeyEvent.VK_V, KeyEvent.SHIFT_DOWN_MASK & KeyEvent.ALT_DOWN_MASK,false).equals(stroke)) {
-            logToChat("RIGHT MOBILE ARC ALT-SHIFT-F has been activated");
         }
         //180 Auxiliary firing Arc command activated CTRL-N
         if (KeyStroke.getKeyStroke(KeyEvent.VK_N, KeyEvent.CTRL_DOWN_MASK,false).equals(stroke)) {
-            logToChat("180 DEGREES AUXILIARY ARC CTRL-N has been activated");
         }
         return piece.keyEvent(stroke);
     }
