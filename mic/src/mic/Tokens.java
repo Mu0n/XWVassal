@@ -38,7 +38,11 @@ public enum Tokens {
     crit,
     ion,
     energy,
-    reinforce,
+    reinforce(
+            Lists.<String>newArrayList("Reinforce"),
+            none,
+            none
+    ),
     cloak(
             Lists.newArrayList("Cloak"),
             Lists.newArrayList("cloakingdevice"),
