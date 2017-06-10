@@ -182,7 +182,7 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
                     }
 */
 
-                boolean isCollisionOccuring = findCollidingEntity(getBumpableCompareShape(this), otherShipShapes) != null ? true : false;
+                boolean isCollisionOccuring = findCollidingEntity(BumpableWithShape.getBumpableCompareShape(this), otherShipShapes) != null ? true : false;
                 //backtracking requested with a detected bumpable overlap, deal with it
                 if (isCollisionOccuring) {
                     Command innerCommand = piece.keyEvent(stroke);
@@ -334,7 +334,7 @@ return innerCommand;
         {
             logToChat("Board name isn't formatted right, change to #'x#' Description");
         }
-        Shape theShape = getBumpableCompareShape(this);
+        Shape theShape = BumpableWithShape.getBumpableCompareShape(this);
 
         if(theShape.getBounds().getMaxX() > mapArea.getBounds().getMaxX()  || // too far to the right
                 theShape.getBounds().getMaxY() > mapArea.getBounds().getMaxY() || // too far to the bottom
@@ -349,7 +349,7 @@ return innerCommand;
     }
 
     private void announceBumpAndPaint(List<BumpableWithShape> otherBumpableShapes) {
-        Shape theShape = getBumpableCompareShape(this);
+        Shape theShape = BumpableWithShape.getBumpableCompareShape(this);
 
         List<BumpableWithShape> collidingEntities = findCollidingEntities(theShape, otherBumpableShapes);
 
@@ -409,7 +409,7 @@ return innerCommand;
         if (this.lastManeuver == null || this.prevPosition == null) {
             return null;
         }
-        Shape rawShape = getRawShape(this);
+        Shape rawShape = BumpableWithShape.getRawShape(this);
         final List<PathPart> parts = this.lastManeuver.getTransformedPathParts(
                 this.prevPosition.x,
                 this.prevPosition.y,
@@ -626,7 +626,8 @@ return innerCommand;
         GamePiece[] pieces = getMap().getAllPieces();
         for (GamePiece piece : pieces) {
             if (piece.getState().contains("Ship")) {
-                ships.add(new BumpableWithShape((Decorator)piece, getBumpableCompareShape((Decorator)piece), "Ship"));
+                ships.add(new BumpableWithShape((Decorator)piece, "Ship",
+                        piece.getProperty("Pilot Name").toString(), piece.getProperty("Craft ID #").toString()));
             }
         }
         return ships;
@@ -640,27 +641,23 @@ return innerCommand;
             String pieceTabOrigin = piece.getState().substring(0,10);
 
             if (piece.getState().contains("Ship")) {
-                bumpables.add(new BumpableWithShape((Decorator)piece, getBumpableCompareShape((Decorator)piece), "Ship",
-                        piece.getProperty("Pilot Name").toString(), piece.getProperty("Craft ID #").toString(),(Shape)null));
+                bumpables.add(new BumpableWithShape((Decorator)piece,"Ship",
+                        piece.getProperty("Pilot Name").toString(), piece.getProperty("Craft ID #").toString()));
             } else if (pieceTabOrigin.contains("Asteroid")) {
                 // comment out this line and the next three that add to bumpables if bumps other than with ships shouldn't be detected yet
                 String testFlipString = "";
                 try{
                     testFlipString = ((Decorator) piece).getDecorator(piece,piece.getClass()).getProperty("whichShape").toString();
                 } catch (Exception e) {}
-                if("2".equals(testFlipString))
-                    bumpables.add(new BumpableWithShape((Decorator)piece, getBumpableCompareShapeButFlip((Decorator)piece), "Asteroid"));
-                else bumpables.add(new BumpableWithShape((Decorator)piece, getBumpableCompareShape((Decorator)piece), "Asteroid"));
+                bumpables.add(new BumpableWithShape((Decorator)piece, "Asteroid", "2".equals(testFlipString)));
             } else if (pieceTabOrigin.contains("Debris")) {
                 String testFlipString = "";
                 try{
                     testFlipString = ((Decorator) piece).getDecorator(piece,piece.getClass()).getProperty("whichShape").toString();
                 } catch (Exception e) {}
-                if("2".equals(testFlipString))
-                    bumpables.add(new BumpableWithShape((Decorator)piece, getBumpableCompareShapeButFlip((Decorator)piece),"Debris"));
-                else bumpables.add(new BumpableWithShape((Decorator)piece, getBumpableCompareShape((Decorator)piece), "Debris"));
+                bumpables.add(new BumpableWithShape((Decorator)piece,"Debris","2".equals(testFlipString)));
             } else if (pieceTabOrigin.contains("Bomb")) {
-                bumpables.add(new BumpableWithShape((Decorator)piece, getBumpableCompareShape((Decorator)piece), "Mine"));
+                bumpables.add(new BumpableWithShape((Decorator)piece, "Mine", false));
             }
         }
         return bumpables;
@@ -681,7 +678,7 @@ return innerCommand;
 
 
     private boolean isLargeShip(Decorator ship) {
-        return getRawShape(ship).getBounds().getWidth() > 114;
+        return BumpableWithShape.getRawShape(ship).getBounds().getWidth() > 114;
     }
 
     private static class CollisionVisualization implements Drawable {

@@ -23,9 +23,9 @@ public class BumpableWithShape {
         this.shape = wantFlip ? getBumpableCompareShapeButFlip(bumpable) : getBumpableCompareShape(bumpable);
         this.type = type;
     }
-    BumpableWithShape(Decorator bumpable, String type, String pilotName, String shipName, boolean wantFlip) {
+    BumpableWithShape(Decorator bumpable, String type, String pilotName, String shipName) {
         this.bumpable = bumpable;
-        this.shape = wantFlip ? getBumpableCompareShapeButFlip(bumpable) : getBumpableCompareShape(bumpable);
+        this.shape = getBumpableCompareShape(bumpable);
         this.rectWithNoNubs = getRectWithNoNubs();
         this.type = type;
         this.pilotName = pilotName;
@@ -70,7 +70,7 @@ else if(rawShape.getBounds().height < 570){
      * @param bumpable
      * @return
      */
-    private Shape getRawShape(Decorator bumpable) {
+    public static Shape getRawShape(Decorator bumpable) {
         return Decorator.getDecorator(Decorator.getOutermost(bumpable), NonRectangular.class).getShape();
     }
 
@@ -81,7 +81,7 @@ else if(rawShape.getBounds().height < 570){
      * @param bumpable
      * @return Translated ship mask
      */
-    private Shape getBumpableCompareShape(Decorator bumpable) {
+    public static Shape getBumpableCompareShape(Decorator bumpable) {
         Shape rawShape = getRawShape(bumpable);
         Shape transformed = AffineTransform
                 .getTranslateInstance(bumpable.getPosition().getX(), bumpable.getPosition().getY())
@@ -96,7 +96,7 @@ else if(rawShape.getBounds().height < 570){
 
         return transformed;
     }
-    private Shape getBumpableCompareShapeButFlip(Decorator bumpable) {
+    public static Shape getBumpableCompareShapeButFlip(Decorator bumpable) {
         Shape rawShape = getRawShape(bumpable);
         Shape transformed = AffineTransform.getScaleInstance(-1, 1).createTransformedShape(rawShape);
         transformed = AffineTransform
