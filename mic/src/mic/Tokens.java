@@ -43,6 +43,11 @@ public enum Tokens {
             none,
             none
     ),
+    illicit(
+            none,
+            Lists.newArrayList("jabbathehutt"),
+            none
+            ),
     cloak(
             Lists.newArrayList("Cloak"),
             Lists.newArrayList("cloakingdevice"),
