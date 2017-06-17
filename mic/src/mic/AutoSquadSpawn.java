@@ -198,7 +198,7 @@ public class AutoSquadSpawn extends AbstractConfigurable {
                 return null;
             }
             XWSList xwsList = loadRemoteJson(translatedURL, XWSList.class);
-            xwsList.setXwsSource(translatedURL.toString());
+            xwsList.setXwsSource(userInput);
             return xwsList;
 
         } catch (Exception e) {

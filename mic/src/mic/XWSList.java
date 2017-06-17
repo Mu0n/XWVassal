@@ -1,5 +1,6 @@
 package mic;
 
+import java.net.URL;
 import java.util.List;
 import java.util.Map;
 
@@ -40,7 +41,6 @@ public class XWSList {
 
     @JsonIgnore
     private String xwsSource;
-
 
     public String getName() {
         return name;
