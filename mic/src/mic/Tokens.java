@@ -22,8 +22,8 @@ public enum Tokens {
     ),
     stress(
             none,
-            Lists.newArrayList("zuckuss", "r3a2","elusiveness","overclockedr4"),
-            Lists.newArrayList("awing/tychocelchu")
+            Lists.newArrayList("zuckuss", "r3a2","elusiveness","overclockedr4","pushthelimit"),
+            Lists.newArrayList("awing/tychocelchu","tiefofighter/zetaleader")
     ),
     focus(
             Lists.newArrayList("Focus"),
@@ -36,12 +36,21 @@ public enum Tokens {
             Lists.newArrayList("t70xwing/redace")
     ),
     crit,
-    ion,
+    ion(
+            none,
+            Lists.newArrayList("pulsedrayshield","leebo","feedbackarray"),
+            none
+    ),
     energy,
     reinforce(
             Lists.<String>newArrayList("Reinforce"),
             none,
             none
+    ),
+    ps12(
+            none,
+            none,
+            Lists.newArrayList("hwk290/roarkgarnet", "tiefofighter/epsilonace")
     ),
     illicit(
             none,
