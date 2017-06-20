@@ -35,7 +35,7 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
     private ShipPositionState prevPosition = null;
     private ManeuverPaths lastManeuver = null;
     private FreeRotator myRotator = null;
-    private CollisionVisualization collisionVisualization = null;
+    private FOVisualization fov = null;
 
 
     public AutoRangeFinder() {
@@ -45,6 +45,7 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
     public AutoRangeFinder(GamePiece piece) {
         setInner(piece);
         this.testRotator = new FreeRotator("rotate;360;;;;;;;", null);
+        fov = new FOVisualization();
     }
 
     @Override
@@ -72,32 +73,29 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
     }
 
     public Command keyEvent(KeyStroke stroke) {
+        if(this.fov == null) {
+            this.fov = new FOVisualization();
+        }
 
-
+        if (this.fov != null && this.fov.getCount() > 0) {
+            getMap().removeDrawComponent(this.fov);
+            this.fov.shapes.clear();
+        }
         //Full Range Options CTRL-O
         if (KeyStroke.getKeyStroke(KeyEvent.VK_O, KeyEvent.CTRL_DOWN_MASK,false).equals(stroke)) {
+            logToChat("starting firing options");
+            List<BumpableWithShape> BWS = getShipsOnMap();
+            for(BumpableWithShape b: BWS){
+                fov.add(b.shape);
 
+                logToChat("ship #" + Integer.toString(fov.shapes.size()) + " detected of size "
+                        + Double.toString(b.shape.getBounds().getWidth()) + " by "
+                        + Double.toString(b.shape.getBounds().getHeight()));
+                fov.draw(getMap().getView().getGraphics(),getMap());
+            }
+            return null;
         }
-
-        //Firing Arc command activated CTRL-F
-        if (KeyStroke.getKeyStroke(KeyEvent.VK_F, KeyEvent.CTRL_DOWN_MASK,false).equals(stroke)) {
-        }
-
-        //Auxiliary firing Arc command activated CTRL-V
-        if (KeyStroke.getKeyStroke(KeyEvent.VK_V, KeyEvent.CTRL_DOWN_MASK,false).equals(stroke)) {
-        }
-
-        //Left mobile firing Arc command activated CTRL-Shift-V
-        if (KeyStroke.getKeyStroke(KeyEvent.VK_V, KeyEvent.CTRL_DOWN_MASK & KeyEvent.SHIFT_DOWN_MASK,false).equals(stroke)) {
-        }
-
-        //Right mobile firing Arc command activated ALT-Shift-V
-        if (KeyStroke.getKeyStroke(KeyEvent.VK_V, KeyEvent.SHIFT_DOWN_MASK & KeyEvent.ALT_DOWN_MASK,false).equals(stroke)) {
-        }
-        //180 Auxiliary firing Arc command activated CTRL-N
-        if (KeyStroke.getKeyStroke(KeyEvent.VK_N, KeyEvent.CTRL_DOWN_MASK,false).equals(stroke)) {
-        }
-        return piece.keyEvent(stroke);
+        else return piece.keyEvent(stroke);
     }
 
 
@@ -191,14 +189,13 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
      * @param ship
      * @return Translated ship mask
      */
-    private Shape getShipCompareShape(Decorator ship) {
+    private Shape getShipRect(Decorator ship) {
         Shape rawShape = getRawShape(ship);
-        double scaleFactor = isLargeShip(ship) ? 1.01d : 1.025d;
-        Shape transformed = AffineTransform.getScaleInstance(scaleFactor, scaleFactor).createTransformedShape(rawShape);
 
-        transformed = AffineTransform
+
+        Shape transformed = AffineTransform
                 .getTranslateInstance(ship.getPosition().getX(), ship.getPosition().getY())
-                .createTransformedShape(transformed);
+                .createTransformedShape(rawShape);
 
         FreeRotator rotator = (FreeRotator) (Decorator.getDecorator(Decorator.getOutermost(ship), FreeRotator.class));
         double centerX = ship.getPosition().getX();
@@ -210,28 +207,53 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
         return transformed;
     }
 
-    private boolean isLargeShip(Decorator ship) {
-        return getRawShape(ship).getBounds().getWidth() > 114;
+    private List<BumpableWithShape> getShipsOnMap() {
+        List<BumpableWithShape> ships = Lists.newArrayList();
+
+        GamePiece[] pieces = getMap().getAllPieces();
+        for (GamePiece piece : pieces) {
+            if (piece.getState().contains("Ship")) {
+                ships.add(new BumpableWithShape((Decorator)piece, "Ship",
+                        piece.getProperty("Pilot Name").toString(), piece.getProperty("Craft ID #").toString()));
+            }
+        }
+        return ships;
     }
 
-    private static class CollisionVisualization implements Drawable {
+    private static class FOVisualization implements Drawable {
 
-        private final Shape ship1;
-        private final Shape ship2;
+        private final List<Shape> shapes;
 
-        CollisionVisualization(Shape ship1, Shape ship2) {
-            this.ship1 = ship1;
-            this.ship2 = ship2;
+        Color myO = new Color(0,50,255, 150);
+
+        FOVisualization() {
+            this.shapes = new ArrayList<Shape>();
+        }
+        FOVisualization(Shape ship) {
+            this.shapes = new ArrayList<Shape>();
+            this.shapes.add(ship);
         }
 
+        public void add(Shape bumpable) {
+            this.shapes.add(bumpable);
+        }
+
+        public int getCount() {
+            int count = 0;
+            Iterator<Shape> it = this.shapes.iterator();
+            while(it.hasNext()) {
+                count++;
+                it.next();
+            }
+            return count;
+        }
         public void draw(Graphics graphics, VASSAL.build.module.Map map) {
             Graphics2D graphics2D = (Graphics2D) graphics;
-            graphics2D.setColor(Color.orange);
+            graphics2D.setColor(myO);
 
             AffineTransform scaler = AffineTransform.getScaleInstance(map.getZoom(), map.getZoom());
-            graphics2D.fill(scaler.createTransformedShape(ship1));
-            if (ship2 != null) {
-                graphics2D.fill(scaler.createTransformedShape(ship2));
+            for (Shape shape : shapes) {
+                graphics2D.fill(scaler.createTransformedShape(shape));
             }
         }
 
