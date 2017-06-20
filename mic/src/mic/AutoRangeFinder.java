@@ -77,10 +77,6 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
             this.fov = new FOVisualization();
         }
 
-        if (this.fov != null && this.fov.getCount() > 0) {
-            getMap().removeDrawComponent(this.fov);
-            this.fov.shapes.clear();
-        }
         //Full Range Options CTRL-O
         if (KeyStroke.getKeyStroke(KeyEvent.VK_O, KeyEvent.CTRL_DOWN_MASK,false).equals(stroke)) {
             logToChat("starting firing options");
@@ -91,11 +87,15 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
                 logToChat("ship #" + Integer.toString(fov.shapes.size()) + " detected of size "
                         + Double.toString(b.shape.getBounds().getWidth()) + " by "
                         + Double.toString(b.shape.getBounds().getHeight()));
-                fov.draw(getMap().getView().getGraphics(),getMap());
             }
-            return null;
+            stroke = null;
         }
-        else return piece.keyEvent(stroke);
+        else if (this.fov != null && this.fov.getCount() > 0) {
+            getMap().removeDrawComponent(this.fov);
+            this.fov.shapes.clear();
+        }
+        fov.draw(getMap().getView().getGraphics(),getMap());
+        return piece.keyEvent(stroke);
     }
 
 
