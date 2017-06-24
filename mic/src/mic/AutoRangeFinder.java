@@ -36,7 +36,10 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
     private ManeuverPaths lastManeuver = null;
     private FreeRotator myRotator = null;
     private FOVisualization fov = null;
-
+    private boolean hasBeenReleased = false;
+    private static Map<String, ManeuverPaths> keyStrokeToManeuver = ImmutableMap.<String, ManeuverPaths>builder()
+            .put("CTRL O", ManeuverPaths.Str1)
+            .build();
 
     public AutoRangeFinder() {
         this(null);
@@ -68,17 +71,15 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
         return null;
     }
 
-    private boolean isAutobumpTrigger(KeyStroke stroke) {
-        return KeyStroke.getAWTKeyStroke(KeyEvent.VK_C, 0, false).equals(stroke);
-    }
 
     public Command keyEvent(KeyStroke stroke) {
-        if(this.fov == null) {
+        /*if(this.fov == null) {
             this.fov = new FOVisualization();
-        }
+        }*/
 
         //Full Range Options CTRL-O
-        if (KeyStroke.getKeyStroke(KeyEvent.VK_O, KeyEvent.CTRL_DOWN_MASK,false).equals(stroke)) {
+
+        if (KeyStroke.getKeyStroke(KeyEvent.VK_O, KeyEvent.CTRL_DOWN_MASK,false).equals(stroke) && stroke.getKeyEventType() == KeyEvent.KEY_PRESSED) {
             logToChat("starting firing options");
             List<BumpableWithShape> BWS = getShipsOnMap();
             for(BumpableWithShape b: BWS){
@@ -88,13 +89,16 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
                         + Double.toString(b.shape.getBounds().getWidth()) + " by "
                         + Double.toString(b.shape.getBounds().getHeight()));
             }
-            stroke = null;
+            fov.draw(getMap().getView().getGraphics(),getMap());
         }
-        else if (this.fov != null && this.fov.getCount() > 0) {
+        else if(KeyStroke.getKeyStroke(KeyEvent.VK_O, KeyEvent.CTRL_DOWN_MASK,false).equals(stroke) && stroke.getKeyEventType() == KeyEvent.KEY_RELEASED) hasBeenReleased = true;
+        else if (this.fov != null && this.fov.getCount() > 0 && hasBeenReleased) {
+            /*logToChat("clear trigger");
             getMap().removeDrawComponent(this.fov);
-            this.fov.shapes.clear();
+            this.fov.shapes.clear();*/
+            hasBeenReleased = false;
         }
-        fov.draw(getMap().getView().getGraphics(),getMap());
+        logToChat("key hit: "+ stroke.toString());
         return piece.keyEvent(stroke);
     }
 
@@ -131,80 +135,6 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
 
     public HelpFile getHelpFile() {
         return null;
-    }
-
-    /**
-     * Returns FreeRotator decorator associated with this instance
-     *
-     * @return
-     */
-    private FreeRotator getRotator() {
-        if (this.myRotator == null) {
-            this.myRotator = ((FreeRotator) Decorator.getDecorator(getOutermost(this), FreeRotator.class));
-        }
-        return this.myRotator;
-    }
-
-    /**
-     * Returns a new ShipPositionState based on the current position and angle of this ship
-     *
-     * @return
-     */
-    private ShipPositionState getCurrentState() {
-        ShipPositionState shipState = new ShipPositionState();
-        shipState.x = getPosition().getX();
-        shipState.y = getPosition().getY();
-        shipState.angle = getRotator().getAngle();
-        return shipState;
-    }
-
-    /**
-     * Uses a FreeRotator unassociated with any game pieces with a 360 rotation limit
-     * to convert the provided angle to the same angle the ship would be drawn at
-     * by vassal
-     *
-     * @param angle
-     * @return
-     */
-    private double convertAngleToGameLimits(double angle) {
-        this.testRotator.setAngle(angle);
-        return this.testRotator.getAngle();
-    }
-
-    /**
-     * Finds non-rectangular mask layer of provided ship.  This is the shape with only the base
-     * and nubs
-     *
-     * @param ship
-     * @return
-     */
-    private Shape getRawShape(Decorator ship) {
-        return Decorator.getDecorator(Decorator.getOutermost(ship), NonRectangular.class).getShape();
-    }
-
-    /**
-     * Finds raw ship mask and translates and rotates it to the current position and heading
-     * of the ship
-     *
-     * @param ship
-     * @return Translated ship mask
-     */
-    private Shape getShipRect(Decorator ship) {
-        Shape rawShape = getRawShape(ship);
-
-
-        Shape transformed = AffineTransform
-                .getTranslateInstance(ship.getPosition().getX(), ship.getPosition().getY())
-                .createTransformedShape(rawShape);
-
-        FreeRotator rotator = (FreeRotator) (Decorator.getDecorator(Decorator.getOutermost(ship), FreeRotator.class));
-        double centerX = ship.getPosition().getX();
-        double centerY = ship.getPosition().getY();
-        transformed = AffineTransform
-                .getRotateInstance(rotator.getAngleInRadians(), centerX, centerY)
-                .createTransformedShape(transformed);
-
-        return transformed;
     }
 
     private List<BumpableWithShape> getShipsOnMap() {
