@@ -63,12 +63,33 @@ public class DialStack  extends Decorator implements EditablePiece {
 
         if (KeyStroke.getKeyStroke(KeyEvent.VK_R, KeyEvent.CTRL_DOWN_MASK,false).equals(stroke)) {
             logToChat("revealing dial");
-            List<BumpableWithShape> BWS = getDialsOnMap();
+            List<BumpableWithShape> BWS = getOtherDials();
+            int count=0;
             for(BumpableWithShape b: BWS){
-                if(shapesOverlap(this.getShape(),b.shape)) logToChat("2 dials are overlapping");
+                logToChat("this shape " + Double.toString(getBumpableCompareShape(this).getBounds().getWidth()));
+                logToChat("bws " + Double.toString(b.shape.getBounds().getWidth()));
+                if(shapesOverlap(getBumpableCompareShape(this),b.shape)) logToChat("2 dials are overlapping");
+                count++;
             }
+            logToChat(Integer.toString(count) + " dials are counted.");
         }
         return piece.keyEvent(stroke);
+    }
+
+    public static Shape getBumpableCompareShape(Decorator bumpable) {
+        Shape rawShape = BumpableWithShape.getRawShape(bumpable);
+        Shape transformed = AffineTransform
+                .getTranslateInstance(bumpable.getPosition().getX(), bumpable.getPosition().getY())
+                .createTransformedShape(rawShape);
+
+        FreeRotator rotator = (FreeRotator) (Decorator.getDecorator(Decorator.getOutermost(bumpable), FreeRotator.class));
+        double centerX = bumpable.getPosition().getX();
+        double centerY = bumpable.getPosition().getY();
+        transformed = AffineTransform
+                .getRotateInstance(rotator.getAngleInRadians(), centerX, centerY)
+                .createTransformedShape(transformed);
+
+        return transformed;
     }
 
 
@@ -123,11 +144,23 @@ public class DialStack  extends Decorator implements EditablePiece {
 
         GamePiece[] pieces = getMap().getAllPieces();
         for (GamePiece piece : pieces) {
-            if (piece.getState().contains("Dial")) {
+            if (piece.getState().contains("Dials")) {
                 ships.add(new BumpableWithShape((Decorator)piece, "Dial",
                         piece.getProperty("Pilot Name").toString(), piece.getProperty("Craft ID #").toString()));
             }
         }
         return ships;
     }
+
+    private List<BumpableWithShape> getOtherDials() {
+        List<BumpableWithShape> bumpables = Lists.newLinkedList();
+        for (BumpableWithShape bumpable : getDialsOnMap()) {
+            if (getId().equals(bumpable.bumpable.getId())) {
+                continue;
+            }
+            bumpables.add(bumpable);
+        }
+        return bumpables;
+    }
+
     }
