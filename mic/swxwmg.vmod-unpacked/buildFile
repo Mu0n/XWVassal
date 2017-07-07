@@ -1883,7 +1883,7 @@
     </VASSAL.build.module.PlayerHand>
     <VASSAL.build.module.PlayerHand allowMultiple="false" backgroundcolor="153,153,153" buttonName="" changeFormat="" color="204,0,0" createFormat="" edgeHeight="0" edgeWidth="0" hotkey="" icon="P1.png" launch="true" mapName="Player 1" markMoved="Never" markUnmovedIcon="/images/unmoved.gif" markUnmovedText="" markUnmovedTooltip="Mark all pieces on this map as not moved" moveKey="" moveToFormat="" moveWithinFormat="" side="Player 1,Solitaire" thickness="1" visible="true">
         <VASSAL.build.module.map.BoardPicker addColumnText="Add column" addRowText="Add row" boardPrompt="Select board" slotHeight="350" slotScale="0.2" slotWidth="350" title="Choose Boards">
-            <VASSAL.build.module.map.boardPicker.Board image="observer_hand_background.jpg" name="Player 1" reversible="false"/>
+            <VASSAL.build.module.map.boardPicker.Board image="observer_hand_background.png" name="Player 1" reversible="false"/>
         </VASSAL.build.module.map.BoardPicker>
         <VASSAL.build.module.map.HandMetrics bottom="40,0" disabled="true" down="37,0" exSepX="4" exSepY="0" top="38,0" unexSepX="1" unexSepY="0" up="39,0"/>
         <VASSAL.build.module.map.ForwardToKeyBuffer/>
@@ -1929,9 +1929,9 @@
             <VASSAL.build.widget.PieceSlot entryName="A3cnt" gpid="3471" height="0" width="0">+/null/restrict;;false;true	label;;Change Label;28;;0,0,0;t;0;c;0;b;c;$pieceName$ ($label$);Dialog;1;0;TextLabel;\	piece;;;;A3cnt/	$P1 Huge Ship 3 Aft Deck Tray_numPieces$ \/ 10\	null;0;0;3471</VASSAL.build.widget.PieceSlot>
         </VASSAL.build.module.map.SetupStack>
     </VASSAL.build.module.PlayerHand>
-    <VASSAL.build.module.PlayerHand allowMultiple="false" backgroundcolor="255,255,255" buttonName="" changeFormat="" color="204,0,0" createFormat="" edgeHeight="0" edgeWidth="0" hotkey="" icon="P2.png" launch="true" mapName="Player 2" markMoved="Never" markUnmovedIcon="/images/unmoved.gif" markUnmovedText="" markUnmovedTooltip="Mark all pieces on this map as not moved" moveKey="" moveToFormat="" moveWithinFormat="" side="Solitaire,Player 2" thickness="1" visible="true">
+    <VASSAL.build.module.PlayerHand allowMultiple="false" backgroundcolor="153,153,153" buttonName="" changeFormat="" color="204,0,0" createFormat="" edgeHeight="0" edgeWidth="0" hotkey="" icon="P2.png" launch="true" mapName="Player 2" markMoved="Never" markUnmovedIcon="/images/unmoved.gif" markUnmovedText="" markUnmovedTooltip="Mark all pieces on this map as not moved" moveKey="" moveToFormat="" moveWithinFormat="" side="Solitaire,Player 2" thickness="1" visible="true">
         <VASSAL.build.module.map.BoardPicker addColumnText="Add column" addRowText="Add row" boardPrompt="Select board" slotHeight="350" slotScale="0.2" slotWidth="350" title="Choose Boards">
-            <VASSAL.build.module.map.boardPicker.Board image="observer_hand_background.jpg" name="Player 2" reversible="false"/>
+            <VASSAL.build.module.map.boardPicker.Board image="observer_hand_background.png" name="Player 2" reversible="false"/>
         </VASSAL.build.module.map.BoardPicker>
         <VASSAL.build.module.map.HandMetrics bottom="40,0" disabled="true" down="37,0" exSepX="12" exSepY="0" top="38,0" unexSepX="12" unexSepY="0" up="39,0"/>
         <VASSAL.build.module.map.ForwardToKeyBuffer/>
@@ -1978,9 +1978,9 @@
             <VASSAL.build.widget.PieceSlot entryName="" gpid="3479" height="0" width="0">+/null/restrict;;false;true	label;;Change Label;28;;0,0,0;t;0;c;0;b;c;$pieceName$ ($label$);Dialog;1;0;TextLabel;\	piece;;;;/	$P2 Huge Ship 3 Aft Deck Tray_numPieces$ \/ 10\	null;0;0;3479</VASSAL.build.widget.PieceSlot>
         </VASSAL.build.module.map.SetupStack>
     </VASSAL.build.module.PlayerHand>
-    <VASSAL.build.module.PlayerHand allowMultiple="false" backgroundcolor="255,255,255" buttonName="" changeFormat="" color="204,0,0" createFormat="" edgeHeight="0" edgeWidth="0" hotkey="" icon="P3.png" launch="true" mapName="Player 3" markMoved="Never" markUnmovedIcon="/images/unmoved.gif" markUnmovedText="" markUnmovedTooltip="Mark all pieces on this map as not moved" moveKey="" moveToFormat="" moveWithinFormat="" side="Solitaire,Player 3" thickness="1" visible="true">
+    <VASSAL.build.module.PlayerHand allowMultiple="false" backgroundcolor="153,153,153" buttonName="" changeFormat="" color="204,0,0" createFormat="" edgeHeight="0" edgeWidth="0" hotkey="" icon="P3.png" launch="true" mapName="Player 3" markMoved="Never" markUnmovedIcon="/images/unmoved.gif" markUnmovedText="" markUnmovedTooltip="Mark all pieces on this map as not moved" moveKey="" moveToFormat="" moveWithinFormat="" side="Solitaire,Player 3" thickness="1" visible="true">
         <VASSAL.build.module.map.BoardPicker addColumnText="Add column" addRowText="Add row" boardPrompt="Select board" slotHeight="350" slotScale="0.2" slotWidth="350" title="Choose Boards">
-            <VASSAL.build.module.map.boardPicker.Board image="observer_hand_background.jpg" name="Player 3" reversible="false"/>
+            <VASSAL.build.module.map.boardPicker.Board image="observer_hand_background.png" name="Player 3" reversible="false"/>
         </VASSAL.build.module.map.BoardPicker>
         <VASSAL.build.module.map.HandMetrics bottom="40,0" disabled="true" down="37,0" exSepX="12" exSepY="0" top="38,0" unexSepX="12" unexSepY="0" up="39,0"/>
         <VASSAL.build.module.map.ForwardToKeyBuffer/>
@@ -2027,9 +2027,9 @@
             <VASSAL.build.widget.PieceSlot entryName="" gpid="3487" height="0" width="0">+/null/restrict;;false;true	label;;Change Label;28;;0,0,0;t;0;c;0;b;c;$pieceName$ ($label$);Dialog;1;0;TextLabel;\	piece;;;;/	$P3 Huge Ship 3 Aft Deck Tray_numPieces$ \/ 10\	null;0;0;3487</VASSAL.build.widget.PieceSlot>
         </VASSAL.build.module.map.SetupStack>
     </VASSAL.build.module.PlayerHand>
-    <VASSAL.build.module.PlayerHand allowMultiple="false" backgroundcolor="255,255,255" buttonName="" changeFormat="" color="204,0,0" createFormat="" edgeHeight="0" edgeWidth="0" hotkey="" icon="P4.png" launch="true" mapName="Player 4" markMoved="Never" markUnmovedIcon="/images/unmoved.gif" markUnmovedText="" markUnmovedTooltip="Mark all pieces on this map as not moved" moveKey="" moveToFormat="" moveWithinFormat="" side="Solitaire,Player 4" thickness="1" visible="true">
+    <VASSAL.build.module.PlayerHand allowMultiple="false" backgroundcolor="153,153,153" buttonName="" changeFormat="" color="204,0,0" createFormat="" edgeHeight="0" edgeWidth="0" hotkey="" icon="P4.png" launch="true" mapName="Player 4" markMoved="Never" markUnmovedIcon="/images/unmoved.gif" markUnmovedText="" markUnmovedTooltip="Mark all pieces on this map as not moved" moveKey="" moveToFormat="" moveWithinFormat="" side="Solitaire,Player 4" thickness="1" visible="true">
         <VASSAL.build.module.map.BoardPicker addColumnText="Add column" addRowText="Add row" boardPrompt="Select board" slotHeight="350" slotScale="0.2" slotWidth="350" title="Choose Boards">
-            <VASSAL.build.module.map.boardPicker.Board image="observer_hand_background.jpg" name="Player 4" reversible="false"/>
+            <VASSAL.build.module.map.boardPicker.Board image="observer_hand_background.png" name="Player 4" reversible="false"/>
         </VASSAL.build.module.map.BoardPicker>
         <VASSAL.build.module.map.HandMetrics bottom="40,0" disabled="true" down="37,0" exSepX="12" exSepY="0" top="38,0" unexSepX="12" unexSepY="0" up="39,0"/>
         <VASSAL.build.module.map.ForwardToKeyBuffer/>
@@ -2075,9 +2075,9 @@
             <VASSAL.build.widget.PieceSlot entryName="" gpid="3495" height="0" width="0">+/null/restrict;;false;true	label;;Change Label;28;;0,0,0;t;0;c;0;b;c;$pieceName$ ($label$);Dialog;1;0;TextLabel;\	piece;;;;/	$P4 Huge Ship 3 Aft Deck Tray_numPieces$ \/ 10\	null;0;0;3495</VASSAL.build.widget.PieceSlot>
         </VASSAL.build.module.map.SetupStack>
     </VASSAL.build.module.PlayerHand>
-    <VASSAL.build.module.PlayerHand allowMultiple="false" backgroundcolor="255,255,255" buttonName="" changeFormat="" color="204,0,0" createFormat="" edgeHeight="0" edgeWidth="0" hotkey="" icon="P5.png" launch="true" mapName="Player 5" markMoved="Never" markUnmovedIcon="/images/unmoved.gif" markUnmovedText="" markUnmovedTooltip="Mark all pieces on this map as not moved" moveKey="" moveToFormat="" moveWithinFormat="" side="Solitaire,Player 5" thickness="1" visible="true">
+    <VASSAL.build.module.PlayerHand allowMultiple="false" backgroundcolor="153,153,153" buttonName="" changeFormat="" color="204,0,0" createFormat="" edgeHeight="0" edgeWidth="0" hotkey="" icon="P5.png" launch="true" mapName="Player 5" markMoved="Never" markUnmovedIcon="/images/unmoved.gif" markUnmovedText="" markUnmovedTooltip="Mark all pieces on this map as not moved" moveKey="" moveToFormat="" moveWithinFormat="" side="Solitaire,Player 5" thickness="1" visible="true">
         <VASSAL.build.module.map.BoardPicker addColumnText="Add column" addRowText="Add row" boardPrompt="Select board" slotHeight="350" slotScale="0.2" slotWidth="350" title="Choose Boards">
-            <VASSAL.build.module.map.boardPicker.Board image="observer_hand_background.jpg" name="Player 5" reversible="false"/>
+            <VASSAL.build.module.map.boardPicker.Board image="observer_hand_background.png" name="Player 5" reversible="false"/>
         </VASSAL.build.module.map.BoardPicker>
         <VASSAL.build.module.map.HandMetrics bottom="40,0" disabled="true" down="37,0" exSepX="12" exSepY="0" top="38,0" unexSepX="12" unexSepY="0" up="39,0"/>
         <VASSAL.build.module.map.ForwardToKeyBuffer/>
@@ -2123,9 +2123,9 @@
             <VASSAL.build.widget.PieceSlot entryName="" gpid="3503" height="0" width="0">+/null/restrict;;false;true	label;;Change Label;28;;0,0,0;t;0;c;0;b;c;$pieceName$ ($label$);Dialog;1;0;TextLabel;\	piece;;;;/	$P5 Huge Ship 3 Aft Deck Tray_numPieces$ \/ 10\	null;0;0;3503</VASSAL.build.widget.PieceSlot>
         </VASSAL.build.module.map.SetupStack>
     </VASSAL.build.module.PlayerHand>
-    <VASSAL.build.module.PlayerHand allowMultiple="false" backgroundcolor="255,255,255" buttonName="" changeFormat="" color="204,0,0" createFormat="" edgeHeight="0" edgeWidth="0" hotkey="" icon="P6.png" launch="true" mapName="Player 6" markMoved="Never" markUnmovedIcon="/images/unmoved.gif" markUnmovedText="" markUnmovedTooltip="Mark all pieces on this map as not moved" moveKey="" moveToFormat="" moveWithinFormat="" side="Solitaire,Player 6" thickness="1" visible="true">
+    <VASSAL.build.module.PlayerHand allowMultiple="false" backgroundcolor="153,153,153" buttonName="" changeFormat="" color="204,0,0" createFormat="" edgeHeight="0" edgeWidth="0" hotkey="" icon="P6.png" launch="true" mapName="Player 6" markMoved="Never" markUnmovedIcon="/images/unmoved.gif" markUnmovedText="" markUnmovedTooltip="Mark all pieces on this map as not moved" moveKey="" moveToFormat="" moveWithinFormat="" side="Solitaire,Player 6" thickness="1" visible="true">
         <VASSAL.build.module.map.BoardPicker addColumnText="Add column" addRowText="Add row" boardPrompt="Select board" slotHeight="350" slotScale="0.2" slotWidth="350" title="Choose Boards">
-            <VASSAL.build.module.map.boardPicker.Board image="observer_hand_background.jpg" name="Player 6" reversible="false"/>
+            <VASSAL.build.module.map.boardPicker.Board image="observer_hand_background.png" name="Player 6" reversible="false"/>
         </VASSAL.build.module.map.BoardPicker>
         <VASSAL.build.module.map.HandMetrics bottom="40,0" disabled="true" down="37,0" exSepX="12" exSepY="0" top="38,0" unexSepX="12" unexSepY="0" up="39,0"/>
         <VASSAL.build.module.map.ForwardToKeyBuffer/>
@@ -2171,9 +2171,9 @@
             <VASSAL.build.widget.PieceSlot entryName="" gpid="3522" height="0" width="0">+/null/restrict;;false;true	label;;Change Label;28;;0,0,0;t;0;c;0;b;c;$pieceName$ ($label$);Dialog;1;0;TextLabel;\	piece;;;;/	$P6 Huge Ship 3 Aft Deck Tray_numPieces$ \/ 10\	null;0;0;3522</VASSAL.build.widget.PieceSlot>
         </VASSAL.build.module.map.SetupStack>
     </VASSAL.build.module.PlayerHand>
-    <VASSAL.build.module.PlayerHand allowMultiple="false" backgroundcolor="255,255,255" buttonName="" changeFormat="" color="204,0,0" createFormat="" edgeHeight="0" edgeWidth="0" hotkey="" icon="P7.png" launch="true" mapName="Player 7" markMoved="Never" markUnmovedIcon="/images/unmoved.gif" markUnmovedText="" markUnmovedTooltip="Mark all pieces on this map as not moved" moveKey="" moveToFormat="" moveWithinFormat="" side="Solitaire,Player 7" thickness="1" visible="true">
+    <VASSAL.build.module.PlayerHand allowMultiple="false" backgroundcolor="153,153,153" buttonName="" changeFormat="" color="204,0,0" createFormat="" edgeHeight="0" edgeWidth="0" hotkey="" icon="P7.png" launch="true" mapName="Player 7" markMoved="Never" markUnmovedIcon="/images/unmoved.gif" markUnmovedText="" markUnmovedTooltip="Mark all pieces on this map as not moved" moveKey="" moveToFormat="" moveWithinFormat="" side="Solitaire,Player 7" thickness="1" visible="true">
         <VASSAL.build.module.map.BoardPicker addColumnText="Add column" addRowText="Add row" boardPrompt="Select board" slotHeight="350" slotScale="0.2" slotWidth="350" title="Choose Boards">
-            <VASSAL.build.module.map.boardPicker.Board image="observer_hand_background.jpg" name="Player 7" reversible="false"/>
+            <VASSAL.build.module.map.boardPicker.Board image="observer_hand_background.png" name="Player 7" reversible="false"/>
         </VASSAL.build.module.map.BoardPicker>
         <VASSAL.build.module.map.HandMetrics bottom="40,0" disabled="true" down="37,0" exSepX="12" exSepY="0" top="38,0" unexSepX="12" unexSepY="0" up="39,0"/>
         <VASSAL.build.module.map.ForwardToKeyBuffer/>
@@ -2219,9 +2219,9 @@
             <VASSAL.build.widget.PieceSlot entryName="" gpid="3523" height="0" width="0">+/null/restrict;;false;true	label;;Change Label;28;;0,0,0;t;0;c;0;b;c;$pieceName$ ($label$);Dialog;1;0;TextLabel;\	piece;;;;/	$P7 Huge Ship 3 Aft Deck Tray_numPieces$ \/ 10\	null;0;0;3523</VASSAL.build.widget.PieceSlot>
         </VASSAL.build.module.map.SetupStack>
     </VASSAL.build.module.PlayerHand>
-    <VASSAL.build.module.PlayerHand allowMultiple="false" backgroundcolor="255,255,255" buttonName="" changeFormat="" color="204,0,0" createFormat="" edgeHeight="0" edgeWidth="0" hotkey="" icon="P8.png" launch="true" mapName="Player 8" markMoved="Never" markUnmovedIcon="/images/unmoved.gif" markUnmovedText="" markUnmovedTooltip="Mark all pieces on this map as not moved" moveKey="" moveToFormat="" moveWithinFormat="" side="Solitaire,Player 8" thickness="1" visible="true">
+    <VASSAL.build.module.PlayerHand allowMultiple="false" backgroundcolor="153,153,153" buttonName="" changeFormat="" color="204,0,0" createFormat="" edgeHeight="0" edgeWidth="0" hotkey="" icon="P8.png" launch="true" mapName="Player 8" markMoved="Never" markUnmovedIcon="/images/unmoved.gif" markUnmovedText="" markUnmovedTooltip="Mark all pieces on this map as not moved" moveKey="" moveToFormat="" moveWithinFormat="" side="Solitaire,Player 8" thickness="1" visible="true">
         <VASSAL.build.module.map.BoardPicker addColumnText="Add column" addRowText="Add row" boardPrompt="Select board" slotHeight="350" slotScale="0.2" slotWidth="350" title="Choose Boards">
-            <VASSAL.build.module.map.boardPicker.Board image="observer_hand_background.jpg" name="Player 8" reversible="false"/>
+            <VASSAL.build.module.map.boardPicker.Board image="observer_hand_background.png" name="Player 8" reversible="false"/>
         </VASSAL.build.module.map.BoardPicker>
         <VASSAL.build.module.map.HandMetrics bottom="40,0" disabled="true" down="37,0" exSepX="12" exSepY="0" top="38,0" unexSepX="12" unexSepY="0" up="39,0"/>
         <VASSAL.build.module.map.ForwardToKeyBuffer/>
@@ -2267,9 +2267,9 @@
             <VASSAL.build.widget.PieceSlot entryName="" gpid="3524" height="0" width="0">+/null/restrict;;false;true	label;;Change Label;28;;0,0,0;t;0;c;0;b;c;$pieceName$ ($label$);Dialog;1;0;TextLabel;\	piece;;;;/	$P8 Huge Ship 3 Aft Deck Tray_numPieces$ \/ 10\	null;0;0;3524</VASSAL.build.widget.PieceSlot>
         </VASSAL.build.module.map.SetupStack>
     </VASSAL.build.module.PlayerHand>
-    <VASSAL.build.module.PlayerHand allowMultiple="false" backgroundcolor="255,255,255" buttonName="" changeFormat="" color="204,0,0" createFormat="" edgeHeight="0" edgeWidth="0" hotkey="" icon="Sol.png" launch="true" mapName="Observer" markMoved="Never" markUnmovedIcon="/images/unmoved.gif" markUnmovedText="" markUnmovedTooltip="Mark all pieces on this map as not moved" moveKey="" moveToFormat="" moveWithinFormat="" side="Solitaire,Player 1,Player 2,Player 3,Player 4,Player 5,Player 6,Player 7,Player 8" thickness="1" tooltip="Observer Window" visible="true">
+    <VASSAL.build.module.PlayerHand allowMultiple="false" backgroundcolor="153,153,153" buttonName="" changeFormat="" color="204,0,0" createFormat="" edgeHeight="0" edgeWidth="0" hotkey="" icon="Sol.png" launch="true" mapName="Observer" markMoved="Never" markUnmovedIcon="/images/unmoved.gif" markUnmovedText="" markUnmovedTooltip="Mark all pieces on this map as not moved" moveKey="" moveToFormat="" moveWithinFormat="" side="Solitaire,Player 1,Player 2,Player 3,Player 4,Player 5,Player 6,Player 7,Player 8" thickness="1" tooltip="Observer Window" visible="true">
         <VASSAL.build.module.map.BoardPicker addColumnText="Add column" addRowText="Add row" boardPrompt="Select board" slotHeight="350" slotScale="0.2" slotWidth="350" title="Choose Boards">
-            <VASSAL.build.module.map.boardPicker.Board image="observer_hand_background.jpg" name="Observer" reversible="false"/>
+            <VASSAL.build.module.map.boardPicker.Board image="observer_hand_background.png" name="Observer" reversible="false"/>
         </VASSAL.build.module.map.BoardPicker>
         <VASSAL.build.module.map.HandMetrics bottom="40,0" disabled="true" down="37,0" exSepX="12" exSepY="0" top="38,0" unexSepX="12" unexSepY="0" up="39,0"/>
         <VASSAL.build.module.map.ForwardToKeyBuffer/>
