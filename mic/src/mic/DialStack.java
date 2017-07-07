@@ -64,8 +64,6 @@ public class DialStack  extends Decorator implements EditablePiece {
         if (KeyStroke.getKeyStroke(KeyEvent.VK_R, KeyEvent.CTRL_DOWN_MASK,false).equals(stroke)) {
             List<BumpableWithShape> BWS = getOtherDials();
             for(BumpableWithShape b: BWS){
-                logToChat("this shape " + Double.toString(getBumpableCompareShape(this).getBounds().getWidth()));
-                logToChat("bws " + Double.toString(b.shape.getBounds().getWidth()));
                 if(shapesOverlap(getBumpableCompareShape(this),b.shape)) logToChat("(((POTENTIAL CHEAT ATTEMPT WARNING))) The dial for "
                         + piece.getProperty("Pilot Name").toString() + "(" + piece.getProperty("Craft ID #").toString()
                 + ") is overlapping the dial for " + b.pilotName + "(" + b.shipName + ")");
