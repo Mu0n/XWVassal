@@ -62,6 +62,8 @@ public class DialStack  extends Decorator implements EditablePiece {
         //Full Range Options CTRL-O
 
         if (KeyStroke.getKeyStroke(KeyEvent.VK_R, KeyEvent.CTRL_DOWN_MASK,false).equals(stroke)) {
+            //don't bother doing anything if it isn't happening on the map
+            if(!"Contested Sector".equals(getMap().getMapName())) return piece.keyEvent(stroke);
             List<BumpableWithShape> BWS = getOtherDials();
             for(BumpableWithShape b: BWS){
                 if(shapesOverlap(getBumpableCompareShape(this),b.shape)) logToChat("(((POTENTIAL CHEAT ATTEMPT WARNING))) The dial for "
