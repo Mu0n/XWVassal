@@ -21,7 +21,7 @@ public enum Tokens {
             none
     ),
     stress(
-            none,
+            Lists.newArrayList("Focus"),
             Lists.newArrayList("zuckuss", "r3a2","elusiveness","overclockedr4","pushthelimit"),
             Lists.newArrayList("awing/tychocelchu","tiefofighter/zetaleader")
     ),

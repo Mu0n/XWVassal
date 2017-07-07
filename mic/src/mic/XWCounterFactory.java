@@ -16,6 +16,8 @@ public class XWCounterFactory extends BasicCommandEncoder {
             piece = new TemplateOverlapCheckDecorator(inner);
         } else if (type.startsWith(AutoRangeFinder.ID)) {
             piece = new AutoRangeFinder(inner);
+        } else if (type.startsWith(DialStack.ID)) {
+            piece = new DialStack(inner);
         } else {
             piece = super.createDecorator(type, inner);
         }

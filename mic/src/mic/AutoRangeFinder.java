@@ -35,8 +35,11 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
     private ShipPositionState prevPosition = null;
     private ManeuverPaths lastManeuver = null;
     private FreeRotator myRotator = null;
-    private CollisionVisualization collisionVisualization = null;
-
+    private FOVisualization fov = null;
+    private boolean hasBeenReleased = false;
+    private static Map<String, ManeuverPaths> keyStrokeToManeuver = ImmutableMap.<String, ManeuverPaths>builder()
+            .put("CTRL O", ManeuverPaths.Str1)
+            .build();
 
     public AutoRangeFinder() {
         this(null);
@@ -45,6 +48,7 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
     public AutoRangeFinder(GamePiece piece) {
         setInner(piece);
         this.testRotator = new FreeRotator("rotate;360;;;;;;;", null);
+        fov = new FOVisualization();
     }
 
     @Override
@@ -67,36 +71,35 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
         return null;
     }
 
-    private boolean isAutobumpTrigger(KeyStroke stroke) {
-        return KeyStroke.getAWTKeyStroke(KeyEvent.VK_C, 0, false).equals(stroke);
-    }
 
     public Command keyEvent(KeyStroke stroke) {
-
+        /*if(this.fov == null) {
+            this.fov = new FOVisualization();
+        }*/
 
         //Full Range Options CTRL-O
-        if (KeyStroke.getKeyStroke(KeyEvent.VK_O, KeyEvent.CTRL_DOWN_MASK,false).equals(stroke)) {
+/*
+        if (KeyStroke.getKeyStroke(KeyEvent.VK_O, KeyEvent.CTRL_DOWN_MASK,false).equals(stroke) && stroke.getKeyEventType() == KeyEvent.KEY_PRESSED) {
+            logToChat("starting firing options");
+            List<BumpableWithShape> BWS = getShipsOnMap();
+            for(BumpableWithShape b: BWS){
+                fov.add(b.shape);
 
+                logToChat("ship #" + Integer.toString(fov.shapes.size()) + " detected of size "
+                        + Double.toString(b.shape.getBounds().getWidth()) + " by "
+                        + Double.toString(b.shape.getBounds().getHeight()));
+            }
+            fov.draw(getMap().getView().getGraphics(),getMap());
         }
-
-        //Firing Arc command activated CTRL-F
-        if (KeyStroke.getKeyStroke(KeyEvent.VK_F, KeyEvent.CTRL_DOWN_MASK,false).equals(stroke)) {
+        else if(KeyStroke.getKeyStroke(KeyEvent.VK_O, KeyEvent.CTRL_DOWN_MASK,false).equals(stroke) && stroke.getKeyEventType() == KeyEvent.KEY_RELEASED) hasBeenReleased = true;
+        else if (this.fov != null && this.fov.getCount() > 0 && hasBeenReleased) {
+            //logToChat("clear trigger");
+            //getMap().removeDrawComponent(this.fov);
+            //this.fov.shapes.clear();
+            hasBeenReleased = false;
         }
-
-        //Auxiliary firing Arc command activated CTRL-V
-        if (KeyStroke.getKeyStroke(KeyEvent.VK_V, KeyEvent.CTRL_DOWN_MASK,false).equals(stroke)) {
-        }
-
-        //Left mobile firing Arc command activated CTRL-Shift-V
-        if (KeyStroke.getKeyStroke(KeyEvent.VK_V, KeyEvent.CTRL_DOWN_MASK & KeyEvent.SHIFT_DOWN_MASK,false).equals(stroke)) {
-        }
-
-        //Right mobile firing Arc command activated ALT-Shift-V
-        if (KeyStroke.getKeyStroke(KeyEvent.VK_V, KeyEvent.SHIFT_DOWN_MASK & KeyEvent.ALT_DOWN_MASK,false).equals(stroke)) {
-        }
-        //180 Auxiliary firing Arc command activated CTRL-N
-        if (KeyStroke.getKeyStroke(KeyEvent.VK_N, KeyEvent.CTRL_DOWN_MASK,false).equals(stroke)) {
-        }
+        logToChat("key hit: "+ stroke.toString());
+    */
         return piece.keyEvent(stroke);
     }
 
@@ -135,103 +138,53 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
         return null;
     }
 
-    /**
-     * Returns FreeRotator decorator associated with this instance
-     *
-     * @return
-     */
-    private FreeRotator getRotator() {
-        if (this.myRotator == null) {
-            this.myRotator = ((FreeRotator) Decorator.getDecorator(getOutermost(this), FreeRotator.class));
+    private List<BumpableWithShape> getShipsOnMap() {
+        List<BumpableWithShape> ships = Lists.newArrayList();
+
+        GamePiece[] pieces = getMap().getAllPieces();
+        for (GamePiece piece : pieces) {
+            if (piece.getState().contains("Ship")) {
+                ships.add(new BumpableWithShape((Decorator)piece, "Ship",
+                        piece.getProperty("Pilot Name").toString(), piece.getProperty("Craft ID #").toString()));
+            }
         }
-        return this.myRotator;
+        return ships;
     }
 
-    /**
-     * Returns a new ShipPositionState based on the current position and angle of this ship
-     *
-     * @return
-     */
-    private ShipPositionState getCurrentState() {
-        ShipPositionState shipState = new ShipPositionState();
-        shipState.x = getPosition().getX();
-        shipState.y = getPosition().getY();
-        shipState.angle = getRotator().getAngle();
-        return shipState;
-    }
+    private static class FOVisualization implements Drawable {
 
-    /**
-     * Uses a FreeRotator unassociated with any game pieces with a 360 rotation limit
-     * to convert the provided angle to the same angle the ship would be drawn at
-     * by vassal
-     *
-     * @param angle
-     * @return
-     */
-    private double convertAngleToGameLimits(double angle) {
-        this.testRotator.setAngle(angle);
-        return this.testRotator.getAngle();
-    }
+        private final List<Shape> shapes;
 
-    /**
-     * Finds non-rectangular mask layer of provided ship.  This is the shape with only the base
-     * and nubs
-     *
-     * @param ship
-     * @return
-     */
-    private Shape getRawShape(Decorator ship) {
-        return Decorator.getDecorator(Decorator.getOutermost(ship), NonRectangular.class).getShape();
-    }
+        Color myO = new Color(0,50,255, 150);
 
-    /**
-     * Finds raw ship mask and translates and rotates it to the current position and heading
-     * of the ship
-     *
-     * @param ship
-     * @return Translated ship mask
-     */
-    private Shape getShipCompareShape(Decorator ship) {
-        Shape rawShape = getRawShape(ship);
-        double scaleFactor = isLargeShip(ship) ? 1.01d : 1.025d;
-        Shape transformed = AffineTransform.getScaleInstance(scaleFactor, scaleFactor).createTransformedShape(rawShape);
-
-        transformed = AffineTransform
-                .getTranslateInstance(ship.getPosition().getX(), ship.getPosition().getY())
-                .createTransformedShape(transformed);
-
-        FreeRotator rotator = (FreeRotator) (Decorator.getDecorator(Decorator.getOutermost(ship), FreeRotator.class));
-        double centerX = ship.getPosition().getX();
-        double centerY = ship.getPosition().getY();
-        transformed = AffineTransform
-                .getRotateInstance(rotator.getAngleInRadians(), centerX, centerY)
-                .createTransformedShape(transformed);
-
-        return transformed;
-    }
-
-    private boolean isLargeShip(Decorator ship) {
-        return getRawShape(ship).getBounds().getWidth() > 114;
-    }
-
-    private static class CollisionVisualization implements Drawable {
-
-        private final Shape ship1;
-        private final Shape ship2;
-
-        CollisionVisualization(Shape ship1, Shape ship2) {
-            this.ship1 = ship1;
-            this.ship2 = ship2;
+        FOVisualization() {
+            this.shapes = new ArrayList<Shape>();
+        }
+        FOVisualization(Shape ship) {
+            this.shapes = new ArrayList<Shape>();
+            this.shapes.add(ship);
         }
 
+        public void add(Shape bumpable) {
+            this.shapes.add(bumpable);
+        }
+
+        public int getCount() {
+            int count = 0;
+            Iterator<Shape> it = this.shapes.iterator();
+            while(it.hasNext()) {
+                count++;
+                it.next();
+            }
+            return count;
+        }
         public void draw(Graphics graphics, VASSAL.build.module.Map map) {
             Graphics2D graphics2D = (Graphics2D) graphics;
-            graphics2D.setColor(Color.orange);
+            graphics2D.setColor(myO);
 
             AffineTransform scaler = AffineTransform.getScaleInstance(map.getZoom(), map.getZoom());
-            graphics2D.fill(scaler.createTransformedShape(ship1));
-            if (ship2 != null) {
-                graphics2D.fill(scaler.createTransformedShape(ship2));
+            for (Shape shape : shapes) {
+                graphics2D.fill(scaler.createTransformedShape(shape));
             }
         }
 
