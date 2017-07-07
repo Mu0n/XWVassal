@@ -78,7 +78,7 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
         }*/
 
         //Full Range Options CTRL-O
-
+/*
         if (KeyStroke.getKeyStroke(KeyEvent.VK_O, KeyEvent.CTRL_DOWN_MASK,false).equals(stroke) && stroke.getKeyEventType() == KeyEvent.KEY_PRESSED) {
             logToChat("starting firing options");
             List<BumpableWithShape> BWS = getShipsOnMap();
@@ -93,12 +93,13 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
         }
         else if(KeyStroke.getKeyStroke(KeyEvent.VK_O, KeyEvent.CTRL_DOWN_MASK,false).equals(stroke) && stroke.getKeyEventType() == KeyEvent.KEY_RELEASED) hasBeenReleased = true;
         else if (this.fov != null && this.fov.getCount() > 0 && hasBeenReleased) {
-            /*logToChat("clear trigger");
-            getMap().removeDrawComponent(this.fov);
-            this.fov.shapes.clear();*/
+            //logToChat("clear trigger");
+            //getMap().removeDrawComponent(this.fov);
+            //this.fov.shapes.clear();
             hasBeenReleased = false;
         }
         logToChat("key hit: "+ stroke.toString());
+    */
         return piece.keyEvent(stroke);
     }
 
