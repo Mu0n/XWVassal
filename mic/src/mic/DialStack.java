@@ -25,6 +25,7 @@ import static mic.Util.logToChat;
  */
 public class DialStack  extends Decorator implements EditablePiece {
     public static final String ID = "dial-stack";
+    public static double DIALRAYLEIGH = 50.0; // distance in pixels between 2 dials where the anti-cheat warning should occur if they overlap
 
     public DialStack() {
         this(null);
@@ -66,7 +67,11 @@ public class DialStack  extends Decorator implements EditablePiece {
             if(!"Contested Sector".equals(getMap().getMapName())) return piece.keyEvent(stroke);
             List<BumpableWithShape> BWS = getOtherDials();
             for(BumpableWithShape b: BWS){
-                if(shapesOverlap(getBumpableCompareShape(this),b.shape)) logToChat("(((POTENTIAL CHEAT ATTEMPT WARNING))) The dial for "
+                double deltax = Math.pow(getBumpableCompareShape(this).getBounds().getX() - b.shape.getBounds().getX(),2.0);
+                double deltay = Math.pow(getBumpableCompareShape(this).getBounds().getY() - b.shape.getBounds().getY(),2.0);
+                double distance = Math.sqrt(deltax + deltay);
+logToChat("detlax: " + Double.toString(deltax) + " deltay: " + Double.toString(deltay) + " dist: " + Double.toString(distance));
+                if(shapesOverlap(getBumpableCompareShape(this),b.shape) && distance < DIALRAYLEIGH) logToChat("(((POTENTIAL CHEAT ATTEMPT WARNING))) The dial for "
                         + piece.getProperty("Pilot Name").toString() + "(" + piece.getProperty("Craft ID #").toString()
                 + ") is overlapping the dial for " + b.pilotName + "(" + b.shipName + ")");
             }
@@ -142,7 +147,7 @@ public class DialStack  extends Decorator implements EditablePiece {
 
         GamePiece[] pieces = getMap().getAllPieces();
         for (GamePiece piece : pieces) {
-            if (piece.getState().contains("Dials")) {
+            if (piece.getState().contains("this_is_a_dial")) {
                 ships.add(new BumpableWithShape((Decorator)piece, "Dial",
                         piece.getProperty("Pilot Name").toString(), piece.getProperty("Craft ID #").toString()));
             }
