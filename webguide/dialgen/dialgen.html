@@ -1,0 +1,483 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+  <base href="http://s93768914.onlinehome.us/xwing/dialgen/img/" target="_blank">
+    <style>
+      body {
+        margin: 0px;
+        padding: 0px;
+      }
+    </style>
+<script>	
+	function generateDial (form) {
+    var TestVar = form.inputbox.value;
+    
+	drawAdial(TestVar);
+}
+
+	function clearString (form) {
+    form.inputbox.value="";
+    
+}
+
+function genFromDD(form,faction) {
+	  var TestVar ="";
+	  
+	  switch(faction)
+	  {
+	  case 1:
+	  TestVar = form.dropdown.options[form.dropdown.selectedIndex].value;
+		
+		break;
+	  case 2:
+	    TestVar = form.dropdown2.options[form.dropdown2.selectedIndex].value;
+		break;
+	case 3:
+	    TestVar = form.dropdown3.options[form.dropdown3.selectedIndex].value;
+		break;
+	  }
+	  form.inputbox.value = TestVar;
+	  drawAdial(form.inputbox.value);
+	}
+</script>
+
+  </head>
+  <body>
+    <canvas id="myCanvas" width="270" height="270"></canvas>
+	<canvas id="stripDial" style="position:absolute;left:0px;top:270px;"  width="540" height="90"></canvas>
+    <script>
+      var canvas = document.getElementById('myCanvas');
+      var context = canvas.getContext('2d');
+      var radius = 133; //radius of the dial circle
+	  var centerX = canvas.width/2;
+	  var centerY = canvas.height/2;
+	  var speedfudge = 0.64; //% used to place the speed icons relative to radius
+	  var headingfudge = 0.86; //% used to place the maneuver icons relative to radius
+	  var iconsz = 30; //size of the speed and maneuver icons, width and height
+	  
+	  var stripCanvas = document.getElementById('stripDial');
+      var context2 = stripCanvas.getContext('2d');
+	
+	var kr = new Image(); //k-turn red
+	kr.src="KR.png";
+	var kw = new Image(); //k-turn white
+	kw.src="KW.png";
+	var bg = new Image(); //bank left green
+	bg.src="BG.png";
+	var bw = new Image(); //bank left white
+	bw.src="BW.png";
+	var br = new Image(); //bank left red
+	br.src="BR.png";
+	var ng = new Image(); //bank right green
+	ng.src="NG.png";
+	var nw = new Image(); //bank right white
+	nw.src="NW.png";
+	var nr = new Image(); //bank right red
+	nr.src="NR.png";
+	var tg = new Image(); //turn left green
+	tg.src="TG.png";
+	var tw = new Image(); //turn left white
+	tw.src="TW.png";
+	var tr = new Image(); //turn left red
+	tr.src="TR.png";
+	var yg = new Image(); //turn right green
+	yg.src="YG.png";
+	var yw = new Image(); //turn right white
+	yw.src="YW.png";
+	var yr = new Image(); //turn right red
+	yr.src="YR.png";
+	var fg = new Image(); //forward green
+	fg.src="FG.png";
+	var fw = new Image(); //forward white
+	fw.src="FW.png";
+	var fr = new Image(); //forward red
+	fr.src="FR.png";
+	var lg = new Image(); //segnor's loop left green
+	lg.src="LG.png";
+	var lw = new Image(); //segnor's loop left white
+	lw.src="LW.png";
+	var lr = new Image(); //segnor's loop left red
+	lr.src="LR.png";
+	var pg = new Image(); //segnor's loop right green
+	pg.src="PG.png";
+	var pw = new Image(); //segnor's loop right white
+	pw.src="PW.png";
+	var pr = new Image(); //segnor's loop right red
+	pr.src="PR.png";
+	var er = new Image(); //Tallon roll left red
+	er.src="ER.png";
+	var rr = new Image(); //Tallon roll right red
+	rr.src="RR.png";
+	var or = new Image(); //Stop red
+	or.src="OR.png";
+	var ar = new Image(); //Reverse bank left red
+	ar.src="AR.png";
+	var sr = new Image(); //Reverse red
+	sr.src="SR.png";
+	var dr = new Image(); //Reverse bank right red
+	dr.src="DR.png";
+	
+	var s0 = new Image();
+	s0.src="0.png";
+	var s1 = new Image();
+	s1.src="1.png";
+	var s2 = new Image();
+	s2.src="2.png";
+	var s3 = new Image();
+	s3.src="3.png";
+	var s4 = new Image();
+	s4.src="4.png";
+	var s5 = new Image();
+	s5.src="5.png";	
+	
+	
+	var XWING="X-Wing.1BG,1FG,1NG,2TW,2BW,2FG,2NW,2YW,3FW,4FW,4KR";
+	var YWING="Y-Wing.1BW,1FG,1NW,2TW,2BW,2FG,2NW,2YW,3TR,3BW,3FW,3NW,3YR,4FR,4KR";
+	var AWING="A-Wing.1TW,1YW,2TG,2BG,2FG,2NG,2YG,3TW,3BW,3FG,3NW,3YW,3KR,4FG,5FG,5KR";
+	var YT1300="YT-1300.1TW,1BG,1FG,1NG,1YW,2TW,2BW,2FG,2NW,2YW,3BW,3FW,3NW,3KR,4FW,4KR";
+	var BWING="B-Wing.1TR,1BG,1FG,1NG,1YR,2TW,2BW,2FG,2NW,2YW,2KR,3BR,3FW,3NR,4FR";
+	var HWK290="HWK-290.1BG,1FG,1NG,2TW,2BW,2FG,2NW,2YW,3BR,3FW,3NR,4FR";
+	var Z95="Z-95 Headhunter.1BW,1FG,1NW,2TW,2BG,2FG,2NG,2YW,3TW,3BW,3FW,3NW,3YW,3KR,4FW";
+	var EWING="E-Wing.1BW,1FG,1NW,2TW,2BG,2FG,2NG,2YW,3TW,3BW,3FG,3NW,3YW,3KR,4FW,4KR,5FW";
+	var YT2400="YT-2400.1TW,1BG,1FG,1NG,1YW,2TW,2BW,2FG,2NW,2YW,3TW,3BW,3FW,2NW,3YW,4FW,4KR";
+	var KWING="K-Wing.1BG,1FG,1NG,2TW,2BW,2FG,2NW,2YW,3BW,3FW,3NW";
+	var T70XWING="T-70 X-Wing.1BG,1FG,1NG,2TW,2BW,2FG,2NW,2YW,3ER,3TW,3BW,3FG,3NW,3YW,3RR,4FW,4KR";
+	var ATKSHUTTLE="Attack Shuttle.1TR,1BG,1FG,1NG,1YR,2TW,2BW,2FG,2NW,2YW,3TR,3BW,3FW,3NW,3YR,4FW,4KR";
+	var ARC170="Arc-170.1BG,1FG,1NG,2TW,2BG,2FG,2NG,2YW,3TR,3BW,3FW,3NW,3YR,4FR";
+	var UWING="U-Wing.0OR,1BG,1FG,1NG,2TW,2BG,2FG,2NG,2YW,3BW,3FW,3NW,4FW";
+	var JM5K="JumpMaster 5000.1TG,1BG,1FG,1NW,1YW,2TG,2BG,2FG,2NW,2YW,2LW,2PR,3BW,3FW,3NW,4FW,4KR";
+	
+	var TIEADVANCED="TIE Advanced.1BG,1NG,2TW,2BW,2FG,2NW,2YW,3TW,3BW,3FG,3NW,3YW,4FW,4KR,5FW";  
+	var TIEADVPROTOTYPE="TIE Adv Prototype.1TG,1BG,1NG,1YG,2TW,2BW,2FG,2NW,2YW,3TW,3BW,3FG,3NW,3YW,4FG,4KR";
+    var TIEFOFIGHTER="TIE/fo Fighter.1TW,1YW,2LR,2TG,2BG,2FG,2NG,2YG,2PR,3TW,3BW,3FG,3NW,3YW,4FW,4KR";
+	
+	  
+	function getShipName(str){
+	return str.match("^[^\.]*") //take only the ship name, everything before the dot
+	}
+	
+	function getListOfMoves(str){
+	var str2 = str.match('[^\.]*$');
+	return str2;
+	}
+	function getOnlyMoves(str){
+	    var str2 = getListOfMoves(str);		
+		var str3 = str2[0].split(",");
+		return str3;
+	}
+		
+	function getNbMoves(str){
+	var str2 = getOnlyMoves(str);
+	return str2.length;
+	}
+	
+	function getSpeedGfx(number){
+		var speed = new Image();
+		switch(number){
+		case '1':
+            speed.src=s1.src;
+            break;
+          case '2':
+            speed.src=s2.src;
+            break;
+          case "3":
+            speed.src=s3.src;
+            break;
+          case "4":
+            speed.src=s4.src;
+            break;
+          case "5":
+            speed.src=s5.src;
+            break;
+          case "0":
+            speed.src=s0.src;
+            break;
+	      default:
+			speed.src=s1.src;
+			break;
+		}
+		return speed;
+	}
+	
+	function getHeadingGfx(code){
+	    var head = code[1]+code[2];
+		var chosenhead = new Image();
+		switch(head){
+		case "KR":
+			chosenhead.src = kr.src;
+			break;
+		case "KW":
+			chosenhead.src = kw.src;
+			break;
+		case "FG":
+			chosenhead.src = fg.src;
+			break;
+		case "FW":
+			chosenhead.src = fw.src;
+			break;
+		case "FR":
+			chosenhead.src = fr.src;
+			break;
+		case "TR":
+			chosenhead.src = tr.src;
+			break;
+		case "TW":
+			chosenhead.src = tw.src;
+			break;
+		case "TG":
+			chosenhead.src = tg.src;
+			break;
+		case "YR":
+			chosenhead.src = yr.src;
+			break;
+		case "YW":
+			chosenhead.src = yw.src;
+			break;
+		case "YG":
+			chosenhead.src = yg.src;
+			break;
+		case "BR":
+			chosenhead.src = br.src;
+			break;
+		case "BW":
+			chosenhead.src = bw.src;
+			break;
+		case "BG":
+			chosenhead.src = bg.src;
+			break;
+		case "NR":
+			chosenhead.src = nr.src;
+			break;
+		case "NW":
+			chosenhead.src = nw.src;
+			break;
+		case "NG":
+			chosenhead.src = ng.src;
+			break;
+		case "LR":
+			chosenhead.src = lr.src;
+			break;
+		case "LW":
+			chosenhead.src = lw.src;
+			break;
+		case "LG":
+			chosenhead.src = lg.src;
+			break;
+		case "PR":
+			chosenhead.src = pr.src;
+			break;
+		case "PW":
+			chosenhead.src = pw.src;
+			break;
+		case "PG":
+			chosenhead.src = pg.src;
+			break;
+		case "RR":
+			chosenhead.src = rr.src;
+			break;
+		case "ER":
+			chosenhead.src = er.src;
+			break;
+		case "OR":
+			chosenhead.src = or.src;
+			break;
+		case "AR":
+			chosenhead.src = ar.src;
+			break;
+		case "SR":
+			chosenhead.src = sr.src;
+			break;
+		case "DR":
+			chosenhead.src = dr.src;
+			break;
+		default:
+			chosenhead.src = fg.src;
+			break;
+		}
+		return chosenhead;
+	}
+
+	  
+	  
+
+
+	  function drawRotatedImage(image, x, y, angle, con) { 
+	
+	switch(con)
+	{
+	    case 1:
+			// save the current co-ordinate system 
+	// before we screw with it
+	context.save(); 
+	// move to the middle of where we want to draw our image
+	context.translate(x, y);
+	// rotate around that point, converting our 
+	// angle from degrees to radians 
+	context.rotate(angle);
+	// draw it up and to the left by half the width
+	// and height of the image 
+	context.drawImage(image, -(image.width/2), -(image.height/2));
+	// and restore the co-ords to how they were when we began
+	context.restore(); 
+		break;
+		case 2:
+		context2.drawImage(image, x,y);
+		break;
+	}
+
+}
+
+
+function drawAdial(theShip){
+		
+	  context.beginPath();
+      context.arc(centerX, centerY, radius, 0, 2 * Math.PI, false);
+      context.fillStyle = '#333333';
+      context.fill();
+      context.lineWidth = 2;
+      context.strokeStyle = '#333333';
+      context.stroke();
+	
+	
+	  
+	var nbmoves = getNbMoves(theShip); //temp var number of moves
+	var anglepermove = 2*Math.PI/nbmoves; //2pi divided by number of moves
+	
+	var shipmoves = getOnlyMoves(theShip);
+	stripCanvas.width=nbmoves*iconsz;
+	
+	 context2.rect(0, 0, nbmoves*iconsz, 90);
+      context2.fillStyle = '#333333';
+      context2.fill();
+	  
+	  
+	  
+	shipmoves.forEach(function(element, index, array){
+		
+		var x=radius+speedfudge*radius*Math.sin(index*anglepermove);
+		var y=radius-speedfudge*radius*Math.cos(index*anglepermove);
+		var gfx = new Image();
+		gfx = getSpeedGfx(element[0]);
+
+		drawRotatedImage(gfx,x,y,anglepermove*index,1);
+		
+		var xstrip = 0+index*iconsz;
+		var ystrip = 30;
+		drawRotatedImage(gfx,xstrip,ystrip,0,2);
+		
+		var gfx2 = new Image();
+		gfx2 = getHeadingGfx(element);
+		x=radius+headingfudge*radius*Math.sin(index*anglepermove);
+		y=radius-headingfudge*radius*Math.cos(index*anglepermove);
+		drawRotatedImage(gfx2,x,y,anglepermove*index,1);
+		
+		ystrip = 30+iconsz;
+		drawRotatedImage(gfx2,xstrip,ystrip,0,2);
+		
+		
+		
+		}
+		);
+		
+		
+	  context.font = '14pt Calibri';
+	  context.fillStyle = '#ffffff';
+	  context.textAlign = 'center';
+      context.fillText(getShipName(theShip), centerX, centerY);
+	
+	  context2.font = '12pt Calibri';
+	  context2.fillStyle = '#ffffff';
+	  context2.textAlign = 'left';
+      context2.fillText(getShipName(theShip), 0, 20);
+	  
+	  context.closePath();
+	  context2.closePath();
+}
+	  
+	  drawAdial(T70XWING);
+
+
+
+	  
+    </script>
+
+<FORM NAME="myform" style="position:absolute; TOP:360px;LEFT:0px" ACTION="" METHOD="GET" >Enter the dial codestring: <BR>
+<INPUT TYPE="text" NAME="inputbox" VALUE="" size="120"><P>
+<INPUT TYPE="button" NAME="button" Value="Submit written codestring" onClick="generateDial(this.form)">
+<INPUT TYPE="button" NAME="button2" Value="Clear codestring" onClick="clearString(this.form)">
+
+<select name="dropdown">
+<option value="">Select rebel ship</option>
+<option value="X-Wing.1BG,1FG,1NG,2TW,2BW,2FG,2NW,2YW,3TW,3BW,3FW,3NW,3YW,4FW,4KR">X-Wing</option>
+<option value="Y-Wing.1BW,1FG,1NW,2TW,2BW,2FG,2NW,2YW,3TR,3BW,3FW,3NW,3YR,4FR,4KR">Y-Wing</option>
+<option value="A-Wing.1TW,1YW,2TG,2BG,2FG,2NG,2YG,3TW,3BW,3FG,3NW,3YW,3KR,4FG,5FG,5KR">A-Wing</option>
+<option value="YT-1300.1TW,1BG,1FG,1NG,1YW,2TW,2BW,2FG,2NW,2YW,3BW,3FW,3NW,3KR,4FW,4KR">YT-1300</option>
+<option value="B-Wing.1TR,1BG,1FG,1NG,1YR,2TW,2BW,2FG,2NW,2YW,2KR,3BR,3FW,3NR,4FR">B-Wing</option>
+<option value="HWK-290.1BG,1FG,1NG,2TW,2BW,2FG,2NW,2YW,3BR,3FW,3NR,4FR">HWK-290</option>
+<option value="Z-95 Headhunter.1BW,1FG,1NW,2TW,2BG,2FG,2NG,2YW,3TW,3BW,3FW,3NW,3YW,3KR,4FW">Z-95 Headhunter</option>
+<option value="E-Wing.1BW,1FG,1NW,2TW,2BG,2FG,2NG,2YW,3TW,3BW,3FG,3NW,3YW,3KR,4FW,4KR,5FW">E-Wing</option>
+<option value="YT-2400.1TW,1BG,1FG,1NG,1YW,2TW,2BW,2FG,2NW,2YW,3TW,3BW,3FW,3NW,3YW,4FW,4KR">YT-2400</option>
+<option value="K-Wing.1BG,1FG,1NG,2TW,2BW,2FG,2NW,2YW,3BW,3FW,3NW">K-Wing</option>
+<option value="T-70 X-Wing.1BG,1FG,1NG,2TW,2BW,2FG,2NW,2YW,3ER,3TW,3BW,3FG,3NW,3YW,3RR,4FW,4KR">T-70 X-Wing</option>
+<option value="VCX-100.1TR,1BW,1FG,1NW,1YR,2TW,2BG,2FG,2NG,2YW,3TR,3BW,3FW,3NW,3YR,4FW,5KR">VCX-100</option>
+<option value="Attack Shuttle.1TR,1BG,1FG,1NG,1YR,2TW,2BW,2FG,2NW,2YW,3TR,3BW,3FW,3NW,3YR,4FW,4KR">Attack Shuttle</option>
+<option value="Arc-170.1BG,1FG,1NG,2TW,2BG,2FG,2NG,2YW,3TR,3BW,3FW,3NW,3YR,4FR,4KR">Arc-170</option>
+<option value="U-Wing.0OR,1BG,1FG,1NG,2TW,2BG,2FG,2NG,2YW,3BW,3FW,3NW,4FW">U-Wing</option>
+<option value="TIE Fighter.1TW,1YW,2TW,2BG,2FG,2NG,2YW,3TW,3BW,3FG,3NW,3YW,3KR,4FW,4KR,5FW">Sabine's TIE Fighter</option>
+<option value="Auzituck.1BG,1FG,1NG,2TW,2BW,2FG,2NW,2YW,3TW,3BW,3FG,3NW,3YW,4FW,5FR">Auzituck Gunship</option>
+<option value="Scurrg H-6.1BW,1FG,1NW,2TW,2BG,2FG,2NG,2YW,3ER,3TR,3BW,3FG,3NW,3YR,3RR,4FW,5FR">Scurrg H-6 Bomber</option>
+</select>
+<INPUT TYPE="button" NAME="button3" Value="Submit ship" onClick="genFromDD(this.form,1)">
+<select name="dropdown2">
+<option value="">Select imperial ship</option>
+<option value="TIE Fighter.1TW,1YW,2TW,2BG,2FG,2NG,2YW,3TW,3BW,3FG,3NW,3YW,3KR,4FW,4KR,5FW">TIE Fighter</option>
+<option value="TIE Advanced.1BG,1NG,2TW,2BW,2FG,2NW,2YW,3TW,3BW,3FG,3NW,3YW,4FW,4KR,5FW">TIE Advanced</option>
+<option value="TIE Interceptor.1TW,1YW,2TG,2BG,2FG,2NG,2YG,3TW,3BW,3FG,3NW,3YW,3KR,4FG,5FW,5KR">TIE Interceptor</option>
+<option value="Firespray-31.1BG,1FG,1NG,2TW,2BW,2FG,2NW,2YW,3TW,3BW,3FW,3NW,3YW,3KR,4FW,4KR">Firespray-31</option>
+<option value="Lambda Shuttle.0OR,1BG,1FG,1NG,2TR,2BW,2FG,2NW,2YR,3BR,3FW,3NR">Lambda Shuttle</option>
+<option value="TIE Bomber.1BW,1FG,1NW,2TR,2BG,2FG,2NG,2YR,3TW,3BW,3FG,3NW,3YW,4FW,5KR">TIE Bomber</option>
+<option value="TIE Phantom.1TW,1YW,2TW,2BG,2FG,2NG,2YW,3TW,3BW,3FG,3NW,3YW,3KR,4FW,4KR">TIE Phantom</option>
+<option value="TIE Defender.1TR,1BW,1NW,1YR,2TR,2BW,2FG,2NW,2YR,3TW,3BW,3FG,3NW,3YW,4FG,4KW,5FG">TIE Defender</option>
+<option value="VT-49 Decimator.1BW,1FW,1NW,2TW,2BG,2FG,2NG,2YW,3TW,3BW,3FG,3NW,3YW,4FW">VT-49 Decimator</option>
+<option value="TIE Punisher.1BG,1FG,1NG,2TR,2BW,2FG,2NW,2YR,3TW,3BW,3FW,3NW,3YW,4KR">TIE Punisher</option>
+<option value="TIE/fo Fighter.1TW,1YW,2LR,2TG,2BG,2FG,2NG,2YG,2PR,3TW,3BW,3FG,3NW,3YW,4FW,4KR,5FW">TIE/fo Fighter</option>
+<option value="TIE Adv Prototype.1TG,1BG,1NG,1YG,2TW,2BW,2FG,2NW,2YW,3TW,3BW,3FG,3NW,3YW,4FG,4KR,5FW">TIE Adv Prototype</option>
+<option value="TIE/sf Fighter.1TR,1BG,1FG,1NG,1YR,2TW,2BW,2FG,2NW,2YW,3LR,3TR,3BW,3FG,3NW,3YR,3PR,4FW">TIE/sf Fighter</option>
+<option value="TIE Striker.1TW,1BG,1FG,1NG,1YW,2TW,2BW,2FG,2NW,2YW,2LR,2KR,2PR,3BW,3FG,3NW">TIE Striker</option>
+<option value="Upsilon.0OR,1TR,1BW,1FG,1NW,1YR,2TW,2BG,2FG,2NG,2YW,3TR,3BW,3FW,3NW,3YR">Upsilon Shuttle</option>
+<option value="TIE Aggressor.1BW,1FG,1NW,2TW,2BG,2FG,2NG,2YW,3TW,3BW,3FG,3NW,3YW,4FW,4KR">TIE Aggressor</option>
+</select>
+<INPUT TYPE="button" NAME="button4" Value="Submit ship" onClick="genFromDD(this.form,2)">
+<select name="dropdown3">
+<option value="">Select scum ship</option>
+<option value="Y-Wing.1BW,1FG,1NW,2TW,2BW,2FG,2NW,2YW,3TR,3BW,3FW,3NW,3YR,4FR,4KR">Y-Wing</option>
+<option value="HWK-290.1BG,1FG,1NG,2TW,2BW,2FG,2NW,2YW,3BR,3FW,3NR,4FR">HWK-290</option>
+<option value="Firespray-31.1BG,1FG,1NG,2TW,2BW,2FG,2NW,2YW,3TW,3BW,3FW,3NW,3YW,3KR,4FW,4KR">Firespray-31</option>
+<option value="Z-95 Headhunter.1BW,1FG,1NW,2TW,2BG,2FG,2NG,2YW,3TW,3BW,3FW,3NW,3YW,3KR,4FW">Z-95 Headhunter</option>
+<option value="M3-A Interceptor.1TW,1BG,1NG,1YW,2TW,2BG,2FG,2NG,2YW,3BW,3FG,3NW,3KR,4FW,5KR">M3-A Interceptor</option>
+<option value="StarViper.1TW,1BG,1FG,1NG,1YW,2TW,2BW,2FG,2NW,2YW,3BW,3FG,3NW,3LR,3PR,4FW">StarViper</option>
+<option value="Aggressor.1TW,1BG,1FG,1NG,1YW,2TW,2BG,2FG,2NG,2YW,3BG,3FG,3NG,3LR,3PR,4KR">Aggressor</option>
+<option value="YV-666.0OR,1BG,1FG,1NG,2TR,2BW,2FG,2NW,2YR,3TW,3BW,3FG,3NW,3YW,4FW">YV-666</option>
+<option value="Kihraxz.1TW,1BG,1NG,1YW,2TW,2BG,2FG,2NG,2YW,3BW,3FW,3NW,4FW,4KR,5KR">Kihraxz</option>
+<option value="G1-A Starfighter.1TR,1BG,1FG,1NG,1YR,2TW,2BW,2FG,2NW,2YW,3BR,3FG,3NR,3KR,4FW,4KR">G1-A Starfighter</option>
+<option value="JumpMaster 5000.1TG,1BG,1FG,1NW,1YW,2TG,2BG,2FG,2NW,2YW,2LW,2PR,3BW,3FW,3NW,4FW,4KR">JumpMaster 5000</option>
+<option value="Protectorate Starf.1TW,1YW,2ER,2TG,2BG,2FG,2NG,2YG,2RR,3TW,3BW,3FG,3NW,3YW,4FW,4KR,5FW">Protectorate Starfighter</option>
+<option value="Lancer-Class.1BW,1FW,1NW,2TW,2BW,2FG,2NW,2YW,3TG,3BG,3FG,3NG,3YG,4FG,5FW,5KR">Lancer-Class</option>
+<option value="Quadjumper.1AR,1SR,1DR,1TW,1FW,1YW,2TW,2BG,2FG,2NG,2YW,2LR,2PR,3BW,3FG,3NW">Quadjumper</option>
+<option value="Scurrg H-6.1BW,1FG,1NW,2TW,2BG,2FG,2NG,2YW,3ER,3TR,3BW,3FG,3NW,3YR,3RR,4FW,5FR">Scurrg H-6 Bomber</option>
+</select>
+<INPUT TYPE="button" NAME="button5" Value="Submit ship" onClick="genFromDD(this.form,3)">
+</form>
+
+<p style="position:absolute; TOP:450px;LEFT:0px"><strong>Guide to writing a dial script:</strong><br>
+<img src="guide.jpg"/><br>
+<strong>Format:</strong> Name_of_ship.#LC,#LC,#LC,etc<br>
+Use a dot to separate the ship tag from the maneuver list.<br>
+where # is the speed of a maneuver<br>
+L is the letter of the maneuver following the above guide<br>
+C is the color of the maneuver (R for red, W for white and G for green)<br>
+(select an example from the drop down menus to study the structure)</p>
+
+  </body>
+</html>   
+
