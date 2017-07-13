@@ -17,6 +17,25 @@
     #clippyButton {
       display: none;
     }
+
+    .toast {
+      position: fixed;
+      bottom: -3rem;
+      left: 0;
+      right: 0;
+      height: 3rem;
+      padding-top: 1rem;
+      font-size: 1rem;
+      color: white;
+      text-align: center;
+      transition: all 0.5s ease-in-out;
+      background-color: #43ac6a;
+      z-index: 2;
+    }
+
+    .toast.active {
+      bottom: 0;
+    }
   </style>
 
   <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js" type="text/javascript"></script>
@@ -29,7 +48,17 @@
       if (!didCopy) {
         $("#clippyButton").css("display", "block");
         $("#ctc").clippy({ text: s });
+      } else {
+        showToolTip("Card text was copied to clipboard")
       }
+    }
+
+    function showToolTip(s) {
+      var toast = $('#toast')
+      toast.html(s).addClass("active");
+      setTimeout(function () {
+        toast.removeClass("active");
+      }, 2000)
     }
   </script>
   <script src="./js/clipboard.min.js"></script>
@@ -41,6 +70,7 @@
 </head>
 
 <body>
+  <div id="toast" class="toast"></div>
 
   <div class="fixed menu">
     <nav class="top-bar" data-topbar>
