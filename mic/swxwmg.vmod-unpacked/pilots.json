@@ -2728,6 +2728,7 @@
     "skill": 4,
     "points": 14,
     "faction": "Galactic Empire",
+    "slots": [],
     "id": 166,
     "xws": "wampa"
   },
@@ -2755,6 +2756,7 @@
     "skill": 3,
     "points": 14,
     "faction": "Galactic Empire",
+    "slots": [],
     "id": 168,
     "xws": "chaser"
   },
@@ -4162,7 +4164,7 @@
     "id": 252
   },
   {
-    "image": "pilots/Scum and Villainy/StarViper/viktor-hel.png",
+    "image": "pilots/Scum and Villainy/Kihraxz Fighter/viktor-hel.png",
     "text": "After defending, if you did not roll exactly 2 defense dice, the attacker receives 1 stress token.",
     "name": "Viktor Hel",
     "xws": "viktorhel",
