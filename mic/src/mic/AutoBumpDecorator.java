@@ -174,13 +174,13 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
 
 
                 // Whenever I want to resume template placement with java, this is where it happens
-/*
+
                     if(lastManeuver != null) {
                         Command placeCollisionAide = spawnRotatedPiece();
                         placeCollisionAide.execute();
                         GameModule.getGameModule().sendAndLog(placeCollisionAide);
                     }
-*/
+
 
                 boolean isCollisionOccuring = findCollidingEntity(BumpableWithShape.getBumpableCompareShape(this), otherShipShapes) != null ? true : false;
                 //backtracking requested with a detected bumpable overlap, deal with it
