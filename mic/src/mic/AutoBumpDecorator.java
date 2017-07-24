@@ -131,28 +131,43 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
 
 
     private Command spawnRotatedPiece() {
-
+        //STEP 1: Collision aide template, centered as in in the image file, centered on 0,0 (upper left corner)
         GamePiece piece = newPiece(findPieceSlotByID(lastManeuver.getAide_gpID()));
 
+        //Info Gathering: Position of the center of the ship, integers inside a Point
         double shipx = this.getPosition().getX();
         double shipy = this.getPosition().getY();
-        Point shipPt = new Point((int) shipx, (int) shipy);
+        Point shipPt = new Point((int) shipx, (int) shipy); // these are the center coordinates of the ship, namely, shipPt.x and shipPt.y
 
+         //Info Gathering: offset vector (integers) that's used in local coordinates, right after a rotation found in lastManeuver.getTemplateAngle(), so that it's positioned behind nubs properly
         double x = isLargeShip(this) ? lastManeuver.getAide_xLarge() : lastManeuver.getAide_x();
         double y = isLargeShip(this) ? lastManeuver.getAide_yLarge() : lastManeuver.getAide_y();
         int posx =  (int)x;
         int posy =  (int)y;
-        Point tOff = new Point(posx, posy);
+        Point tOff = new Point(posx, posy); // these are the offsets in local space for the templates, if the ship's center is at 0,0 and pointing up
 
+
+        //Info Gathering: gets the angle from ManeuverPaths which deals with degrees, local space with ship at 0,0, pointing up
+        double tAngle = lastManeuver.getTemplateAngle();
+        double sAngle = this.getRotator().getAngle();
+
+        //STEP 2: rotate the collision aide with both the getTemplateAngle and the ship's final angle,
         FreeRotator fR = (FreeRotator)Decorator.getDecorator(piece, FreeRotator.class);
+        fR.setAngle(sAngle - tAngle);
 
-        fR.setAngle(lastManeuver.getTemplateAngle());
-        piece.setPosition(tOff);
-        fR.setAngle(fR.getAngle() + this.getRotator().getAngle());
+        //STEP 3: rotate a double version of tOff to get tOff_rotated
+        double xWork = Math.cos(-Math.PI*sAngle/180.0f)*tOff.getX() - Math.sin(-Math.PI*sAngle/180.0f)*tOff.getY();
+        double yWork = Math.sin(-Math.PI*sAngle/180.0f)*tOff.getX() + Math.cos(-Math.PI*sAngle/180.0f)*tOff.getY();
+        Point tOff_rotated = new Point((int)xWork, (int)yWork);
 
-        Command placeCommand = getMap().placeOrMerge(piece, new Point((int)piece.getPosition().getX(), (int)piece.getPosition().getY()));
+        //STEP 4: translation into place
+        Command placeCommand = getMap().placeOrMerge(piece, new Point(tOff_rotated.x + shipPt.x, tOff_rotated.y + shipPt.y));
+        //to do, use the current ship angle, matrix rotate the tOff vector (map global coords)
+        //take the virgin template, rotate it with ManeuverPaths' angle and ship angle combined, translate it with tOff_rotated + ship center combined
+        //this should mimick what a centered, 0,0 positioned ship has to endure to go to the map global coords, namely:
+        //rotate with game's current ship angle (no equivalent to ManeuAngle for ships), no equivalent tOff translation, then game's current ship pos translation
 
-
+        //recap: spawn virgin template at 0,0; rot template with ManeuAngle & ShipAngle; rot tOff with ShipAngle; trans template with tOff + shipPos
         return placeCommand;
     }
 
