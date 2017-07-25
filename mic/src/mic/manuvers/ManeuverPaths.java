@@ -26,6 +26,16 @@ public enum ManeuverPaths {
     RBk2(CurvedPaths.RBk2, "Right Bank 2", 2, 0.0f, "519", 180.0f, 51.6f, 197.0f, 51.6f, 253.5f, "3654", 0.0f, 0.0f, 0.0f, 0.0f),
     RBk3(CurvedPaths.RBk3, "Right Bank 3", 3, 0.0f, "520", 180.0f, 72.0f, 246.5f, 72.0f, 303.0f, "3655", 0.0f, 0.0f, 0.0f, 0.0f),
 
+    /*
+    (ManeuverPath path, String fullName, int speedInt,
+                  double additionalAngleForShip, String gpID, double templateAngle,
+                  double offsetX, double offsetY,
+                  double offsetXLarge, double offsetYLarge,
+                  String aide_gpID,
+                  double aide_x, double aide_y,
+                  double aide_xLarge, double aide_yLarge)
+     */
+
     LT1(CurvedPaths.LT1, "Left Turn 1", 1, 0.0f, "521", 90.0f, -35.0f, 120.0f, -35.0f, 176.5f, "3656", -206.0f, -59.0f, -234.5f, -176.5f),
     LT2(CurvedPaths.LT2, "Left Turn 2", 2, 0.0f, "522", 90.0f, -74.0f, 159.0f, -74.0f, 215.5f, "3657", 0.0f, 159.0f, 0.0f, 215.5f),
     LT3(CurvedPaths.LT3, "Left Turn 3", 3, 0.0f, "523", 90.0f, -113.0f, 198.0f, -113.0f, 254.5f, "3658", 0.0f, 198.0f, 0.0f, 254.5f),
