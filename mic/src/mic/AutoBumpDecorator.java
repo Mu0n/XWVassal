@@ -130,9 +130,9 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
     }
 
 
-    private Command spawnRotatedPiece() {
+    private Command spawnRotatedPiece(ManeuverPaths theManeuv) {
         //STEP 1: Collision aide template, centered as in in the image file, centered on 0,0 (upper left corner)
-        GamePiece piece = newPiece(findPieceSlotByID(lastManeuver.getAide_gpID()));
+        GamePiece piece = newPiece(findPieceSlotByID(theManeuv.getAide_gpID()));
 
         //Info Gathering: Position of the center of the ship, integers inside a Point
         double shipx = this.getPosition().getX();
@@ -140,8 +140,8 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
         Point shipPt = new Point((int) shipx, (int) shipy); // these are the center coordinates of the ship, namely, shipPt.x and shipPt.y
 
          //Info Gathering: offset vector (integers) that's used in local coordinates, right after a rotation found in lastManeuver.getTemplateAngle(), so that it's positioned behind nubs properly
-        double x = isLargeShip(this) ? lastManeuver.getAide_xLarge() : lastManeuver.getAide_x();
-        double y = isLargeShip(this) ? lastManeuver.getAide_yLarge() : lastManeuver.getAide_y();
+        double x = isLargeShip(this) ? theManeuv.getAide_xLarge() : theManeuv.getAide_x();
+        double y = isLargeShip(this) ? theManeuv.getAide_yLarge() : theManeuv.getAide_y();
         int posx =  (int)x;
         int posy =  (int)y;
         Point tOff = new Point(posx, posy); // these are the offsets in local space for the templates, if the ship's center is at 0,0 and pointing up
@@ -162,12 +162,7 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
 
         //STEP 4: translation into place
         Command placeCommand = getMap().placeOrMerge(piece, new Point(tOff_rotated.x + shipPt.x, tOff_rotated.y + shipPt.y));
-        //to do, use the current ship angle, matrix rotate the tOff vector (map global coords)
-        //take the virgin template, rotate it with ManeuverPaths' angle and ship angle combined, translate it with tOff_rotated + ship center combined
-        //this should mimick what a centered, 0,0 positioned ship has to endure to go to the map global coords, namely:
-        //rotate with game's current ship angle (no equivalent to ManeuAngle for ships), no equivalent tOff translation, then game's current ship pos translation
 
-        //recap: spawn virgin template at 0,0; rot template with ManeuAngle & ShipAngle; rot tOff with ShipAngle; trans template with tOff + shipPos
         return placeCommand;
     }
 
@@ -191,7 +186,7 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
                 // Whenever I want to resume template placement with java, this is where it happens
 
                     if(lastManeuver != null) {
-                        Command placeCollisionAide = spawnRotatedPiece();
+                        Command placeCollisionAide = spawnRotatedPiece(lastManeuver);
                         placeCollisionAide.execute();
                         GameModule.getGameModule().sendAndLog(placeCollisionAide);
                     }
