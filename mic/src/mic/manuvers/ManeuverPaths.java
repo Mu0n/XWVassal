@@ -62,9 +62,9 @@ public enum ManeuverPaths {
     SloopR3Turn(CurvedPaths.RT3, "Segnor's Loop Hard Right 3", 3, 180.0f, "523", 0.0f, -113.0f, -198.0f, -113.0f, -254.5f, "3658", 0.0f, 0.0f, -282.0f, -86.0f),
 
     TrollL2(CurvedPaths.LT2, "Tallon Roll Left 2", 2, 90.0f, "522", 180.0f, -159.0f, -75.0f, -215.5f, -75.0f, "3657", -75.0f, -158.0f, 0.0f, 0.0f),
-    TrollL3(CurvedPaths.LT3, "Tallon Roll Left 3", 2, 90.0f, "523", 180.0f, -198.0f, -113.0f, -254.5f, -113.0f, "3658", -113.0f, -198.0f, 0.0f, 0.0f),
+    TrollL3(CurvedPaths.LT3, "Tallon Roll Left 3", 3, 90.0f, "523", 180.0f, -198.0f, -113.0f, -254.5f, -113.0f, "523", -198.0f, -113.0f, -254.5f, -113.0f),
     TrollR2(CurvedPaths.RT2, "Tallon Roll Right 2", 2, 270.0f, "522", 90.0f, 159.5f, -75.0f, 215.5f, -75.0f, "3657", 75.0f, -158.0f, 0.0f, 0.0f),
-    TrollR3(CurvedPaths.RT3, "Tallon Roll Right 3", 2, 270.0f, "523", 90.0f, 198.0f, -113.0f, 254.5f, -113.0f, "3658", 113.0f, -198.0f, 0.0f, 0.0f);
+    TrollR3(CurvedPaths.RT3, "Tallon Roll Right 3", 3, 270.0f, "523", 90.0f, 198.0f, -113.0f, 254.5f, -113.0f, "523", 198.0f, -113.0f, 254.5f, -113.0f);
 
     private final ManeuverPath path;
     private final String fullName;
@@ -103,6 +103,7 @@ public enum ManeuverPaths {
         this.aide_xLarge = aide_xLarge;
         this.aide_yLarge = aide_yLarge;
     }
+
 
     public String getFullName() { return this.fullName; }
     public int getSpeedInt() { return this.speedInt; }

@@ -184,7 +184,7 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
 
 
                 // Whenever I want to resume template placement with java, this is where it happens
-
+logToChat("with c: "+ lastManeuver.getFullName());
                     if(lastManeuver != null) {
                         Command placeCollisionAide = spawnRotatedPiece(lastManeuver);
                         placeCollisionAide.execute();
@@ -220,10 +220,13 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
             // find the list of other bumpables
             List<BumpableWithShape> otherBumpableShapes = getBumpablesWithShapes();
 
+
             //safeguard old position and path
 
             this.prevPosition = getCurrentState();
             this.lastManeuver = path;
+
+
 
             //This PathPart list will be used everywhere: moving, bumping, out of boundsing
             //maybe fetch it for both 'c' behavior and movement
@@ -243,6 +246,14 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
             Command innerCommand = piece.keyEvent(stroke);
 
             innerCommand.append(buildTranslateCommand(part, path.getAdditionalAngleForShip()));
+
+            //check for Tallon rolls and spawn the template
+            if(lastManeuver == ManeuverPaths.TrollL2 || lastManeuver == ManeuverPaths.TrollL3 || lastManeuver == ManeuverPaths.TrollR2 || lastManeuver == ManeuverPaths.TrollR3) {
+                Command placeTrollTemplate = spawnRotatedPiece(lastManeuver);
+                innerCommand.append(placeTrollTemplate);
+
+            }
+
 
             //These lines fetch the Shape of the last movement template used
             FreeRotator rotator = (FreeRotator) (Decorator.getDecorator(Decorator.getOutermost(this), FreeRotator.class));
