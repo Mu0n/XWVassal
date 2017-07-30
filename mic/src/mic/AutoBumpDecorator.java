@@ -184,7 +184,6 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
 
 
                 // Whenever I want to resume template placement with java, this is where it happens
-logToChat("with c: "+ lastManeuver.getFullName());
                     if(lastManeuver != null) {
                         Command placeCollisionAide = spawnRotatedPiece(lastManeuver);
                         placeCollisionAide.execute();

@@ -36,7 +36,80 @@ import static mic.Util.*;
  * Manages the spawning of bombs on the bomb spawner by intercepting the shortcuts, which will be the only item using this custom java class
  * Phase II could include a spiffy GUI menu 
  */
- 
+enum BombToken {
+    ConnerNet("Conner Net","Mine","666",0.0f, 0.0f),
+    ProxMine("Proximity Mine","Mine","666",0.0f, 0.0f),
+    ClusterMineCenter("Cluster Mine Center","Mine","666", 0.0f, 0.0f),
+    ClusterMineLeft("Cluster Mine Left","Mine","666", 0.0f, 0.0f),
+    ClusterMineRight("Cluster Mine Right", "Mine", "666", 0.0f, 0.0f),
+    IonBombs("Ion Bobs", "Bomb", "666", 0.0f, 0.0f),
+    SeismicCharge("Seismic Charge", "Bomb", "666", 0.0f, 0.0f),
+    ProtonBomb("Proton Bomb", "Bomb", "666", 0.0f, 0.0f),
+    ThermalDetonator("Thermal Detonator", "Bomb", "666", 0.0f, 0.0f),
+    Bomblet("Bomblet", "Bomb", "666", 0.0f, 0.0f);
+
+    private final String bombName;
+    private final String bombType;
+    private final String gpID;
+    private final double offsetX;
+    private final double offsetY;
+
+    BombToken(String bombName, String bombType, String gpID, double offsetX, double offsetY) {
+        this.bombName = bombName;
+        this.bombType = bombType;
+        this.gpID = gpID;
+        this.offsetX = offsetX;
+        this.offsetY = offsetY;
+    }
+    public String getBombName() { return this.bombName; }
+    public String getBombType() { return this.bombType; }
+    public String getBombGpID() { return this.gpID; }
+    public double getOffsetX() { return this.offsetX; }
+    public double getOffsetY() { return this.offsetY; }
+}
+
+enum BombManeuver {
+    Back1("Back 1", 0.0f, "521", 0.0f, 0.0f, -113.0f, 0.0f, -226.0f),
+    Back2("Back 2", 0.0f, "521", 0.0f, 0.0f, -113.0f, 0.0f, -226.0f),
+    Back3("Back 3", 0.0f, "521", 0.0f, 0.0f, -113.0f, 0.0f, -226.0f),
+    LT1("Left Turn 1", 0.0f, "521", 0.0f, 0.0f, -113.0f, 0.0f, -226.0f),
+    RT1("Right Turn 1", 0.0f, "521", 0.0f, 0.0f, -113.0f, 0.0f, -226.0f),
+    LT3("Left Turn 3", 0.0f, "521", 0.0f, 0.0f, -113.0f, 0.0f, -226.0f),
+    RT3("Right Turn 3", 0.0f, "521", 0.0f, 0.0f, -113.0f, 0.0f, -226.0f);
+
+    private final String templateName;
+    private final double additionalAngleForShip;
+    private final String gpID;
+    private final double templateAngle;
+    private final double offsetX;
+    private final double offsetY;
+    private final double offsetXLarge;
+    private final double offsetYLarge;
+
+    BombManeuver(String templateName,  double additionalAngleForShip, String gpID, double templateAngle,
+                double offsetX, double offsetY, double offsetXLarge, double offsetYLarge)
+    {
+        this.templateName = templateName;
+        this.additionalAngleForShip = additionalAngleForShip;
+        this.gpID = gpID;
+        this.templateAngle = templateAngle;
+        this.offsetX = offsetX;
+        this.offsetY = offsetY;
+        this.offsetXLarge = offsetXLarge;
+        this.offsetYLarge = offsetYLarge;
+    }
+
+    public String getTemplateName() { return this.templateName; }
+    public double getAdditionalAngleForShip() { return this.additionalAngleForShip; }
+    public String getTemplateGpID() { return this.gpID; }
+    public double getTemplateAngle() { return this.templateAngle; }
+    public double getOffsetX() { return this.offsetX; }
+    public double getOffsetY() { return this.offsetY; }
+    public double getOffsetXLarge() { return this.offsetXLarge; }
+    public double getOffsetYLarge() { return this.offsetYLarge; }
+
+}
+
 public class BombSpawner extends Decorator implements EditablePiece {
     public static final String ID = "bombspawner";
     static final int NBFLASHES = 5; //use the same flash functionality if a mine is spawned on a ship
@@ -54,12 +127,14 @@ public class BombSpawner extends Decorator implements EditablePiece {
     private FreeRotator myRotator = null;
     public CollisionVisualization previousCollisionVisualization = null;
 
-    private static Map<String, ManeuverPaths> keyStrokeToManeuver = ImmutableMap.<String, ManeuverPaths>builder()
-            .put("SHIFT 1", ManeuverPaths.Str1)
-            .put("SHIFT 2", ManeuverPaths.Str2)
-            .put("SHIFT 3", ManeuverPaths.Str3)
-            .put("CTRL SHIFT 1", ManeuverPaths.LT1)
-            .put("CTRL SHIFT 3", ManeuverPaths.LT3)
+    private static Map<String, BombManeuver> keyStrokeToManeuver = ImmutableMap.<String, BombManeuver>builder()
+            .put("SHIFT 1", BombManeuver.Back1)
+            .put("SHIFT 2", BombManeuver.Back2)
+            .put("SHIFT 3", BombManeuver.Back3)
+            .put("CTRL SHIFT 1", BombManeuver.LT1)
+            .put("ALT SHIFT 1", BombManeuver.RT1)
+            .put("CTRL SHIFT 3", BombManeuver.LT3)
+            .put("ALT SHIFT 3", BombManeuver.RT3)
             .build();
 
     public BombSpawner() {
@@ -100,7 +175,7 @@ public class BombSpawner extends Decorator implements EditablePiece {
     }
 
 
-    private Command spawnRotatedPiece(ManeuverPaths theManeuv) {
+    private Command spawnBomb(BombToken theBomb) {
         //STEP 1: Collision aide template, centered as in in the image file, centered on 0,0 (upper left corner)
         GamePiece piece = newPiece(findPieceSlotByID(theManeuv.getAide_gpID()));
 
@@ -190,40 +265,13 @@ logToChat("with c: "+ lastManeuver.getFullName());
             // find the list of other bumpables
             List<BumpableWithShape> otherBumpableShapes = getBumpablesWithShapes();
 
-
             //safeguard old position and path
 
             this.prevPosition = getCurrentState();
             this.lastManeuver = path;
 
-
-
-            //This PathPart list will be used everywhere: moving, bumping, out of boundsing
-            //maybe fetch it for both 'c' behavior and movement
-            final List<PathPart> parts = path.getTransformedPathParts(
-                    this.getCurrentState().x,
-                    this.getCurrentState().y,
-                    this.getCurrentState().angle,
-                    isLargeShip(this)
-            );
-
-            //this is the final ship position post-move
-            PathPart part = parts.get(parts.size()-1);
-
-            //Get the ship name string for announcements
-            String yourShipName = getShipStringForReports(true, this.getProperty("Pilot Name").toString(), this.getProperty("Craft ID #").toString());
             //Start the Command chain
             Command innerCommand = piece.keyEvent(stroke);
-
-            innerCommand.append(buildTranslateCommand(part, path.getAdditionalAngleForShip()));
-
-            //check for Tallon rolls and spawn the template
-            if(lastManeuver == ManeuverPaths.TrollL2 || lastManeuver == ManeuverPaths.TrollL3 || lastManeuver == ManeuverPaths.TrollR2 || lastManeuver == ManeuverPaths.TrollR3) {
-                Command placeTrollTemplate = spawnRotatedPiece(lastManeuver);
-                innerCommand.append(placeTrollTemplate);
-
-            }
-
 
             //These lines fetch the Shape of the last movement template used
             FreeRotator rotator = (FreeRotator) (Decorator.getDecorator(Decorator.getOutermost(this), FreeRotator.class));
@@ -232,243 +280,12 @@ logToChat("with c: "+ lastManeuver.getFullName());
                     isLargeShip(this),
                     rotator);
 
-            //don't check for collisions in windows other than the main map
-            if(!"Contested Sector".equals(getMap().getMapName())) return innerCommand;
-
-            innerCommand.append(logToChatWithTimeCommand("* --- " + yourShipName + " performs move: " + path.getFullName()));
-
-            //Check for template shape overlap with mines, asteroids, debris
-            checkTemplateOverlap(lastMoveShapeUsed, otherBumpableShapes);
-            //Check for ship bumping other ships, mines, asteroids, debris
-            announceBumpAndPaint(otherBumpableShapes);
-            //Check if a ship becomes out of bounds
-            checkIfOutOfBounds(yourShipName);
-
-            //Add all the detected overlapping shapes to the map drawn components here
-            if(this.previousCollisionVisualization != null &&  this.previousCollisionVisualization.getCount() > 0){
-
-                final Timer timer = new Timer();
-                timer.schedule(new TimerTask() {
-                    int count = 1;
-                    @Override
-                    public void run() {
-                        try{
-                            previousCollisionVisualization.draw(getMap().getView().getGraphics(),getMap());
-                            count++;
-                            if(count == NBFLASHES * 2) {
-                                getMap().removeDrawComponent(previousCollisionVisualization);
-                                timer.cancel();
-                            }
-                        } catch (Exception e) {
-
-                        }
-                    }
-                }, 0,DELAYBETWEENFLASHES);
-            }
-
 return innerCommand;
         }
         //the maneuver has finished. return control of the event to vassal to do nothing
         return piece.keyEvent(stroke);
     }
 
-    private void checkTemplateOverlap(Shape lastMoveShapeUsed, List<BumpableWithShape> otherBumpableShapes) {
-
-        List<BumpableWithShape> collidingEntities = findCollidingEntities(lastMoveShapeUsed, otherBumpableShapes);
-        CollisionVisualization cvFoundHere = new CollisionVisualization(lastMoveShapeUsed);
-
-        int howManyBumped = 0;
-        for (BumpableWithShape bumpedBumpable : collidingEntities) {
-            if (DRAW_COLLISIONS) {
-                String yourShipName = getShipStringForReports(true, this.getProperty("Pilot Name").toString(), this.getProperty("Craft ID #").toString());
-                if (bumpedBumpable.type.equals("Asteroid")) {
-                    String bumpAlertString = "* --- Overlap detected with " + yourShipName + "'s maneuver template and an asteroid.";
-                    logToChatWithTime(bumpAlertString);
-                    cvFoundHere.add(bumpedBumpable.shape);
-                    this.previousCollisionVisualization.add(bumpedBumpable.shape);
-                    howManyBumped++;
-                } else if (bumpedBumpable.type.equals("Debris")) {
-                    String bumpAlertString = "* --- Overlap detected with " + yourShipName + "'s maneuver template and a debris cloud.";
-                    logToChatWithTime(bumpAlertString);
-                    cvFoundHere.add(bumpedBumpable.shape);
-                    this.previousCollisionVisualization.add(bumpedBumpable.shape);
-                    howManyBumped++;
-                } else if (bumpedBumpable.type.equals("Mine")) {
-                    String bumpAlertString = "* --- Overlap detected with " + yourShipName + "'s maneuver template and a mine.";
-                    logToChatWithTime(bumpAlertString);
-                    cvFoundHere.add(bumpedBumpable.shape);
-                    this.previousCollisionVisualization.add(bumpedBumpable.shape);
-                    howManyBumped++;
-                }
-            }
-        }
-        if (howManyBumped > 0) {
-            this.previousCollisionVisualization.add(lastMoveShapeUsed);
-        }
-    }
-
-
-    private void spawnPiece(GamePiece piece, Point position, VASSAL.build.module.Map map) {
-        Command placeCommand = map.placeOrMerge(piece, position);
-        placeCommand.execute();
-        GameModule.getGameModule().sendAndLog(placeCommand);
-    }
-
-
-    private void checkIfOutOfBounds(String yourShipName) {
-        Rectangle mapArea = new Rectangle(0,0,0,0);
-        try{
-            Board b = getMap().getBoards().iterator().next();
-            mapArea = b.bounds();
-            String name = b.getName();
-        }catch(Exception e)
-        {
-            logToChat("Board name isn't formatted right, change to #'x#' Description");
-        }
-        Shape theShape = BumpableWithShape.getBumpableCompareShape(this);
-
-        if(theShape.getBounds().getMaxX() > mapArea.getBounds().getMaxX()  || // too far to the right
-                theShape.getBounds().getMaxY() > mapArea.getBounds().getMaxY() || // too far to the bottom
-                theShape.getBounds().getX() < mapArea.getBounds().getX() || //too far to the left
-                theShape.getBounds().getY() < mapArea.getBounds().getY()) // too far to the top
-        {
-
-            logToChatWithTime("* -- " + yourShipName + " flew out of bounds");
-            CollisionVisualization collisionVisualization = new CollisionVisualization(theShape);
-            this.previousCollisionVisualization.add(theShape);
-        }
-    }
-
-    private void announceBumpAndPaint(List<BumpableWithShape> otherBumpableShapes) {
-        Shape theShape = BumpableWithShape.getBumpableCompareShape(this);
-
-        List<BumpableWithShape> collidingEntities = findCollidingEntities(theShape, otherBumpableShapes);
-
-        int howManyBumped = 0;
-        for (BumpableWithShape bumpedBumpable : collidingEntities) {
-            if (DRAW_COLLISIONS) {
-                String yourShipName = getShipStringForReports(true, this.getProperty("Pilot Name").toString(), this.getProperty("Craft ID #").toString());
-                if (bumpedBumpable.type.equals("Ship")) {
-                    String otherShipName = getShipStringForReports(false, bumpedBumpable.pilotName, bumpedBumpable.shipName);
-                    String bumpAlertString = "* --- Overlap detected with " + yourShipName + " and " + otherShipName + ". Resolve this by hitting the 'c' key.";
-                    logToChatWithTime(bumpAlertString);
-                    this.previousCollisionVisualization.add(bumpedBumpable.shape);
-                    howManyBumped++;
-                } else if (bumpedBumpable.type.equals("Asteroid")) {
-                    String bumpAlertString = "* --- Overlap detected with " + yourShipName + " and an asteroid.";
-                    logToChatWithTime(bumpAlertString);
-                    this.previousCollisionVisualization.add(bumpedBumpable.shape);
-                    howManyBumped++;
-                } else if (bumpedBumpable.type.equals("Debris")) {
-                    String bumpAlertString = "* --- Overlap detected with " + yourShipName + " and a debris cloud.";
-                    logToChatWithTime(bumpAlertString);
-                    this.previousCollisionVisualization.add(bumpedBumpable.shape);
-                    howManyBumped++;
-                } else if (bumpedBumpable.type.equals("Mine")) {
-                    String bumpAlertString = "* --- Overlap detected with " + yourShipName + " and a mine.";
-                    logToChatWithTime(bumpAlertString);
-                    this.previousCollisionVisualization.add(bumpedBumpable.shape);
-                    howManyBumped++;
-                }
-            }
-        }
-        if (howManyBumped > 0) {
-            this.previousCollisionVisualization.add(theShape);
-        }
-
-    }
-
-    private String getShipStringForReports(boolean isYours, String pilotName, String shipName)
-    {
-
-        String yourShipName = (isYours ? GlobalOptions.getInstance().getPlayerId() + "'s" : "another ship");
-
-        if (!pilotName.equals("")) { yourShipName += " " + pilotName; }
-        else yourShipName += " ship";
-        if (!shipName.equals("")) { yourShipName += " (" + shipName + ")"; }
-        else yourShipName += " ";
-
-        return yourShipName;
-    }
-    /**
-     * Iterate in reverse over path of last maneuver and return a command that
-     * will move the ship to a non-overlapping position and rotation
-     *
-     * @return
-     */
-    private Command resolveBump(List<BumpableWithShape> otherBumpableShapes) {
-        if (this.lastManeuver == null || this.prevPosition == null) {
-            return null;
-        }
-        Shape rawShape = BumpableWithShape.getRawShape(this);
-        final List<PathPart> parts = this.lastManeuver.getTransformedPathParts(
-                this.prevPosition.x,
-                this.prevPosition.y,
-                this.prevPosition.angle,
-                isLargeShip(this)
-        );
-
-
-
-        for (int i = parts.size() - 1; i >= 0; i--) {
-            PathPart part = parts.get(i);
-            Shape movedShape = AffineTransform
-                    .getTranslateInstance(part.getX(), part.getY())
-                    .createTransformedShape(rawShape);
-            double roundedAngle = convertAngleToGameLimits(part.getAngle());
-            movedShape = AffineTransform
-                    .getRotateInstance(Math.toRadians(-roundedAngle), part.getX(), part.getY())
-                    .createTransformedShape(movedShape);
-
-            BumpableWithShape bumpedBumpable = findCollidingEntity(movedShape, otherBumpableShapes);
-            if (bumpedBumpable == null) {
-                if (DRAW_COLLISIONS) {
-                    if (this.previousCollisionVisualization != null) {
-                        getMap().removeDrawComponent(this.previousCollisionVisualization);
-                    }
-                }
-                return buildTranslateCommand(part,0.0f);
-            }
-        }
-
-        // Could not find a position that wasn't bumping, bring it back to where it was before
-        return buildTranslateCommand(new PathPart(this.prevPosition.x, this.prevPosition.y, this.prevPosition.angle), 0.0f);
-    }
-
-    /**
-     * Builds vassal command to transform the current ship to the given PathPart
-     *
-     * @param part
-     * @return
-     */
-    private Command buildTranslateCommand(PathPart part, double additionalAngle) {
-        // Copypasta from VASSAL.counters.Pivot
-        ChangeTracker changeTracker = new ChangeTracker(this);
-        getRotator().setAngle(part.getAngle() + additionalAngle);
-
-        setProperty("Moved", Boolean.TRUE);
-
-        Command result = changeTracker.getChangeCommand();
-
-        GamePiece outermost = Decorator.getOutermost(this);
-        MoveTracker moveTracker = new MoveTracker(outermost);
-        Point point = new Point((int) Math.floor(part.getX() + 0.5), (int) Math.floor(part.getY() + 0.5));
-        // ^^ There be dragons here ^^ - vassals gives positions as doubles but only lets them be set as ints :(
-        this.getMap().placeOrMerge(outermost, point);
-        result = result.append(moveTracker.getMoveCommand());
-/*
-        MovementReporter reporter = new MovementReporter(result);
-
-        Command reportCommand = reporter.getReportCommand();
-        if (reportCommand != null) {
-            reportCommand.execute();
-            result = result.append(reportCommand);
-        }
-
-        result = result.append(reporter.markMovedPieces());
-*/
-        return result;
-    }
 
     /**
      * Returns the comparision shape of the first bumpable colliding with the provided ship.  Returns null if there
@@ -650,24 +467,6 @@ return innerCommand;
             }
         }
         return bumpables;
-    }
-
-    /**
-     * Uses a FreeRotator unassociated with any game pieces with a 360 rotation limit
-     * to convert the provided angle to the same angle the ship would be drawn at
-     * by vassal
-     *
-     * @param angle
-     * @return
-     */
-    private double convertAngleToGameLimits(double angle) {
-        this.testRotator.setAngle(angle);
-        return this.testRotator.getAngle();
-    }
-
-
-    private boolean isLargeShip(Decorator ship) {
-        return BumpableWithShape.getRawShape(ship).getBounds().getWidth() > 114;
     }
 
     private static class CollisionVisualization implements Drawable {
