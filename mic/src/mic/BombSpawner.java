@@ -6,13 +6,10 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Area;
 import java.util.*;
 import java.util.List;
-import java.util.Timer;
 
 import javax.swing.*;
 
 import VASSAL.build.GameModule;
-import VASSAL.build.module.GlobalOptions;
-import VASSAL.build.module.map.boardPicker.Board;
 import VASSAL.build.widget.PieceSlot;
 import VASSAL.counters.*;
 import com.google.common.collect.ImmutableMap;
@@ -20,12 +17,9 @@ import com.google.common.collect.Lists;
 
 import VASSAL.build.module.documentation.HelpFile;
 import VASSAL.build.module.map.Drawable;
-import VASSAL.command.ChangeTracker;
 import VASSAL.command.Command;
-import VASSAL.command.MoveTracker;
 import VASSAL.configure.HotKeyConfigurer;
 import mic.manuvers.ManeuverPaths;
-import mic.manuvers.PathPart;
 
 import static java.awt.event.InputEvent.ALT_DOWN_MASK;
 import static mic.Util.*;
@@ -37,16 +31,16 @@ import static mic.Util.*;
  * Phase II could include a spiffy GUI menu 
  */
 enum BombToken {
-    ConnerNet("Conner Net","Mine","666",0.0f, 0.0f),
-    ProxMine("Proximity Mine","Mine","666",0.0f, 0.0f),
-    ClusterMineCenter("Cluster Mine Center","Mine","666", 0.0f, 0.0f),
-    ClusterMineLeft("Cluster Mine Left","Mine","666", 0.0f, 0.0f),
-    ClusterMineRight("Cluster Mine Right", "Mine", "666", 0.0f, 0.0f),
-    IonBombs("Ion Bobs", "Bomb", "666", 0.0f, 0.0f),
-    SeismicCharge("Seismic Charge", "Bomb", "666", 0.0f, 0.0f),
-    ProtonBomb("Proton Bomb", "Bomb", "666", 0.0f, 0.0f),
-    ThermalDetonator("Thermal Detonator", "Bomb", "666", 0.0f, 0.0f),
-    Bomblet("Bomblet", "Bomb", "666", 0.0f, 0.0f);
+    ConnerNet("Conner Net","Mine","6423",0.0f, 0.0f),
+    ProxMine("Proximity Mine","Mine","3666",0.0f, 0.0f),
+    ClusterMineCenter("Cluster Mine Center","Mine","5774", 0.0f, 0.0f),
+    ClusterMineLeft("Cluster Mine Left","Mine","5775", 0.0f, 0.0f),
+    ClusterMineRight("Cluster Mine Right", "Mine", "5775", 0.0f, 0.0f),
+    IonBombs("Ion Bombs", "Bomb", "5260", 0.0f, 0.0f),
+    SeismicCharge("Seismic Charge", "Bomb", "3665", 0.0f, 0.0f),
+    ProtonBomb("Proton Bomb", "Bomb", "1269", 0.0f, 0.0f),
+    ThermalDetonator("Thermal Detonator", "Bomb", "8867", 0.0f, 0.0f),
+    Bomblet("Bomblet", "Bomb", "11774", 0.0f, 0.0f);
 
     private final String bombName;
     private final String bombType;
@@ -137,6 +131,20 @@ public class BombSpawner extends Decorator implements EditablePiece {
             .put("ALT SHIFT 3", BombManeuver.RT3)
             .build();
 
+    private static Map<String, BombToken> keyStrokeToBomb = ImmutableMap.<String, BombToken>builder()
+            .put("CTRL O", BombToken.ConnerNet)
+            .put("CTRL M", BombToken.ProxMine)
+            .put("CTRL L", BombToken.ClusterMineCenter)
+            .put("CTRL I", BombToken.IonBombs)
+            .put("CTRL S", BombToken.SeismicCharge)
+            .put("CTRL P", BombToken.ProtonBomb)
+            .put("CTRL H", BombToken.ThermalDetonator)
+            .put("CTRL B", BombToken.Bomblet)
+            .build();
+
+
+
+
     public BombSpawner() {
         this(null);
     }
@@ -174,19 +182,22 @@ public class BombSpawner extends Decorator implements EditablePiece {
         return null;
     }
 
+    private boolean isLargeShip(Decorator ship) {
+        return BumpableWithShape.getRawShape(ship).getBounds().getWidth() > 114;
+    }
 
     private Command spawnBomb(BombToken theBomb) {
         //STEP 1: Collision aide template, centered as in in the image file, centered on 0,0 (upper left corner)
-        GamePiece piece = newPiece(findPieceSlotByID(theManeuv.getAide_gpID()));
+        GamePiece piece = newPiece(findPieceSlotByID(theBomb.getBombGpID()));
 
-        //Info Gathering: Position of the center of the ship, integers inside a Point
-        double shipx = this.getPosition().getX();
-        double shipy = this.getPosition().getY();
-        Point shipPt = new Point((int) shipx, (int) shipy); // these are the center coordinates of the ship, namely, shipPt.x and shipPt.y
+        //Info Gathering: Position of the center of the bomb spawner, integers inside a Point
+        double bsx = this.getPosition().getX();
+        double bsy = this.getPosition().getY();
+        Point bsPt = new Point((int) bsx, (int) bsy); // these are the center coordinates of the ship, namely, shipPt.x and shipPt.y
 
          //Info Gathering: offset vector (integers) that's used in local coordinates, right after a rotation found in lastManeuver.getTemplateAngle(), so that it's positioned behind nubs properly
-        double x = isLargeShip(this) ? theManeuv.getAide_xLarge() : theManeuv.getAide_x();
-        double y = isLargeShip(this) ? theManeuv.getAide_yLarge() : theManeuv.getAide_y();
+        double x = theBomb.getOffsetX();
+        double y = theBomb.getOffsetY();
         int posx =  (int)x;
         int posy =  (int)y;
         Point tOff = new Point(posx, posy); // these are the offsets in local space for the templates, if the ship's center is at 0,0 and pointing up
@@ -206,9 +217,25 @@ public class BombSpawner extends Decorator implements EditablePiece {
         Point tOff_rotated = new Point((int)xWork, (int)yWork);
 
         //STEP 4: translation into place
-        Command placeCommand = getMap().placeOrMerge(piece, new Point(tOff_rotated.x + shipPt.x, tOff_rotated.y + shipPt.y));
+        Command placeCommand = getMap().placeOrMerge(piece, new Point(tOff_rotated.x + bsPt.x, tOff_rotated.y + bsPt.y));
 
         return placeCommand;
+    }
+
+    private BombManeuver getKeystrokeBombManeuver(KeyStroke keyStroke) {
+        String hotKey = HotKeyConfigurer.getString(keyStroke);
+        if (keyStrokeToManeuver.containsKey(hotKey)) {
+            return keyStrokeToManeuver.get(hotKey);
+        }
+        return null;
+    }
+
+    private BombToken getKeystrokeBomb(KeyStroke keyStroke) {
+        String hotKey = HotKeyConfigurer.getString(keyStroke);
+        if (keyStrokeToBomb.containsKey(hotKey)) {
+            return keyStrokeToBomb.get(hotKey);
+        }
+        return null;
     }
 
     @Override
@@ -219,23 +246,14 @@ public class BombSpawner extends Decorator implements EditablePiece {
             this.previousCollisionVisualization = new CollisionVisualization();
         }
 
-        ManeuverPaths path = getKeystrokePath(stroke);
+        BombManeuver bombDropTemplate = getKeystrokeBombManeuver(stroke);
         // Is this a keystroke for a maneuver? Deal with the 'no' cases first
-        if (path == null) {
-            //check to see if 'c' was pressed
-            if(KeyStroke.getKeyStroke(KeyEvent.VK_C, 0, false).equals(stroke) && lastManeuver != null) {
+        if (bombDropTemplate == null) {
+            //check to see if a bomb was summoned
+            BombToken droppedBomb = getKeystrokeBomb(stroke);
+            if(droppedBomb != null){
+                //bomb drop needed
                 List<BumpableWithShape> otherShipShapes = getShipsWithShapes();
-
-
-
-                // Whenever I want to resume template placement with java, this is where it happens
-logToChat("with c: "+ lastManeuver.getFullName());
-                    if(lastManeuver != null) {
-                        Command placeCollisionAide = spawnRotatedPiece(lastManeuver);
-                        placeCollisionAide.execute();
-                        GameModule.getGameModule().sendAndLog(placeCollisionAide);
-                    }
-
 
                 boolean isCollisionOccuring = findCollidingEntity(BumpableWithShape.getBumpableCompareShape(this), otherShipShapes) != null ? true : false;
                 //backtracking requested with a detected bumpable overlap, deal with it
@@ -244,6 +262,30 @@ logToChat("with c: "+ lastManeuver.getFullName());
                     Command bumpResolveCommand = resolveBump(otherShipShapes);
                     return bumpResolveCommand == null ? innerCommand : innerCommand.append(bumpResolveCommand);
                 }
+
+
+
+            } //end of dealing with a bomb drop
+            else return piece.keyEvent(stroke);
+
+            if(KeyStroke.getKeyStroke(KeyEvent.VK_C, 0, false).equals(stroke) && lastManeuver != null) {
+                List<BumpableWithShape> otherShipShapes = getShipsWithShapes();
+
+                Command placeBombCommand = spawnBomb(droppedBomb);
+                if("Cluster Mine Center".equals(droppedBomb.getBombName())) {
+                    //do the side ones too
+                }
+                placeBombCommand.execute();
+                GameModule.getGameModule().sendAndLog(placeBombCommand);
+
+                    if(lastManeuver != null) {
+                        Command placeBomb = spawnBomb(getKeystrokeBombManeuver(stroke));
+                        placeBomb.execute();
+                        GameModule.getGameModule().sendAndLog(placeBomb);
+                    }
+
+
+
             }
             // 'c' keystroke has finished here, leave the method altogether
             if(KeyStroke.getKeyStroke(KeyEvent.VK_8, ALT_DOWN_MASK, false).equals(stroke)){
