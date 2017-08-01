@@ -203,7 +203,7 @@ public class BombSpawner extends Decorator implements EditablePiece {
 
 
         //Info Gathering: gets the angle from ManeuverPaths which deals with degrees, local space with ship at 0,0, pointing up
-        double tAngle = lastManeuver.getTemplateAngle();
+        double tAngle = 0.0f;
         double sAngle = this.getRotator().getAngle();
 
         //STEP 2: rotate the collision aide with both the getTemplateAngle and the ship's final angle,
