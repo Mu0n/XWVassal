@@ -65,30 +65,32 @@ enum BombToken {
 }
 
 enum BombManeuver {
-    Back1("Back 1", 0.0f, "524", 0.0f, 0.0f, -113.0f, 0.0f, -226.0f),
-    Back2("Back 2", 0.0f, "525", 0.0f, 0.0f, -113.0f, 0.0f, -226.0f),
-    Back3("Back 3", 0.0f, "526", 0.0f, 0.0f, -113.0f, 0.0f, -226.0f),
-    LT1("Left Turn 1", 0.0f, "521", 90.0f, 0.0f, -113.0f, 0.0f, -226.0f),
-    RT1("Right Turn 1", 0.0f, "521", 180.0f, 0.0f, -113.0f, 0.0f, -226.0f),
-    LT3("Left Turn 3", 0.0f, "523", 90.0f, 0.0f, -113.0f, 0.0f, -226.0f),
-    RT3("Right Turn 3", 0.0f, "523", 180.0f, 0.0f, -113.0f, 0.0f, -226.0f);
+    Back1("Back 1", "1", "524", 0.0f, 0.0f, 0.0f, -113.0f, 0.0f, -226.0f),
+    Back2("Back 2", "2", "525", 0.0f, 0.0f, 0.0f, -113.0f, 0.0f, -226.0f),
+    Back3("Back 3", "3", "526", 0.0f, 0.0f, 0.0f, -113.0f, 0.0f, -226.0f),
+    LT1("Left Turn 1", "4", "521", 90.0f, 90.0f, 0.0f, -113.0f, 0.0f, -226.0f),
+    RT1("Right Turn 1", "5", "521", 180.0f, -90.0f, 0.0f, -113.0f, 0.0f, -226.0f),
+    LT3("Left Turn 3", "6", "523", 90.0f, 90.0f, 0.0f, -113.0f, 0.0f, -226.0f),
+    RT3("Right Turn 3", "7", "523", 180.0f, -90.0f, 0.0f, -113.0f, 0.0f, -226.0f);
 
     private final String templateName;
-    private final double additionalAngleForShip;
+    private final String gfxLayer;
     private final String gpID;
     private final double templateAngle;
+    private final double bombAngle;
     private final double offsetX;
     private final double offsetY;
     private final double offsetXLarge;
     private final double offsetYLarge;
 
-    BombManeuver(String templateName,  double additionalAngleForShip, String gpID, double templateAngle,
+    BombManeuver(String templateName,  String gfxLayer, String gpID, double templateAngle, double bombAngle,
                 double offsetX, double offsetY, double offsetXLarge, double offsetYLarge)
     {
         this.templateName = templateName;
-        this.additionalAngleForShip = additionalAngleForShip;
+        this.gfxLayer = gfxLayer;
         this.gpID = gpID;
         this.templateAngle = templateAngle;
+        this.bombAngle = bombAngle;
         this.offsetX = offsetX;
         this.offsetY = offsetY;
         this.offsetXLarge = offsetXLarge;
@@ -96,9 +98,10 @@ enum BombManeuver {
     }
 
     public String getTemplateName() { return this.templateName; }
-    public double getAdditionalAngleForShip() { return this.additionalAngleForShip; }
+    public String getGFXLayer() { return this.gfxLayer; }
     public String getTemplateGpID() { return this.gpID; }
     public double getTemplateAngle() { return this.templateAngle; }
+    public double getBombAngle() {return this.bombAngle; }
     public double getOffsetX() { return this.offsetX; }
     public double getOffsetY() { return this.offsetY; }
     public double getOffsetXLarge() { return this.offsetXLarge; }
@@ -185,7 +188,7 @@ public class BombSpawner extends Decorator implements EditablePiece {
         return BumpableWithShape.getRawShape(ship).getBounds().getWidth() > 114;
     }
 
-    private Command spawnBomb(BombToken theBomb) {
+    private Command spawnBomb(BombToken theBomb, BombManeuver theManeu) {
         //STEP 1: Collision aide template, centered as in in the image file, centered on 0,0 (upper left corner)
         GamePiece piece = newPiece(findPieceSlotByID(theBomb.getBombGpID()));
 
@@ -203,7 +206,8 @@ public class BombSpawner extends Decorator implements EditablePiece {
 
 
         //Info Gathering: gets the angle from ManeuverPaths which deals with degrees, local space with ship at 0,0, pointing up
-        double tAngle = 0.0f;
+        double tAngle;
+        tAngle = theManeu.getBombAngle();
         double sAngle = this.getRotator().getAngle();
 
         //STEP 2: rotate the collision aide with both the getTemplateAngle and the ship's final angle,
@@ -237,6 +241,13 @@ public class BombSpawner extends Decorator implements EditablePiece {
         return null;
     }
 
+    private BombManeuver getBombManeuverFromProperty(String reportedProperty) {
+        for(BombManeuver bm : BombManeuver.values()) {
+            if(bm.getGFXLayer().equals(reportedProperty)) return bm;
+        }
+        return null;
+    }
+
     @Override
     public Command keyEvent(KeyStroke stroke) {
         //Any keystroke made on a ship will remove the orange shades
@@ -264,7 +275,10 @@ public class BombSpawner extends Decorator implements EditablePiece {
                     return bumpResolveCommand == null ? innerCommand : innerCommand.append(bumpResolveCommand);
                 }
 */
-                Command placeBombCommand = spawnBomb(droppedBomb);
+                GamePiece thBS = getInner();
+                String selectedMove = thBS.getProperty("selectedMove").toString();
+                BombManeuver theBM = getBombManeuverFromProperty(selectedMove);
+                Command placeBombCommand = spawnBomb(droppedBomb, getBombManeuverFromProperty(selectedMove));
                 if("Cluster Mine Center".equals(droppedBomb.getBombName())) {
                     //do the side ones too
                 }
@@ -281,7 +295,6 @@ public class BombSpawner extends Decorator implements EditablePiece {
             return piece.keyEvent(stroke);
         }
         else { //want to change the drop template - should this be left to the vassal editor?
-logToChat("change in bomb drop template choice");
         }
 
         return piece.keyEvent(stroke);
