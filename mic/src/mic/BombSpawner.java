@@ -1,6 +1,7 @@
 package mic;
 
 import java.awt.*;
+import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Area;
@@ -11,6 +12,7 @@ import javax.swing.*;
 
 import VASSAL.build.GameModule;
 import VASSAL.build.widget.PieceSlot;
+import VASSAL.command.RemovePiece;
 import VASSAL.counters.*;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
@@ -63,13 +65,13 @@ enum BombToken {
 }
 
 enum BombManeuver {
-    Back1("Back 1", 0.0f, "521", 0.0f, 0.0f, -113.0f, 0.0f, -226.0f),
-    Back2("Back 2", 0.0f, "521", 0.0f, 0.0f, -113.0f, 0.0f, -226.0f),
-    Back3("Back 3", 0.0f, "521", 0.0f, 0.0f, -113.0f, 0.0f, -226.0f),
-    LT1("Left Turn 1", 0.0f, "521", 0.0f, 0.0f, -113.0f, 0.0f, -226.0f),
-    RT1("Right Turn 1", 0.0f, "521", 0.0f, 0.0f, -113.0f, 0.0f, -226.0f),
-    LT3("Left Turn 3", 0.0f, "521", 0.0f, 0.0f, -113.0f, 0.0f, -226.0f),
-    RT3("Right Turn 3", 0.0f, "521", 0.0f, 0.0f, -113.0f, 0.0f, -226.0f);
+    Back1("Back 1", 0.0f, "524", 0.0f, 0.0f, -113.0f, 0.0f, -226.0f),
+    Back2("Back 2", 0.0f, "525", 0.0f, 0.0f, -113.0f, 0.0f, -226.0f),
+    Back3("Back 3", 0.0f, "526", 0.0f, 0.0f, -113.0f, 0.0f, -226.0f),
+    LT1("Left Turn 1", 0.0f, "521", 90.0f, 0.0f, -113.0f, 0.0f, -226.0f),
+    RT1("Right Turn 1", 0.0f, "521", 180.0f, 0.0f, -113.0f, 0.0f, -226.0f),
+    LT3("Left Turn 3", 0.0f, "523", 90.0f, 0.0f, -113.0f, 0.0f, -226.0f),
+    RT3("Right Turn 3", 0.0f, "523", 180.0f, 0.0f, -113.0f, 0.0f, -226.0f);
 
     private final String templateName;
     private final double additionalAngleForShip;
@@ -141,9 +143,6 @@ public class BombSpawner extends Decorator implements EditablePiece {
             .put("CTRL H", BombToken.ThermalDetonator)
             .put("CTRL B", BombToken.Bomblet)
             .build();
-
-
-
 
     public BombSpawner() {
         this(null);
@@ -253,7 +252,9 @@ public class BombSpawner extends Decorator implements EditablePiece {
             BombToken droppedBomb = getKeystrokeBomb(stroke);
             if(droppedBomb != null){
                 //bomb drop needed
-                List<BumpableWithShape> otherShipShapes = getShipsWithShapes();
+
+                //overlap with ship part
+                /*List<BumpableWithShape> otherShipShapes = getShipsWithShapes();
 
                 boolean isCollisionOccuring = findCollidingEntity(BumpableWithShape.getBumpableCompareShape(this), otherShipShapes) != null ? true : false;
                 //backtracking requested with a detected bumpable overlap, deal with it
@@ -262,69 +263,27 @@ public class BombSpawner extends Decorator implements EditablePiece {
                     Command bumpResolveCommand = resolveBump(otherShipShapes);
                     return bumpResolveCommand == null ? innerCommand : innerCommand.append(bumpResolveCommand);
                 }
-
-
-
-            } //end of dealing with a bomb drop
-            else return piece.keyEvent(stroke);
-
-            if(KeyStroke.getKeyStroke(KeyEvent.VK_C, 0, false).equals(stroke) && lastManeuver != null) {
-                List<BumpableWithShape> otherShipShapes = getShipsWithShapes();
-
+*/
                 Command placeBombCommand = spawnBomb(droppedBomb);
                 if("Cluster Mine Center".equals(droppedBomb.getBombName())) {
                     //do the side ones too
                 }
+
+                KeyStroke deleteyourself = KeyStroke.getKeyStroke(KeyEvent.VK_D, InputEvent.CTRL_DOWN_MASK, false);
+                placeBombCommand.append(piece.keyEvent(deleteyourself));
+
                 placeBombCommand.execute();
                 GameModule.getGameModule().sendAndLog(placeBombCommand);
 
-                    if(lastManeuver != null) {
-                        Command placeBomb = spawnBomb(getKeystrokeBombManeuver(stroke));
-                        placeBomb.execute();
-                        GameModule.getGameModule().sendAndLog(placeBomb);
-                    }
-
-
-
-            }
-            // 'c' keystroke has finished here, leave the method altogether
-            if(KeyStroke.getKeyStroke(KeyEvent.VK_8, ALT_DOWN_MASK, false).equals(stroke)){
-
-            }
+            } //end of dealing with a bomb drop
+            else return piece.keyEvent(stroke);
 
             return piece.keyEvent(stroke);
         }
-
-        // We know we're dealing with a maneuver keystroke
-// TO DO include decloaks, barrel rolls
-        if (stroke.isOnKeyRelease() == false) {
-
-
-            if (this.previousCollisionVisualization != null && this.previousCollisionVisualization.getCount() > 0) {
-                getMap().removeDrawComponent(this.previousCollisionVisualization);
-                this.previousCollisionVisualization.shapes.clear();
-            }
-            // find the list of other bumpables
-            List<BumpableWithShape> otherBumpableShapes = getBumpablesWithShapes();
-
-            //safeguard old position and path
-
-            this.prevPosition = getCurrentState();
-            this.lastManeuver = path;
-
-            //Start the Command chain
-            Command innerCommand = piece.keyEvent(stroke);
-
-            //These lines fetch the Shape of the last movement template used
-            FreeRotator rotator = (FreeRotator) (Decorator.getDecorator(Decorator.getOutermost(this), FreeRotator.class));
-            Shape lastMoveShapeUsed = path.getTransformedTemplateShape(this.getPosition().getX(),
-                    this.getPosition().getY(),
-                    isLargeShip(this),
-                    rotator);
-
-return innerCommand;
+        else { //want to change the drop template - should this be left to the vassal editor?
+logToChat("change in bomb drop template choice");
         }
-        //the maneuver has finished. return control of the event to vassal to do nothing
+
         return piece.keyEvent(stroke);
     }
 
@@ -397,7 +356,7 @@ return innerCommand;
     }
 
     public String getDescription() {
-        return "Custom auto-bump resolution (mic.AutoBumpDecorator)";
+        return "Custom bomb spawner (mic.BombSpawner)";
     }
 
     public void mySetType(String s) {
@@ -431,21 +390,6 @@ return innerCommand;
         shipState.y = getPosition().getY();
         shipState.angle = getRotator().getAngle();
         return shipState;
-    }
-
-    /**
-     * Finds any maneuver paths related to the keystroke based on the map
-     * keyStrokeToManeuver map
-     *
-     * @param keyStroke
-     * @return
-     */
-    private ManeuverPaths getKeystrokePath(KeyStroke keyStroke) {
-        String hotKey = HotKeyConfigurer.getString(keyStroke);
-        if (keyStrokeToManeuver.containsKey(hotKey)) {
-            return keyStrokeToManeuver.get(hotKey);
-        }
-        return null;
     }
 
     private List<BumpableWithShape> getShipsWithShapes() {
