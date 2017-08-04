@@ -32,17 +32,21 @@ import static mic.Util.*;
  * Manages the spawning of bombs on the bomb spawner by intercepting the shortcuts, which will be the only item using this custom java class
  * Phase II could include a spiffy GUI menu 
  */
+
+/*The Offset x and y are calculated when everything is facing up and you're bringing the bomb, jpg centered at the mid point of the first
+ edge of the bomb spawner, so that the bomb midnub point is brought to the mid point of the first edge of the bomb spawner
+*/
 enum BombToken {
-    ConnerNet("Conner Net","Mine","6423",0.0f, 0.0f),
-    ProxMine("Proximity Mine","Mine","3666",0.0f, 0.0f),
-    ClusterMineCenter("Cluster Mine Center","Mine","5774", 0.0f, 0.0f),
-    ClusterMineLeft("Cluster Mine Left","Mine","5775", 0.0f, 0.0f),
-    ClusterMineRight("Cluster Mine Right", "Mine", "5775", 0.0f, 0.0f),
-    IonBombs("Ion Bombs", "Bomb", "5260", 0.0f, 0.0f),
-    SeismicCharge("Seismic Charge", "Bomb", "3665", 0.0f, 0.0f),
-    ProtonBomb("Proton Bomb", "Bomb", "1269", 0.0f, 0.0f),
-    ThermalDetonator("Thermal Detonator", "Bomb", "8867", 0.0f, 0.0f),
-    Bomblet("Bomblet", "Bomb", "11774", 0.0f, 0.0f);
+    ConnerNet("Conner Net","Mine","6423", 0.0f, 110.0f),
+    ProxMine("Proximity Mine","Mine","3666",0.0f, 92.0f),
+    ClusterMineCenter("Cluster Mine Center","Mine","5774", 0.0f, 55.0f),
+    ClusterMineLeft("Cluster Mine Left","Mine","5775", -113.0f, 58.5f),
+    ClusterMineRight("Cluster Mine Right", "Mine", "5775", 113.0f, 58.5f),
+    IonBombs("Ion Bombs", "Bomb", "5260", 0.0f, 40.0f),
+    SeismicCharge("Seismic Charge", "Bomb", "3665", 0.0f, 40.0f),
+    ProtonBomb("Proton Bomb", "Bomb", "1269", 0.0f, 40.0f),
+    ThermalDetonator("Thermal Detonator", "Bomb", "8867", 0.0f, 40.0f),
+    Bomblet("Bomblet", "Bomb", "11774", 0.0f, 40.0f);
 
     private final String bombName;
     private final String bombType;
@@ -65,13 +69,13 @@ enum BombToken {
 }
 
 enum BombManeuver {
-    Back1("Back 1", "1", "524", 0.0f, 0.0f, 0.0f, -113.0f, 0.0f, -226.0f),
-    Back2("Back 2", "2", "525", 0.0f, 0.0f, 0.0f, -113.0f, 0.0f, -226.0f),
-    Back3("Back 3", "3", "526", 0.0f, 0.0f, 0.0f, -113.0f, 0.0f, -226.0f),
-    LT1("Left Turn 1", "4", "521", 90.0f, 90.0f, 0.0f, -113.0f, 0.0f, -226.0f),
-    RT1("Right Turn 1", "5", "521", 180.0f, -90.0f, 0.0f, -113.0f, 0.0f, -226.0f),
-    LT3("Left Turn 3", "6", "523", 90.0f, 90.0f, 0.0f, -113.0f, 0.0f, -226.0f),
-    RT3("Right Turn 3", "7", "523", 180.0f, -90.0f, 0.0f, -113.0f, 0.0f, -226.0f);
+    Back1("Back 1", "1", "524", 0.0f, 0.0f, 0.0f, 113.0f),
+    Back2("Back 2", "2", "525", 0.0f, 0.0f, 0.0f, 226.0f),
+    Back3("Back 3", "3", "526", 0.0f, 0.0f, 0.0f, 339.0f),
+    LT1("Left Turn 1", "4", "521", 90.0f, 90.0f, -98.0f, 97.0f),
+    RT1("Right Turn 1", "5", "521", 180.0f, -90.0f, 98.0f, 97.0f),
+    LT3("Left Turn 3", "6", "523", 90.0f, 90.0f, -254.5f, 254.5f),
+    RT3("Right Turn 3", "7", "523", 180.0f, -90.0f, 254.5f, 254.5f);
 
     private final String templateName;
     private final String gfxLayer;
@@ -80,11 +84,9 @@ enum BombManeuver {
     private final double bombAngle;
     private final double offsetX;
     private final double offsetY;
-    private final double offsetXLarge;
-    private final double offsetYLarge;
 
     BombManeuver(String templateName,  String gfxLayer, String gpID, double templateAngle, double bombAngle,
-                double offsetX, double offsetY, double offsetXLarge, double offsetYLarge)
+                double offsetX, double offsetY)
     {
         this.templateName = templateName;
         this.gfxLayer = gfxLayer;
@@ -93,8 +95,6 @@ enum BombManeuver {
         this.bombAngle = bombAngle;
         this.offsetX = offsetX;
         this.offsetY = offsetY;
-        this.offsetXLarge = offsetXLarge;
-        this.offsetYLarge = offsetYLarge;
     }
 
     public String getTemplateName() { return this.templateName; }
@@ -104,9 +104,6 @@ enum BombManeuver {
     public double getBombAngle() {return this.bombAngle; }
     public double getOffsetX() { return this.offsetX; }
     public double getOffsetY() { return this.offsetY; }
-    public double getOffsetXLarge() { return this.offsetXLarge; }
-    public double getOffsetYLarge() { return this.offsetYLarge; }
-
 }
 
 public class BombSpawner extends Decorator implements EditablePiece {
@@ -192,37 +189,53 @@ public class BombSpawner extends Decorator implements EditablePiece {
         //STEP 1: Collision aide template, centered as in in the image file, centered on 0,0 (upper left corner)
         GamePiece piece = newPiece(findPieceSlotByID(theBomb.getBombGpID()));
 
-        //Info Gathering: Position of the center of the bomb spawner, integers inside a Point
-        double bsx = this.getPosition().getX();
-        double bsy = this.getPosition().getY();
-        Point bsPt = new Point((int) bsx, (int) bsy); // these are the center coordinates of the ship, namely, shipPt.x and shipPt.y
-
-         //Info Gathering: offset vector (integers) that's used in local coordinates, right after a rotation found in lastManeuver.getTemplateAngle(), so that it's positioned behind nubs properly
-        double x = theBomb.getOffsetX();
-        double y = theBomb.getOffsetY();
-        int posx =  (int)x;
-        int posy =  (int)y;
-        Point tOff = new Point(posx, posy); // these are the offsets in local space for the templates, if the ship's center is at 0,0 and pointing up
-
-
         //Info Gathering: gets the angle from ManeuverPaths which deals with degrees, local space with ship at 0,0, pointing up
         double tAngle;
-        tAngle = theManeu.getBombAngle();
-        double sAngle = this.getRotator().getAngle();
-
+        tAngle = theManeu.getBombAngle(); //t(he maneuver) angle for its dropped bomb
+        double sAngle = this.getRotator().getAngle(); //s(pawner) angle
         //STEP 2: rotate the collision aide with both the getTemplateAngle and the ship's final angle,
         FreeRotator fR = (FreeRotator)Decorator.getDecorator(piece, FreeRotator.class);
         fR.setAngle(sAngle - tAngle);
 
-        //STEP 3: rotate a double version of tOff to get tOff_rotated
-        double xWork = Math.cos(-Math.PI*sAngle/180.0f)*tOff.getX() - Math.sin(-Math.PI*sAngle/180.0f)*tOff.getY();
-        double yWork = Math.sin(-Math.PI*sAngle/180.0f)*tOff.getX() + Math.cos(-Math.PI*sAngle/180.0f)*tOff.getY();
-        Point tOff_rotated = new Point((int)xWork, (int)yWork);
+        //STEP 3 -- Info Gathering: Offset 1, from mid bomb to mid start spawner nubs, constant
+        double off1x = 0.0f;
+        double off1y = -169.5f;
+
+        //Info Gathering: Offset 2, from mid of start spawner nubs to end of spawner nubs, maneuver dependant
+        double off2x = theManeu.getOffsetX();
+        double off2y = theManeu.getOffsetY();
+
+        //Info Gathering: Offset 3, bomb drop from mid point to center of bomb nubs, bomb dependant
+        double off3x = theBomb.getOffsetX();
+        double off3y = theBomb.getOffsetY();
+
+        //Info Gathering: Offset 4 Position of the center of the bomb spawner, integers inside a Point
+        double off4x = this.getPosition().getX();
+        double off4y = this.getPosition().getY();
+
+        //STEP 4: rotate the offsets that are dependant within the spawner's local coordinates
+        double off1x_rot = rotX(off1x, off1y, sAngle);
+        double off1y_rot = rotY(off1x, off1y, sAngle);
+
+        double off2x_rot = rotX(off2x, off2y, sAngle);
+        double off2y_rot = rotY(off2x, off2y, sAngle);
+
+
+        double off3x_rot = rotX(off3x, off3y, sAngle - tAngle);
+        double off3y_rot = rotY(off3x, off3y, sAngle - tAngle);
+      //  logToChat(Double.toString(off3x) + " " + Double.toString(off3y) + " becomes " + Double.toString(off3x_rot) +  " " + Double.toString(off3y_rot));
+        Point localTranslate = new Point((int)(off1x_rot + off2x_rot + off3x_rot), (int)(off1y_rot + off2y_rot + off3y_rot));
 
         //STEP 4: translation into place
-        Command placeCommand = getMap().placeOrMerge(piece, new Point(tOff_rotated.x + bsPt.x, tOff_rotated.y + bsPt.y));
+        Command placeCommand = getMap().placeOrMerge(piece, new Point(localTranslate.x + (int)off4x, localTranslate.y + (int)off4y));
 
         return placeCommand;
+    }
+    double rotX(double x, double y, double angle){
+        return Math.cos(-Math.PI*angle/180.0f)*x - Math.sin(-Math.PI*angle/180.0f)*y;
+    }
+    double rotY(double x, double y, double angle){
+        return Math.sin(-Math.PI*angle/180.0f)*x + Math.cos(-Math.PI*angle/180.0f)*y;
     }
 
     private BombManeuver getKeystrokeBombManeuver(KeyStroke keyStroke) {
@@ -281,6 +294,10 @@ public class BombSpawner extends Decorator implements EditablePiece {
                 Command placeBombCommand = spawnBomb(droppedBomb, getBombManeuverFromProperty(selectedMove));
                 if("Cluster Mine Center".equals(droppedBomb.getBombName())) {
                     //do the side ones too
+                    Command leftBomb = spawnBomb(BombToken.ClusterMineLeft, getBombManeuverFromProperty(selectedMove));
+                    Command rightBomb = spawnBomb(BombToken.ClusterMineRight, getBombManeuverFromProperty(selectedMove));
+                    placeBombCommand.append(leftBomb);
+                    placeBombCommand.append(rightBomb);
                 }
 
                 KeyStroke deleteyourself = KeyStroke.getKeyStroke(KeyEvent.VK_D, InputEvent.CTRL_DOWN_MASK, false);
