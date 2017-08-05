@@ -300,6 +300,9 @@ public class BombSpawner extends Decorator implements EditablePiece {
                     placeBombCommand.append(rightBomb);
                 }
 
+                // place ship collision detection + paint + announcement underneath the previously placed bomb(s) around here
+
+
                 KeyStroke deleteyourself = KeyStroke.getKeyStroke(KeyEvent.VK_D, InputEvent.CTRL_DOWN_MASK, false);
                 placeBombCommand.append(piece.keyEvent(deleteyourself));
 
