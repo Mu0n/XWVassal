@@ -107,7 +107,7 @@ public class TemplateOverlapCheckDecorator extends Decorator implements Editable
 
                     final java.util.Timer timer = new java.util.Timer();
                     timer.schedule(new TimerTask() {
-                        int count = 1;
+                        int count = 0;
                         @Override
                         public void run() {
                             try{
@@ -133,7 +133,7 @@ public class TemplateOverlapCheckDecorator extends Decorator implements Editable
 
         return piece.keyEvent(stroke);
     }
-    
+
     private void announceBumpAndPaint(java.util.List<BumpableWithShape> otherBumpableShapes) {
         Shape theShape = getBumpableCompareShape(this);
 
