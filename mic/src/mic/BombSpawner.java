@@ -7,6 +7,7 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Area;
 import java.util.*;
 import java.util.List;
+import java.util.Timer;
 
 import javax.swing.*;
 
@@ -39,7 +40,7 @@ import static mic.Util.*;
 enum BombToken {
     ConnerNet("Conner Net","Mine","6423", 0.0f, 110.0f),
     ProxMine("Proximity Mine","Mine","3666",0.0f, 92.0f),
-    ClusterMineCenter("Cluster Mine Center","Mine","5774", 0.0f, 55.0f),
+    ClusterMineCenter("Cluster Mine","Mine","5774", 0.0f, 55.0f),
     ClusterMineLeft("Cluster Mine Left","Mine","5775", -113.0f, 58.5f),
     ClusterMineRight("Cluster Mine Right", "Mine", "5775", 113.0f, 58.5f),
     IonBombs("Ion Bombs", "Bomb", "5260", 0.0f, 40.0f),
@@ -114,14 +115,13 @@ public class BombSpawner extends Decorator implements EditablePiece {
     // Set to true to enable visualizations of collision objects.
     // They will be drawn after a collision resolution, select the colliding
     // ship and press x to remove it.
-    private static boolean DRAW_COLLISIONS = true;
 
     private final FreeRotator testRotator;
 
-    private ShipPositionState prevPosition = null;
-    private ManeuverPaths lastManeuver = null;
+    private List<Shape> shapesForOverlap;
     private FreeRotator myRotator = null;
     public CollisionVisualization previousCollisionVisualization = null;
+    private Boolean processingOnlyOneBomb = false;
 
     private static Map<String, BombManeuver> keyStrokeToManeuver = ImmutableMap.<String, BombManeuver>builder()
             .put("SHIFT 1", BombManeuver.Back1)
@@ -152,6 +152,7 @@ public class BombSpawner extends Decorator implements EditablePiece {
         setInner(piece);
         this.testRotator = new FreeRotator("rotate;360;;;;;;;", null);
         previousCollisionVisualization = new CollisionVisualization();
+        shapesForOverlap = new ArrayList<Shape>();
     }
 
     @Override
@@ -188,6 +189,7 @@ public class BombSpawner extends Decorator implements EditablePiece {
     private Command spawnBomb(BombToken theBomb, BombManeuver theManeu) {
         //STEP 1: Collision aide template, centered as in in the image file, centered on 0,0 (upper left corner)
         GamePiece piece = newPiece(findPieceSlotByID(theBomb.getBombGpID()));
+        Shape transfShape = piece.getShape();
 
         //Info Gathering: gets the angle from ManeuverPaths which deals with degrees, local space with ship at 0,0, pointing up
         double tAngle;
@@ -229,6 +231,14 @@ public class BombSpawner extends Decorator implements EditablePiece {
         //STEP 4: translation into place
         Command placeCommand = getMap().placeOrMerge(piece, new Point(localTranslate.x + (int)off4x, localTranslate.y + (int)off4y));
 
+        transfShape = AffineTransform
+                .getTranslateInstance(localTranslate.x + (int)off4x, localTranslate.y + (int)off4y)
+                .createTransformedShape(transfShape);
+        double roundedAngle = convertAngleToGameLimits(sAngle - tAngle);
+        transfShape = AffineTransform
+                .getRotateInstance(Math.toRadians(-roundedAngle), localTranslate.x + (int)off4x, localTranslate.y + (int)off4y)
+                .createTransformedShape(transfShape);
+        shapesForOverlap.add(transfShape);
         return placeCommand;
     }
     double rotX(double x, double y, double angle){
@@ -236,6 +246,11 @@ public class BombSpawner extends Decorator implements EditablePiece {
     }
     double rotY(double x, double y, double angle){
         return Math.sin(-Math.PI*angle/180.0f)*x + Math.cos(-Math.PI*angle/180.0f)*y;
+    }
+
+    private double convertAngleToGameLimits(double angle) {
+        this.testRotator.setAngle(angle);
+        return this.testRotator.getAngle();
     }
 
     private BombManeuver getKeystrokeBombManeuver(KeyStroke keyStroke) {
@@ -265,51 +280,83 @@ public class BombSpawner extends Decorator implements EditablePiece {
     public Command keyEvent(KeyStroke stroke) {
         //Any keystroke made on a ship will remove the orange shades
 
-        if(this.previousCollisionVisualization == null) {
-            this.previousCollisionVisualization = new CollisionVisualization();
-        }
-
         BombManeuver bombDropTemplate = getKeystrokeBombManeuver(stroke);
         // Is this a keystroke for a maneuver? Deal with the 'no' cases first
         if (bombDropTemplate == null) {
             //check to see if a bomb was summoned
             BombToken droppedBomb = getKeystrokeBomb(stroke);
-            if(droppedBomb != null){
-                //bomb drop needed
+            if(droppedBomb != null && processingOnlyOneBomb == false){
+                processingOnlyOneBomb = true;
+                if("Mine".equals(droppedBomb.getBombType())) //deal with prox mine, conner net, etc which can trigger an overlap event
+                {
+                    List<BumpableWithShape> otherShipShapes = getShipsOnMap();
 
-                //overlap with ship part
-                /*List<BumpableWithShape> otherShipShapes = getShipsWithShapes();
+                    GamePiece thBS = getInner();
+                    String selectedMove = thBS.getProperty("selectedMove").toString();
 
-                boolean isCollisionOccuring = findCollidingEntity(BumpableWithShape.getBumpableCompareShape(this), otherShipShapes) != null ? true : false;
-                //backtracking requested with a detected bumpable overlap, deal with it
-                if (isCollisionOccuring) {
-                    Command innerCommand = piece.keyEvent(stroke);
-                    Command bumpResolveCommand = resolveBump(otherShipShapes);
-                    return bumpResolveCommand == null ? innerCommand : innerCommand.append(bumpResolveCommand);
+                    //prepare the drop command and get the shape ready for overlap detection
+                    Command placeBombCommand = spawnBomb(droppedBomb, getBombManeuverFromProperty(selectedMove));
+                    if("Cluster Mine".equals(droppedBomb.getBombName())) {
+                        //do the side ones too, their shapes are all added in the shapesForOverlap array inside the spawnBomb method
+                        Command leftBomb = spawnBomb(BombToken.ClusterMineLeft, getBombManeuverFromProperty(selectedMove));
+                        Command rightBomb = spawnBomb(BombToken.ClusterMineRight, getBombManeuverFromProperty(selectedMove));
+                        placeBombCommand.append(leftBomb);
+                        placeBombCommand.append(rightBomb);
+                    }
+                    boolean isCollisionOccuring = false;
+                    for(Shape sh : shapesForOverlap ){
+                        List<BumpableWithShape> overlappingShips = findCollidingEntities(sh, otherShipShapes);
+                        if(overlappingShips.size() > 0) {
+                            for(BumpableWithShape bws : overlappingShips)
+                            {
+                                previousCollisionVisualization.add(bws.shape);
+
+                                logToChat("*** Overlap detected with dropped " + droppedBomb.getBombName() + " and " + bws.shipName + " ("  + bws.pilotName + ")");
+                                isCollisionOccuring = true;
+                            }
+                            previousCollisionVisualization.add(sh);
+                        }
+                    }
+
+                    // if a collision has been found, start painting the shapes and flash them with a timer, mark the bomb spawner for deletion after this has gone through.
+                    if(isCollisionOccuring == true && this.previousCollisionVisualization != null &&  this.previousCollisionVisualization.getCount() > 0){
+
+                        final Timer timer = new Timer();
+                        timer.schedule(new TimerTask() {
+                            int count = 0;
+                            @Override
+                            public void run() {
+                                try{
+                                    previousCollisionVisualization.draw(getMap().getView().getGraphics(),getMap());
+                                    count++;
+                                    if(count == NBFLASHES * 2) {
+                                        getMap().removeDrawComponent(previousCollisionVisualization);
+                                        timer.cancel();
+                                        KeyStroke deleteyourself = KeyStroke.getKeyStroke(KeyEvent.VK_D, InputEvent.CTRL_DOWN_MASK, false);
+                                        Command goToHell = piece.keyEvent(deleteyourself);
+                                        goToHell.execute();
+                                        GameModule.getGameModule().sendAndLog(goToHell);
+                                    }
+                                } catch (Exception e) {
+                                }
+                            }
+                        }, 0,DELAYBETWEENFLASHES);
+                    }
+
                 }
-*/
-                GamePiece thBS = getInner();
-                String selectedMove = thBS.getProperty("selectedMove").toString();
-                BombManeuver theBM = getBombManeuverFromProperty(selectedMove);
-                Command placeBombCommand = spawnBomb(droppedBomb, getBombManeuverFromProperty(selectedMove));
-                if("Cluster Mine Center".equals(droppedBomb.getBombName())) {
-                    //do the side ones too
-                    Command leftBomb = spawnBomb(BombToken.ClusterMineLeft, getBombManeuverFromProperty(selectedMove));
-                    Command rightBomb = spawnBomb(BombToken.ClusterMineRight, getBombManeuverFromProperty(selectedMove));
-                    placeBombCommand.append(leftBomb);
-                    placeBombCommand.append(rightBomb);
-                }
+                //was not a mine, but still a bomb (seismic, ion, thermal, etc), so drop it and delete the bomb spawner right away
+                else{
+                    GamePiece thBS = getInner();
+                    String selectedMove = thBS.getProperty("selectedMove").toString();
+                    Command placeBombCommand = spawnBomb(droppedBomb, getBombManeuverFromProperty(selectedMove));
+                    KeyStroke deleteyourself = KeyStroke.getKeyStroke(KeyEvent.VK_D, InputEvent.CTRL_DOWN_MASK, false);
+                    placeBombCommand.append(piece.keyEvent(deleteyourself));
 
-                // place ship collision detection + paint + announcement underneath the previously placed bomb(s) around here
+                    placeBombCommand.execute();
+                    GameModule.getGameModule().sendAndLog(placeBombCommand);
+                } // end of dealing with a non-mine drop
 
-
-                KeyStroke deleteyourself = KeyStroke.getKeyStroke(KeyEvent.VK_D, InputEvent.CTRL_DOWN_MASK, false);
-                placeBombCommand.append(piece.keyEvent(deleteyourself));
-
-                placeBombCommand.execute();
-                GameModule.getGameModule().sendAndLog(placeBombCommand);
-
-            } //end of dealing with a bomb drop
+            } //end of dealing with the keystroke
             else return piece.keyEvent(stroke);
 
             return piece.keyEvent(stroke);
@@ -492,7 +539,7 @@ public class BombSpawner extends Decorator implements EditablePiece {
 
         private final List<Shape> shapes;
         private boolean tictoc = false;
-        Color myO = new Color(255,99,71, 150);
+        Color myO = new Color(215, 255, 0, 150);
 
         CollisionVisualization() {
             this.shapes = new ArrayList<Shape>();
@@ -531,6 +578,7 @@ public class BombSpawner extends Decorator implements EditablePiece {
                 map.getView().repaint();
                 tictoc = false;
             }
+
 
 
         }

@@ -278,7 +278,7 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
 
                 final Timer timer = new Timer();
                 timer.schedule(new TimerTask() {
-                    int count = 1;
+                    int count = 0;
                     @Override
                     public void run() {
                         try{
