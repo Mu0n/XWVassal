@@ -1,29 +1,25 @@
 package mic;
 
-
-import VASSAL.build.GameModule;
-import VASSAL.build.module.documentation.HelpFile;
-import VASSAL.build.module.map.Drawable;
-import VASSAL.build.widget.PieceSlot;
-import VASSAL.command.Command;
-import VASSAL.configure.HotKeyConfigurer;
-import VASSAL.counters.*;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Lists;
-
-import javax.swing.*;
 import java.awt.*;
-import java.awt.event.InputEvent;
-import java.awt.event.KeyEvent;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Area;
 import java.util.*;
 import java.util.List;
 import java.util.Timer;
 
-import static mic.Util.logToChat;
-import static mic.Util.newPiece;
+import javax.swing.*;
 
+import VASSAL.build.GameModule;
+import VASSAL.build.widget.PieceSlot;
+import VASSAL.counters.*;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Lists;
+
+import VASSAL.build.module.documentation.HelpFile;
+import VASSAL.build.module.map.Drawable;
+import VASSAL.command.Command;
+import VASSAL.configure.HotKeyConfigurer;
+import static mic.Util.*;
 
 /**
  * Created by Mic on 07/08/2017.
