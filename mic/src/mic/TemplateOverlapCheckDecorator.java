@@ -133,8 +133,7 @@ public class TemplateOverlapCheckDecorator extends Decorator implements Editable
 
         return piece.keyEvent(stroke);
     }
-
-
+    
     private void announceBumpAndPaint(java.util.List<BumpableWithShape> otherBumpableShapes) {
         Shape theShape = getBumpableCompareShape(this);
 
