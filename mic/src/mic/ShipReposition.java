@@ -283,7 +283,7 @@ public class ShipReposition extends Decorator implements EditablePiece {
     }
     private RepoManeuver getKeystrokeRepoManeuver(KeyStroke keyStroke) {
         String hotKey = HotKeyConfigurer.getString(keyStroke);
-        if (keyStrokeToRepositionShip.containsKey(hotKey)) {
+          if (keyStrokeToRepositionShip.containsKey(hotKey)) {
             return keyStrokeToRepositionShip.get(hotKey);
         }
         return null;
@@ -339,7 +339,7 @@ public class ShipReposition extends Decorator implements EditablePiece {
     }
 
     public void draw(Graphics graphics, int i, int i1, Component component, double v) {
-        //nothing for now, will be added later with spiffy mouse driven interface!
+        this.piece.draw(graphics, i, i1, component, v);
     }
 
     public Rectangle boundingBox() {
