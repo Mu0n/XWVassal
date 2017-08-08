@@ -28,8 +28,8 @@ import static mic.Util.logToChat;
  */
 public class AnnouncementOnLog extends AbstractConfigurable {
 
-    private static String defaultURL =        "https://raw.githubusercontent.com/Mu0n/HWpopup/master/VassalNews";
-    private static String currentVersionURL = "https://raw.githubusercontent.com/Mu0n/HWpopup/master/currentVersion";
+    private static String defaultURL =        "https://raw.githubusercontent.com/Mu0n/XWVassal/master/VassalNews";
+    private static String currentVersionURL = "https://raw.githubusercontent.com/Mu0n/XWVassal/master/currentVersion";
     private static String vassalDownloadURL = "http://www.vassalengine.org/wiki/Module:Star_Wars:_X-Wing_Miniatures_Game";
 
     private synchronized void AnnouncementOnLog() {

@@ -28,17 +28,6 @@
         <jarDirectory url="file://$MODULE_DIR$/lib" recursive="false" />
       </library>
     </orderEntry>
-    <orderEntry type="library" name="lib" level="project" />
-    <orderEntry type="module-library">
-      <library>
-        <CLASSES />
-        <JAVADOC />
-        <SOURCES>
-          <root url="file://$MODULE_DIR$/../../JSON-java" />
-        </SOURCES>
-      </library>
-    </orderEntry>
-    <orderEntry type="library" name="com.fasterxml.jackson.core:jackson-core:2.0.4" level="project" />
     <orderEntry type="library" name="com.fasterxml.jackson.core:jackson-databind:2.1.5" level="project" />
     <orderEntry type="library" name="com.google.guava:guava-jdk5:17.0" level="project" />
   </component>
