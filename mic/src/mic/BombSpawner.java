@@ -13,7 +13,6 @@ import javax.swing.*;
 
 import VASSAL.build.GameModule;
 import VASSAL.build.widget.PieceSlot;
-import VASSAL.command.RemovePiece;
 import VASSAL.counters.*;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
@@ -22,9 +21,6 @@ import VASSAL.build.module.documentation.HelpFile;
 import VASSAL.build.module.map.Drawable;
 import VASSAL.command.Command;
 import VASSAL.configure.HotKeyConfigurer;
-import mic.manuvers.ManeuverPaths;
-
-import static java.awt.event.InputEvent.ALT_DOWN_MASK;
 import static mic.Util.*;
 
 /**
