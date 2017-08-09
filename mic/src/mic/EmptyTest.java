@@ -44,31 +44,31 @@ public class EmptyTest extends Decorator implements EditablePiece {
     public Command myKeyEvent(KeyStroke keyStroke) {
         return null;
     }
-    @Override
+
     public String getDescription() {
         return "emptytest";
     }
-    @Override
+
     public void mySetType(String s) {
 
     }
-    @Override
+
     public HelpFile getHelpFile() {
         return null;
     }
-    @Override
+
     public void draw(Graphics graphics, int i, int i1, Component component, double v) {
 
     }
-    @Override
+
     public Rectangle boundingBox() {
         return null;
     }
-    @Override
+
     public Shape getShape() {
         return null;
     }
-    @Override
+    
     public String getName() {
         return null;
     }
