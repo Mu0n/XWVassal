@@ -22,6 +22,8 @@ public class XWCounterFactory extends BasicCommandEncoder {
             piece = new BombSpawner(inner);
         }else if (type.startsWith(ShipReposition.ID)) {
             piece = new ShipReposition(inner);
+        }else if (type.startsWith(EmptyTest.ID)) {
+            piece = new EmptyTest(inner);
         }else {
             piece = super.createDecorator(type, inner);
         }
