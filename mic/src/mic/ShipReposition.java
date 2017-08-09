@@ -30,11 +30,11 @@ import static mic.Util.*;
  */
 
 enum RepoManeuver {
-    BR1_Left_Mid("Place Mid BR Left", "524", -113.0f, 0.0f, 0.0f, 0.0f, 0.0f),
-    BR1_Right_Mid("Place Mid BR Right", "524", 113.0f, 0.0f, 0.0f, 0.0f, 0.0f),
+    BR1_Left_Mid("Place Mid BR Left", "524", -90.0f, -113.0f, 0.0f, -226.0f, 0.0f),
+    BR1_Right_Mid("Place Mid BR Right", "524", -90.0f, 113.0f, 0.0f, 226.0f, 0.0f),
 
-    BR2_Left_Mid("Place Mid BR2/Decloak Left", "525", -226.0f, 0.0f, 0.0f, 0.0f, 0.0f),
-    BR2_Right_Mid("Place Mid BR2/Decloak Right", "521", 226.0f, 0.0f, 0.0f, 0.0f, 0.0f),
+    BR2_Left_Mid("Place Mid BR2/Decloak Left", "525", -90.0f, -169.5f, 0.0f, -226.0f, 0.0f),
+    BR2_Right_Mid("Place Mid BR2/Decloak Right", "521", -90.0f, 169.5f, 0.0f, 226.0f, 0.0f),
 
     BR_Bk1_Left_Fwd_Mid("Place Mid BR Bank 1 Left Fwd", "521", 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
     BR_Bk1_Left_Bwd_Mid("Place Mid BR Bank 1 Left Bwd", "521", 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
@@ -133,8 +133,8 @@ public class ShipReposition extends Decorator implements EditablePiece {
         fR.setAngle(sAngle - tAngle);
 
         //Info Gathering: Offset 1, put to the side of the ship, local coords, adjusting for large base if it is found
-        double off1x = isLargeShip(this) ? theManeu.getOffsetX() : theManeu.getOffsetX_large();
-        double off1y = isLargeShip(this) ? theManeu.getOffsetY() : theManeu.getOffsetY_large();
+        double off1x = !isLargeShip(this) ? theManeu.getOffsetX() : theManeu.getOffsetX_large();
+        double off1y = !isLargeShip(this) ? theManeu.getOffsetY() : theManeu.getOffsetY_large();
 
         //Info Gathering: Offset 2 get the center global coordinates of the ship calling this op
         double off2x = this.getPosition().getX();
@@ -154,6 +154,8 @@ public class ShipReposition extends Decorator implements EditablePiece {
         shapeForOverlap = AffineTransform
                 .getRotateInstance(Math.toRadians(-roundedAngle), (int)off1x_rot + (int)off2x, (int)off1y_rot + (int)off2y)
                 .createTransformedShape(shapeForOverlap);
+
+        logToChat("sAngle "  + Double.toString(sAngle) + " tAngle " + Double.toString(tAngle) + " off1x " + Double.toString(off1x) + " off1x_rot " + Double.toString(off1x_rot) + " off2x " + Double.toString(off2x));
         return placeCommand;
     }
 
