@@ -30,8 +30,8 @@ import static mic.Util.*;
  */
 
 enum RepoManeuver {
-    BR1_Left_Mid("Place Mid BR Left", "524", -90.0f, -113.0f, 0.0f, -226.0f, 0.0f),
-    BR1_Right_Mid("Place Mid BR Right", "524", -90.0f, 113.0f, 0.0f, 226.0f, 0.0f),
+    BR1_Left_Mid("Place Mid BR Left", "524", -90.0f, -113.0f, 0.0f, -169.5f, 0.0f),
+    BR1_Right_Mid("Place Mid BR Right", "524", -90.0f, 113.0f, 0.0f, 169.5f, 0.0f),
 
     BR2_Left_Mid("Place Mid BR2/Decloak Left", "525", -90.0f, -169.5f, 0.0f, -226.0f, 0.0f),
     BR2_Right_Mid("Place Mid BR2/Decloak Right", "521", -90.0f, 169.5f, 0.0f, 226.0f, 0.0f),
@@ -102,6 +102,8 @@ public class ShipReposition extends Decorator implements EditablePiece {
     private static Map<String, RepoManeuver> keyStrokeToDropTemplate = ImmutableMap.<String, RepoManeuver>builder()
             .put("CTRL R", RepoManeuver.BR1_Left_Mid)
             .put("ALT R", RepoManeuver.BR1_Right_Mid)
+            .put("J", RepoManeuver.BR2_Left_Mid)
+            .put("K", RepoManeuver.BR2_Right_Mid)
             .build();
 
     private static Map<String, RepoManeuver> keyStrokeToRepositionShip = ImmutableMap.<String, RepoManeuver>builder()
@@ -165,11 +167,10 @@ public class ShipReposition extends Decorator implements EditablePiece {
 
         RepoManeuver repoTemplateDrop = getKeystrokeTemplateDrop(stroke);
         // Template drop requested
-        if (repoTemplateDrop != null) {
+        if (repoTemplateDrop != null && stroke.isOnKeyRelease() == false) {
             spawnRepoTemplate(repoTemplateDrop);
             List<BumpableWithShape> obstacles = getBumpablesOnMap();
 
-            boolean isCollisionOccuring = false;
             if(shapeForOverlap != null){
                 List<BumpableWithShape> overlappingObstacles = findCollidingEntities(shapeForOverlap, obstacles);
                 if(overlappingObstacles.size() > 0) {
@@ -182,10 +183,14 @@ public class ShipReposition extends Decorator implements EditablePiece {
                 }
             }
         }
+
         RepoManeuver repoShip = getKeystrokeRepoManeuver(stroke);
         //Ship reposition requested
-        if(repoShip != null) {
-
+        if(repoShip != null  && stroke.isOnKeyRelease() == false) {
+            if (this.previousCollisionVisualization != null && this.previousCollisionVisualization.getCount() > 0) {
+                getMap().removeDrawComponent(this.previousCollisionVisualization);
+                this.previousCollisionVisualization.shapes.clear();
+            }
         }
         // if a collision has been found, start painting the shapes and flash them with a timer, mark the bomb spawner for deletion after this has gone through.
         if(this.previousCollisionVisualization != null &&  this.previousCollisionVisualization.getCount() > 0){
@@ -199,7 +204,7 @@ public class ShipReposition extends Decorator implements EditablePiece {
                         previousCollisionVisualization.draw(getMap().getView().getGraphics(),getMap());
                         count++;
                         if(count == NBFLASHES * 2) {
-                            getMap().removeDrawComponent(previousCollisionVisualization);
+                            FlushOldVisu();
                             timer.cancel();
                         }
                     } catch (Exception e) {
@@ -210,6 +215,14 @@ public class ShipReposition extends Decorator implements EditablePiece {
 
         return piece.keyEvent(stroke);
     }
+
+    private void FlushOldVisu() {
+        if (this.previousCollisionVisualization != null && this.previousCollisionVisualization.getCount() > 0) {
+            getMap().removeDrawComponent(this.previousCollisionVisualization);
+            this.previousCollisionVisualization.shapes.clear();
+        }
+    }
+
     private List<BumpableWithShape> findCollidingEntities(Shape myTestShape, List<BumpableWithShape> otherShapes) {
         List<BumpableWithShape> shapes = Lists.newLinkedList();
         for (BumpableWithShape otherBumpableShape : otherShapes) {

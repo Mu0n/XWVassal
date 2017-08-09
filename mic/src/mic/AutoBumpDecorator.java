@@ -204,7 +204,6 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
         }
 
         // We know we're dealing with a maneuver keystroke
-// TO DO include decloaks, barrel rolls
         if (stroke.isOnKeyRelease() == false) {
 
 
