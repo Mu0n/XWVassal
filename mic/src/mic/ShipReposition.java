@@ -34,31 +34,31 @@ enum RepoManeuver {
     BR1_Right_Mid("Place Mid BR Right", "524", -90.0f, 113.0f, 0.0f, 169.5f, 0.0f),
 
     BR2_Left_Mid("Place Mid BR2/Decloak Left", "525", -90.0f, -169.5f, 0.0f, -226.0f, 0.0f),
-    BR2_Right_Mid("Place Mid BR2/Decloak Right", "521", -90.0f, 169.5f, 0.0f, 226.0f, 0.0f),
+    BR2_Right_Mid("Place Mid BR2/Decloak Right", "525", -90.0f, 169.5f, 0.0f, 226.0f, 0.0f),
 
     BR_Bk1_Left_Fwd_Mid("Place Mid BR Bank 1 Left Fwd", "521", 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
     BR_Bk1_Left_Bwd_Mid("Place Mid BR Bank 1 Left Bwd", "521", 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
 
-    BR_Bk2_Left_Fwd_Mid("Place Mid Echo Decloak Left Fwd", "523", 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
-    BR_Bk2_Left_Bwd_Mid("Place Mid Echo Decloak Left Bwd", "523", 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
+    BR_Bk2_Left_Fwd_Mid("Place Mid Echo Decloak Left Fwd", "519", 135.0f, -183.0f, -45.0f, 0.0f, 0.0f),
+    BR_Bk2_Left_Bwd_Mid("Place Mid Echo Decloak Left Bwd", "519", -90.0f, -196.0f, 50.0f, 0.0f, 0.0f),
 
     BR_Bk1_Right_Fwd_Mid("Place Mid BR Bank 1 Right Fwd", "521", 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
     BR_Bk1_Right_Bwd_Mid("Place Mid BR Bank 1 Right Bwd", "521", 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
 
-    BR_Bk2_Right_Fwd_Mid("Place Mid Echo Decloak Right Fwd", "523", 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
-    BR_Bk2_Right_Bwd_Mid("Place Mid Echo Decloak Right Bwd", "523", 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
+    BR_Bk2_Right_Fwd_Mid("Place Mid Echo Decloak Right Fwd", "519", 90.0f, 196.0f, -49.0f, 0.0f, 0.0f),
+    BR_Bk2_Right_Bwd_Mid("Place Mid Echo Decloak Right Bwd", "519", -45.0f, 183.0f, 43.0f, 0.0f, 0.0f),
 
     BR1_Left_AFAP("Place Mid BR Left", "524", -113.0f, 0.0f, 0.0f, 0.0f, 0.0f),
     BR1_Left_ABAP("Place Mid BR Left", "524", -113.0f, 0.0f, 0.0f, 0.0f, 0.0f),
 
-    BR2_Left_AFAP("Place Mid BR Left", "524", -113.0f, 0.0f, 0.0f, 0.0f, 0.0f),
-    BR2_LefT_ABAP("Place Mid BR Left", "524", -113.0f, 0.0f, 0.0f, 0.0f, 0.0f),
+    BR2_Left_AFAP("Place Mid BR Left", "525", -113.0f, 0.0f, 0.0f, 0.0f, 0.0f),
+    BR2_LefT_ABAP("Place Mid BR Left", "525", -113.0f, 0.0f, 0.0f, 0.0f, 0.0f),
 
     BR1_Right_AFAP("Place Mid BR Left", "524", -113.0f, 0.0f, 0.0f, 0.0f, 0.0f),
     BR1_Right_ABAP("Place Mid BR Left", "524", -113.0f, 0.0f, 0.0f, 0.0f, 0.0f),
 
-    BR2_Right_AFAP("Place Mid BR Left", "524", -113.0f, 0.0f, 0.0f, 0.0f, 0.0f),
-    BR2_Right_ABAP("Place Mid BR Left", "524", -113.0f, 0.0f, 0.0f, 0.0f, 0.0f);
+    BR2_Right_AFAP("Place Mid BR Left", "525", -113.0f, 0.0f, 0.0f, 0.0f, 0.0f),
+    BR2_Right_ABAP("Place Mid BR Left", "525", -113.0f, 0.0f, 0.0f, 0.0f, 0.0f);
 
     private final String repoName;
     private final String gpID;
@@ -104,6 +104,10 @@ public class ShipReposition extends Decorator implements EditablePiece {
             .put("ALT R", RepoManeuver.BR1_Right_Mid)
             .put("J", RepoManeuver.BR2_Left_Mid)
             .put("K", RepoManeuver.BR2_Right_Mid)
+            .put("CTRL J", RepoManeuver.BR_Bk2_Left_Fwd_Mid)
+            .put("CTRL K", RepoManeuver.BR_Bk2_Right_Fwd_Mid)
+            .put("CTRL SHIFT J", RepoManeuver.BR_Bk2_Left_Bwd_Mid)
+            .put("CTRL SHIFT K", RepoManeuver.BR_Bk2_Right_Bwd_Mid)
             .build();
 
     private static Map<String, RepoManeuver> keyStrokeToRepositionShip = ImmutableMap.<String, RepoManeuver>builder()
