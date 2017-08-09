@@ -36,14 +36,14 @@ enum RepoManeuver {
     BR2_Left_Mid("Place Mid BR2/Decloak Left", "525", -90.0f, -169.5f, 0.0f, -226.0f, 0.0f),
     BR2_Right_Mid("Place Mid BR2/Decloak Right", "525", -90.0f, 169.5f, 0.0f, 226.0f, 0.0f),
 
-    BR_Bk1_Left_Fwd_Mid("Place Mid BR Bank 1 Left Fwd", "521", 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
-    BR_Bk1_Left_Bwd_Mid("Place Mid BR Bank 1 Left Bwd", "521", 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
+    BR_Bk1_Left_Fwd_Mid("Place Mid BR Bank 1 Left Fwd", "517", 135.0f, -133.0f, -22.0f, 0.0f, 0.0f),
+    BR_Bk1_Left_Bwd_Mid("Place Mid BR Bank 1 Left Bwd", "517", -90.0f, -146.0f, 30.0f, 0.0f, 0.0f),
 
     BR_Bk2_Left_Fwd_Mid("Place Mid Echo Decloak Left Fwd", "519", 135.0f, -183.0f, -45.0f, 0.0f, 0.0f),
     BR_Bk2_Left_Bwd_Mid("Place Mid Echo Decloak Left Bwd", "519", -90.0f, -196.0f, 50.0f, 0.0f, 0.0f),
 
-    BR_Bk1_Right_Fwd_Mid("Place Mid BR Bank 1 Right Fwd", "521", 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
-    BR_Bk1_Right_Bwd_Mid("Place Mid BR Bank 1 Right Bwd", "521", 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
+    BR_Bk1_Right_Fwd_Mid("Place Mid BR Bank 1 Right Fwd", "517", 90.0f, 147.0f, -28.0f, 0.0f, 0.0f),
+    BR_Bk1_Right_Bwd_Mid("Place Mid BR Bank 1 Right Bwd", "517", -45.0f, 134.0f, 25.0f, 0.0f, 0.0f),
 
     BR_Bk2_Right_Fwd_Mid("Place Mid Echo Decloak Right Fwd", "519", 90.0f, 196.0f, -49.0f, 0.0f, 0.0f),
     BR_Bk2_Right_Bwd_Mid("Place Mid Echo Decloak Right Bwd", "519", -45.0f, 183.0f, 43.0f, 0.0f, 0.0f),
@@ -108,6 +108,10 @@ public class ShipReposition extends Decorator implements EditablePiece {
             .put("CTRL K", RepoManeuver.BR_Bk2_Right_Fwd_Mid)
             .put("CTRL SHIFT J", RepoManeuver.BR_Bk2_Left_Bwd_Mid)
             .put("CTRL SHIFT K", RepoManeuver.BR_Bk2_Right_Bwd_Mid)
+            .put("ALT J", RepoManeuver.BR_Bk1_Left_Fwd_Mid)
+            .put("ALT SHIFT J", RepoManeuver.BR_Bk1_Left_Bwd_Mid)
+            .put("ALT K", RepoManeuver.BR_Bk1_Right_Fwd_Mid)
+            .put("ALT SHIFT K", RepoManeuver.BR_Bk1_Right_Bwd_Mid)
             .build();
 
     private static Map<String, RepoManeuver> keyStrokeToRepositionShip = ImmutableMap.<String, RepoManeuver>builder()
