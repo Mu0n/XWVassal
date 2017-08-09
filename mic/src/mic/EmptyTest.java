@@ -12,6 +12,8 @@ import java.awt.*;
 
 /**
  * Created by Mic on 09/08/2017.
+ *
+ * use this class as a template to make useful ones.
  */
 public class EmptyTest extends Decorator implements EditablePiece {
     public static final String ID = "emptytest";
@@ -28,7 +30,7 @@ public class EmptyTest extends Decorator implements EditablePiece {
     public Command keyEvent(KeyStroke stroke) {
         return piece.keyEvent(stroke);
     }
-    
+
     @Override
     public void mySetState(String s) {
 
@@ -67,14 +69,14 @@ public class EmptyTest extends Decorator implements EditablePiece {
     }
 
     public Rectangle boundingBox() {
-        return null;
+        return this.piece.boundingBox();
     }
 
     public Shape getShape() {
-        return null;
+        return this.piece.getShape();
     }
 
     public String getName() {
-        return null;
+        return this.piece.getName();
     }
 }

@@ -343,15 +343,15 @@ public class ShipReposition extends Decorator implements EditablePiece {
     }
 
     public Rectangle boundingBox() {
-        return null;
+        return this.piece.boundingBox();
     }
 
     public Shape getShape() {
-        return null;
+        return this.piece.getShape();
     }
 
     public String getName() {
-        return null;
+        return this.piece.getName();
     }
 
 
