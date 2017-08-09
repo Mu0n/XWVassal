@@ -132,30 +132,27 @@ public class ShipReposition extends Decorator implements EditablePiece {
         FreeRotator fR = (FreeRotator)Decorator.getDecorator(piece, FreeRotator.class);
         fR.setAngle(sAngle - tAngle);
 
-        //Info Gathering: Offset 1, from mid of start spawner nubs to end of spawner nubs, maneuver dependant
+        //Info Gathering: Offset 1, put to the side of the ship, local coords, adjusting for large base if it is found
         double off1x = isLargeShip(this) ? theManeu.getOffsetX() : theManeu.getOffsetX_large();
         double off1y = isLargeShip(this) ? theManeu.getOffsetY() : theManeu.getOffsetY_large();
 
-        //Info Gathering: Offset 2 Position of the center of the bomb spawner, integers inside a Point
+        //Info Gathering: Offset 2 get the center global coordinates of the ship calling this op
         double off2x = this.getPosition().getX();
         double off2y = this.getPosition().getY();
 
-        //STEP 4: rotate the offset dependant within the spawner's local coordinates
+        //STEP 3: rotate the offset1 dependant within the spawner's local coordinates
         double off1x_rot = rotX(off1x, off1y, sAngle);
         double off1y_rot = rotY(off1x, off1y, sAngle);
 
-        double off3x_rot = rotX(off2x, off2y, sAngle - tAngle);
-        double off3y_rot = rotY(off2x, off2y, sAngle - tAngle);
-
         //STEP 4: translation into place
-        Command placeCommand = getMap().placeOrMerge(piece, new Point((int)off1x + (int)off2x, (int)off1y + (int)off2y));
+        Command placeCommand = getMap().placeOrMerge(piece, new Point((int)off1x_rot + (int)off2x, (int)off1y_rot + (int)off2y));
 
         shapeForOverlap = AffineTransform.
-                getTranslateInstance((int)off1x + (int)off2x, (int)off1y + (int)off2y).
+                getTranslateInstance((int)off1x_rot + (int)off2x, (int)off1y_rot + (int)off2y).
                 createTransformedShape(shapeForOverlap);
         double roundedAngle = convertAngleToGameLimits(sAngle - tAngle);
         shapeForOverlap = AffineTransform
-                .getRotateInstance(Math.toRadians(-roundedAngle), (int)off1x + (int)off2x, (int)off1y + (int)off2y)
+                .getRotateInstance(Math.toRadians(-roundedAngle), (int)off1x_rot + (int)off2x, (int)off1y_rot + (int)off2y)
                 .createTransformedShape(shapeForOverlap);
         return placeCommand;
     }
