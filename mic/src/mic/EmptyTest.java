@@ -25,6 +25,11 @@ public class EmptyTest extends Decorator implements EditablePiece {
     }
 
     @Override
+    public Command keyEvent(KeyStroke stroke) {
+        return piece.keyEvent(stroke);
+    }
+    
+    @Override
     public void mySetState(String s) {
 
     }
@@ -34,7 +39,7 @@ public class EmptyTest extends Decorator implements EditablePiece {
     }
     @Override
     public String myGetType() {
-        return null;
+        return ID;
     }
     @Override
     protected KeyCommand[] myGetKeyCommands() {
@@ -68,7 +73,7 @@ public class EmptyTest extends Decorator implements EditablePiece {
     public Shape getShape() {
         return null;
     }
-    
+
     public String getName() {
         return null;
     }
