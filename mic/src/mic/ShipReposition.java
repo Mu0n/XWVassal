@@ -30,55 +30,59 @@ import static mic.Util.*;
  */
 
 enum RepoManeuver {
-    BR1_Left_Mid("Place Mid BR Left", "524", -90.0f, -113.0f, 0.0f, -169.5f, 0.0f),
-    BR1_Right_Mid("Place Mid BR Right", "524", -90.0f, 113.0f, 0.0f, 169.5f, 0.0f),
+    BR1_Left_Mid("Place Mid BR Left", "524", -90.0f, -113.0f, 0.0f),
+    BR1_Right_Mid("Place Mid BR Right", "524", -90.0f, 113.0f, 0.0f),
 
-    BR2_Left_Mid("Place Mid BR2/Decloak Left", "525", -90.0f, -169.5f, 0.0f, -226.0f, 0.0f),
-    BR2_Right_Mid("Place Mid BR2/Decloak Right", "525", -90.0f, 169.5f, 0.0f, 226.0f, 0.0f),
+    BR2_Left_Mid("Place Mid BR2/Decloak Left", "525", -90.0f, -169.5f, 0.0f),
+    BR2_Right_Mid("Place Mid BR2/Decloak Right", "525", -90.0f, 169.5f, 0.0f),
 
-    BR_Bk1_Left_Fwd_Mid("Place Mid BR Bank 1 Left Fwd", "517", 135.0f, -133.0f, -22.0f, 0.0f, 0.0f),
-    BR_Bk1_Left_Bwd_Mid("Place Mid BR Bank 1 Left Bwd", "517", -90.0f, -146.0f, 30.0f, 0.0f, 0.0f),
+    BR1_Left_Mid_Large("Place Mid BR Left", "524", 0.0f, -141.5f, 0.0f),
+    BR1_Right_Mid_Large("Place Mid BR Right", "524", 0.0f, 141.5f, 0.0f),
 
-    BR_Bk2_Left_Fwd_Mid("Place Mid Echo Decloak Left Fwd", "519", 135.0f, -183.0f, -45.0f, 0.0f, 0.0f),
-    BR_Bk2_Left_Bwd_Mid("Place Mid Echo Decloak Left Bwd", "519", -90.0f, -196.0f, 50.0f, 0.0f, 0.0f),
+    BR_Bk1_Left_Fwd_Mid("Place Mid BR Bank 1 Left Fwd", "517", 135.0f, -133.0f, -22.0f),
+    BR_Bk1_Left_Bwd_Mid("Place Mid BR Bank 1 Left Bwd", "517", -90.0f, -146.0f, 30.0f),
 
-    BR_Bk1_Right_Fwd_Mid("Place Mid BR Bank 1 Right Fwd", "517", 90.0f, 147.0f, -28.0f, 0.0f, 0.0f),
-    BR_Bk1_Right_Bwd_Mid("Place Mid BR Bank 1 Right Bwd", "517", -45.0f, 134.0f, 25.0f, 0.0f, 0.0f),
+    BR_Bk2_Left_Fwd_Mid("Place Mid Echo Decloak Left Fwd", "519", 135.0f, -183.0f, -45.0f),
+    BR_Bk2_Left_Bwd_Mid("Place Mid Echo Decloak Left Bwd", "519", -90.0f, -196.0f, 50.0f),
 
-    BR_Bk2_Right_Fwd_Mid("Place Mid Echo Decloak Right Fwd", "519", 90.0f, 196.0f, -49.0f, 0.0f, 0.0f),
-    BR_Bk2_Right_Bwd_Mid("Place Mid Echo Decloak Right Bwd", "519", -45.0f, 183.0f, 43.0f, 0.0f, 0.0f),
+    BR_Bk1_Right_Fwd_Mid("Place Mid BR Bank 1 Right Fwd", "517", 90.0f, 147.0f, -28.0f),
+    BR_Bk1_Right_Bwd_Mid("Place Mid BR Bank 1 Right Bwd", "517", -45.0f, 134.0f, 25.0f),
 
-    BR1_Left_AFAP("Place Mid BR Left", "524", -113.0f, 0.0f, 0.0f, 0.0f, 0.0f),
-    BR1_Left_ABAP("Place Mid BR Left", "524", -113.0f, 0.0f, 0.0f, 0.0f, 0.0f),
+    BR_Bk2_Right_Fwd_Mid("Place Mid Echo Decloak Right Fwd", "519", 90.0f, 196.0f, -49.0f),
+    BR_Bk2_Right_Bwd_Mid("Place Mid Echo Decloak Right Bwd", "519", -45.0f, 183.0f, 43.0f),
 
-    BR2_Left_AFAP("Place Mid BR Left", "525", -113.0f, 0.0f, 0.0f, 0.0f, 0.0f),
-    BR2_LefT_ABAP("Place Mid BR Left", "525", -113.0f, 0.0f, 0.0f, 0.0f, 0.0f),
+    BR1_Left_AFAP("BR Left as Forward as Possible", "524", -113.0f, 0.0f, 0.0f),
+    BR1_Left_ABAP("BR Left as Backward as Possible", "524", -113.0f, 0.0f, 0.0f),
 
-    BR1_Right_AFAP("Place Mid BR Left", "524", -113.0f, 0.0f, 0.0f, 0.0f, 0.0f),
-    BR1_Right_ABAP("Place Mid BR Left", "524", -113.0f, 0.0f, 0.0f, 0.0f, 0.0f),
+    BR1_Left_AFAP_Large("BR Left as Forward as Possible", "524", -113.0f, 0.0f, 0.0f),
+    BR1_Left_ABAP_Large("BR Left as Backward as Possible", "524", -113.0f, 0.0f, 0.0f),
 
-    BR2_Right_AFAP("Place Mid BR Left", "525", -113.0f, 0.0f, 0.0f, 0.0f, 0.0f),
-    BR2_Right_ABAP("Place Mid BR Left", "525", -113.0f, 0.0f, 0.0f, 0.0f, 0.0f);
+    BR2_Left_AFAP("BR2 Left as Forward as Possible", "525", -113.0f, 0.0f, 0.0f),
+    BR2_LefT_ABAP("BR2 Left as Backward as Possible", "525", -113.0f, 0.0f, 0.0f),
+
+    BR1_Right_AFAP("BR Right as Forward as Possible", "524", -113.0f, 0.0f, 0.0f),
+    BR1_Right_ABAP("BR Right as Backward as Possible", "524", -113.0f, 0.0f, 0.0f),
+
+    BR1_Right_AFAP_Large("BR Right as Forward as Possible", "524", -113.0f, 0.0f, 0.0f),
+    BR1_Right_ABAP_Large("BR Right as Backward as Possible", "524", -113.0f, 0.0f, 0.0f),
+
+    BR2_Right_AFAP("BR2 Right as Forward as Possible", "525", -113.0f, 0.0f, 0.0f),
+    BR2_Right_ABAP("BR2 Right as Backward as Possible", "525", -113.0f, 0.0f, 0.0f);
 
     private final String repoName;
     private final String gpID;
     private final double templateAngle;
     private final double offsetX;
     private final double offsetY;
-    private final double offsetX_large;
-    private final double offsetY_large;
 
     RepoManeuver(String repoName,  String gpID, double templateAngle,
-                 double offsetX, double offsetY,
-                 double offsetX_large, double offsetY_large)
+                 double offsetX, double offsetY)
     {
         this.repoName = repoName;
         this.gpID = gpID;
         this.templateAngle = templateAngle;
         this.offsetX = offsetX;
         this.offsetY = offsetY;
-        this.offsetX_large = offsetX_large;
-        this.offsetY_large = offsetY_large;
     }
 
     public String getRepoName() { return this.repoName; }
@@ -86,8 +90,6 @@ enum RepoManeuver {
     public double getTemplateAngle() { return this.templateAngle; }
     public double getOffsetX() { return this.offsetX; }
     public double getOffsetY() { return this.offsetY; }
-    public double getOffsetX_large() { return this.offsetX_large; }
-    public double getOffsetY_large() { return this.offsetY_large; }
 }
 
 public class ShipReposition extends Decorator implements EditablePiece {
@@ -116,7 +118,13 @@ public class ShipReposition extends Decorator implements EditablePiece {
 
     private static Map<String, RepoManeuver> keyStrokeToRepositionShip = ImmutableMap.<String, RepoManeuver>builder()
             .put("CTRL 8", RepoManeuver.BR1_Left_AFAP)
+            .put("CTRL SHIFT 8", RepoManeuver.BR1_Left_ABAP)
             .put("ALT 8", RepoManeuver.BR1_Right_AFAP)
+            .put("ALT SHIFT 8", RepoManeuver.BR1_Right_ABAP)
+            .put("CTRL 9", RepoManeuver.BR2_Left_AFAP)
+            .put("CTRL SHIFT 9", RepoManeuver.BR2_LefT_ABAP)
+            .put("ALT 9", RepoManeuver.BR2_Right_AFAP)
+            .put("ALT SHIFT 9", RepoManeuver.BR2_Right_ABAP)
             .build();
 
     public ShipReposition() {
@@ -130,6 +138,22 @@ public class ShipReposition extends Decorator implements EditablePiece {
     }
 
     private Command spawnRepoTemplate(RepoManeuver theManeu) {
+        //Prep step, check if it's a large ship, and only deal with regular barrel rolls, because it's all they can do anyway, rerouting to the correct RepoManeuver
+        if(isLargeShip(this))
+        {
+            switch(theManeu){
+                case BR1_Left_Mid:
+                    theManeu = RepoManeuver.BR1_Left_Mid_Large;
+                    break;
+                case BR1_Right_Mid:
+                    theManeu = RepoManeuver.BR1_Right_Mid_Large;
+                    break;
+                default:
+                    return null;
+            }
+        }
+
+
         //STEP 1: Collision reposition template, centered as in in the image file, centered on 0,0 (upper left corner)
         GamePiece piece = newPiece(findPieceSlotByID(theManeu.getTemplateGpID()));
         shapeForOverlap = piece.getShape();
@@ -143,8 +167,8 @@ public class ShipReposition extends Decorator implements EditablePiece {
         fR.setAngle(sAngle - tAngle);
 
         //Info Gathering: Offset 1, put to the side of the ship, local coords, adjusting for large base if it is found
-        double off1x = !isLargeShip(this) ? theManeu.getOffsetX() : theManeu.getOffsetX_large();
-        double off1y = !isLargeShip(this) ? theManeu.getOffsetY() : theManeu.getOffsetY_large();
+        double off1x = theManeu.getOffsetX();
+        double off1y = theManeu.getOffsetY();
 
         //Info Gathering: Offset 2 get the center global coordinates of the ship calling this op
         double off2x = this.getPosition().getX();
