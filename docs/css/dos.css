@@ -1,0 +1,93 @@
+* {
+  box-sizing: border-box;
+}
+body{
+  background-color: #061072;
+  font-family: 'Press Start 2P', cursive;
+  color: #fff;
+  margin: 0;
+  padding: 0;
+
+}
+header, section, .main, footer {
+  margin: 0 auto;
+}
+
+header, .main, section {
+  max-width: 800px;
+}
+
+
+
+/*NAV*/
+nav {
+  padding: 10px;
+  background-color: #ADADAD;
+}
+ul, h2 {
+  background-color: #ADADAD;
+  display: inline-block;
+}
+
+nav ul{
+  padding: 0 20px;
+
+
+}
+nav ul li {
+  list-style: none;
+  display: inline-block;
+  font-size: 0.7em;
+
+}
+
+nav a {
+  text-decoration: none;
+  color: #000;
+}
+
+nav a:hover {
+
+  color: #fff;
+}
+
+nav h2{
+  font-size: 1.3em;
+
+
+}
+/*MAIN*/
+.main{
+  border: 8px solid #fff;
+  padding: 40px;
+  margin: 100px auto;
+  max-width: 700px;
+  text-align: center;
+}
+
+/*SECTION ABOUT ME*/
+.about-me {
+  background-color: #000;
+  padding: 100px;
+  color: #A9A9A9;
+  font-size: 0.7em;
+  line-height: 2em;
+}
+
+/*SKILLS*/
+
+.skills {
+
+  text-align: center;
+}
+.sk {
+  width: 40%;
+  background: #00A8A8;
+  margin-right: 10px;
+  padding: 80px;
+  display: inline-block;
+  height: 350px;
+  box-shadow: 15px 15px rgba(0, 0, 0, 0.5);
+  margin-top: 20px;
+}
+

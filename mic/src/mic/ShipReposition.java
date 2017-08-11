@@ -3,14 +3,26 @@ package mic;
 import java.awt.*;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
+import VASSAL.build.GameModule;
+import VASSAL.build.module.documentation.HelpFile;
+import VASSAL.build.module.map.Drawable;
+import VASSAL.build.widget.PieceSlot;
+import VASSAL.command.Command;
+import VASSAL.configure.HotKeyConfigurer;
+import VASSAL.counters.*;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Lists;
+
+import javax.swing.*;
+import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Area;
 import java.util.*;
 import java.util.List;
 import java.util.Timer;
 
-import javax.swing.*;
 
+import javax.swing.*;
 import VASSAL.build.GameModule;
 import VASSAL.build.widget.PieceSlot;
 import VASSAL.command.ChangeTracker;
@@ -24,6 +36,8 @@ import VASSAL.build.module.map.Drawable;
 import VASSAL.command.Command;
 import VASSAL.configure.HotKeyConfigurer;
 import static mic.Util.*;
+import static mic.Util.logToChat;
+import static mic.Util.newPiece;
 
 /**
  * Created by Mic on 07/08/2017.
@@ -32,6 +46,7 @@ import static mic.Util.*;
  *
  * Long term: offer a mouse driven slide and click interface with valid position checking
  */
+
 
 enum RepoManeuver {
     //Section for when you only want to place a template on the side of the start position of a repositioning
@@ -77,6 +92,7 @@ enum RepoManeuver {
     private final double templateAngle;
     private final double offsetX;
     private final double offsetY;
+
     private final double shipAngle;
     private final double shipX;
     private final double shipY;
@@ -97,6 +113,7 @@ enum RepoManeuver {
     RepoManeuver(String repoName,  String gpID, double templateAngle,
                  double offsetX, double offsetY,
                  double shipAngle, double shipX, double shipY)
+
     {
         this.repoName = repoName;
         this.gpID = gpID;
@@ -106,6 +123,7 @@ enum RepoManeuver {
         this.shipAngle = shipAngle;
         this.shipX = shipX;
         this.shipY = shipY;
+
     }
 
     public String getRepoName() { return this.repoName; }
@@ -113,6 +131,7 @@ enum RepoManeuver {
     public double getTemplateAngle() { return this.templateAngle; }
     public double getOffsetX() { return this.offsetX; }
     public double getOffsetY() { return this.offsetY; }
+
     public double getShipAngle() { return this.shipAngle; }
     public double getShipX() { return this.shipX; }
     public double getShipY() { return this.shipY; }
@@ -122,6 +141,7 @@ public class ShipReposition extends Decorator implements EditablePiece {
     public static final String ID = "ShipReposition";
     private FreeRotator myRotator = null;
     public CollisionVisualization previousCollisionVisualization = null;
+
     private final FreeRotator testRotator;
     private Shape shapeForOverlap;
     static final int NBFLASHES = 5; //use the same flash functionality if a mine is spawned on a ship
@@ -140,6 +160,7 @@ public class ShipReposition extends Decorator implements EditablePiece {
             .put("ALT SHIFT J", RepoManeuver.BR_Bk1_Left_Bwd_Mid)
             .put("ALT K", RepoManeuver.BR_Bk1_Right_Fwd_Mid)
             .put("ALT SHIFT K", RepoManeuver.BR_Bk1_Right_Bwd_Mid)
+
             .build();
 
     private static Map<String, RepoManeuver> keyStrokeToRepositionShip = ImmutableMap.<String, RepoManeuver>builder()
@@ -152,6 +173,7 @@ public class ShipReposition extends Decorator implements EditablePiece {
             .put("ALT 9", RepoManeuver.BR2_Right_AFAP)
             .put("ALT SHIFT 9", RepoManeuver.BR2_Right_ABAP)
             .build();
+
 
     public ShipReposition() {
         this(null);
@@ -184,6 +206,7 @@ public class ShipReposition extends Decorator implements EditablePiece {
                     return null;
             }
         }
+
 
         //STEP 1: Collision reposition template, centered as in in the image file, centered on 0,0 (upper left corner)
         GamePiece piece = newPiece(findPieceSlotByID(theManeu.getTemplateGpID()));
@@ -359,6 +382,7 @@ public class ShipReposition extends Decorator implements EditablePiece {
 
 
 
+
     @Override
     public Command keyEvent(KeyStroke stroke) {
         //Any keystroke made on a ship will remove the orange shades
@@ -377,6 +401,7 @@ public class ShipReposition extends Decorator implements EditablePiece {
             result.append(tempCommand);
 
             List<BumpableWithShape> obstacles = getBumpablesOnMap(false);
+
 
             if(shapeForOverlap != null){
                 List<BumpableWithShape> overlappingObstacles = findCollidingEntities(shapeForOverlap, obstacles);
@@ -410,6 +435,7 @@ public class ShipReposition extends Decorator implements EditablePiece {
                 return result;
             }
             //detect that the template used overlaps an obstacle
+
         }
         // if a collision has been found, start painting the shapes and flash them with a timer, mark the bomb spawner for deletion after this has gone through.
         if(this.previousCollisionVisualization != null &&  this.previousCollisionVisualization.getCount() > 0){
@@ -428,12 +454,11 @@ public class ShipReposition extends Decorator implements EditablePiece {
                         }
                     } catch (Exception e) {
                         logToChat("bug");
+
                     }
                 }
             }, 0,DELAYBETWEENFLASHES);
         }
-
-
         return piece.keyEvent(stroke);
     }
 
@@ -443,6 +468,7 @@ public class ShipReposition extends Decorator implements EditablePiece {
             this.previousCollisionVisualization.shapes.clear();
         }
     }
+
 
     private List<BumpableWithShape> findCollidingEntities(Shape myTestShape, List<BumpableWithShape> otherShapes) {
         List<BumpableWithShape> shapes = Lists.newLinkedList();
@@ -466,6 +492,7 @@ public class ShipReposition extends Decorator implements EditablePiece {
         return !a1.isEmpty();
     }
     private List<BumpableWithShape> getBumpablesOnMap(Boolean wantShipsToo) {
+
         List<BumpableWithShape> bumpables = Lists.newArrayList();
 
         GamePiece[] pieces = getMap().getAllPieces();
@@ -487,6 +514,7 @@ public class ShipReposition extends Decorator implements EditablePiece {
                 bumpables.add(new BumpableWithShape((Decorator)piece, "Mine", false));
             } else if(wantShipsToo == true && piece.getState().contains("this_is_a_ship")) {
                 bumpables.add(new BumpableWithShape((Decorator)piece, "Ship",false));
+
             }
         }
         return bumpables;
@@ -511,6 +539,7 @@ public class ShipReposition extends Decorator implements EditablePiece {
         this.testRotator.setAngle(angle);
         return this.testRotator.getAngle();
     }
+
     private RepoManeuver getKeystrokeTemplateDrop(KeyStroke keyStroke) {
         String hotKey = HotKeyConfigurer.getString(keyStroke);
         if (keyStrokeToDropTemplate.containsKey(hotKey)) {
@@ -521,6 +550,7 @@ public class ShipReposition extends Decorator implements EditablePiece {
     private RepoManeuver getKeystrokeRepoManeuver(KeyStroke keyStroke) {
         String hotKey = HotKeyConfigurer.getString(keyStroke);
           if (keyStrokeToRepositionShip.containsKey(hotKey)) {
+
             return keyStrokeToRepositionShip.get(hotKey);
         }
         return null;
@@ -530,12 +560,12 @@ public class ShipReposition extends Decorator implements EditablePiece {
     public void mySetState(String s) {
 
     }
-
+  
     @Override
     public String myGetState() {
         return "";
     }
-
+  
     @Override
     public String myGetType() {
         return ID;
@@ -580,6 +610,7 @@ public class ShipReposition extends Decorator implements EditablePiece {
     }
 
     public Rectangle boundingBox() {
+
         return this.piece.boundingBox();
     }
 
@@ -644,5 +675,4 @@ public class ShipReposition extends Decorator implements EditablePiece {
             return true;
         }
     }
-
 }

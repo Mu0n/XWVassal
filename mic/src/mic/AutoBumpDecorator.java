@@ -331,14 +331,6 @@ return innerCommand;
         }
     }
 
-
-    private void spawnPiece(GamePiece piece, Point position, VASSAL.build.module.Map map) {
-        Command placeCommand = map.placeOrMerge(piece, position);
-        placeCommand.execute();
-        GameModule.getGameModule().sendAndLog(placeCommand);
-    }
-
-
     private void checkIfOutOfBounds(String yourShipName) {
         Rectangle mapArea = new Rectangle(0,0,0,0);
         try{

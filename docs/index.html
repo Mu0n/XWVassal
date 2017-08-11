@@ -1,569 +1,88 @@
 <!doctype html>
 <html class="no-js" lang="en">
-<head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>X-Wing on Vassal: Hands-on Guide to Playing</title>
-    <link rel="stylesheet" href="css/foundation.css" />
-    <script src="js/vendor/modernizr.js"></script>
-    <style>
-    .anchor {
-      display: block;
-      position: relative;
-      visibility: hidden;
-    }
-    </style>
-</head>
-<body>
-
-<div class="fixed">
-    <nav class="top-bar" data-topbar>
-        <ul class="title-area">
-            <li class="name">
-                <h1><a href="#">X-Wing on Vassal</a></h1>
-            </li>
-            <li class="toggle-topbar menu-icon"><a href="#">Menu</a></li>
+<header>
+    <title>Home of the Vassal league for X-Wing</title>
+    <link rel="stylesheet" href="./css/dos.css"/>
+    <!--NAV-->
+    <nav>
+        <h2>Home of the X-Wing Vassal League</h2>
+        <ul>
+            <li><a rel="nofollow" rel="noreferrer"href="http://xwvassal.info/guide"><h3>[ Guide for X-Wing on Vassal ]</h3></a></li>
+            <li><a rel="nofollow" rel="noreferrer"href="http://xwvassal.info/crits"><h3>[ Critical Cards Lookup ]</h3></a></li>
         </ul>
-
-        <section class="top-bar-section">
-
-
-            <!-- Left Nav Section -->
-            <ul class="left">
-                <li><a href="#aboutNav">About the Module</a></li>
-                <li><a href="#installNav">Installing</a></li>
-                <li><a href="#basicsNav">Basics</a></li>
-                <li><a href="#timeSaversNav">Time Savers</a></li>
-                <li><a href="#advancedNav">Advanced Topics</a></li>
-            </ul>
-        </section>
     </nav>
-</div>
+</header>
+<body>
+<section class="about-me" id="me">
+    <p>Latest league mailing list</p>
+    <p>Past example for a mailing list</p>
+    With the advent of Slack, the need for newsletters has diminished, but there’s a lot to talk about as we near the end of the season.
+    TL:DR
+    End of season is Monday, April 17
+    Earthworm is on the road- questions to KDubb or Sozin
+    Interdivision games are available to replace ANY matchups
+    Prizes are on their way out- make sure I have your address
+    We’re going to have to start thinking about talking about money
+    Don’t count on Slack to store information- the archive limit deletes messages older than two weeks
+    Contacting Admins for questions
+    It’s spring break, so we’re on a family adventure for the next two weeks. If you need admin help, Kdubb and Sozin are your points of contact. You can also include the word ‘admin’ in your query in random, and it should notify all of us.
+    Inter-division play is now fully open
 
+    If there are any more inactive or hard to reach players in your division, you are now free to substitute an interdivision game for your matchup with that player. If you do, please notify them before seeking inter- opponents by tagging them with @username in your Slack channel. This serves two important purposes:
+    lets them know that they’ll need to play an inter- game in place of their matchup with you
+    gives them one final chance to schedule their match with you
+    This second concept is a little complicated. Obviously, if you’ve had trouble getting a match with this player over the last two months, giving them another chance, and disrupting your planning isn’t really fair. We’d of course prefer that all of the division games get played, and if it turns out that you get the game in as a result, great, but we’re not going to force you to do so. It’s far more important that active players get their requisite number of games in.
+    What we’d like to avoid (and really don’t foresee being a problem) is players playing an interdivision game instead of a matchup with an active player. If you feel that you’ve been sufficiently active, and a player in your division is taking an inter- game to avoid playing you, please contact us. Again, we don’t really expect this to be a problem.
+    As a reminder, the required number of games for season 4 players is:
+    Tier	Quota
+    Deep Core (1a)	10
+    Core Worlds (2a-2c)	9
+    Inner Rim (3a-3f)	8
+    Outer Rim (4a-4i)	8
+    Unknown Reaches: (5a-5m)	8
+    Note:
+    Deep Core players cannot play interdivision matches.
+    All other players must play their inter- match against a player at their same numbered level.
+    Any games played above your quota will not be counted (ListJuggler will accept the result, but we’ll have to remove it manually)
+    To arrange an interdivision match, go to the channel for your tier: #2_coreworlds, #3_innerrim, #4_outerrim, #5_unknownreaches.
+    Instructions for escrow and reporting on interdivision matches can be found on our league reference manual
+    Prizes
+    I’m in the process of sending out the prizes for winners of Seasons 2 and 3. The prizes are for the top player in each division and for every player participating in Deep Core play. You get a range 1 ruler first, followed by a range 2 and a range 3 ruler for each instance of winning a prize. These are the beautiful black and yellow Vassal League custom rulers from Team Covenant, which has been an awesome prize sponsor during our first year.
+    The first batch of Range 1 and 2 rulers for which I had confirmed addresses have been sent out. I’m not going to be able to send Range 3 rulers out until the middle of April- they require a special sized envelope that I’ll have to make, and I’ll be traveling. If you have a prize coming and have not gotten back to me with your address (or reconfirmed it despite sending it to me in September), please let me know. I’d prefer not to send things out without a really recent address (a couple of players have moved since then…)
+    Money
 
-<div class="row">
-    <div class="large-12 columns">
-        <div class="panel">
-            <h3>This tutorial is valid as of: <script type="text/javascript">
-var currentTime = new Date();
-var month = currentTime.getMonth() + 1;
-var day = currentTime.getDate();
-var year = currentTime.getFullYear();
-var hour = currentTime.getHours();
-var minute = currentTime.getMinutes();
-document.write(month + "/" + day + "/" + year + " " + hour + ":" + minute);</script>. Written by Mu0n.</h3>
-        </div>
-      </div>
+    Our gracious sponsors at Team Covenant have supplied us with enough range rulers to get through Season 4’s prizes, with some left over for future incentives. However, they’re going to be ending their direct support with free prizes for us. We’d like to continue with custom prizes available to a large number of players at all levels- this is really important to us. Our other main sponsor, the Scum and Villainy podcast continues to provide support, of course- they’ve done special prizes in the past, and underwrite the technical costs of ListJuggler, upon which we increasingly depend. They wouldn’t, however, be able to cover the costs of prizes at our current level.
+    Our costs for the last few seasons, assuming that we’d now be paying for the TC templates, work out to somewhere in the neighborhood of $230.00 per season. (Previously, our biggest cost was postage for prizes (Earthworm), which ran about $30.00/season along with ListJuggler’s hosting fees (Sozin) and Premier Challonge account/API access (Sozin last year, Earthworm this year). Challonge may possibly go away in the future, and LJ will also continue to be supported by Scum and Villainy, but the cost of prizes will swamp any of that.
+    One solution is to look for additional sponsors. I’m not particularly connected outside the Seattle x-wing community, so unless you want nothing but Evergreen Squadron Radio stickers as prizes, we’ll have to look further afield. We’re open to your ideas or acquaintances for prize support or other forms of sponsorship.
+    The other solution is to collect a small fee from each player. This season saw 286 players registered and placed in divisions- 130 new players, and 156 returning players. A fee might have a chilling effect on new signups, but collecting $1.50 from all returning players would pretty much cover our costs. What are your thoughts on this? Would you prefer to continue as a free league, but without prizes, or pony up a little for some goodies every now and then? Alternatively, we could operate by suggested donation, with prizes available only to paying players, though this would probably also result in fewer prizes.
+    Slack Messages
 
+    We’re on a free Slack account. I talked them into relaxing our signup limit, which has been useful, but we now contend with the 10,000 message limit imposed on free teams. With 351 total and 224 active members, we run into that pretty quickly, and messages more than about two weeks old (including pinned messages) are no longer available. Upgrading to a paid team with our membership size would apparently cost $17,000 per year, which would sort of wipe out your $1.50 entry fee….
+    There’s not really anything that we can do about this, so please remember that stuff will disappear, and posting your availability last month won’t mean that people can see it this month.
+    We’re looking at posting official announcements and such back on the Reddit page for the time being.
+    <p>-Mu0n</p>
+</section>
 
-    <div class="large-12 columns">
-        <div class="panel">
-            <a class="anchor" name="aboutNav"></a>
-            <h3>About the X-Wing Vassal Module</h3>
-        </div>
+<!--SKILLS-->
+<section class="skills" id="skills">
+    <div class="sk">
+        <h4> Check Current Division Standings </h4>
+        <br><a href="http://lists.starwarsclubhouse.com/tier_rankings?tier_id=26">Deep Core Rankings</a>
+        <br><a href="http://lists.starwarsclubhouse.com/tier_rankings?tier_id=24">Core Worlds</a>
+        <br><a href="http://lists.starwarsclubhouse.com/tier_rankings?tier_id=22">Inner Rim</a>
+        <br><a href="http://lists.starwarsclubhouse.com/tier_rankings?tier_id=25">Outer Rim</a>
+        <br><a href="http://lists.starwarsclubhouse.com/tier_rankings?tier_id=23">Outer Reaches</a>
     </div>
-    <dl class="accordion" data-accordion>
-        <dd>
-            <a href="#Who">Who made the x-wing vassal module?</a>
-            <div id="Who" class="content">
-                Someone named Aiden, who happened to post on afewmaneuvers back in 2012. Since then, the module has seen some work from Buhallin in early 2013 to add some needed features (ship moves with right click menu). The modules are now maintained by Mu0n since August/September of 2013 (wave 3, firing arc corrections, length corrections, imperial aces, wave 4, transport, corvette, etc.), with help from theorist, chris B. for art, sigzog for helper ref cards, radarman5 for ship art, gabriel for map packs and silentubiquity for map packs + ship pictures + squad logfiles + side table logfile. A huge set of programmed features (that brought squad autospawn, overlapping backtracking, etc) appeared in early 2017 thanks to the tremendous help from ajmath, haslo, Guido Kessels, yours truly, and many others.
-            </div>
-        </dd>
-        <dd>
-            <a href="#support">This is cool! I want to support this. How?</a>
-            <div id="support" class="content">
-                Thank you for your support. Any donation means a lot to me (Mu0n). I have bought ships to helping hands in the past, using a part of the donations. Here is a <a href="http://paypal.me/mu0n">paypal donation link</a>.
-            </div>
-        </dd>
-        <dd>
-            <a href="#empty">Why are the pilot and upgrade cards empty?</a>
-            <div id="empty" class="content">
-                To make sure players keep supporting Fantasy Flight Games (the creators of X-Wing Miniatures), that they treat vassal as a complementary way to play the game rather than the main way and prevent any unfortunate loss of business
-            </div>
-        </dd>
-        <dd>
-            <a href="#players">I logged in and it was empty. Where do I find players?</a>
-            <div id="players" class="content">
-                Players of all time zones come and go. North America, Germany, Singapore, Japan, Australia, France, etc. Just try at another time. If you really want to make sure to find players, you can find them discussing the game we all love in these places:
-                <ul>
-                    <li><a href="https://xwingvassalleagueslack.herokuapp.com/">Vassal League Players Slack Channel</a></li>
-                    <li><a href="http://www.reddit.com/r/XWingTMG/">Reddit X-Wing page</a></li>
-                    <li><a href="http://community.fantasyflightgames.com/index.php?showforum=222">FFG X-Wing forums</a></li>
-                    <li><a href="http://teamcovenant.com/">Team Covenant's community</a></li>
-                    <li><a href="http://boardgamegeek.com/forum/1058867/star-wars-x-wing-miniatures-game/general">Board Game Geek X-Wing forums</a></li>
-                    <li><a href="https://plus.google.com/communities/111561231691521211179">Google+ X-Wing community</a></li>
-                </ul>
-            </div>
-        </dd>
-        <dd>
-            <a href="#tourneys">I want to participate in tournaments. How do I find some and sign up?</a>
-            <div id="tourneys" class="content">
-                Whenever you log into the Vassal server, pay attention to the text that pops right at the top of the chat window. This will contain a few links about upcoming tournaments and the Vassal league. A big hotspot of active players can be found in the <a href="https://xwingvassalleagueslack.herokuapp.com/">Vassal League Players Slack Channel</a>.
-            </div>
-        </dd>
-    </dl>
-
-    <div class="large-12 columns">
-        <div class="panel">
-            <a class="anchor" name="installNav"></a>
-            <h3>Installing the Module</h3>
-        </div>
+    <div class="sk">
+        <h4> Schedule a Game </h4>
+        <a href="http://lists.starwarsclubhouse.com/league">List Juggler</a>
     </div>
-    <dl class="accordion" data-accordion>
-        <dd>
-            <a href="#Installing">Installing the program Vassal</a>
-            <div id="Installing" class="content">
-                Go to the vassal homepage <h3><a href="http://www.vassalengine.org/">http://www.vassalengine.org/</a></h3><p>
-                Current vassal version: 3.2.17
-            </div>
-        </dd>
-        <dd>
-            <a href="#Where">Where to get the X-Wing vassal module files?</a>
-            <div id="Where" class="content">
-                Go to the x-wing module download page:  <h3><a href="http://www.vassalengine.org/wiki/Module:Star_Wars:_X-Wing_Miniatures_Game">http://www.vassalengine.org/wiki/Module:Star_Wars:_X-Wing_Miniatures_Game</a></h3><p>
-            </div>
-        </dd>
-        <dd>
-            <a href="#need">Which module files are the ones I need?</a>
-            <div id="need" class="content">
-                <ul>
-                    <li><b>Star_Wars_X-Wing_Miniatures_Game-7.1.2.vmod</b></li>
-                </ul>
-                <p>That's it. Really. That's the only mandatory file. It contains a few 3x3 starfield maps (classic, light and deep), a teal nebula map (formerly known as blue nebula) and then a bunch of standard black maps (3x3, 4x4, 5x5, 3x6 and 6x3). It contains all ships, pilots, upgrades, tokens, dials currently released in its counterpart tabletop game, and then some, as previews from FFG filter out information to us. Vassal is a great way to try out some of the unreleased, but spoiled stuff from the game.
-                <p>If you want more variety for the maps, there's an optional map pack found in the X-Wing Vassal download page (where you got the module): Universal_Map_Pack_1.0.vmdx
-            </div>
-        </dd>
-        <dd>
-            <a href="#obsolete">Which module files are obsolete and can be safely discarded? (from previous installations?)</a>
-            <div id="obsolete" class="content">
-                <ul>
-			<li>Star_Wars_X-Wing_Miniatures_Game-7.1.0.vmod</li>
-                    <li>Star_Wars_X-Wing_Miniatures_Game-7.0.7.vmod</li>
-                    <li>Star_Wars_X-Wing_Miniatures_Game-7.0.5.vmod</li>
-                    <li>Star_Wars_X-Wing_Miniatures_Game-7.0.3.vmod</li>
-                    <li>Star_Wars_X-Wing_Miniatures_Game-7.0.1.vmod</li>
-                    <li>Star_Wars_X-Wing_Miniatures_Game-6.5.3.vmod</li>
-                    <li>Star_Wars_X-Wing_Miniatures_Game-6.5.2.vmod</li>
-                    <li>Star_Wars_X-Wing_Miniatures_Game-6.5.0.vmod</li>
-                    <li>Star_Wars_X-Wing_Miniatures_Game-6.4.0.vmod</li>
-                    <li>Star_Wars_X-Wing_Miniatures_Game-6.3.2.vmod</li>
-                    <li>Star_Wars_X-Wing_Miniatures_Game-6.3.0.vmod</li>
-                    <li>Star_Wars_X-Wing_Miniatures_Game-6.2.6.vmod</li>
-                    <li>Star_Wars_X-Wing_Miniatures_Game-6.2.4.vmod</li>
-                    <li>Star_Wars_X-Wing_Miniatures_Game-6.2.3.vmod</li>
-                    <li>Star_Wars_X-Wing_Miniatures_Game-6.2.2.vmod</li>
-                    <li>Star_Wars_X-Wing_Miniatures_Game-6.2.0.vmod</li>
-                    <li>Star_Wars_X-Wing_Miniatures_Game-6.1.0.vmod</li>
-                    <li>Star_Wars_X-Wing_Miniatures_Game-6.0.2.vmod</li>
-                    <li>Star_Wars_X-Wing_Miniatures_Game-6.0.0.vmod</li>
-                    <li>Star_Wars_X-Wing_Miniatures_Game-5.7.3.vmod</li>
-                    <li>Star_Wars_X-Wing_Miniatures_Game-5.7.2.vmod</li>
-                    <li>Star_Wars_X-Wing_Miniatures_Game-5.7.1.vmod</li>
-                    <li>Star_Wars_X-Wing_Miniatures_Game-5.7.0.vmod</li>
-                    <li>Star_Wars_X-Wing_Miniatures_Game-5.6.6.vmod</li>
-                    <li>Star_Wars_X-Wing_Miniatures_Game-5.6.4.vmod</li>
-                    <li>Star_Wars_X-Wing_Miniatures_Game-5.6.2.vmod</li>
-                    <li>Star_Wars_X-Wing_Miniatures_Game-5.6.0.vmod</li>
-                    <li>Star_Wars_X-Wing_Miniatures_Game-5.5.0.vmod</li>
-                    <li>Star_Wars_X-Wing_Miniatures_Game-5.4.0.vmod</li>
-                    <li>Star_Wars_X-Wing_Miniatures_Game-5.3.3.vmod</li>
-                    <li>Star_Wars_X-Wing_Miniatures_Game-5.3.2.vmod</li>
-                    <li>Star_Wars_X-Wing_Miniatures_Game-5.3.1.vmod</li>
-                    <li>Star_Wars_X-Wing_Miniatures_Game-5.3.0.vmod</li>
-                    <li>Star_Wars_X-Wing_Miniatures_Game-5.2.3.vmod</li>
-                    <li>Star_Wars_X-Wing_Miniatures_Game-5.2.2.vmod</li>
-                    <li>Star_Wars_X-Wing_Miniatures_Game-5.2.0.vmod</li>
-                    <li>Star_Wars_X-Wing_Miniatures_Game-5.1.5.vmod</li>
-                    <li>Star_Wars_X-Wing_Miniatures_Game-5.1.2.vmod</li>
-                    <li>Star_Wars_X-Wing_Miniatures_Game-5.1.0.vmod</li>
-                    <li>Star_Wars_X-Wing_Miniatures_Game-5.0.8.vmod</li>
-                    <li>Star_Wars_X-Wing_Miniatures_Game-5.0.5.vmod</li>
-                    <li>Star_Wars_X-Wing_Miniatures_Game-5.0.1.vmod</li>
-                    <li>Star Wars X-Wing Miniatures Game-5.0.0.vmod</li>
-                    <li>Star Wars X-Wing Miniatures Game-4.6.0.vmod</li>
-                    <li>Star Wars X-Wing Miniatures Game-4.5.1.vmod</li>
-                    <li>Star Wars X-Wing Miniatures Game-4.5.vmod</li>
-                    <li>Star Wars X-Wing Miniatures Game-4.2.vmod</li>
-                    <li>Star Wars X-Wing Miniatures Game-4.1.vmod</li>
-                    <li>Star Wars X-Wing Miniatures Game-4.0.vmod</li>
-                    <li>Star Wars X-Wing -Tournament.vmod</li>
-                    <li>Star_Wars_X-Wing_miniatures_game.vmod</li>
-                    <li>Every "single-ship" extension file, such as A-Wing_Booster_-4.6.0.vmdx </li>
-                </ul>
-                <p>The following map packs (and earlier versions) are no longer supported. Please don't use them anymore.
-                <ul>
-                    <li>Star_Wars_X-Wing_Vassal_Playmats-5.1.2.vmdx</li>
-                    <li>Gabriel's_Map_Pack_-5.0.0.vmdx</li>
-                    <li>Crazy_Toms_Playmats_-5.0.0.vmdx</li>
-                    <li>Yagyu's_Map_Pack_-5.0.0.vmdx</li>
-                </ul>
-            </div>
-        </dd>
-        <dd>
-            <a href="#go">Where are the module files supposed to go?</a>
-            <div id="go" class="content">
-                Anywhere that's convenient to you. Vassal does NOT impose any special location on your computer.
-                <p>For ease of use and to find your files easily in the future, you can create a
-                    folder inside \My Documents\, <br>for example: \My Documents\Vassal\
-                <p><b>Main module file</b>: it ends with a .vmod file extension (as seen in the download page)
-                <p><b>(optional) Map extension files</b>: they end with a .vmdx file extension (as seen in the download page). They will be placed in a subfolder at the location of the main module file, (following the example) in \My Documents\Vassal\[--the module name followed by _ext--]\ when they are properly installed.
-                <p><b>As an example, for version 5.0.5</b>
-                <p>This is the contents of \My Documents\Vassal\
-                <p><img src="./img/properInstall.png">
-                <p><ul>
-                <li>The main module file (.vmod) is in the chosen directory and is called: Star_Wars_X-Wing_Miniatures_Game-5.0.5.vmod</li>
-                <li>The extension module files (.vmdx) are in a subdirectory of the chosen directory; in this case they are map collections</li>
-                <li>(optional) The subdirectory bears the name: "Star_Wars_X-Wing_Miniatures_Game-5.0.5<b>_ext</b>"</li>
-            </ul>
-            </div>
-        </dd>
-        <dd>
-            <a href="#installmodule">Now that I have the module files, how do I install them?</a>
-            <div id="installmodule" class="content">
-                Go into the vassal launcher window, go to File/Open Module...
-                <p><img src="./img/openModule.png">
-                <p>And select your main X-Wing module file. Vassal will then launch it.
-                <p>(optional) If you want to install the map packs immediately, close those new windows and go back to the launcher.
-                    Add the map extensions by right clicking your module name in the launcher window and selecting "Add Extension..."
-                <p><img src="./img/addExtension.png">
-                <p>Do this for all map extensions.
-            </div>
-        </dd>
-        <dd>
-            <a href="#update">I already have the X-Wing module, but must update to a new version. How to do it?</a>
-            <div id="update" class="content">
-                The first step is to remember where you put the module files. If you forgot, there's an easy way. Open up Vassal's launcher window, and do a mouse-over on the module file. A blue popup field will appear and show you the location of the module file, like so:
-                <p><img src="./img/directory.png">
-                <p>
-                    The second step is to simply delete the old .vmod file, which has this appearance:
-                <p><img src="./img/moduleIcon.png">
-                <p>The third step is to download the new file (from the page whose link is under "How to install the x-wing vassal modules for the first time") in that same location.
-                <p>
-                    The fourth step is to go into the vassal launcher window, go to File/Open Module...
-                <p><img src="./img/openModule.png">
-                <p>Vassal will then attempt to launch the module - close those new windows and go back to the launcher.
-                <p>
-                    The fifth step is to add the map extensions by right clicking your module name in the launcher window and selecting "Add Extension..."
-                <p><img src="./img/addExtension.png">
-                <p>Do this for all map extensions.
-            </div>
-        </dd>
-        <dd>
-            <a href="#whenupdate">How can I know when to update the module? Is it important to update?</a>
-            <div id="whenupdate" class="content">
-                When you attempt to log onto the X-Wing Vassal server and if there's a new version available, a small popup will appear at the start of the logging process. This popup will display the current version, the newer version and contain a link to the x-wing vassal module download page. Follow it and update!
-                It's fairly important to update your module version ASAP. Sometimes, some game pieces or mechanism will behave strangely as bugs are fixed and features added.
-            </div>
-        </dd>
-    </dl>
-
-    <div class="large-12 columns">
-        <div class="panel">
-            <a class="anchor" name="basicsNav"></a>
-            <h3>Basics</h3>
-        </div>
+    <div class="sk">
+        <h4> Report a Finished Game </h4>
+       <a href="http://www.challonge.com">Challonge</a>
     </div>
-    <dl class="accordion" data-accordion>
-        <dd>
-            <a href="#room">First step, going into a game room [VIDEO]</a>
-            <div id="room" class="content">
-                In order to manipulate X-Wing ships, tokens and do anything of substance, you need to be a numbered player inside a game room. When you first log into the X-Wing Vassal server, you're a generic user inside the 'Main Room'.
-                <iframe width="560" height="315" src="https://www.youtube.com/embed/hsx_nkAVZWM" frameborder="0" allowfullscreen></iframe>
-            </div>
-        </dd>
-        <dd>
-            <a href="#spawn">How do I spawn a squad?</a>
-            <div id="spawn" class="content">
-                Spawning a squad is done with some help from the known squad builder websites found online. These are a few of the more important ones which are supported:
-                <ul>
-                    <li><a href=https://geordanr.github.io/xwing/">(Yet Another) X-Wing Miniatures Squad Builder (aka YASB)</a></li>
-                    <li><a href=http://xwing-builder.co.uk/build">X-Wing Squadron Builder (aka voidstate)</a></li>
-                    <li><a href=http://x-wing.fabpsb.net/">Fab's Squadron Builder</a></li>
-                </ul>
-                Build a list with these squadrons. Be in a vassal game room, as a numbered player. Open your numbered player window (button showing up as a yellow number on a black square). Click on the Squad Spawn button. Paste your squad's URL. Your squad will spawn inside your player's window.
-            </div>
-        </dd>
-        <dd>
-            <a href="#values">Editing the values on a ship token</a>
-            <div id="values" class="content">
-                When you use the automatic squad spawn, all the stats are normally all entered in. However, there are game effects which alter the stats, so it's good to know how to change these things (including damage reducing your health)
-                Everything can be done in the slowly, but surely way of right clicking on ships and adjusting all the values, one by one:
-                <p><img src="./img/editingShip.png">
-                <p>Alternatively, you can use the keyboard shortcuts to do this much faster.
-                <ul>
-                    <li>Alt-<b>P</b> to increase pilot skill; Ctrl-Alt-<b>P</b> to decrease pilot skill</li>
-                    <li>Alt-<b>A</b> to increase attack rating; Ctrl-Alt-<b>A</b> to decrease attack rating</li>
-                    <li>Alt-<b>D</b> to increase defense rating; Ctrl-Alt-<b>D</b> to decrease defense rating</li>
-                    <li>Alt-<b>H</b> to increase hull rating; Ctrl-Alt-<b>H</b> to decrease hull rating</li>
-                    <li>Alt-<b>S</b> to increase shield rating; Ctrl-Alt-<b>S</b> to decrease shield rating</li>
-                    <li>Shift-<b>N</b> to add a ship name visible on the token at the top left</li>
-                    <li>Shift-<b>P</b> to add a second/alternate ship name visible on the token at the bottom, much smaller</li>
-                </ul>
-                <p><b>Important:</b> you can always clone a ship by clicking on it (left mouse button), hitting Ctrl-C, then dragging the copy away from the original. This saves time when you have multiples of a ship type in a squad.
-            </div>
-        </dd>
-        <dd>
-            <a href="#dials">What's the proper way to use the dials under vassal? (planning and activation phase)</a>
-            <div id="dials" class="content">
-                <p><img src="./img/dialRevealed.png">
-                <p>The proper way to use the dials during the planning and activation phases of the game is the following:
-                <p><ul>
-                <li>Changing the maneuvers of a dial while it's in the map window will trigger an anti-cheating warning message in the main window, therefore...</li>
-                <li>(planning phase) ...you have to change your dials inside your personal player hand window</li>
-                <li>Make sure the dial is hidden with Ctrl-R. This is what your own dial will look like while hidden. A ship icon appears in the top left corner <img src="./img/dialHiddenView1.png"></li>
-                <li>This is what your hidden dial will look like to your opponent: <img src="./img/dialHiddenView2.png"></li>
-                <li>Use '.' and ',' to cycle through the available moves.</li>
-                <li>When ready, bring your dials (still hidden) on the map window, besides your ships and declare you're ready in the chat window. Most players use the word "set". <img src="./img/set.png"></li>
-                <li>(activation phase) Respecting play order with regard to ascending pilot skill activation, reveal a dial with the same shortcut, Ctrl-R and activate your ship (see next item).
-            </ul>
-                <p>Some players enjoy rotating the dials, as it gives you an easier time to visualize the proper direction for turning ships when they're facing downward, for example. Do this by clicking on the dial and hitting the left or right arrow keys.
-                <p><img src="./img/dialTurned.png">
-            </div>
-        </dd>
-        <dd>
-            <a href="#move">How do I move my ships (activation phase)</a>
-            <div id="move" class="content">
-                Way #1: through the right click menu. Right click on a ship, find your move in the template move submenu.
-                <p>Way #2: (heartily recommended) through the usage of keyboard shortcuts. There is a certain logic to their definitions
-                <p>Forward moves:
-                <p><ul>
-                <li>Forward 1: Shift-1</li>
-                <li>Forward 2: Shift-2</li>
-                <li>Forward 3: Shift-3</li>
-                <li>Forward 4: Shift-4</li>
-                <li>Forward 5: Shift-5</li>
-            </ul>
-                <p>Bank moves:
-                <p><ul>
-                <li>Left Bank 1: Ctrl-1</li>
-                <li>Left Bank 2: Ctrl-2</li>
-                <li>Left Bank 3: Ctrl-3</li>
-                <li>Right Bank 1: Alt-1</li>
-                <li>Right Bank 2: Alt-2</li>
-                <li>Right Bank 3: Alt-3</li>
-            </ul>
-                <p>Turn moves:
-                <p><ul>
-                <li>Left Turn 1: Ctrl-Shift-1</li>
-                <li>Left Turn 2: Ctrl-Shift-2</li>
-                <li>Left Turn 3: Ctrl-Shift-3</li>
-                <li>Right Turn 1: Alt-Shift-1</li>
-                <li>Right Turn 2: Alt-Shift-2</li>
-                <li>Right Turn 3: Alt-Shift-3</li>
-            </ul>
-                <p>Koiogran (k-turn) moves:
-                <p><ul>
-                <li>K-turn 1: Ctrl-Alt-1</li>
-                <li>K-turn 2: Ctrl-Alt-2</li>
-                <li>K-turn 3: Ctrl-Alt-3</li>
-                <li>K-turn 4: Ctrl-Alt-4</li>
-                <li>K-turn 5: Ctrl-Alt-5</li>
-            </ul>
-                <p>Segnor's Loop (sloop) moves:
-                <p><ul>
-                <li>Left Sloop 1: Ctrl-Q</li>
-                <li>Left Sloop 2: Ctrl-W</li>
-                <li>Left Sloop 3: Ctrl-E</li>
-                <li>Right Sloop 1: Alt-Q</li>
-                <li>Right Sloop 2: Alt-W</li>
-                <li>Right Sloop 3: Alt-E</li>
-            </ul>
-                <p>Tallon Roll (troll) moves:
-                <p><ul>
-                <li>Left Troll 2: Ctrl-Y</li>
-                <li>Left Troll 3: Ctrl-T</li>
-                <li>Right Troll 2: Alt-Y</li>
-                <li>Right Troll 3: Alt-T</li>
-            </ul>
-                <p>Reverse moves:
-                <p><ul>
-                <li>Reverse 1: Shift-6</li>
-                <li>Left Bank Reverse 1: Ctrl-6</li>
-                <li>Right Bank Reverse 1: Alt-6</li>
-            </ul>
-                <p>How do you manage to remember all this? You can always check up on shortcuts under the button "How To & Shortcuts", under "Movement Shortcuts". <img src="./img/shipaide_ver2.png"> This image can be dragged and dropped around on the map or into your player window.
-            </div>
-        </dd>
-        <dd>
-            <a href="#action">How do I declare what actions my ships do? (activation phase)</a>
-            <div id="action" class="content">
-                There are two ways to do this:
-                <p>Way #1: more tedious, but more intuitive. If you used the automatic squad spawn feature inside your player window, you should normally have all the tokens associated with the actions that your ships are capable of. If, for some reason, some are lost or missing, you can always spawn some more from the Pieces window, Chits/Tokens tab. This is tedious because you'll have to manually put tokens during the activation phase, then take out every unused focus and evade tokens during the end phase. There is a faster way.
-                <p>Way #2: (<b>heartily recommended</b>) Ships have space for 3 "action declarations". As always, you have access to this in their right click contextual menus, but here are the shortcuts:
-                <ul>
-                    <li>Shift-A to cycle through the first line of potential ship actions. Shift-Z to remove it without have to cycle it out.</li>
-                    <li>Ctrl-A to cycle through the first line of potential ship actions. Ctrl-Z to remove it</li>
-                    <li>Shift-Ctrl-A to cycle through the third line of potential ship actions. Shift-Ctrl-Z to remove it</li>
-                <li>Alt-Ctrl-Shift-Z to remove all actions (up to 3) at once.</li>
-                </ul>
-                As an example, Darth Vader (in a TIE Advanced x1) with push the limit can easily go up to 3 actions during a turn and would use all three 'lines'.
-                <p><img src="./img/vader.png">
-            </div>
-        </dd>
-        <dd>
-            <a href="#stress">How do I put a stress on my ship? (activation phase)</a>
-            <div id="stress" class="content">
-                Click on a ship and hit Shift-S to increase the stress by 1 with a small icon at the side of your ship and it can go up to 4. To decrease the stress count, hit Ctrl-Shift-S. To remove all stress at once, hit Ctrl-Shift-Alt-S. For other ship status condition tokens, check the right click menu, or go find the shortcuts in the "How To & Shortcuts" button, under the "Ship Stats and Status" section, "Small & Large Ships" item.
-                <p>Alternatively, if you used the Squad Spawn feature (heatily recommended), you will receive at least 1 stress token per ship. You can drag and drop those around. You can increase its value with Shift-S and decrease it with Ctrl-Shift-S.
-                    <p>If, for some reason, you lost all your stress tokens, you can go to the Pieces Window, under the Chits/Tokens tabs and spawn some more.</p>
-                <p><img src="./img/stress.png">
-            </div>
-        </dd>
-        <dd>
-            <a href="#lock">What's the proper way to check for range (i.e. during a target lock acquisition)? (activation phase)</a>
-            <div id="lock" class="content">
-                Click on your ship and hit Ctrl-L to toggle the range 1-3 finder area. It will check for range 1-3 around your ship. Zooming might be necessary for close cases.
-                <p><img src="./img/lock.png">
-            </div>
-        </dd>
-        <dd>
-            <a href="#shot">What's the proper way to check for a valid shot? (combat phase)</a>
-            <div id="shot" class="content">
-                Click on your ship and hit Ctrl-F to toggle the firing arc.
-                If a ship has a rear auxiliary arc, hit Ctrl-V to toggle it.
-                If a ship has a mobile turret arc, hit Ctrl-Shift-V to toggle the left side and Alt-Shift-V to toggle the right side.
-                If a ship has frontal-side auxiliary arcs (such as the YV-666 and Auzituck Gunship), hit Ctrl-N
-                <p><img src="./img/arc.png">
-            </div>
-        </dd>
-        <dd>
-            <a href="#dice">What's the proper way to roll for dice and modify some results? (combat phase)</a>
-            <div id="dice" class="content">
-                Have the dice window open at all times. Results get broadcasted in the chat window, but it's always faster to interpret results by having the graphics show it up.
-                <p><b>Attacking</b>: click on the graphic that shows a bundle of red dice and hit Ctrl-(a number) to roll this amount of dice. For example, Ctrl-3 will roll 3 attack dice:
-                <p><img src="./img/attackDice.png">
-                <p><img src="./img/rolledAttackDice.png">
-                <p><b>Modifying attack dice results</b>:
-                <ul>
-                    <li>Using focus: click on the spend focus button at the left. This will automaticaly change all eye results to hits</li>
-                    <li>Rerolling a particular die: click on a die you want to reroll and hit Ctrl-V</li>
-                    <li>Miscellaneous modifications: These can happen with Marskmanship, Sensor Jammer, etc. Click on the die and use these shortcuts:</li>
-                    <ul>
-                        <li>Change to hit: Shift-H</li>
-                        <li>Change to crit: Shift-C</li>
-                        <li>Change to focus: Shift-F</li>
-                        <li>Change to blank: Shift-B</li>
-                    </ul>
-                </ul>
-                <p>Defending: click on the similar green graphic and use the same kind of shortcut, Ctrl-(a number):
-                <p><img src="./img/rolledDefenseDice.png">
-                <p><b>Modifying defense results</b>:
-                <ul>
-                    <li>Using focus: click on the spend focus button at the left. This will automaticaly change all eye results to evades</li>
-                    <li>Rerolling a particular die: click on a die you want to reroll and hit Ctrl-V</li>
-                    <li>Miscellaneous modifications: These can happen with Flight Instructor, etc. Click on the die and use these shortcuts:</li>
-                    <ul>
-                        <li>Change to evade: Shift-E</li>
-                        <li>Change to focus: Shift-F</li>
-                        <li>Change to blank: Shift-B</li>
-                    </ul>
-                </ul>
-            </div>
-        </dd>
-        <dd>
-            <a href="#damage">How do you keep track of damage? (combat phase)</a>
-            <div id="damage" class="content">
-                Most players keep track of it on the map itself, directly on the ships. You can adjust the relevant ship stats using these shortcuts:
-                <p><ul>
-                <li>Decrease shield value: Ctrl-Alt-S (Alt-S to increase in case you go too far)</li>
-                <li>Decrease Hull value: Ctrl-Alt-H (Alt-H to increase in case you go too far)</li>
-            </ul>
-                <p>When you take damage to the hull (past shields), the game expects you to draw damage cards. Each player can spawn their own damage deck to their player window, then drag and drop cards from it, to their respective player hands as damage accumulates on the ship. This is on top of modifying the ship values on the ship pieces on the map.
-                <p>As for critical damage, it is customary to draw the appropriate card on the map, flip it (Ctrl-F) there and wait for some acknowledgement from your opponent. On the map, every player can then mouse-hover the card and see a zoomed version of it, allowing to read it easily. If you spawn and flip the card in your player hand window instead, only you can benefit from the mouse-hover zoom.
-            </div>
-        </dd>
-        <dd>
-            <a href="#critical">How do I easily find what critical damage cards do?</a>
-            <div id="critical" class="content">
-                This is a handy reference website from which you can automatically copy the text of any critical card (standard or huge ships) and have it ready for a paste into vassal's chat window (with CTRL-V): <a href="http://xwvassal.info/crits">http://xwvassal.info/crits</a>
-            </div>
-        </dd>
-        <dd>
-            <a href="#end">What's the proper way deal with the end phase? (end phase)</a>
-            <div id="end" class="content">
-                If you used the ship side action icons (Shift-A, Ctrl-A, etc.): Click on "Reset Actions" at the top of the map window. This will clear all actions on all ships.
-                If you instead moved standalone tokens (ie provided from the automatic squad spawn), you will have to manually remove them from the play area. This is why using the action bars is so much more quicker than spawning and dragging around multiple token chits manually.
-            </div>
-        </dd>
-    </dl>
-
-      <div class="large-12 columns">
-      	<div class="panel">
-            <a class="anchor" name="timeSaversNav"></a>
-			<h3>Time Savers</h3>
-      </div>
+    <div class="sk">
+        <h4> Request Help / Report Grievance </h4>
     </div>
-    <dl class="accordion" data-accordion>
-        <dd>
-            <a href="#shipShipOverlap">A moved ship overlaps another ship. How to resolve this quickly? [VIDEO]</a>
-            <div id="shipShipOverlap" class="content">
-                <iframe width="560" height="315" src="https://www.youtube.com/embed/DuMytInIBSA" frameborder="0" allowfullscreen></iframe>
-            </div>
-        </dd>
-    </dl>
-
-    <div class="large-12 columns">
-        <div class="panel">
-            <a class="anchor" name="advancedNav"></a>
-            <h3>Advanced Topics</h3>
-        </div>
-    </div>
-    <dl class="accordion" data-accordion>
-        <dd>
-            <a href="#mobileturret">How do I use the Lancer-Class Pursuit Craft Mobile turret?</a>
-            <div id="mobileturret" class="content">
-                This image explains the shortcuts explicitly. All 4 sides have independant arc graphic toggles. The rotation of the red overlay can be done clockwise or counterclockwise.
-                <p><img src="./img/mobileturret.png"></p>
-            </div>
-        </dd>
-        <dd>
-            <a href="#bombs">How do I drop bombs?</a>
-            <div id="bombs" class="content">
-                The first step is to drop a bomb spawner with CTRL-B (CTRL-SHIFT-B is you want to drop in front of your ship instead). Then, you manipulate the spawner to drop a bomb.
-                <p><img src="./img/Ref-Bomb_guide.png"></p>
-                <ul>
-                    <li>You can change its length by performing the corresponding movement shortcut on it:</li>
-                    <ul>
-                        <li>Forward 1,2,3: Shift-1,2,3</li>
-                        <li>Hard Left 3: Ctrl-Shift-3</li>
-                        <li>Hard Right 3: Alt-Shift-3</li>
-                    </ul>
-                    <li>Next, you choose the bomb token itself:</li>
-                    <ul>
-                        <li>Proximity Mine: Ctrl-M</li>
-                        <li>Seismic Charge: Ctrl-S</li>
-                        <li>Proton Bomb: Ctrl-P</li>
-                        <li>Ion Bombs: Ctrl-I</li>
-                        <li>Conner Net: Ctrl-O</li>
-                        <li>Cluster Mines: Ctrl-L</li>
-                        <li>Thermal Detonators: Ctrl-H</li>
-                    </ul>
-                </ul>
-            </div>
-        </dd>
-        <dd>
-            <a href="#isytds">How do I get out a specific damage card ("I'll Show you the Dark Side" condition card)? [VIDEO]</a>
-            <div id="isytds" class="content">
-                <iframe width="560" height="315" src="https://www.youtube.com/embed/v5n8i9P0Cxg" frameborder="0" allowfullscreen></iframe>
-            </div>
-        </dd>
-    </dl>
-</div>
-
-
-
-
-    <script src="js/vendor/jquery.js"></script>
-    <script src="js/foundation.min.js"></script>
-    <script>
-      $(document).foundation();
-    </script>
-<script>
-        $(document).ready(function () {
-          var menuHeight = $('.menu').height();
-          var menuTop = -1 * (menuHeight + 64);
-          $('.anchor').css({ top: menuTop });
-        })
-      </script>
+</section>
 </body>
-</html>
