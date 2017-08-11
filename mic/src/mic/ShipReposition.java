@@ -11,6 +11,8 @@ import javax.swing.*;
 
 import VASSAL.build.GameModule;
 import VASSAL.build.widget.PieceSlot;
+import VASSAL.command.ChangeTracker;
+import VASSAL.command.MoveTracker;
 import VASSAL.counters.*;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
@@ -288,7 +290,7 @@ public class ShipReposition extends Decorator implements EditablePiece {
             if (overlappingObstacles.size() > 0) {
                 for (BumpableWithShape bws : overlappingObstacles) {
                     previousCollisionVisualization.add(bws.shape);
-                    logToChat("*** Warning: reposition template currently overlaps an obstacle");
+                    logToChat("*** Warning: reposition template currently overlaps an obstacle. You can attempt to move it into a legal position and check if it still overlaps with 'c'.");
                 }
                 previousCollisionVisualization.add(shapeForOverlap);
                 spawnTemplate = true; //we'll want the template
@@ -329,8 +331,8 @@ public class ShipReposition extends Decorator implements EditablePiece {
                 for(BumpableWithShape bws : overlappingShipOrObstacles)
                 {
                     previousCollisionVisualization.add(bws.shape);
-                    if("Ship".equals(bws.bumpable.getType())) logToChat("*** Warning: Ship's final reposition location currently overlaps a Ship");
-                    else logToChat("*** Warning: Ship's final reposition location currently overlaps an obstacle");
+                    logToChat("*** Warning: Ship's final reposition location currently overlaps a Ship or Obstacle. You can attempt to move it into a legal position and check if it still overlaps with 'shift-c'.");
+
                 }
                 previousCollisionVisualization.add(shapeForOverlap2);
                 spawnTemplate = true; //we'll want the template
@@ -355,10 +357,19 @@ public class ShipReposition extends Decorator implements EditablePiece {
     public Command keyEvent(KeyStroke stroke) {
         //Any keystroke made on a ship will remove the orange shades
 
+        ChangeTracker changeTracker = new ChangeTracker(this);
+        Command result = changeTracker.getChangeCommand();
+        MoveTracker moveTracker = new MoveTracker(Decorator.getOutermost(this));
+        result.append(moveTracker.getMoveCommand());
+
+
+
         RepoManeuver repoTemplateDrop = getKeystrokeTemplateDrop(stroke);
         // Template drop requested
         if (repoTemplateDrop != null && stroke.isOnKeyRelease() == false) {
-            spawnRepoTemplate(repoTemplateDrop);
+            Command tempCommand = spawnRepoTemplate(repoTemplateDrop);
+            result.append(tempCommand);
+
             List<BumpableWithShape> obstacles = getBumpablesOnMap(false);
 
             if(shapeForOverlap != null){
@@ -372,6 +383,8 @@ public class ShipReposition extends Decorator implements EditablePiece {
                     previousCollisionVisualization.add(shapeForOverlap);
                 }
             }
+            result.append(piece.keyEvent(stroke));
+            return result;
         }
 
         RepoManeuver repoShip = getKeystrokeRepoManeuver(stroke);
@@ -385,8 +398,12 @@ public class ShipReposition extends Decorator implements EditablePiece {
             //detect that the ship's final position overlaps a ship or obstacle
             Command repoCommand = repositionTheShip(repoShip);
             if(repoCommand == null) return piece.keyEvent(stroke);
+            else{
+                result.append(repoCommand);
+                result.append(piece.keyEvent(stroke));
+                return result;
+            }
             //detect that the template used overlaps an obstacle
-
         }
         // if a collision has been found, start painting the shapes and flash them with a timer, mark the bomb spawner for deletion after this has gone through.
         if(this.previousCollisionVisualization != null &&  this.previousCollisionVisualization.getCount() > 0){
@@ -404,10 +421,12 @@ public class ShipReposition extends Decorator implements EditablePiece {
                             timer.cancel();
                         }
                     } catch (Exception e) {
+                        logToChat("bug");
                     }
                 }
             }, 0,DELAYBETWEENFLASHES);
         }
+
 
         return piece.keyEvent(stroke);
     }

@@ -13,6 +13,8 @@ import javax.swing.*;
 
 import VASSAL.build.GameModule;
 import VASSAL.build.widget.PieceSlot;
+import VASSAL.command.ChangeTracker;
+import VASSAL.command.MoveTracker;
 import VASSAL.command.RemovePiece;
 import VASSAL.counters.*;
 import com.google.common.collect.ImmutableMap;
@@ -279,6 +281,10 @@ public class BombSpawner extends Decorator implements EditablePiece {
     @Override
     public Command keyEvent(KeyStroke stroke) {
         //Any keystroke made on a ship will remove the orange shades
+        ChangeTracker changeTracker = new ChangeTracker(this);
+        Command result = changeTracker.getChangeCommand();
+        MoveTracker moveTracker = new MoveTracker(Decorator.getOutermost(this));
+        result.append(moveTracker.getMoveCommand());
 
         BombManeuver bombDropTemplate = getKeystrokeBombManeuver(stroke);
         // Is this a keystroke for a maneuver? Deal with the 'no' cases first
@@ -296,12 +302,13 @@ public class BombSpawner extends Decorator implements EditablePiece {
 
                     //prepare the drop command and get the shape ready for overlap detection
                     Command placeBombCommand = spawnBomb(droppedBomb, getBombManeuverFromProperty(selectedMove));
+                    result.append(placeBombCommand);
                     if("Cluster Mine".equals(droppedBomb.getBombName())) {
                         //do the side ones too, their shapes are all added in the shapesForOverlap array inside the spawnBomb method
                         Command leftBomb = spawnBomb(BombToken.ClusterMineLeft, getBombManeuverFromProperty(selectedMove));
                         Command rightBomb = spawnBomb(BombToken.ClusterMineRight, getBombManeuverFromProperty(selectedMove));
-                        placeBombCommand.append(leftBomb);
-                        placeBombCommand.append(rightBomb);
+                        result.append(leftBomb);
+                        result.append(rightBomb);
                     }
                     boolean isCollisionOccuring = false;
                     for(Shape sh : shapesForOverlap ){
@@ -317,6 +324,10 @@ public class BombSpawner extends Decorator implements EditablePiece {
                             previousCollisionVisualization.add(sh);
                         }
                     }
+
+                    result.append(keyEvent(stroke));
+
+
 
                     // if a collision has been found, start painting the shapes and flash them with a timer, mark the bomb spawner for deletion after this has gone through.
                     if(isCollisionOccuring == true && this.previousCollisionVisualization != null &&  this.previousCollisionVisualization.getCount() > 0){
@@ -342,6 +353,12 @@ public class BombSpawner extends Decorator implements EditablePiece {
                             }
                         }, 0,DELAYBETWEENFLASHES);
                     }
+                    else { //mine was dropped, no collision found
+                        KeyStroke deleteyourself = KeyStroke.getKeyStroke(KeyEvent.VK_D, InputEvent.CTRL_DOWN_MASK, false);
+                        Command goToHell = keyEvent(deleteyourself);
+                        goToHell.execute();
+                        GameModule.getGameModule().sendAndLog(goToHell);
+                    }
 
                 }
                 //was not a mine, but still a bomb (seismic, ion, thermal, etc), so drop it and delete the bomb spawner right away
@@ -349,11 +366,16 @@ public class BombSpawner extends Decorator implements EditablePiece {
                     GamePiece thBS = getInner();
                     String selectedMove = thBS.getProperty("selectedMove").toString();
                     Command placeBombCommand = spawnBomb(droppedBomb, getBombManeuverFromProperty(selectedMove));
-                    KeyStroke deleteyourself = KeyStroke.getKeyStroke(KeyEvent.VK_D, InputEvent.CTRL_DOWN_MASK, false);
-                    placeBombCommand.append(piece.keyEvent(deleteyourself));
 
-                    placeBombCommand.execute();
-                    GameModule.getGameModule().sendAndLog(placeBombCommand);
+                    result.append(placeBombCommand);
+                    result.append(keyEvent(stroke));
+
+                    KeyStroke deleteyourself = KeyStroke.getKeyStroke(KeyEvent.VK_D, InputEvent.CTRL_DOWN_MASK, false);
+                    Command goToHell = keyEvent(deleteyourself);
+                    goToHell.execute();
+                    GameModule.getGameModule().sendAndLog(goToHell);
+
+                    return result;
                 } // end of dealing with a non-mine drop
 
             } //end of dealing with the keystroke
