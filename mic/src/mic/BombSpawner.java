@@ -318,16 +318,12 @@ public class BombSpawner extends Decorator implements EditablePiece {
                             {
                                 previousCollisionVisualization.add(bws.shape);
 
-                                logToChat("*** Overlap detected with dropped " + droppedBomb.getBombName() + " and " + bws.shipName + " ("  + bws.pilotName + ")");
+                                result.append(logToChatCommand("*** Overlap detected with dropped " + droppedBomb.getBombName() + " and " + bws.shipName + " ("  + bws.pilotName + ")"));
                                 isCollisionOccuring = true;
                             }
                             previousCollisionVisualization.add(sh);
                         }
                     }
-
-                    result.append(keyEvent(stroke));
-
-
 
                     // if a collision has been found, start painting the shapes and flash them with a timer, mark the bomb spawner for deletion after this has gone through.
                     if(isCollisionOccuring == true && this.previousCollisionVisualization != null &&  this.previousCollisionVisualization.getCount() > 0){
@@ -346,18 +342,18 @@ public class BombSpawner extends Decorator implements EditablePiece {
                                         KeyStroke deleteyourself = KeyStroke.getKeyStroke(KeyEvent.VK_D, InputEvent.CTRL_DOWN_MASK, false);
                                         Command goToHell = piece.keyEvent(deleteyourself);
                                         goToHell.execute();
-                                        GameModule.getGameModule().sendAndLog(goToHell);
                                     }
                                 } catch (Exception e) {
                                 }
                             }
                         }, 0,DELAYBETWEENFLASHES);
+                        return result;
                     }
                     else { //mine was dropped, no collision found
                         KeyStroke deleteyourself = KeyStroke.getKeyStroke(KeyEvent.VK_D, InputEvent.CTRL_DOWN_MASK, false);
                         Command goToHell = keyEvent(deleteyourself);
                         goToHell.execute();
-                        GameModule.getGameModule().sendAndLog(goToHell);
+                        return result;
                     }
 
                 }
@@ -368,24 +364,14 @@ public class BombSpawner extends Decorator implements EditablePiece {
                     Command placeBombCommand = spawnBomb(droppedBomb, getBombManeuverFromProperty(selectedMove));
 
                     result.append(placeBombCommand);
-                    result.append(keyEvent(stroke));
-
                     KeyStroke deleteyourself = KeyStroke.getKeyStroke(KeyEvent.VK_D, InputEvent.CTRL_DOWN_MASK, false);
                     Command goToHell = keyEvent(deleteyourself);
                     goToHell.execute();
-                    GameModule.getGameModule().sendAndLog(goToHell);
 
                     return result;
                 } // end of dealing with a non-mine drop
-
-            } //end of dealing with the keystroke
-            else return piece.keyEvent(stroke);
-
-            return piece.keyEvent(stroke);
-        }
-        else { //want to change the drop template - should this be left to the vassal editor?
-        }
-
+            } //end of dealing with the keystroke for any drop
+        } // end of dealing with any keystroke, none found interesting
         return piece.keyEvent(stroke);
     }
 

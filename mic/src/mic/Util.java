@@ -121,6 +121,14 @@ public class Util {
         c.execute();
         return c;
     }
+    public static Command logToChatCommand(String msg, Object... args) {
+        if (args != null && args.length > 0) {
+            msg = String.format(msg, args);
+        }
+        Command c = new Chatter.DisplayText(GameModule.getGameModule().getChatter(), msg);
+        c.execute();
+        return c;
+    }
     public static GamePiece newPiece(PieceSlot slot) {
         return PieceCloner.getInstance().clonePiece(slot.getPiece());
     }

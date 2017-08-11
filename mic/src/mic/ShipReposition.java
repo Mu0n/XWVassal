@@ -1,6 +1,8 @@
 package mic;
 
 import java.awt.*;
+import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Area;
 import java.util.*;
@@ -290,17 +292,15 @@ public class ShipReposition extends Decorator implements EditablePiece {
             if (overlappingObstacles.size() > 0) {
                 for (BumpableWithShape bws : overlappingObstacles) {
                     previousCollisionVisualization.add(bws.shape);
-                    logToChat("*** Warning: reposition template currently overlaps an obstacle. You can attempt to move it into a legal position and check if it still overlaps with 'c'.");
+                    String overlapWarn = "*** Warning: reposition template currently overlaps an obstacle. You can attempt to move it into a legal position and check if it still overlaps with 'c'.";
+                    if(bigCommand != null) bigCommand.append(logToChatCommand(overlapWarn));
+                    else bigCommand = logToChatCommand(overlapWarn);
                 }
                 previousCollisionVisualization.add(shapeForOverlap);
                 spawnTemplate = true; //we'll want the template
             }
         }
         //STEP 6: Gather info for ship's final wanted position
-
-        //TO DO find how to clone it
-
-        GamePiece myClone = PieceCloner.getInstance().clonePiece(this.piece);
         Shape shapeForOverlap2 = this.piece.getShape();
         //Info Gathering: gets the angle from RepoManeuver which deals with degrees, local space with ship at 0,0, pointing up
         double tAngle2;
@@ -331,22 +331,28 @@ public class ShipReposition extends Decorator implements EditablePiece {
                 for(BumpableWithShape bws : overlappingShipOrObstacles)
                 {
                     previousCollisionVisualization.add(bws.shape);
-                    logToChat("*** Warning: Ship's final reposition location currently overlaps a Ship or Obstacle. You can attempt to move it into a legal position and check if it still overlaps with 'shift-c'.");
+                    String overlapOnFinalWarn = "*** Warning: Ship's final reposition location currently overlaps a Ship or Obstacle. You can attempt to move it into a legal position and check if it still overlaps with 'shift-c'.";
+                    if(bigCommand !=null) bigCommand.append(logToChatCommand(overlapOnFinalWarn));
+                    else bigCommand = logToChatCommand(overlapOnFinalWarn);
 
                 }
                 previousCollisionVisualization.add(shapeForOverlap2);
                 spawnTemplate = true; //we'll want the template
             }
         }
-
-        //STEP 11: spawn and move what is needed
-        //get the ship moved away
-        bigCommand = getMap().placeOrMerge(Decorator.getOutermost(this), new Point((int)off1x_rot_s + (int)off2x, (int)off1y_rot_s + (int)off2y));
-        //check if the templates is needed as well, in case of any kind of overlap
+        //STEP 10: optional if there's any kind of overlap, produce both the template and initial ship position
         if(spawnTemplate == true) {
-            bigCommand.append(getMap().placeOrMerge(piece, new Point((int)off1x_rot + (int)off2x, (int)off1y_rot + (int)off2y)));
+            //the template is needed, in case of any kind of overlap
+            if(bigCommand !=null) bigCommand.append(getMap().placeOrMerge(piece, new Point((int)off1x_rot + (int)off2x, (int)off1y_rot + (int)off2y)));
+            else bigCommand = getMap().placeOrMerge(piece, new Point((int)off1x_rot + (int)off2x, (int)off1y_rot + (int)off2y));
+            //clone the initial position
+            GamePiece myClone = PieceCloner.getInstance().clonePiece(this);
             bigCommand.append(getMap().placeOrMerge(myClone, new Point((int)off2x, (int)off2y)));
         }
+        //STEP 11: reposition the ship
+        if(bigCommand != null) bigCommand.append(getMap().placeOrMerge(Decorator.getOutermost(this), new Point((int)off1x_rot_s + (int)off2x, (int)off1y_rot_s + (int)off2y)));
+        else bigCommand = getMap().placeOrMerge(Decorator.getOutermost(this), new Point((int)off1x_rot_s + (int)off2x, (int)off1y_rot_s + (int)off2y));
+        //check if the templates is needed as well, in case of any kind of overlap
 
     return bigCommand;
     }
