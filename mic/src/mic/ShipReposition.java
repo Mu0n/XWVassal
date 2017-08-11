@@ -298,35 +298,30 @@ public class ShipReposition extends Decorator implements EditablePiece {
 
         //TO DO find how to clone it
 
+        GamePiece myClone = PieceCloner.getInstance().clonePiece(this.piece);
         Shape shapeForOverlap2 = this.piece.getShape();
-
         //Info Gathering: gets the angle from RepoManeuver which deals with degrees, local space with ship at 0,0, pointing up
         double tAngle2;
         tAngle2 = repoTemplate.getShipAngle(); //repo maneuver's angle
-
-
-        //STEP 7: rotate the final ship with both angles
-        FreeRotator fR2 = (FreeRotator)Decorator.getDecorator(this.piece, FreeRotator.class);
-        fR2.setAngle(sAngle - tAngle2);
 
         //Info Gathering: Offset 1, put to the side of the ship, local coords, adjusting for large base if it is found
         double off1x_s = repoTemplate.getShipX();
         double off1y_s = repoTemplate.getShipY();
 
-        //STEP 8: rotate the offset1 dependant within the spawner's local coordinates
+        //STEP 7: rotate the offset1 dependant within the spawner's local coordinates
         double off1x_rot_s = rotX(off1x_s, off1y_s, sAngle);
         double off1y_rot_s = rotY(off1x_s, off1y_s, sAngle);
 
-        //STEP 9: translation into place
+        //STEP 8: translation into place
         shapeForOverlap2 = AffineTransform.
                 getTranslateInstance((int)off1x_rot_s + (int)off2x, (int)off1y_rot_s + (int)off2y).
                 createTransformedShape(shapeForOverlap2);
-        double roundedAngle2 = convertAngleToGameLimits(sAngle - tAngle2);
+        double roundedAngle2 = convertAngleToGameLimits(tAngle2);
         shapeForOverlap2 = AffineTransform
                 .getRotateInstance(Math.toRadians(-roundedAngle2), (int)off1x_rot_s + (int)off2x, (int)off1y_rot_s + (int)off2y)
                 .createTransformedShape(shapeForOverlap2);
 
-        //STEP 10: Check for overlap with obstacles and ships with the final ship position
+        //STEP 9: Check for overlap with obstacles and ships with the final ship position
         List<BumpableWithShape> shipsOrObstacles = getBumpablesOnMap(true);
         if(shapeForOverlap2 != null){
             List<BumpableWithShape> overlappingShipOrObstacles = findCollidingEntities(shapeForOverlap2, shipsOrObstacles);
@@ -346,7 +341,10 @@ public class ShipReposition extends Decorator implements EditablePiece {
         //get the ship moved away
         bigCommand = getMap().placeOrMerge(Decorator.getOutermost(this), new Point((int)off1x_rot_s + (int)off2x, (int)off1y_rot_s + (int)off2y));
         //check if the templates is needed as well, in case of any kind of overlap
-        if(spawnTemplate == true) bigCommand.append(getMap().placeOrMerge(piece, new Point((int)off1x_rot + (int)off2x, (int)off1y_rot + (int)off2y)));
+        if(spawnTemplate == true) {
+            bigCommand.append(getMap().placeOrMerge(piece, new Point((int)off1x_rot + (int)off2x, (int)off1y_rot + (int)off2y)));
+            bigCommand.append(getMap().placeOrMerge(myClone, new Point((int)off2x, (int)off2y)));
+        }
 
     return bigCommand;
     }
