@@ -30,58 +30,52 @@ import static mic.Util.*;
  */
 
 enum RepoManeuver {
+    //Section for when you only want to place a template on the side of the start position of a repositioning
+        //small normal BR
     BR1_Left_Mid("Place Mid BR Left", "524", -90.0f, -113.0f, 0.0f),
     BR1_Right_Mid("Place Mid BR Right", "524", -90.0f, 113.0f, 0.0f),
-
+        //small decloak/zeta ace
     BR2_Left_Mid("Place Mid BR2/Decloak Left", "525", -90.0f, -169.5f, 0.0f),
     BR2_Right_Mid("Place Mid BR2/Decloak Right", "525", -90.0f, 169.5f, 0.0f),
-
+        //large normal BR
     BR1_Left_Mid_Large("Place Mid BR Left", "524", 0.0f, -141.5f, 0.0f),
     BR1_Right_Mid_Large("Place Mid BR Right", "524", 0.0f, 141.5f, 0.0f),
-
+        //small Lorrir/SVmk2 BR
     BR_Bk1_Left_Fwd_Mid("Place Mid BR Bank 1 Left Fwd", "517", 135.0f, -133.0f, -22.0f),
     BR_Bk1_Left_Bwd_Mid("Place Mid BR Bank 1 Left Bwd", "517", -90.0f, -146.0f, 30.0f),
-
-    BR_Bk2_Left_Fwd_Mid("Place Mid Echo Decloak Left Fwd", "519", 135.0f, -183.0f, -45.0f),
-    BR_Bk2_Left_Bwd_Mid("Place Mid Echo Decloak Left Bwd", "519", -90.0f, -196.0f, 50.0f),
-
     BR_Bk1_Right_Fwd_Mid("Place Mid BR Bank 1 Right Fwd", "517", 90.0f, 147.0f, -28.0f),
     BR_Bk1_Right_Bwd_Mid("Place Mid BR Bank 1 Right Bwd", "517", -45.0f, 134.0f, 25.0f),
-
+        //small echo decloaks
+    BR_Bk2_Left_Fwd_Mid("Place Mid Echo Decloak Left Fwd", "519", 135.0f, -183.0f, -45.0f),
+    BR_Bk2_Left_Bwd_Mid("Place Mid Echo Decloak Left Bwd", "519", -90.0f, -196.0f, 50.0f),
     BR_Bk2_Right_Fwd_Mid("Place Mid Echo Decloak Right Fwd", "519", 90.0f, 196.0f, -49.0f),
     BR_Bk2_Right_Bwd_Mid("Place Mid Echo Decloak Right Bwd", "519", -45.0f, 183.0f, 43.0f),
 
-    BR1_Left_AFAP("BR Left as Forward as Possible", "524", -90.0f, -113.0f, -28.25f),
-    BR1_Left_ABAP("BR Left as Backward as Possible", "524", -90.0f, -113.0f, 28.25f),
-    BR1_Left_AFAP_Ship("Ship BR Left as Forward as Possible", "524", 0.0f, -226.0f, -56.5f),
-    BR1_Left_ABAP_Ship("Ship BR Left as Backward as Possible", "524", 0.0f, -226.0f, 56.5f),
-
-    BR1_Right_AFAP("BR Right as Forward as Possible", "524", -90.0f, 226.0f, -56.0f),
-    BR1_Right_ABAP("BR Right as Backward as Possible", "524", -90.0f, 226.0f, 56.0f),
-    BR1_Right_AFAP_Ship("BR Right as Forward as Possible", "524", 0.0f, 226.0f, -56.5f),
-    BR1_Right_ABAP_Ship("BR Right as Backward as Possible", "524", 0.0f, 226.0f, 56.5f),
-
-    BR1_Left_AFAP_Large("BR Left as Forward as Possible", "524", 0.0f, -283.0f, -113.0f),
-    BR1_Left_ABAP_Large("BR Left as Backward as Possible", "524", 0.0f, -283.0f, 113.0f),
-    BR1_Left_AFAP_Large_Ship("Large Ship BR Left as Forward as Possible", "524", 0.0f, -283.0f, -113.0f),
-    BR1_Left_ABAP_Large_Ship("Large Ship BR Left as Backward as Possible", "524", 0.0f, -283.0f, 113.0f),
-
-    BR2_Left_AFAP("BR2 Left as Forward as Possible", "525", -90.0f, -339.0f, -56.5f),
-    BR2_LefT_ABAP("BR2 Left as Backward as Possible", "525", -90.0f, -339.0f, 56.5f),
-    BR2_Left_AFAP_Ship("BR2 Left as Forward as Possible", "525", 0.0f, 0.0f, 0.0f),
-    BR2_LefT_ABAP_Ship("BR2 Left as Backward as Possible", "525", 0.0f, 0.0f, 0.0f),
-
-    BR1_Right_AFAP_Large("BR Right as Forward as Possible", "524", 0.0f, 283.0f, -113.0f),
-    BR1_Right_ABAP_Large("BR Right as Backward as Possible", "524", 0.0f, 283.0f, 113.0f),
-
-    BR2_Right_AFAP("BR2 Right as Forward as Possible", "525", -90.0f, 339.0f, -56.5f),
-    BR2_Right_ABAP("BR2 Right as Backward as Possible", "525", -90.0f, 339.0f, 56.5f);
+    //Section for when you want to move the whole ship to extreme forward or backward positions, code must both fetch the final position and the template used in case of an overlap event
+        //small normal BR
+    BR1_Left_AFAP("BR Left as Forward as Possible", "524", -90.0f, -113.0f, -28.25f, 0.0f, -226.0f, -56.5f),
+    BR1_Left_ABAP("BR Left as Backward as Possible", "524", -90.0f, -113.0f, 28.25f, 0.0f, -226.0f, 56.5f),
+    BR1_Right_AFAP("BR Right as Forward as Possible", "524", -90.0f, 113.0f, -28.25f, 0.0f, 226.0f, -56.5f),
+    BR1_Right_ABAP("BR Right as Backward as Possible", "524", -90.0f, 113.0f, 28.25f, 0.0f, 226.0f, 56.5f),
+        //small Zeta Ace BR
+    BR2_Left_AFAP("BR2 Left as Forward as Possible", "525", -90.0f, -169.5f, -28.25f, 0.0f, -339.0f, -56.5f),
+    BR2_Left_ABAP("BR2 Left as Backward as Possible", "525", -90.0f, -169.5f, 28.25f, 0.0f, -339.0f, 56.5f),
+    BR2_Right_AFAP("BR2 Right as Forward as Possible", "525", -90.0f, 169.5f, -28.25f, 0.0f, 339.0f, -56.5f),
+    BR2_Right_ABAP("BR2 Right as Backward as Possible", "525", -90.0f, 169.5f, 28.25f, 0.0f, 339.0f, 56.5f),
+        //large normal BR
+    BR1_Left_AFAP_Large("BR Left as Forward as Possible", "524", 0.0f, -141.25f, -56.5f, 0.0f, -283.0f, -113.0f),
+    BR1_Left_ABAP_Large("BR Left as Backward as Possible", "524", 0.0f, -141.25f, 56.5f, 0.0f, -283.0f, 113.0f),
+    BR1_Right_AFAP_Large("BR Right as Forward as Possible", "524", 0.0f, 141.25f, -56.5f, 0.0f, 283.0f, -113.0f),
+    BR1_Right_ABAP_Large("BR Right as Backward as Possible", "524", 0.0f, 141.25f, 56.5f, 0.0f, 283.0f, 113.0f);
 
     private final String repoName;
     private final String gpID;
     private final double templateAngle;
     private final double offsetX;
     private final double offsetY;
+    private final double shipAngle;
+    private final double shipX;
+    private final double shipY;
 
     RepoManeuver(String repoName,  String gpID, double templateAngle,
                  double offsetX, double offsetY)
@@ -91,6 +85,23 @@ enum RepoManeuver {
         this.templateAngle = templateAngle;
         this.offsetX = offsetX;
         this.offsetY = offsetY;
+        this.shipAngle = 0.0f;
+        this.shipX = 0.0f;
+        this.shipY = 0.0f;
+    }
+
+    RepoManeuver(String repoName,  String gpID, double templateAngle,
+                 double offsetX, double offsetY,
+                 double shipAngle, double shipX, double shipY)
+    {
+        this.repoName = repoName;
+        this.gpID = gpID;
+        this.templateAngle = templateAngle;
+        this.offsetX = offsetX;
+        this.offsetY = offsetY;
+        this.shipAngle = shipAngle;
+        this.shipX = shipX;
+        this.shipY = shipY;
     }
 
     public String getRepoName() { return this.repoName; }
@@ -98,6 +109,9 @@ enum RepoManeuver {
     public double getTemplateAngle() { return this.templateAngle; }
     public double getOffsetX() { return this.offsetX; }
     public double getOffsetY() { return this.offsetY; }
+    public double getShipAngle() { return this.shipAngle; }
+    public double getShipX() { return this.shipX; }
+    public double getShipY() { return this.shipY; }
 }
 
 public class ShipReposition extends Decorator implements EditablePiece {
@@ -130,7 +144,7 @@ public class ShipReposition extends Decorator implements EditablePiece {
             .put("ALT 8", RepoManeuver.BR1_Right_AFAP)
             .put("ALT SHIFT 8", RepoManeuver.BR1_Right_ABAP)
             .put("CTRL 9", RepoManeuver.BR2_Left_AFAP)
-            .put("CTRL SHIFT 9", RepoManeuver.BR2_LefT_ABAP)
+            .put("CTRL SHIFT 9", RepoManeuver.BR2_Left_ABAP)
             .put("ALT 9", RepoManeuver.BR2_Right_AFAP)
             .put("ALT SHIFT 9", RepoManeuver.BR2_Right_ABAP)
             .build();
@@ -208,7 +222,6 @@ public class ShipReposition extends Decorator implements EditablePiece {
 
     private Command repositionTheShip(RepoManeuver repoTemplate) {
         //Getting into this function, repoShip is associated with the template used to reposition the ship. We also need the non-mapped final ship tentative position
-        RepoManeuver finalShipPosition;
         Boolean spawnTemplate = false;
 
         //Prep step, check if it's a large ship, and only deal with regular barrel rolls, because it's all they can do anyway, rerouting to the correct RepoManeuver
@@ -230,31 +243,6 @@ public class ShipReposition extends Decorator implements EditablePiece {
                 default:
                     return null;
             }
-        }
-
-        //Second prep step, get the template associated with the repositioning move so we can test for overlap right away
-        switch(repoTemplate){
-            case BR1_Left_AFAP:
-                finalShipPosition = RepoManeuver.BR1_Left_AFAP_Ship;
-                break;
-            case BR1_Left_ABAP:
-                finalShipPosition = RepoManeuver.BR1_Left_ABAP_Ship;
-                break;
-            case BR1_Right_AFAP:
-                finalShipPosition = RepoManeuver.BR1_Right_AFAP_Ship;
-                break;
-            case BR1_Right_ABAP:
-                finalShipPosition = RepoManeuver.BR1_Right_ABAP_Ship;
-                break;
-            case BR1_Left_AFAP_Large:
-                finalShipPosition = RepoManeuver.BR1_Left_AFAP_Large_Ship;
-                break;
-            case BR1_Left_ABAP_Large:
-                finalShipPosition = RepoManeuver.BR1_Left_ABAP_Large_Ship;
-                break;
-            default:
-                finalShipPosition = RepoManeuver.BR1_Left_ABAP_Ship;
-                break;
         }
 
         //STEP 1: Collision reposition template, centered as in in the image file, centered on 0,0 (upper left corner)
@@ -314,16 +302,16 @@ public class ShipReposition extends Decorator implements EditablePiece {
 
         //Info Gathering: gets the angle from RepoManeuver which deals with degrees, local space with ship at 0,0, pointing up
         double tAngle2;
-       // tAngle2 = finalShipPosition.getTemplateAngle(); //repo maneuver's angle
-        tAngle2 = 0.0f;
+        tAngle2 = repoTemplate.getShipAngle(); //repo maneuver's angle
+
 
         //STEP 7: rotate the final ship with both angles
         FreeRotator fR2 = (FreeRotator)Decorator.getDecorator(this.piece, FreeRotator.class);
         fR2.setAngle(sAngle - tAngle2);
 
         //Info Gathering: Offset 1, put to the side of the ship, local coords, adjusting for large base if it is found
-        double off1x_s = finalShipPosition.getOffsetX();
-        double off1y_s = finalShipPosition.getOffsetY();
+        double off1x_s = repoTemplate.getShipX();
+        double off1y_s = repoTemplate.getShipY();
 
         //STEP 8: rotate the offset1 dependant within the spawner's local coordinates
         double off1x_rot_s = rotX(off1x_s, off1y_s, sAngle);
@@ -398,7 +386,7 @@ public class ShipReposition extends Decorator implements EditablePiece {
 
             //detect that the ship's final position overlaps a ship or obstacle
             Command repoCommand = repositionTheShip(repoShip);
-            if(repoCommand == null) logToChat("something happened while this was requested " + repoShip.getRepoName());
+            if(repoCommand == null) return piece.keyEvent(stroke);
             //detect that the template used overlaps an obstacle
 
         }
@@ -472,8 +460,9 @@ public class ShipReposition extends Decorator implements EditablePiece {
                     testFlipString = ((Decorator) piece).getDecorator(piece,piece.getClass()).getProperty("whichShape").toString();
                 } catch (Exception e) {}
                 bumpables.add(new BumpableWithShape((Decorator)piece,"Debris","2".equals(testFlipString)));
-            }
-            else if(wantShipsToo == true && piece.getState().contains("this_is_a_ship")) {
+            } else if (piece.getState().contains("this_is_a_bomb")) {
+                bumpables.add(new BumpableWithShape((Decorator)piece, "Mine", false));
+            } else if(wantShipsToo == true && piece.getState().contains("this_is_a_ship")) {
                 bumpables.add(new BumpableWithShape((Decorator)piece, "Ship",false));
             }
         }
@@ -633,9 +622,4 @@ public class ShipReposition extends Decorator implements EditablePiece {
         }
     }
 
-    private static class ShipPositionState {
-        double x;
-        double y;
-        double angle;
-    }
 }
