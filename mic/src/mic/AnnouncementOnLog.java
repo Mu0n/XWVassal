@@ -31,7 +31,8 @@ public class AnnouncementOnLog extends AbstractConfigurable {
     private static String defaultURL =        "https://raw.githubusercontent.com/Mu0n/XWVassal/master/VassalNews";
     private static String currentVersionURL = "https://raw.githubusercontent.com/Mu0n/XWVassal/master/currentVersion";
     private static String vassalDownloadURL = "http://www.vassalengine.org/wiki/Module:Star_Wars:_X-Wing_Miniatures_Game";
-
+    private static String githubDownloadURL = "https://github.com/Mu0n/XWVassal/releases";
+    private static String guideURL = "http://xwvassal.info/guide";
     private synchronized void AnnouncementOnLog() {
 
     }
@@ -64,7 +65,8 @@ public class AnnouncementOnLog extends AbstractConfigurable {
 
     private void checkForUpdate() {
         String userVersion = GameModule.getGameModule().getGameVersion();
-
+        String msg ="";
+        Boolean isGreater = false;
         try {
             URL url = new URL(currentVersionURL);
             URLConnection con = url.openConnection();
@@ -75,27 +77,54 @@ public class AnnouncementOnLog extends AbstractConfigurable {
             String line;
             line = in.readLine();
             in.close();
-            if (!userVersion.equals(line)) {
-                String msg = "You currently have version " + userVersion + " of the X-Wing Vassal module.\n"
-                    + "A new version " + line + " is available!\n";
+
+                String[] onlineParts = line.split("\\.");
+                String[] userParts = userVersion.split("\\.");
+                int length = Math.max(userParts.length, onlineParts.length);
+                for(int i = 0; i < length; i++) {
+                    int userPart = i < userParts.length ?
+                            Integer.parseInt(userParts[i]) : 0;
+                    int onlinePart = i < onlineParts.length ?
+                            Integer.parseInt(onlineParts[i]) : 0;
+                    logToChat("user " + Integer.toString(userPart) + " online " + Integer.toString(onlinePart));
+                    if(onlinePart > userPart) {
+                        isGreater = true;
+                        break;
+                    } else if(userPart > onlinePart) break;
+                }
+
+                if(isGreater == true) msg += "A new version is available! ";
+                else msg += "You have the latest version. ";
+
+                msg += "You currently have version " + userVersion + " of the X-Wing Vassal module.\n"
+                    + "The latest version available for download is " + line + "\n";
 
                 SwingLink link = new SwingLink("X-Wing Vassal download page", vassalDownloadURL);
+                SwingLink link2 = new SwingLink("Alt download page on github", githubDownloadURL);
+                SwingLink link3 = new SwingLink("New? Need help? Go to the web guide", guideURL);
 
                 JFrame frame = new JFrame();
                 JPanel panel = new JPanel();
+                JLabel spacer;
+
                 panel.setMinimumSize(new Dimension(600,100));
                 panel.add(link);
+            panel.add(spacer = new JLabel(" "),"span, grow");
+                panel.add(link2);
+            panel.add(spacer = new JLabel(" "),"span, grow");
+                panel.add(link3);
 
                 JOptionPane optionPane = new JOptionPane();
                 optionPane.setMessage(msg);
                 //optionPane.setMessageType(JOptionPane.INFORMATION_MESSAGE);
                 optionPane.add(panel);
-                JDialog dialog = optionPane.createDialog(frame, "New module version");
+                JDialog dialog = optionPane.createDialog(frame, "Welcome to the X-Wing vassal module");
 
                 dialog.setVisible(true);
+                frame.toFront();
+                frame.repaint();
 
 
-            }
         } catch (MalformedURLException e) {
             System.out.println("Malformed URL: " + e.getMessage());
 

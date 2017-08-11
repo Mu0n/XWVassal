@@ -13,6 +13,8 @@ import javax.swing.*;
 
 import VASSAL.build.GameModule;
 import VASSAL.build.widget.PieceSlot;
+import VASSAL.command.ChangeTracker;
+import VASSAL.command.MoveTracker;
 import VASSAL.counters.*;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
@@ -275,6 +277,10 @@ public class BombSpawner extends Decorator implements EditablePiece {
     @Override
     public Command keyEvent(KeyStroke stroke) {
         //Any keystroke made on a ship will remove the orange shades
+        ChangeTracker changeTracker = new ChangeTracker(this);
+        Command result = changeTracker.getChangeCommand();
+        MoveTracker moveTracker = new MoveTracker(Decorator.getOutermost(this));
+        result.append(moveTracker.getMoveCommand());
 
         BombManeuver bombDropTemplate = getKeystrokeBombManeuver(stroke);
         // Is this a keystroke for a maneuver? Deal with the 'no' cases first
@@ -292,12 +298,13 @@ public class BombSpawner extends Decorator implements EditablePiece {
 
                     //prepare the drop command and get the shape ready for overlap detection
                     Command placeBombCommand = spawnBomb(droppedBomb, getBombManeuverFromProperty(selectedMove));
+                    result.append(placeBombCommand);
                     if("Cluster Mine".equals(droppedBomb.getBombName())) {
                         //do the side ones too, their shapes are all added in the shapesForOverlap array inside the spawnBomb method
                         Command leftBomb = spawnBomb(BombToken.ClusterMineLeft, getBombManeuverFromProperty(selectedMove));
                         Command rightBomb = spawnBomb(BombToken.ClusterMineRight, getBombManeuverFromProperty(selectedMove));
-                        placeBombCommand.append(leftBomb);
-                        placeBombCommand.append(rightBomb);
+                        result.append(leftBomb);
+                        result.append(rightBomb);
                     }
                     boolean isCollisionOccuring = false;
                     for(Shape sh : shapesForOverlap ){
@@ -307,7 +314,7 @@ public class BombSpawner extends Decorator implements EditablePiece {
                             {
                                 previousCollisionVisualization.add(bws.shape);
 
-                                logToChat("*** Overlap detected with dropped " + droppedBomb.getBombName() + " and " + bws.shipName + " ("  + bws.pilotName + ")");
+                                result.append(logToChatCommand("*** Overlap detected with dropped " + droppedBomb.getBombName() + " and " + bws.shipName + " ("  + bws.pilotName + ")"));
                                 isCollisionOccuring = true;
                             }
                             previousCollisionVisualization.add(sh);
@@ -331,12 +338,18 @@ public class BombSpawner extends Decorator implements EditablePiece {
                                         KeyStroke deleteyourself = KeyStroke.getKeyStroke(KeyEvent.VK_D, InputEvent.CTRL_DOWN_MASK, false);
                                         Command goToHell = piece.keyEvent(deleteyourself);
                                         goToHell.execute();
-                                        GameModule.getGameModule().sendAndLog(goToHell);
                                     }
                                 } catch (Exception e) {
                                 }
                             }
                         }, 0,DELAYBETWEENFLASHES);
+                        return result;
+                    }
+                    else { //mine was dropped, no collision found
+                        KeyStroke deleteyourself = KeyStroke.getKeyStroke(KeyEvent.VK_D, InputEvent.CTRL_DOWN_MASK, false);
+                        Command goToHell = keyEvent(deleteyourself);
+                        goToHell.execute();
+                        return result;
                     }
 
                 }
@@ -345,21 +358,16 @@ public class BombSpawner extends Decorator implements EditablePiece {
                     GamePiece thBS = getInner();
                     String selectedMove = thBS.getProperty("selectedMove").toString();
                     Command placeBombCommand = spawnBomb(droppedBomb, getBombManeuverFromProperty(selectedMove));
+
+                    result.append(placeBombCommand);
                     KeyStroke deleteyourself = KeyStroke.getKeyStroke(KeyEvent.VK_D, InputEvent.CTRL_DOWN_MASK, false);
-                    placeBombCommand.append(piece.keyEvent(deleteyourself));
+                    Command goToHell = keyEvent(deleteyourself);
+                    goToHell.execute();
 
-                    placeBombCommand.execute();
-                    GameModule.getGameModule().sendAndLog(placeBombCommand);
+                    return result;
                 } // end of dealing with a non-mine drop
-
-            } //end of dealing with the keystroke
-            else return piece.keyEvent(stroke);
-
-            return piece.keyEvent(stroke);
-        }
-        else { //want to change the drop template - should this be left to the vassal editor?
-        }
-
+            } //end of dealing with the keystroke for any drop
+        } // end of dealing with any keystroke, none found interesting
         return piece.keyEvent(stroke);
     }
 
@@ -495,7 +503,7 @@ public class BombSpawner extends Decorator implements EditablePiece {
 
         GamePiece[] pieces = getMap().getAllPieces();
         for (GamePiece piece : pieces) {
-            if (piece.getState().contains("Ship")) {
+            if (piece.getState().contains("this_is_a_ship")) {
                 ships.add(new BumpableWithShape((Decorator)piece, "Ship",
                         piece.getProperty("Pilot Name").toString(), piece.getProperty("Craft ID #").toString()));
             }

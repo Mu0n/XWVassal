@@ -23,6 +23,7 @@ import java.util.*;
 import java.util.List;
 
 import static mic.Util.logToChat;
+import static mic.Util.logToChatCommand;
 
 /**
  * Created by Mic on 23/03/2017.
@@ -36,7 +37,6 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
     private ManeuverPaths lastManeuver = null;
     private FreeRotator myRotator = null;
     private FOVisualization fov = null;
-    private boolean hasBeenReleased = false;
     private static Map<String, ManeuverPaths> keyStrokeToManeuver = ImmutableMap.<String, ManeuverPaths>builder()
             .put("CTRL O", ManeuverPaths.Str1)
             .build();
@@ -73,33 +73,27 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
 
 
     public Command keyEvent(KeyStroke stroke) {
-        /*if(this.fov == null) {
+        if(this.fov == null) {
             this.fov = new FOVisualization();
-        }*/
+        }
+
+        Command bigCommand;
 
         //Full Range Options CTRL-O
-/*
-        if (KeyStroke.getKeyStroke(KeyEvent.VK_O, KeyEvent.CTRL_DOWN_MASK,false).equals(stroke) && stroke.getKeyEventType() == KeyEvent.KEY_PRESSED) {
-            logToChat("starting firing options");
+        if (KeyStroke.getKeyStroke(KeyEvent.VK_O, KeyEvent.CTRL_DOWN_MASK,false).equals(stroke)) {
+            bigCommand = logToChatCommand("starting firing options");
+
             List<BumpableWithShape> BWS = getShipsOnMap();
             for(BumpableWithShape b: BWS){
-                fov.add(b.shape);
+                fov.add(b.rectWithNoNubs);
 
-                logToChat("ship #" + Integer.toString(fov.shapes.size()) + " detected of size "
+                bigCommand.append(logToChatCommand("ship #" + Integer.toString(fov.shapes.size()) + " detected of size "
                         + Double.toString(b.shape.getBounds().getWidth()) + " by "
-                        + Double.toString(b.shape.getBounds().getHeight()));
+                        + Double.toString(b.shape.getBounds().getHeight())));
             }
             fov.draw(getMap().getView().getGraphics(),getMap());
+            return bigCommand;
         }
-        else if(KeyStroke.getKeyStroke(KeyEvent.VK_O, KeyEvent.CTRL_DOWN_MASK,false).equals(stroke) && stroke.getKeyEventType() == KeyEvent.KEY_RELEASED) hasBeenReleased = true;
-        else if (this.fov != null && this.fov.getCount() > 0 && hasBeenReleased) {
-            //logToChat("clear trigger");
-            //getMap().removeDrawComponent(this.fov);
-            //this.fov.shapes.clear();
-            hasBeenReleased = false;
-        }
-        logToChat("key hit: "+ stroke.toString());
-    */
         return piece.keyEvent(stroke);
     }
 
@@ -143,7 +137,7 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
 
         GamePiece[] pieces = getMap().getAllPieces();
         for (GamePiece piece : pieces) {
-            if (piece.getState().contains("Ship")) {
+            if (piece.getState().contains("this_is_a_ship")) {
                 ships.add(new BumpableWithShape((Decorator)piece, "Ship",
                         piece.getProperty("Pilot Name").toString(), piece.getProperty("Craft ID #").toString()));
             }

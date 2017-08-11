@@ -10,6 +10,7 @@ import VASSAL.build.module.documentation.HelpFile;
 import VASSAL.build.module.map.Drawable;
 import VASSAL.build.widget.PieceSlot;
 import VASSAL.command.Command;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 
 import javax.swing.*;
@@ -29,7 +30,6 @@ import VASSAL.counters.GamePiece;
 import VASSAL.counters.KeyCommand;
 import VASSAL.counters.NonRectangular;
 
-
 public class TemplateOverlapCheckDecorator extends Decorator implements EditablePiece {
     public static final String ID = "TemplateOverlapCheck";
     static final int NBFLASHES = 5;
@@ -44,6 +44,7 @@ public class TemplateOverlapCheckDecorator extends Decorator implements Editable
 
     private FreeRotator myRotator = null;
     public CollisionVisualization previousCollisionVisualization = null;
+
 
     public TemplateOverlapCheckDecorator() {
         this(null);
@@ -107,7 +108,7 @@ public class TemplateOverlapCheckDecorator extends Decorator implements Editable
 
                     final java.util.Timer timer = new java.util.Timer();
                     timer.schedule(new TimerTask() {
-                        int count = 1;
+                        int count = 0;
                         @Override
                         public void run() {
                             try{
@@ -133,7 +134,6 @@ public class TemplateOverlapCheckDecorator extends Decorator implements Editable
 
         return piece.keyEvent(stroke);
     }
-
 
     private void announceBumpAndPaint(java.util.List<BumpableWithShape> otherBumpableShapes) {
         Shape theShape = getBumpableCompareShape(this);
@@ -284,13 +284,21 @@ public class TemplateOverlapCheckDecorator extends Decorator implements Editable
 
         GamePiece[] pieces = getMap().getAllPieces();
         for (GamePiece piece : pieces) {
-            if (piece.getState().contains("Asteroid")) {
+            if (piece.getState().contains("this_is_an_asteroid")) {
                 // comment out this line and the next three that add to bumpables if bumps other than with ships shouldn't be detected yet
-                bumpables.add(new BumpableWithShape((Decorator)piece, getBumpableCompareShape((Decorator)piece), "Asteroid"));
-            } else if (piece.getState().contains("Debris")) {
-                bumpables.add(new BumpableWithShape((Decorator)piece, getBumpableCompareShape((Decorator)piece), "Debris"));
-            } else if (piece.getState().contains("Bomb")) {
-                bumpables.add(new BumpableWithShape((Decorator)piece, getBumpableCompareShape((Decorator)piece), "Mine"));
+                String testFlipString = "";
+                try{
+                    testFlipString = ((Decorator) piece).getDecorator(piece,piece.getClass()).getProperty("whichShape").toString();
+                } catch (Exception e) {}
+                bumpables.add(new BumpableWithShape((Decorator)piece, "Asteroid", "2".equals(testFlipString)));
+            } else if (piece.getState().contains("this_is_a_debris")) {
+                String testFlipString = "";
+                try{
+                    testFlipString = ((Decorator) piece).getDecorator(piece,piece.getClass()).getProperty("whichShape").toString();
+                } catch (Exception e) {}
+                bumpables.add(new BumpableWithShape((Decorator)piece,"Debris","2".equals(testFlipString)));
+            } else if (piece.getState().contains("this_is_a_bomb")) {
+                bumpables.add(new BumpableWithShape((Decorator)piece, "Mine", false));
             }
         }
         return bumpables;
@@ -402,16 +410,5 @@ public class TemplateOverlapCheckDecorator extends Decorator implements Editable
         double x;
         double y;
         double angle;
-    }
-
-    public class BumpableWithShape {
-        Shape shape;
-        Decorator bumpable;
-        String type;
-        BumpableWithShape(Decorator bumpable, Shape shape, String type) {
-            this.bumpable = bumpable;
-            this.shape = shape;
-            this.type = type;
-        }
     }
 }
