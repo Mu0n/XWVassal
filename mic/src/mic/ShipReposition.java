@@ -51,23 +51,31 @@ enum RepoManeuver {
     BR_Bk2_Right_Fwd_Mid("Place Mid Echo Decloak Right Fwd", "519", 90.0f, 196.0f, -49.0f),
     BR_Bk2_Right_Bwd_Mid("Place Mid Echo Decloak Right Bwd", "519", -45.0f, 183.0f, 43.0f),
 
-    BR1_Left_AFAP("BR Left as Forward as Possible", "524", -113.0f, 0.0f, 0.0f),
-    BR1_Left_ABAP("BR Left as Backward as Possible", "524", -113.0f, 0.0f, 0.0f),
+    BR1_Left_AFAP("BR Left as Forward as Possible", "524", -90.0f, -113.0f, -28.25f),
+    BR1_Left_ABAP("BR Left as Backward as Possible", "524", -90.0f, -113.0f, 28.25f),
+    BR1_Left_AFAP_Ship("Ship BR Left as Forward as Possible", "524", 0.0f, -226.0f, -56.5f),
+    BR1_Left_ABAP_Ship("Ship BR Left as Backward as Possible", "524", 0.0f, -226.0f, 56.5f),
 
-    BR1_Left_AFAP_Large("BR Left as Forward as Possible", "524", -113.0f, 0.0f, 0.0f),
-    BR1_Left_ABAP_Large("BR Left as Backward as Possible", "524", -113.0f, 0.0f, 0.0f),
+    BR1_Right_AFAP("BR Right as Forward as Possible", "524", -90.0f, 226.0f, -56.0f),
+    BR1_Right_ABAP("BR Right as Backward as Possible", "524", -90.0f, 226.0f, 56.0f),
+    BR1_Right_AFAP_Ship("BR Right as Forward as Possible", "524", 0.0f, 226.0f, -56.5f),
+    BR1_Right_ABAP_Ship("BR Right as Backward as Possible", "524", 0.0f, 226.0f, 56.5f),
 
-    BR2_Left_AFAP("BR2 Left as Forward as Possible", "525", -113.0f, 0.0f, 0.0f),
-    BR2_LefT_ABAP("BR2 Left as Backward as Possible", "525", -113.0f, 0.0f, 0.0f),
+    BR1_Left_AFAP_Large("BR Left as Forward as Possible", "524", 0.0f, -283.0f, -113.0f),
+    BR1_Left_ABAP_Large("BR Left as Backward as Possible", "524", 0.0f, -283.0f, 113.0f),
+    BR1_Left_AFAP_Large_Ship("Large Ship BR Left as Forward as Possible", "524", 0.0f, -283.0f, -113.0f),
+    BR1_Left_ABAP_Large_Ship("Large Ship BR Left as Backward as Possible", "524", 0.0f, -283.0f, 113.0f),
 
-    BR1_Right_AFAP("BR Right as Forward as Possible", "524", -113.0f, 0.0f, 0.0f),
-    BR1_Right_ABAP("BR Right as Backward as Possible", "524", -113.0f, 0.0f, 0.0f),
+    BR2_Left_AFAP("BR2 Left as Forward as Possible", "525", -90.0f, -339.0f, -56.5f),
+    BR2_LefT_ABAP("BR2 Left as Backward as Possible", "525", -90.0f, -339.0f, 56.5f),
+    BR2_Left_AFAP_Ship("BR2 Left as Forward as Possible", "525", 0.0f, 0.0f, 0.0f),
+    BR2_LefT_ABAP_Ship("BR2 Left as Backward as Possible", "525", 0.0f, 0.0f, 0.0f),
 
-    BR1_Right_AFAP_Large("BR Right as Forward as Possible", "524", -113.0f, 0.0f, 0.0f),
-    BR1_Right_ABAP_Large("BR Right as Backward as Possible", "524", -113.0f, 0.0f, 0.0f),
+    BR1_Right_AFAP_Large("BR Right as Forward as Possible", "524", 0.0f, 283.0f, -113.0f),
+    BR1_Right_ABAP_Large("BR Right as Backward as Possible", "524", 0.0f, 283.0f, 113.0f),
 
-    BR2_Right_AFAP("BR2 Right as Forward as Possible", "525", -113.0f, 0.0f, 0.0f),
-    BR2_Right_ABAP("BR2 Right as Backward as Possible", "525", -113.0f, 0.0f, 0.0f);
+    BR2_Right_AFAP("BR2 Right as Forward as Possible", "525", -90.0f, 339.0f, -56.5f),
+    BR2_Right_ABAP("BR2 Right as Backward as Possible", "525", -90.0f, 339.0f, 56.5f);
 
     private final String repoName;
     private final String gpID;
@@ -142,17 +150,22 @@ public class ShipReposition extends Decorator implements EditablePiece {
         if(isLargeShip(this))
         {
             switch(theManeu){
-                case BR1_Left_Mid:
-                    theManeu = RepoManeuver.BR1_Left_Mid_Large;
+                case BR1_Left_AFAP:
+                    theManeu = RepoManeuver.BR1_Left_AFAP_Large;
                     break;
-                case BR1_Right_Mid:
-                    theManeu = RepoManeuver.BR1_Right_Mid_Large;
+                case BR1_Left_ABAP:
+                    theManeu = RepoManeuver.BR1_Left_ABAP_Large;
+                    break;
+                case BR1_Right_AFAP:
+                    theManeu = RepoManeuver.BR1_Right_AFAP_Large;
+                    break;
+                case BR1_Right_ABAP:
+                    theManeu = RepoManeuver.BR1_Right_ABAP_Large;
                     break;
                 default:
                     return null;
             }
         }
-
 
         //STEP 1: Collision reposition template, centered as in in the image file, centered on 0,0 (upper left corner)
         GamePiece piece = newPiece(findPieceSlotByID(theManeu.getTemplateGpID()));
@@ -189,9 +202,168 @@ public class ShipReposition extends Decorator implements EditablePiece {
                 .getRotateInstance(Math.toRadians(-roundedAngle), (int)off1x_rot + (int)off2x, (int)off1y_rot + (int)off2y)
                 .createTransformedShape(shapeForOverlap);
 
-        logToChat("sAngle "  + Double.toString(sAngle) + " tAngle " + Double.toString(tAngle) + " off1x " + Double.toString(off1x) + " off1x_rot " + Double.toString(off1x_rot) + " off2x " + Double.toString(off2x));
         return placeCommand;
     }
+
+
+    private Command repositionTheShip(RepoManeuver repoTemplate) {
+        //Getting into this function, repoShip is associated with the template used to reposition the ship. We also need the non-mapped final ship tentative position
+        RepoManeuver finalShipPosition;
+        Boolean spawnTemplate = false;
+
+        //Prep step, check if it's a large ship, and only deal with regular barrel rolls, because it's all they can do anyway, rerouting to the correct RepoManeuver
+        if(isLargeShip(this))
+        {
+            switch(repoTemplate){
+                case BR1_Left_AFAP:
+                    repoTemplate = RepoManeuver.BR1_Left_AFAP_Large;
+                    break;
+                case BR1_Left_ABAP:
+                    repoTemplate = RepoManeuver.BR1_Left_ABAP_Large;
+                    break;
+                case BR1_Right_AFAP:
+                    repoTemplate = RepoManeuver.BR1_Right_AFAP_Large;
+                    break;
+                case BR1_Right_ABAP:
+                    repoTemplate = RepoManeuver.BR1_Right_ABAP_Large;
+                    break;
+                default:
+                    return null;
+            }
+        }
+
+        //Second prep step, get the template associated with the repositioning move so we can test for overlap right away
+        switch(repoTemplate){
+            case BR1_Left_AFAP:
+                finalShipPosition = RepoManeuver.BR1_Left_AFAP_Ship;
+                break;
+            case BR1_Left_ABAP:
+                finalShipPosition = RepoManeuver.BR1_Left_ABAP_Ship;
+                break;
+            case BR1_Right_AFAP:
+                finalShipPosition = RepoManeuver.BR1_Right_AFAP_Ship;
+                break;
+            case BR1_Right_ABAP:
+                finalShipPosition = RepoManeuver.BR1_Right_ABAP_Ship;
+                break;
+            case BR1_Left_AFAP_Large:
+                finalShipPosition = RepoManeuver.BR1_Left_AFAP_Large_Ship;
+                break;
+            case BR1_Left_ABAP_Large:
+                finalShipPosition = RepoManeuver.BR1_Left_ABAP_Large_Ship;
+                break;
+            default:
+                finalShipPosition = RepoManeuver.BR1_Left_ABAP_Ship;
+                break;
+        }
+
+        //STEP 1: Collision reposition template, centered as in in the image file, centered on 0,0 (upper left corner)
+        GamePiece piece = newPiece(findPieceSlotByID(repoTemplate.getTemplateGpID()));
+        shapeForOverlap = piece.getShape();
+
+        //Info Gathering: gets the angle from repoTemplate which deals with degrees, local space with ship at 0,0, pointing up
+        double tAngle;
+        tAngle = repoTemplate.getTemplateAngle(); //repo maneuver's angle
+        double sAngle = this.getRotator().getAngle(); //ship angle
+        //STEP 2: rotate the reposition template with both angles
+        FreeRotator fR = (FreeRotator)Decorator.getDecorator(piece, FreeRotator.class);
+        fR.setAngle(sAngle - tAngle);
+
+        //Info Gathering: Offset 1, put to the side of the ship, local coords, adjusting for large base if it is found
+        double off1x = repoTemplate.getOffsetX();
+        double off1y = repoTemplate.getOffsetY();
+
+        //Info Gathering: Offset 2 get the center global coordinates of the ship calling this op
+        double off2x = this.getPosition().getX();
+        double off2y = this.getPosition().getY();
+
+        //STEP 3: rotate the offset1 dependant within the spawner's local coordinates
+        double off1x_rot = rotX(off1x, off1y, sAngle);
+        double off1y_rot = rotY(off1x, off1y, sAngle);
+
+        //STEP 4: translation into place
+        shapeForOverlap = AffineTransform.
+                getTranslateInstance((int)off1x_rot + (int)off2x, (int)off1y_rot + (int)off2y).
+                createTransformedShape(shapeForOverlap);
+        double roundedAngle = convertAngleToGameLimits(sAngle - tAngle);
+        shapeForOverlap = AffineTransform
+                .getRotateInstance(Math.toRadians(-roundedAngle), (int)off1x_rot + (int)off2x, (int)off1y_rot + (int)off2y)
+                .createTransformedShape(shapeForOverlap);
+
+        //STEP 5: Check for overlap with an obstacle, if so, spawn it so the player sees it
+        Command bigCommand = null;
+
+        List<BumpableWithShape> obstacles = getBumpablesOnMap(false);
+
+        if(shapeForOverlap != null) {
+            List<BumpableWithShape> overlappingObstacles = findCollidingEntities(shapeForOverlap, obstacles);
+            if (overlappingObstacles.size() > 0) {
+                for (BumpableWithShape bws : overlappingObstacles) {
+                    previousCollisionVisualization.add(bws.shape);
+                    logToChat("*** Warning: reposition template currently overlaps an obstacle");
+                }
+                previousCollisionVisualization.add(shapeForOverlap);
+                spawnTemplate = true; //we'll want the template
+            }
+        }
+        //STEP 6: Gather info for ship's final wanted position
+
+        //TO DO find how to clone it
+
+        Shape shapeForOverlap2 = this.piece.getShape();
+
+        //Info Gathering: gets the angle from RepoManeuver which deals with degrees, local space with ship at 0,0, pointing up
+        double tAngle2;
+       // tAngle2 = finalShipPosition.getTemplateAngle(); //repo maneuver's angle
+        tAngle2 = 0.0f;
+
+        //STEP 7: rotate the final ship with both angles
+        FreeRotator fR2 = (FreeRotator)Decorator.getDecorator(this.piece, FreeRotator.class);
+        fR2.setAngle(sAngle - tAngle2);
+
+        //Info Gathering: Offset 1, put to the side of the ship, local coords, adjusting for large base if it is found
+        double off1x_s = finalShipPosition.getOffsetX();
+        double off1y_s = finalShipPosition.getOffsetY();
+
+        //STEP 8: rotate the offset1 dependant within the spawner's local coordinates
+        double off1x_rot_s = rotX(off1x_s, off1y_s, sAngle);
+        double off1y_rot_s = rotY(off1x_s, off1y_s, sAngle);
+
+        //STEP 9: translation into place
+        shapeForOverlap2 = AffineTransform.
+                getTranslateInstance((int)off1x_rot_s + (int)off2x, (int)off1y_rot_s + (int)off2y).
+                createTransformedShape(shapeForOverlap2);
+        double roundedAngle2 = convertAngleToGameLimits(sAngle - tAngle2);
+        shapeForOverlap2 = AffineTransform
+                .getRotateInstance(Math.toRadians(-roundedAngle2), (int)off1x_rot_s + (int)off2x, (int)off1y_rot_s + (int)off2y)
+                .createTransformedShape(shapeForOverlap2);
+
+        //STEP 10: Check for overlap with obstacles and ships with the final ship position
+        List<BumpableWithShape> shipsOrObstacles = getBumpablesOnMap(true);
+        if(shapeForOverlap2 != null){
+            List<BumpableWithShape> overlappingShipOrObstacles = findCollidingEntities(shapeForOverlap2, shipsOrObstacles);
+            if(overlappingShipOrObstacles.size() > 0) {
+                for(BumpableWithShape bws : overlappingShipOrObstacles)
+                {
+                    previousCollisionVisualization.add(bws.shape);
+                    if("Ship".equals(bws.bumpable.getType())) logToChat("*** Warning: Ship's final reposition location currently overlaps a Ship");
+                    else logToChat("*** Warning: Ship's final reposition location currently overlaps an obstacle");
+                }
+                previousCollisionVisualization.add(shapeForOverlap2);
+                spawnTemplate = true; //we'll want the template
+            }
+        }
+
+        //STEP 11: spawn and move what is needed
+        //get the ship moved away
+        bigCommand = getMap().placeOrMerge(Decorator.getOutermost(this), new Point((int)off1x_rot_s + (int)off2x, (int)off1y_rot_s + (int)off2y));
+        //check if the templates is needed as well, in case of any kind of overlap
+        if(spawnTemplate == true) bigCommand.append(getMap().placeOrMerge(piece, new Point((int)off1x_rot + (int)off2x, (int)off1y_rot + (int)off2y)));
+
+    return bigCommand;
+    }
+
+
 
     @Override
     public Command keyEvent(KeyStroke stroke) {
@@ -201,7 +373,7 @@ public class ShipReposition extends Decorator implements EditablePiece {
         // Template drop requested
         if (repoTemplateDrop != null && stroke.isOnKeyRelease() == false) {
             spawnRepoTemplate(repoTemplateDrop);
-            List<BumpableWithShape> obstacles = getBumpablesOnMap();
+            List<BumpableWithShape> obstacles = getBumpablesOnMap(false);
 
             if(shapeForOverlap != null){
                 List<BumpableWithShape> overlappingObstacles = findCollidingEntities(shapeForOverlap, obstacles);
@@ -223,6 +395,12 @@ public class ShipReposition extends Decorator implements EditablePiece {
                 getMap().removeDrawComponent(this.previousCollisionVisualization);
                 this.previousCollisionVisualization.shapes.clear();
             }
+
+            //detect that the ship's final position overlaps a ship or obstacle
+            Command repoCommand = repositionTheShip(repoShip);
+            if(repoCommand == null) logToChat("something happened while this was requested " + repoShip.getRepoName());
+            //detect that the template used overlaps an obstacle
+
         }
         // if a collision has been found, start painting the shapes and flash them with a timer, mark the bomb spawner for deletion after this has gone through.
         if(this.previousCollisionVisualization != null &&  this.previousCollisionVisualization.getCount() > 0){
@@ -276,7 +454,7 @@ public class ShipReposition extends Decorator implements EditablePiece {
         a1.intersect(new Area(shape2));
         return !a1.isEmpty();
     }
-    private List<BumpableWithShape> getBumpablesOnMap() {
+    private List<BumpableWithShape> getBumpablesOnMap(Boolean wantShipsToo) {
         List<BumpableWithShape> bumpables = Lists.newArrayList();
 
         GamePiece[] pieces = getMap().getAllPieces();
@@ -294,6 +472,9 @@ public class ShipReposition extends Decorator implements EditablePiece {
                     testFlipString = ((Decorator) piece).getDecorator(piece,piece.getClass()).getProperty("whichShape").toString();
                 } catch (Exception e) {}
                 bumpables.add(new BumpableWithShape((Decorator)piece,"Debris","2".equals(testFlipString)));
+            }
+            else if(wantShipsToo == true && piece.getState().contains("this_is_a_ship")) {
+                bumpables.add(new BumpableWithShape((Decorator)piece, "Ship",false));
             }
         }
         return bumpables;
