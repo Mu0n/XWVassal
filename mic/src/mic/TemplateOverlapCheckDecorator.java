@@ -10,6 +10,7 @@ import VASSAL.build.module.documentation.HelpFile;
 import VASSAL.build.module.map.Drawable;
 import VASSAL.build.widget.PieceSlot;
 import VASSAL.command.Command;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 
 import javax.swing.*;
@@ -29,7 +30,6 @@ import VASSAL.counters.GamePiece;
 import VASSAL.counters.KeyCommand;
 import VASSAL.counters.NonRectangular;
 
-
 public class TemplateOverlapCheckDecorator extends Decorator implements EditablePiece {
     public static final String ID = "TemplateOverlapCheck";
     static final int NBFLASHES = 5;
@@ -44,6 +44,7 @@ public class TemplateOverlapCheckDecorator extends Decorator implements Editable
 
     private FreeRotator myRotator = null;
     public CollisionVisualization previousCollisionVisualization = null;
+
 
     public TemplateOverlapCheckDecorator() {
         this(null);
