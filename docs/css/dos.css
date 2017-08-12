@@ -1,0 +1,113 @@
+@import url('https://fonts.googleapis.com/css?family=Roboto');
+@font-face {
+  font-family: XWingShip;
+  src: url('../fonts/xwing-miniatures-ships.ttf');
+}
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: 'Roboto', sans-serif;
+}
+html {
+  background: linear-gradient(135deg, #211032 0%, #211032 50%, #450D29 100%);
+  background-attachment: fixed;
+}
+body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-bottom: 4rem;
+}
+header {
+  color: white;
+  width: 100%;
+  padding: 2rem 0 0 0;
+  max-width: 1024px;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  font-weight: 100;
+}
+header .logo {
+  width: 100%;
+  text-align: center;
+  margin: 1.5rem;
+}
+header .logo:before {
+  padding: 1rem;
+  border-radius: 50%;
+  border: 3px solid white;
+  content: 'x';
+  font-family: XWingShip;
+  font-size: 13rem;
+  width: 100%;
+  height: 1px;
+}
+header .title {
+  width: 100%;
+  font-weight: 300;
+}
+header .title .title-text {
+  font-size: 2.75rem;
+  display: inline-block;
+}
+header a {
+  color: white;
+  margin: 0 1rem 0 0;
+}
+.skills {
+  width: 100%;
+  margin: 4rem 0 4rem 0;
+  max-width: 1024px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+}
+.skills .sk {
+  line-height: 24px;
+  margin-top: 1rem;
+  text-align: center;
+  padding: 0.5rem;
+  width: 240px;
+  min-height: 310px;
+  color: white;
+  border: 2px solid white;
+  border-radius: 3px;
+}
+.skills .sk .fa {
+  width: 100%;
+  font-size: 4rem;
+  font-weight: 300;
+  margin: 1rem 0 1rem 0;
+}
+.skills .sk .fa-calendar-plus-o {
+  color: #fb3;
+}
+.skills .sk .fa-file-text-o {
+  color: #40AD52;
+}
+.skills .sk .fa-life-ring {
+  color: #EF767A;
+}
+.skills .sk .fa-list {
+  color: #38AECC;
+}
+.skills .sk a {
+  color: white;
+}
+.about-me {
+  font-size: 1.05rem;
+  background-color: white;
+  padding: 2rem;
+  max-width: 1024px;
+}
+.about-me h2 {
+  margin: 1.5rem 0 1rem 0;
+}
+@media (max-width: 1024px) {
+  body {
+    padding: 1rem;
+  }
+}
