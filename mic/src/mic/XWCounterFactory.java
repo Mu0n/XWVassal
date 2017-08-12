@@ -18,7 +18,13 @@ public class XWCounterFactory extends BasicCommandEncoder {
             piece = new AutoRangeFinder(inner);
         } else if (type.startsWith(DialStack.ID)) {
             piece = new DialStack(inner);
-        } else {
+        } else if (type.startsWith(BombSpawner.ID)) {
+            piece = new BombSpawner(inner);
+        }else if (type.startsWith(ShipReposition.ID)) {
+            piece = new ShipReposition(inner);
+        }else if (type.startsWith(EmptyTest.ID)) {
+            piece = new EmptyTest(inner);
+        }else {
             piece = super.createDecorator(type, inner);
         }
         return piece;

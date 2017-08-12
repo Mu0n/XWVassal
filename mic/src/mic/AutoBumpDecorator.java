@@ -130,28 +130,38 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
     }
 
 
-    private Command spawnRotatedPiece() {
+    private Command spawnRotatedPiece(ManeuverPaths theManeuv) {
+        //STEP 1: Collision aide template, centered as in in the image file, centered on 0,0 (upper left corner)
+        GamePiece piece = newPiece(findPieceSlotByID(theManeuv.getAide_gpID()));
 
-        GamePiece piece = newPiece(findPieceSlotByID(lastManeuver.getAide_gpID()));
-
+        //Info Gathering: Position of the center of the ship, integers inside a Point
         double shipx = this.getPosition().getX();
         double shipy = this.getPosition().getY();
-        Point shipPt = new Point((int) shipx, (int) shipy);
+        Point shipPt = new Point((int) shipx, (int) shipy); // these are the center coordinates of the ship, namely, shipPt.x and shipPt.y
 
-        double x = isLargeShip(this) ? lastManeuver.getAide_xLarge() : lastManeuver.getAide_x();
-        double y = isLargeShip(this) ? lastManeuver.getAide_yLarge() : lastManeuver.getAide_y();
+         //Info Gathering: offset vector (integers) that's used in local coordinates, right after a rotation found in lastManeuver.getTemplateAngle(), so that it's positioned behind nubs properly
+        double x = isLargeShip(this) ? theManeuv.getAide_xLarge() : theManeuv.getAide_x();
+        double y = isLargeShip(this) ? theManeuv.getAide_yLarge() : theManeuv.getAide_y();
         int posx =  (int)x;
         int posy =  (int)y;
-        Point tOff = new Point(posx, posy);
+        Point tOff = new Point(posx, posy); // these are the offsets in local space for the templates, if the ship's center is at 0,0 and pointing up
 
+
+        //Info Gathering: gets the angle from ManeuverPaths which deals with degrees, local space with ship at 0,0, pointing up
+        double tAngle = lastManeuver.getTemplateAngle();
+        double sAngle = this.getRotator().getAngle();
+
+        //STEP 2: rotate the collision aide with both the getTemplateAngle and the ship's final angle,
         FreeRotator fR = (FreeRotator)Decorator.getDecorator(piece, FreeRotator.class);
+        fR.setAngle(sAngle - tAngle);
 
-        fR.setAngle(lastManeuver.getTemplateAngle());
-        piece.setPosition(tOff);
-        fR.setAngle(fR.getAngle() + this.getRotator().getAngle());
+        //STEP 3: rotate a double version of tOff to get tOff_rotated
+        double xWork = Math.cos(-Math.PI*sAngle/180.0f)*tOff.getX() - Math.sin(-Math.PI*sAngle/180.0f)*tOff.getY();
+        double yWork = Math.sin(-Math.PI*sAngle/180.0f)*tOff.getX() + Math.cos(-Math.PI*sAngle/180.0f)*tOff.getY();
+        Point tOff_rotated = new Point((int)xWork, (int)yWork);
 
-        Command placeCommand = getMap().placeOrMerge(piece, new Point((int)piece.getPosition().getX(), (int)piece.getPosition().getY()));
-
+        //STEP 4: translation into place
+        Command placeCommand = getMap().placeOrMerge(piece, new Point(tOff_rotated.x + shipPt.x, tOff_rotated.y + shipPt.y));
 
         return placeCommand;
     }
@@ -174,13 +184,12 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
 
 
                 // Whenever I want to resume template placement with java, this is where it happens
-/*
                     if(lastManeuver != null) {
-                        Command placeCollisionAide = spawnRotatedPiece();
+                        Command placeCollisionAide = spawnRotatedPiece(lastManeuver);
                         placeCollisionAide.execute();
                         GameModule.getGameModule().sendAndLog(placeCollisionAide);
                     }
-*/
+
 
                 boolean isCollisionOccuring = findCollidingEntity(BumpableWithShape.getBumpableCompareShape(this), otherShipShapes) != null ? true : false;
                 //backtracking requested with a detected bumpable overlap, deal with it
@@ -191,15 +200,10 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
                 }
             }
             // 'c' keystroke has finished here, leave the method altogether
-            if(KeyStroke.getKeyStroke(KeyEvent.VK_8, ALT_DOWN_MASK, false).equals(stroke)){
-
-            }
-
             return piece.keyEvent(stroke);
         }
 
         // We know we're dealing with a maneuver keystroke
-// TO DO include decloaks, barrel rolls
         if (stroke.isOnKeyRelease() == false) {
 
 
@@ -210,10 +214,13 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
             // find the list of other bumpables
             List<BumpableWithShape> otherBumpableShapes = getBumpablesWithShapes();
 
+
             //safeguard old position and path
 
             this.prevPosition = getCurrentState();
             this.lastManeuver = path;
+
+
 
             //This PathPart list will be used everywhere: moving, bumping, out of boundsing
             //maybe fetch it for both 'c' behavior and movement
@@ -233,6 +240,14 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
             Command innerCommand = piece.keyEvent(stroke);
 
             innerCommand.append(buildTranslateCommand(part, path.getAdditionalAngleForShip()));
+
+            //check for Tallon rolls and spawn the template
+            if(lastManeuver == ManeuverPaths.TrollL2 || lastManeuver == ManeuverPaths.TrollL3 || lastManeuver == ManeuverPaths.TrollR2 || lastManeuver == ManeuverPaths.TrollR3) {
+                Command placeTrollTemplate = spawnRotatedPiece(lastManeuver);
+                innerCommand.append(placeTrollTemplate);
+
+            }
+
 
             //These lines fetch the Shape of the last movement template used
             FreeRotator rotator = (FreeRotator) (Decorator.getDecorator(Decorator.getOutermost(this), FreeRotator.class));
@@ -258,7 +273,7 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
 
                 final Timer timer = new Timer();
                 timer.schedule(new TimerTask() {
-                    int count = 1;
+                    int count = 0;
                     @Override
                     public void run() {
                         try{
@@ -315,14 +330,6 @@ return innerCommand;
             this.previousCollisionVisualization.add(lastMoveShapeUsed);
         }
     }
-
-
-    private void spawnPiece(GamePiece piece, Point position, VASSAL.build.module.Map map) {
-        Command placeCommand = map.placeOrMerge(piece, position);
-        placeCommand.execute();
-        GameModule.getGameModule().sendAndLog(placeCommand);
-    }
-
 
     private void checkIfOutOfBounds(String yourShipName) {
         Rectangle mapArea = new Rectangle(0,0,0,0);
@@ -638,25 +645,23 @@ return innerCommand;
 
         GamePiece[] pieces = getMap().getAllPieces();
         for (GamePiece piece : pieces) {
-            String pieceTabOrigin = piece.getState().substring(0,10);
-
-            if (piece.getState().contains("Ship")) {
+            if (piece.getState().contains("this_is_a_ship")) {
                 bumpables.add(new BumpableWithShape((Decorator)piece,"Ship",
                         piece.getProperty("Pilot Name").toString(), piece.getProperty("Craft ID #").toString()));
-            } else if (pieceTabOrigin.contains("Asteroid")) {
+            } else if (piece.getState().contains("this_is_an_asteroid")) {
                 // comment out this line and the next three that add to bumpables if bumps other than with ships shouldn't be detected yet
                 String testFlipString = "";
                 try{
                     testFlipString = ((Decorator) piece).getDecorator(piece,piece.getClass()).getProperty("whichShape").toString();
                 } catch (Exception e) {}
                 bumpables.add(new BumpableWithShape((Decorator)piece, "Asteroid", "2".equals(testFlipString)));
-            } else if (pieceTabOrigin.contains("Debris")) {
+            } else if (piece.getState().contains("this_is_a_debris")) {
                 String testFlipString = "";
                 try{
                     testFlipString = ((Decorator) piece).getDecorator(piece,piece.getClass()).getProperty("whichShape").toString();
                 } catch (Exception e) {}
                 bumpables.add(new BumpableWithShape((Decorator)piece,"Debris","2".equals(testFlipString)));
-            } else if (pieceTabOrigin.contains("Bomb")) {
+            } else if (piece.getState().contains("this_is_a_bomb")) {
                 bumpables.add(new BumpableWithShape((Decorator)piece, "Mine", false));
             }
         }
