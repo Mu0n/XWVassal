@@ -6,7 +6,9 @@ import VASSAL.counters.NonRectangular;
 
 import java.awt.*;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import java.util.ArrayList;
 
 /**
  * Created by mjuneau on 2017-06-08.
@@ -33,7 +35,29 @@ public class BumpableWithShape {
         this.shipName = shipName;
     }
 
-    private Shape getRectWithNoNubs() {
+public double[] getVertices(){
+        double angle = getAngleInRadians();
+        Point center = bumpable.getPosition();
+        double halfsize = 56.5;
+        double[] vertices = new double[8];
+
+        if(rectWithNoNubs.getBounds().getWidth() > 140) halfsize = 113.0;
+        //top left
+        vertices[0] = Util.rotX(-halfsize, -halfsize, angle) + center.getX();
+        vertices[1] = Util.rotY(-halfsize, -halfsize, angle) + center.getY();
+        //top right
+        vertices[2] = Util.rotX(halfsize, -halfsize, angle) + center.getX();
+        vertices[3] = Util.rotY(halfsize, -halfsize, angle) + center.getY();
+        //bottom right
+        vertices[4] = Util.rotX(halfsize, halfsize, angle) + center.getX();
+        vertices[5] = Util.rotY(halfsize, halfsize, angle) + center.getY();
+        //bottom left
+        vertices[6] = Util.rotX(-halfsize, halfsize, angle) + center.getX();
+        vertices[7] = Util.rotY(-halfsize, halfsize, angle) + center.getY();
+        return vertices;
+}
+
+    public Shape getRectWithNoNubs() {
         Shape rawShape = getRawShape(bumpable);
         Shape theSquare = new Rectangle2D.Double(0.0f, 0.0f, 0.0f, 0.0f);
         //small
@@ -61,10 +85,8 @@ else if(rawShape.getBounds().height < 570){
                     .getTranslateInstance(centerX,centerY)
                     .createTransformedShape(theSquare);
 
-        FreeRotator rotator = (FreeRotator) (Decorator.getDecorator(Decorator.getOutermost(bumpable), FreeRotator.class));
-
         transformed = AffineTransform
-                .getRotateInstance(rotator.getAngleInRadians(), centerX, centerY)
+                .getRotateInstance(getAngleInRadians(), centerX, centerY)
                 .createTransformedShape(transformed);
 
         return transformed;
@@ -74,6 +96,15 @@ else if(rawShape.getBounds().height < 570){
 
     }
 
+    private double getAngleInRadians(){
+        FreeRotator rotator = (FreeRotator) (Decorator.getDecorator(Decorator.getOutermost(bumpable), FreeRotator.class));
+        return rotator.getAngleInRadians();
+    }
+
+    private double getAngle(){
+        FreeRotator rotator = (FreeRotator) (Decorator.getDecorator(Decorator.getOutermost(bumpable), FreeRotator.class));
+        return rotator.getAngle();
+    }
     /**
      * Finds non-rectangular mask layer of provided ship.  This is the shape with only the base
      * and nubs

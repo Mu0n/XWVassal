@@ -529,12 +529,6 @@ public class ShipReposition extends Decorator implements EditablePiece {
         }
         return null;
     }
-    double rotX(double x, double y, double angle){
-        return Math.cos(-Math.PI*angle/180.0f)*x - Math.sin(-Math.PI*angle/180.0f)*y;
-    }
-    double rotY(double x, double y, double angle){
-        return Math.sin(-Math.PI*angle/180.0f)*x + Math.cos(-Math.PI*angle/180.0f)*y;
-    }
     private double convertAngleToGameLimits(double angle) {
         this.testRotator.setAngle(angle);
         return this.testRotator.getAngle();

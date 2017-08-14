@@ -217,7 +217,7 @@ public class VassalXWSPilotPieces {
 
     private void setPilotShipName(GamePiece piece) {
         if (pilotData != null) {
-            piece.setProperty("Pilot Name", this.pilotData.getShip());
+            piece.setProperty("Pilot Name", getDisplayShipName());
         }
         piece.setProperty("Craft ID #", getDisplayPilotName());
     }
@@ -235,6 +235,18 @@ public class VassalXWSPilotPieces {
             pilotName += " " + shipNumber;
         }
         return pilotName;
+    }
+
+    private String getDisplayShipName() {
+        String shipName = "";
+        if (pilotData != null) {
+            shipName = Acronymizer.acronymizer(
+                    this.pilotData.getShip(),
+                    this.pilotData.isUnique(),
+                    this.shipData.hasSmallBase());
+        }
+
+        return shipName;
     }
 
     public MasterShipData.ShipData getShipData() {

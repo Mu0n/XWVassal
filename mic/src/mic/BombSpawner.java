@@ -239,12 +239,6 @@ public class BombSpawner extends Decorator implements EditablePiece {
         shapesForOverlap.add(transfShape);
         return placeCommand;
     }
-    double rotX(double x, double y, double angle){
-        return Math.cos(-Math.PI*angle/180.0f)*x - Math.sin(-Math.PI*angle/180.0f)*y;
-    }
-    double rotY(double x, double y, double angle){
-        return Math.sin(-Math.PI*angle/180.0f)*x + Math.cos(-Math.PI*angle/180.0f)*y;
-    }
 
     private double convertAngleToGameLimits(double angle) {
         this.testRotator.setAngle(angle);
