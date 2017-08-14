@@ -1,5 +1,5 @@
-# HWpopup 
-(X-Wing Vassal module with its proof-of-concept git name: Hello World Popup)
+# XWVassal 
+(X-Wing Vassal module and Web page for the X-Wing Vassal league in /docs/)
 
 ## Distance and geometry specs:
 
