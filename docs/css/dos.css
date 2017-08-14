@@ -1,93 +1,113 @@
+@import url('https://fonts.googleapis.com/css?family=Roboto');
+@font-face {
+  font-family: XWingShip;
+  src: url('../fonts/xwing-miniatures-ships.ttf');
+}
 * {
   box-sizing: border-box;
-}
-body{
-  background-color: #061072;
-  font-family: 'Press Start 2P', cursive;
-  color: #fff;
   margin: 0;
   padding: 0;
-
+  font-family: 'Roboto', sans-serif;
 }
-header, section, .main, footer {
-  margin: 0 auto;
+html {
+  background: linear-gradient(135deg, #211032 0%, #211032 50%, #450D29 100%);
+  background-attachment: fixed;
 }
-
-header, .main, section {
-  max-width: 800px;
+body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-bottom: 4rem;
 }
-
-
-
-/*NAV*/
-nav {
-  padding: 10px;
-  background-color: #ADADAD;
+header {
+  color: white;
+  width: 100%;
+  padding: 2rem 0 0 0;
+  max-width: 1024px;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  font-weight: 100;
 }
-ul, h2 {
-  background-color: #ADADAD;
-  display: inline-block;
-}
-
-nav ul{
-  padding: 0 20px;
-
-
-}
-nav ul li {
-  list-style: none;
-  display: inline-block;
-  font-size: 0.7em;
-
-}
-
-nav a {
-  text-decoration: none;
-  color: #000;
-}
-
-nav a:hover {
-
-  color: #fff;
-}
-
-nav h2{
-  font-size: 1.3em;
-
-
-}
-/*MAIN*/
-.main{
-  border: 8px solid #fff;
-  padding: 40px;
-  margin: 100px auto;
-  max-width: 700px;
+header .logo {
+  width: 100%;
   text-align: center;
+  margin: 1.5rem;
 }
-
-/*SECTION ABOUT ME*/
-.about-me {
-  background-color: #000;
-  padding: 100px;
-  color: #A9A9A9;
-  font-size: 0.7em;
-  line-height: 2em;
+header .logo:before {
+  padding: 1rem;
+  border-radius: 50%;
+  border: 3px solid white;
+  content: 'x';
+  font-family: XWingShip;
+  font-size: 13rem;
+  width: 100%;
+  height: 1px;
 }
-
-/*SKILLS*/
-
+header .title {
+  width: 100%;
+  font-weight: 300;
+}
+header .title .title-text {
+  font-size: 2.75rem;
+  display: inline-block;
+}
+header a {
+  color: white;
+  margin: 0 1rem 0 0;
+}
 .skills {
-
+  width: 100%;
+  margin: 4rem 0 4rem 0;
+  max-width: 1024px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+}
+.skills .sk {
+  line-height: 24px;
+  margin-top: 1rem;
   text-align: center;
+  padding: 0.5rem;
+  width: 240px;
+  min-height: 310px;
+  color: white;
+  border: 2px solid white;
+  border-radius: 3px;
 }
-.sk {
-  width: 40%;
-  background: #00A8A8;
-  margin-right: 10px;
-  padding: 80px;
-  display: inline-block;
-  height: 350px;
-  box-shadow: 15px 15px rgba(0, 0, 0, 0.5);
-  margin-top: 20px;
+.skills .sk .fa {
+  width: 100%;
+  font-size: 4rem;
+  font-weight: 300;
+  margin: 1rem 0 1rem 0;
 }
-
+.skills .sk .fa-calendar-plus-o {
+  color: #fb3;
+}
+.skills .sk .fa-file-text-o {
+  color: #40AD52;
+}
+.skills .sk .fa-life-ring {
+  color: #EF767A;
+}
+.skills .sk .fa-list {
+  color: #38AECC;
+}
+.skills .sk a {
+  color: white;
+}
+.about-me {
+  font-size: 1.05rem;
+  background-color: white;
+  padding: 2rem;
+  max-width: 1024px;
+}
+.about-me h2 {
+  margin: 1.5rem 0 1rem 0;
+}
+@media (max-width: 1024px) {
+  body {
+    padding: 1rem;
+  }
+}
