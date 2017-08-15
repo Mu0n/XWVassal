@@ -10,6 +10,8 @@ import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 
+import static mic.Util.logToChat;
+
 /**
  * Created by mjuneau on 2017-06-08.
  */
@@ -36,12 +38,12 @@ public class BumpableWithShape {
     }
 
 public double[] getVertices(){
-        double angle = getAngleInRadians();
+        double angle = getAngle();
         Point center = bumpable.getPosition();
         double halfsize = 56.5;
         double[] vertices = new double[8];
 
-        if(rectWithNoNubs.getBounds().getWidth() > 140) halfsize = 113.0;
+        if(getRawShape(bumpable).getBounds().height > 140) halfsize = 113.0;
         //top left
         vertices[0] = Util.rotX(-halfsize, -halfsize, angle) + center.getX();
         vertices[1] = Util.rotY(-halfsize, -halfsize, angle) + center.getY();
