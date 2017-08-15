@@ -1,26 +1,22 @@
 package mic;
 
+import VASSAL.build.module.*;
 import VASSAL.build.module.documentation.HelpFile;
 import VASSAL.build.module.map.Drawable;
-import VASSAL.build.module.map.MovementReporter;
-import VASSAL.command.ChangeTracker;
 import VASSAL.command.Command;
-import VASSAL.command.MoveTracker;
-import VASSAL.configure.HotKeyConfigurer;
 import VASSAL.counters.*;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import mic.manuvers.ManeuverPaths;
-import mic.manuvers.PathPart;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.geom.AffineTransform;
-import java.awt.geom.Area;
-import java.awt.geom.RectangularShape;
+import java.awt.geom.Point2D;
 import java.util.*;
 import java.util.List;
+import java.util.Map;
 
 import static mic.Util.logToChat;
 import static mic.Util.logToChatCommand;
@@ -40,6 +36,8 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
     private static Map<String, ManeuverPaths> keyStrokeToManeuver = ImmutableMap.<String, ManeuverPaths>builder()
             .put("CTRL O", ManeuverPaths.Str1)
             .build();
+private final double preventDoubleTap = 500;
+private Date lastPressTime = new Date();
 
     public AutoRangeFinder() {
         this(null);
@@ -77,27 +75,69 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
             this.fov = new FOVisualization();
         }
 
-        Command bigCommand;
+        Command bigCommand = logToChatCommand("");
 
         //Full Range Options CTRL-O
         if (KeyStroke.getKeyStroke(KeyEvent.VK_O, KeyEvent.CTRL_DOWN_MASK,false).equals(stroke)) {
-            bigCommand = logToChatCommand("starting firing options");
 
-            List<BumpableWithShape> BWS = getShipsOnMap();
+            Date thisPressTime = new Date();
+            if(thisPressTime.getTime() - lastPressTime.getTime() < preventDoubleTap)
+            {
+                logToChat("delta time is " + Double.toString(thisPressTime.getTime() - lastPressTime.getTime()));
+                lastPressTime = thisPressTime;
+                return null;
+            }
+            else lastPressTime = thisPressTime;
+
+            if (this.fov != null && this.fov.getCount() > 0) {
+                getMap().removeDrawComponent(this.fov);
+                logToChat("components removed");
+                this.fov.shapes.clear();
+            }
+
+            List<BumpableWithShape> BWS = getOtherShipsOnMap();
             for(BumpableWithShape b: BWS){
                 fov.add(b.rectWithNoNubs);
 
-                bigCommand.append(logToChatCommand("ship #" + Integer.toString(fov.shapes.size()) + " detected of size "
-                        + Double.toString(b.shape.getBounds().getWidth()) + " by "
-                        + Double.toString(b.shape.getBounds().getHeight())));
+                bigCommand = logToChatCommand("ship " + b.pilotName + " (" + b.shipName + ") " +
+                " center is at " + Integer.toString(b.bumpable.getPosition().x) + "," + Integer.toString(b.bumpable.getPosition().y) +
+                        "raw distance " + Double.toString(nonSRPyth(b.bumpable.getPosition(),this.getPosition()))
+                );
+double[] dist = new double[4];
+                dist[0] = nonSRPyth(this.getPosition(), new Point((int)b.getVertices()[0],(int)b.getVertices()[1]));
+                dist[1] = nonSRPyth(this.getPosition(), new Point((int)b.getVertices()[2],(int)b.getVertices()[3]));
+                dist[2] = nonSRPyth(this.getPosition(), new Point((int)b.getVertices()[4],(int)b.getVertices()[5]));
+                dist[3] = nonSRPyth(this.getPosition(), new Point((int)b.getVertices()[6],(int)b.getVertices()[7]));
+
+bigCommand.append(logToChatCommand("dist1 " + Double.toString(dist[0]) +
+        " dist2 " + Double.toString(dist[1]) +
+        " dist3 " + Double.toString(dist[2]) +
+        " dist4 " + Double.toString(dist[3])));
+
+                double min = Double.MAX_VALUE;
+                int j = 5;
+                for(int i = 0 ; i <4 ; i++){
+                    if(min > dist[i]) {
+                        min = dist[i]; //min distance
+                        j=i;//index of the min distance
+                    }
+                }
+                bigCommand.append(logToChatCommand("minimum distance " + Double.toString(min) + " sqroot " + Math.sqrt(min) + " range " + (int)Math.ceil(Math.sqrt(min)/282.5)));
+                TestAWT myLine = new TestAWT(this.getPosition().x, this.getPosition().y, (int)b.getVertices()[j], (int)b.getVertices()[j+1]);
+                myLine.draw(getMap().getView().getGraphics(),getMap());
             }
+
+
             fov.draw(getMap().getView().getGraphics(),getMap());
             return bigCommand;
         }
-        return piece.keyEvent(stroke);
+        return null;
     }
 
-
+    //non square rooted Pythagoreas theorem. don't need the real pixel distance, just numbers which can be compared and are proportional to the distance
+private double nonSRPyth(Point first, Point second){
+        return Math.pow(first.getX()-second.getX(),2) + Math.pow(first.getY()-second.getY(),2);
+}
 
     public void draw(Graphics graphics, int i, int i1, Component component, double v) {
         this.piece.draw(graphics, i, i1, component, v);
@@ -132,12 +172,12 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
         return null;
     }
 
-    private List<BumpableWithShape> getShipsOnMap() {
+    private List<BumpableWithShape> getOtherShipsOnMap() {
         List<BumpableWithShape> ships = Lists.newArrayList();
 
         GamePiece[] pieces = getMap().getAllPieces();
         for (GamePiece piece : pieces) {
-            if (piece.getState().contains("this_is_a_ship")) {
+            if (piece.getState().contains("this_is_a_ship") && piece.getId() != this.piece.getId()) {
                 ships.add(new BumpableWithShape((Decorator)piece, "Ship",
                         piece.getProperty("Pilot Name").toString(), piece.getProperty("Craft ID #").toString()));
             }
@@ -184,6 +224,27 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
 
         public boolean drawAboveCounters() {
             return true;
+        }
+    }
+    public static class TestAWT implements Drawable{
+int x1, y1, x2, y2;
+TestAWT(int x1, int y1, int x2, int y2){
+    this.x1 = x1;
+    this.y1 = y1;
+    this.x2 = x2;
+    this.y2 = y2;
+}
+
+        public void draw(Graphics graphics, VASSAL.build.module.Map map) {
+            Graphics2D graphics2D = (Graphics2D) graphics;
+
+            AffineTransform scaler = AffineTransform.getScaleInstance(map.getZoom(), map.getZoom());
+            graphics2D.setColor(new Color(10,255,200));
+            graphics2D.drawLine(x1,y1,x2,y2);
+        }
+
+        public boolean drawAboveCounters() {
+            return false;
         }
     }
 

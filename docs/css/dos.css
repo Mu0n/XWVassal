@@ -94,6 +94,12 @@ header a {
 .skills .sk .fa-list {
   color: #38AECC;
 }
+.skills .sk .fa-heartbeat {
+  color: #DD0000;
+}
+.skills .sk .fa-wrench {
+  color: #CC00CC;
+}
 .skills .sk a {
   color: white;
 }

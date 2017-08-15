@@ -158,6 +158,12 @@ public class Util {
         }
     }
 
+    public static double rotX(double x, double y, double angle){
+        return Math.cos(-Math.PI*angle/180.0f)*x - Math.sin(-Math.PI*angle/180.0f)*y;
+    }
+    public static double rotY(double x, double y, double angle){
+        return Math.sin(-Math.PI*angle/180.0f)*x + Math.cos(-Math.PI*angle/180.0f)*y;
+    }
 
     public static class XWPlayerInfo {
         public static int OBSERVER_SIDE = 66;
