@@ -160,7 +160,6 @@ public class ShipReposition extends Decorator implements EditablePiece {
             .put("ALT SHIFT J", RepoManeuver.BR_Bk1_Left_Bwd_Mid)
             .put("ALT K", RepoManeuver.BR_Bk1_Right_Fwd_Mid)
             .put("ALT SHIFT K", RepoManeuver.BR_Bk1_Right_Bwd_Mid)
-
             .build();
 
     private static Map<String, RepoManeuver> keyStrokeToRepositionShip = ImmutableMap.<String, RepoManeuver>builder()
@@ -369,7 +368,7 @@ public class ShipReposition extends Decorator implements EditablePiece {
             if(bigCommand !=null) bigCommand.append(getMap().placeOrMerge(piece, new Point((int)off1x_rot + (int)off2x, (int)off1y_rot + (int)off2y)));
             else bigCommand = getMap().placeOrMerge(piece, new Point((int)off1x_rot + (int)off2x, (int)off1y_rot + (int)off2y));
             //clone the initial position
-            GamePiece myClone = PieceCloner.getInstance().clonePiece(this);
+            GamePiece myClone = PieceCloner.getInstance().clonePiece(Decorator.getOutermost(this));
             bigCommand.append(getMap().placeOrMerge(myClone, new Point((int)off2x, (int)off2y)));
         }
         //STEP 11: reposition the ship
