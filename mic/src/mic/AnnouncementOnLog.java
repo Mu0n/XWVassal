@@ -30,6 +30,7 @@ public class AnnouncementOnLog extends AbstractConfigurable {
 
     private static String defaultURL =        "https://raw.githubusercontent.com/Mu0n/XWVassal/master/VassalNews";
     private static String currentVersionURL = "https://raw.githubusercontent.com/Mu0n/XWVassal/master/currentVersion";
+    private static String blogURL = "https://raw.githubusercontent.com/Mu0n/XWVassal/master/currentBlog";
     private static String vassalDownloadURL = "http://www.vassalengine.org/wiki/Module:Star_Wars:_X-Wing_Miniatures_Game";
     private static String githubDownloadURL = "https://github.com/Mu0n/XWVassal/releases";
     private static String guideURL = "http://xwvassal.info/guide";
@@ -93,6 +94,15 @@ public class AnnouncementOnLog extends AbstractConfigurable {
                     } else if(userPart > onlinePart) break;
                 }
 
+
+                URL urlPatchNotes = new URL(blogURL);
+                URLConnection con2 = urlPatchNotes.openConnection();
+                con2.setUseCaches(false);
+                BufferedReader in2 = new BufferedReader(new InputStreamReader(urlPatchNotes.openStream()));
+                String urlPatchString = in2.readLine();
+                in2.close();
+
+
                 if(isGreater == true) msg += "A new version is available! ";
                 else msg += "You have the latest version. ";
 
@@ -101,18 +111,21 @@ public class AnnouncementOnLog extends AbstractConfigurable {
 
                 SwingLink link = new SwingLink("X-Wing Vassal download page", vassalDownloadURL);
                 SwingLink link2 = new SwingLink("Alt download page on github", githubDownloadURL);
+            SwingLink link4 = new SwingLink("What's new in v" + line, urlPatchString);
                 SwingLink link3 = new SwingLink("New? Need help? Go to the web guide", guideURL);
-
+            SwingLink link5 = new SwingLink("Home for the Vassal League", "http://xwvassal.info");
                 JFrame frame = new JFrame();
                 JPanel panel = new JPanel();
                 JLabel spacer;
 
                 panel.setMinimumSize(new Dimension(600,100));
-                panel.add(link);
-            panel.add(spacer = new JLabel(" "),"span, grow");
-                panel.add(link2);
-            panel.add(spacer = new JLabel(" "),"span, grow");
-                panel.add(link3);
+
+            panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+            panel.add(link);
+            panel.add(link2);
+            panel.add(link4);
+            panel.add(link3);
+            panel.add(link5);
 
                 JOptionPane optionPane = new JOptionPane();
                 optionPane.setMessage(msg);
