@@ -632,7 +632,7 @@ return innerCommand;
 
         GamePiece[] pieces = getMap().getAllPieces();
         for (GamePiece piece : pieces) {
-            if (piece.getState().contains("Ship")) {
+            if (piece.getState().contains("this_is_a_ship")) {
                 ships.add(new BumpableWithShape((Decorator)piece, "Ship",
                         piece.getProperty("Pilot Name").toString(), piece.getProperty("Craft ID #").toString()));
             }

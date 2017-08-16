@@ -34,11 +34,10 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
     private FreeRotator myRotator = null;
     private FOVisualization fov = null;
     private static Map<String, ManeuverPaths> keyStrokeToManeuver = ImmutableMap.<String, ManeuverPaths>builder()
-            .put("CTRL O", ManeuverPaths.Str1)
+            //.put("CTRL O", ManeuverPaths.Str1)
             .build();
-private final double preventDoubleTap = 500;
-private Date lastPressTime = new Date();
-
+int cheapCount = 0;
+    List<TestAWT> myLines = new ArrayList<TestAWT>();
     public AutoRangeFinder() {
         this(null);
     }
@@ -71,38 +70,33 @@ private Date lastPressTime = new Date();
 
 
     public Command keyEvent(KeyStroke stroke) {
+
         if(this.fov == null) {
             this.fov = new FOVisualization();
         }
 
-        Command bigCommand = logToChatCommand("");
-
         //Full Range Options CTRL-O
-        if (KeyStroke.getKeyStroke(KeyEvent.VK_O, KeyEvent.CTRL_DOWN_MASK,false).equals(stroke)) {
+        if(false){
+        //if (KeyStroke.getKeyStroke(KeyEvent.VK_O, KeyEvent.CTRL_DOWN_MASK,false).equals(stroke)) {
+            Command bigCommand = piece.keyEvent(stroke);
 
-            Date thisPressTime = new Date();
-            if(thisPressTime.getTime() - lastPressTime.getTime() < preventDoubleTap)
-            {
-                logToChat("delta time is " + Double.toString(thisPressTime.getTime() - lastPressTime.getTime()));
-                lastPressTime = thisPressTime;
-                return null;
-            }
-            else lastPressTime = thisPressTime;
 
             if (this.fov != null && this.fov.getCount() > 0) {
                 getMap().removeDrawComponent(this.fov);
+                for(TestAWT t: myLines) getMap().removeDrawComponent(t);
                 logToChat("components removed");
                 this.fov.shapes.clear();
+                return bigCommand;
             }
 
             List<BumpableWithShape> BWS = getOtherShipsOnMap();
             for(BumpableWithShape b: BWS){
                 fov.add(b.rectWithNoNubs);
 
-                bigCommand = logToChatCommand("ship " + b.pilotName + " (" + b.shipName + ") " +
+                bigCommand.append(logToChatCommand("ship " + b.pilotName + " (" + b.shipName + ") " +
                 " center is at " + Integer.toString(b.bumpable.getPosition().x) + "," + Integer.toString(b.bumpable.getPosition().y) +
                         "raw distance " + Double.toString(nonSRPyth(b.bumpable.getPosition(),this.getPosition()))
-                );
+                ));
 double[] dist = new double[4];
                 dist[0] = nonSRPyth(this.getPosition(), new Point((int)b.getVertices()[0],(int)b.getVertices()[1]));
                 dist[1] = nonSRPyth(this.getPosition(), new Point((int)b.getVertices()[2],(int)b.getVertices()[3]));
@@ -114,24 +108,34 @@ bigCommand.append(logToChatCommand("dist1 " + Double.toString(dist[0]) +
         " dist3 " + Double.toString(dist[2]) +
         " dist4 " + Double.toString(dist[3])));
 
+
                 double min = Double.MAX_VALUE;
-                int j = 5;
+                int bestIndex = -1;
+                myLines.clear();
                 for(int i = 0 ; i <4 ; i++){
+                    TestAWT toAdd = new TestAWT(this.getPosition().x, this.getPosition().y, (int)b.getVertices()[2*i], (int)b.getVertices()[2*i+1]);
+                    toAdd.range = "Range " + Double.toString((int)Math.ceil(Math.sqrt(nonSRPyth(this.getPosition(),new Point((int)b.getVertices()[2*i], (int)b.getVertices()[2*i+1])))/282.5f));
+                myLines.add(toAdd);
                     if(min > dist[i]) {
                         min = dist[i]; //min distance
-                        j=i;//index of the min distance
+                        bestIndex = myLines.size()-1;
                     }
+
                 }
+                logToChat("best index" + Integer.toString(bestIndex));
+                if(bestIndex != -1) myLines.get(bestIndex).isBestLine = true;
                 bigCommand.append(logToChatCommand("minimum distance " + Double.toString(min) + " sqroot " + Math.sqrt(min) + " range " + (int)Math.ceil(Math.sqrt(min)/282.5)));
-                TestAWT myLine = new TestAWT(this.getPosition().x, this.getPosition().y, (int)b.getVertices()[j], (int)b.getVertices()[j+1]);
-                myLine.draw(getMap().getView().getGraphics(),getMap());
+
+                for(TestAWT t : myLines) {
+                    getMap().addDrawComponent(t);
+                }
             }
+            getMap().addDrawComponent(fov);
 
-
-            fov.draw(getMap().getView().getGraphics(),getMap());
             return bigCommand;
         }
-        return null;
+        return piece.keyEvent(stroke);
+
     }
 
     //non square rooted Pythagoreas theorem. don't need the real pixel distance, just numbers which can be compared and are proportional to the distance
@@ -190,7 +194,6 @@ private double nonSRPyth(Point first, Point second){
         private final List<Shape> shapes;
 
         Color myO = new Color(0,50,255, 150);
-
         FOVisualization() {
             this.shapes = new ArrayList<Shape>();
         }
@@ -227,6 +230,10 @@ private double nonSRPyth(Point first, Point second){
         }
     }
     public static class TestAWT implements Drawable{
+        public Color myO = new Color(30,30,255,200);
+        public Color bestO = new Color(45,200,190,200);
+        public Boolean isBestLine = false;
+        public String range = "";
 int x1, y1, x2, y2;
 TestAWT(int x1, int y1, int x2, int y2){
     this.x1 = x1;
@@ -238,9 +245,12 @@ TestAWT(int x1, int y1, int x2, int y2){
         public void draw(Graphics graphics, VASSAL.build.module.Map map) {
             Graphics2D graphics2D = (Graphics2D) graphics;
 
-            AffineTransform scaler = AffineTransform.getScaleInstance(map.getZoom(), map.getZoom());
-            graphics2D.setColor(new Color(10,255,200));
+            if(isBestLine == true) graphics2D.setColor(bestO);
+            else graphics2D.setColor(myO);
             graphics2D.drawLine(x1,y1,x2,y2);
+            double centerX = 0.5*((double)x2 - (double)x1);
+            double centerY = 0.5*((double)y2 - (double)y1);
+            graphics2D.drawString(range,(int)centerX, (int)centerY);
         }
 
         public boolean drawAboveCounters() {
