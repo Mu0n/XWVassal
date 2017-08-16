@@ -189,17 +189,11 @@ public class ShipReposition extends Decorator implements EditablePiece {
         if(isLargeShip(this))
         {
             switch(theManeu){
-                case BR1_Left_AFAP:
-                    theManeu = RepoManeuver.BR1_Left_AFAP_Large;
+                case BR1_Left_Mid:
+                    theManeu = RepoManeuver.BR1_Left_Mid_Large;
                     break;
-                case BR1_Left_ABAP:
-                    theManeu = RepoManeuver.BR1_Left_ABAP_Large;
-                    break;
-                case BR1_Right_AFAP:
-                    theManeu = RepoManeuver.BR1_Right_AFAP_Large;
-                    break;
-                case BR1_Right_ABAP:
-                    theManeu = RepoManeuver.BR1_Right_ABAP_Large;
+                case BR1_Right_Mid:
+                    theManeu = RepoManeuver.BR1_Right_Mid_Large;
                     break;
                 default:
                     return null;
@@ -244,7 +238,6 @@ public class ShipReposition extends Decorator implements EditablePiece {
 
         return placeCommand;
     }
-
 
     private Command repositionTheShip(RepoManeuver repoTemplate) {
         //Getting into this function, repoShip is associated with the template used to reposition the ship. We also need the non-mapped final ship tentative position
@@ -353,7 +346,7 @@ public class ShipReposition extends Decorator implements EditablePiece {
                 for(BumpableWithShape bws : overlappingShipOrObstacles)
                 {
                     previousCollisionVisualization.add(bws.shape);
-                    String overlapOnFinalWarn = "*** Warning: Ship's final reposition location currently overlaps a Ship or Obstacle. You can attempt to move it into a legal position and check if it still overlaps with 'shift-c'.";
+                    String overlapOnFinalWarn = "*** Warning: Ship's final reposition location currently overlaps a Ship or Obstacle. You can attempt to move it into a legal position and check if it still overlaps with 'alt-c'.";
                     if(bigCommand !=null) bigCommand.append(logToChatCommand(overlapOnFinalWarn));
                     else bigCommand = logToChatCommand(overlapOnFinalWarn);
 
@@ -380,7 +373,35 @@ public class ShipReposition extends Decorator implements EditablePiece {
     }
 
 
+    private Shape getRawShape(Decorator bumpable) {
+        return Decorator.getDecorator(Decorator.getOutermost(bumpable), NonRectangular.class).getShape();
+    }
 
+    /**
+     * Finds raw ship mask and translates and rotates it to the current position and heading
+     * of the ship
+     *
+     * @param bumpable
+     * @return Translated ship mask
+     */
+    private Shape getBumpableCompareShape(Decorator bumpable) {
+        Shape rawShape = getRawShape(bumpable);
+        double scaleFactor = 1.0f;
+
+        Shape transformed = AffineTransform.getScaleInstance(scaleFactor, scaleFactor).createTransformedShape(rawShape);
+
+        transformed = AffineTransform
+                .getTranslateInstance(bumpable.getPosition().getX(), bumpable.getPosition().getY())
+                .createTransformedShape(transformed);
+        FreeRotator rotator = (FreeRotator) (Decorator.getDecorator(Decorator.getOutermost(bumpable), FreeRotator.class));
+        double centerX = bumpable.getPosition().getX();
+        double centerY = bumpable.getPosition().getY();
+        transformed = AffineTransform
+                .getRotateInstance(rotator.getAngleInRadians(), centerX, centerY)
+                .createTransformedShape(transformed);
+
+        return transformed;
+    }
 
     @Override
     public Command keyEvent(KeyStroke stroke) {
@@ -391,7 +412,20 @@ public class ShipReposition extends Decorator implements EditablePiece {
         MoveTracker moveTracker = new MoveTracker(Decorator.getOutermost(this));
         result.append(moveTracker.getMoveCommand());
 
-
+        if (KeyStroke.getKeyStroke(KeyEvent.VK_C, KeyEvent.ALT_DOWN_MASK,false).equals(stroke)){
+            logToChat("alt-c");
+            List<BumpableWithShape> BWS = getBumpablesOnMap(true);
+            Shape shipShape = getBumpableCompareShape(this);
+            List<BumpableWithShape> overlappingObstacles = findCollidingEntities(shipShape, BWS);
+                if(overlappingObstacles.size() > 0) {
+                    for(BumpableWithShape bws : overlappingObstacles)
+                    {
+                        previousCollisionVisualization.add(bws.shape);
+                        logToChat("*** Warning: Your ship overlaps a " + bws.type + ".");
+                    }
+                    previousCollisionVisualization.add(shipShape);
+                }
+        }
 
         RepoManeuver repoTemplateDrop = getKeystrokeTemplateDrop(stroke);
         // Template drop requested
@@ -512,12 +546,21 @@ public class ShipReposition extends Decorator implements EditablePiece {
             } else if (piece.getState().contains("this_is_a_bomb")) {
                 bumpables.add(new BumpableWithShape((Decorator)piece, "Mine", false));
             } else if(wantShipsToo == true && piece.getState().contains("this_is_a_ship")) {
-                bumpables.add(new BumpableWithShape((Decorator)piece, "Ship",false));
+                BumpableWithShape tentativeBumpable = new BumpableWithShape((Decorator)piece, "Ship",false);
+                if (getId().equals(tentativeBumpable.bumpable.getId())) {
+                    continue;
+                }
+                bumpables.add(tentativeBumpable);
 
             }
         }
         return bumpables;
     }
+
+    public String getId() {
+        return this.piece.getId();
+    }
+
     private boolean isLargeShip(Decorator ship) {
         return BumpableWithShape.getRawShape(ship).getBounds().getWidth() > 114;
     }

@@ -34,7 +34,7 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
     private FreeRotator myRotator = null;
     private FOVisualization fov = null;
     private static Map<String, ManeuverPaths> keyStrokeToManeuver = ImmutableMap.<String, ManeuverPaths>builder()
-            .put("CTRL O", ManeuverPaths.Str1)
+            //.put("CTRL O", ManeuverPaths.Str1)
             .build();
 int cheapCount = 0;
     List<TestAWT> myLines = new ArrayList<TestAWT>();
@@ -76,7 +76,8 @@ int cheapCount = 0;
         }
 
         //Full Range Options CTRL-O
-        if (KeyStroke.getKeyStroke(KeyEvent.VK_O, KeyEvent.CTRL_DOWN_MASK,false).equals(stroke)) {
+        if(false){
+        //if (KeyStroke.getKeyStroke(KeyEvent.VK_O, KeyEvent.CTRL_DOWN_MASK,false).equals(stroke)) {
             Command bigCommand = piece.keyEvent(stroke);
 
 
