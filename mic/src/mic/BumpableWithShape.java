@@ -37,27 +37,28 @@ public class BumpableWithShape {
         this.shipName = shipName;
     }
 
-public double[] getVertices(){
+    public ArrayList<Point2D.Double> getVertices(){
         double angle = getAngle();
         Point center = bumpable.getPosition();
         double halfsize = 56.5;
-        double[] vertices = new double[8];
+        ArrayList<Point2D.Double> vertices = new ArrayList<Point2D.Double>();
 
         if(getRawShape(bumpable).getBounds().height > 140) halfsize = 113.0;
         //top left
-        vertices[0] = Util.rotX(-halfsize, -halfsize, angle) + center.getX();
-        vertices[1] = Util.rotY(-halfsize, -halfsize, angle) + center.getY();
+        vertices.add(new Point2D.Double(Util.rotX(-halfsize, -halfsize, angle) + center.getX(),
+                Util.rotY(-halfsize, -halfsize, angle) + center.getY()));
         //top right
-        vertices[2] = Util.rotX(halfsize, -halfsize, angle) + center.getX();
-        vertices[3] = Util.rotY(halfsize, -halfsize, angle) + center.getY();
+        vertices.add(new Point2D.Double(Util.rotX(halfsize, -halfsize, angle) + center.getX(),
+                Util.rotY(halfsize, -halfsize, angle) + center.getY()));
         //bottom right
-        vertices[4] = Util.rotX(halfsize, halfsize, angle) + center.getX();
-        vertices[5] = Util.rotY(halfsize, halfsize, angle) + center.getY();
+        vertices.add(new Point2D.Double(Util.rotX(halfsize, halfsize, angle) + center.getX(),
+                Util.rotY(halfsize, halfsize, angle) + center.getY()));
         //bottom left
-        vertices[6] = Util.rotX(-halfsize, halfsize, angle) + center.getX();
-        vertices[7] = Util.rotY(-halfsize, halfsize, angle) + center.getY();
+        vertices.add(new Point2D.Double(Util.rotX(-halfsize, halfsize, angle) + center.getX(),
+                Util.rotY(-halfsize, halfsize, angle) + center.getY()));
+
         return vertices;
-}
+    }
 
     public Shape getRectWithNoNubs() {
         Shape rawShape = getRawShape(bumpable);
