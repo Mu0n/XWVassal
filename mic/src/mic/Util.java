@@ -141,6 +141,19 @@ public class Util {
         return new XWPlayerInfo(parsePlayerSide(sideStr), name, userId);
     }
 
+    public static String getShipStringForReports(boolean isYours, String pilotName, String shipName)
+    {
+
+        String yourShipName = (isYours ? GlobalOptions.getInstance().getPlayerId() + "'s" : "another ship");
+
+        if (!pilotName.equals("")) { yourShipName += " " + pilotName; }
+        else yourShipName += " ship";
+        if (!shipName.equals("")) { yourShipName += " (" + shipName + ")"; }
+        else yourShipName += " ";
+
+        return yourShipName;
+    }
+
     private static int parsePlayerSide(String sideStr) {
         if (sideStr == null || sideStr.length() == 0) {
             return XWPlayerInfo.UNKNOWN;

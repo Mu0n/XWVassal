@@ -346,7 +346,8 @@ public class ShipReposition extends Decorator implements EditablePiece {
                 for(BumpableWithShape bws : overlappingShipOrObstacles)
                 {
                     previousCollisionVisualization.add(bws.shape);
-                    String overlapOnFinalWarn = "*** Warning: Ship's final reposition location currently overlaps a Ship or Obstacle. You can attempt to move it into a legal position and check if it still overlaps with 'alt-c'.";
+                    String yourShipName = getShipStringForReports(true, this.getProperty("Pilot Name").toString(), this.getProperty("Craft ID #").toString());
+                    String overlapOnFinalWarn = "*** Warning: " + yourShipName + "'s final reposition location currently overlaps a Ship or Obstacle. You can attempt to move it into a legal position and check if it still overlaps with 'alt-c'.";
                     if(bigCommand !=null) bigCommand.append(logToChatCommand(overlapOnFinalWarn));
                     else bigCommand = logToChatCommand(overlapOnFinalWarn);
 
@@ -413,7 +414,6 @@ public class ShipReposition extends Decorator implements EditablePiece {
         result.append(moveTracker.getMoveCommand());
 
         if (KeyStroke.getKeyStroke(KeyEvent.VK_C, KeyEvent.ALT_DOWN_MASK,false).equals(stroke)){
-            logToChat("alt-c");
             List<BumpableWithShape> BWS = getBumpablesOnMap(true);
             Shape shipShape = getBumpableCompareShape(this);
             List<BumpableWithShape> overlappingObstacles = findCollidingEntities(shipShape, BWS);
@@ -421,7 +421,8 @@ public class ShipReposition extends Decorator implements EditablePiece {
                     for(BumpableWithShape bws : overlappingObstacles)
                     {
                         previousCollisionVisualization.add(bws.shape);
-                        logToChat("*** Warning: Your ship overlaps a " + bws.type + ".");
+                        String yourShipName = getShipStringForReports(true, this.getProperty("Pilot Name").toString(), this.getProperty("Craft ID #").toString());
+                        logToChat("*** Warning: " + yourShipName + " overlaps a " + bws.type + ".");
                     }
                     previousCollisionVisualization.add(shipShape);
                 }
@@ -486,7 +487,6 @@ public class ShipReposition extends Decorator implements EditablePiece {
                             timer.cancel();
                         }
                     } catch (Exception e) {
-                        logToChat("bug");
 
                     }
                 }
