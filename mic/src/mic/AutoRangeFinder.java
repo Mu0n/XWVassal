@@ -12,7 +12,11 @@ import mic.manuvers.ManeuverPaths;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
+import java.awt.font.FontRenderContext;
+import java.awt.font.TextAttribute;
+import java.awt.font.TextLayout;
 import java.awt.geom.*;
+import java.text.AttributedString;
 import java.util.*;
 import java.util.List;
 import java.util.Map;
@@ -38,7 +42,6 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
     private static double RANGE2 = 565;
     private static double RANGE3 = 847.5;
 
-    List<TestAWT> myLines = new ArrayList<TestAWT>();
     public AutoRangeFinder() {
         this(null);
     }
@@ -72,10 +75,8 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
 private void clearVisu()
 {
     getMap().removeDrawComponent(this.fov);
-    for(TestAWT t: myLines) getMap().removeDrawComponent(t);
-    logToChat("components removed");
     this.fov.shapes.clear();
-    myLines.clear();
+    this.fov.lines.clear();
 }
     public Command keyEvent(KeyStroke stroke) {
 
@@ -137,11 +138,24 @@ bigCommand.append(logToChatCommand("dist1 " + Double.toString(dist[0]) +
                     Point2D.Double toTarget = findClosestVertex(b, thisShip);
                     TestAWT bestLine = new TestAWT(fromAttacker, toTarget);
                     bestLine.isBestLine = true;
-                    bigCommand.append(logToChatCommand("range " + (int)Math.ceil(Math.sqrt(nonSRPyth(fromAttacker,toTarget))/282.5)));
+                    String rangeString = "range " + (int)Math.ceil(Math.sqrt(nonSRPyth(fromAttacker,toTarget))/282.5);
+                    Line2D.Double lineShape = new Line2D.Double(bestLine.x1, bestLine.y1, bestLine.x2, bestLine.y2);
+                    //find if there's an obstruction
+                    List<BumpableWithShape> obstructions = getObstructionsOnMap();
+                    for(BumpableWithShape obstruction : obstructions){
+                        if(shapesOverlap(lineShape, obstruction.shape))
+                        {
+                            bestLine.range += "\n" + "obstructed";
+                            break;
+                        }
+                    }
 
-                    Line2D.Double bestLine2D = new Line2D.Double(fromAttacker,toTarget);
 
-                    myLines.add(bestLine);
+
+                    bigCommand.append(logToChatCommand(rangeString));
+
+                    bestLine.range = rangeString;
+                    fov.addLine(bestLine);
                 }
 
                 //verify that the target ship and attacker ship aren't of the same alignment, modulo 90 degrees
@@ -152,9 +166,6 @@ bigCommand.append(logToChatCommand("dist1 " + Double.toString(dist[0]) +
                 else { //toughest case, multiple lines are possible between attacker and target
                     logToChat("toughest case; multiple lines");
                 }
-                for(TestAWT t : myLines) {
-                    getMap().addDrawComponent(t);
-                }
             }
             getMap().addDrawComponent(fov);
 
@@ -164,6 +175,8 @@ bigCommand.append(logToChatCommand("dist1 " + Double.toString(dist[0]) +
 
     }
 
+    //FindClosestVertex: first argument is the ship for which all 4 vertices will be considered
+    //second argument is the ship for which you might get a vertex, or a point somewhere on an edge
     private Point2D.Double findClosestVertex(BumpableWithShape shipWithVertex, BumpableWithShape target) {
         ArrayList<Point2D.Double> vertices = shipWithVertex.getVertices();
         double min = Double.MAX_VALUE;
@@ -199,7 +212,28 @@ bigCommand.append(logToChatCommand("dist1 " + Double.toString(dist[0]) +
         }
         return true;
     }
+    public  java.util.List<BumpableWithShape> getObstructionsOnMap() {
+        java.util.List<BumpableWithShape> bumpables = Lists.newArrayList();
 
+        GamePiece[] pieces = getMap().getAllPieces();
+        for (GamePiece piece : pieces) {
+            if (piece.getState().contains("this_is_an_asteroid")) {
+                // comment out this line and the next three that add to bumpables if bumps other than with ships shouldn't be detected yet
+                String testFlipString = "";
+                try{
+                    testFlipString = ((Decorator) piece).getDecorator(piece,piece.getClass()).getProperty("whichShape").toString();
+                } catch (Exception e) {}
+                bumpables.add(new BumpableWithShape((Decorator)piece, "Asteroid", "2".equals(testFlipString)));
+            } else if (piece.getState().contains("this_is_a_debris")) {
+                String testFlipString = "";
+                try{
+                    testFlipString = ((Decorator) piece).getDecorator(piece,piece.getClass()).getProperty("whichShape").toString();
+                } catch (Exception e) {}
+                bumpables.add(new BumpableWithShape((Decorator)piece,"Debris","2".equals(testFlipString)));
+            }
+        }
+        return bumpables;
+    }
     private Shape findUnionOfRectangularExtensions() {
         Shape rawShape = getRawShape(this);
         double workingWidth = 226.0f;
@@ -287,18 +321,27 @@ private double nonSRPyth(Point first, Point second){
     private static class FOVisualization implements Drawable {
 
         private final List<Shape> shapes;
+        private final List<TestAWT> lines;
+
+        public Color badLineColor = new Color(30,30,255,255);
+        public Color bestLineColor = new Color(45,200,190,255);
 
         Color myO = new Color(0,50,255, 50);
         FOVisualization() {
             this.shapes = new ArrayList<Shape>();
+            this.lines = new ArrayList<TestAWT>();
         }
         FOVisualization(Shape ship) {
             this.shapes = new ArrayList<Shape>();
             this.shapes.add(ship);
+            this.lines = new ArrayList<TestAWT>();
         }
 
         public void add(Shape bumpable) {
             this.shapes.add(bumpable);
+        }
+        public void addLine(TestAWT line){
+            this.lines.add(line);
         }
 
         public int getCount() {
@@ -313,50 +356,73 @@ private double nonSRPyth(Point first, Point second){
         public void draw(Graphics graphics, VASSAL.build.module.Map map) {
             Graphics2D graphics2D = (Graphics2D) graphics;
             graphics2D.setColor(myO);
+            double scale = map.getZoom();
+            AffineTransform scaler = AffineTransform.getScaleInstance(scale, scale);
 
-            AffineTransform scaler = AffineTransform.getScaleInstance(map.getZoom(), map.getZoom());
             for (Shape shape : shapes) {
                 graphics2D.fill(scaler.createTransformedShape(shape));
+
             }
+            for(TestAWT line : lines){
+                if(line.isBestLine == true) graphics2D.setColor(bestLineColor);
+                else graphics2D.setColor(badLineColor);
+
+                Line2D.Double lineShape = new Line2D.Double(line.x1, line.y1, line.x2, line.y2);
+                graphics2D.draw(scaler.createTransformedShape(lineShape));
+
+                //create a shape in the form of the string that's needed
+                graphics2D.setFont(new Font("Arial",0,42));
+                Shape textShape = getTextShape(graphics2D, line.range, graphics2D.getFont(), true);
+
+//transform the textShape into place, near the center of the line
+                textShape = AffineTransform.getTranslateInstance(line.centerX, line.centerY)
+                        .createTransformedShape(textShape);
+                textShape = AffineTransform.getScaleInstance(scale, scale)
+                        .createTransformedShape(textShape);
+                graphics2D.draw(textShape);
+
+            }
+        }
+        public static Shape getTextShape(Graphics2D g2d, String text, Font font, boolean ltr) {
+            AttributedString attstring = new AttributedString(text);
+            attstring.addAttribute(TextAttribute.FONT, font);
+            attstring.addAttribute(TextAttribute.RUN_DIRECTION, ltr ? TextAttribute.RUN_DIRECTION_LTR : TextAttribute.RUN_DIRECTION_RTL);
+            FontRenderContext frc = g2d.getFontRenderContext();
+            TextLayout t = new TextLayout(attstring.getIterator(), frc);
+            return t.getOutline(null);
         }
 
         public boolean drawAboveCounters() {
             return true;
         }
     }
-    public static class TestAWT implements Drawable{
-        public Color myO = new Color(30,30,255,255);
-        public Color bestO = new Color(45,200,190,255);
+    public static class TestAWT {
         public Boolean isBestLine = false;
         public String range = "";
-int x1, y1, x2, y2;
+
+        int x1, y1, x2, y2;
+        int centerX, centerY;
+
 TestAWT(int x1, int y1, int x2, int y2){
     this.x1 = x1;
     this.y1 = y1;
     this.x2 = x2;
     this.y2 = y2;
+    calculateCenter();
 }
 TestAWT(Point2D.Double first, Point2D.Double second){
     this.x1 = (int)first.getX();
     this.y1 = (int)first.getY();
     this.x2 = (int)second.getX();
     this.y2 = (int)second.getY();
+    calculateCenter();
+
 }
 
-        public void draw(Graphics graphics, VASSAL.build.module.Map map) {
-            Graphics2D graphics2D = (Graphics2D) graphics;
-
-            if(isBestLine == true) graphics2D.setColor(bestO);
-            else graphics2D.setColor(myO);
-            graphics2D.drawLine(x1,y1,x2,y2);
-            double centerX = 0.5*((double)x2 - (double)x1);
-            double centerY = 0.5*((double)y2 - (double)y1);
-            graphics2D.drawString(range,(int)centerX, (int)centerY);
-        }
-
-        public boolean drawAboveCounters() {
-            return false;
-        }
+void calculateCenter(){
+    centerX = (int)(this.x1 + 0.5*(this.x2-this.x1));
+    centerY = (int)(this.y1 + 0.5*(this.y2-this.y1));
+}
     }
 
     private static class ShipPositionState {
