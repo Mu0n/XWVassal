@@ -1,15 +1,13 @@
 package mic;
 
 import java.awt.*;
-import java.awt.geom.AffineTransform;
-import java.awt.geom.Area;
-import java.awt.geom.Line2D;
-import java.awt.geom.Point2D;
+import java.awt.geom.*;
 import java.io.BufferedInputStream;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
@@ -194,6 +192,51 @@ public class Util {
         a1.intersect(new Area(shape2));
         return !a1.isEmpty();
     }
+    public static Shape getIntersectedShape(Shape shape1, Shape shape2){
+        Area a1 = new Area(shape1);
+        a1.intersect(new Area(shape2));
+        return a1;
+    }
+    public static boolean isLine2DOverlapShape(Line2D.Double l, Shape s){
+        double[] segment = new double[2];
+        Point2D.Double p1 = new Point2D.Double();
+        Point2D.Double p2 = new Point2D.Double();
+        PathIterator pi = s.getPathIterator(null);
+
+        pi.currentSegment(segment);
+        p1 = new Point2D.Double(segment[0], segment[1]);
+        pi.next();
+        pi.currentSegment(segment);
+        p2 = new Point2D.Double(segment[0], segment[1]);
+
+        while(!pi.isDone()) {
+            Line2D.Double l2 = new Line2D.Double(p1.getX(), p1.getY(), p2.getX(), p2.getY());
+            if(l.intersectsLine(l2)){
+                return true;
+            }
+            else {
+                p1 = new Point2D.Double(segment[0], segment[1]);
+
+                pi.next();
+                if(pi.isDone()) break;
+                pi.currentSegment(segment);
+                p2 = new Point2D.Double(segment[0], segment[1]);
+            }
+        }
+
+        return false;
+    }
+
+
+    //non square rooted Pythagoreas theorem. don't need the real pixel distance, just numbers which can be compared and are proportional to the distance
+    public static double nonSRPyth(Point first, Point second){
+        return Math.pow(first.getX()-second.getX(),2) + Math.pow(first.getY()-second.getY(),2);
+    }
+
+    public static double nonSRPyth(Point2D.Double first, Point2D.Double second){
+        return Math.pow(first.getX()-second.getX(),2) + Math.pow(first.getY()-second.getY(),2);
+    }
+
 
     public static boolean isPointInShape(Point2D.Double pt, Shape shape) {
         Area a = new Area(shape);
