@@ -1,6 +1,5 @@
 package mic;
 
-import VASSAL.build.module.*;
 import VASSAL.build.module.documentation.HelpFile;
 import VASSAL.build.module.map.Drawable;
 import VASSAL.command.Command;
@@ -115,7 +114,7 @@ bigCommand.append(logToChatCommand("dist1 " + Double.toString(dist[0]) +
                 int bestIndex = -1;
                 myLines.clear();
                 for(int i = 0 ; i <4 ; i++){
-                    TestAWT toAdd = new TestAWT(this.getPosition().x, this.getPosition().y, (int)b.getVertices()[2*i], (int)b.getVertices()[2*i+1]);
+                    micLine toAdd = new micLine(this.getPosition().x, this.getPosition().y, (int)b.getVertices()[2*i], (int)b.getVertices()[2*i+1]);
                     toAdd.range = "Range " + Double.toString((int)Math.ceil(Math.sqrt(nonSRPyth(this.getPosition(),new Point((int)b.getVertices()[2*i], (int)b.getVertices()[2*i+1])))/282.5f));
                 myLines.add(toAdd);
                     if(min > dist[i]) {
@@ -134,69 +133,26 @@ bigCommand.append(logToChatCommand("dist1 " + Double.toString(dist[0]) +
                 //First check, verify that the target ship's vertices are not inside the projected rectangles from the attacker
                 if(true)
                 {//easiest case first, the best line will go from attacker's corner to target's corner
-                    logToChat("easiest case; corner to corner");
-                    Point2D.Double fromAttacker = findClosestVertex(thisShip, b);
-                    Point2D.Double toTarget = findClosestVertex(b, thisShip);
-                    Point2D.Double toTarget2nd = find2ndClosestVertex(b, thisShip);
+                    Point2D.Double A1 = findClosestVertex(thisShip, b);
+                    Point2D.Double A2 = find2ndClosestVertex(thisShip, b);
 
+                    Point2D.Double D1 = findClosestVertex(b, thisShip);
+                    Point2D.Double D2 = find2ndClosestVertex(b, thisShip);
 
-                    TestAWT closestLine = new TestAWT(fromAttacker, toTarget);
-                    TestAWT secondLine = new TestAWT(fromAttacker, toTarget2nd);
-                    TestAWT bestLine = findBestLine(closestLine, secondLine);
+                    micLine bestLine = findBestLine(A1, A2, D1, D2);
                     bestLine.isBestLine = true;
-
-                    String rangeString = "range " + (int)Math.ceil(Math.sqrt(nonSRPyth(fromAttacker,toTarget))/282.5);
-                    String range2String = "range " + (int)Math.ceil(Math.sqrt(nonSRPyth(fromAttacker,toTarget2nd))/282.5);
-                    String range3String = "range " + (int)Math.ceil(Math.sqrt(nonSRPyth(
-                            new Point2D.Double((double)bestLine.x1, (double)bestLine.y1),
-                            new Point2D.Double((double)bestLine.x2, (double)bestLine.y2)
-                    ))/282.5);
-
-                    Line2D.Double lineShape = new Line2D.Double(closestLine.x1, closestLine.y1, closestLine.x2, closestLine.y2);
-                    Line2D.Double line2Shape = new Line2D.Double(secondLine.x1, secondLine.y1, secondLine.x2, secondLine.y2);
-                    Line2D.Double bestLineShape = new Line2D.Double(bestLine.x1, bestLine.y1, bestLine.x2, bestLine.y2);
 
                     //find if there's an obstruction
                     List<BumpableWithShape> obstructions = getObstructionsOnMap();
-                    logToChat("this many obstacles: " + Integer.toString(obstructions.size()));
                     for(BumpableWithShape obstruction : obstructions){
-                        if(isLine2DOverlapShape(lineShape, obstruction.shape))
+                        if(isLine2DOverlapShape(bestLine.line, obstruction.shape))
                         {
-                            rangeString += " obstructed";
+                            bestLine.rangeString += " obstructed";
                             fov.add(obstruction.shape);
                             break;
                         }
                     }
-                    closestLine.range = rangeString;
-
-                    for(BumpableWithShape obstruction : obstructions){
-                        if(isLine2DOverlapShape(line2Shape, obstruction.shape))
-                        {
-                            range2String += " obstructed";
-                            fov.add(obstruction.shape);
-                            break;
-                        }
-                    }
-                    secondLine.range = range2String;
-
-                    for(BumpableWithShape obstruction : obstructions){
-                        if(isLine2DOverlapShape(bestLineShape, obstruction.shape))
-                        {
-                            range3String += " obstructed";
-                            fov.add(obstruction.shape);
-                            break;
-                        }
-                    }
-                    bestLine.range = range3String;
-
-
-                    bigCommand.append(logToChatCommand(rangeString));
-
-                    fov.addLine(closestLine);
-                    fov.addLine(secondLine);
                     fov.addLine(bestLine);
-
-                    fov.addLine(secondLine);
                 }
 
                 //verify that the target ship and attacker ship aren't of the same alignment, modulo 90 degrees
@@ -209,7 +165,6 @@ bigCommand.append(logToChatCommand("dist1 " + Double.toString(dist[0]) +
                 }
             }
             getMap().addDrawComponent(fov);
-
             return bigCommand;
         }
         return piece.keyEvent(stroke);
@@ -219,78 +174,110 @@ bigCommand.append(logToChatCommand("dist1 " + Double.toString(dist[0]) +
     //this finds the line that links the attacker ship to someplace on the line formed by the closest edge of the target, using
     //the closest and 2nd closest lines to the target's vertices.
     //using an algorithm based on this: http://www.ahristov.com/tutorial/geometry-games/point-line-distance.html
-    private TestAWT findBestLine(TestAWT closestLine, TestAWT secondLine) {
-        //assuming the first point of both input lines are the same...
+    private micLine findBestLine(Point2D.Double A1, Point2D.Double A2, Point2D.Double D1, Point2D.Double D2) {
+
+        ArrayList<micLine> lineList = new ArrayList<micLine>();
+
+        //Closest Attacker to Closest Defender
+        micLine A1D1 = new micLine(A1, D1);
+        //Closest Attacker to 2nd Closest Defender
+        micLine A1D2 = new micLine(A1, D2);
+        //Closest Defender to Closest Attacker
+        micLine D1A1 = new micLine(D1, A1);
+        //Closest Defender to 2nd Closest Attacker
+        micLine D1A2 = new micLine(D1, A2);
+        //Closest Attacker Edge
+        micLine AA = new micLine(A1, A2);
+        //Closest Defender Edge
+        micLine DD = new micLine(D1, D2);
+
+        lineList.add(A1D1);
+        lineList.add(A1D2);
+        lineList.add(D1A2);
+
+        //Figure out A1 to DD, closest line according to the algorithm above
         //end of the closest vertex
-        double x1 = closestLine.x2;
-        double y1 = closestLine.y2;
+        double x1 = A1D1.second.getX();
+        double y1 = A1D1.second.getY();
         //end of the 2nd closest vertex
-        double x2 = secondLine.x2;
-        double y2 = secondLine.y2;
+        double x2 = A1D2.second.getX();
+        double y2 = A1D2.second.getY();
         //start point
-        double xp = closestLine.x1;
-        double yp = closestLine.y1;
+        double xp = A1D1.first.getX();
+        double yp = A1D1.first.getY();
 
         //getting the shortest distance in pixels to the line formed by both (x1,y1) and (x2,y2)
         double numerator = Math.abs((xp - x1) * (y2 - y1) - (yp - y1) * (x2 - x1));
         double denominator = Math.sqrt(Math.pow(x2 - x1, 2.0) + Math.pow(y2 - y1, 2.0));
         double shortestdist = numerator / denominator;
 
-        //also getting the distances for closest and 2nd closest vertices, in case the first is the best
-        double closestDistance = Math.sqrt(Math.pow((closestLine.x2 - closestLine.x1),2.0) + Math.pow(closestLine.y2 - closestLine.y1,2.0));
-        double secondDistance = Math.sqrt(Math.pow((secondLine.x2 - secondLine.x1),2.0) + Math.pow(secondLine.y2 - secondLine.y1,2.0));
-
-        double threshhold = 0.0001f;
-
-        logToChat("shortest " + Double.toString(shortestdist) +
-        " closest vx " + Double.toString(closestDistance) +
-        " 2nd closest vx " + Double.toString(secondDistance));
-
-        double segmentPartialDist = Math.sqrt(Math.pow(closestDistance,2.0) - Math.pow(shortestdist,2.0));
-        double segmentx = x2 - x1;
-        double segmenty = y2 - y1;
-        double segmentFullDist = Math.sqrt(Math.pow(segmentx,2.0)+ Math.pow(segmenty,2.0));
+        double segmentPartialDist = Math.sqrt(Math.pow(A1D1.pixelLength,2.0) - Math.pow(shortestdist,2.0));
+        double segmentFullDist = DD.pixelLength;
         double gapx = (x2-x1)/segmentFullDist*segmentPartialDist;
         double gapy = (y2-y1)/segmentFullDist*segmentPartialDist;
         double vector_x = x1 + gapx;
         double vector_y = y1 + gapy;
 
-        TestAWT bestLine = new TestAWT(new Point2D.Double(xp,yp), new Point2D.Double(vector_x, vector_y));
+        micLine A1DD = new micLine(A1, new Point2D.Double(vector_x, vector_y));
+        lineList.add(A1DD);
 
-        //If the closest distance is already the best, take it (corner to corner case - should NEVER trigger by definition
+        //Figure out D1 to AA, closest line according to the algorithm above
+        x1 = A1D1.first.getX();
+        y1 = A1D1.first.getY();
+        //end of the 2nd closest vertex
+        x2 = D1A2.second.getX();
+        y2 = D1A2.second.getY();
+        //start point
+        xp = A1D1.second.getX();
+        yp = A1D1.second.getY();
+//getting the shortest distance in pixels to the line formed by both (x1,y1) and (x2,y2)
+        numerator = Math.abs((xp - x1) * (y2 - y1) - (yp - y1) * (x2 - x1));
+        denominator = Math.sqrt(Math.pow(x2 - x1, 2.0) + Math.pow(y2 - y1, 2.0));
+        shortestdist = numerator / denominator;
 
-        if(isItBetweenFirstTwo(closestLine,secondLine,bestLine))return bestLine;
-        else return closestLine;
+        segmentPartialDist = Math.sqrt(Math.pow(D1A1.pixelLength,2.0) - Math.pow(shortestdist,2.0));
+        segmentFullDist = AA.pixelLength;
+        gapx = (x2-x1)/segmentFullDist*segmentPartialDist;
+        gapy = (y2-y1)/segmentFullDist*segmentPartialDist;
+        vector_x = x1 + gapx;
+        vector_y = y1 + gapy;
+
+        micLine D1AA = new micLine(D1, new Point2D.Double(vector_x,vector_y));
+        lineList.add(D1AA);
+
+        //find the best distance and make it the best Line
+        double bestDist = Double.MAX_VALUE;
+        micLine best = A1D1;
+        for(micLine l : lineList){
+            if(Double.compare(bestDist,l.pixelLength) > 0) {
+                bestDist = l.pixelLength;
+                best = l;
+            }
+        }
+        return best;
 
     }
 
-    private boolean isItBetweenFirstTwo(TestAWT closestLine, TestAWT secondLine, TestAWT bestLine) {
-        double crossproduct = (bestLine.y2 - closestLine.y2) * (secondLine.x2 - closestLine.x2)
-                - (bestLine.x2 - closestLine.x2) * (secondLine.y2 - closestLine.y2);
-        if (Double.compare(Math.abs(crossproduct),0.001) > 0) return false;
 
-        double dotproduct = (bestLine.x2 - closestLine.x2) * (secondLine.x2 - closestLine.x2) +
-                (bestLine.y2 - closestLine.y2) * (secondLine.y2 - closestLine.y2);
-        if(Double.compare(dotproduct,0.0) < 0) return false;
-        double squaredlengthba = (secondLine.x2 - closestLine.x2) * (secondLine.y2 - closestLine.y2);
-        if(Double.compare(dotproduct,squaredlengthba)>0) return false;
-        else return true;
+    //FindClosestVertex: first argument is the ship for which all 4 vertices will be considered
+    //second argument is the ship for which you get a vertex
+    private Point2D.Double findClosestVertex(BumpableWithShape shipWithVertex, BumpableWithShape target) {
+        ArrayList<Point2D.Double> vertices = shipWithVertex.getVertices();
+        double min = Double.MAX_VALUE;
+        Point2D.Double centerTarget = new Point2D.Double(target.bumpable.getPosition().getX(), target.bumpable.getPosition().getY());
+        Point2D.Double closestVertex = null;
+        for(Point2D.Double vertex : vertices) {
+            double dist = nonSRPyth(vertex, centerTarget);
+            if(min > dist) {
+                min = dist;
+                closestVertex = vertex;
+            }
+        }
+        return closestVertex;
     }
 
-/* python code
-    def isBetween(a, b, c):
-    crossproduct = (c.y - a.y) * (b.x - a.x) - (c.x - a.x) * (b.y - a.y)
-            if abs(crossproduct) > epsilon : return False   # (or != 0 if using integers)
-
-    dotproduct = (c.x - a.x) * (b.x - a.x) + (c.y - a.y)*(b.y - a.y)
-            if dotproduct < 0 : return False
-
-            squaredlengthba = (b.x - a.x)*(b.x - a.x) + (b.y - a.y)*(b.y - a.y)
-    if dotproduct > squaredlengthba: return False
-
-    return True
-    */
-
+    //FindClosestVertex: first argument is the ship for which all 4 vertices will be considered
+    //second argument is the ship for which you get a vertex
     private Point2D.Double find2ndClosestVertex(BumpableWithShape shipWithVertex, BumpableWithShape target) {
         ArrayList<Point2D.Double> vertices = shipWithVertex.getVertices();
         double min = Double.MAX_VALUE;
@@ -313,25 +300,7 @@ bigCommand.append(logToChatCommand("dist1 " + Double.toString(dist[0]) +
                 secondVertex = vertex;
             }
         }
-
         return secondVertex;
-    }
-
-    //FindClosestVertex: first argument is the ship for which all 4 vertices will be considered
-    //second argument is the ship for which you might get a vertex, or a point somewhere on an edge
-    private Point2D.Double findClosestVertex(BumpableWithShape shipWithVertex, BumpableWithShape target) {
-        ArrayList<Point2D.Double> vertices = shipWithVertex.getVertices();
-        double min = Double.MAX_VALUE;
-        Point2D.Double centerTarget = new Point2D.Double(target.bumpable.getPosition().getX(), target.bumpable.getPosition().getY());
-        Point2D.Double closestVertex = null;
-        for(Point2D.Double vertex : vertices) {
-            double dist = nonSRPyth(vertex, centerTarget);
-            if(min > dist) {
-                min = dist;
-                closestVertex = vertex;
-            }
-        }
-        return closestVertex;
     }
 
     private boolean isTargetOverlappingAttacker(BumpableWithShape b) {
@@ -455,7 +424,7 @@ bigCommand.append(logToChatCommand("dist1 " + Double.toString(dist[0]) +
     private static class FOVisualization implements Drawable {
 
         private final List<Shape> shapes;
-        private final List<TestAWT> lines;
+        private final List<micLine> lines;
 
         public Color badLineColor = new Color(30,30,255,255);
         public Color bestLineColor = new Color(45,200,190,255);
@@ -463,18 +432,18 @@ bigCommand.append(logToChatCommand("dist1 " + Double.toString(dist[0]) +
         Color myO = new Color(0,50,255, 50);
         FOVisualization() {
             this.shapes = new ArrayList<Shape>();
-            this.lines = new ArrayList<TestAWT>();
+            this.lines = new ArrayList<micLine>();
         }
         FOVisualization(Shape ship) {
             this.shapes = new ArrayList<Shape>();
             this.shapes.add(ship);
-            this.lines = new ArrayList<TestAWT>();
+            this.lines = new ArrayList<micLine>();
         }
 
         public void add(Shape bumpable) {
             this.shapes.add(bumpable);
         }
-        public void addLine(TestAWT line){
+        public void addLine(micLine line){
             this.lines.add(line);
         }
 
@@ -497,16 +466,16 @@ bigCommand.append(logToChatCommand("dist1 " + Double.toString(dist[0]) +
                 graphics2D.fill(scaler.createTransformedShape(shape));
 
             }
-            for(TestAWT line : lines){
+            for(micLine line : lines){
                 if(line.isBestLine == true) graphics2D.setColor(bestLineColor);
                 else graphics2D.setColor(badLineColor);
 
-                Line2D.Double lineShape = new Line2D.Double(line.x1, line.y1, line.x2, line.y2);
+                Line2D.Double lineShape = new Line2D.Double(line.first, line.second);
                 graphics2D.draw(scaler.createTransformedShape(lineShape));
 
                 //create a shape in the form of the string that's needed
                 graphics2D.setFont(new Font("Arial",0,42));
-                Shape textShape = getTextShape(graphics2D, line.range, graphics2D.getFont(), true);
+                Shape textShape = getTextShape(graphics2D, line.rangeString, graphics2D.getFont(), true);
 
 //transform the textShape into place, near the center of the line
                 textShape = AffineTransform.getTranslateInstance(line.centerX, line.centerY)
@@ -530,33 +499,37 @@ bigCommand.append(logToChatCommand("dist1 " + Double.toString(dist[0]) +
             return true;
         }
     }
-    public static class TestAWT {
+    public static class micLine {
         public Boolean isBestLine = false;
-        public String range = "";
+        public String rangeString = "Range ";
+        public double pixelLength = 0.0f;
+        public int rangeLength = 0;
+        public int centerX, centerY;
+        public Point2D.Double first, second;
+        public Line2D.Double line = null;
 
-        int x1, y1, x2, y2;
-        int centerX, centerY;
+    micLine(int x1, int y1, int x2, int y2){
+        this.first = new Point2D.Double(x1, y1);
+        this.second = new Point2D.Double(x2, y2);
+        doRest();
+        }
+    micLine(Point2D.Double first, Point2D.Double second){
+        this.first = first;
+        this.second = second;
+        doRest();
+    }
+    void doRest(){
+        pixelLength = Math.sqrt(nonSRPyth(first, second));
+        rangeLength = (int)Math.ceil(pixelLength/282.5);
+        rangeString += Integer.toString(rangeLength);
+        line = new Line2D.Double(first, second);
+        calculateCenter();
+    }
 
-TestAWT(int x1, int y1, int x2, int y2){
-    this.x1 = x1;
-    this.y1 = y1;
-    this.x2 = x2;
-    this.y2 = y2;
-    calculateCenter();
-}
-TestAWT(Point2D.Double first, Point2D.Double second){
-    this.x1 = (int)first.getX();
-    this.y1 = (int)first.getY();
-    this.x2 = (int)second.getX();
-    this.y2 = (int)second.getY();
-    calculateCenter();
-
-}
-
-void calculateCenter(){
-    centerX = (int)(this.x1 + 0.5*(this.x2-this.x1));
-    centerY = (int)(this.y1 + 0.5*(this.y2-this.y1));
-}
+    void calculateCenter(){
+        centerX = (int)(this.first.getX() + 0.5*(this.second.getX()-this.first.getX()));
+        centerY = (int)(this.first.getY() + 0.5*(this.second.getY()-this.first.getY()));
+        }
     }
 
     private static class ShipPositionState {
