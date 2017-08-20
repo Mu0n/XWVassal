@@ -21,8 +21,8 @@ enum chassisInfo{
     unknown("unknown", 0.0, 0.0, 0.0, 0.0, 0.0),
     small("small", 113.0, 113.0, 9.0, 8.3296, 40.45),
     large("large", 226.0, 226.0, 10.0, 11.1650, 42.025),
-    hugeLittle("GR-75 size", 224.0, 551.0, 8.0, 11.1650, 40.45),
-    hugeBig("CR90 size", 224.0, 635.0, 8.0, 11.1650, 40.45);
+    hugeLittle("GR-75 size", 226.0, 551.0, 10.0, 11.1650, 40.45),
+    hugeBig("CR90 size", 226.0, 635.0, 10.0, 11.1650, 40.45);
 
     private final String chassisName;
     private final double width;
