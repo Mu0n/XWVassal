@@ -501,25 +501,14 @@ return innerCommand;
     private List<BumpableWithShape> findCollidingEntities(Shape myTestShape, List<BumpableWithShape> otherShapes) {
         List<BumpableWithShape> shapes = Lists.newLinkedList();
         for (BumpableWithShape otherBumpableShape : otherShapes) {
-            if (shapesOverlap(myTestShape, otherBumpableShape.shape)) {
+            if (Util.shapesOverlap(myTestShape, otherBumpableShape.shape)) {
                 shapes.add(otherBumpableShape);
             }
         }
         return shapes;
     }
 
-    /**
-     * Returns true if the two provided shapes areas have any intersection
-     *
-     * @param shape1
-     * @param shape2
-     * @return
-     */
-    private boolean shapesOverlap(Shape shape1, Shape shape2) {
-        Area a1 = new Area(shape1);
-        a1.intersect(new Area(shape2));
-        return !a1.isEmpty();
-    }
+
 
     public void draw(Graphics graphics, int i, int i1, Component component, double v) {
         this.piece.draw(graphics, i, i1, component, v);

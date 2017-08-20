@@ -1,14 +1,18 @@
 package mic;
 
+import java.awt.*;
+import java.awt.geom.*;
 import java.io.BufferedInputStream;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
 
+import VASSAL.counters.*;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
@@ -19,8 +23,6 @@ import VASSAL.build.module.GlobalOptions;
 import VASSAL.build.module.PlayerRoster;
 import VASSAL.build.widget.PieceSlot;
 import VASSAL.command.Command;
-import VASSAL.counters.GamePiece;
-import VASSAL.counters.PieceCloner;
 
 /**
  * Created by amatheny on 2/9/17.
@@ -176,6 +178,100 @@ public class Util {
     }
     public static double rotY(double x, double y, double angle){
         return Math.sin(-Math.PI*angle/180.0f)*x + Math.cos(-Math.PI*angle/180.0f)*y;
+    }
+
+    /**
+     * Returns true if the two provided shapes areas have any intersection
+     *
+     * @param shape1
+     * @param shape2
+     * @return
+     */
+    public static boolean shapesOverlap(Shape shape1, Shape shape2) {
+        Area a1 = new Area(shape1);
+        a1.intersect(new Area(shape2));
+        return !a1.isEmpty();
+    }
+    public static Shape getIntersectedShape(Shape shape1, Shape shape2){
+        Area a1 = new Area(shape1);
+        a1.intersect(new Area(shape2));
+        return a1;
+    }
+    public static boolean isLine2DOverlapShape(Line2D.Double l, Shape s){
+        double[] segment = new double[2];
+        Point2D.Double p1 = new Point2D.Double();
+        Point2D.Double p2 = new Point2D.Double();
+        PathIterator pi = s.getPathIterator(null);
+
+        pi.currentSegment(segment);
+        p1 = new Point2D.Double(segment[0], segment[1]);
+        pi.next();
+        pi.currentSegment(segment);
+        p2 = new Point2D.Double(segment[0], segment[1]);
+
+        while(!pi.isDone()) {
+            Line2D.Double l2 = new Line2D.Double(p1.getX(), p1.getY(), p2.getX(), p2.getY());
+            if(l.intersectsLine(l2)){
+                return true;
+            }
+            else {
+                p1 = new Point2D.Double(segment[0], segment[1]);
+
+                pi.next();
+                if(pi.isDone()) break;
+                pi.currentSegment(segment);
+                p2 = new Point2D.Double(segment[0], segment[1]);
+            }
+        }
+
+        return false;
+    }
+
+
+    //non square rooted Pythagoreas theorem. don't need the real pixel distance, just numbers which can be compared and are proportional to the distance
+    public static double nonSRPyth(Point first, Point second){
+        return Math.pow(first.getX()-second.getX(),2) + Math.pow(first.getY()-second.getY(),2);
+    }
+
+    public static double nonSRPyth(Point2D.Double first, Point2D.Double second){
+        return Math.pow(first.getX()-second.getX(),2) + Math.pow(first.getY()-second.getY(),2);
+    }
+
+
+    public static boolean isPointInShape(Point2D.Double pt, Shape shape) {
+        Area a = new Area(shape);
+        return a.contains(pt.getX(), pt.getY());
+    }
+
+    /**
+     * Finds raw ship mask and translates and rotates it to the current position and heading
+     * of the ship
+     *
+     * @param bumpable
+     * @return Translated ship mask
+     */
+    public static Shape getBumpableCompareShape(Decorator bumpable) {
+        Shape rawShape = getRawShape(bumpable);
+        double scaleFactor = 1.0f;
+
+        Shape transformed = AffineTransform.getScaleInstance(scaleFactor, scaleFactor).createTransformedShape(rawShape);
+
+        transformed = AffineTransform
+                .getTranslateInstance(bumpable.getPosition().getX(), bumpable.getPosition().getY())
+                .createTransformedShape(transformed);
+        FreeRotator rotator = (FreeRotator) (Decorator.getDecorator(Decorator.getOutermost(bumpable), FreeRotator.class));
+        double centerX = bumpable.getPosition().getX();
+        double centerY = bumpable.getPosition().getY();
+        transformed = AffineTransform
+                .getRotateInstance(rotator.getAngleInRadians(), centerX, centerY)
+                .createTransformedShape(transformed);
+
+        return transformed;
+    }
+
+
+    public static Shape getRawShape(Decorator bumpable) {
+        return Decorator.getDecorator(Decorator.getOutermost(bumpable), NonRectangular.class).getShape();
     }
 
     public static class XWPlayerInfo {

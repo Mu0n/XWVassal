@@ -374,35 +374,7 @@ public class ShipReposition extends Decorator implements EditablePiece {
     }
 
 
-    private Shape getRawShape(Decorator bumpable) {
-        return Decorator.getDecorator(Decorator.getOutermost(bumpable), NonRectangular.class).getShape();
-    }
 
-    /**
-     * Finds raw ship mask and translates and rotates it to the current position and heading
-     * of the ship
-     *
-     * @param bumpable
-     * @return Translated ship mask
-     */
-    private Shape getBumpableCompareShape(Decorator bumpable) {
-        Shape rawShape = getRawShape(bumpable);
-        double scaleFactor = 1.0f;
-
-        Shape transformed = AffineTransform.getScaleInstance(scaleFactor, scaleFactor).createTransformedShape(rawShape);
-
-        transformed = AffineTransform
-                .getTranslateInstance(bumpable.getPosition().getX(), bumpable.getPosition().getY())
-                .createTransformedShape(transformed);
-        FreeRotator rotator = (FreeRotator) (Decorator.getDecorator(Decorator.getOutermost(bumpable), FreeRotator.class));
-        double centerX = bumpable.getPosition().getX();
-        double centerY = bumpable.getPosition().getY();
-        transformed = AffineTransform
-                .getRotateInstance(rotator.getAngleInRadians(), centerX, centerY)
-                .createTransformedShape(transformed);
-
-        return transformed;
-    }
 
     @Override
     public Command keyEvent(KeyStroke stroke) {
@@ -512,18 +484,7 @@ public class ShipReposition extends Decorator implements EditablePiece {
         }
         return shapes;
     }
-    /**
-     * Returns true if the two provided shapes areas have any intersection
-     *
-     * @param shape1
-     * @param shape2
-     * @return
-     */
-    private boolean shapesOverlap(Shape shape1, Shape shape2) {
-        Area a1 = new Area(shape1);
-        a1.intersect(new Area(shape2));
-        return !a1.isEmpty();
-    }
+
     private List<BumpableWithShape> getBumpablesOnMap(Boolean wantShipsToo) {
 
         List<BumpableWithShape> bumpables = Lists.newArrayList();
@@ -562,7 +523,8 @@ public class ShipReposition extends Decorator implements EditablePiece {
     }
 
     private boolean isLargeShip(Decorator ship) {
-        return BumpableWithShape.getRawShape(ship).getBounds().getWidth() > 114;
+        BumpableWithShape test = new BumpableWithShape(ship, "Ship", "notimportant", "notimportant");
+        return test.chassis.getChassisName().equals("large");
     }
 
     private PieceSlot findPieceSlotByID(String gpID) {

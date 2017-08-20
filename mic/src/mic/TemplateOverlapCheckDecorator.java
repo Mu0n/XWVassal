@@ -22,6 +22,7 @@ import java.util.*;
 
 import static mic.Util.logToChat;
 import static mic.Util.logToChatWithTime;
+import static mic.Util.shapesOverlap;
 
 import VASSAL.counters.Decorator;
 import VASSAL.counters.EditablePiece;
@@ -205,19 +206,6 @@ public class TemplateOverlapCheckDecorator extends Decorator implements Editable
             }
         }
         return shapes;
-    }
-
-    /**
-     * Returns true if the two provided shapes areas have any intersection
-     *
-     * @param shape1
-     * @param shape2
-     * @return
-     */
-    private boolean shapesOverlap(Shape shape1, Shape shape2) {
-        Area a1 = new Area(shape1);
-        a1.intersect(new Area(shape2));
-        return !a1.isEmpty();
     }
 
     public void draw(Graphics graphics, int i, int i1, Component component, double v) {
