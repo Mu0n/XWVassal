@@ -523,7 +523,8 @@ public class ShipReposition extends Decorator implements EditablePiece {
     }
 
     private boolean isLargeShip(Decorator ship) {
-        return BumpableWithShape.getRawShape(ship).getBounds().getWidth() > 114;
+        BumpableWithShape test = new BumpableWithShape(ship, "Ship", "notimportant", "notimportant");
+        return test.chassis.getChassisName().equals("large");
     }
 
     private PieceSlot findPieceSlotByID(String gpID) {
