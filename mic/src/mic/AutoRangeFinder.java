@@ -194,6 +194,9 @@ private void clearVisu()
             bigCommand.append(bigAnnounceCommand);
             return bigCommand;
         }
+        else if(KeyStroke.getKeyStroke(KeyEvent.VK_D, KeyEvent.CTRL_DOWN_MASK,false).equals(stroke)){
+            if (this.fov != null && this.fov.getCount() > 0)  clearVisu();
+        }
         return piece.keyEvent(stroke);
     }
 
