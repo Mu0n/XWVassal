@@ -184,7 +184,6 @@ private void clearVisu()
                     a1.intersect(a2);
 
                     double extra = getExtraAngleDuringRectDetection(thisShip, b);
-                    logToChat("ship angle " + Double.toString(thisShip.getAngleInRadians()) + "extra " + Double.toString(extra));
                     ShapeWithText bestBand = new ShapeWithText(a1, thisShip.getAngleInRadians() + extra);
                     rfindings.add(found);
                     fov.addShapeWithText(bestBand);
