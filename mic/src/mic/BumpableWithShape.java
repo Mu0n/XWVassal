@@ -15,6 +15,37 @@ import static mic.Util.logToChat;
 /**
  * Created by mjuneau on 2017-06-08.
  */
+
+//TO DO great place to add nub to corner distance, blue line
+enum chassisInfo{
+    unknown("unknown", 0.0, 0.0, 0.0, 0.0, 0.0),
+    small("small", 113.0, 113.0, 9.0, 8.3296, 40.45),
+    large("large", 226.0, 226.0, 10.0, 11.1650, 42.025),
+    hugeLittle("GR-75 size", 224.0, 551.0, 8.0, 11.1650, 40.45),
+    hugeBig("CR90 size", 224.0, 635.0, 8.0, 11.1650, 40.45);
+
+    private final String chassisName;
+    private final double width;
+    private final double height;
+    private final double nubFudge;
+    private final double cornerToFiringArc;
+    private final double arcHalfAngle;
+
+    chassisInfo(String chassisName, double width, double height, double nubFudge, double cornerToFiringArc, double arcHalfAngle) {
+        this.chassisName = chassisName;
+        this.width = width;
+        this.height = height;
+        this.nubFudge = nubFudge;
+        this.cornerToFiringArc = cornerToFiringArc;
+        this.arcHalfAngle = arcHalfAngle;
+    }
+    public String getChassisName() { return this.chassisName; }
+    public double getWidth() { return this.width; }
+    public double getHeight() { return this.height; }
+    public double getNubFudge() { return this.nubFudge; }
+    public double getCornerToFiringArc() { return this.cornerToFiringArc; }
+    public double getArcHalfAngle() { return this.arcHalfAngle; }
+}
 public class BumpableWithShape {
     Shape shape;
     Shape rectWithNoNubs;
@@ -22,11 +53,14 @@ public class BumpableWithShape {
     String type;
     String shipName = "";
     String pilotName = "";
+    chassisInfo chassis = chassisInfo.unknown;
+    int nubAdjust = 10;
 
     BumpableWithShape(Decorator bumpable, String type, boolean wantFlip) {
         this.bumpable = bumpable;
         this.shape = wantFlip ? getBumpableCompareShapeButFlip(bumpable) : getBumpableCompareShape(bumpable);
         this.type = type;
+        this.chassis = figureOutChassis();
     }
     BumpableWithShape(Decorator bumpable, String type, String pilotName, String shipName) {
         this.bumpable = bumpable;
@@ -35,15 +69,45 @@ public class BumpableWithShape {
         this.type = type;
         this.pilotName = pilotName;
         this.shipName = shipName;
+        this.chassis = figureOutChassis();
     }
 
+    private chassisInfo figureOutChassis() {
+        Shape rawShape = getRawShape(bumpable);
+        double rawWidth = rawShape.getBounds().width;
+        double rawHeight = rawShape.getBounds().height;
+
+        chassisInfo result = chassisInfo.unknown;
+        if(Double.compare(rawWidth,chassisInfo.small.getWidth())==0) {
+            result= chassisInfo.small;
+        }
+        else if(Double.compare(rawWidth,chassisInfo.large.getWidth())==0
+                && Double.compare(rawHeight,chassisInfo.large.getHeight()+chassis.large.getNubFudge())==0) {
+            result= chassisInfo.large;
+        }
+        else if(Double.compare(rawWidth,chassisInfo.hugeLittle.getWidth())==0
+                && Double.compare(rawHeight,chassisInfo.hugeLittle.getHeight()+chassis.hugeLittle.getNubFudge())==0) result= chassisInfo.hugeLittle;
+        else if(Double.compare(rawWidth,chassisInfo.hugeBig.getWidth())==0
+                && Double.compare(rawHeight,chassisInfo.hugeBig.getHeight()+chassis.hugeBig.getNubFudge())==0) result= chassisInfo.hugeBig;
+        //logToChat("rawWidth " + Double.toString(rawWidth) + " rawHeight " + Double.toString(rawHeight) + " chassis " + result.getChassisName());
+        return result;
+    }
+
+    public chassisInfo getChassis() {
+        return chassis;
+    }
+    public double getChassisHeight(){
+        return chassis.getHeight();
+    }
+    public double getChassisWidth(){
+        return chassis.getWidth();
+    }
     public ArrayList<Point2D.Double> getVertices(){
         double angle = getAngle();
         Point center = bumpable.getPosition();
-        double halfsize = 56.5;
+        double halfsize = getChassisWidth()/2.0;
         ArrayList<Point2D.Double> vertices = new ArrayList<Point2D.Double>();
 
-        if(getRawShape(bumpable).getBounds().height > 140) halfsize = 113.0;
         //top left
         vertices.add(new Point2D.Double(Util.rotX(-halfsize, -halfsize, angle) + center.getX(),
                 Util.rotY(-halfsize, -halfsize, angle) + center.getY()));
@@ -60,25 +124,34 @@ public class BumpableWithShape {
         return vertices;
     }
 
+    //gets the firing arc edges on a ship. First 2 are on the ship (left and right), last 2 are at the end of the arc edge (left and right)
+    public ArrayList<Point2D.Double> getFiringArcEdges(){
+        double angle = getAngle();
+        Point center = bumpable.getPosition();
+        double halfsize = getChassisWidth()/2.0;
+        ArrayList<Point2D.Double> firingArcEdges = new ArrayList<Point2D.Double>();
+
+        firingArcEdges.add(new Point2D.Double(Util.rotX(-halfsize + chassis.getCornerToFiringArc(), -halfsize, angle) + center.getX(),
+                Util.rotY(-halfsize + chassis.getCornerToFiringArc(), -halfsize, angle) + center.getY()));
+        firingArcEdges.add(new Point2D.Double(Util.rotX(halfsize - chassis.getCornerToFiringArc(), -halfsize, angle) + center.getX(),
+                Util.rotY(halfsize - chassis.getCornerToFiringArc(), -halfsize, angle) + center.getY()));
+
+        double arcAngleInRad = Math.PI*chassis.getArcHalfAngle()/180.0;
+
+        firingArcEdges.add(new Point2D.Double(
+                Util.rotX(-halfsize + chassis.getCornerToFiringArc() - Math.sin(arcAngleInRad)*847.5, -halfsize - Math.cos(arcAngleInRad)*847.5, angle) + center.getX(),
+                Util.rotY(-halfsize + chassis.getCornerToFiringArc() - Math.sin(arcAngleInRad)*847.5, -halfsize - Math.cos(arcAngleInRad)*847.5, angle) + center.getY()));
+
+        firingArcEdges.add(new Point2D.Double(Util.rotX(halfsize - chassis.getCornerToFiringArc() + Math.sin(arcAngleInRad)*847.5, -halfsize - Math.cos(arcAngleInRad)*847.5, angle) + center.getX(),
+                Util.rotY(halfsize - chassis.getCornerToFiringArc() + Math.sin(arcAngleInRad)*847.5, -halfsize - Math.cos(arcAngleInRad)*847.5, angle) + center.getY()));
+
+        return firingArcEdges;
+    }
     public Shape getRectWithNoNubs() {
-        Shape rawShape = getRawShape(bumpable);
         Shape theSquare = new Rectangle2D.Double(0.0f, 0.0f, 0.0f, 0.0f);
-        //small
-        if(rawShape.getBounds().height < 140) {
-            theSquare = new Rectangle2D.Double(-56.5f, -56.5f, 113.0f, 113.0f);
-        }
-        //large
-        else if (rawShape.getBounds().height < 250) {
-            theSquare = new Rectangle2D.Double(-113.0f, -113.0f, 226.0f, 226.0f);
-        }
 
-        //GR-75 huge, Gozanti, C-ROC
-else if(rawShape.getBounds().height < 570){
-
-        }
-        //CR90, Raider
-
-        else return null;
+        double halfWidth = getChassisWidth()/2.0;
+        theSquare = new Rectangle2D.Double(-halfWidth, -halfWidth, 2.0*halfWidth, 2.0*halfWidth);
 
         if(theSquare.getBounds().getWidth() != 0.0f) {
             double centerX = bumpable.getPosition().getX();
@@ -99,12 +172,12 @@ else if(rawShape.getBounds().height < 570){
 
     }
 
-    private double getAngleInRadians(){
+    public double getAngleInRadians(){
         FreeRotator rotator = (FreeRotator) (Decorator.getDecorator(Decorator.getOutermost(bumpable), FreeRotator.class));
         return rotator.getAngleInRadians();
     }
 
-    private double getAngle(){
+    public double getAngle(){
         FreeRotator rotator = (FreeRotator) (Decorator.getDecorator(Decorator.getOutermost(bumpable), FreeRotator.class));
         return rotator.getAngle();
     }

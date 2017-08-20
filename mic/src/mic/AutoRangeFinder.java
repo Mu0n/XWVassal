@@ -3,6 +3,7 @@ package mic;
 import VASSAL.build.module.documentation.HelpFile;
 import VASSAL.build.module.map.Drawable;
 import VASSAL.command.Command;
+import VASSAL.configure.HotKeyConfigurer;
 import VASSAL.counters.*;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
@@ -15,6 +16,7 @@ import java.awt.font.FontRenderContext;
 import java.awt.font.TextAttribute;
 import java.awt.font.TextLayout;
 import java.awt.geom.*;
+import java.lang.reflect.Array;
 import java.text.AttributedString;
 import java.util.*;
 import java.util.List;
@@ -34,8 +36,9 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
     private ManeuverPaths lastManeuver = null;
     private FreeRotator myRotator = null;
     private FOVisualization fov = null;
-    private static Map<String, ManeuverPaths> keyStrokeToManeuver = ImmutableMap.<String, ManeuverPaths>builder()
-            //.put("CTRL O", ManeuverPaths.Str1)
+    private static Map<String, Integer> keyStrokeToOptions = ImmutableMap.<String, Integer>builder()
+            //.put("CTRL SHIFT F", 1)
+            .put("CTRL SHIFT L", 2)
             .build();
     private static double RANGE1 = 282.5;
     private static double RANGE2 = 565;
@@ -77,70 +80,82 @@ private void clearVisu()
     getMap().removeDrawComponent(this.fov);
     this.fov.shapes.clear();
     this.fov.lines.clear();
+    this.fov.shapesWithText.clear();
 }
+
+    private Integer getKeystrokeToOptions(KeyStroke keyStroke) {
+        String hotKey = HotKeyConfigurer.getString(keyStroke);
+        if (keyStrokeToOptions.containsKey(hotKey)) {
+            return keyStrokeToOptions.get(hotKey);
+        }
+        return null;
+    }
+
     public Command keyEvent(KeyStroke stroke) {
 
         if(this.fov == null) {
             this.fov = new FOVisualization();
         }
 
-        //Full Range Options CTRL-O
-        if (KeyStroke.getKeyStroke(KeyEvent.VK_O, KeyEvent.CTRL_DOWN_MASK,false).equals(stroke)) {
-            Command bigCommand = piece.keyEvent(stroke);
 
+        Integer whichOption =  getKeystrokeToOptions(stroke);
+
+        if (whichOption !=null && stroke.isOnKeyRelease() == false) {
+            Command bigCommand = piece.keyEvent(stroke);
+            String bigAnnounce = "*** Firing Options ";
+            boolean wantFrontFiringArc = false;
+            if(whichOption.equals(1)) wantFrontFiringArc = true;
+            else if(whichOption.equals(2)) bigAnnounce += "for Target Lock/Turrets - from ";
 
             if (this.fov != null && this.fov.getCount() > 0) {
                 clearVisu();
                 return bigCommand;
             }
-            BumpableWithShape thisShip = new BumpableWithShape(this, "Ship", false);
+            BumpableWithShape thisShip = new BumpableWithShape(this, "Ship",
+                    this.getInner().getProperty("Pilot Name").toString(), this.getInner().getProperty("Craft ID #").toString());
+
+            String fullShipName = thisShip.pilotName + "(" + thisShip.shipName + ")";
+            bigAnnounce += fullShipName + "\n";
+
+            ArrayList<rangeFindings> rfindings = new ArrayList<rangeFindings>();
+
             List<BumpableWithShape> BWS = getOtherShipsOnMap();
             for(BumpableWithShape b: BWS){
-                fov.add(b.rectWithNoNubs);
-                /*
-                double[] dist = new double[4];
-                dist[0] = nonSRPyth(this.getPosition(), new Point((int)b.getVertices()[0],(int)b.getVertices()[1]));
-                dist[1] = nonSRPyth(this.getPosition(), new Point((int)b.getVertices()[2],(int)b.getVertices()[3]));
-                dist[2] = nonSRPyth(this.getPosition(), new Point((int)b.getVertices()[4],(int)b.getVertices()[5]));
-                dist[3] = nonSRPyth(this.getPosition(), new Point((int)b.getVertices()[6],(int)b.getVertices()[7]));
-
-bigCommand.append(logToChatCommand("dist1 " + Double.toString(dist[0]) +
-        " dist2 " + Double.toString(dist[1]) +
-        " dist3 " + Double.toString(dist[2]) +
-        " dist4 " + Double.toString(dist[3])));
-
-
-                double min = Double.MAX_VALUE;
-                int bestIndex = -1;
-                myLines.clear();
-                for(int i = 0 ; i <4 ; i++){
-                    micLine toAdd = new micLine(this.getPosition().x, this.getPosition().y, (int)b.getVertices()[2*i], (int)b.getVertices()[2*i+1]);
-                    toAdd.range = "Range " + Double.toString((int)Math.ceil(Math.sqrt(nonSRPyth(this.getPosition(),new Point((int)b.getVertices()[2*i], (int)b.getVertices()[2*i+1])))/282.5f));
-                myLines.add(toAdd);
-                    if(min > dist[i]) {
-                        min = dist[i]; //min distance
-                        bestIndex = myLines.size()-1;
-                    }
-
-                }
-                logToChat("best index" + Integer.toString(bestIndex));
-                if(bestIndex != -1) myLines.get(bestIndex).isBestLine = true;
-                bigCommand.append(logToChatCommand("minimum distance " + Double.toString(min) + " sqroot " + Math.sqrt(min) + " range " + (int)Math.ceil(Math.sqrt(min)/282.5)));
-*/
                 //Preliminary check, eliminate attempt to calculate this if the target is overlapping the attacker, could lead to exception errors
-                if(isTargetOverlappingAttacker(b) == true) continue;
+                Point2D.Double A1, A2;
+                ArrayList<Point2D.Double> edges = new ArrayList<Point2D.Double>();
+                if(wantFrontFiringArc) {
+                    edges = thisShip.getFiringArcEdges();
+                    A1 = edges.get(0);
+                    A2 = edges.get(1);
+                }
+                else {
+                    A1 = findClosestVertex(thisShip, b);
+                    A2 = find2ndClosestVertex(thisShip, b);
+                }
 
-                //First check, verify that the target ship's vertices are not inside the projected rectangles from the attacker
-                if(true)
-                {//easiest case first, the best line will go from attacker's corner to target's corner
-                    Point2D.Double A1 = findClosestVertex(thisShip, b);
-                    Point2D.Double A2 = find2ndClosestVertex(thisShip, b);
+                Point2D.Double D1 = findClosestVertex(b, thisShip);
+                Point2D.Double D2 = find2ndClosestVertex(b, thisShip);
 
-                    Point2D.Double D1 = findClosestVertex(b, thisShip);
-                    Point2D.Double D2 = find2ndClosestVertex(b, thisShip);
+                micLine bestLine = findBestLine(A1, A2, D1, D2);
+                bestLine.isBestLine = true;
 
-                    micLine bestLine = findBestLine(A1, A2, D1, D2);
-                    bestLine.isBestLine = true;
+
+
+                //Test to see if it crosses the arc edge line and rejet it if so
+                if(wantFrontFiringArc && isLineCrossingArcEdge(edges, bestLine, thisShip.chassis) == true) continue;
+
+                if(shapesOverlap(thisShip.shape, b.shape)) continue;
+
+                String bShipName = b.pilotName + "(" + b.shipName + ")";
+                rangeFindings found = new rangeFindings(bestLine.rangeLength, bShipName);
+
+                //deal with the case where's there no chance of having multiple best lines first
+                if((!isTargetOutsideofRectangles(thisShip, b, true) && are90degreesAligned(thisShip, b) == false) ||
+                        isTargetOutsideofRectangles(thisShip, b, true))
+                {
+                    //TO DO: replace with a different range cap later, associated with the type of arc (for huge ships)
+                    if(bestLine.rangeLength > 3) continue;
 
                     //find if there's an obstruction
                     List<BumpableWithShape> obstructions = getObstructionsOnMap();
@@ -149,26 +164,80 @@ bigCommand.append(logToChatCommand("dist1 " + Double.toString(dist[0]) +
                         {
                             bestLine.rangeString += " obstructed";
                             fov.add(obstruction.shape);
+                            found.isObstructed = true;
                             break;
                         }
                     }
+
+                    rfindings.add(found);
                     fov.addLine(bestLine);
                 }
+                else { //multiple lines case
+                    int quickDist = (int)Math.ceil(Math.sqrt(Math.pow(A1.getX() - D1.getX(),2.0)+ Math.pow(A1.getY() - D1.getY(),2.0))/282.5);
+                    if(quickDist > 3) continue;
 
-                //verify that the target ship and attacker ship aren't of the same alignment, modulo 90 degrees
-                else if(are90degreesAligned() == false) {
-                    //second easiest case, the best line will be from a corner from the target to a point found on the attacker's edge
-                    logToChat("mild case; particular point on attacker's edge to corner on target");
-                }
-                else { //toughest case, multiple lines are possible between attacker and target
-                    logToChat("toughest case; multiple lines");
+                    Shape fromShip = findInBetweenRectangle(thisShip, b);
+                    Shape fromTarget = findInBetweenRectangle(b, thisShip);
+
+                    Area a1 = new Area(fromShip);
+                    Area a2 = new Area(fromTarget);
+                    a1.intersect(a2);
+
+                    double extra = getExtraAngleDuringRectDetection(thisShip, b);
+                    logToChat("ship angle " + Double.toString(thisShip.getAngleInRadians()) + "extra " + Double.toString(extra));
+                    ShapeWithText bestBand = new ShapeWithText(a1, thisShip.getAngleInRadians() + extra);
+                    rfindings.add(found);
+                    fov.addShapeWithText(bestBand);
                 }
             }
             getMap().addDrawComponent(fov);
+            Command bigAnnounceCommand = makeBigAnnounceCommand(bigAnnounce, rfindings);
+            bigCommand.append(bigAnnounceCommand);
             return bigCommand;
         }
         return piece.keyEvent(stroke);
+    }
 
+    private Command makeBigAnnounceCommand(String bigAnnounce, ArrayList<rangeFindings> rfindings) {
+        String range1String = "";
+        String range2String = "";
+        String range3String = "";
+
+        boolean hasR1 = false;
+        boolean hasR2 = false;
+        boolean hasR3 = false;
+
+        for(rangeFindings rf : rfindings){
+            if(rf.range == 1){
+                hasR1 = true;
+                range1String += rf.fullName + (rf.isObstructed ? " [obstructed] | " : " | ");
+            }
+            if(rf.range == 2){
+                hasR2 = true;
+                range2String += rf.fullName + (rf.isObstructed ? " [obstructed] | " : " | ");
+            }
+            if(rf.range == 3){
+                hasR3 = true;
+                range3String += rf.fullName + (rf.isObstructed ? " [obstructed] | " : " | ");
+            }
+        }
+
+        String result = bigAnnounce + (hasR1? "*** Range 1: " + range1String + "\n" : "") +
+                (hasR2? "*** Range 2: " + range2String + "\n" : "") +
+                (hasR3? "*** Range 3: " + range3String + "\n" : "");
+        if(hasR1 == false && hasR2 == false && hasR3 == false) result = "No ships in range.";
+
+        return logToChatCommand(result);
+    }
+
+    private boolean isLineCrossingArcEdge(ArrayList<Point2D.Double> edges, micLine bestLine, chassisInfo chassis) {
+//TO REDO, not good enough
+        Line2D.Double leftEdge = new Line2D.Double(edges.get(0),edges.get(2));
+        Line2D.Double rightEdge = new Line2D.Double(edges.get(1),edges.get(3));
+        Line2D.Double bestShape = new Line2D.Double(bestLine.first, bestLine.second);
+
+        if(shapesOverlap(bestShape, leftEdge) || shapesOverlap(bestShape, rightEdge)) return true;
+        else return false;
     }
 
     //this finds the line that links the attacker ship to someplace on the line formed by the closest edge of the target, using
@@ -255,9 +324,7 @@ bigCommand.append(logToChatCommand("dist1 " + Double.toString(dist[0]) +
             }
         }
         return best;
-
     }
-
 
     //FindClosestVertex: first argument is the ship for which all 4 vertices will be considered
     //second argument is the ship for which you get a vertex
@@ -311,17 +378,20 @@ bigCommand.append(logToChatCommand("dist1 " + Double.toString(dist[0]) +
         return Decorator.getDecorator(Decorator.getOutermost(bumpable), NonRectangular.class).getShape();
     }
 
-    private boolean are90degreesAligned() {
-        return false;
+    private boolean are90degreesAligned(BumpableWithShape thisShip, BumpableWithShape b) {
+        int shipAngle = Math.abs((int)thisShip.getAngle());
+        int bAngle =  Math.abs((int)b.getAngle());
+
+        while(shipAngle > 89) shipAngle -= 90;
+        while(bAngle > 89) bAngle -= 90;
+        if(shipAngle == bAngle) return true;
+        else return false;
     }
 
-    private Boolean isTargetOutsideofRectangles(BumpableWithShape targetBWS) {
-        Shape crossZone = findUnionOfRectangularExtensions();
-        ArrayList<Point2D.Double> allFourCorners = targetBWS.getVertices();
-        for(Point2D.Double vertex : allFourCorners){
-            if(isPointInShape(vertex, crossZone)) return false;
-        }
-        return true;
+
+    private Boolean isTargetOutsideofRectangles(BumpableWithShape thisShip, BumpableWithShape targetBWS, boolean wantBoost) {
+        Shape crossZone = findUnionOfRectangularExtensions(thisShip, wantBoost);
+        return !shapesOverlap(crossZone, targetBWS.shape);
     }
     public  java.util.List<BumpableWithShape> getObstructionsOnMap() {
         java.util.List<BumpableWithShape> bumpables = Lists.newArrayList();
@@ -345,31 +415,95 @@ bigCommand.append(logToChatCommand("dist1 " + Double.toString(dist[0]) +
         }
         return bumpables;
     }
-    private Shape findUnionOfRectangularExtensions() {
-        Shape rawShape = getRawShape(this);
-        double workingWidth = 226.0f;
-        if(rawShape.getBounds().getWidth() < 140.0f) workingWidth = 113.0f;
 
-        Shape frontBack = new Rectangle2D.Double(-workingWidth/2.0, -RANGE3 - workingWidth/2.0, workingWidth, 2.0*RANGE3 + workingWidth);
-        Shape leftRight = new Rectangle2D.Double(-workingWidth/2.0 - RANGE3, -workingWidth/2.0, 2.0*RANGE3+workingWidth, workingWidth);
+    private Shape findInBetweenRectangle(BumpableWithShape atk, BumpableWithShape def) {
+        double workingWidth = atk.getChassisWidth();
+        Shape front = new Rectangle2D.Double(-workingWidth/2.0, -RANGE3 - workingWidth/2.0, workingWidth, RANGE3);
+        Shape back = new Rectangle2D.Double(-workingWidth/2.0, workingWidth/2.0, workingWidth, RANGE3);
+
+        Shape left = new Rectangle2D.Double(-workingWidth/2.0 - RANGE3, -workingWidth/2.0, RANGE3, workingWidth);
+        Shape right = new Rectangle2D.Double(workingWidth/2.0, -workingWidth/2.0, RANGE3, workingWidth);
+
+        ArrayList<Shape> listShape = new ArrayList<Shape>();
+        listShape.add(front);
+        listShape.add(back);
+        listShape.add(left);
+        listShape.add(right);
+
+        double centerX = atk.bumpable.getPosition().getX();
+        double centerY = atk.bumpable.getPosition().getY();
+
+        for(Shape s : listShape){
+
+            Shape transformed = AffineTransform
+                    .getTranslateInstance(centerX, centerY)
+                    .createTransformedShape(s);
+
+            transformed = AffineTransform
+                    .getRotateInstance(atk.getAngleInRadians(), centerX, centerY)
+                    .createTransformedShape(transformed);
+            if(shapesOverlap(transformed, def.shape)) return transformed;
+        }
+        return null;
+    }
+
+    private double getExtraAngleDuringRectDetection(BumpableWithShape atk, BumpableWithShape def){
+        double workingWidth = atk.getChassisWidth();
+        Shape front = new Rectangle2D.Double(-workingWidth/2.0, -RANGE3 - workingWidth/2.0, workingWidth, RANGE3);
+        Shape back = new Rectangle2D.Double(-workingWidth/2.0, workingWidth/2.0, workingWidth, RANGE3);
+
+        Shape left = new Rectangle2D.Double(-workingWidth/2.0 - RANGE3, -workingWidth/2.0, RANGE3, workingWidth);
+        Shape right = new Rectangle2D.Double(workingWidth/2.0, -workingWidth/2.0, RANGE3, workingWidth);
+
+        ArrayList<Shape> listShape = new ArrayList<Shape>();
+        listShape.add(front);
+        listShape.add(right);
+        listShape.add(back);
+        listShape.add(left);
+
+        double centerX = atk.bumpable.getPosition().getX();
+        double centerY = atk.bumpable.getPosition().getY();
+        double extra = 90.0f;
+        for(Shape s : listShape){
+
+            Shape transformed = AffineTransform
+                    .getTranslateInstance(centerX, centerY)
+                    .createTransformedShape(s);
+
+            transformed = AffineTransform
+                    .getRotateInstance(atk.getAngleInRadians(), centerX, centerY)
+                    .createTransformedShape(transformed);
+            if(shapesOverlap(transformed, def.shape)) {
+                return Math.PI*extra/180.0;
+            }
+            extra += 90.0;
+        }
+        return 0.0;
+    }
+    private Shape findUnionOfRectangularExtensions(BumpableWithShape b, boolean superLong) {
+        Shape rawShape = BumpableWithShape.getRawShape(b.bumpable);
+        double workingWidth = b.getChassisWidth();
+        double boost = 1.0f;
+        if(superLong) boost = 30.0f;
+        Shape frontBack = new Rectangle2D.Double(-workingWidth/2.0, -boost*RANGE3 - workingWidth/2.0, workingWidth, 2.0*RANGE3*boost + workingWidth);
+        Shape leftRight = new Rectangle2D.Double(-workingWidth/2.0 - boost*RANGE3, -workingWidth/2.0, 2.0*boost*RANGE3+workingWidth, workingWidth);
 
         Area zone = new Area(frontBack);
         zone.add(new Area(leftRight));
         zone.exclusiveOr(new Area(rawShape));
 
-        double centerX = this.getPosition().getX();
-        double centerY = this.getPosition().getY();
+        double centerX = b.bumpable.getPosition().getX();
+        double centerY = b.bumpable.getPosition().getY();
 
         Shape transformed = AffineTransform
                 .getTranslateInstance(centerX, centerY)
                 .createTransformedShape(zone);
-        FreeRotator rotator = (FreeRotator) (Decorator.getDecorator(Decorator.getOutermost(this), FreeRotator.class));
 
         transformed = AffineTransform
-                .getRotateInstance(rotator.getAngleInRadians(), centerX, centerY)
+                .getRotateInstance(b.getAngleInRadians(), centerX, centerY)
                 .createTransformedShape(transformed);
 
-        fov.add(transformed);
+        //fov.add(transformed);
         return transformed;
     }
 
@@ -424,20 +558,24 @@ bigCommand.append(logToChatCommand("dist1 " + Double.toString(dist[0]) +
     private static class FOVisualization implements Drawable {
 
         private final List<Shape> shapes;
+        private final List<ShapeWithText> shapesWithText;
         private final List<micLine> lines;
 
-        public Color badLineColor = new Color(30,30,255,255);
+        public Color badLineColor = new Color(30,30,255,110);
         public Color bestLineColor = new Color(45,200,190,255);
+        public Color shipsObstaclesColor = new Color(255,99,71, 150);
 
         Color myO = new Color(0,50,255, 50);
         FOVisualization() {
             this.shapes = new ArrayList<Shape>();
             this.lines = new ArrayList<micLine>();
+            this.shapesWithText = new ArrayList<ShapeWithText>();
         }
         FOVisualization(Shape ship) {
             this.shapes = new ArrayList<Shape>();
             this.shapes.add(ship);
             this.lines = new ArrayList<micLine>();
+            this.shapesWithText = new ArrayList<ShapeWithText>();
         }
 
         public void add(Shape bumpable) {
@@ -446,7 +584,7 @@ bigCommand.append(logToChatCommand("dist1 " + Double.toString(dist[0]) +
         public void addLine(micLine line){
             this.lines.add(line);
         }
-
+        public void addShapeWithText(ShapeWithText swt){ this.shapesWithText.add(swt); }
         public int getCount() {
             int count = 0;
             Iterator<Shape> it = this.shapes.iterator();
@@ -454,17 +592,41 @@ bigCommand.append(logToChatCommand("dist1 " + Double.toString(dist[0]) +
                 count++;
                 it.next();
             }
+            Iterator<ShapeWithText> it2 = this.shapesWithText.iterator();
+            while(it2.hasNext()){
+                count++;
+                it2.next();
+            }
+            Iterator<micLine> it3 = this.lines.iterator();
+            while(it3.hasNext()){
+                count++;
+                it3.next();
+            }
             return count;
         }
         public void draw(Graphics graphics, VASSAL.build.module.Map map) {
             Graphics2D graphics2D = (Graphics2D) graphics;
-            graphics2D.setColor(myO);
+
             double scale = map.getZoom();
             AffineTransform scaler = AffineTransform.getScaleInstance(scale, scale);
 
+            graphics2D.setColor(shipsObstaclesColor);
             for (Shape shape : shapes) {
                 graphics2D.fill(scaler.createTransformedShape(shape));
 
+            }
+
+            for(ShapeWithText SWT : shapesWithText){
+                graphics2D.setColor(badLineColor);
+                graphics2D.fill(scaler.createTransformedShape(SWT.shape));
+                graphics2D.setFont(new Font("Arial",0,42));
+                graphics2D.setColor(bestLineColor);
+                Shape textShape = getTextShape(graphics2D, SWT.rangeString, graphics2D.getFont(), true);
+                textShape = AffineTransform.getTranslateInstance(SWT.x, SWT.y)
+                        .createTransformedShape(textShape);
+                textShape = AffineTransform.getScaleInstance(scale, scale)
+                        .createTransformedShape(textShape);
+                graphics2D.draw(textShape);
             }
             for(micLine line : lines){
                 if(line.isBestLine == true) graphics2D.setColor(bestLineColor);
@@ -499,6 +661,39 @@ bigCommand.append(logToChatCommand("dist1 " + Double.toString(dist[0]) +
             return true;
         }
     }
+
+    public static class ShapeWithText {
+        public String rangeString = "Range ";
+        public int rangeLength = 0;
+        public Shape shape;
+        public int x, y;
+        //angle should be the calling detection angle for the multiple best line case, but add an extra angle to account for
+        //if it's the right, left or bottom band required.
+        public double angle = 0.0;
+
+        ShapeWithText(Shape shape, double angle) {
+            this.shape = shape;
+            this.angle = angle;
+            rangeLength = (int)Math.ceil(((double)calculateRange()/282.5));
+            rangeString += Integer.toString(rangeLength);
+            this.x = shape.getBounds().x;
+            this.y = shape.getBounds().y;
+        }
+
+        private int calculateRange() {
+        Shape temp = this.shape;
+        double centerX = shape.getBounds().getCenterX();
+        double centerY = shape.getBounds().getCenterY();
+
+        //unrotate the shape so we can get the range through its width
+            temp = AffineTransform
+                    .getRotateInstance(-angle, centerX, centerY)
+                    .createTransformedShape(temp);
+
+            return (int)temp.getBounds().getWidth();
+        }
+
+    }
     public static class micLine {
         public Boolean isBestLine = false;
         public String rangeString = "Range ";
@@ -532,6 +727,23 @@ bigCommand.append(logToChatCommand("dist1 " + Double.toString(dist[0]) +
         }
     }
 
+    public static class rangeFindings {
+        public int range=0;
+        public String fullName="";
+        public boolean isObstructed=false;
+
+        rangeFindings(){}
+        rangeFindings(int range, String fullName){
+            this.fullName = fullName;
+            this.range = range;
+            this.isObstructed = false;
+        }
+        rangeFindings(int range, String fullName, boolean isObstructed){
+            this.fullName = fullName;
+            this.range = range;
+            this.isObstructed = isObstructed;
+        }
+    }
     private static class ShipPositionState {
         double x;
         double y;
