@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css?family=Roboto');
+@import url('https://fonts.googleapis.com/css?family=Roboto:300,400,700');
 @font-face {
   font-family: XWingShip;
   src: url('../fonts/xwing-miniatures-ships.ttf');
@@ -8,9 +8,10 @@
   margin: 0;
   padding: 0;
   font-family: 'Roboto', sans-serif;
+  line-height: 1.5;
 }
 html {
-  background: linear-gradient(135deg, #211032 0%, #211032 50%, #450D29 100%);
+  background: #211032 linear-gradient(135deg, #211032 0%, #211032 50%, #450D29 100%);
   background-attachment: fixed;
 }
 body {
@@ -136,14 +137,27 @@ header nav a:hover {
 .skills .sk a {
   color: white;
 }
-.about-me {
-  font-size: 1.05rem;
+.latest {
+  position: relative;
   background-color: white;
-  padding: 2rem;
   max-width: 1024px;
 }
-.about-me h2 {
-  margin: 1.5rem 0 1rem 0;
+.latest .header {
+  padding: 2rem;
+  border-bottom: 1px solid #ddd;
+}
+.latest .header h2 {
+  font-size: 2rem;
+  font-weight: 600;
+}
+.latest .header time {
+  color: #999;
+}
+.latest .content {
+  padding: 2rem;
+}
+.latest .content * + * {
+  margin-top: 20px;
 }
 @media (max-width: 1024px) {
   body {
