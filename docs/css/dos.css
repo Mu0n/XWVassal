@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css?family=Roboto:300,400,700');
+@import url('https://fonts.googleapis.com/css?family=Roboto');
 @font-face {
   font-family: XWingShip;
   src: url('../fonts/xwing-miniatures-ships.ttf');
@@ -8,10 +8,9 @@
   margin: 0;
   padding: 0;
   font-family: 'Roboto', sans-serif;
-  line-height: 1.5;
 }
 html {
-  background: #211032 linear-gradient(135deg, #211032 0%, #211032 50%, #450D29 100%);
+  background: linear-gradient(135deg, #211032 0%, #211032 50%, #450D29 100%);
   background-attachment: fixed;
 }
 body {
@@ -29,30 +28,45 @@ header {
   flex-direction: row;
   flex-wrap: wrap;
   align-items: flex-end;
+  text-align: center;
   font-weight: 100;
 }
-header .logo {
-  width: 100%;
-  text-align: center;
-  margin: 1.5rem;
-}
-header .logo:before {
-  padding: 1rem;
-  border-radius: 50%;
-  border: 3px solid white;
-  content: 'x';
-  font-family: XWingShip;
-  font-size: 13rem;
-  width: 100%;
-  height: 1px;
-}
 header .title {
-  width: 100%;
-  font-weight: 300;
+  width: 671px;
+  margin: 0 auto 20px;
+  overflow: hidden;
 }
-header .title .title-text {
-  font-size: 2.75rem;
-  display: inline-block;
+header .title-logo {
+  float: left;
+  display: block;
+  width: 268px;
+  height: 338px;
+  margin: 0;
+  background: url('../img/logo-xw-lrg.png') 0 0 no-repeat;
+  background-size: 100%;
+}
+header .title-text {
+  float: right;
+  display: block;
+  width: 363px;
+  height: 207px;
+  margin-top: 105px;
+  background: url('../img/logo-txt-lrg.png') 0 0 no-repeat;
+  background-size: 100%;
+  /* Hide the text */
+  overflow: hidden;
+  white-space: nowrap;
+  text-indent: -9999em;
+}
+@media screen and (max-width: 765px) {
+  header .title { width: 418px; }
+  header .title-logo { width: 171px; height: 216px; }
+  header .title-text { width: 227px; height: 130px; margin-top: 70px; }
+}
+@media screen and (max-width: 526px) {
+  header .title { width: 100%; }
+  header .title-logo { float: none; margin: 0 auto; }
+  header .title-text { float: none; margin: 20px auto 0; }
 }
 header a {
   color: white;
@@ -104,27 +118,14 @@ header a {
 .skills .sk a {
   color: white;
 }
-.latest {
-  position: relative;
+.about-me {
+  font-size: 1.05rem;
   background-color: white;
+  padding: 2rem;
   max-width: 1024px;
 }
-.latest .header {
-  padding: 2rem;
-  border-bottom: 1px solid #ddd;
-}
-.latest .header h2 {
-  font-size: 2rem;
-  font-weight: 600;
-}
-.latest .header time {
-  color: #999;
-}
-.latest .content {
-  padding: 2rem;
-}
-.latest .content * + * {
-  margin-top: 20px;
+.about-me h2 {
+  margin: 1.5rem 0 1rem 0;
 }
 @media (max-width: 1024px) {
   body {
