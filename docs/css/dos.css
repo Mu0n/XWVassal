@@ -43,7 +43,7 @@ header .title-logo {
   width: 268px;
   height: 338px;
   margin: 0;
-  background: url('../img/logo-xw-lrg.png') 0 0 no-repeat;
+  background: url('./img/logo-xw-lrg.png') 0 0 no-repeat;
   background-size: 100%;
 }
 header .title-text {
