@@ -11,7 +11,7 @@
   line-height: 1.5;
 }
 html {
-  background: #211032 linear-gradient(135deg, #211032 0%, #211032 50%, #450D29 100%);
+  background: #211032 linear-gradient(45deg, #211032 0%, #211032 50%, #450D29 100%);
   background-attachment: fixed;
 }
 body {
@@ -91,52 +91,83 @@ header a {
   color: white;
   margin: 0 1rem 0 0;
 }
-.skills {
+.blocks {
   width: 100%;
-  margin: 4rem 0 4rem 0;
+  margin: 4rem auto;
   max-width: 1024px;
   display: flex;
   flex-wrap: wrap;
-  justify-content: space-around;
+  justify-content: space-between;
 }
-.skills .sk {
-  line-height: 24px;
-  margin-top: 1rem;
-  text-align: center;
-  padding: 0.5rem;
-  width: 240px;
-  min-height: 310px;
+.blocks .item {
+  width: 23%;
   color: white;
-  border: 2px solid white;
-  border-radius: 3px;
+  text-align: center;
+  background: #000;
+  background: rgba(0,0,0,0.5);
+  border-radius: 5px;
+  margin-bottom: 20px;
+  padding: 1.5rem;
 }
-.skills .sk .fa {
+.blocks .fa {
   width: 100%;
-  font-size: 4rem;
+  font-size: 3rem;
   font-weight: 300;
-  margin: 1rem 0 1rem 0;
+  margin: 0 auto 10px;
+  text-align: center;
+  color: #6E518A;
 }
-.skills .sk .fa-calendar-plus-o {
+.blocks h4 {
+  font-size: 1.3rem;
+  font-weight: 800;
+  margin-bottom: 15px;
+}
+.blocks a {
+  display: block;
+  font-weight: 300;
+  text-decoration: none;
+  color: white;
+}
+.blocks a + a {
+  margin-top: 10px;
+}
+.blocks a:hover,
+.blocks a:focus {
+  color: #c5a5e5;
+  text-decoration: underline;
+}
+@media screen and (max-width: 765px) {
+  .blocks .item { width: 48%; }
+}
+@media screen and (max-width: 526px) {
+  .blocks .item { width: 100%; }
+}
+
+.blocks .fa-calendar-plus-o {
   color: #fb3;
 }
-.skills .sk .fa-file-text-o {
+.blocks .fa-file-text-o {
   color: #40AD52;
 }
-.skills .sk .fa-life-ring {
+.blocks .fa-life-ring {
   color: #EF767A;
 }
-.skills .sk .fa-list {
+.blocks .fa-list {
   color: #38AECC;
 }
-.skills .sk .fa-heartbeat {
+.blocks .fa-comments {
+  color: #A1B091;
+}
+.blocks .fa-heart {
   color: #DD0000;
 }
-.skills .sk .fa-wrench {
+.blocks .fa-wrench {
   color: #CC00CC;
 }
-.skills .sk a {
-  color: white;
+.blocks .fa-edit {
+  color: #aa6644;
 }
+
 .latest {
   position: relative;
   background-color: white;
