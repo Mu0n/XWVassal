@@ -24,6 +24,8 @@ public class XWCounterFactory extends BasicCommandEncoder {
             piece = new ShipReposition(inner);
         }else if (type.startsWith(EmptyTest.ID)) {
             piece = new EmptyTest(inner);
+        }else if (type.startsWith(MouseShipGUI.ID)) {
+            piece = new MouseShipGUI(inner);
         }else {
             piece = super.createDecorator(type, inner);
         }
