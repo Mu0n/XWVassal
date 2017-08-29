@@ -2,13 +2,13 @@ package mic;
 
 import VASSAL.build.module.documentation.HelpFile;
 import VASSAL.command.Command;
-import VASSAL.counters.Decorator;
-import VASSAL.counters.EditablePiece;
-import VASSAL.counters.GamePiece;
-import VASSAL.counters.KeyCommand;
+import VASSAL.counters.*;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 
 /**
  * Created by Mic on 09/08/2017.
@@ -17,10 +17,38 @@ import java.awt.*;
  */
 public class MouseShipGUI extends Decorator implements EditablePiece {
     public static final String ID = "MouseShipGUI";
+    private MouseEvent mEvent;
+    private MouseListener mListener;
+
 
     public MouseShipGUI(){
         this(null);
     }
+/*
+    public void addDragSource(Component var1) {
+        var1.addMouseListener(new MouseAdapter() {
+            public void mousePressed(MouseEvent var1) {
+                DragBuffer.this.lastRelease = null;
+                DragBuffer.this.dropTarget = null;
+                DragBuffer.this.dropHandler = null;
+            }
+
+            public void mouseReleased(MouseEvent var1) {
+                var1.getComponent().setCursor((Cursor)null);
+                Component var2 = (Component)var1.getSource();
+                if(DragBuffer.this.dropTarget == null) {
+                    var1.translatePoint(var2.getLocationOnScreen().x, var2.getLocationOnScreen().y);
+                    DragBuffer.this.lastRelease = var1;
+                } else {
+                    var1.translatePoint(var2.getLocationOnScreen().x, var2.getLocationOnScreen().y);
+                    var1.translatePoint(-DragBuffer.this.dropTarget.getLocationOnScreen().x, -DragBuffer.this.dropTarget.getLocationOnScreen().y);
+                    DragBuffer.this.dropHandler.mouseReleased(var1);
+                }
+
+            }
+        });
+    }
+*/
 
     public MouseShipGUI(GamePiece piece){
         setInner(piece);
