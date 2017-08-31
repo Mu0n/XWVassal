@@ -22,6 +22,8 @@
 * Small ship corner to intersection of forward arc to front edge: 8.3296 px
 * Large ship corner to intersection of forward arc to front edge: 11.1650 px
 
+Approximative bullseye arc corner to bullseye line
+* small ship: 34.24 px
 
 ## Updating the module
 
