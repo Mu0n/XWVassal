@@ -87,7 +87,7 @@ public class AnnouncementOnLog extends AbstractConfigurable {
                             Integer.parseInt(userParts[i]) : 0;
                     int onlinePart = i < onlineParts.length ?
                             Integer.parseInt(onlineParts[i]) : 0;
-                    logToChat("user " + Integer.toString(userPart) + " online " + Integer.toString(onlinePart));
+                    //logToChat("user " + Integer.toString(userPart) + " online " + Integer.toString(onlinePart));
                     if(onlinePart > userPart) {
                         isGreater = true;
                         break;
