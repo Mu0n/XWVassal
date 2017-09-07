@@ -195,3 +195,12 @@ header a {
     padding: 1rem;
   }
 }
+ul{
+  margin-left:20px;
+}
+ul ul{
+  margin-left:30px;
+}
+ul ul ul{
+  margin-left:40px;
+}
