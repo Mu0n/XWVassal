@@ -229,7 +229,7 @@ private void clearVisu()
                 (hasR2? "*** Range 2: " + range2String + "\n" : "") +
                 (hasR3? "*** Range 3: " + range3String + "\n" : "");
         if(hasR1 == false && hasR2 == false && hasR3 == false) result = "No ships in range.";
-        
+
         return logToChatCommand(result);
     }
 
