@@ -272,7 +272,7 @@ public class BombSpawner extends Decorator implements EditablePiece {
     public Command keyEvent(KeyStroke stroke) {
         //Any keystroke made on a ship will remove the orange shades
         ChangeTracker changeTracker = new ChangeTracker(this);
-        Command result = changeTracker.getChangeCommand();
+        final Command result = changeTracker.getChangeCommand();
         MoveTracker moveTracker = new MoveTracker(Decorator.getOutermost(this));
         result.append(moveTracker.getMoveCommand());
 
@@ -332,6 +332,7 @@ public class BombSpawner extends Decorator implements EditablePiece {
                                         KeyStroke deleteyourself = KeyStroke.getKeyStroke(KeyEvent.VK_D, InputEvent.CTRL_DOWN_MASK, false);
                                         Command goToHell = piece.keyEvent(deleteyourself);
                                         goToHell.execute();
+                                        GameModule.getGameModule().sendAndLog(goToHell);
                                     }
                                 } catch (Exception e) {
                                 }
@@ -342,7 +343,7 @@ public class BombSpawner extends Decorator implements EditablePiece {
                     else { //mine was dropped, no collision found
                         KeyStroke deleteyourself = KeyStroke.getKeyStroke(KeyEvent.VK_D, InputEvent.CTRL_DOWN_MASK, false);
                         Command goToHell = keyEvent(deleteyourself);
-                        goToHell.execute();
+                        result.append(goToHell);
                         return result;
                     }
 
@@ -356,7 +357,7 @@ public class BombSpawner extends Decorator implements EditablePiece {
                     result.append(placeBombCommand);
                     KeyStroke deleteyourself = KeyStroke.getKeyStroke(KeyEvent.VK_D, InputEvent.CTRL_DOWN_MASK, false);
                     Command goToHell = keyEvent(deleteyourself);
-                    goToHell.execute();
+                    result.append(goToHell);
 
                     return result;
                 } // end of dealing with a non-mine drop
