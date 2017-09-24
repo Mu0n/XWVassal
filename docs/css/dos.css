@@ -59,6 +59,13 @@ header .title-text {
   white-space: nowrap;
   text-indent: -9999em;
 }
+header .title-subtext {
+  float: right;
+  display: block;
+  width: 363px;
+  /* Hide the text */
+  white-space: nowrap;
+}
 header nav {
   width: 100%;
   text-align: center;
