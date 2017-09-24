@@ -48,6 +48,7 @@ public class Canonicalizer {
             .put("title/milleniumfalcon", "millenniumfalcon")
             .put("title/milleniumfalcon2", "millenniumfalcon-swx57")
             .put("title/adaptativeailerons", "adaptiveailerons")
+            .put("title/ghost2","ghost-swx72")
             .build();
 
     static Map<String, String> upgradeTypeFixes = ImmutableMap.<String, String>builder()
