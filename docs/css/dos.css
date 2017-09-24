@@ -62,9 +62,6 @@ header .title-text {
 header .title-subtext {
   float: right;
   display: block;
-  width: 363px;
-  /* Hide the text */
-  white-space: nowrap;
 }
 header nav {
   width: 100%;
