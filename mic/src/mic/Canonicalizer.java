@@ -19,7 +19,6 @@ public class Canonicalizer {
             .put("hansolo2", "hansolo-swx57")
             .put("chewbacca2", "chewbacca-swx57")
             .put("poedameron2", "poedameron-swx57")
-            .put("ghost2","ghost-swx72")
             .build();
 
     static Map<String, String> shipFixes = ImmutableMap.<String, String>builder()
@@ -49,6 +48,7 @@ public class Canonicalizer {
             .put("title/milleniumfalcon", "millenniumfalcon")
             .put("title/milleniumfalcon2", "millenniumfalcon-swx57")
             .put("title/adaptativeailerons", "adaptiveailerons")
+            .put("title/ghost2","ghost-swx72")
             .build();
 
     static Map<String, String> upgradeTypeFixes = ImmutableMap.<String, String>builder()
