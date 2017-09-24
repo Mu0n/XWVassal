@@ -91,6 +91,11 @@ header a {
   color: white;
   margin: 0 1rem 0 0;
 }
+header a.subtle{
+    text-decoration: none;
+    color: #fba3fb;
+    font-weight: bold;
+}
 .blocks {
   width: 100%;
   margin: 4rem auto;
