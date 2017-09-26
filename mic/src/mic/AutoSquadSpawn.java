@@ -70,6 +70,10 @@ public class AutoSquadSpawn extends AbstractConfigurable {
 
         List<GamePiece> shipBases = Lists.newArrayList();
         for (VassalXWSPilotPieces ship : pieces.getShips()) {
+
+            // flag - does this pilot have the Extra Munitions upgrade card assigned
+            boolean pilotHasExtraMunitions = false;
+
             logToChat("Spawning pilot: %s", ship.getPilotCard().getConfigureName());
             shipBases.add(ship.cloneShip());
 
@@ -91,15 +95,44 @@ public class AutoSquadSpawn extends AbstractConfigurable {
             totalDialsWidth += dialWidth;
 
             int totalUpgradeWidth = 0;
+
+            //Check to see if this pilot has extra munitions
+            for (VassalXWSPilotPieces.Upgrade tempUpgrade : ship.getUpgrades()) {
+                GamePiece tempPiece = tempUpgrade.cloneGamePiece();
+
+                if(tempPiece.getName().equalsIgnoreCase("Extra Munitions"))
+                {
+                    pilotHasExtraMunitions = true;
+                }
+
+            }
+
+            List<Point> ordinanceLocations = Lists.newArrayList(); // list of coordinates to place ordinance tokens
+            int ordinanceYOffset = 50; // Y-Offset of where to place ordinance tokens relative to the upgrade card
+
             for (VassalXWSPilotPieces.Upgrade upgrade : ship.getUpgrades()) {
                 GamePiece upgradePiece = upgrade.cloneGamePiece();
+
+                // if pilot has extra munitions, we will collect the positions of each card that can take it
+                // so we can add the tokens later
+                if(pilotHasExtraMunitions)
+                {
+                    // check to see if the upgrade card has the "disposableOrdinance" property set to true
+                    if (upgradePiece.getProperty("disposableOrdinance") != null &&
+                            (((String)upgradePiece.getProperty("disposableOrdinance")).equalsIgnoreCase("true")))
+                    {
+                        // add the coordinates to the list of ordinance token locations
+                        ordinanceLocations.add(new Point((int) startPosition.getX() + pilotWidth + totalUpgradeWidth + fudgePilotUpgradeFrontier,
+                                (int) startPosition.getY() + totalPilotHeight + ordinanceYOffset));
+                    }
+                }
+
                 spawnPiece(upgradePiece, new Point(
                                 (int) startPosition.getX() + pilotWidth + totalUpgradeWidth + fudgePilotUpgradeFrontier,
                                 (int) startPosition.getY() + totalPilotHeight),
                         playerMap);
                 totalUpgradeWidth += upgradePiece.boundingBox().getWidth();
             } //loop to next upgrade
-
 
             for (PieceSlot conditionSlot : ship.getConditions()) {
                 GamePiece conditionPiece = newPiece(conditionSlot);
@@ -118,6 +151,14 @@ public class AutoSquadSpawn extends AbstractConfigurable {
                                     (int) tlStartPosition.getY()),
                             playerMap);
                     totalTLWidth += token.boundingBox().getWidth();
+                }else if("Ordnance".equals(pieceSlot.getConfigureName()))
+                {
+                    // place the ordinance tokens
+                    for(Point aPoint : ordinanceLocations)
+                    {
+                        GamePiece ordnanceToken = newPiece(pieceSlot);
+                        spawnPiece(ordnanceToken, aPoint, playerMap);
+                    }
                 } else {
                     spawnPiece(token, new Point(
                                     (int) tokensStartPosition.getX() + totalTokenWidth,
