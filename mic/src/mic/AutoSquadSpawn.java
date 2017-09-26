@@ -144,8 +144,8 @@ public class AutoSquadSpawn extends AbstractConfigurable {
                 if(pilotHasExtraMunitions)
                 {
                     // check to see if the upgrade card has the "acceptsOrdnanceToken" property set to true
-                    if (upgradePiece.getProperty("acceptsOrnanceToken") != null &&
-                            (((String)upgradePiece.getProperty("acceptsOrnanceToken")).equalsIgnoreCase("true")))
+                    if (upgradePiece.getProperty("acceptsOrdnanceToken") != null &&
+                            (((String)upgradePiece.getProperty("acceptsOrdnanceToken")).equalsIgnoreCase("true")))
                     {
                         // add the coordinates to the list of ordnance token locations
                         ordnanceLocations.add(new Point((int) startPosition.getX() + pilotWidth + totalUpgradeWidth + fudgePilotUpgradeFrontier,
@@ -160,8 +160,8 @@ public class AutoSquadSpawn extends AbstractConfigurable {
                     // check to see if the upgrade card has the "bomb" and "acceptsOrdnanceToken" properties set to true
                     if (upgradePiece.getProperty("bomb") != null &&
                             (((String)upgradePiece.getProperty("bomb")).equalsIgnoreCase("true")) &&
-                            upgradePiece.getProperty("acceptsOrnanceToken") != null &&
-                            (((String)upgradePiece.getProperty("acceptsOrnanceToken")).equalsIgnoreCase("true")))
+                            upgradePiece.getProperty("acceptsOrdnanceToken") != null &&
+                            (((String)upgradePiece.getProperty("acceptsOrdnanceToken")).equalsIgnoreCase("true")))
                     {
                         // add three ordnance token locations
                         ordnanceLocations.add(new Point((int) startPosition.getX() + pilotWidth + totalUpgradeWidth + fudgePilotUpgradeFrontier,
@@ -182,8 +182,8 @@ public class AutoSquadSpawn extends AbstractConfigurable {
                     // check to see if the upgrade card has the "illicit" and "acceptsOrdnanceToken" property set to true
                     if (upgradePiece.getProperty("illicit") != null &&
                             (((String)upgradePiece.getProperty("illicit")).equalsIgnoreCase("true")) &&
-                            upgradePiece.getProperty("acceptsOrnanceToken") != null &&
-                            (((String)upgradePiece.getProperty("acceptsOrnanceToken")).equalsIgnoreCase("true")))
+                            upgradePiece.getProperty("acceptsOrdnanceToken") != null &&
+                            (((String)upgradePiece.getProperty("acceptsOrdnanceToken")).equalsIgnoreCase("true")))
                     {
                         // add the coordinates to the list of ordnance token locations
                         illicitLocations.add(new Point((int) startPosition.getX() + pilotWidth + totalUpgradeWidth + fudgePilotUpgradeFrontier,
