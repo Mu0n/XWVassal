@@ -77,6 +77,9 @@ public class AutoSquadSpawn extends AbstractConfigurable {
             // flag - does this pilot have the Jabba The Hutt upgrade card assigned
             boolean pilotHasJabba = false;
 
+            // flag - does this pilot have the Ordinance Silos upgrade card assigned
+            boolean pilotHasOrdinanceSilos = false;
+
             logToChat("Spawning pilot: %s", ship.getPilotCard().getConfigureName());
             shipBases.add(ship.cloneShip());
 
@@ -99,18 +102,19 @@ public class AutoSquadSpawn extends AbstractConfigurable {
 
             int totalUpgradeWidth = 0;
 
-            //Check to see if this pilot has extra munitions or Jabba
+            //Check to see if this pilot has extra munitions or Jabba or Ordinance Silos
             for (VassalXWSPilotPieces.Upgrade tempUpgrade : ship.getUpgrades()) {
                 GamePiece tempPiece = tempUpgrade.cloneGamePiece();
 
                 if(tempPiece.getName().equalsIgnoreCase("Extra Munitions"))
                 {
                     pilotHasExtraMunitions = true;
-                }
-
-                if(tempPiece.getName().equalsIgnoreCase("Jabba the Hutt"))
+                }else if(tempPiece.getName().equalsIgnoreCase("Jabba the Hutt"))
                 {
                     pilotHasJabba = true;
+                }else if(tempPiece.getName().equalsIgnoreCase("Ordnance Silos"))
+                {
+                    pilotHasOrdinanceSilos = true;
                 }
             }
 
@@ -134,6 +138,26 @@ public class AutoSquadSpawn extends AbstractConfigurable {
                         // add the coordinates to the list of ordinance token locations
                         ordinanceLocations.add(new Point((int) startPosition.getX() + pilotWidth + totalUpgradeWidth + fudgePilotUpgradeFrontier,
                                 (int) startPosition.getY() + totalPilotHeight + ordinanceYOffset));
+                    }
+                }
+
+                // if pilot has Ordinance Silos, we will collect the positions of each card that can take it
+                // so we can add the tokens later
+                if(pilotHasOrdinanceSilos)
+                {
+                    // check to see if the upgrade card has the "disposableOrdinance" property set to true
+                    if (upgradePiece.getProperty("disposableBomb") != null &&
+                            (((String)upgradePiece.getProperty("disposableBomb")).equalsIgnoreCase("true")))
+                    {
+                        // add three ordinance token locations
+                        ordinanceLocations.add(new Point((int) startPosition.getX() + pilotWidth + totalUpgradeWidth + fudgePilotUpgradeFrontier,
+                            (int) startPosition.getY() + totalPilotHeight + ordinanceYOffset));
+
+                        ordinanceLocations.add(new Point((int) startPosition.getX() + pilotWidth + totalUpgradeWidth + fudgePilotUpgradeFrontier + 5,
+                                (int) startPosition.getY() + totalPilotHeight + ordinanceYOffset +10));
+
+                        ordinanceLocations.add(new Point((int) startPosition.getX() + pilotWidth + totalUpgradeWidth + fudgePilotUpgradeFrontier + 10,
+                                (int) startPosition.getY() + totalPilotHeight + ordinanceYOffset +20));
                     }
                 }
 
