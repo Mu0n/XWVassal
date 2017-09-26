@@ -77,8 +77,8 @@ public class AutoSquadSpawn extends AbstractConfigurable {
             // flag - does this pilot have the Jabba The Hutt upgrade card assigned
             boolean pilotHasJabba = false;
 
-            // flag - does this pilot have the Ordinance Silos upgrade card assigned
-            boolean pilotHasOrdinanceSilos = false;
+            // flag - does this pilot have the  Silos upgrade card assigned
+            boolean pilotHasOrdnanceSilos = false;
 
             logToChat("Spawning pilot: %s", ship.getPilotCard().getConfigureName());
             shipBases.add(ship.cloneShip());
@@ -102,7 +102,7 @@ public class AutoSquadSpawn extends AbstractConfigurable {
 
             int totalUpgradeWidth = 0;
 
-            //Check to see if this pilot has extra munitions or Jabba or Ordinance Silos
+            //Check to see if this pilot has extra munitions or Jabba or Ordnance Silos
             for (VassalXWSPilotPieces.Upgrade tempUpgrade : ship.getUpgrades()) {
                 GamePiece tempPiece = tempUpgrade.cloneGamePiece();
 
@@ -114,12 +114,12 @@ public class AutoSquadSpawn extends AbstractConfigurable {
                     pilotHasJabba = true;
                 }else if(tempPiece.getName().equalsIgnoreCase("Ordnance Silos"))
                 {
-                    pilotHasOrdinanceSilos = true;
+                    pilotHasOrdnanceSilos = true;
                 }
             }
 
-            List<Point> ordinanceLocations = Lists.newArrayList(); // list of coordinates to place ordinance tokens
-            int ordinanceYOffset = 50; // Y-Offset of where to place ordinance tokens relative to the upgrade card
+            List<Point> ordnanceLocations = Lists.newArrayList(); // list of coordinates to place ordnance tokens
+            int ordnanceYOffset = 50; // Y-Offset of where to place ordnance tokens relative to the upgrade card
 
             List<Point> illicitLocations = Lists.newArrayList(); // list of coordinates to place illicit tokens
             int illicitYOffset = 50; // Y-Offset of where to place illicit tokens relative to the upgrade card
@@ -131,33 +131,33 @@ public class AutoSquadSpawn extends AbstractConfigurable {
                 // so we can add the tokens later
                 if(pilotHasExtraMunitions)
                 {
-                    // check to see if the upgrade card has the "disposableOrdinance" property set to true
-                    if (upgradePiece.getProperty("disposableOrdinance") != null &&
-                            (((String)upgradePiece.getProperty("disposableOrdinance")).equalsIgnoreCase("true")))
+                    // check to see if the upgrade card has the "disposableOrdnance" property set to true
+                    if (upgradePiece.getProperty("disposableOrdnance") != null &&
+                            (((String)upgradePiece.getProperty("disposableOrdnance")).equalsIgnoreCase("true")))
                     {
-                        // add the coordinates to the list of ordinance token locations
-                        ordinanceLocations.add(new Point((int) startPosition.getX() + pilotWidth + totalUpgradeWidth + fudgePilotUpgradeFrontier,
-                                (int) startPosition.getY() + totalPilotHeight + ordinanceYOffset));
+                        // add the coordinates to the list of ordnance token locations
+                        ordnanceLocations.add(new Point((int) startPosition.getX() + pilotWidth + totalUpgradeWidth + fudgePilotUpgradeFrontier,
+                                (int) startPosition.getY() + totalPilotHeight + ordnanceYOffset));
                     }
                 }
 
-                // if pilot has Ordinance Silos, we will collect the positions of each card that can take it
+                // if pilot has Ordnance Silos, we will collect the positions of each card that can take it
                 // so we can add the tokens later
-                if(pilotHasOrdinanceSilos)
+                if(pilotHasOrdnanceSilos)
                 {
-                    // check to see if the upgrade card has the "disposableOrdinance" property set to true
+                    // check to see if the upgrade card has the "disposableOrdnance" property set to true
                     if (upgradePiece.getProperty("disposableBomb") != null &&
                             (((String)upgradePiece.getProperty("disposableBomb")).equalsIgnoreCase("true")))
                     {
-                        // add three ordinance token locations
-                        ordinanceLocations.add(new Point((int) startPosition.getX() + pilotWidth + totalUpgradeWidth + fudgePilotUpgradeFrontier,
-                            (int) startPosition.getY() + totalPilotHeight + ordinanceYOffset));
+                        // add three ordnance token locations
+                        ordnanceLocations.add(new Point((int) startPosition.getX() + pilotWidth + totalUpgradeWidth + fudgePilotUpgradeFrontier,
+                            (int) startPosition.getY() + totalPilotHeight + ordnanceYOffset));
 
-                        ordinanceLocations.add(new Point((int) startPosition.getX() + pilotWidth + totalUpgradeWidth + fudgePilotUpgradeFrontier + 5,
-                                (int) startPosition.getY() + totalPilotHeight + ordinanceYOffset +10));
+                        ordnanceLocations.add(new Point((int) startPosition.getX() + pilotWidth + totalUpgradeWidth + fudgePilotUpgradeFrontier + 5,
+                                (int) startPosition.getY() + totalPilotHeight + ordnanceYOffset +10));
 
-                        ordinanceLocations.add(new Point((int) startPosition.getX() + pilotWidth + totalUpgradeWidth + fudgePilotUpgradeFrontier + 10,
-                                (int) startPosition.getY() + totalPilotHeight + ordinanceYOffset +20));
+                        ordnanceLocations.add(new Point((int) startPosition.getX() + pilotWidth + totalUpgradeWidth + fudgePilotUpgradeFrontier + 10,
+                                (int) startPosition.getY() + totalPilotHeight + ordnanceYOffset +20));
                     }
                 }
 
@@ -169,7 +169,7 @@ public class AutoSquadSpawn extends AbstractConfigurable {
                     if (upgradePiece.getProperty("disposableIllicit") != null &&
                             (((String)upgradePiece.getProperty("disposableIllicit")).equalsIgnoreCase("true")))
                     {
-                        // add the coordinates to the list of ordinance token locations
+                        // add the coordinates to the list of ordnance token locations
                         illicitLocations.add(new Point((int) startPosition.getX() + pilotWidth + totalUpgradeWidth + fudgePilotUpgradeFrontier,
                                 (int) startPosition.getY() + totalPilotHeight + illicitYOffset));
                     }
@@ -201,15 +201,15 @@ public class AutoSquadSpawn extends AbstractConfigurable {
                     totalTLWidth += token.boundingBox().getWidth();
                 }else if("Ordnance".equals(pieceSlot.getConfigureName()))
                 {
-                    // place the ordinance tokens
-                    for(Point aPoint : ordinanceLocations)
+                    // place the ordnance tokens
+                    for(Point aPoint : ordnanceLocations)
                     {
                         GamePiece ordnanceToken = newPiece(pieceSlot);
                         spawnPiece(ordnanceToken, aPoint, playerMap);
                     }
                 }else if("Illicit".equals(pieceSlot.getConfigureName()))
                 {
-                    // place the ordinance tokens
+                    // place the ordnance tokens
                     for(Point aPoint : illicitLocations)
                     {
                         GamePiece illicitToken = newPiece(pieceSlot);
