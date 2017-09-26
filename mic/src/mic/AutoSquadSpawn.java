@@ -74,6 +74,9 @@ public class AutoSquadSpawn extends AbstractConfigurable {
             // flag - does this pilot have the Extra Munitions upgrade card assigned
             boolean pilotHasExtraMunitions = false;
 
+            // flag - does this pilot have the Jabba The Hutt upgrade card assigned
+            boolean pilotHasJabba = false;
+
             logToChat("Spawning pilot: %s", ship.getPilotCard().getConfigureName());
             shipBases.add(ship.cloneShip());
 
@@ -96,7 +99,7 @@ public class AutoSquadSpawn extends AbstractConfigurable {
 
             int totalUpgradeWidth = 0;
 
-            //Check to see if this pilot has extra munitions
+            //Check to see if this pilot has extra munitions or Jabba
             for (VassalXWSPilotPieces.Upgrade tempUpgrade : ship.getUpgrades()) {
                 GamePiece tempPiece = tempUpgrade.cloneGamePiece();
 
@@ -105,10 +108,17 @@ public class AutoSquadSpawn extends AbstractConfigurable {
                     pilotHasExtraMunitions = true;
                 }
 
+                if(tempPiece.getName().equalsIgnoreCase("Jabba the Hutt"))
+                {
+                    pilotHasJabba = true;
+                }
             }
 
             List<Point> ordinanceLocations = Lists.newArrayList(); // list of coordinates to place ordinance tokens
             int ordinanceYOffset = 50; // Y-Offset of where to place ordinance tokens relative to the upgrade card
+
+            List<Point> illicitLocations = Lists.newArrayList(); // list of coordinates to place illicit tokens
+            int illicitYOffset = 50; // Y-Offset of where to place illicit tokens relative to the upgrade card
 
             for (VassalXWSPilotPieces.Upgrade upgrade : ship.getUpgrades()) {
                 GamePiece upgradePiece = upgrade.cloneGamePiece();
@@ -124,6 +134,20 @@ public class AutoSquadSpawn extends AbstractConfigurable {
                         // add the coordinates to the list of ordinance token locations
                         ordinanceLocations.add(new Point((int) startPosition.getX() + pilotWidth + totalUpgradeWidth + fudgePilotUpgradeFrontier,
                                 (int) startPosition.getY() + totalPilotHeight + ordinanceYOffset));
+                    }
+                }
+
+                // if pilot has Jabba the Hutt, we will collect the positions of each card that can take illicit tokens
+                // so we can add the tokens later
+                if(pilotHasJabba)
+                {
+                    // check to see if the upgrade card has the "disposableIllicit" property set to true
+                    if (upgradePiece.getProperty("disposableIllicit") != null &&
+                            (((String)upgradePiece.getProperty("disposableIllicit")).equalsIgnoreCase("true")))
+                    {
+                        // add the coordinates to the list of ordinance token locations
+                        illicitLocations.add(new Point((int) startPosition.getX() + pilotWidth + totalUpgradeWidth + fudgePilotUpgradeFrontier,
+                                (int) startPosition.getY() + totalPilotHeight + illicitYOffset));
                     }
                 }
 
@@ -158,6 +182,14 @@ public class AutoSquadSpawn extends AbstractConfigurable {
                     {
                         GamePiece ordnanceToken = newPiece(pieceSlot);
                         spawnPiece(ordnanceToken, aPoint, playerMap);
+                    }
+                }else if("Illicit".equals(pieceSlot.getConfigureName()))
+                {
+                    // place the ordinance tokens
+                    for(Point aPoint : illicitLocations)
+                    {
+                        GamePiece illicitToken = newPiece(pieceSlot);
+                        spawnPiece(illicitToken, aPoint, playerMap);
                     }
                 } else {
                     spawnPiece(token, new Point(
