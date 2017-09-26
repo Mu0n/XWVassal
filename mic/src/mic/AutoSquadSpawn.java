@@ -143,9 +143,9 @@ public class AutoSquadSpawn extends AbstractConfigurable {
                 // so we can add the tokens later
                 if(pilotHasExtraMunitions)
                 {
-                    // check to see if the upgrade card has the "disposableOrdnance" property set to true
-                    if (upgradePiece.getProperty("disposableOrdnance") != null &&
-                            (((String)upgradePiece.getProperty("disposableOrdnance")).equalsIgnoreCase("true")))
+                    // check to see if the upgrade card has the "acceptsOrdnanceToken" property set to true
+                    if (upgradePiece.getProperty("acceptsOrnanceToken") != null &&
+                            (((String)upgradePiece.getProperty("acceptsOrnanceToken")).equalsIgnoreCase("true")))
                     {
                         // add the coordinates to the list of ordnance token locations
                         ordnanceLocations.add(new Point((int) startPosition.getX() + pilotWidth + totalUpgradeWidth + fudgePilotUpgradeFrontier,
@@ -157,9 +157,11 @@ public class AutoSquadSpawn extends AbstractConfigurable {
                 // so we can add the tokens later
                 if(pilotHasOrdnanceSilos)
                 {
-                    // check to see if the upgrade card has the "disposableOrdnance" property set to true
-                    if (upgradePiece.getProperty("disposableBomb") != null &&
-                            (((String)upgradePiece.getProperty("disposableBomb")).equalsIgnoreCase("true")))
+                    // check to see if the upgrade card has the "bomb" and "acceptsOrdnanceToken" properties set to true
+                    if (upgradePiece.getProperty("bomb") != null &&
+                            (((String)upgradePiece.getProperty("bomb")).equalsIgnoreCase("true")) &&
+                            upgradePiece.getProperty("acceptsOrnanceToken") != null &&
+                            (((String)upgradePiece.getProperty("acceptsOrnanceToken")).equalsIgnoreCase("true")))
                     {
                         // add three ordnance token locations
                         ordnanceLocations.add(new Point((int) startPosition.getX() + pilotWidth + totalUpgradeWidth + fudgePilotUpgradeFrontier,
@@ -177,9 +179,11 @@ public class AutoSquadSpawn extends AbstractConfigurable {
                 // so we can add the tokens later
                 if(squadHasJabba)
                 {
-                    // check to see if the upgrade card has the "disposableIllicit" property set to true
-                    if (upgradePiece.getProperty("disposableIllicit") != null &&
-                            (((String)upgradePiece.getProperty("disposableIllicit")).equalsIgnoreCase("true")))
+                    // check to see if the upgrade card has the "illicit" and "acceptsOrdnanceToken" property set to true
+                    if (upgradePiece.getProperty("illicit") != null &&
+                            (((String)upgradePiece.getProperty("illicit")).equalsIgnoreCase("true")) &&
+                            upgradePiece.getProperty("acceptsOrnanceToken") != null &&
+                            (((String)upgradePiece.getProperty("acceptsOrnanceToken")).equalsIgnoreCase("true")))
                     {
                         // add the coordinates to the list of ordnance token locations
                         illicitLocations.add(new Point((int) startPosition.getX() + pilotWidth + totalUpgradeWidth + fudgePilotUpgradeFrontier,
