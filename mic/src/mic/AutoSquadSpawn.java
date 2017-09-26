@@ -69,13 +69,31 @@ public class AutoSquadSpawn extends AbstractConfigurable {
         int totalTLWidth = 0;
 
         List<GamePiece> shipBases = Lists.newArrayList();
+
+        // check to see if any pilot in the squad has Jabba the Hutt equipped
+
+        // flag - does this pilot have the Jabba The Hutt upgrade card assigned
+        boolean squadHasJabba = false;
+
+        for (VassalXWSPilotPieces ship : pieces.getShips()) {
+            for (VassalXWSPilotPieces.Upgrade tempUpgrade : ship.getUpgrades()) {
+                GamePiece tempPiece = tempUpgrade.cloneGamePiece();
+
+                if(tempPiece.getName().equalsIgnoreCase("Jabba the Hutt")) {
+                    squadHasJabba = true;
+                    break;
+                }
+            }
+        }
+
+        List<Point> illicitLocations = Lists.newArrayList(); // list of coordinates to place illicit tokens
+        int illicitYOffset = 50; // Y-Offset of where to place illicit tokens relative to the upgrade card
+        PieceSlot illicitPieceSlot = null;
+
         for (VassalXWSPilotPieces ship : pieces.getShips()) {
 
             // flag - does this pilot have the Extra Munitions upgrade card assigned
             boolean pilotHasExtraMunitions = false;
-
-            // flag - does this pilot have the Jabba The Hutt upgrade card assigned
-            boolean pilotHasJabba = false;
 
             // flag - does this pilot have the  Silos upgrade card assigned
             boolean pilotHasOrdnanceSilos = false;
@@ -102,18 +120,13 @@ public class AutoSquadSpawn extends AbstractConfigurable {
 
             int totalUpgradeWidth = 0;
 
-            //Check to see if this pilot has extra munitions or Jabba or Ordnance Silos
+            //Check to see if this pilot has extra munitions or Ordnance Silos
             for (VassalXWSPilotPieces.Upgrade tempUpgrade : ship.getUpgrades()) {
                 GamePiece tempPiece = tempUpgrade.cloneGamePiece();
 
-                if(tempPiece.getName().equalsIgnoreCase("Extra Munitions"))
-                {
+                if(tempPiece.getName().equalsIgnoreCase("Extra Munitions")) {
                     pilotHasExtraMunitions = true;
-                }else if(tempPiece.getName().equalsIgnoreCase("Jabba the Hutt"))
-                {
-                    pilotHasJabba = true;
-                }else if(tempPiece.getName().equalsIgnoreCase("Ordnance Silos"))
-                {
+                }else if(tempPiece.getName().equalsIgnoreCase("Ordnance Silos")) {
                     pilotHasOrdnanceSilos = true;
                 }
             }
@@ -121,8 +134,7 @@ public class AutoSquadSpawn extends AbstractConfigurable {
             List<Point> ordnanceLocations = Lists.newArrayList(); // list of coordinates to place ordnance tokens
             int ordnanceYOffset = 50; // Y-Offset of where to place ordnance tokens relative to the upgrade card
 
-            List<Point> illicitLocations = Lists.newArrayList(); // list of coordinates to place illicit tokens
-            int illicitYOffset = 50; // Y-Offset of where to place illicit tokens relative to the upgrade card
+
 
             for (VassalXWSPilotPieces.Upgrade upgrade : ship.getUpgrades()) {
                 GamePiece upgradePiece = upgrade.cloneGamePiece();
@@ -161,9 +173,9 @@ public class AutoSquadSpawn extends AbstractConfigurable {
                     }
                 }
 
-                // if pilot has Jabba the Hutt, we will collect the positions of each card that can take illicit tokens
+                // if squad has Jabba the Hutt, we will collect the positions of each card that can take illicit tokens
                 // so we can add the tokens later
-                if(pilotHasJabba)
+                if(squadHasJabba)
                 {
                     // check to see if the upgrade card has the "disposableIllicit" property set to true
                     if (upgradePiece.getProperty("disposableIllicit") != null &&
@@ -209,12 +221,8 @@ public class AutoSquadSpawn extends AbstractConfigurable {
                     }
                 }else if("Illicit".equals(pieceSlot.getConfigureName()))
                 {
-                    // place the ordnance tokens
-                    for(Point aPoint : illicitLocations)
-                    {
-                        GamePiece illicitToken = newPiece(pieceSlot);
-                        spawnPiece(illicitToken, aPoint, playerMap);
-                    }
+                    // just store the illicit piece slot.
+                    illicitPieceSlot = pieceSlot;
                 } else {
                     spawnPiece(token, new Point(
                                     (int) tokensStartPosition.getX() + totalTokenWidth,
@@ -224,6 +232,13 @@ public class AutoSquadSpawn extends AbstractConfigurable {
                 }
             }// loop to next token*/
         } //loop to next pilot
+
+        // place the illicit tokens throughout the squad
+        for(Point aPoint : illicitLocations)
+        {
+            GamePiece illicitToken = newPiece(illicitPieceSlot);
+            spawnPiece(illicitToken, aPoint, playerMap);
+        }
         UserInformer.informUser();
 
         int shipBaseX = (int) dialstartPosition.getX() + totalDialsWidth - 30;
