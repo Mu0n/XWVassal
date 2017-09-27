@@ -71,7 +71,7 @@ public enum Tokens {
     initiative,
     ordnance(
             none,
-            Lists.newArrayList("extramunitions"),
+            Lists.newArrayList("extramunitions", "ordnancesilos"),
             none
     ),
     tractorbeam(
