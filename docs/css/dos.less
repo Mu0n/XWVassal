@@ -1,131 +1,259 @@
-@import url('https://fonts.googleapis.com/css?family=Roboto');
-
+@import "https://fonts.googleapis.com/css?family=Roboto:300,400,700";
 @font-face {
-  font-family: XWingShip;
-  src: url('../fonts/xwing-miniatures-ships.ttf');
+	font-family: XWingShip;
+	src: url('../fonts/xwing-miniatures-ships.ttf');
 }
-
 * {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-    font-family: 'Roboto', sans-serif;
+	box-sizing: border-box;
+	margin: 0;
+	padding: 0;
+	font-family: 'Roboto', sans-serif;
+	line-height: 1.5;
+}
+html {
+	background: #211032 linear-gradient(45deg, #211032 0%, #211032 50%, #450D29 100%);
+	background-attachment: fixed;
+}
+body {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	padding-bottom: 4rem;
+}
+header {
+	color: white;
+	width: 100%;
+	padding: 2rem 0 0 0;
+	max-width: 1024px;
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+	align-items: flex-end;
+	font-weight: 100;
+	.title {
+		overflow: hidden;
+		display: flex;
+        margin-bottom: 2rem;
+		.title-box {
+			display: flex;
+			flex-direction: column;
+            padding: 0 0 0 4rem;
+		}
+	}
+	.title-logo {
+		display: block;
+		width: 268px;
+		height: 338px;
+		margin: 0;
+		background: url('../img/logo-xw-lrg.png') 0 0 no-repeat;
+		background-size: 100%;
+	}
+	.title-text {
+		display: block;
+		width: 363px;
+		height: 207px;
+		margin-top: 105px;
+		background: url('../img/logo-txt-lrg.png') 0 0 no-repeat;
+		background-size: 100%;
+		overflow: hidden;
+		white-space: nowrap;
+		text-indent: -9999em;
+	}
+	.title-subtext {
+		display: block;
+	}
+	nav {
+		width: 100%;
+		text-align: center;
+		a {
+			display: inline-block;
+			text-decoration: none;
+			background: #442C5B;
+			box-shadow: 0 3px 0 0 rgba(0, 0, 0, 0.6);
+			border-radius: 3px;
+			line-height: 40px;
+			padding: 0 20px;
+			margin: 5px;
+			&:focus {
+				background: #6E518A;
+			}
+			&:hover {
+				background: #6E518A;
+			}
+		}
+	}
+	a {
+		color: white;
+		margin: 0 1rem 0 0;
+	}
+	a.subtle {
+		text-decoration: none;
+		color: #fba3fb;
+		font-weight: bold;
+	}
+}
+.blocks {
+	width: 100%;
+	margin: 4rem auto;
+	max-width: 1024px;
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: space-between;
+	.item {
+		width: 23%;
+		color: white;
+		text-align: center;
+		background: #000;
+		background: rgba(0, 0, 0, 0.5);
+		border-radius: 5px;
+		margin-bottom: 20px;
+		padding: 1.5rem;
+	}
+	.fa {
+		width: 100%;
+		font-size: 3rem;
+		font-weight: 300;
+		margin: 0 auto 10px;
+		text-align: center;
+		color: #6E518A;
+	}
+	h4 {
+		font-size: 1.3rem;
+		font-weight: 800;
+		margin-bottom: 15px;
+	}
+	a {
+		display: block;
+		font-weight: 300;
+		text-decoration: none;
+		color: white;
+		&:hover {
+			color: #c5a5e5;
+			text-decoration: underline;
+		}
+		&:focus {
+			color: #c5a5e5;
+			text-decoration: underline;
+		}
+	}
+	a+a {
+		margin-top: 10px;
+	}
+	.fa-calendar-plus-o {
+		color: #fb3;
+	}
+	.fa-file-text-o {
+		color: #40AD52;
+	}
+	.fa-life-ring {
+		color: #EF767A;
+	}
+	.fa-list {
+		color: #38AECC;
+	}
+	.fa-comments {
+		color: #A1B091;
+	}
+	.fa-heart {
+		color: #DD0000;
+	}
+	.fa-wrench {
+		color: #CC00CC;
+	}
+	.fa-edit {
+		color: #aa6644;
+	}
 }
 
-@brown-red: #450D29;
-@blue: #211032;
-
-html{
-    background: linear-gradient(135deg, @blue 0%, @blue 50%, @brown-red 100%);
-    background-attachment: fixed;
+.latest {
+	position: relative;
+	background-color: white;
+	max-width: 1024px;
+	.content {
+		padding: 2rem;
+		*+* {
+			margin-top: 20px;
+		}
+	}
 }
 
-body{
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding-bottom: 4rem;
+ul {
+	margin-left: 20px;
+	ul {
+		margin-left: 30px;
+		ul {
+			margin-left: 40px;
+		}
+	}
 }
 
-header{
-    color: white;
-    width: 100%;
-    padding: 2rem 0 0 0;
-    max-width: 1024px;
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    align-items: flex-end;
-    font-weight: 100;
-
-    .logo{
-        width: 100%;
-        text-align: center;
-        margin: 1.5rem;
-        &:before{
-            padding: 1rem;
-            border-radius: 50%;
-            border: 3px solid white;
-            content:'x';
-            font-family: XWingShip;
-            font-size: 13rem;
-            width: 100%;
-            height: 1px;
-        }
-    }
-    .title {
-        width: 100%;
-        font-weight: 300;
-
-        .title-text{
-            font-size: 2.75rem;
-            display: inline-block;
-        }
-    }
-
-    a{
-        color: white;
-        margin: 0 1rem 0 0;
-    }
-}
-
-.skills{
-    width: 100%;
-    margin: 4rem 0 4rem 0;
-    max-width: 1024px;
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-around;
-    .sk{
-        line-height: 24px;
-        margin-top: 1rem;
-        .fa{
-            width: 100%;
-            font-size: 4rem;
-            font-weight: 300;
-            margin: 1rem 0 1rem 0;
-        }
-
-        .fa-calendar-plus-o{
-            color: #fb3;
-        }
-        .fa-file-text-o{
-            color: #40AD52;
-        }
-
-        .fa-life-ring{
-            color: #EF767A;
-        }
-
-        .fa-list{
-            color: #38AECC;
-        }
-
-        a{
-            color: white;
-        }
-        text-align: center;
-        padding: 0.5rem;
-        width: 240px;
-        min-height: 310px;
-        color: white;
-        border: 2px solid white;
-        border-radius: 3px;
-    }
-}
-
-.about-me{
-    h2{
-        margin: 1.5rem 0 1rem 0;
-    }
-    font-size: 1.05rem;
-    background-color: white;
+.header {
     padding: 2rem;
-    max-width: 1024px;
+    border-bottom: 1px solid #ddd;
+    h2 {
+        font-size: 2rem;
+        font-weight: 600;
+    }
+    time {
+        color: #999;
+    }
 }
 
-@media (max-width: 1024px){
-    body{
-        padding: 1rem;
-    }
-} 
+
+.sponsors {
+	background: white;
+    width: 100%;
+    max-width: 1024px;
+    margin-bottom: 2rem;
+    padding: 2rem;
+    text-align: center;
+	.header {
+		border-bottom: 1px solid #ddd;
+	}
+}
+@media screen and (max-width: 765px) {
+	header {
+		.title {
+			width: 418px;
+		}
+		.title-logo {
+			width: 171px;
+			height: 216px;
+		}
+		.title-text {
+			width: 227px;
+			height: 130px;
+			margin-top: 70px;
+		}
+	}
+	.blocks {
+		.item {
+			width: 48%;
+		}
+	}
+}
+@media screen and (max-width: 526px) {
+	header {
+		.title {
+			width: 100%;
+		}
+		.title-logo {
+			float: none;
+			margin: 0 auto;
+		}
+		.title-text {
+			float: none;
+			margin: 20px auto 0;
+		}
+	}
+	.blocks {
+		.item {
+			width: 100%;
+		}
+	}
+}
+@media (max-width: 1024px) {
+	body {
+		padding: 1rem;
+	}
+}
