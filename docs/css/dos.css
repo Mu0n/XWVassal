@@ -58,10 +58,9 @@ header .title-text {
   overflow: hidden;
   white-space: nowrap;
   text-indent: -9999em;
+  margin-bottom: 10px;
 }
 header .title-subtext {
-  float: right;
-  display: block;
 }
 header nav {
   width: 100%;
@@ -90,7 +89,9 @@ header nav a:hover {
   header .title { width: 100%; }
   header .title-logo { float: none; margin: 0 auto; }
   header .title-text { float: none; margin: 20px auto 0; }
+  header .title-subtext{ float: none; }
 }
+
 header a {
   color: white;
   margin: 0 1rem 0 0;
