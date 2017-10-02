@@ -38,7 +38,7 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
     private FreeRotator myRotator = null;
     private FOVisualization fov = null;
     private static Map<String, Integer> keyStrokeToOptions = ImmutableMap.<String, Integer>builder()
-            //.put("CTRL SHIFT F", 1)
+            .put("CTRL SHIFT F", 1)
             .put("CTRL SHIFT L", 2)
             .build();
     private static double RANGE1 = 282.5;
@@ -105,7 +105,10 @@ private void clearVisu()
             Command bigCommand = piece.keyEvent(stroke);
             String bigAnnounce = "*** Firing Options ";
             boolean wantFrontFiringArc = false;
-            if(whichOption.equals(1)) wantFrontFiringArc = true;
+            if(whichOption.equals(1)) {
+                wantFrontFiringArc = true;
+                bigAnnounce += "for the primary arc - from ";
+            }
             else if(whichOption.equals(2)) bigAnnounce += "for Target Lock/Turrets - from ";
 
             if (this.fov != null && this.fov.getCount() > 0) {
@@ -123,6 +126,9 @@ private void clearVisu()
             List<BumpableWithShape> BWS = getOtherShipsOnMap();
             for(BumpableWithShape b: BWS){
                 //Preliminary check, eliminate attempt to calculate this if the target is overlapping the attacker, could lead to exception errors
+                //TO DO:
+
+                
                 Point2D.Double A1, A2;
                 ArrayList<Point2D.Double> edges = new ArrayList<Point2D.Double>();
                 if(wantFrontFiringArc) {
