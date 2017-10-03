@@ -125,10 +125,9 @@ private void clearVisu()
 
             List<BumpableWithShape> BWS = getOtherShipsOnMap();
             for(BumpableWithShape b: BWS){
-                //Preliminary check, eliminate attempt to calculate this if the target is overlapping the attacker, could lead to exception errors
-                //TO DO:
+                //TO DO: Preliminary check, eliminate attempt to calculate this if the target is overlapping the attacker, could lead to exception error
 
-                
+
                 Point2D.Double A1, A2;
                 ArrayList<Point2D.Double> edges = new ArrayList<Point2D.Double>();
                 if(wantFrontFiringArc) {
@@ -144,12 +143,15 @@ private void clearVisu()
                 Point2D.Double D1 = findClosestVertex(b, thisShip);
                 Point2D.Double D2 = find2ndClosestVertex(b, thisShip);
 
+
+                //TO DO: special case, D1 and D2 might not be a vertex on the target, but instead an intermediate point on some edge of the ship.
+
                 micLine bestLine = findBestLine(A1, A2, D1, D2);
                 bestLine.isBestLine = true;
 
 
 
-                //Test to see if it crosses the arc edge line and rejet it if so
+                //Test to see if it crosses the arc edge line and reject it if so
                 if(wantFrontFiringArc && isLineCrossingArcEdge(edges, bestLine, thisShip.chassis) == true) continue;
 
                 if(shapesOverlap(thisShip.shape, b.shape)) continue;

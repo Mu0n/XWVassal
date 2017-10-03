@@ -142,7 +142,8 @@ public class BumpableWithShape {
                 Util.rotX(-halfsize + chassis.getCornerToFiringArc() - Math.sin(arcAngleInRad)*847.5, -halfsize - Math.cos(arcAngleInRad)*847.5, angle) + center.getX(),
                 Util.rotY(-halfsize + chassis.getCornerToFiringArc() - Math.sin(arcAngleInRad)*847.5, -halfsize - Math.cos(arcAngleInRad)*847.5, angle) + center.getY()));
 
-        firingArcEdges.add(new Point2D.Double(Util.rotX(halfsize - chassis.getCornerToFiringArc() + Math.sin(arcAngleInRad)*847.5, -halfsize - Math.cos(arcAngleInRad)*847.5, angle) + center.getX(),
+        firingArcEdges.add(new Point2D.Double(
+                Util.rotX(halfsize - chassis.getCornerToFiringArc() + Math.sin(arcAngleInRad)*847.5, -halfsize - Math.cos(arcAngleInRad)*847.5, angle) + center.getX(),
                 Util.rotY(halfsize - chassis.getCornerToFiringArc() + Math.sin(arcAngleInRad)*847.5, -halfsize - Math.cos(arcAngleInRad)*847.5, angle) + center.getY()));
 
         return firingArcEdges;
