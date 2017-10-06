@@ -133,6 +133,7 @@ private void clearVisu()
                 //Preliminary check, eliminate attempt to calculate this if the target is overlapping the attacker, could lead to exception error
                 if(shapesOverlap(thisShip.shape, b.shape)) continue;
 
+                figureOutAutoRange(whichOption, b);
                 //Figure out which best 2 points will be used on the attacker, A1 and A2
 
                 if(whichOption != 2) edges = thisShip.getFiringArcEdges(whichOption, 3); //TO DO: take into account huge ships eventually; not needed if you're checking turret/TL
@@ -201,6 +202,10 @@ private void clearVisu()
             if (this.fov != null && this.fov.getCount() > 0)  clearVisu();
         }
         return piece.keyEvent(stroke);
+    }
+
+    private void figureOutAutoRange(int whichOption, BumpableWithShape b) {
+        //should do the legwork here
     }
 
     private void prepAnnouncementEnd() {
