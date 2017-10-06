@@ -125,29 +125,79 @@ public class BumpableWithShape {
     }
 
     //gets the firing arc edges on a ship. First 2 are on the ship (left and right), last 2 are at the end of the arc edge (left and right)
-    public ArrayList<Point2D.Double> getFiringArcEdges(){
+    //Use these points to reject a best (shortest) autorange firing line if it crosses these edges; eg a ship that could be in turret range 1 but it out of arc
+    public ArrayList<Point2D.Double> getFiringArcEdges(int whichOption, int maxRange){
+
+        //whichOption: 1 = primary arc; 3 = front aux arcs; 4 = back aux arc; 5 = mobile side arc
+        //common to any arc requested
+        double pixelMaxRange = maxRange * 282.5f;
         double angle = getAngle();
         Point center = bumpable.getPosition();
         double halfsize = getChassisWidth()/2.0;
-        ArrayList<Point2D.Double> firingArcEdges = new ArrayList<Point2D.Double>();
+        ArrayList<Point2D.Double> firingArcEdgePoints = new ArrayList<Point2D.Double>();
+        double firstStartX = 0.0, firstStartY = 0.0, secondStartX = 0.0, secondStartY = 0.0; //used to get from center to a ship's arc start point
+        double firstEndX = 0.0, firstEndY = 0.0, secondEndX = 0.0, secondEndY = 0.0; //used to get the end of the arc lines
 
-        firingArcEdges.add(new Point2D.Double(Util.rotX(-halfsize + chassis.getCornerToFiringArc(), -halfsize, angle) + center.getX(),
-                Util.rotY(-halfsize + chassis.getCornerToFiringArc(), -halfsize, angle) + center.getY()));
-        firingArcEdges.add(new Point2D.Double(Util.rotX(halfsize - chassis.getCornerToFiringArc(), -halfsize, angle) + center.getX(),
-                Util.rotY(halfsize - chassis.getCornerToFiringArc(), -halfsize, angle) + center.getY()));
+        double arcAngleInRad = Math.PI*chassis.getArcHalfAngle()/180.0; //half angle of the arc being used TO DO: get the proper mobile turret arc angle, front aux arc, etc or just ignore it inside the switch
 
-        double arcAngleInRad = Math.PI*chassis.getArcHalfAngle()/180.0;
+        //specific to the arc type, in local ship coordinates assuming it's facing up. x axis goes to right, y axis goes to bottom
+        switch(whichOption)
+        {
+            case 1: //primary arc
+                firstStartX = -halfsize + chassis.getCornerToFiringArc();
+                firstStartY = -halfsize;
+                secondStartX = halfsize - chassis.getCornerToFiringArc();
+                secondStartY = firstStartY;
 
-        firingArcEdges.add(new Point2D.Double(
-                Util.rotX(-halfsize + chassis.getCornerToFiringArc() - Math.sin(arcAngleInRad)*847.5, -halfsize - Math.cos(arcAngleInRad)*847.5, angle) + center.getX(),
-                Util.rotY(-halfsize + chassis.getCornerToFiringArc() - Math.sin(arcAngleInRad)*847.5, -halfsize - Math.cos(arcAngleInRad)*847.5, angle) + center.getY()));
+                firstEndX = - Math.sin(arcAngleInRad)*pixelMaxRange;
+                firstEndY = - Math.cos(arcAngleInRad)*pixelMaxRange;
 
-        firingArcEdges.add(new Point2D.Double(
-                Util.rotX(halfsize - chassis.getCornerToFiringArc() + Math.sin(arcAngleInRad)*847.5, -halfsize - Math.cos(arcAngleInRad)*847.5, angle) + center.getX(),
-                Util.rotY(halfsize - chassis.getCornerToFiringArc() + Math.sin(arcAngleInRad)*847.5, -halfsize - Math.cos(arcAngleInRad)*847.5, angle) + center.getY()));
+                secondEndX = Math.sin(arcAngleInRad)*pixelMaxRange;
+                secondEndY = firstEndY;
+                break;
+            case 4: //back aux arc
+                firstStartX = -halfsize + chassis.getCornerToFiringArc();
+                firstStartY = halfsize;
+                secondStartX = halfsize - chassis.getCornerToFiringArc();
+                secondStartY = halfsize;
 
-        return firingArcEdges;
+                firstEndX = - Math.sin(arcAngleInRad)*pixelMaxRange;
+                firstEndY = Math.cos(arcAngleInRad)*pixelMaxRange;
+
+                secondEndX = Math.sin(arcAngleInRad)*pixelMaxRange;
+                secondEndY = firstEndY;
+                break;
+            case 5: //mobile arc, ugh
+                break;
+            default:
+                break;
+        }
+
+//back to common to any arc requested
+        //calculate the rotated, translated coordinates of the firing arc start points
+        firingArcEdgePoints.add(getATransformedPoint(firstStartX, firstStartY, 0.0, 0.0, angle, center.getX(), center.getY()));
+        firingArcEdgePoints.add(getATransformedPoint(secondStartX, secondStartY, 0.0, 0.0, angle, center.getX(), center.getY()));
+
+        //calculate the rotated, translated coordinates of the firing arc end points
+        firingArcEdgePoints.add(getATransformedPoint(firstStartX, firstStartY, firstEndX, firstEndY, angle, center.getX(), center.getY()));
+        firingArcEdgePoints.add(getATransformedPoint(secondStartX, secondStartY, secondEndX, secondEndY, angle, center.getX(), center.getY()));
+
+//specific to the arc type
+        if(whichOption == 2) //front aux arcs for Auzituck, Hound's Tooth
+        {
+            //TO DO, calculate extra 2 edges for the right arc
+        }
+        return firingArcEdgePoints;
     }
+
+    Point2D.Double getATransformedPoint(double offX, double offY, double extraOffX, double extraOffY, double shipAngle, double centerX, double centerY)
+    {
+        //use OffX & OffY to get to the start of the arc. Use extraOffX & extraOffY to add the offset needed to get to the outlier end of an arc, if needed
+        return new Point2D.Double(
+                Util.rotX(offX + extraOffX, offY + extraOffY, shipAngle) + centerX,
+                Util.rotY(offX + extraOffX, offY + extraOffY, shipAngle) + centerY);
+    }
+
     public Shape getRectWithNoNubs() {
         Shape theSquare = new Rectangle2D.Double(0.0f, 0.0f, 0.0f, 0.0f);
 

@@ -1,6 +1,5 @@
 package mic;
 
-import VASSAL.build.GameModule;
 import VASSAL.build.module.documentation.HelpFile;
 import VASSAL.build.module.map.Drawable;
 import VASSAL.command.Command;
@@ -17,7 +16,6 @@ import java.awt.font.FontRenderContext;
 import java.awt.font.TextAttribute;
 import java.awt.font.TextLayout;
 import java.awt.geom.*;
-import java.lang.reflect.Array;
 import java.text.AttributedString;
 import java.util.*;
 import java.util.List;
@@ -28,6 +26,8 @@ import static mic.Util.*;
 /**
  * Created by Mic on 23/03/2017.
  */
+
+
 public class AutoRangeFinder extends Decorator implements EditablePiece {
     public static final String ID = "auto-range-finder";
 
@@ -38,12 +38,24 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
     private FreeRotator myRotator = null;
     private FOVisualization fov = null;
     private static Map<String, Integer> keyStrokeToOptions = ImmutableMap.<String, Integer>builder()
-            .put("CTRL SHIFT F", 1)
-            .put("CTRL SHIFT L", 2)
+            .put("CTRL SHIFT F", 1) //primary arc
+            .put("CTRL SHIFT L", 2) //turret/TL
+            //.put("CTRL SHIFT N", 3) //front pairs of aux arc (YV-666, Auzituck)
+            //.put("CTRL SHIFT V", 4) //back aux arc
+            //.put("ALT SHIFT V", 5) //mobile turret arc, must detect which one is selected on the ship
             .build();
     private static double RANGE1 = 282.5;
     private static double RANGE2 = 565;
     private static double RANGE3 = 847.5;
+    int whichOption = -1; //which autorange option. See the Map above. -1 if none is selected.
+    String bigAnnounce = "";
+    BumpableWithShape thisShip; //ship's full combined name string
+    ArrayList<rangeFindings> rfindings = new ArrayList<rangeFindings>(); //findings compiled here
+    Point2D.Double A1, A2; //attacker ship's best points
+    ArrayList<Point2D.Double> edges = new ArrayList<Point2D.Double>();
+    // Assuming an upward facing ship,
+    // firing arc edges used to restrict best lines if they are crossing (unused for turret/TL. element 1&3 (leftmost) and element 2&4 (rightmost).
+    // 5&7, rightmost front aux arc for Auzituck/hound's tooth, left edge. 6&8 rightmost front aux arc for Auz/Hound's, right edge
 
 
     public AutoRangeFinder() {
@@ -84,12 +96,12 @@ private void clearVisu()
     this.fov.shapesWithText.clear();
 }
 
-    private Integer getKeystrokeToOptions(KeyStroke keyStroke) {
+    private int getKeystrokeToOptions(KeyStroke keyStroke) {
         String hotKey = HotKeyConfigurer.getString(keyStroke);
         if (keyStrokeToOptions.containsKey(hotKey)) {
-            return keyStrokeToOptions.get(hotKey);
+            return keyStrokeToOptions.get(hotKey).intValue();
         }
-        return null;
+        return -1;
     }
 
     public Command keyEvent(KeyStroke stroke) {
@@ -98,64 +110,46 @@ private void clearVisu()
             this.fov = new FOVisualization();
         }
 
+        //identify which autorange option was used by using the static Map defined above in the globals, store it in an int
+        whichOption =  getKeystrokeToOptions(stroke);
 
-        Integer whichOption =  getKeystrokeToOptions(stroke);
-
-        if (whichOption !=null && stroke.isOnKeyRelease() == false) {
+        if (whichOption != -1 && stroke.isOnKeyRelease() == false) {
             Command bigCommand = piece.keyEvent(stroke);
-            String bigAnnounce = "*** Firing Options ";
-            boolean wantFrontFiringArc = false;
-            if(whichOption.equals(1)) {
-                wantFrontFiringArc = true;
-                bigAnnounce += "for the primary arc - from ";
-            }
-            else if(whichOption.equals(2)) bigAnnounce += "for Target Lock/Turrets - from ";
 
+            //if the firing options were already activated, remove the visuals and exit right away
             if (this.fov != null && this.fov.getCount() > 0) {
                 clearVisu();
                 return bigCommand;
             }
-            BumpableWithShape thisShip = new BumpableWithShape(this, "Ship",
+
+            thisShip = new BumpableWithShape(this, "Ship",
                     this.getInner().getProperty("Pilot Name").toString(), this.getInner().getProperty("Craft ID #").toString());
+            //Prepare the start of the appropriate chat announcement string - which ship are we doing this from, which kind of autorange
+            prepAnnouncementStart();
 
-            String fullShipName = thisShip.pilotName + "(" + thisShip.shipName + ")";
-            bigAnnounce += fullShipName + "\n";
-
-            ArrayList<rangeFindings> rfindings = new ArrayList<rangeFindings>();
-
+            //Loop over every other target ship
             List<BumpableWithShape> BWS = getOtherShipsOnMap();
             for(BumpableWithShape b: BWS){
-                //TO DO: Preliminary check, eliminate attempt to calculate this if the target is overlapping the attacker, could lead to exception error
+                //Preliminary check, eliminate attempt to calculate this if the target is overlapping the attacker, could lead to exception error
+                if(shapesOverlap(thisShip.shape, b.shape)) continue;
 
+                //Figure out which best 2 points will be used on the attacker, A1 and A2
 
-                Point2D.Double A1, A2;
-                ArrayList<Point2D.Double> edges = new ArrayList<Point2D.Double>();
-                if(wantFrontFiringArc) {
-                    edges = thisShip.getFiringArcEdges();
-                    A1 = edges.get(0);
-                    A2 = edges.get(1);
-                }
-                else {
-                    A1 = findClosestVertex(thisShip, b);
-                    A2 = find2ndClosestVertex(thisShip, b);
-                }
+                if(whichOption != 2) edges = thisShip.getFiringArcEdges(whichOption, 3); //TO DO: take into account huge ships eventually; not needed if you're checking turret/TL
+                findAttackerBestPoints(b);
 
                 Point2D.Double D1 = findClosestVertex(b, thisShip);
                 Point2D.Double D2 = find2ndClosestVertex(b, thisShip);
 
-
                 //TO DO: special case, D1 and D2 might not be a vertex on the target, but instead an intermediate point on some edge of the ship.
-
                 micLine bestLine = findBestLine(A1, A2, D1, D2);
                 bestLine.isBestLine = true;
 
-
-
                 //Test to see if it crosses the arc edge line and reject it if so
-                if(wantFrontFiringArc && isLineCrossingArcEdge(edges, bestLine, thisShip.chassis) == true) continue;
+                if(whichOption != -1 && whichOption != 2 && isLineOutOfArc(edges, bestLine, thisShip.chassis) == true) continue;
 
-                if(shapesOverlap(thisShip.shape, b.shape)) continue;
-
+                //Prepare the end of the appropriate chat announcement string - targets with their range, obstruction notice if relevant, ordered per range
+                prepAnnouncementEnd();
                 String bShipName = b.pilotName + "(" + b.shipName + ")";
                 rangeFindings found = new rangeFindings(bestLine.rangeLength, bShipName);
 
@@ -209,6 +203,45 @@ private void clearVisu()
         return piece.keyEvent(stroke);
     }
 
+    private void prepAnnouncementEnd() {
+    }
+
+    private void findAttackerBestPoints(BumpableWithShape b) {
+
+        switch(whichOption)
+        {
+            case 1:
+                A1 = edges.get(0);
+                A2 = edges.get(1);
+                break;
+            case 2:
+                A1 = findClosestVertex(thisShip, b);
+                A2 = find2ndClosestVertex(thisShip, b);
+                break;
+            default:
+                break;
+        }
+    }
+
+    private void prepAnnouncementStart() {
+        //prepares the initial part of the chat window string that announces the firing options
+        bigAnnounce = "*** Firing Options ";
+
+        switch(whichOption)
+        {
+            case 1:
+                bigAnnounce += "for the primary arc - from ";
+                break;
+            case 2:
+                bigAnnounce += "for Target Lock/Turrets - from ";
+                break;
+        }
+
+        String fullShipName = thisShip.pilotName + "(" + thisShip.shipName + ")";
+        bigAnnounce += fullShipName + "\n";
+
+    }
+
     private Command makeBigAnnounceCommand(String bigAnnounce, ArrayList<rangeFindings> rfindings) {
         String range1String = "";
         String range2String = "";
@@ -241,7 +274,7 @@ private void clearVisu()
         return logToChatCommand(result);
     }
 
-    private boolean isLineCrossingArcEdge(ArrayList<Point2D.Double> edges, micLine bestLine, chassisInfo chassis) {
+    private boolean isLineOutOfArc(ArrayList<Point2D.Double> edges, micLine bestLine, chassisInfo chassis) {
 //TO REDO, not good enough
         Line2D.Double leftEdge = new Line2D.Double(edges.get(0),edges.get(2));
         Line2D.Double rightEdge = new Line2D.Double(edges.get(1),edges.get(3));
