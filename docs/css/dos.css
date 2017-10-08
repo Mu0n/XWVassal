@@ -200,11 +200,35 @@ ul ul ul {
   width: 100%;
   max-width: 1024px;
   margin-bottom: 2rem;
-  padding: 2rem;
   text-align: center;
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: row;
+  padding: 2rem;
+  justify-content: space-around;
 }
-.sponsors .header {
-  border-bottom: 1px solid #ddd;
+.sponsors .main-sponsor-img {
+  background: url("../img/sponsors/hooters.png") center center no-repeat;
+  background-size: contain;
+  width: 100%;
+  height: 200px;
+}
+.sponsors .sponsor-img {
+  height: 200px;
+  width: 200px;
+}
+.sponsors .sponsor-img.snv {
+  background: url("../img/sponsors/snv.png") center center no-repeat;
+  background-size: contain;
+  border-radius: 50%;
+}
+.sponsors .sponsor-img.gold {
+  background: url("../img/sponsors/gold.png") center center no-repeat;
+  background-size: contain;
+}
+.sponsors .sponsor-img.mynock {
+  background: url("../img/sponsors/mynock.png") center center no-repeat;
+  background-size: contain;
 }
 @media screen and (max-width: 765px) {
   header .title {
