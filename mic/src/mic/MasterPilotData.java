@@ -1,5 +1,6 @@
 package mic;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -80,6 +81,12 @@ public class MasterPilotData extends ArrayList<MasterPilotData.PilotData> {
             }
         }
 
+        @JsonIgnore
+        public void setSkill(Integer skill)
+        {
+            this.skill = skill.toString();
+        }
+        
         public int getPoints() {
             try {
                 return Integer.parseInt(points);
