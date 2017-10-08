@@ -196,6 +196,8 @@ ul ul ul {
   color: #999;
 }
 .sponsors {
+  color: 450D29;
+  font-weight: bold;
   background: white;
   width: 100%;
   max-width: 1024px;
@@ -207,7 +209,10 @@ ul ul ul {
   padding: 2rem;
   justify-content: space-around;
 }
-.sponsors .main-sponsor-img {
+.sponsors .main-sponsor {
+  width: 100%;
+}
+.sponsors .main-sponsor.img {
   background: url("../img/sponsors/hooters.png") center center no-repeat;
   background-size: contain;
   width: 100%;
