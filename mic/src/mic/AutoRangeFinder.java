@@ -89,13 +89,12 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
         return null;
     }
 
-private void clearVisu()
-{
-    getMap().removeDrawComponent(this.fov);
-    this.fov.shapes.clear();
-    this.fov.lines.clear();
-    this.fov.shapesWithText.clear();
-}
+    private void clearVisu() {
+        getMap().removeDrawComponent(this.fov);
+        this.fov.shapes.clear();
+        this.fov.lines.clear();
+        this.fov.shapesWithText.clear();
+    }
 
     private int getKeystrokeToOptions(KeyStroke keyStroke) {
         String hotKey = HotKeyConfigurer.getString(keyStroke);
@@ -106,11 +105,11 @@ private void clearVisu()
     }
 
     public Command keyEvent(KeyStroke stroke) {
-        if(this.fov == null) {
+        if (this.fov == null) {
             this.fov = new FOVisualization();
         }
         //identify which autorange option was used by using the static Map defined above in the globals, store it in an int
-        whichOption =  getKeystrokeToOptions(stroke);
+        whichOption = getKeystrokeToOptions(stroke);
         if (whichOption != -1 && stroke.isOnKeyRelease() == false) {
             Command bigCommand = piece.keyEvent(stroke);
             //if the firing options were already activated, remove the visuals and exit right away
@@ -126,12 +125,12 @@ private void clearVisu()
 
             //Loop over every other target ship
             List<BumpableWithShape> BWS = getOtherShipsOnMap();
-            for(BumpableWithShape b: BWS){
+            for (BumpableWithShape b : BWS) {
                 //Preliminary check, eliminate attempt to calculate this if the target is overlapping the attacker, could lead to exception error
-                if(shapesOverlap(thisShip.shape, b.shape)) continue;
+                if (shapesOverlap(thisShip.shape, b.shape)) continue;
 
                 //Do everything method here:
-                figureOutAutoRange(whichOption, b);
+                figureOutAutoRange(b);
             }
 
             //draw visuals and announce the results in the chat
@@ -139,50 +138,53 @@ private void clearVisu()
             Command bigAnnounceCommand = makeBigAnnounceCommand(bigAnnounce, rfindings);
             bigCommand.append(bigAnnounceCommand);
             return bigCommand;
-        }
-        else if(KeyStroke.getKeyStroke(KeyEvent.VK_D, KeyEvent.CTRL_DOWN_MASK,false).equals(stroke)){
-            if (this.fov != null && this.fov.getCount() > 0)  clearVisu();
+        } else if (KeyStroke.getKeyStroke(KeyEvent.VK_D, KeyEvent.CTRL_DOWN_MASK, false).equals(stroke)) {
+            if (this.fov != null && this.fov.getCount() > 0) clearVisu();
         }
         return piece.keyEvent(stroke);
     }
 
 
-    private void figureOutAutoRange(int whichOption, BumpableWithShape b) {
+    private void figureOutAutoRange(BumpableWithShape b) {
         //Figure out which best 2 points will be used on the attacker, A1 and A2
 
-        if(whichOption != 2) edges = thisShip.getFiringArcEdges(whichOption, 3); //TO DO: take into account huge ships eventually; not needed if you're checking turret/TL
+        if (whichOption != 2)
+            edges = thisShip.getFiringArcEdges(whichOption,3); //TO DO: take into account huge ships eventually; not needed if you're checking turret/TL
         findAttackerBestPoints(b);
 
         Point2D.Double D1 = findClosestVertex(b, thisShip);
         Point2D.Double D2 = find2ndClosestVertex(b, thisShip);
 
-        //Extremity of arc edges, used for angle checks
-        Point2D.Double E1 = edges.get(2);
-        Point2D.Double E2 = edges.get(3);
+        //Extremity of arc edges, used for angle checks. They are only used if an in-arc check will be performed
+        Point2D.Double E1 = null;
+        Point2D.Double E2 = null;
+        if (whichOption != 2)
+        {
+            E1 = edges.get(2); //associated with A1 as the edge A1E1
+            E2 = edges.get(3); //associated with A2 as the edge A2E2
+        }
 
         //TO DO inside findBestLine: special case, D1 and D2 might not be a vertex on the target, but instead an intermediate point on some edge of the ship.
-        micLine bestLine = findBestLine(A1, A2, D1, D2, E1, E2, 3); //TO DO: take into account huge ships eventually; not needed if you're checking turret/TL
-        if(bestLine == null) return;
-        
+        micLine bestLine = null;
+        if(whichOption == 2) bestLine = findBestLine(A1, A2, D1, D2, 3);
+        else bestLine = findBestArcRestrictedLine(A1, A2, D1, D2, E1, E2, 3);
+        if (bestLine == null) return;
         bestLine.isBestLine = true;
 
         //Prepare the end of the appropriate chat announcement string - targets with their range, obstruction notice if relevant, ordered per range
-        prepAnnouncementEnd();
         String bShipName = b.pilotName + "(" + b.shipName + ")";
         rangeFindings found = new rangeFindings(bestLine.rangeLength, bShipName);
 
         //deal with the case where's there no chance of having multiple best lines first
-        if((!isTargetOutsideofRectangles(thisShip, b, true) && are90degreesAligned(thisShip, b) == false) ||
-                isTargetOutsideofRectangles(thisShip, b, true))
-        {
+        if ((!isTargetOutsideofRectangles(thisShip, b, true) && are90degreesAligned(thisShip, b) == false) ||
+                isTargetOutsideofRectangles(thisShip, b, true)) {
             //TO DO: replace with a different range cap later, associated with the type of arc (for huge ships)
-            if(bestLine.rangeLength > 3) return;
+            if (bestLine.rangeLength > 3) return;
 
             //find if there's an obstruction
             List<BumpableWithShape> obstructions = getObstructionsOnMap();
-            for(BumpableWithShape obstruction : obstructions){
-                if(isLine2DOverlapShape(bestLine.line, obstruction.shape))
-                {
+            for (BumpableWithShape obstruction : obstructions) {
+                if (isLine2DOverlapShape(bestLine.line, obstruction.shape)) {
                     bestLine.rangeString += " obstructed";
                     fov.add(obstruction.shape);
                     found.isObstructed = true;
@@ -192,14 +194,18 @@ private void clearVisu()
 
             rfindings.add(found);
             fov.addLine(bestLine);
-        }
-        else { //multiple lines case
-            int quickDist = (int)Math.ceil(Math.sqrt(Math.pow(A1.getX() - D1.getX(),2.0)+ Math.pow(A1.getY() - D1.getY(),2.0))/282.5);
-            if(quickDist > 3) return;
+        } else { //multiple lines case
+            int quickDist = (int) Math.ceil(Math.sqrt(Math.pow(A1.getX() - D1.getX(), 2.0) + Math.pow(A1.getY() - D1.getY(), 2.0)) / 282.5);
+            if (quickDist > 3) return;
 
-            Shape fromShip = findInBetweenRectangle(thisShip, b);
-            Shape fromTarget = findInBetweenRectangle(b, thisShip);
+            double wantedWidth = 0.0;
+            if(whichOption == 2) wantedWidth = thisShip.getChassisWidth();
+            else wantedWidth = thisShip.getChassisWidth() - thisShip.chassis.getCornerToFiringArc()*2.0;
 
+            Shape fromShip = findInBetweenRectangle(thisShip, b, wantedWidth);
+            Shape fromTarget = findInBetweenRectangle(b, thisShip, b.getChassisWidth());
+
+            if(fromShip == null) return;
             Area a1 = new Area(fromShip);
             Area a2 = new Area(fromTarget);
             a1.intersect(a2);
@@ -217,9 +223,9 @@ private void clearVisu()
 
     private void findAttackerBestPoints(BumpableWithShape b) {
 
-        switch(whichOption)
-        {
+        switch (whichOption) {
             case 1:
+            case 3:
                 A1 = edges.get(0);
                 A2 = edges.get(1);
                 break;
@@ -236,8 +242,7 @@ private void clearVisu()
         //prepares the initial part of the chat window string that announces the firing options
         bigAnnounce = "*** Firing Options ";
 
-        switch(whichOption)
-        {
+        switch (whichOption) {
             case 1:
                 bigAnnounce += "for the primary arc - from ";
                 break;
@@ -260,44 +265,32 @@ private void clearVisu()
         boolean hasR2 = false;
         boolean hasR3 = false;
 
-        for(rangeFindings rf : rfindings){
-            if(rf.range == 1){
+        for (rangeFindings rf : rfindings) {
+            if (rf.range == 1) {
                 hasR1 = true;
                 range1String += rf.fullName + (rf.isObstructed ? " [obstructed] | " : " | ");
             }
-            if(rf.range == 2){
+            if (rf.range == 2) {
                 hasR2 = true;
                 range2String += rf.fullName + (rf.isObstructed ? " [obstructed] | " : " | ");
             }
-            if(rf.range == 3){
+            if (rf.range == 3) {
                 hasR3 = true;
                 range3String += rf.fullName + (rf.isObstructed ? " [obstructed] | " : " | ");
             }
         }
 
-        String result = bigAnnounce + (hasR1? "*** Range 1: " + range1String + "\n" : "") +
-                (hasR2? "*** Range 2: " + range2String + "\n" : "") +
-                (hasR3? "*** Range 3: " + range3String + "\n" : "");
-        if(hasR1 == false && hasR2 == false && hasR3 == false) result = "No ships in range.";
+        String result = bigAnnounce + (hasR1 ? "*** Range 1: " + range1String + "\n" : "") +
+                (hasR2 ? "*** Range 2: " + range2String + "\n" : "") +
+                (hasR3 ? "*** Range 3: " + range3String + "\n" : "");
+        if (hasR1 == false && hasR2 == false && hasR3 == false) result = "No ships in range.";
 
         return logToChatCommand(result);
     }
 
-    private boolean isLineOutOfArc(ArrayList<Point2D.Double> edges, micLine bestLine, chassisInfo chassis) {
-//TO REDO, not good enough
-        Line2D.Double leftEdge = new Line2D.Double(edges.get(0),edges.get(2));
-        Line2D.Double rightEdge = new Line2D.Double(edges.get(1),edges.get(3));
-        Line2D.Double bestShape = new Line2D.Double(bestLine.first, bestLine.second);
 
-        if(shapesOverlap(bestShape, leftEdge) || shapesOverlap(bestShape, rightEdge)) return true;
-        else return false;
-    }
 
-    //this finds the line that links the attacker ship to someplace on the line formed by the closest edge of the target, using
-    //the closest and 2nd closest lines to the target's vertices.
-    //using an algorithm based on this: http://www.ahristov.com/tutorial/geometry-games/point-line-distance.html
-    private micLine findBestLine(Point2D.Double A1, Point2D.Double A2, Point2D.Double D1, Point2D.Double D2, Point2D.Double E1, Point2D.Double E2, int rangeInt) {
-
+    private micLine findBestArcRestrictedLine(Point2D.Double A1, Point2D.Double A2, Point2D.Double D1, Point2D.Double D2, Point2D.Double E1, Point2D.Double E2, int rangeInt) {
         ArrayList<micLine> lineList = new ArrayList<micLine>();
 
         //Closest Attacker to Closest Defender
@@ -307,7 +300,9 @@ private void clearVisu()
         //Closest Defender to Closest Attacker
         micLine D1A1 = new micLine(D1, A1);
         //Closest Defender to 2nd Closest Attacker
-        micLine D1A2 = new micLine(D1, A2);
+        micLine A2D1 = new micLine(A2, D1);
+        //Closest Defender to 2nd Closest Attacker
+        micLine D1A2 = new micLine(A2, D1);
         //Closest Attacker Edge
         micLine AA = new micLine(A1, A2);
         //Closest Defender Edge
@@ -315,12 +310,94 @@ private void clearVisu()
 
         lineList.add(A1D1);
         lineList.add(A1D2);
-        lineList.add(D1A2);
+        lineList.add(A2D1);
+
+        //Closest attacker's point to the defender's closest vertex
+        micLine A1DD = createLineA1toDD(A1D1, A1D2, DD);
+        lineList.add(A1DD);
+
+        micLine A1DD_arc_restricted = createLineA1toDD(A1D1, A1D2, DD);
+        micLine A2DD_arc_restricted = createLineA1toDD(A2D1, A2D1, DD);
+
+        //Attacker's edge to defender's closest vertex
+        micLine D1AA = createLineAAtoD1(A1D1, D1A2, AA, D1);
+        if(doesAAforInArcPassTest(D1AA, AA)== true)lineList.add(D1AA);
+
+
+        ArrayList<micLine> filteredList = new ArrayList<micLine>();
+        //Filter out shots that aren't in-arc if the turret option is not chosen
+        for(micLine l: lineList)
+        {
+            if(isEdgeInArc(A1, A2, l, E1, E2) == true) filteredList.add(l);
+        }
+
+        ArrayList<micLine> usedList = new ArrayList<micLine>();
+
+        if(whichOption == 2) usedList = (ArrayList<micLine>)lineList.clone();
+        else  usedList = (ArrayList<micLine>) filteredList.clone();
+
+        //First criterium, find the best distance and make it the best Line
+        double bestDist = rangeInt * 282.5;
+        micLine best = null;
+        for (micLine l : usedList) {
+            if (Double.compare(bestDist, l.pixelLength) > 0) {
+                bestDist = l.pixelLength;
+                best = l;
+            }
+        }
+        //nothing under the requested range was found, no best lines can be submitted
+        if (best == null) {
+            //logToChatCommand("did not find a best line");
+            return null;
+        }
+
+        return best;
+    }
+
+    private boolean doesAAforInArcPassTest(micLine D1AA, micLine AA) {
+        double x1 = AA.first.x;
+        double y1 = AA.first.y;
+        double x2 = AA.second.x;
+        double y2 = AA.second.y;
+        //Get the midpoint inside the firing arc, on the attacker
+        double xp = D1AA.second.x;
+        double yp = D1AA.second.y;
+
+        double dist1 = Math.sqrt(Math.pow(xp - x1, 2.0) + Math.pow(yp - y1, 2.0));
+        double dist2 = Math.sqrt(Math.pow(xp - x2, 2.0) + Math.pow(yp - y2, 2.0));
+        double distaa = Math.sqrt(Math.pow(x2 - x1, 2.0) + Math.pow(y2 - y1, 2.0));
+//is the point used in D1AA between A1 and A2?
+        if(Double.compare(distaa,dist1) > 0 && Double.compare(distaa,dist2) > 0) return true;
+        return false;
+    }
+
+
+    //this finds the line that links the attacker ship to someplace on the line formed by the closest edge of the target, using
+    //the closest and 2nd closest lines to the target's vertices.
+    //using an algorithm based on this: http://www.ahristov.com/tutorial/geometry-games/point-line-distance.html
+    private micLine findBestLine(Point2D.Double A1, Point2D.Double A2, Point2D.Double D1, Point2D.Double D2, int rangeInt) {
+
+        ArrayList<micLine> lineList = new ArrayList<micLine>();
+
+        //Closest Attacker to Closest Defender
+        micLine A1D1 = new micLine(A1, D1);
+        //Closest Attacker to 2nd Closest Defender
+        micLine A1D2 = new micLine(A1, D2);
+        //Closest Defender to 2nd Closest Attacker
+        micLine A2D1 = new micLine(A2, D1);
+        //Closest Attacker Edge
+        micLine AA = new micLine(A1, A2);
+        //Closest Defender Edge
+        micLine DD = new micLine(D1, D2);
+
+        lineList.add(A1D1);
+        lineList.add(A1D2);
+        lineList.add(A2D1);
 
         micLine A1DD = createLineA1toDD(A1D1, A1D2, DD);
         lineList.add(A1DD);
 
-        micLine D1AA = createLineD1toAA(A1D1, D1A1, D1A2, AA, D1);
+        micLine D1AA = createLineAAtoD1(A1D1, A2D1, AA, D1);
         lineList.add(D1AA);
 
         //First criterium, find the best distance and make it the best Line
@@ -335,18 +412,18 @@ private void clearVisu()
         //nothing under the requested range was found, no best lines can be submitted
         if(best==null) return null;
 
-        //Otherwise, continue with
-        //second criterium, if it's an in-arc shot, check if the best line polar angle is between arc edges' polar angles. reject if not.
-        if(whichOption != 2)
-        {
-            double firstArcEdgePolarAngle = getEdgeAngle(A1, E1);
-            double secondArcEdgePolarAngle = getEdgeAngle(A2, E2);
-            double bestLinePolarAngle = getEdgeAngle(best.first, best.second);
-
-            if(bestLinePolarAngle < firstArcEdgePolarAngle || bestLinePolarAngle > secondArcEdgePolarAngle) return null;
-        }
-
         return best;
+    }
+
+    private boolean isEdgeInArc(Point2D.Double A1, Point2D.Double A2, micLine theCandidateLine, Point2D.Double E1, Point2D.Double E2)
+    {
+        double firstArcEdgePolarAngle = getEdgeAngle(A1, E1);
+        double secondArcEdgePolarAngle = getEdgeAngle(A2, E2);
+        double bestLinePolarAngle = getEdgeAngle(theCandidateLine.first, theCandidateLine.second);
+        logToChatCommand("arc edge left at " + Double.toString(firstArcEdgePolarAngle) + " bestline at " + Double.toString(bestLinePolarAngle) + " arc edge right at " + Double.toString(secondArcEdgePolarAngle));
+        if (bestLinePolarAngle < firstArcEdgePolarAngle || bestLinePolarAngle > secondArcEdgePolarAngle)
+            return false;
+        return true;
     }
 
     private double getEdgeAngle(Point2D.Double start, Point2D.Double end) {
@@ -358,12 +435,13 @@ private void clearVisu()
     }
 
     private micLine createLineA1toDD(micLine A1D1, micLine A1D2, micLine DD) {
+        //getting D1 again
         double x1 = A1D1.second.getX();
         double y1 = A1D1.second.getY();
-        //end of the 2nd closest vertex
+        //getting D2 again
         double x2 = A1D2.second.getX();
         double y2 = A1D2.second.getY();
-        //start point
+        //getting A1 again
         double xp = A1D1.first.getX();
         double yp = A1D1.first.getY();
 
@@ -376,6 +454,8 @@ private void clearVisu()
         double segmentFullDist = DD.pixelLength;
         double gapx = (x2-x1)/segmentFullDist*segmentPartialDist;
         double gapy = (y2-y1)/segmentFullDist*segmentPartialDist;
+
+
         double vector_x = x1 + gapx;
         double vector_y = y1 + gapy;
 
@@ -383,15 +463,84 @@ private void clearVisu()
         return new micLine(A1, new Point2D.Double(vector_x, vector_y));
     }
 
-    private micLine createLineD1toAA(micLine A1D1, micLine D1A1, micLine D1A2, micLine AA, Point2D.Double D1)
+    private micLine createLineA1toDD_arc_restricted(micLine A1D1, micLine A1D2, micLine DD, Point2D.Double E1, Point2D.Double E2) {
+        //getting D1 again
+        double x1 = A1D1.second.getX();
+        double y1 = A1D1.second.getY();
+        //getting D2 again
+        double x2 = A1D2.second.getX();
+        double y2 = A1D2.second.getY();
+        //getting A1 again
+        double xp = A1D1.first.getX();
+        double yp = A1D1.first.getY();
+
+        micLine A1E1 = new micLine(A1, E1);
+        micLine A2E2 = new micLine(A2, E2);
+
+        if(areMicLinesCrossing(A1E1, DD) == true);
+        else if(areMicLinesCrossing(A2E2, DD) == true);
+
+        //getting the shortest distance in pixels to the line formed by both (x1,y1) and (x2,y2)
+        double numerator = Math.abs((xp - x1) * (y2 - y1) - (yp - y1) * (x2 - x1));
+        double denominator = Math.sqrt(Math.pow(x2 - x1, 2.0) + Math.pow(y2 - y1, 2.0));
+        double shortestdist = numerator / denominator;
+
+        double segmentPartialDist = Math.sqrt(Math.pow(A1D1.pixelLength,2.0) - Math.pow(shortestdist,2.0));
+        double segmentFullDist = DD.pixelLength;
+        double gapx = (x2-x1)/segmentFullDist*segmentPartialDist;
+        double gapy = (y2-y1)/segmentFullDist*segmentPartialDist;
+
+
+        double vector_x = x1 + gapx;
+        double vector_y = y1 + gapy;
+
+        //returns A1DD - closest attacker point (vertex or in-arc edge) to an defender's edge point satisfying the 90 degrees shortest distance requirement
+        return new micLine(A1, new Point2D.Double(vector_x, vector_y));
+    }
+
+    //Using this algorithm to detect if the two segments cross
+    //https://stackoverflow.com/questions/563198/how-do-you-detect-where-two-line-segments-intersect
+    private boolean areMicLinesCrossing(micLine A1E1, micLine DD) {
+        micLine p = A1E1;
+
+        micLine q = DD;
+    }
+
+    private Point2D.Double findSegmentCrossPoint(micLine A1E1, micLine DD)
     {
-        //Figure out D1 to AA, closest line according to the algorithm above
+        Point2D.Double intersectionPt = null;
+        double px = A1E1.first.x;
+        double py = A1E1.first.y;
+
+        double qx = DD.first.x;
+        double qy = DD.first.y;
+        
+
+        return intersectionPt;
+    }
+
+    private double micLineCrossProduct(micLine A, micLine B)
+    {
+        double ax = A.second.x - A.first.x;
+        double ay = A.second.y - A.first.y;
+
+        double bx = B.second.x - B.first.x;
+        double by = B.second.y - B.first.y;
+
+        return ax * by  - ay * bx;
+
+    }
+
+
+    private micLine createLineAAtoD1(micLine A1D1, micLine A2D1, micLine AA, Point2D.Double D1)
+    {
+        //Find A1 again
         double x1 = A1D1.first.getX();
         double y1 = A1D1.first.getY();
-        //end of the 2nd closest vertex
-        double x2 = D1A2.second.getX();
-        double y2 = D1A2.second.getY();
-        //start point
+        //Find A2 again
+        double x2 = A2D1.first.getX();
+        double y2 = A2D1.first.getY();
+        //find D1 again
         double xp = A1D1.second.getX();
         double yp = A1D1.second.getY();
 //getting the shortest distance in pixels to the line formed by both (x1,y1) and (x2,y2)
@@ -399,15 +548,15 @@ private void clearVisu()
         double denominator = Math.sqrt(Math.pow(x2 - x1, 2.0) + Math.pow(y2 - y1, 2.0));
         double shortestdist = numerator / denominator;
 
-        double segmentPartialDist = Math.sqrt(Math.pow(D1A1.pixelLength,2.0) - Math.pow(shortestdist,2.0));
+        double segmentPartialDist = Math.sqrt(Math.pow(A1D1.pixelLength,2.0) - Math.pow(shortestdist,2.0));
         double segmentFullDist = AA.pixelLength;
         double gapx = (x2-x1)/segmentFullDist*segmentPartialDist;
         double gapy = (y2-y1)/segmentFullDist*segmentPartialDist;
         double vector_x = x1 + gapx;
         double vector_y = y1 + gapy;
 
-        //returns D1AA - closest defender vertex to an attacker's edge point satisfying the 90 degrees shortest distance requirement
-        return new micLine(D1, new Point2D.Double(vector_x,vector_y));
+        //returns AAD1 - closest defender vertex to an attacker's edge point satisfying the 90 degrees shortest distance requirement
+        return new micLine(new Point2D.Double(vector_x,vector_y), D1);
     }
     //FindClosestVertex: first argument is the ship for which all 4 vertices will be considered
     //second argument is the ship for which you get a vertex
@@ -499,13 +648,14 @@ private void clearVisu()
         return bumpables;
     }
 
-    private Shape findInBetweenRectangle(BumpableWithShape atk, BumpableWithShape def) {
-        double workingWidth = atk.getChassisWidth();
-        Shape front = new Rectangle2D.Double(-workingWidth/2.0, -RANGE3 - workingWidth/2.0, workingWidth, RANGE3);
-        Shape back = new Rectangle2D.Double(-workingWidth/2.0, workingWidth/2.0, workingWidth, RANGE3);
+    private Shape findInBetweenRectangle(BumpableWithShape atk, BumpableWithShape def, double wantedWidth) {
+        double chassisHeight = atk.getChassisHeight();
+        double chassisWidth = atk.getChassisWidth();
+        Shape front = new Rectangle2D.Double(-wantedWidth/2.0, -RANGE3 - chassisHeight/2.0, wantedWidth, RANGE3);
+        Shape back = new Rectangle2D.Double(-wantedWidth/2.0, chassisHeight/2.0, wantedWidth, RANGE3);
 
-        Shape left = new Rectangle2D.Double(-workingWidth/2.0 - RANGE3, -workingWidth/2.0, RANGE3, workingWidth);
-        Shape right = new Rectangle2D.Double(workingWidth/2.0, -workingWidth/2.0, RANGE3, workingWidth);
+        Shape left = new Rectangle2D.Double(-chassisWidth/2.0 - RANGE3, -chassisHeight/2.0, RANGE3, chassisHeight);
+        Shape right = new Rectangle2D.Double(chassisWidth/2.0, -chassisHeight/2.0, RANGE3, chassisHeight);
 
         ArrayList<Shape> listShape = new ArrayList<Shape>();
         listShape.add(front);
@@ -565,15 +715,22 @@ private void clearVisu()
     }
     private Shape findUnionOfRectangularExtensions(BumpableWithShape b, boolean superLong) {
         Shape rawShape = BumpableWithShape.getRawShape(b.bumpable);
+        double chassisWidth = b.getChassisWidth();
         double workingWidth = b.getChassisWidth();
+        if(whichOption !=2) workingWidth = b.getChassisWidth() - b.getChassis().getCornerToFiringArc()*2.0;
+        double workingHeight = b.getChassisHeight();
         double boost = 1.0f;
         if(superLong) boost = 30.0f;
-        Shape frontBack = new Rectangle2D.Double(-workingWidth/2.0, -boost*RANGE3 - workingWidth/2.0, workingWidth, 2.0*RANGE3*boost + workingWidth);
-        Shape leftRight = new Rectangle2D.Double(-workingWidth/2.0 - boost*RANGE3, -workingWidth/2.0, 2.0*boost*RANGE3+workingWidth, workingWidth);
+        Shape frontBack = new Rectangle2D.Double(-workingWidth/2.0, -boost*RANGE3 - workingHeight/2.0, workingWidth, 2.0*RANGE3*boost + workingHeight);
+        Shape front = new Rectangle2D.Double(-workingWidth/2.0, -boost*RANGE3 - workingHeight/2.0, workingWidth, RANGE3*boost);
+
+        Shape leftRight = new Rectangle2D.Double(-chassisWidth/2.0 - boost*RANGE3, -workingHeight/2.0, 2.0*boost*RANGE3+chassisWidth, workingWidth);
 
         Area zone = new Area(frontBack);
         zone.add(new Area(leftRight));
         zone.exclusiveOr(new Area(rawShape));
+
+        if(whichOption!=2) zone = new Area(front);
 
         double centerX = b.bumpable.getPosition().getX();
         double centerY = b.bumpable.getPosition().getY();
