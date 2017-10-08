@@ -20,11 +20,15 @@ import VASSAL.build.module.documentation.HelpFile;
 import VASSAL.build.widget.PieceSlot;
 import VASSAL.command.Command;
 import VASSAL.counters.GamePiece;
+import com.google.common.collect.Maps;
 
 /**
  * Created by Mic on 12/02/2017.
  */
 public class AutoSquadSpawn extends AbstractConfigurable {
+
+    private boolean listHasHoundsTooth = false;
+    private int houndsToothPilotSkill = 0;
 
     private VassalXWSPieceLoader slotLoader = new VassalXWSPieceLoader();
     private List<JButton> spawnButtons = Lists.newArrayList();
@@ -53,6 +57,10 @@ public class AutoSquadSpawn extends AbstractConfigurable {
         if (xwsList == null) {
             return;
         }
+
+        // If the list includes a yv666 with Hound's Tooth upgrade, add the nashtah pup ship
+        xwsList = handleHoundsTooth(xwsList);
+
 
         VassalXWSListPieces pieces = slotLoader.loadListFromXWS(xwsList);
 
@@ -99,6 +107,14 @@ public class AutoSquadSpawn extends AbstractConfigurable {
             boolean pilotHasOrdnanceSilos = false;
 
             logToChat("Spawning pilot: %s", ship.getPilotCard().getConfigureName());
+
+            if(ship.getPilotData().getXws().equals("nashtahpuppilot"))
+            {
+                MasterPilotData.PilotData nashtahPilotData = ship.getPilotData();
+                nashtahPilotData.setSkill(houndsToothPilotSkill);
+                ship.setPilotData(nashtahPilotData);
+
+            }
             shipBases.add(ship.cloneShip());
 
             GamePiece pilotPiece = ship.clonePilotCard();
@@ -332,6 +348,52 @@ public class AutoSquadSpawn extends AbstractConfigurable {
             logToChat("Unable to load raw JSON list '%s': %s", userInput, e.toString());
             return null;
         }
+    }
+
+    private XWSList handleHoundsTooth(XWSList list)
+    {
+
+
+        for (XWSList.XWSPilot pilot : list.getPilots())
+        {
+            if (pilot.getShip().equals("yv666"))
+            {
+                // check for the hounds tooth upgrade
+                java.util.Map<String, List<String>> upgrades = pilot.getUpgrades();
+                List titleList = upgrades.get("title");
+                if(titleList != null)
+                {
+
+                    for(Object title : titleList)
+                    {
+                        if(((String)title).equals("houndstooth"))
+                        {
+                            // found the hounds tooth
+
+                            listHasHoundsTooth = true;
+
+                            houndsToothPilotSkill = MasterPilotData.getPilotData("yv666", pilot.getName()).getSkill();
+                            break;
+                        }
+                    }
+                }
+
+            }
+            if(listHasHoundsTooth)
+            {
+                break;
+            }
+        }
+
+        if(listHasHoundsTooth)
+        {
+            // add the pup
+            java.util.Map<String, List<String>> upgrades = Maps.newHashMap();
+            java.util.Map<String, java.util.Map<String, String>> vendor = Maps.newHashMap();
+            XWSList.XWSPilot pupPilot = new XWSList.XWSPilot("nashtahpuppilot","z95headhunter",upgrades,vendor,null);
+            list.addPilot(pupPilot);
+        }
+        return list;
     }
 
     private XWSList loadListFromUserInput(String userInput) {

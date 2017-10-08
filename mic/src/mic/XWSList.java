@@ -82,7 +82,26 @@ public class XWSList {
         this.xwsSource = xwsSource;
     }
 
+    public void addPilot(XWSPilot newPilot)
+    {
+        pilots.add(newPilot);
+    }
+
     public static class XWSPilot {
+
+        public XWSPilot()
+        {
+            super();
+        }
+        public XWSPilot(String name, String ship, Map upgrades, Map vendor, Integer points)
+        {
+            this.name = name;
+            this.ship = ship;
+            this.upgrades = upgrades;
+            this.vendor = vendor;
+            this.points = points;
+        }
+
         @JsonProperty("multisection_id")
         private Integer multisectionId;
 
