@@ -27,6 +27,9 @@ import com.google.common.collect.Maps;
  */
 public class AutoSquadSpawn extends AbstractConfigurable {
 
+    private boolean listHasHoundsTooth = false;
+    private int houndsToothPilotSkill = 0;
+
     private VassalXWSPieceLoader slotLoader = new VassalXWSPieceLoader();
     private List<JButton> spawnButtons = Lists.newArrayList();
 
@@ -104,6 +107,14 @@ public class AutoSquadSpawn extends AbstractConfigurable {
             boolean pilotHasOrdnanceSilos = false;
 
             logToChat("Spawning pilot: %s", ship.getPilotCard().getConfigureName());
+
+            if(ship.getPilotData().getXws().equals("nashtahpuppilot"))
+            {
+                MasterPilotData.PilotData nashtahPilotData = ship.getPilotData();
+                nashtahPilotData.setSkill(houndsToothPilotSkill);
+                ship.setPilotData(nashtahPilotData);
+
+            }
             shipBases.add(ship.cloneShip());
 
             GamePiece pilotPiece = ship.clonePilotCard();
@@ -341,8 +352,7 @@ public class AutoSquadSpawn extends AbstractConfigurable {
 
     private XWSList handleHoundsTooth(XWSList list)
     {
-        boolean foundHoundsTooth = false;
-        XWSList.XWSPilot yv666Pilot = null;
+
 
         for (XWSList.XWSPilot pilot : list.getPilots())
         {
@@ -359,21 +369,23 @@ public class AutoSquadSpawn extends AbstractConfigurable {
                         if(((String)title).equals("houndstooth"))
                         {
                             // found the hounds tooth
-                            foundHoundsTooth = true;
-                            yv666Pilot = pilot;
+
+                            listHasHoundsTooth = true;
+
+                            houndsToothPilotSkill = MasterPilotData.getPilotData("yv666", pilot.getName()).getSkill();
                             break;
                         }
                     }
                 }
 
             }
-            if(foundHoundsTooth)
+            if(listHasHoundsTooth)
             {
                 break;
             }
         }
 
-        if(foundHoundsTooth)
+        if(listHasHoundsTooth)
         {
             // add the pup
             java.util.Map<String, List<String>> upgrades = Maps.newHashMap();
