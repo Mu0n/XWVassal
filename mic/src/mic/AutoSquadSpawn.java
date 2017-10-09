@@ -40,6 +40,9 @@ public class AutoSquadSpawn extends AbstractConfigurable {
     }
 
     private void spawnForPlayer(int playerIndex) {
+        listHasHoundsTooth = false;
+        houndsToothPilotSkill = 0;
+
         Map playerMap = getPlayerMap(playerIndex);
         if (playerMap == null) {
             logToChat("Unexpected error, couldn't find map for player side " + playerIndex);
