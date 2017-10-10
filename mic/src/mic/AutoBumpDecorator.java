@@ -20,11 +20,11 @@ import VASSAL.build.widget.PieceSlot;
 import VASSAL.command.CommandEncoder;
 import VASSAL.counters.*;
 import VASSAL.tools.SequenceEncoder;
-import com.google.common.base.Charsets;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.apache.commons.codec.binary.Base64;
 
 import VASSAL.build.module.documentation.HelpFile;
 import VASSAL.build.module.map.Drawable;
@@ -173,9 +173,7 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
     public Command keyEvent(KeyStroke stroke) {
         //Any keystroke made on a ship will remove the orange shades
 
-        if(this.previousCollisionVisualization == null) {
-            this.previousCollisionVisualization = new CollisionVisualization();
-        }
+        this.previousCollisionVisualization = new CollisionVisualization();
 
         ManeuverPaths path = getKeystrokePath(stroke);
         // Is this a keystroke for a maneuver? Deal with the 'no' cases first
@@ -268,6 +266,7 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
             //Add all the detected overlapping shapes to the map drawn components here
             if(this.previousCollisionVisualization != null &&  this.previousCollisionVisualization.getCount() > 0){
                 innerCommand.append(this.previousCollisionVisualization);
+                this.previousCollisionVisualization.executeCommand();
             }
 
             return innerCommand;
@@ -328,7 +327,6 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
         {
 
             logToChatWithTime("* -- " + yourShipName + " flew out of bounds");
-            CollisionVisualization collisionVisualization = new CollisionVisualization(theShape);
             this.previousCollisionVisualization.add(theShape);
         }
     }
@@ -651,7 +649,7 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
 
         protected void executeCommand() {
             final Timer timer = new Timer();
-            final VASSAL.build.module.Map map = VASSAL.build.module.Map.activeMap; // FIXME I have no idea if this will work
+            final VASSAL.build.module.Map map = VASSAL.build.module.Map.activeMap;
             timer.schedule(new TimerTask() {
                 int count = 0;
                 @Override
@@ -716,6 +714,7 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
 
     public static class CollsionVisualizationEncoder implements CommandEncoder {
         private static String commandPrefix = "CollisionVis=";
+
         public Command decode(String command) {
             logger.info("Attempting to decode command {}...", command.substring(0, command.length() > 100 ? 100 : command.length()));
             if (command == null || !command.contains(commandPrefix))
@@ -724,22 +723,22 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
             logger.info("Decoding CollisionVisualization");
 
             command = command.substring(commandPrefix.length());
-            SequenceEncoder.Decoder decoder = new SequenceEncoder.Decoder(command, '\t');
+
+            int i = 0;
             try {
                 CollisionVisualization visualization = new CollisionVisualization();
-                while (decoder.hasMoreTokens()) {
-                    ByteArrayInputStream strIn = new ByteArrayInputStream(decoder.next().getBytes(Charsets.ISO_8859_1.name()));
-                    ObjectInputStream in = new ObjectInputStream(strIn);
+                ByteArrayInputStream strIn = new ByteArrayInputStream(Base64.decodeBase64(command));
+                ObjectInputStream in = new ObjectInputStream(strIn);
 
-                    Shape shape = (Shape) in.readObject();
-                    while (shape != null) {
-                        visualization.add(shape);
-                        shape = (Shape) in.readObject();
-                    }
+                Shape shape = (Shape) in.readObject();
+                while (shape != null) {
+                    i++;
+                    visualization.add(shape);
+                    shape = (Shape) in.readObject();
                 }
                 return visualization;
             } catch (Exception e) {
-                logger.error("Error decoding CollisionVisualization", e.toString());
+                logger.error("Error decoding CollisionVisualization, decoded {} tokens", i, e);
                 return null;
             }
         }
@@ -749,17 +748,16 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
                 return null;
             }
             logger.info("Encoding CollisionVisualization");
-            SequenceEncoder encoder = new SequenceEncoder('\t');
             CollisionVisualization visualization = (CollisionVisualization) c;
             try {
+                ByteArrayOutputStream bos = new ByteArrayOutputStream();
+                ObjectOutputStream out = new ObjectOutputStream(bos);
                 for (Shape shape : visualization.getShapes()) {
-                    ByteArrayOutputStream bos = new ByteArrayOutputStream();
-                    ObjectOutputStream out = new ObjectOutputStream(bos);
                     out.writeObject(shape);
-                    out.close();
-                    encoder.append(bos.toString(Charsets.ISO_8859_1.name()));
                 }
-                String encoded = commandPrefix + encoder.getValue();
+                out.close();
+                byte[] base64bytes = Base64.encodeBase64(bos.toByteArray());
+                String encoded = commandPrefix + base64bytes.toString();
                 logger.info("Returning encoded CollisionVisualization = {}", encoded);
                 return encoded;
             } catch (Exception e) {
