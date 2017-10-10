@@ -76,13 +76,12 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
         return null;
     }
 
-private void clearVisu()
-{
-    getMap().removeDrawComponent(this.fov);
-    this.fov.shapes.clear();
-    this.fov.lines.clear();
-    this.fov.shapesWithText.clear();
-}
+    private void clearVisu() {
+        getMap().removeDrawComponent(this.fov);
+        this.fov.shapes.clear();
+        this.fov.lines.clear();
+        this.fov.shapesWithText.clear();
+    }
 
     private Integer getKeystrokeToOptions(KeyStroke keyStroke) {
         String hotKey = HotKeyConfigurer.getString(keyStroke);
