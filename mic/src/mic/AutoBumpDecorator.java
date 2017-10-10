@@ -3,6 +3,7 @@ package mic;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.Path2D;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.ObjectInputStream;
@@ -19,7 +20,7 @@ import VASSAL.build.module.map.boardPicker.Board;
 import VASSAL.build.widget.PieceSlot;
 import VASSAL.command.CommandEncoder;
 import VASSAL.counters.*;
-import VASSAL.tools.SequenceEncoder;
+import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import org.slf4j.Logger;
@@ -266,7 +267,7 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
             //Add all the detected overlapping shapes to the map drawn components here
             if(this.previousCollisionVisualization != null &&  this.previousCollisionVisualization.getCount() > 0){
                 innerCommand.append(this.previousCollisionVisualization);
-                this.previousCollisionVisualization.executeCommand();
+                this.previousCollisionVisualization.execute();
             }
 
             return innerCommand;
@@ -716,29 +717,29 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
         private static String commandPrefix = "CollisionVis=";
 
         public Command decode(String command) {
-            logger.info("Attempting to decode command {}...", command.substring(0, command.length() > 100 ? 100 : command.length()));
-            if (command == null || !command.contains(commandPrefix))
-            return null;
+            if (command == null || !command.contains(commandPrefix)) {
+                return null;
+            }
 
             logger.info("Decoding CollisionVisualization");
 
             command = command.substring(commandPrefix.length());
 
-            int i = 0;
             try {
+                String[] newCommandStrs = command.split("\t");
                 CollisionVisualization visualization = new CollisionVisualization();
-                ByteArrayInputStream strIn = new ByteArrayInputStream(Base64.decodeBase64(command));
-                ObjectInputStream in = new ObjectInputStream(strIn);
-
-                Shape shape = (Shape) in.readObject();
-                while (shape != null) {
-                    i++;
+                for (String bytesBase64Str : newCommandStrs) {
+                    ByteArrayInputStream strIn = new ByteArrayInputStream(Base64.decodeBase64(bytesBase64Str));
+                    ObjectInputStream in = new ObjectInputStream(strIn);
+                    Shape shape = (Shape) in.readObject();
                     visualization.add(shape);
-                    shape = (Shape) in.readObject();
+                    in.close();
                 }
+                logger.info("Decoded CollisionVisualization with {} shapes", visualization.getShapes().size());
+                visualization.execute();
                 return visualization;
             } catch (Exception e) {
-                logger.error("Error decoding CollisionVisualization, decoded {} tokens", i, e);
+                logger.error("Error decoding CollisionVisualization", e);
                 return null;
             }
         }
@@ -750,16 +751,17 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
             logger.info("Encoding CollisionVisualization");
             CollisionVisualization visualization = (CollisionVisualization) c;
             try {
-                ByteArrayOutputStream bos = new ByteArrayOutputStream();
-                ObjectOutputStream out = new ObjectOutputStream(bos);
+                List<String> commandStrs = Lists.newArrayList();
                 for (Shape shape : visualization.getShapes()) {
+                    ByteArrayOutputStream bos = new ByteArrayOutputStream();
+                    ObjectOutputStream out = new ObjectOutputStream(bos);
                     out.writeObject(shape);
+                    out.close();
+                    byte[] bytes = bos.toByteArray();
+                    String bytesBase64 = Base64.encodeBase64String(bytes);
+                    commandStrs.add(bytesBase64);
                 }
-                out.close();
-                byte[] base64bytes = Base64.encodeBase64(bos.toByteArray());
-                String encoded = commandPrefix + base64bytes.toString();
-                logger.info("Returning encoded CollisionVisualization = {}", encoded);
-                return encoded;
+                return commandPrefix + Joiner.on('\t').join(commandStrs);
             } catch (Exception e) {
                 logger.error("Error encoding CollisionVisualization", e);
                 return null;
@@ -771,5 +773,25 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
         double x;
         double y;
         double angle;
+    }
+
+    public static void main(String[] args) throws Exception {
+        CollisionVisualization visualization = new CollisionVisualization();
+        Path2D.Double path = new Path2D.Double();
+        path.moveTo(0.0, 0.0);
+        path.lineTo(0.0, 1.0);
+        visualization.add(path);
+        path = new Path2D.Double();
+        path.moveTo(0.0, 0.0);
+        path.lineTo(0.0, 0.10);
+        visualization.add(path);
+
+        CommandEncoder encoder = new CollsionVisualizationEncoder();
+
+        String encoded = encoder.encode(visualization);
+        System.out.println("encoded = " + encoded);
+
+        CollisionVisualization newVis = (CollisionVisualization) encoder.decode(encoded);
+        System.out.println("decoded = " + newVis.getShapes().size())     ;
     }
 }
