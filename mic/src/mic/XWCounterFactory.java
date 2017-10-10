@@ -1,5 +1,6 @@
 package mic;
 
+import VASSAL.build.GameModule;
 import VASSAL.build.module.BasicCommandEncoder;
 import VASSAL.counters.Decorator;
 import VASSAL.counters.GamePiece;
@@ -8,6 +9,13 @@ import VASSAL.counters.GamePiece;
  * Created by amatheny on 2/23/17.
  */
 public class XWCounterFactory extends BasicCommandEncoder {
+
+    static {
+        // This is only done here since this is something loaded early on
+        // and I have no better idea of where it should go.  That said... it doesn't work (at least for decoding)
+        GameModule.getGameModule().addCommandEncoder(new AutoBumpDecorator.CollsionVisualizationEncoder());
+    }
+
     public Decorator createDecorator(String type, GamePiece inner) {
         Decorator piece;
         if (type.startsWith(AutoBumpDecorator.ID)) {
