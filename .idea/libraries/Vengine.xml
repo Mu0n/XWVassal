@@ -4,6 +4,8 @@
       <root url="jar://$PROJECT_DIR$/mic/lib/Vengine.jar!/" />
     </CLASSES>
     <JAVADOC />
-    <SOURCES />
+    <SOURCES>
+      <root url="jar://$PROJECT_DIR$/mic/lib/VASSAL-3.2.17-src.zip!/VASSAL-3.2.17-src/src" />
+    </SOURCES>
   </library>
 </component>
