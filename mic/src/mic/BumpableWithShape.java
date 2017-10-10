@@ -105,21 +105,22 @@ public class BumpableWithShape {
     public ArrayList<Point2D.Double> getVertices(){
         double angle = getAngle();
         Point center = bumpable.getPosition();
-        double halfsize = getChassisWidth()/2.0;
+        double halfWidth = getChassisWidth()/2.0;
+        double halfHeight = getChassisHeight()/2.0;
         ArrayList<Point2D.Double> vertices = new ArrayList<Point2D.Double>();
 
         //top left
-        vertices.add(new Point2D.Double(Util.rotX(-halfsize, -halfsize, angle) + center.getX(),
-                Util.rotY(-halfsize, -halfsize, angle) + center.getY()));
+        vertices.add(new Point2D.Double(Util.rotX(-halfWidth, -halfHeight, angle) + center.getX(),
+                Util.rotY(-halfWidth, -halfHeight, angle) + center.getY()));
         //top right
-        vertices.add(new Point2D.Double(Util.rotX(halfsize, -halfsize, angle) + center.getX(),
-                Util.rotY(halfsize, -halfsize, angle) + center.getY()));
+        vertices.add(new Point2D.Double(Util.rotX(halfWidth, -halfHeight, angle) + center.getX(),
+                Util.rotY(halfWidth, -halfHeight, angle) + center.getY()));
         //bottom right
-        vertices.add(new Point2D.Double(Util.rotX(halfsize, halfsize, angle) + center.getX(),
-                Util.rotY(halfsize, halfsize, angle) + center.getY()));
+        vertices.add(new Point2D.Double(Util.rotX(halfWidth, halfHeight, angle) + center.getX(),
+                Util.rotY(halfWidth, halfHeight, angle) + center.getY()));
         //bottom left
-        vertices.add(new Point2D.Double(Util.rotX(-halfsize, halfsize, angle) + center.getX(),
-                Util.rotY(-halfsize, halfsize, angle) + center.getY()));
+        vertices.add(new Point2D.Double(Util.rotX(-halfWidth, halfHeight, angle) + center.getX(),
+                Util.rotY(-halfWidth, halfHeight, angle) + center.getY()));
 
         return vertices;
     }

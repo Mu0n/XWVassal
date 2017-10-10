@@ -1,6 +1,5 @@
 package mic;
 
-import VASSAL.build.module.BasicCommandEncoder;
 import VASSAL.build.module.documentation.HelpFile;
 import VASSAL.build.module.map.Drawable;
 import VASSAL.command.Command;
@@ -148,8 +147,7 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
     private void figureOutAutoRange(BumpableWithShape b) {
         //Figure out which best 2 points will be used on the attacker, A1 and A2
 
-        if (whichOption != 2)
-            edges = thisShip.getFiringArcEdges(whichOption,3); //TO DO: take into account huge ships eventually; not needed if you're checking turret/TL
+        edges = thisShip.getFiringArcEdges(whichOption,3); //TO DO: take into account huge ships eventually; not needed if you're checking turret/TL
         findAttackerBestPoints(b);
 
         Point2D.Double D1 = findClosestVertex(b, thisShip);
@@ -168,6 +166,7 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
         micLine bestLine = null;
         if(whichOption == 2) bestLine = findBestLine(A1, A2, D1, D2, 3);
         else bestLine = findBestArcRestrictedLine(A1, A2, D1, D2, E1, E2, 3);
+
         if (bestLine == null) return;
         bestLine.isBestLine = true;
 
@@ -175,46 +174,46 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
         String bShipName = b.pilotName + "(" + b.shipName + ")";
         rangeFindings found = new rangeFindings(bestLine.rangeLength, bShipName);
 
-        //deal with the case where's there no chance of having multiple best lines first
-        if ((!isTargetOutsideofRectangles(thisShip, b, true) && are90degreesAligned(thisShip, b) == false) ||
-                isTargetOutsideofRectangles(thisShip, b, true)) {
-            //TO DO: replace with a different range cap later, associated with the type of arc (for huge ships)
-            if (bestLine.rangeLength > 3) return;
+            //deal with the case where's there no chance of having multiple best lines first
+            if ((!isTargetOutsideofRectangles(thisShip, b, true) && are90degreesAligned(thisShip, b) == false) ||
+                    isTargetOutsideofRectangles(thisShip, b, true)) {
+                //TO DO: replace with a different range cap later, associated with the type of arc (for huge ships)
+                if (bestLine.rangeLength > 3) return;
 
-            //find if there's an obstruction
-            List<BumpableWithShape> obstructions = getObstructionsOnMap();
-            for (BumpableWithShape obstruction : obstructions) {
-                if (isLine2DOverlapShape(bestLine.line, obstruction.shape)) {
-                    bestLine.rangeString += " obstructed";
-                    fov.add(obstruction.shape);
-                    found.isObstructed = true;
-                    break;
+                //find if there's an obstruction
+                List<BumpableWithShape> obstructions = getObstructionsOnMap();
+                for (BumpableWithShape obstruction : obstructions) {
+                    if (isLine2DOverlapShape(bestLine.line, obstruction.shape)) {
+                        bestLine.rangeString += " obstructed";
+                        fov.add(obstruction.shape);
+                        found.isObstructed = true;
+                        break;
+                    }
                 }
+
+                rfindings.add(found);
+                fov.addLine(bestLine);
+            } else { //multiple lines case
+                int quickDist = (int) Math.ceil(Math.sqrt(Math.pow(A1.getX() - D1.getX(), 2.0) + Math.pow(A1.getY() - D1.getY(), 2.0)) / 282.5);
+                if (quickDist > 3) return;
+
+                double wantedWidth = 0.0;
+                if (whichOption == 2) wantedWidth = thisShip.getChassisWidth();
+                else wantedWidth = thisShip.getChassisWidth() - thisShip.chassis.getCornerToFiringArc() * 2.0;
+
+                Shape fromShip = findInBetweenRectangle(thisShip, b, wantedWidth);
+                Shape fromTarget = findInBetweenRectangle(b, thisShip, b.getChassisWidth());
+
+                if (fromShip == null) return;
+                Area a1 = new Area(fromShip);
+                Area a2 = new Area(fromTarget);
+                a1.intersect(a2);
+
+                double extra = getExtraAngleDuringRectDetection(thisShip, b);
+                ShapeWithText bestBand = new ShapeWithText(a1, thisShip.getAngleInRadians() + extra);
+                rfindings.add(found);
+                fov.addShapeWithText(bestBand);
             }
-
-            rfindings.add(found);
-            fov.addLine(bestLine);
-        } else { //multiple lines case
-            int quickDist = (int) Math.ceil(Math.sqrt(Math.pow(A1.getX() - D1.getX(), 2.0) + Math.pow(A1.getY() - D1.getY(), 2.0)) / 282.5);
-            if (quickDist > 3) return;
-
-            double wantedWidth = 0.0;
-            if(whichOption == 2) wantedWidth = thisShip.getChassisWidth();
-            else wantedWidth = thisShip.getChassisWidth() - thisShip.chassis.getCornerToFiringArc()*2.0;
-
-            Shape fromShip = findInBetweenRectangle(thisShip, b, wantedWidth);
-            Shape fromTarget = findInBetweenRectangle(b, thisShip, b.getChassisWidth());
-
-            if(fromShip == null) return;
-            Area a1 = new Area(fromShip);
-            Area a2 = new Area(fromTarget);
-            a1.intersect(a2);
-
-            double extra = getExtraAngleDuringRectDetection(thisShip, b);
-            ShapeWithText bestBand = new ShapeWithText(a1, thisShip.getAngleInRadians() + extra);
-            rfindings.add(found);
-            fov.addShapeWithText(bestBand);
-        }
 
     }
 
@@ -289,16 +288,22 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
     }
 
 
+    private Boolean isRangeOk(micLine theLine, int rangeMin, int rangeMax)
+    {
+        if(theLine == null) return false;
+        double minPixelDist = rangeMin * 282.5;
+        double maxPixelDist = rangeMax * 282.5;
+
+        if(Double.compare(theLine.pixelLength, minPixelDist) >= 0 && Double.compare(theLine.pixelLength, maxPixelDist) <=0) return true;
+        return false;
+    }
 
     private micLine findBestArcRestrictedLine(Point2D.Double A1, Point2D.Double A2, Point2D.Double D1, Point2D.Double D2, Point2D.Double E1, Point2D.Double E2, int rangeInt) {
+
         ArrayList<micLine> lineList = new ArrayList<micLine>();
 
         //Closest Attacker to Closest Defender
         micLine A1D1 = new micLine(A1, D1);
-        //Closest Attacker to 2nd Closest Defender
-        micLine A1D2 = new micLine(A1, D2);
-        //Closest Defender to Closest Attacker
-        micLine D1A1 = new micLine(D1, A1);
         //Closest Defender to 2nd Closest Attacker
         micLine A2D1 = new micLine(A2, D1);
         //Closest Defender to 2nd Closest Attacker
@@ -308,22 +313,32 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
         //Closest Defender Edge
         micLine DD = new micLine(D1, D2);
 
-        lineList.add(A1D1);
-        lineList.add(A1D2);
-        lineList.add(A2D1);
+
+        if(isRangeOk(A1D1, 1, rangeInt)) lineList.add(A1D1);
+        if(isRangeOk(A2D1, 1, rangeInt)) lineList.add(A2D1);
 
         //Closest attacker's point to the defender's closest vertex
-        micLine A1DD = createLineA1toDD(A1D1, A1D2, DD);
-        lineList.add(A1DD);
+        micLine A1DD = createLineA1toDD(A1D1, DD, 1);
+        if(isRangeOk(A1DD, 1, rangeInt)) lineList.add(A1DD);
 
-        micLine A1DD_arc_restricted = createLineA1toDD(A1D1, A1D2, DD);
-        micLine A2DD_arc_restricted = createLineA1toDD(A2D1, A2D1, DD);
+        micLine A2DD = createLineA1toDD(A2D1, DD, 2);
+        if(isRangeOk(A2DD, 1, rangeInt)) lineList.add(A2DD);
+
+        micLine A1DD_arc_restricted = createLineA1toDD_along_arc_edge(A1D1, DD, E1, E2, 1);
+        if(isRangeOk(A1DD_arc_restricted, 1, rangeInt)) lineList.add(A1DD_arc_restricted);
+
+        micLine A2DD_arc_restricted = createLineA1toDD_along_arc_edge(A2D1, DD, E1, E2, 2);
+        if(isRangeOk(A2DD_arc_restricted, 1, rangeInt)) lineList.add(A2DD_arc_restricted);
 
         //Attacker's edge to defender's closest vertex
-        micLine D1AA = createLineAAtoD1(A1D1, D1A2, AA, D1);
-        if(doesAAforInArcPassTest(D1AA, AA)== true)lineList.add(D1AA);
-
-
+        micLine AAD1 = createLineAAtoD1(A1D1, AA, D1);
+        if(doesAAforInArcPassTest(AAD1, AA)== true)
+            if(isRangeOk(AAD1, 1, rangeInt)) {
+                lineList.add(AAD1);
+                logToChatCommand("passed both tests");
+            }
+        else logToChatCommand("passed inarcpasstest, did not pass range");
+        else logToChatCommand("did not pass inarcpasstest");
         ArrayList<micLine> filteredList = new ArrayList<micLine>();
         //Filter out shots that aren't in-arc if the turret option is not chosen
         for(micLine l: lineList)
@@ -331,7 +346,8 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
             if(isEdgeInArc(A1, A2, l, E1, E2) == true) filteredList.add(l);
         }
 
-        ArrayList<micLine> usedList = new ArrayList<micLine>();
+
+        ArrayList<micLine> usedList;
 
         if(whichOption == 2) usedList = (ArrayList<micLine>)lineList.clone();
         else  usedList = (ArrayList<micLine>) filteredList.clone();
@@ -354,18 +370,20 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
         return best;
     }
 
-    private boolean doesAAforInArcPassTest(micLine D1AA, micLine AA) {
+    private boolean doesAAforInArcPassTest(micLine AAD1, micLine AA) {
         double x1 = AA.first.x;
         double y1 = AA.first.y;
         double x2 = AA.second.x;
         double y2 = AA.second.y;
         //Get the midpoint inside the firing arc, on the attacker
-        double xp = D1AA.second.x;
-        double yp = D1AA.second.y;
+        double xp = AAD1.first.x;
+        double yp = AAD1.first.y;
 
         double dist1 = Math.sqrt(Math.pow(xp - x1, 2.0) + Math.pow(yp - y1, 2.0));
         double dist2 = Math.sqrt(Math.pow(xp - x2, 2.0) + Math.pow(yp - y2, 2.0));
         double distaa = Math.sqrt(Math.pow(x2 - x1, 2.0) + Math.pow(y2 - y1, 2.0));
+
+        logToChatCommand("dist1 " + Double.toString(dist1) + " dist 2 " + Double.toString(dist2) + " distaa " + Double.toString(distaa));
 //is the point used in D1AA between A1 and A2?
         if(Double.compare(distaa,dist1) > 0 && Double.compare(distaa,dist2) > 0) return true;
         return false;
@@ -376,7 +394,6 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
     //the closest and 2nd closest lines to the target's vertices.
     //using an algorithm based on this: http://www.ahristov.com/tutorial/geometry-games/point-line-distance.html
     private micLine findBestLine(Point2D.Double A1, Point2D.Double A2, Point2D.Double D1, Point2D.Double D2, int rangeInt) {
-
         ArrayList<micLine> lineList = new ArrayList<micLine>();
 
         //Closest Attacker to Closest Defender
@@ -394,10 +411,12 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
         lineList.add(A1D2);
         lineList.add(A2D1);
 
-        micLine A1DD = createLineA1toDD(A1D1, A1D2, DD);
+        micLine A1DD = createLineA1toDD(A1D1, DD, 1);
         lineList.add(A1DD);
+        micLine A2DD = createLineA1toDD(A2D1, DD, 2);
+        lineList.add(A2DD);
 
-        micLine D1AA = createLineAAtoD1(A1D1, A2D1, AA, D1);
+        micLine D1AA = createLineAAtoD1(A1D1, AA, D1);
         lineList.add(D1AA);
 
         //First criterium, find the best distance and make it the best Line
@@ -411,8 +430,8 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
         }
         //nothing under the requested range was found, no best lines can be submitted
         if(best==null) return null;
-
         return best;
+
     }
 
     private boolean isEdgeInArc(Point2D.Double A1, Point2D.Double A2, micLine theCandidateLine, Point2D.Double E1, Point2D.Double E2)
@@ -434,13 +453,13 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
         return Math.atan2(deltaY, deltaX) + Math.PI;
     }
 
-    private micLine createLineA1toDD(micLine A1D1, micLine A1D2, micLine DD) {
+    private micLine createLineA1toDD(micLine A1D1, micLine DD, int whichAPoint) {
         //getting D1 again
         double x1 = A1D1.second.getX();
         double y1 = A1D1.second.getY();
         //getting D2 again
-        double x2 = A1D2.second.getX();
-        double y2 = A1D2.second.getY();
+        double x2 = DD.second.getX();
+        double y2 = DD.second.getY();
         //getting A1 again
         double xp = A1D1.first.getX();
         double yp = A1D1.first.getY();
@@ -460,16 +479,19 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
         double vector_y = y1 + gapy;
 
         //returns A1DD - closest attacker point (vertex or in-arc edge) to an defender's edge point satisfying the 90 degrees shortest distance requirement
-        return new micLine(A1, new Point2D.Double(vector_x, vector_y));
+        if(whichAPoint == 1) return new micLine(A1, new Point2D.Double(vector_x, vector_y));
+        if(whichAPoint == 2) return new micLine(A2, new Point2D.Double(vector_x, vector_y));
+
+        return null;
     }
 
-    private micLine createLineA1toDD_arc_restricted(micLine A1D1, micLine A1D2, micLine DD, Point2D.Double E1, Point2D.Double E2) {
+    private micLine createLineA1toDD_along_arc_edge(micLine A1D1, micLine DD, Point2D.Double E1, Point2D.Double E2, int whichStart) {
         //getting D1 again
         double x1 = A1D1.second.getX();
         double y1 = A1D1.second.getY();
         //getting D2 again
-        double x2 = A1D2.second.getX();
-        double y2 = A1D2.second.getY();
+        double x2 = DD.second.getX();
+        double y2 = DD.second.getY();
         //getting A1 again
         double xp = A1D1.first.getX();
         double yp = A1D1.first.getY();
@@ -477,45 +499,56 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
         micLine A1E1 = new micLine(A1, E1);
         micLine A2E2 = new micLine(A2, E2);
 
-        if(areMicLinesCrossing(A1E1, DD) == true);
-        else if(areMicLinesCrossing(A2E2, DD) == true);
+        Point2D.Double D3 = null;
 
-        //getting the shortest distance in pixels to the line formed by both (x1,y1) and (x2,y2)
-        double numerator = Math.abs((xp - x1) * (y2 - y1) - (yp - y1) * (x2 - x1));
-        double denominator = Math.sqrt(Math.pow(x2 - x1, 2.0) + Math.pow(y2 - y1, 2.0));
-        double shortestdist = numerator / denominator;
-
-        double segmentPartialDist = Math.sqrt(Math.pow(A1D1.pixelLength,2.0) - Math.pow(shortestdist,2.0));
-        double segmentFullDist = DD.pixelLength;
-        double gapx = (x2-x1)/segmentFullDist*segmentPartialDist;
-        double gapy = (y2-y1)/segmentFullDist*segmentPartialDist;
-
-
-        double vector_x = x1 + gapx;
-        double vector_y = y1 + gapy;
-
-        //returns A1DD - closest attacker point (vertex or in-arc edge) to an defender's edge point satisfying the 90 degrees shortest distance requirement
-        return new micLine(A1, new Point2D.Double(vector_x, vector_y));
+        if(whichStart == 1)  {
+            D3 = findSegmentCrossPoint(A1E1,DD);
+            if(D3 != null) return new micLine(A1,D3);
+        }
+        else if(whichStart == 2) {
+            D3 = findSegmentCrossPoint(A2E2,DD);
+            if(D3 != null) return new micLine(A2,D3);
+        }
+        return null;
     }
 
     //Using this algorithm to detect if the two segments cross
     //https://stackoverflow.com/questions/563198/how-do-you-detect-where-two-line-segments-intersect
-    private boolean areMicLinesCrossing(micLine A1E1, micLine DD) {
-        micLine p = A1E1;
-
-        micLine q = DD;
-    }
-
     private Point2D.Double findSegmentCrossPoint(micLine A1E1, micLine DD)
     {
-        Point2D.Double intersectionPt = null;
+        Point2D.Double intersectionPt = new Point2D.Double(-1.0,-1.0);
         double px = A1E1.first.x;
         double py = A1E1.first.y;
 
         double qx = DD.first.x;
         double qy = DD.first.y;
         
+        double rx = A1E1.second.x - A1E1.first.x;
+        double ry = A1E1.second.y - A1E1.first.y;
 
+        double sx = DD.second.x - DD.first.x;
+        double sy = DD.second.y - DD.first.y;
+
+        micLine qmpLine = new micLine(new Point2D.Double(px, py), new Point2D.Double(qx, qy));
+
+        Boolean checkColinearity_1 = Double.compare(micLineCrossProduct(A1E1, DD),0.0) == 0;
+        Boolean checkColinearity_2 = Double.compare(micLineCrossProduct(qmpLine, A1E1), 0.0) == 0;
+
+        if(checkColinearity_1 == true) {
+            if(checkColinearity_2 == true) return null; //TO DO parallel and intersecting
+            else return null; //parallel and non-intersecting
+        }
+
+        double t = micLineCrossProduct(qmpLine, DD) / micLineCrossProduct(A1E1, DD);
+        double u = micLineCrossProduct(qmpLine, A1E1) / micLineCrossProduct(A1E1, DD);
+
+        if(Double.compare(t,0.0) >= 0 && Double.compare(t,1.0) <= 0
+                && Double.compare(u,0.0) >= 0 && Double.compare(u, 1.0) <= 0)
+        {
+            intersectionPt.x = px + t*rx;
+            intersectionPt.y = py + t*ry;
+        }
+        if(Double.compare(intersectionPt.x,-1.0) == 0) return null;
         return intersectionPt;
     }
 
@@ -528,18 +561,27 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
         double by = B.second.y - B.first.y;
 
         return ax * by  - ay * bx;
-
     }
 
+    private double micLineDotProduct(micLine A, micLine B)
+    {
+        double ax = A.second.x - A.first.x;
+        double ay = A.second.y - A.first.y;
 
-    private micLine createLineAAtoD1(micLine A1D1, micLine A2D1, micLine AA, Point2D.Double D1)
+        double bx = B.second.x - B.first.x;
+        double by = B.second.y - B.first.y;
+
+        return ax * bx + ay * by;
+    }
+
+    private micLine createLineAAtoD1(micLine A1D1, micLine AA, Point2D.Double D1)
     {
         //Find A1 again
-        double x1 = A1D1.first.getX();
-        double y1 = A1D1.first.getY();
+        double x1 = AA.first.getX();
+        double y1 = AA.first.getY();
         //Find A2 again
-        double x2 = A2D1.first.getX();
-        double y2 = A2D1.first.getY();
+        double x2 = AA.second.getX();
+        double y2 = AA.second.getY();
         //find D1 again
         double xp = A1D1.second.getX();
         double yp = A1D1.second.getY();
@@ -943,23 +985,25 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
         public Point2D.Double first, second;
         public Line2D.Double line = null;
 
-    micLine(int x1, int y1, int x2, int y2){
-        this.first = new Point2D.Double(x1, y1);
-        this.second = new Point2D.Double(x2, y2);
-        doRest();
+        micLine(int x1, int y1, int x2, int y2) {
+            this.first = new Point2D.Double(x1, y1);
+            this.second = new Point2D.Double(x2, y2);
+            doRest();
         }
-    micLine(Point2D.Double first, Point2D.Double second){
-        this.first = first;
-        this.second = second;
-        doRest();
-    }
-    void doRest(){
-        pixelLength = Math.sqrt(nonSRPyth(first, second));
-        rangeLength = (int)Math.ceil(pixelLength/282.5);
-        rangeString += Integer.toString(rangeLength);
-        line = new Line2D.Double(first, second);
-        calculateCenter();
-    }
+
+        micLine(Point2D.Double first, Point2D.Double second) {
+            this.first = first;
+            this.second = second;
+            doRest();
+        }
+
+        void doRest() {
+            pixelLength = Math.sqrt(nonSRPyth(first, second));
+            rangeLength = (int) Math.ceil(pixelLength / 282.5);
+            rangeString += Integer.toString(rangeLength);
+            line = new Line2D.Double(first, second);
+            calculateCenter();
+        }
 
     void calculateCenter(){
         centerX = (int)(this.first.getX() + 0.5*(this.second.getX()-this.first.getX()));
