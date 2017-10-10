@@ -41,7 +41,7 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
             .put("CTRL SHIFT F", 1) //primary arc
             .put("CTRL SHIFT L", 2) //turret/TL
             //.put("CTRL SHIFT N", 3) //front pairs of aux arc (YV-666, Auzituck)
-            //.put("CTRL SHIFT V", 4) //back aux arc
+            .put("CTRL SHIFT V", 4) //back aux arc
             //.put("ALT SHIFT V", 5) //mobile turret arc, must detect which one is selected on the ship
             .build();
     private static double RANGE1 = 282.5;
@@ -50,7 +50,6 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
     int whichOption = -1; //which autorange option. See the Map above. -1 if none is selected.
     String bigAnnounce = "";
     BumpableWithShape thisShip; //ship's full combined name string
-    ArrayList<rangeFindings> rfindings = new ArrayList<rangeFindings>(); //findings compiled here
     Point2D.Double A1, A2; //attacker ship's best points
     ArrayList<Point2D.Double> edges = new ArrayList<Point2D.Double>();
     // Assuming an upward facing ship,
@@ -104,6 +103,9 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
     }
 
     public Command keyEvent(KeyStroke stroke) {
+
+        ArrayList<rangeFindings> rfindings = new ArrayList<rangeFindings>(); //findings compiled here
+
         if (this.fov == null) {
             this.fov = new FOVisualization();
         }
@@ -129,7 +131,7 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
                 if (shapesOverlap(thisShip.shape, b.shape)) continue;
 
                 //Do everything method here:
-                figureOutAutoRange(b);
+                figureOutAutoRange(b, rfindings);
             }
 
             //draw visuals and announce the results in the chat
@@ -144,7 +146,7 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
     }
 
 
-    private void figureOutAutoRange(BumpableWithShape b) {
+    private void figureOutAutoRange(BumpableWithShape b, ArrayList<rangeFindings> rfindings) {
         //Figure out which best 2 points will be used on the attacker, A1 and A2
 
         edges = thisShip.getFiringArcEdges(whichOption,3); //TO DO: take into account huge ships eventually; not needed if you're checking turret/TL
@@ -173,6 +175,7 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
         //Prepare the end of the appropriate chat announcement string - targets with their range, obstruction notice if relevant, ordered per range
         String bShipName = b.pilotName + "(" + b.shipName + ")";
         rangeFindings found = new rangeFindings(bestLine.rangeLength, bShipName);
+
 
             //deal with the case where's there no chance of having multiple best lines first
             if ((!isTargetOutsideofRectangles(thisShip, b, true) && are90degreesAligned(thisShip, b) == false) ||
@@ -224,7 +227,7 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
 
         switch (whichOption) {
             case 1:
-            case 3:
+            case 4:
                 A1 = edges.get(0);
                 A2 = edges.get(1);
                 break;
@@ -248,6 +251,8 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
             case 2:
                 bigAnnounce += "for Target Lock/Turrets - from ";
                 break;
+            case 4:
+                bigAnnounce += "for the backward auxiliary arc - from";
         }
 
         String fullShipName = thisShip.pilotName + "(" + thisShip.shipName + ")";
@@ -291,7 +296,7 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
     private Boolean isRangeOk(micLine theLine, int rangeMin, int rangeMax)
     {
         if(theLine == null) return false;
-        double minPixelDist = rangeMin * 282.5;
+        double minPixelDist = rangeMin * 282.5 - 282.5;
         double maxPixelDist = rangeMax * 282.5;
 
         if(Double.compare(theLine.pixelLength, minPixelDist) >= 0 && Double.compare(theLine.pixelLength, maxPixelDist) <=0) return true;
@@ -306,8 +311,6 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
         micLine A1D1 = new micLine(A1, D1);
         //Closest Defender to 2nd Closest Attacker
         micLine A2D1 = new micLine(A2, D1);
-        //Closest Defender to 2nd Closest Attacker
-        micLine D1A2 = new micLine(A2, D1);
         //Closest Attacker Edge
         micLine AA = new micLine(A1, A2);
         //Closest Defender Edge
@@ -335,10 +338,7 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
         if(doesAAforInArcPassTest(AAD1, AA)== true)
             if(isRangeOk(AAD1, 1, rangeInt)) {
                 lineList.add(AAD1);
-                logToChatCommand("passed both tests");
             }
-        else logToChatCommand("passed inarcpasstest, did not pass range");
-        else logToChatCommand("did not pass inarcpasstest");
         ArrayList<micLine> filteredList = new ArrayList<micLine>();
         //Filter out shots that aren't in-arc if the turret option is not chosen
         for(micLine l: lineList)
@@ -346,16 +346,10 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
             if(isEdgeInArc(A1, A2, l, E1, E2) == true) filteredList.add(l);
         }
 
-
-        ArrayList<micLine> usedList;
-
-        if(whichOption == 2) usedList = (ArrayList<micLine>)lineList.clone();
-        else  usedList = (ArrayList<micLine>) filteredList.clone();
-
         //First criterium, find the best distance and make it the best Line
         double bestDist = rangeInt * 282.5;
         micLine best = null;
-        for (micLine l : usedList) {
+        for (micLine l : filteredList) {
             if (Double.compare(bestDist, l.pixelLength) > 0) {
                 bestDist = l.pixelLength;
                 best = l;
@@ -363,13 +357,14 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
         }
         //nothing under the requested range was found, no best lines can be submitted
         if (best == null) {
-            //logToChatCommand("did not find a best line");
             return null;
         }
 
+        best.isArcLine = true;
         return best;
     }
 
+    //Checks if the AAD1 line, from closest defender vertex to a point somewhere inside the arc, on the attacker's edge, is actually between the arc points instead of simply outside but still on that extended line
     private boolean doesAAforInArcPassTest(micLine AAD1, micLine AA) {
         double x1 = AA.first.x;
         double y1 = AA.first.y;
@@ -382,8 +377,6 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
         double dist1 = Math.sqrt(Math.pow(xp - x1, 2.0) + Math.pow(yp - y1, 2.0));
         double dist2 = Math.sqrt(Math.pow(xp - x2, 2.0) + Math.pow(yp - y2, 2.0));
         double distaa = Math.sqrt(Math.pow(x2 - x1, 2.0) + Math.pow(y2 - y1, 2.0));
-
-        logToChatCommand("dist1 " + Double.toString(dist1) + " dist 2 " + Double.toString(dist2) + " distaa " + Double.toString(distaa));
 //is the point used in D1AA between A1 and A2?
         if(Double.compare(distaa,dist1) > 0 && Double.compare(distaa,dist2) > 0) return true;
         return false;
@@ -430,6 +423,7 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
         }
         //nothing under the requested range was found, no best lines can be submitted
         if(best==null) return null;
+        best.isBestLine = true;
         return best;
 
     }
@@ -439,7 +433,6 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
         double firstArcEdgePolarAngle = getEdgeAngle(A1, E1);
         double secondArcEdgePolarAngle = getEdgeAngle(A2, E2);
         double bestLinePolarAngle = getEdgeAngle(theCandidateLine.first, theCandidateLine.second);
-        logToChatCommand("arc edge left at " + Double.toString(firstArcEdgePolarAngle) + " bestline at " + Double.toString(bestLinePolarAngle) + " arc edge right at " + Double.toString(secondArcEdgePolarAngle));
         if (bestLinePolarAngle < firstArcEdgePolarAngle || bestLinePolarAngle > secondArcEdgePolarAngle)
             return false;
         return true;
@@ -450,6 +443,11 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
         double deltaY = end.y - start.y;
 
         //returns a polar angle in rad, keeps it positive for easy ordering (might not be necessary)
+        if(whichOption == 4) {//back aux arc, hits the transition between 0 and 360, breaking the test
+            double angle = Math.atan2(deltaY, deltaX) - Math.PI/2.0;
+            if(Double.compare(angle, 0.0) > 0) angle -= Math.PI*2.0;
+            return angle;
+        }
         return Math.atan2(deltaY, deltaX) + Math.PI;
     }
 
@@ -691,36 +689,54 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
     }
 
     private Shape findInBetweenRectangle(BumpableWithShape atk, BumpableWithShape def, double wantedWidth) {
+        //whichAtkRect: 1 = front; 2 = left; 3 = right; 4 = back; 5 = all
         double chassisHeight = atk.getChassisHeight();
         double chassisWidth = atk.getChassisWidth();
-        Shape front = new Rectangle2D.Double(-wantedWidth/2.0, -RANGE3 - chassisHeight/2.0, wantedWidth, RANGE3);
-        Shape back = new Rectangle2D.Double(-wantedWidth/2.0, chassisHeight/2.0, wantedWidth, RANGE3);
 
-        Shape left = new Rectangle2D.Double(-chassisWidth/2.0 - RANGE3, -chassisHeight/2.0, RANGE3, chassisHeight);
-        Shape right = new Rectangle2D.Double(chassisWidth/2.0, -chassisHeight/2.0, RANGE3, chassisHeight);
-
-        ArrayList<Shape> listShape = new ArrayList<Shape>();
-        listShape.add(front);
-        listShape.add(back);
-        listShape.add(left);
-        listShape.add(right);
 
         double centerX = atk.bumpable.getPosition().getX();
         double centerY = atk.bumpable.getPosition().getY();
-
-        for(Shape s : listShape){
-
-            Shape transformed = AffineTransform
-                    .getTranslateInstance(centerX, centerY)
-                    .createTransformedShape(s);
-
-            transformed = AffineTransform
-                    .getRotateInstance(atk.getAngleInRadians(), centerX, centerY)
-                    .createTransformedShape(transformed);
-            if(shapesOverlap(transformed, def.shape)) return transformed;
+        Shape testShape = null;
+        if(whichOption == 1) { //front only
+            testShape = new Rectangle2D.Double(-wantedWidth/2.0, -RANGE3 - chassisHeight/2.0, wantedWidth, RANGE3);
         }
+        if(whichOption == 4) { //back only
+            testShape = new Rectangle2D.Double(-wantedWidth/2.0, chassisHeight/2.0, wantedWidth, RANGE3);
+        }
+        if(whichOption == 2) { //all 4
+            Shape front = new Rectangle2D.Double(-wantedWidth/2.0, -RANGE3 - chassisHeight/2.0, wantedWidth, RANGE3);
+            Shape back = new Rectangle2D.Double(-wantedWidth/2.0, chassisHeight/2.0, wantedWidth, RANGE3);
+            Shape left = new Rectangle2D.Double(-chassisWidth/2.0 - RANGE3, -chassisHeight/2.0, RANGE3, chassisHeight);
+            Shape right = new Rectangle2D.Double(chassisWidth/2.0, -chassisHeight/2.0, RANGE3, chassisHeight);
+
+            ArrayList<Shape> listShape = new ArrayList<Shape>();
+            listShape.add(front);
+            listShape.add(back);
+            listShape.add(left);
+            listShape.add(right);
+
+            for(Shape s : listShape){
+                Shape transformed = transformRectShapeForBestLines(atk, def, s, centerX, centerY);
+                if(shapesOverlap(transformed, def.shape)) return transformed;
+            }
+        }
+        //common to all options except turret/TL shots
+        Shape tShape = transformRectShapeForBestLines(atk, def, testShape, centerX, centerY);
+        if(shapesOverlap(tShape, def.shape)) return tShape;
         return null;
     }
+
+    private Shape transformRectShapeForBestLines(BumpableWithShape atk, BumpableWithShape def, Shape toTransform, double x, double y) {
+        Shape transformed = AffineTransform
+                .getTranslateInstance(x, y)
+                .createTransformedShape(toTransform);
+
+        transformed = AffineTransform
+                .getRotateInstance(atk.getAngleInRadians(), x, y)
+                .createTransformedShape(transformed);
+        return transformed;
+    }
+
 
     private double getExtraAngleDuringRectDetection(BumpableWithShape atk, BumpableWithShape def){
         double workingWidth = atk.getChassisWidth();
@@ -846,7 +862,7 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
         public Color badLineColor = new Color(30,30,255,110);
         public Color bestLineColor = new Color(45,200,190,255);
         public Color shipsObstaclesColor = new Color(255,99,71, 150);
-
+        public Color arcLineColor = new Color(246, 255, 41,180);
         Color myO = new Color(0,50,255, 50);
         FOVisualization() {
             this.shapes = new ArrayList<Shape>();
@@ -912,6 +928,7 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
             }
             for(micLine line : lines){
                 if(line.isBestLine == true) graphics2D.setColor(bestLineColor);
+                if(line.isArcLine == true) graphics2D.setColor(arcLineColor);
                 else graphics2D.setColor(badLineColor);
 
                 Line2D.Double lineShape = new Line2D.Double(line.first, line.second);
@@ -978,6 +995,7 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
     }
     public static class micLine {
         public Boolean isBestLine = false;
+        public Boolean isArcLine = false;
         public String rangeString = "Range ";
         public double pixelLength = 0.0f;
         public int rangeLength = 0;
