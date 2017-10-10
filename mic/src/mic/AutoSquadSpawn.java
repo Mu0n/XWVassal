@@ -266,9 +266,9 @@ public class AutoSquadSpawn extends AbstractConfigurable {
 
         int shipBaseX = (int) dialstartPosition.getX() + totalDialsWidth - 30;
         for (GamePiece piece : shipBases) {
-            int halfBase = (int) (piece.boundingBox().getWidth() / 2.0);
+            int halfBase = (int) (piece.getShape().getBounds2D().getWidth() / 2.0);
             spawnPiece(piece, new Point(shipBaseX + halfBase, shipBaseY), playerMap);
-            shipBaseX += piece.boundingBox().getWidth();
+            shipBaseX += piece.getShape().getBounds2D().getWidth() + 10.0;
         }
 
         int obstacleX = (int) dialstartPosition.getX() + totalDialsWidth - 30;

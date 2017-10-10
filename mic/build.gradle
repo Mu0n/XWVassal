@@ -21,6 +21,7 @@ targetCompatibility = '1.5'
 
 dependencies {
     compileOnly files('lib/vengine.jar')
+    compileOnly 'org.slf4j:slf4j-api:1.7.7'
     compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.1.5'
     compile group: 'com.google.guava', name: 'guava-jdk5', version: '17.0'
 }
