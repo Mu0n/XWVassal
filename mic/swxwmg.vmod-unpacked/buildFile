@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<VASSAL.launch.BasicModule VassalVersion="3.2.17" description="" name="Star Wars X-Wing Miniatures Game" nextPieceSlotId="12164" version="7.4.3">
+<VASSAL.launch.BasicModule VassalVersion="3.2.17" description="" name="Star Wars X-Wing Miniatures Game" nextPieceSlotId="12164" version="7.5.0">
     <mic.XWCounterFactory/>
     <VASSAL.build.module.Documentation>
         <VASSAL.build.module.documentation.AboutScreen fileName="Splash.PNG" title="About Module"/>
