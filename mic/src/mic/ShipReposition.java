@@ -1,13 +1,12 @@
 package mic;
 
-import java.awt.*;
-import java.awt.event.InputEvent;
-import java.awt.event.KeyEvent;
 import VASSAL.build.GameModule;
 import VASSAL.build.module.documentation.HelpFile;
 import VASSAL.build.module.map.Drawable;
 import VASSAL.build.widget.PieceSlot;
+import VASSAL.command.ChangeTracker;
 import VASSAL.command.Command;
+import VASSAL.command.MoveTracker;
 import VASSAL.configure.HotKeyConfigurer;
 import VASSAL.counters.*;
 import com.google.common.collect.ImmutableMap;
@@ -15,29 +14,15 @@ import com.google.common.collect.Lists;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.KeyEvent;
 import java.awt.geom.AffineTransform;
-import java.awt.geom.Area;
 import java.util.*;
 import java.util.List;
 import java.util.Timer;
 
-
-import javax.swing.*;
-import VASSAL.build.GameModule;
-import VASSAL.build.widget.PieceSlot;
-import VASSAL.command.ChangeTracker;
-import VASSAL.command.MoveTracker;
-import VASSAL.counters.*;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Lists;
-
-import VASSAL.build.module.documentation.HelpFile;
-import VASSAL.build.module.map.Drawable;
-import VASSAL.command.Command;
-import VASSAL.configure.HotKeyConfigurer;
 import static mic.Util.*;
-import static mic.Util.logToChat;
-import static mic.Util.newPiece;
+
+//import VASSAL.command.ChangeTracker;
 
 /**
  * Created by Mic on 07/08/2017.
@@ -316,7 +301,10 @@ public class ShipReposition extends Decorator implements EditablePiece {
             }
         }
         //STEP 6: Gather info for ship's final wanted position
-        Shape shapeForOverlap2 = this.piece.getShape();
+
+        // spawn a copy of the ship without the actions
+        Shape shapeForOverlap2 = getCopyOfShapeWithoutActionsForOverlapCheck(this.piece,repoTemplate );
+
         //Info Gathering: gets the angle from RepoManeuver which deals with degrees, local space with ship at 0,0, pointing up
         double tAngle2;
         tAngle2 = repoTemplate.getShipAngle(); //repo maneuver's angle
@@ -340,8 +328,11 @@ public class ShipReposition extends Decorator implements EditablePiece {
 
         //STEP 9: Check for overlap with obstacles and ships with the final ship position
         List<BumpableWithShape> shipsOrObstacles = getBumpablesOnMap(true);
+
         if(shapeForOverlap2 != null){
+
             List<BumpableWithShape> overlappingShipOrObstacles = findCollidingEntities(shapeForOverlap2, shipsOrObstacles);
+
             if(overlappingShipOrObstacles.size() > 0) {
                 for(BumpableWithShape bws : overlappingShipOrObstacles)
                 {
@@ -350,12 +341,12 @@ public class ShipReposition extends Decorator implements EditablePiece {
                     String overlapOnFinalWarn = "*** Warning: " + yourShipName + "'s final reposition location currently overlaps a Ship or Obstacle. You can attempt to move it into a legal position and check if it still overlaps with 'alt-c'.";
                     if(bigCommand !=null) bigCommand.append(logToChatCommand(overlapOnFinalWarn));
                     else bigCommand = logToChatCommand(overlapOnFinalWarn);
-
                 }
                 previousCollisionVisualization.add(shapeForOverlap2);
                 spawnTemplate = true; //we'll want the template
             }
         }
+
         //STEP 10: optional if there's any kind of overlap, produce both the template and initial ship position
         if(spawnTemplate == true) {
             //the template is needed, in case of any kind of overlap
@@ -373,8 +364,23 @@ public class ShipReposition extends Decorator implements EditablePiece {
     return bigCommand;
     }
 
+    private Shape getCopyOfShapeWithoutActionsForOverlapCheck(GamePiece oldPiece,RepoManeuver repoTemplate ) {
+        // Copy the old piece, but don't set the State
+        GamePiece newPiece = GameModule.getGameModule().createPiece(oldPiece.getType());
+        VASSAL.build.module.Map var3 = oldPiece.getMap();
+        this.piece.setMap((VASSAL.build.module.Map) null);
+        // manually set the same position of the old piece
+        newPiece.setPosition(oldPiece.getPosition());
+        oldPiece.setMap(var3);
 
-
+        // now set the angle
+        double templateAngle;
+        templateAngle = repoTemplate.getTemplateAngle(); //repo maneuver's angle
+        double shipAngle = this.getRotator().getAngle(); //ship angle
+        FreeRotator rotater = (FreeRotator) Decorator.getDecorator(newPiece, FreeRotator.class);
+        rotater.setAngle(shipAngle);
+        return newPiece.getShape();
+    }
 
     @Override
     public Command keyEvent(KeyStroke stroke) {
@@ -474,7 +480,6 @@ public class ShipReposition extends Decorator implements EditablePiece {
         }
     }
 
-
     private List<BumpableWithShape> findCollidingEntities(Shape myTestShape, List<BumpableWithShape> otherShapes) {
         List<BumpableWithShape> shapes = Lists.newLinkedList();
         for (BumpableWithShape otherBumpableShape : otherShapes) {
@@ -506,7 +511,11 @@ public class ShipReposition extends Decorator implements EditablePiece {
                 bumpables.add(new BumpableWithShape((Decorator)piece,"Debris","2".equals(testFlipString)));
             } else if (piece.getState().contains("this_is_a_bomb")) {
                 bumpables.add(new BumpableWithShape((Decorator)piece, "Mine", false));
-            } else if(wantShipsToo == true && piece.getState().contains("this_is_a_ship")) {
+            } else if(wantShipsToo == true && piece.getState().contains("this_is_a_ship")){
+                //MrMurphM
+            //    GamePiece newPiece = PieceCloner.getInstance().clonePiece(piece);
+            //    newPiece.setPosition(piece.getPosition());
+                //END
                 BumpableWithShape tentativeBumpable = new BumpableWithShape((Decorator)piece, "Ship",false);
                 if (getId().equals(tentativeBumpable.bumpable.getId())) {
                     continue;
