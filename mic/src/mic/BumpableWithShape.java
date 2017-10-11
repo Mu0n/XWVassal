@@ -55,6 +55,12 @@ public class BumpableWithShape {
     String pilotName = "";
     chassisInfo chassis = chassisInfo.unknown;
     int nubAdjust = 10;
+    private static final int frontArcOption = 1;
+    private static final int turretArcOption = 2;
+    private static final int frontAuxArcOption = 3;
+    private static final int backArcOption = 4;
+    private static final int mobileSideArcOption = 5;
+
 
     BumpableWithShape(Decorator bumpable, String type, boolean wantFlip) {
         this.bumpable = bumpable;
@@ -137,38 +143,75 @@ public class BumpableWithShape {
         double halfsize = getChassisWidth()/2.0;
         ArrayList<Point2D.Double> firingArcEdgePoints = new ArrayList<Point2D.Double>();
         double firstStartX = 0.0, firstStartY = 0.0, secondStartX = 0.0, secondStartY = 0.0; //used to get from center to a ship's arc start point
+        double thirdStartX = 0.0, thirdStartY = 0.0, fourthStartX = 0.0, fourthStartY = 0.0; //for the 2 new arc edges for the second aux arc CCW side
+        double fifthStartX = 0.0, fifthStartY = 0.0, sixthStartX = 0.0, sixthStartY = 0.0; //for the 2 new arc edges for the second aux arc CC side
         double firstEndX = 0.0, firstEndY = 0.0, secondEndX = 0.0, secondEndY = 0.0; //used to get the end of the arc lines
+        double thirdEndX = 0.0, thirdEndY = 0.0, fourthEndX = 0.0, fourthEndY = 0.0;//for the 2 new arc edges for the second aux arc CCW side
+        double fifthEndX = 0.0, fifthEndY = 0.0, sixthEndX = 0.0, sixthEndY = 0.0;//for the 2 new arc edges for the second aux arc CCW side
 
         double arcAngleInRad = Math.PI*chassis.getArcHalfAngle()/180.0; //half angle of the arc being used TO DO: get the proper mobile turret arc angle, front aux arc, etc or just ignore it inside the switch
 
         //specific to the arc type, in local ship coordinates assuming it's facing up. x axis goes to right, y axis goes to bottom
         switch(whichOption)
         {
-            case 1: //primary arc
-                firstStartX = -halfsize + chassis.getCornerToFiringArc();
+            case frontArcOption: //primary arc
+                firstStartX = -halfsize + chassis.getCornerToFiringArc(); //0
                 firstStartY = -halfsize;
-                secondStartX = halfsize - chassis.getCornerToFiringArc();
+                secondStartX = halfsize - chassis.getCornerToFiringArc();  //1
                 secondStartY = firstStartY;
 
-                firstEndX = - Math.sin(arcAngleInRad)*pixelMaxRange;
+                firstEndX = - Math.sin(arcAngleInRad)*pixelMaxRange;  //2
                 firstEndY = - Math.cos(arcAngleInRad)*pixelMaxRange;
 
-                secondEndX = Math.sin(arcAngleInRad)*pixelMaxRange;
+                secondEndX = Math.sin(arcAngleInRad)*pixelMaxRange;  //3
                 secondEndY = firstEndY;
                 break;
-            case 4: //back aux arc
-                firstStartX = -halfsize + chassis.getCornerToFiringArc();
+            case frontAuxArcOption: //aux front arcs, YV-666, Auzituck
+                firstStartX = -halfsize + chassis.getCornerToFiringArc(); //0
+                firstStartY = -halfsize;
+                secondStartX = halfsize - chassis.getCornerToFiringArc(); //1
+                secondStartY = firstStartY;
+
+                firstEndX = - Math.sin(arcAngleInRad)*pixelMaxRange;   //2
+                firstEndY = - Math.cos(arcAngleInRad)*pixelMaxRange;
+
+                secondEndX = Math.sin(arcAngleInRad)*pixelMaxRange;   //3
+                secondEndY = firstEndY;
+
+
+                thirdStartX = -halfsize;   //4
+                thirdStartY = 0.0;
+                fourthStartX = -halfsize + chassis.getCornerToFiringArc();  //5
+                fourthStartY = -halfsize;
+
+                thirdEndX = -halfsize - pixelMaxRange;  //6
+                thirdEndY = 0.0;
+                fourthEndX = -halfsize + chassis.getCornerToFiringArc() - Math.sin(arcAngleInRad)*pixelMaxRange;  //7
+                fourthEndY = -halfsize - Math.cos(arcAngleInRad)*pixelMaxRange;
+
+                fifthStartX = halfsize - chassis.getCornerToFiringArc();  //8
+                fifthStartY = -halfsize;
+                sixthStartX = halfsize;  //9
+                sixthStartY = 0.0;
+
+                fifthEndX = halfsize - chassis.getCornerToFiringArc() + Math.sin(arcAngleInRad)*pixelMaxRange;  //10
+                fifthEndY = -halfsize - Math.cos(arcAngleInRad)*pixelMaxRange;
+                sixthEndX = halfsize + pixelMaxRange;  //11
+                sixthEndY = 0.0;
+                break;
+            case backArcOption: //back aux arc
+                firstStartX = halfsize - chassis.getCornerToFiringArc();
                 firstStartY = halfsize;
-                secondStartX = halfsize - chassis.getCornerToFiringArc();
+                secondStartX = -halfsize + chassis.getCornerToFiringArc();
                 secondStartY = halfsize;
 
-                firstEndX = - Math.sin(arcAngleInRad)*pixelMaxRange;
+                firstEndX = Math.sin(arcAngleInRad)*pixelMaxRange;
                 firstEndY = Math.cos(arcAngleInRad)*pixelMaxRange;
 
-                secondEndX = Math.sin(arcAngleInRad)*pixelMaxRange;
+                secondEndX = - Math.sin(arcAngleInRad)*pixelMaxRange;
                 secondEndY = firstEndY;
                 break;
-            case 5: //mobile arc, ugh
+            case mobileSideArcOption: //mobile arc, ugh
                 break;
             default:
                 break;
@@ -176,18 +219,24 @@ public class BumpableWithShape {
 
 //back to common to any arc requested
         //calculate the rotated, translated coordinates of the firing arc start points
-        firingArcEdgePoints.add(getATransformedPoint(firstStartX, firstStartY, 0.0, 0.0, angle, center.getX(), center.getY()));
-        firingArcEdgePoints.add(getATransformedPoint(secondStartX, secondStartY, 0.0, 0.0, angle, center.getX(), center.getY()));
+        firingArcEdgePoints.add(getATransformedPoint(firstStartX, firstStartY, 0.0, 0.0, angle, center.getX(), center.getY())); //0
+        firingArcEdgePoints.add(getATransformedPoint(secondStartX, secondStartY, 0.0, 0.0, angle, center.getX(), center.getY()));  //1
 
         //calculate the rotated, translated coordinates of the firing arc end points
-        firingArcEdgePoints.add(getATransformedPoint(firstStartX, firstStartY, firstEndX, firstEndY, angle, center.getX(), center.getY()));
-        firingArcEdgePoints.add(getATransformedPoint(secondStartX, secondStartY, secondEndX, secondEndY, angle, center.getX(), center.getY()));
+        firingArcEdgePoints.add(getATransformedPoint(firstStartX, firstStartY, firstEndX, firstEndY, angle, center.getX(), center.getY()));  //2
+        firingArcEdgePoints.add(getATransformedPoint(secondStartX, secondStartY, secondEndX, secondEndY, angle, center.getX(), center.getY()));  //3
 
-//specific to the arc type
-        if(whichOption == 2) //front aux arcs for Auzituck, Hound's Tooth
-        {
-            //TO DO, calculate extra 2 edges for the right arc
-        }
+        //add the same in the case of the 2nd arc needed for YV-666 and Auzituck
+        firingArcEdgePoints.add(getATransformedPoint(thirdStartX, thirdStartY, 0.0, 0.0, angle, center.getX(), center.getY()));  //4
+        firingArcEdgePoints.add(getATransformedPoint(fourthStartX, fourthStartY, 0.0, 0.0, angle, center.getX(), center.getY()));  //5
+        firingArcEdgePoints.add(getATransformedPoint(thirdStartX, thirdStartY, thirdEndX, thirdEndY, angle, center.getX(), center.getY()));  //6
+        firingArcEdgePoints.add(getATransformedPoint(fourthStartX, fourthStartY, fourthEndX, fourthEndY, angle, center.getX(), center.getY()));  //7
+
+        firingArcEdgePoints.add(getATransformedPoint(fifthStartX, fifthStartY, 0.0, 0.0, angle, center.getX(), center.getY()));  //8
+        firingArcEdgePoints.add(getATransformedPoint(sixthStartX, sixthStartY, 0.0, 0.0, angle, center.getX(), center.getY()));  //9
+        firingArcEdgePoints.add(getATransformedPoint(fifthStartX, fifthStartY, fifthEndX, fifthEndY, angle, center.getX(), center.getY()));  //10
+        firingArcEdgePoints.add(getATransformedPoint(sixthStartX, sixthStartY, sixthEndX, sixthEndY, angle, center.getX(), center.getY()));  //11
+
         return firingArcEdgePoints;
     }
 
