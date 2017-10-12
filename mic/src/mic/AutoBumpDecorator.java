@@ -3,7 +3,6 @@ package mic;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.geom.AffineTransform;
-import java.awt.geom.Path2D;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.ObjectInputStream;
@@ -12,6 +11,7 @@ import java.util.*;
 import java.util.List;
 import java.util.Map;
 import java.util.Timer;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.swing.*;
 
@@ -650,20 +650,22 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
 
         protected void executeCommand() {
             final Timer timer = new Timer();
-            final VASSAL.build.module.Map map = VASSAL.build.module.Map.activeMap;
+            final VASSAL.build.module.Map map = VASSAL.build.module.Map.getMapById("Map0");
+            logToChat("Rendering CollisionVisualization command");
+            this.tictoc = false;
+            final AtomicInteger count = new AtomicInteger(0);
             timer.schedule(new TimerTask() {
-                int count = 0;
                 @Override
                 public void run() {
                     try{
-                        draw(map.getView().getGraphics(), map);
-                        count++;
-                        if(count == NBFLASHES * 2) {
-                            map.removeDrawComponent(CollisionVisualization.this);
+                        if(count.getAndIncrement() >= NBFLASHES * 2) {
                             timer.cancel();
+                            map.removeDrawComponent(CollisionVisualization.this);
+                            return;
                         }
+                        draw(map.getView().getGraphics(), map);
                     } catch (Exception e) {
-
+                        logger.error("Error rendering collision visualization", e);
                     }
                 }
             }, 0,DELAYBETWEENFLASHES);
@@ -736,7 +738,6 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
                     in.close();
                 }
                 logger.info("Decoded CollisionVisualization with {} shapes", visualization.getShapes().size());
-                visualization.execute();
                 return visualization;
             } catch (Exception e) {
                 logger.error("Error decoding CollisionVisualization", e);
@@ -775,23 +776,23 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
         double angle;
     }
 
-    public static void main(String[] args) throws Exception {
-        CollisionVisualization visualization = new CollisionVisualization();
-        Path2D.Double path = new Path2D.Double();
-        path.moveTo(0.0, 0.0);
-        path.lineTo(0.0, 1.0);
-        visualization.add(path);
-        path = new Path2D.Double();
-        path.moveTo(0.0, 0.0);
-        path.lineTo(0.0, 0.10);
-        visualization.add(path);
-
-        CommandEncoder encoder = new CollsionVisualizationEncoder();
-
-        String encoded = encoder.encode(visualization);
-        System.out.println("encoded = " + encoded);
-
-        CollisionVisualization newVis = (CollisionVisualization) encoder.decode(encoded);
-        System.out.println("decoded = " + newVis.getShapes().size())     ;
-    }
+//    public static void main(String[] args) throws Exception {
+//        CollisionVisualization visualization = new CollisionVisualization();
+//        Path2D.Double path = new Path2D.Double();
+//        path.moveTo(0.0, 0.0);
+//        path.lineTo(0.0, 1.0);
+//        visualization.add(path);
+//        path = new Path2D.Double();
+//        path.moveTo(0.0, 0.0);
+//        path.lineTo(0.0, 0.10);
+//        visualization.add(path);
+//
+//        CommandEncoder encoder = new CollsionVisualizationEncoder();
+//
+//        String encoded = encoder.encode(visualization);
+//        System.out.println("encoded = " + encoded);
+//
+//        CollisionVisualization newVis = (CollisionVisualization) encoder.decode(encoded);
+//        System.out.println("decoded = " + newVis.getShapes().size())     ;
+//    }
 }
