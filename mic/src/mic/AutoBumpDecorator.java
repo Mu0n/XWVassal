@@ -46,9 +46,6 @@ import static mic.Util.*;
 public class AutoBumpDecorator extends Decorator implements EditablePiece {
     private static final Logger logger = LoggerFactory.getLogger(AutoBumpDecorator.class);
     public static final String ID = "auto-bump;";
-    static final int NBFLASHES = 5;
-    static final int DELAYBETWEENFLASHES = 150;
-
     private final FreeRotator testRotator;
 
     private ShipPositionState prevPosition = null;
@@ -634,6 +631,8 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
     }
 
     public static class CollisionVisualization extends Command implements Drawable {
+        static final int NBFLASHES = 10;
+        static final int DELAYBETWEENFLASHES = 250;
 
         private final List<Shape> shapes;
         private boolean tictoc = false;
