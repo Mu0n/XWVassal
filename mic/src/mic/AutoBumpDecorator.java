@@ -262,7 +262,7 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
             checkIfOutOfBounds(yourShipName);
 
             //Add all the detected overlapping shapes to the map drawn components here
-            if(this.previousCollisionVisualization != null &&  this.previousCollisionVisualization.getCount() > 0){
+            if(this.previousCollisionVisualization != null &&  this.previousCollisionVisualization.getShapes().size() > 0){
                 innerCommand.append(this.previousCollisionVisualization);
                 this.previousCollisionVisualization.execute();
             }
@@ -631,7 +631,7 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
     }
 
     public static class CollisionVisualization extends Command implements Drawable {
-        static final int NBFLASHES = 10;
+        static final int NBFLASHES = 6;
         static final int DELAYBETWEENFLASHES = 250;
 
         private final List<Shape> shapes;
@@ -650,7 +650,7 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
         protected void executeCommand() {
             final Timer timer = new Timer();
             final VASSAL.build.module.Map map = VASSAL.build.module.Map.getMapById("Map0");
-            logToChat("Rendering CollisionVisualization command");
+            logger.info("Rendering CollisionVisualization command");
             this.tictoc = false;
             final AtomicInteger count = new AtomicInteger(0);
             timer.schedule(new TimerTask() {
@@ -680,16 +680,6 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
 
         public List<Shape> getShapes() {
             return this.shapes;
-        }
-
-        public int getCount() {
-            int count = 0;
-            Iterator<Shape> it = this.shapes.iterator();
-            while(it.hasNext()) {
-                count++;
-                it.next();
-            }
-            return count;
         }
 
         public void draw(Graphics graphics, VASSAL.build.module.Map map) {
