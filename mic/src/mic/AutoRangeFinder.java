@@ -3,11 +3,16 @@ package mic;
 import VASSAL.build.module.documentation.HelpFile;
 import VASSAL.build.module.map.Drawable;
 import VASSAL.command.Command;
+import VASSAL.command.CommandEncoder;
 import VASSAL.configure.HotKeyConfigurer;
 import VASSAL.counters.*;
+import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import mic.manuvers.ManeuverPaths;
+import org.apache.commons.codec.binary.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.swing.*;
 import java.awt.*;
@@ -16,10 +21,16 @@ import java.awt.font.FontRenderContext;
 import java.awt.font.TextAttribute;
 import java.awt.font.TextLayout;
 import java.awt.geom.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.text.AttributedString;
 import java.util.*;
 import java.util.List;
 import java.util.Map;
+import java.util.Timer;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static mic.Util.*;
 
@@ -69,7 +80,6 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
     public AutoRangeFinder(GamePiece piece) {
         setInner(piece);
         this.testRotator = new FreeRotator("rotate;360;;;;;;;", null);
-        fov = new FOVisualization();
     }
 
     @Override
@@ -92,13 +102,6 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
         return null;
     }
 
-    private void clearVisu() {
-        getMap().removeDrawComponent(this.fov);
-        this.fov.shapes.clear();
-        this.fov.lines.clear();
-        this.fov.shapesWithText.clear();
-    }
-
     private int getKeystrokeToOptions(KeyStroke keyStroke) {
         String hotKey = HotKeyConfigurer.getString(keyStroke);
         if (keyStrokeToOptions.containsKey(hotKey)) {
@@ -108,19 +111,20 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
     }
 
     public Command keyEvent(KeyStroke stroke) {
+        this.fov = new FOVisualization();
 
         ArrayList<rangeFindings> rfindings = new ArrayList<rangeFindings>(); //findings compiled here
 
-        if (this.fov == null) {
-            this.fov = new FOVisualization();
-        }
         //identify which autorange option was used by using the static Map defined above in the globals, store it in an int
         whichOption = getKeystrokeToOptions(stroke);
         if (whichOption != -1 && stroke.isOnKeyRelease() == false) {
             Command bigCommand = piece.keyEvent(stroke);
             //if the firing options were already activated, remove the visuals and exit right away
             if (this.fov != null && this.fov.getCount() > 0) {
+                logToChatCommand("toggle off");
                 clearVisu();
+                bigCommand.append(this.fov);
+                this.fov.execute();
                 return bigCommand;
             }
             thisShip = new BumpableWithShape(this, "Ship",
@@ -140,16 +144,32 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
             }
 
             //draw visuals and announce the results in the chat
-            getMap().addDrawComponent(fov);
             Command bigAnnounceCommand = makeBigAnnounceCommand(bigAnnounce, rfindings);
             bigCommand.append(bigAnnounceCommand);
+            if(this.fov !=null && this.fov.getCount() > 0) {
+                bigCommand.append(this.fov);
+                this.fov.execute();
+                logToChatCommand("launch execute");
+            }
             return bigCommand;
         } else if (KeyStroke.getKeyStroke(KeyEvent.VK_D, KeyEvent.CTRL_DOWN_MASK, false).equals(stroke)) {
-            if (this.fov != null && this.fov.getCount() > 0) clearVisu();
+            if (this.fov != null && this.fov.getCount() > 0) {
+                clearVisu();
+                Command goToHell = piece.keyEvent(stroke);
+                goToHell.append(this.fov);
+                this.fov.execute();
+                return goToHell;
+            }
         }
         return piece.keyEvent(stroke);
     }
 
+    private void clearVisu() {
+        getMap().removeDrawComponent(this.fov);
+        this.fov.shapes.clear();
+        this.fov.lines.clear();
+        this.fov.shapesWithText.clear();
+    }
 
     private void figureOutAutoRange(BumpableWithShape b, ArrayList<rangeFindings> rfindings) {
         //Compute the A's and E's
@@ -962,7 +982,7 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
         return ships;
     }
 
-    private static class FOVisualization implements Drawable {
+    private static class FOVisualization extends Command implements Drawable {
 
         private final List<Shape> shapes;
         private final List<ShapeWithText> shapesWithText;
@@ -1011,6 +1031,25 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
             }
             return count;
         }
+
+
+        protected void executeCommand() {
+            final VASSAL.build.module.Map map = VASSAL.build.module.Map.getMapById("Map0");
+            int count = getCount();
+            if(count > 0) {
+                draw(map.getView().getGraphics(), map);
+                logToChat("executing with " + Integer.toString(count) + " stuff to draw.");
+            }
+            else {
+                map.removeDrawComponent(FOVisualization.this);
+                logToChat("removing components with " + Integer.toString(count) + " stuff to draw.");
+            }
+        }
+
+        protected Command myUndoCommand() {
+            return null;
+        }
+
         public void draw(Graphics graphics, VASSAL.build.module.Map map) {
             Graphics2D graphics2D = (Graphics2D) graphics;
 
@@ -1066,8 +1105,109 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
             return t.getOutline(null);
         }
 
+        public List<Shape> getShapes() {
+            return this.shapes;
+        }
+
+
+        public List<ShapeWithText> getTextShapes() {
+            return this.shapesWithText;
+        }
+
+        public List<micLine> getMicLines() {
+            return this.lines;
+        }
+
         public boolean drawAboveCounters() {
             return true;
+        }
+    }
+
+    public static class AutorangeVisualizationEncoder implements CommandEncoder {
+        private static final Logger logger = LoggerFactory.getLogger(AutoBumpDecorator.class);
+        private static String commandPrefix = "CollisionVis=";
+
+        public Command decode(String command) {
+            if (command == null || !command.contains(commandPrefix)) {
+                return null;
+            }
+
+            logger.info("Decoding CollisionVisualization");
+
+            command = command.substring(commandPrefix.length());
+
+            try {
+                String[] newCommandStrs = command.split("\t");
+                FOVisualization visualization = new FOVisualization();
+                for (String bytesBase64Str : newCommandStrs) {
+                    ByteArrayInputStream strIn = new ByteArrayInputStream(org.apache.commons.codec.binary.Base64.decodeBase64(bytesBase64Str));
+                    ObjectInputStream in = new ObjectInputStream(strIn);
+                    Shape shape = (Shape) in.readObject();
+                    visualization.add(shape);
+                    in.close();
+                }
+                for (String bytesBase64Str : newCommandStrs) {
+                    ByteArrayInputStream strIn = new ByteArrayInputStream(org.apache.commons.codec.binary.Base64.decodeBase64(bytesBase64Str));
+                    ObjectInputStream in = new ObjectInputStream(strIn);
+                    ShapeWithText shapeWT = (ShapeWithText) in.readObject();
+                    visualization.addShapeWithText(shapeWT);
+                    in.close();
+                }
+                for (String bytesBase64Str : newCommandStrs) {
+                    ByteArrayInputStream strIn = new ByteArrayInputStream(org.apache.commons.codec.binary.Base64.decodeBase64(bytesBase64Str));
+                    ObjectInputStream in = new ObjectInputStream(strIn);
+                    micLine line = (micLine) in.readObject();
+                    visualization.addLine(line);
+                    in.close();
+                }
+                logger.info("Decoded CollisionVisualization with {} shapes", visualization.getShapes().size());
+                return visualization;
+            } catch (Exception e) {
+                logger.error("Error decoding CollisionVisualization", e);
+                return null;
+            }
+        }
+
+        public String encode(Command c) {
+            if (!(c instanceof FOVisualization)) {
+                return null;
+            }
+            logger.info("Encoding autorange visualization");
+            FOVisualization visualization = (FOVisualization) c;
+            try {
+                List<String> commandStrs = Lists.newArrayList();
+                for (Shape shape : visualization.getShapes()) {
+                    ByteArrayOutputStream bos = new ByteArrayOutputStream();
+                    ObjectOutputStream out = new ObjectOutputStream(bos);
+                    out.writeObject(shape);
+                    out.close();
+                    byte[] bytes = bos.toByteArray();
+                    String bytesBase64 = org.apache.commons.codec.binary.Base64.encodeBase64String(bytes);
+                    commandStrs.add(bytesBase64);
+                }
+                for (ShapeWithText shapeWT : visualization.getTextShapes()) {
+                    ByteArrayOutputStream bos = new ByteArrayOutputStream();
+                    ObjectOutputStream out = new ObjectOutputStream(bos);
+                    out.writeObject(shapeWT);
+                    out.close();
+                    byte[] bytes = bos.toByteArray();
+                    String bytesBase64 = org.apache.commons.codec.binary.Base64.encodeBase64String(bytes);
+                    commandStrs.add(bytesBase64);
+                }
+                for (micLine line : visualization.getMicLines()) {
+                    ByteArrayOutputStream bos = new ByteArrayOutputStream();
+                    ObjectOutputStream out = new ObjectOutputStream(bos);
+                    out.writeObject(line);
+                    out.close();
+                    byte[] bytes = bos.toByteArray();
+                    String bytesBase64 = org.apache.commons.codec.binary.Base64.encodeBase64String(bytes);
+                    commandStrs.add(bytesBase64);
+                }
+                return commandPrefix + Joiner.on('\t').join(commandStrs);
+            } catch (Exception e) {
+                logger.error("Error encoding autorange visualization", e);
+                return null;
+            }
         }
     }
 

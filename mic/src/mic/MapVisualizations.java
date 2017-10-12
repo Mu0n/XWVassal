@@ -21,6 +21,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Created by Mic on 12/10/2017.
+ *
+ * This makes an array of shapes flash a few times. Used by all sorts of overlap management classes (AutoBumpDecorator, ShipReposition, etc.
  */
 public class MapVisualizations extends Command implements Drawable {
     private static final Logger logger = LoggerFactory.getLogger(AutoBumpDecorator.class);
