@@ -404,6 +404,10 @@ public class ShipReposition extends Decorator implements EditablePiece {
                     }
                     previousCollisionVisualization.add(shipShape);
                 }
+                else {
+                    String yourShipName = getShipStringForReports(true, this.getProperty("Pilot Name").toString(), this.getProperty("Craft ID #").toString());
+                    logToChatWithTime(yourShipName + " does not overlap with an obstacle, ship or mine.");
+                }
         }
 
         RepoManeuver repoTemplateDrop = getKeystrokeTemplateDrop(stroke);
