@@ -3,6 +3,7 @@ package mic;
 import VASSAL.build.AbstractConfigurable;
 import VASSAL.build.Buildable;
 import VASSAL.build.module.documentation.HelpFile;
+import com.google.common.base.Function;
 import com.google.common.base.Joiner;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
@@ -31,12 +32,14 @@ public class MultipleVassalInstanceCheck extends AbstractConfigurable {
     private List<String> getProcessNames() {
         List<String> ret = Lists.newArrayList();
         try {
-            Process p = Runtime.getRuntime().exec(getProcessListCommand());
+            String cmd = getProcessListCommand();
+            Process p = Runtime.getRuntime().exec(cmd);
             BufferedReader input = new BufferedReader(new InputStreamReader(p.getInputStream()));
             String process;
             while ((process = input.readLine()) != null) {
                 ret.add(process);
             }
+            input.close();
         } catch (Exception e) {
             logger.error("Error getting running processes", e);
         }
@@ -60,9 +63,14 @@ public class MultipleVassalInstanceCheck extends AbstractConfigurable {
                 });
 
                 if (Iterables.size(vassalProcesses) > 1) {
+                    Iterable<String> vassalProcessesLogs = Iterables.transform(processNames, new Function<String, String>() {
+                        public String apply(String input) {
+                            return "* " + input;
+                        }
+                    });
                     mic.Util.XWPlayerInfo playerInfo = getCurrentPlayer();
-                    logToChat("* (((POTENTIAL CHEAT ATTEMPT WARNING))) - %s is running multiple instances of Vassal. I found these \n %s",
-                            playerInfo.getName(), Joiner.on("\n*").join(vassalProcesses));
+                    logToChat("* (((POTENTIAL CHEAT ATTEMPT WARNING))) - %s is running multiple instances of Vassal. I found these \n%s",
+                            playerInfo.getName(), Joiner.on("\n").join(vassalProcessesLogs));
                 }
             }
         }, 0, CHECK_INTERVAL_SECONDS * 1000);
@@ -71,7 +79,7 @@ public class MultipleVassalInstanceCheck extends AbstractConfigurable {
     private static String getProcessListCommand() throws Exception {
         String os = System.getProperty("os.name").toLowerCase();
         if (os.contains("win")) {
-            return System.getenv("windir") +"\\system32\\"+"tasklist.exe";
+            return "wmic process";
         }
         if (os.contains("nix")) {
             return "ps -few";
