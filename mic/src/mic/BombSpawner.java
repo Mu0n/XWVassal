@@ -530,7 +530,7 @@ public class BombSpawner extends Decorator implements EditablePiece {
 
         private final List<Shape> shapes;
         private boolean tictoc = false;
-        Color myO = new Color(215, 255, 0, 150);
+        Color bumpColor = new Color(215, 255, 0, 150);
 
         FlashCommand() {
             this.shapes = new ArrayList<Shape>();
@@ -566,7 +566,7 @@ public class BombSpawner extends Decorator implements EditablePiece {
             Graphics2D graphics2D = (Graphics2D) graphics;
             if(tictoc == false)
             {
-                graphics2D.setColor(myO);
+                graphics2D.setColor(bumpColor);
                 AffineTransform scaler = AffineTransform.getScaleInstance(map.getZoom(), map.getZoom());
                 for (Shape shape : shapes) {
                     graphics2D.fill(scaler.createTransformedShape(shape));

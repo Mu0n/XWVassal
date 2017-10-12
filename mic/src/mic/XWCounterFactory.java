@@ -13,7 +13,7 @@ public class XWCounterFactory extends BasicCommandEncoder {
     static {
         // This is only done here since this is something loaded early on
         // and I have no better idea of where it should go
-        GameModule.getGameModule().addCommandEncoder(new AutoBumpDecorator.CollsionVisualizationEncoder());
+        GameModule.getGameModule().addCommandEncoder(new MapVisualizations.CollsionVisualizationEncoder());
     }
 
     public Decorator createDecorator(String type, GamePiece inner) {

@@ -51,7 +51,8 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
     private ShipPositionState prevPosition = null;
     private ManeuverPaths lastManeuver = null;
     private FreeRotator myRotator = null;
-    public CollisionVisualization previousCollisionVisualization = null;
+    //public CollisionVisualization previousCollisionVisualization = null;
+    MapVisualizations previousCollisionVisualization = null;
 
     private static Map<String, ManeuverPaths> keyStrokeToManeuver = ImmutableMap.<String, ManeuverPaths>builder()
             .put("SHIFT 1", ManeuverPaths.Str1)
@@ -100,7 +101,6 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
     public AutoBumpDecorator(GamePiece piece) {
         setInner(piece);
         this.testRotator = new FreeRotator("rotate;360;;;;;;;", null);
-        previousCollisionVisualization = new CollisionVisualization();
     }
 
     @Override
@@ -171,7 +171,7 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
     public Command keyEvent(KeyStroke stroke) {
         //Any keystroke made on a ship will remove the orange shades
 
-        this.previousCollisionVisualization = new CollisionVisualization();
+        this.previousCollisionVisualization = new MapVisualizations();
 
         ManeuverPaths path = getKeystrokePath(stroke);
         // Is this a keystroke for a maneuver? Deal with the 'no' cases first
@@ -276,7 +276,7 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
     private void checkTemplateOverlap(Shape lastMoveShapeUsed, List<BumpableWithShape> otherBumpableShapes) {
 
         List<BumpableWithShape> collidingEntities = findCollidingEntities(lastMoveShapeUsed, otherBumpableShapes);
-        CollisionVisualization cvFoundHere = new CollisionVisualization(lastMoveShapeUsed);
+        MapVisualizations cvFoundHere = new MapVisualizations(lastMoveShapeUsed);
 
         int howManyBumped = 0;
         for (BumpableWithShape bumpedBumpable : collidingEntities) {
@@ -630,6 +630,7 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
         return BumpableWithShape.getRawShape(ship).getBounds().getWidth() > 114;
     }
 
+    /*
     public static class CollisionVisualization extends Command implements Drawable {
         static final int NBFLASHES = 6;
         static final int DELAYBETWEENFLASHES = 250;
@@ -758,7 +759,7 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
             }
         }
     }
-
+*/
     private static class ShipPositionState {
         double x;
         double y;
