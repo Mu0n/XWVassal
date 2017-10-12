@@ -446,10 +446,7 @@ public class ShipReposition extends Decorator implements EditablePiece {
                 this.previousCollisionVisualization.shapes.clear();
             }*/
 
-            if(this.previousCollisionVisualization != null &&  this.previousCollisionVisualization.getShapes().size() > 0){
-                result.append(previousCollisionVisualization);
-                previousCollisionVisualization.execute();
-            }
+
 
 
             //detect that the ship's final position overlaps a ship or obstacle
@@ -462,6 +459,12 @@ public class ShipReposition extends Decorator implements EditablePiece {
             }
             //detect that the template used overlaps an obstacle
 
+        }
+        if(this.previousCollisionVisualization != null &&  this.previousCollisionVisualization.getShapes().size() > 0){
+            logToChat("visu here");
+            result.append(previousCollisionVisualization);
+            previousCollisionVisualization.execute();
+            return result;
         }
         return piece.keyEvent(stroke);
     }
