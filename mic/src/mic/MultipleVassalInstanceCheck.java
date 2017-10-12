@@ -27,13 +27,12 @@ public class MultipleVassalInstanceCheck extends AbstractConfigurable {
     private static Logger logger = LoggerFactory.getLogger(MultipleVassalInstanceCheck.class);
 
     private static boolean alreadyRunning = false;
-    private static int CHECK_INTERVAL_SECONDS = 15;
+    private static int CHECK_INTERVAL_SECONDS = 5 * 60;
 
     private List<String> getProcessNames() {
         List<String> ret = Lists.newArrayList();
         try {
-            String cmd = getProcessListCommand();
-            Process p = Runtime.getRuntime().exec(cmd);
+            Process p = Runtime.getRuntime().exec(getProcessListCommand());
             BufferedReader input = new BufferedReader(new InputStreamReader(p.getInputStream()));
             String process;
             while ((process = input.readLine()) != null) {
@@ -63,14 +62,9 @@ public class MultipleVassalInstanceCheck extends AbstractConfigurable {
                 });
 
                 if (Iterables.size(vassalProcesses) > 1) {
-                    Iterable<String> vassalProcessesLogs = Iterables.transform(processNames, new Function<String, String>() {
-                        public String apply(String input) {
-                            return "* " + input;
-                        }
-                    });
                     mic.Util.XWPlayerInfo playerInfo = getCurrentPlayer();
-                    logToChat("* (((POTENTIAL CHEAT ATTEMPT WARNING))) - %s is running multiple instances of Vassal. I found these \n%s",
-                            playerInfo.getName(), Joiner.on("\n").join(vassalProcessesLogs));
+                    logToChat("* %s is running multiple instances of Vassal. " +
+                            " Please report on github if you think this is a bug https://github.com/Mu0n/XWVassal/issues", playerInfo.getName());
                 }
             }
         }, 0, CHECK_INTERVAL_SECONDS * 1000);
