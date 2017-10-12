@@ -169,8 +169,6 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
 
     @Override
     public Command keyEvent(KeyStroke stroke) {
-        //Any keystroke made on a ship will remove the orange shades
-
         this.previousCollisionVisualization = new MapVisualizations();
 
         ManeuverPaths path = getKeystrokePath(stroke);
@@ -180,15 +178,11 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
             if(KeyStroke.getKeyStroke(KeyEvent.VK_C, 0, false).equals(stroke) && lastManeuver != null) {
                 List<BumpableWithShape> otherShipShapes = getShipsWithShapes();
 
-
-
-                // Whenever I want to resume template placement with java, this is where it happens
                     if(lastManeuver != null) {
                         Command placeCollisionAide = spawnRotatedPiece(lastManeuver);
                         placeCollisionAide.execute();
                         GameModule.getGameModule().sendAndLog(placeCollisionAide);
                     }
-
 
                 boolean isCollisionOccuring = findCollidingEntity(BumpableWithShape.getBumpableCompareShape(this), otherShipShapes) != null ? true : false;
                 //backtracking requested with a detected bumpable overlap, deal with it
@@ -207,13 +201,9 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
             // find the list of other bumpables
             List<BumpableWithShape> otherBumpableShapes = getBumpablesWithShapes();
 
-
             //safeguard old position and path
-
             this.prevPosition = getCurrentState();
             this.lastManeuver = path;
-
-
 
             //This PathPart list will be used everywhere: moving, bumping, out of boundsing
             //maybe fetch it for both 'c' behavior and movement
@@ -231,17 +221,13 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
             String yourShipName = getShipStringForReports(true, this.getProperty("Pilot Name").toString(), this.getProperty("Craft ID #").toString());
             //Start the Command chain
             Command innerCommand = piece.keyEvent(stroke);
-
             innerCommand.append(buildTranslateCommand(part, path.getAdditionalAngleForShip()));
 
             //check for Tallon rolls and spawn the template
             if(lastManeuver == ManeuverPaths.TrollL2 || lastManeuver == ManeuverPaths.TrollL3 || lastManeuver == ManeuverPaths.TrollR2 || lastManeuver == ManeuverPaths.TrollR3) {
                 Command placeTrollTemplate = spawnRotatedPiece(lastManeuver);
                 innerCommand.append(placeTrollTemplate);
-
             }
-
-
             //These lines fetch the Shape of the last movement template used
             FreeRotator rotator = (FreeRotator) (Decorator.getDecorator(Decorator.getOutermost(this), FreeRotator.class));
             Shape lastMoveShapeUsed = path.getTransformedTemplateShape(this.getPosition().getX(),
@@ -266,7 +252,6 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
                 innerCommand.append(this.previousCollisionVisualization);
                 this.previousCollisionVisualization.execute();
             }
-
             return innerCommand;
         }
         //the maneuver has finished. return control of the event to vassal to do nothing
@@ -274,7 +259,6 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
     }
 
     private void checkTemplateOverlap(Shape lastMoveShapeUsed, List<BumpableWithShape> otherBumpableShapes) {
-
         List<BumpableWithShape> collidingEntities = findCollidingEntities(lastMoveShapeUsed, otherBumpableShapes);
         MapVisualizations cvFoundHere = new MapVisualizations(lastMoveShapeUsed);
 

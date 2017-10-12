@@ -126,6 +126,7 @@ enum RepoManeuver {
 
 public class ShipReposition extends Decorator implements EditablePiece {
     private static final Logger logger = LoggerFactory.getLogger(ShipReposition.class);
+
     public static final String ID = "ShipReposition";
     private FreeRotator myRotator = null;
     public MapVisualizations previousCollisionVisualization = null;
@@ -186,7 +187,6 @@ public class ShipReposition extends Decorator implements EditablePiece {
                     return null;
             }
         }
-
 
         //STEP 1: Collision reposition template, centered as in in the image file, centered on 0,0 (upper left corner)
         GamePiece piece = newPiece(findPieceSlotByID(theManeu.getTemplateGpID()));
@@ -434,7 +434,6 @@ public class ShipReposition extends Decorator implements EditablePiece {
                 }
             }
             result.append(piece.keyEvent(stroke));
-            return result;
         }
 
         RepoManeuver repoShip = getKeystrokeRepoManeuver(stroke);
@@ -455,13 +454,11 @@ public class ShipReposition extends Decorator implements EditablePiece {
             else{
                 result.append(repoCommand);
                 result.append(piece.keyEvent(stroke));
-                return result;
             }
             //detect that the template used overlaps an obstacle
 
         }
         if(this.previousCollisionVisualization != null &&  this.previousCollisionVisualization.getShapes().size() > 0){
-            logToChat("visu here");
             result.append(previousCollisionVisualization);
             previousCollisionVisualization.execute();
             return result;

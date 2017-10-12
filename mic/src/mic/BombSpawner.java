@@ -120,7 +120,7 @@ public class BombSpawner extends Decorator implements EditablePiece {
 
     private List<Shape> shapesForOverlap;
     private FreeRotator myRotator = null;
-    public CollisionVisualization previousCollisionVisualization = null;
+    public MapVisualizations previousCollisionVisualization = null;
     private Boolean processingOnlyOneBomb = false;
 
     private static Map<String, BombManeuver> keyStrokeToManeuver = ImmutableMap.<String, BombManeuver>builder()
@@ -151,7 +151,6 @@ public class BombSpawner extends Decorator implements EditablePiece {
     public BombSpawner(GamePiece piece) {
         setInner(piece);
         this.testRotator = new FreeRotator("rotate;360;;;;;;;", null);
-        previousCollisionVisualization = new CollisionVisualization();
         shapesForOverlap = new ArrayList<Shape>();
     }
 
@@ -273,6 +272,8 @@ public class BombSpawner extends Decorator implements EditablePiece {
     @Override
     public Command keyEvent(KeyStroke stroke) {
         //Any keystroke made on a ship will remove the orange shades
+        previousCollisionVisualization = new MapVisualizations();
+
         ChangeTracker changeTracker = new ChangeTracker(this);
         final Command result = changeTracker.getChangeCommand();
         MoveTracker moveTracker = new MoveTracker(Decorator.getOutermost(this));
@@ -318,28 +319,14 @@ public class BombSpawner extends Decorator implements EditablePiece {
                     }
 
                     // if a collision has been found, start painting the shapes and flash them with a timer, mark the bomb spawner for deletion after this has gone through.
-                    if(isCollisionOccuring == true && this.previousCollisionVisualization != null &&  this.previousCollisionVisualization.getCount() > 0){
+                    if(isCollisionOccuring == true && this.previousCollisionVisualization != null &&  this.previousCollisionVisualization.getShapes().size() > 0){
+                        result.append(previousCollisionVisualization);
+                        previousCollisionVisualization.execute();
 
-                        final Timer timer = new Timer();
-                        timer.schedule(new TimerTask() {
-                            int count = 0;
-                            @Override
-                            public void run() {
-                                try{
-                                    previousCollisionVisualization.draw(getMap().getView().getGraphics(),getMap());
-                                    count++;
-                                    if(count == NBFLASHES * 2) {
-                                        getMap().removeDrawComponent(previousCollisionVisualization);
-                                        timer.cancel();
-                                        KeyStroke deleteyourself = KeyStroke.getKeyStroke(KeyEvent.VK_D, InputEvent.CTRL_DOWN_MASK, false);
-                                        Command goToHell = piece.keyEvent(deleteyourself);
-                                        goToHell.execute();
-                                        GameModule.getGameModule().sendAndLog(goToHell);
-                                    }
-                                } catch (Exception e) {
-                                }
-                            }
-                        }, 0,DELAYBETWEENFLASHES);
+                        KeyStroke deleteyourself = KeyStroke.getKeyStroke(KeyEvent.VK_D, InputEvent.CTRL_DOWN_MASK, false);
+                        Command goToHell = keyEvent(deleteyourself);
+                        result.append(goToHell);
+
                         return result;
                     }
                     else { //mine was dropped, no collision found
@@ -584,7 +571,7 @@ public class BombSpawner extends Decorator implements EditablePiece {
         }
     }*/
 
-   
+   /*
     private static class CollisionVisualization implements Drawable {
 
         private final List<Shape> shapes;
@@ -637,7 +624,7 @@ public class BombSpawner extends Decorator implements EditablePiece {
             return true;
         }
     }
-
+*/
     private static class ShipPositionState {
         double x;
         double y;
