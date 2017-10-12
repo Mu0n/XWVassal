@@ -131,6 +131,7 @@ public class TemplateOverlapCheckDecorator extends Decorator implements Editable
 
                 return innerCommand;
             }
+            else  logToChatWithTime("This template does not overlap with an obstacle.");
         }
 
         return piece.keyEvent(stroke);

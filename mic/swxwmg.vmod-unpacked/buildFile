@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<VASSAL.launch.BasicModule VassalVersion="3.2.17" description="" name="Star Wars X-Wing Miniatures Game" nextPieceSlotId="12164" version="7.4.3">
+<VASSAL.launch.BasicModule VassalVersion="3.2.17" description="" name="Star Wars X-Wing Miniatures Game" nextPieceSlotId="12164" version="7.5.0">
     <mic.XWCounterFactory/>
     <VASSAL.build.module.Documentation>
         <VASSAL.build.module.documentation.AboutScreen fileName="Splash.PNG" title="About Module"/>
@@ -27,8 +27,9 @@
     <VASSAL.build.module.Map allowMultiple="false" backgroundcolor="51,0,0" buttonName="Map" changeFormat="$message$" color="255,255,51" createFormat="" edgeHeight="0" edgeWidth="0" hotkey="" icon="" launch="true" mapName="Contested Sector" markMoved="Never" markUnmovedIcon="/images/unmoved.gif" markUnmovedText="" markUnmovedTooltip="Mark all pieces on this map as not moved" moveKey="" moveToFormat="" moveWithinFormat="" thickness="1">
         <VASSAL.build.module.map.BoardPicker addColumnText="Add column" addRowText="Add row" boardPrompt="Select board" slotHeight="140" slotScale="0.2" slotWidth="350" title="Choose Boards">
             <VASSAL.build.module.map.boardPicker.Board color="0,0,0" height="2583" name="3'x3' - Plain Black" reversible="false" width="2583"/>
+            <VASSAL.build.module.map.boardPicker.Board image="3'x3' HootersMapFinal.jpg" name="3’x3’ Team Hooters" reversible="false"/>
             <VASSAL.build.module.map.boardPicker.Board image="3'x3' - GSP Mat.jpg" name="3'x3' - Gold Squadron Podcast" reversible="false"/>
-            <VASSAL.build.module.map.boardPicker.Board image="3'x3' - MustafarMat_InkedGaming.jpg" name="3'x3' - Mustafar - InkedGaming" reversible="false"/>
+            <VASSAL.build.module.map.boardPicker.Board image="3'x3' - MustafarMat_InkedGaming.jpg" name="3'x3' - Mynock Squadron Podcast (Mustafar)" reversible="false"/>
             <VASSAL.build.module.map.boardPicker.Board image="3'x3' - s&amp;v.jpg" name="3'x3' - Scum &amp; Villainy Podcast" reversible="false"/>
             <VASSAL.build.module.map.boardPicker.Board image="3'x3' - Starfield - Light.jpg" name="3'x3' - Starfield - Light" reversible="false"/>
             <VASSAL.build.module.map.boardPicker.Board image="3'x3' - Teal Nebula.jpg" name="3'x3' - Teal Nebula" reversible="false"/>
