@@ -80,6 +80,7 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
     public AutoRangeFinder(GamePiece piece) {
         setInner(piece);
         this.testRotator = new FreeRotator("rotate;360;;;;;;;", null);
+        this.fov = new FOVisualization();
     }
 
     @Override
@@ -111,7 +112,6 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
     }
 
     public Command keyEvent(KeyStroke stroke) {
-        this.fov = new FOVisualization();
 
         ArrayList<rangeFindings> rfindings = new ArrayList<rangeFindings>(); //findings compiled here
 
@@ -121,7 +121,7 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
             Command bigCommand = piece.keyEvent(stroke);
             //if the firing options were already activated, remove the visuals and exit right away
             if (this.fov != null && this.fov.getCount() > 0) {
-                logToChatCommand("toggle off");
+                //logToChatCommand("toggle off");
                 clearVisu();
                 bigCommand.append(this.fov);
                 this.fov.execute();
@@ -149,7 +149,7 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
             if(this.fov !=null && this.fov.getCount() > 0) {
                 bigCommand.append(this.fov);
                 this.fov.execute();
-                logToChatCommand("launch execute");
+                //logToChatCommand("launch execute");
             }
             return bigCommand;
         } else if (KeyStroke.getKeyStroke(KeyEvent.VK_D, KeyEvent.CTRL_DOWN_MASK, false).equals(stroke)) {
@@ -1014,20 +1014,10 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
         public void addShapeWithText(ShapeWithText swt){ this.shapesWithText.add(swt); }
         public int getCount() {
             int count = 0;
-            Iterator<Shape> it = this.shapes.iterator();
-            while(it.hasNext()) {
+            Iterator<micLine> it = this.lines.iterator();
+            while(it.hasNext()){
                 count++;
                 it.next();
-            }
-            Iterator<ShapeWithText> it2 = this.shapesWithText.iterator();
-            while(it2.hasNext()){
-                count++;
-                it2.next();
-            }
-            Iterator<micLine> it3 = this.lines.iterator();
-            while(it3.hasNext()){
-                count++;
-                it3.next();
             }
             return count;
         }
@@ -1037,12 +1027,14 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
             final VASSAL.build.module.Map map = VASSAL.build.module.Map.getMapById("Map0");
             int count = getCount();
             if(count > 0) {
+
+                map.addDrawComponent(this);
                 draw(map.getView().getGraphics(), map);
-                logToChat("executing with " + Integer.toString(count) + " stuff to draw.");
+                //logToChat("executing with " + Integer.toString(count) + " stuff to draw.");
             }
             else {
                 map.removeDrawComponent(FOVisualization.this);
-                logToChat("removing components with " + Integer.toString(count) + " stuff to draw.");
+                //logToChat("removing components with " + Integer.toString(count) + " stuff to draw.");
             }
         }
 
@@ -1142,20 +1134,6 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
                 for (String bytesBase64Str : newCommandStrs) {
                     ByteArrayInputStream strIn = new ByteArrayInputStream(org.apache.commons.codec.binary.Base64.decodeBase64(bytesBase64Str));
                     ObjectInputStream in = new ObjectInputStream(strIn);
-                    Shape shape = (Shape) in.readObject();
-                    visualization.add(shape);
-                    in.close();
-                }
-                for (String bytesBase64Str : newCommandStrs) {
-                    ByteArrayInputStream strIn = new ByteArrayInputStream(org.apache.commons.codec.binary.Base64.decodeBase64(bytesBase64Str));
-                    ObjectInputStream in = new ObjectInputStream(strIn);
-                    ShapeWithText shapeWT = (ShapeWithText) in.readObject();
-                    visualization.addShapeWithText(shapeWT);
-                    in.close();
-                }
-                for (String bytesBase64Str : newCommandStrs) {
-                    ByteArrayInputStream strIn = new ByteArrayInputStream(org.apache.commons.codec.binary.Base64.decodeBase64(bytesBase64Str));
-                    ObjectInputStream in = new ObjectInputStream(strIn);
                     micLine line = (micLine) in.readObject();
                     visualization.addLine(line);
                     in.close();
@@ -1176,24 +1154,6 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
             FOVisualization visualization = (FOVisualization) c;
             try {
                 List<String> commandStrs = Lists.newArrayList();
-                for (Shape shape : visualization.getShapes()) {
-                    ByteArrayOutputStream bos = new ByteArrayOutputStream();
-                    ObjectOutputStream out = new ObjectOutputStream(bos);
-                    out.writeObject(shape);
-                    out.close();
-                    byte[] bytes = bos.toByteArray();
-                    String bytesBase64 = org.apache.commons.codec.binary.Base64.encodeBase64String(bytes);
-                    commandStrs.add(bytesBase64);
-                }
-                for (ShapeWithText shapeWT : visualization.getTextShapes()) {
-                    ByteArrayOutputStream bos = new ByteArrayOutputStream();
-                    ObjectOutputStream out = new ObjectOutputStream(bos);
-                    out.writeObject(shapeWT);
-                    out.close();
-                    byte[] bytes = bos.toByteArray();
-                    String bytesBase64 = org.apache.commons.codec.binary.Base64.encodeBase64String(bytes);
-                    commandStrs.add(bytesBase64);
-                }
                 for (micLine line : visualization.getMicLines()) {
                     ByteArrayOutputStream bos = new ByteArrayOutputStream();
                     ObjectOutputStream out = new ObjectOutputStream(bos);
