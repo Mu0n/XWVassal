@@ -376,9 +376,9 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
         lineList.add(A2D1);
 
         micLine A1DD = createLineAxtoDD(A1, DD);
-        lineList.add(A1DD);
+        if(A1DD != null) lineList.add(A1DD);
         micLine A2DD = createLineAxtoDD(A2, DD);
-        lineList.add(A2DD);
+        if(A2DD != null) lineList.add(A2DD);
 
         micLine D1AA = createLineAAtoD1(A1D1, AA, D1);
         lineList.add(D1AA);
@@ -437,27 +437,27 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
         if(whichOption == frontArcOption || whichOption == backArcOption) {
             //Closest attacker's point to the defender's closest edge along the arc edge
             micLine A1DD_arc_restricted = createLineAxtoDD_along_arc_edge(A1, E1, DD);
-            if(isRangeOk(A1DD_arc_restricted, 1, rangeInt)) lineList.add(A1DD_arc_restricted);
+            if(A1DD_arc_restricted != null) if(isRangeOk(A1DD_arc_restricted, 1, rangeInt)) lineList.add(A1DD_arc_restricted);
             micLine A2DD_arc_restricted = createLineAxtoDD_along_arc_edge(A2, E2, DD);
-            if(isRangeOk(A2DD_arc_restricted, 1, rangeInt)) lineList.add(A2DD_arc_restricted);
+            if(A2DD_arc_restricted != null) if(isRangeOk(A2DD_arc_restricted, 1, rangeInt)) lineList.add(A2DD_arc_restricted);
 
             //Closest attacker's point to the defender's 2nd closest edge along the arc edge
             micLine A1DD_arc_restricted_2nd = createLineAxtoDD_along_arc_edge(A1, E1, DD_2nd);
-            if(isRangeOk(A1DD_arc_restricted_2nd, 1, rangeInt)) lineList.add(A1DD_arc_restricted_2nd);
+            if(A1DD_arc_restricted_2nd != null) if(isRangeOk(A1DD_arc_restricted_2nd, 1, rangeInt)) lineList.add(A1DD_arc_restricted_2nd);
             micLine A2DD_arc_restricted_2nd = createLineAxtoDD_along_arc_edge(A2, E2, DD_2nd);
-            if(isRangeOk(A2DD_arc_restricted_2nd, 1, rangeInt)) lineList.add(A2DD_arc_restricted_2nd);
+            if(A2DD_arc_restricted_2nd != null) if(isRangeOk(A2DD_arc_restricted_2nd, 1, rangeInt)) lineList.add(A2DD_arc_restricted_2nd);
         }
         if(whichOption == frontAuxArcOption) {
             micLine A3DD_arc_restricted_2nd = createLineAxtoDD_along_arc_edge(A3, E3, DD_2nd);
-            if(isRangeOk(A3DD_arc_restricted_2nd, 1, rangeInt)) lineList.add(A3DD_arc_restricted_2nd);
+            if(A3DD_arc_restricted_2nd != null) if(isRangeOk(A3DD_arc_restricted_2nd, 1, rangeInt)) lineList.add(A3DD_arc_restricted_2nd);
             micLine A4DD_arc_restricted_2nd = createLineAxtoDD_along_arc_edge(A4, E4, DD_2nd);
-            if(isRangeOk(A4DD_arc_restricted_2nd, 1, rangeInt)) lineList.add(A4DD_arc_restricted_2nd);
+            if(A4DD_arc_restricted_2nd != null) if(isRangeOk(A4DD_arc_restricted_2nd, 1, rangeInt)) lineList.add(A4DD_arc_restricted_2nd);
 
 
             micLine A5DD_arc_restricted_2nd = createLineAxtoDD_along_arc_edge(A5, E5, DD_2nd);
-            if(isRangeOk(A5DD_arc_restricted_2nd, 1, rangeInt)) lineList.add(A5DD_arc_restricted_2nd);
+            if(A5DD_arc_restricted_2nd != null) if(isRangeOk(A5DD_arc_restricted_2nd, 1, rangeInt)) lineList.add(A5DD_arc_restricted_2nd);
             micLine A6DD_arc_restricted_2nd = createLineAxtoDD_along_arc_edge(A6, E6, DD_2nd);
-            if(isRangeOk(A6DD_arc_restricted_2nd, 1, rangeInt)) lineList.add(A6DD_arc_restricted_2nd);
+            if(A6DD_arc_restricted_2nd != null) if(isRangeOk(A6DD_arc_restricted_2nd, 1, rangeInt)) lineList.add(A6DD_arc_restricted_2nd);
         }
         //Attacker's edge to defender's closest vertex
         micLine AAD1 = createLineAAtoD1(A1D1, AA, D1);
