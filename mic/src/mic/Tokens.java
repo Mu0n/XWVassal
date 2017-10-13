@@ -81,7 +81,8 @@ public enum Tokens {
     ),
     hull,
     hugeshipforestats,
-    hugeshipaftstats;
+    hugeshipaftstats,
+    oldstylereinforce;
 
     private List<String> actions = Lists.newArrayList();
     private List<String> upgrades = Lists.newArrayList();
