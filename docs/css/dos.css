@@ -235,6 +235,10 @@ ul ul ul {
   background: url("../img/sponsors/mynock.png") center center no-repeat;
   background-size: contain;
 }
+.sponsors .sponsor-img.jawa {
+  background: url("../img/sponsors/teamjawa.png") center center no-repeat;
+  background-size: contain;
+}
 @media screen and (max-width: 765px) {
   header .title {
     width: 418px;
