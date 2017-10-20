@@ -3,6 +3,7 @@ package mic;
 import VASSAL.build.GameModule;
 import VASSAL.build.module.documentation.HelpFile;
 import VASSAL.build.module.map.Drawable;
+import VASSAL.build.module.map.boardPicker.Board;
 import VASSAL.build.widget.PieceSlot;
 import VASSAL.command.ChangeTracker;
 import VASSAL.command.Command;
@@ -329,6 +330,7 @@ public class ShipReposition extends Decorator implements EditablePiece {
         //STEP 9: Check for overlap with obstacles and ships with the final ship position
         List<BumpableWithShape> shipsOrObstacles = getBumpablesOnMap(true);
 
+        String yourShipName = getShipStringForReports(true, this.getProperty("Pilot Name").toString(), this.getProperty("Craft ID #").toString());
         if(shapeForOverlap2 != null){
 
             List<BumpableWithShape> overlappingShipOrObstacles = findCollidingEntities(shapeForOverlap2, shipsOrObstacles);
@@ -337,7 +339,7 @@ public class ShipReposition extends Decorator implements EditablePiece {
                 for(BumpableWithShape bws : overlappingShipOrObstacles)
                 {
                     previousCollisionVisualization.add(bws.shape);
-                    String yourShipName = getShipStringForReports(true, this.getProperty("Pilot Name").toString(), this.getProperty("Craft ID #").toString());
+
                     String overlapOnFinalWarn = "*** Warning: " + yourShipName + "'s final reposition location currently overlaps a Ship or Obstacle. You can attempt to move it into a legal position and check if it still overlaps with 'alt-c'.";
                     if(bigCommand !=null) bigCommand.append(logToChatCommand(overlapOnFinalWarn));
                     else bigCommand = logToChatCommand(overlapOnFinalWarn);
@@ -346,6 +348,9 @@ public class ShipReposition extends Decorator implements EditablePiece {
                 spawnTemplate = true; //we'll want the template
             }
         }
+
+        // STEP 9.5: Check for movement out of bounds
+        checkIfOutOfBounds(yourShipName, shapeForOverlap2);
 
         //STEP 10: optional if there's any kind of overlap, produce both the template and initial ship position
         if(spawnTemplate == true) {
@@ -362,6 +367,30 @@ public class ShipReposition extends Decorator implements EditablePiece {
         //check if the templates is needed as well, in case of any kind of overlap
 
     return bigCommand;
+    }
+
+    private void checkIfOutOfBounds(String yourShipName, Shape shapeForOutOfBounds) {
+        Rectangle mapArea = new Rectangle(0,0,0,0);
+        try{
+            Board b = getMap().getBoards().iterator().next();
+            mapArea = b.bounds();
+            String name = b.getName();
+        }catch(Exception e)
+        {
+            logToChat("Board name isn't formatted right, change to #'x#' Description");
+        }
+        //Shape theShape = BumpableWithShape.getBumpableCompareShape(this);
+
+        if(shapeForOutOfBounds.getBounds().getMaxX() > mapArea.getBounds().getMaxX()  || // too far to the right
+                shapeForOutOfBounds.getBounds().getMaxY() > mapArea.getBounds().getMaxY() || // too far to the bottom
+                shapeForOutOfBounds.getBounds().getX() < mapArea.getBounds().getX() || //too far to the left
+                shapeForOutOfBounds.getBounds().getY() < mapArea.getBounds().getY()) // too far to the top
+        {
+
+            logToChatWithTime("* -- " + yourShipName + " flew out of bounds");
+            ShipReposition.CollisionVisualization collisionVisualization = new ShipReposition.CollisionVisualization(shapeForOutOfBounds);
+            this.previousCollisionVisualization.add(shapeForOutOfBounds);
+        }
     }
 
     private Shape getCopyOfShapeWithoutActionsForOverlapCheck(GamePiece oldPiece,RepoManeuver repoTemplate ) {
