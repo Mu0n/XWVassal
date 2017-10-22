@@ -113,6 +113,7 @@ public class AnnouncementOnLog extends AbstractConfigurable {
                 SwingLink link2 = new SwingLink("Alt download page on github", githubDownloadURL);
             SwingLink link4 = new SwingLink("What's new in v" + line, urlPatchString);
                 SwingLink link3 = new SwingLink("New? Need help? Go to the web guide", guideURL);
+            SwingLink link6 = new SwingLink("Support the X-Wing Vassal module", "http://xwvassal.info/supportmodule.html");
             SwingLink link5 = new SwingLink("Home for the Vassal League", "http://xwvassal.info");
                 JFrame frame = new JFrame();
                 JPanel panel = new JPanel();
@@ -125,6 +126,7 @@ public class AnnouncementOnLog extends AbstractConfigurable {
             panel.add(link2);
             panel.add(link4);
             panel.add(link3);
+            panel.add(link6);
             panel.add(link5);
 
                 JOptionPane optionPane = new JOptionPane();

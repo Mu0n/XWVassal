@@ -40,9 +40,13 @@ public class PatreonWindow extends AbstractConfigurable  {
             URLConnection con = urlPatchNotes.openConnection();
             con.setUseCaches(false);
             BufferedReader in = new BufferedReader(new InputStreamReader(urlPatchNotes.openStream()));
-            String urlPatchString = in.readLine();
+            String line;
+            while ((line = in.readLine()) != null) {
+                msg += line;
+                msg += "\n";
+            }
             in.close();
-            
+
             JFrame frame = new JFrame();
             JPanel panel = new JPanel();
             JLabel spacer;
@@ -50,7 +54,7 @@ public class PatreonWindow extends AbstractConfigurable  {
 
             panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
 
-            SwingLink link = new SwingLink("Patreon page", defaultURL);
+            SwingLink link = new SwingLink("Click here to visit the Patreon page", defaultURL);
 
             panel.add(link);
 
@@ -58,7 +62,7 @@ public class PatreonWindow extends AbstractConfigurable  {
             optionPane.setMessage(msg);
             //optionPane.setMessageType(JOptionPane.INFORMATION_MESSAGE);
             optionPane.add(panel);
-            JDialog dialog = optionPane.createDialog(frame, "Patreon for the X-Wing Vassal module - Thank You!");
+            JDialog dialog = optionPane.createDialog(frame, "Patreon Thank You List");
 
             dialog.setVisible(true);
             frame.toFront();
@@ -73,7 +77,7 @@ public class PatreonWindow extends AbstractConfigurable  {
 
     }
     public void addTo(Buildable parent) {
-        JButton b = new JButton("Patreon");
+        JButton b = new JButton("Support the module through Patreon");
         b.setAlignmentY(0.0F);
         b.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
