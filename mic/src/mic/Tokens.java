@@ -82,7 +82,13 @@ public enum Tokens {
     hull,
     hugeshipforestats,
     hugeshipaftstats,
-    oldstylereinforce;
+    oldstylereinforce,
+    jam(
+            none,
+            Lists.newArrayList("jammingbeam"),
+            none
+
+    );
 
     private List<String> actions = Lists.newArrayList();
     private List<String> upgrades = Lists.newArrayList();

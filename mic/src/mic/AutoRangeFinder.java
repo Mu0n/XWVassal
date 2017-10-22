@@ -226,6 +226,10 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
                 Area a2 = new Area(fromTarget);
                 a1.intersect(a2);
 
+                //TO DO:
+                //Initial step: if an obstacle intersects this rectangle, get this rectangular shape and find its 2 lengthwise edges
+                //case 1: the 2 lines intersect the SAME obstacle. Then, no chance of finding a non-obstructed line. Case closed
+                //case 2: if the 2 lines are crossed by different obstacles, then ray-cast all the possible lines and check for an obstacle free line
                 double extra = getExtraAngleDuringRectDetection(thisShip, b);
                 ShapeWithText bestBand = new ShapeWithText(a1, thisShip.getAngleInRadians() + extra);
                 rfindings.add(found);
@@ -383,6 +387,13 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
         micLine D1AA = createLineAAtoD1(A1D1, AA, D1);
         lineList.add(D1AA);
 
+
+        //ALLLINES: if all lines have to been added to the visuals, then, uncomment this section
+        /*for(micLine everyline : lineList) {
+            fov.addLine(everyline);
+        }*/
+        //end of section
+
         //First criterium, find the best distance and make it the best Line
         double bestDist = rangeInt*282.5;
         micLine best = null;
@@ -471,6 +482,14 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
         {
             if(isEdgeInArc(l) == true) filteredList.add(l);
         }
+
+
+        //ALLLINES: if all lines have to been added to the visuals, then, uncomment this section
+        /*for(micLine everyline : lineList) {
+            fov.addLine(everyline);
+        }*/
+        //end of section
+
 
         //First criterium, find the best distance and make it the best Line
         double bestDist = rangeInt * 282.5;
@@ -988,8 +1007,8 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
         private final List<ShapeWithText> shapesWithText;
         private final List<micLine> lines;
 
-        public Color badLineColor = new Color(30,30,255,110);
-        public Color bestLineColor = new Color(45,200,190,255);
+        public Color badLineColor = new Color(0, 121,255,110);
+        public Color bestLineColor = new Color(0, 180, 200,255);
         public Color shipsObstaclesColor = new Color(255,99,71, 150);
         public Color arcLineColor = new Color(246, 255, 41,180);
         Color myO = new Color(0,50,255, 50);
