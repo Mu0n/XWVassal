@@ -12,6 +12,8 @@ import VASSAL.configure.HotKeyConfigurer;
 import VASSAL.counters.*;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.swing.*;
 import java.awt.*;
@@ -124,9 +126,11 @@ enum RepoManeuver {
 }
 
 public class ShipReposition extends Decorator implements EditablePiece {
+    private static final Logger logger = LoggerFactory.getLogger(ShipReposition.class);
+
     public static final String ID = "ShipReposition";
     private FreeRotator myRotator = null;
-    public CollisionVisualization previousCollisionVisualization = null;
+    public MapVisualizations previousCollisionVisualization = null;
 
     private final FreeRotator testRotator;
     private Shape shapeForOverlap;
@@ -167,7 +171,6 @@ public class ShipReposition extends Decorator implements EditablePiece {
     public ShipReposition(GamePiece piece) {
         setInner(piece);
         this.testRotator = new FreeRotator("rotate;360;;;;;;;", null);
-        previousCollisionVisualization = new CollisionVisualization();
     }
 
     private Command spawnRepoTemplate(RepoManeuver theManeu) {
@@ -185,7 +188,6 @@ public class ShipReposition extends Decorator implements EditablePiece {
                     return null;
             }
         }
-
 
         //STEP 1: Collision reposition template, centered as in in the image file, centered on 0,0 (upper left corner)
         GamePiece piece = newPiece(findPieceSlotByID(theManeu.getTemplateGpID()));
@@ -388,7 +390,6 @@ public class ShipReposition extends Decorator implements EditablePiece {
         {
 
             logToChatWithTime("* -- " + yourShipName + " flew out of bounds");
-            ShipReposition.CollisionVisualization collisionVisualization = new ShipReposition.CollisionVisualization(shapeForOutOfBounds);
             this.previousCollisionVisualization.add(shapeForOutOfBounds);
         }
     }
@@ -414,6 +415,7 @@ public class ShipReposition extends Decorator implements EditablePiece {
     @Override
     public Command keyEvent(KeyStroke stroke) {
         //Any keystroke made on a ship will remove the orange shades
+        previousCollisionVisualization = new MapVisualizations();
 
         ChangeTracker changeTracker = new ChangeTracker(this);
         Command result = changeTracker.getChangeCommand();
@@ -460,16 +462,19 @@ public class ShipReposition extends Decorator implements EditablePiece {
                 }
             }
             result.append(piece.keyEvent(stroke));
-            return result;
         }
 
         RepoManeuver repoShip = getKeystrokeRepoManeuver(stroke);
         //Ship reposition requested
         if(repoShip != null  && stroke.isOnKeyRelease() == false) {
+            /*
             if (this.previousCollisionVisualization != null && this.previousCollisionVisualization.getCount() > 0) {
                 getMap().removeDrawComponent(this.previousCollisionVisualization);
                 this.previousCollisionVisualization.shapes.clear();
-            }
+            }*/
+
+
+
 
             //detect that the ship's final position overlaps a ship or obstacle
             Command repoCommand = repositionTheShip(repoShip);
@@ -477,40 +482,16 @@ public class ShipReposition extends Decorator implements EditablePiece {
             else{
                 result.append(repoCommand);
                 result.append(piece.keyEvent(stroke));
-                return result;
             }
             //detect that the template used overlaps an obstacle
 
         }
-        // if a collision has been found, start painting the shapes and flash them with a timer, mark the bomb spawner for deletion after this has gone through.
-        if(this.previousCollisionVisualization != null &&  this.previousCollisionVisualization.getCount() > 0){
-
-            final Timer timer = new Timer();
-            timer.schedule(new TimerTask() {
-                int count = 0;
-                @Override
-                public void run() {
-                    try{
-                        previousCollisionVisualization.draw(getMap().getView().getGraphics(),getMap());
-                        count++;
-                        if(count == NBFLASHES * 2) {
-                            FlushOldVisu();
-                            timer.cancel();
-                        }
-                    } catch (Exception e) {
-
-                    }
-                }
-            }, 0,DELAYBETWEENFLASHES);
+        if(this.previousCollisionVisualization != null &&  this.previousCollisionVisualization.getShapes().size() > 0){
+            result.append(previousCollisionVisualization);
+            previousCollisionVisualization.execute();
+            return result;
         }
         return piece.keyEvent(stroke);
-    }
-
-    private void FlushOldVisu() {
-        if (this.previousCollisionVisualization != null && this.previousCollisionVisualization.getCount() > 0) {
-            getMap().removeDrawComponent(this.previousCollisionVisualization);
-            this.previousCollisionVisualization.shapes.clear();
-        }
     }
 
     private List<BumpableWithShape> findCollidingEntities(Shape myTestShape, List<BumpableWithShape> otherShapes) {
@@ -662,7 +643,7 @@ public class ShipReposition extends Decorator implements EditablePiece {
         return this.piece.getName();
     }
 
-
+/*
     private static class CollisionVisualization implements Drawable {
 
         private final List<Shape> shapes;
@@ -715,4 +696,5 @@ public class ShipReposition extends Decorator implements EditablePiece {
             return true;
         }
     }
+    */
 }

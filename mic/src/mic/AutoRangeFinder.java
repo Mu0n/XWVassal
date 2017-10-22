@@ -3,11 +3,16 @@ package mic;
 import VASSAL.build.module.documentation.HelpFile;
 import VASSAL.build.module.map.Drawable;
 import VASSAL.command.Command;
+import VASSAL.command.CommandEncoder;
 import VASSAL.configure.HotKeyConfigurer;
 import VASSAL.counters.*;
+import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import mic.manuvers.ManeuverPaths;
+import org.apache.commons.codec.binary.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.swing.*;
 import java.awt.*;
@@ -16,10 +21,16 @@ import java.awt.font.FontRenderContext;
 import java.awt.font.TextAttribute;
 import java.awt.font.TextLayout;
 import java.awt.geom.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.text.AttributedString;
 import java.util.*;
 import java.util.List;
 import java.util.Map;
+import java.util.Timer;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static mic.Util.*;
 
@@ -69,7 +80,7 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
     public AutoRangeFinder(GamePiece piece) {
         setInner(piece);
         this.testRotator = new FreeRotator("rotate;360;;;;;;;", null);
-        fov = new FOVisualization();
+        this.fov = new FOVisualization();
     }
 
     @Override
@@ -92,13 +103,6 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
         return null;
     }
 
-    private void clearVisu() {
-        getMap().removeDrawComponent(this.fov);
-        this.fov.shapes.clear();
-        this.fov.lines.clear();
-        this.fov.shapesWithText.clear();
-    }
-
     private int getKeystrokeToOptions(KeyStroke keyStroke) {
         String hotKey = HotKeyConfigurer.getString(keyStroke);
         if (keyStrokeToOptions.containsKey(hotKey)) {
@@ -111,16 +115,16 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
 
         ArrayList<rangeFindings> rfindings = new ArrayList<rangeFindings>(); //findings compiled here
 
-        if (this.fov == null) {
-            this.fov = new FOVisualization();
-        }
         //identify which autorange option was used by using the static Map defined above in the globals, store it in an int
         whichOption = getKeystrokeToOptions(stroke);
         if (whichOption != -1 && stroke.isOnKeyRelease() == false) {
             Command bigCommand = piece.keyEvent(stroke);
             //if the firing options were already activated, remove the visuals and exit right away
             if (this.fov != null && this.fov.getCount() > 0) {
+                //logToChatCommand("toggle off");
                 clearVisu();
+                bigCommand.append(this.fov);
+                this.fov.execute();
                 return bigCommand;
             }
             thisShip = new BumpableWithShape(this, "Ship",
@@ -140,16 +144,32 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
             }
 
             //draw visuals and announce the results in the chat
-            getMap().addDrawComponent(fov);
             Command bigAnnounceCommand = makeBigAnnounceCommand(bigAnnounce, rfindings);
             bigCommand.append(bigAnnounceCommand);
+            if(this.fov !=null && this.fov.getCount() > 0) {
+                bigCommand.append(this.fov);
+                this.fov.execute();
+                //logToChatCommand("launch execute");
+            }
             return bigCommand;
         } else if (KeyStroke.getKeyStroke(KeyEvent.VK_D, KeyEvent.CTRL_DOWN_MASK, false).equals(stroke)) {
-            if (this.fov != null && this.fov.getCount() > 0) clearVisu();
+            if (this.fov != null && this.fov.getCount() > 0) {
+                clearVisu();
+                Command goToHell = piece.keyEvent(stroke);
+                goToHell.append(this.fov);
+                this.fov.execute();
+                return goToHell;
+            }
         }
         return piece.keyEvent(stroke);
     }
 
+    private void clearVisu() {
+        getMap().removeDrawComponent(this.fov);
+        this.fov.shapes.clear();
+        this.fov.lines.clear();
+        this.fov.shapesWithText.clear();
+    }
 
     private void figureOutAutoRange(BumpableWithShape b, ArrayList<rangeFindings> rfindings) {
         //Compute the A's and E's
@@ -356,9 +376,9 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
         lineList.add(A2D1);
 
         micLine A1DD = createLineAxtoDD(A1, DD);
-        lineList.add(A1DD);
+        if(A1DD != null) lineList.add(A1DD);
         micLine A2DD = createLineAxtoDD(A2, DD);
-        lineList.add(A2DD);
+        if(A2DD != null) lineList.add(A2DD);
 
         micLine D1AA = createLineAAtoD1(A1D1, AA, D1);
         lineList.add(D1AA);
@@ -417,27 +437,27 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
         if(whichOption == frontArcOption || whichOption == backArcOption) {
             //Closest attacker's point to the defender's closest edge along the arc edge
             micLine A1DD_arc_restricted = createLineAxtoDD_along_arc_edge(A1, E1, DD);
-            if(isRangeOk(A1DD_arc_restricted, 1, rangeInt)) lineList.add(A1DD_arc_restricted);
+            if(A1DD_arc_restricted != null) if(isRangeOk(A1DD_arc_restricted, 1, rangeInt)) lineList.add(A1DD_arc_restricted);
             micLine A2DD_arc_restricted = createLineAxtoDD_along_arc_edge(A2, E2, DD);
-            if(isRangeOk(A2DD_arc_restricted, 1, rangeInt)) lineList.add(A2DD_arc_restricted);
+            if(A2DD_arc_restricted != null) if(isRangeOk(A2DD_arc_restricted, 1, rangeInt)) lineList.add(A2DD_arc_restricted);
 
             //Closest attacker's point to the defender's 2nd closest edge along the arc edge
             micLine A1DD_arc_restricted_2nd = createLineAxtoDD_along_arc_edge(A1, E1, DD_2nd);
-            if(isRangeOk(A1DD_arc_restricted_2nd, 1, rangeInt)) lineList.add(A1DD_arc_restricted_2nd);
+            if(A1DD_arc_restricted_2nd != null) if(isRangeOk(A1DD_arc_restricted_2nd, 1, rangeInt)) lineList.add(A1DD_arc_restricted_2nd);
             micLine A2DD_arc_restricted_2nd = createLineAxtoDD_along_arc_edge(A2, E2, DD_2nd);
-            if(isRangeOk(A2DD_arc_restricted_2nd, 1, rangeInt)) lineList.add(A2DD_arc_restricted_2nd);
+            if(A2DD_arc_restricted_2nd != null) if(isRangeOk(A2DD_arc_restricted_2nd, 1, rangeInt)) lineList.add(A2DD_arc_restricted_2nd);
         }
         if(whichOption == frontAuxArcOption) {
             micLine A3DD_arc_restricted_2nd = createLineAxtoDD_along_arc_edge(A3, E3, DD_2nd);
-            if(isRangeOk(A3DD_arc_restricted_2nd, 1, rangeInt)) lineList.add(A3DD_arc_restricted_2nd);
+            if(A3DD_arc_restricted_2nd != null) if(isRangeOk(A3DD_arc_restricted_2nd, 1, rangeInt)) lineList.add(A3DD_arc_restricted_2nd);
             micLine A4DD_arc_restricted_2nd = createLineAxtoDD_along_arc_edge(A4, E4, DD_2nd);
-            if(isRangeOk(A4DD_arc_restricted_2nd, 1, rangeInt)) lineList.add(A4DD_arc_restricted_2nd);
+            if(A4DD_arc_restricted_2nd != null) if(isRangeOk(A4DD_arc_restricted_2nd, 1, rangeInt)) lineList.add(A4DD_arc_restricted_2nd);
 
 
             micLine A5DD_arc_restricted_2nd = createLineAxtoDD_along_arc_edge(A5, E5, DD_2nd);
-            if(isRangeOk(A5DD_arc_restricted_2nd, 1, rangeInt)) lineList.add(A5DD_arc_restricted_2nd);
+            if(A5DD_arc_restricted_2nd != null) if(isRangeOk(A5DD_arc_restricted_2nd, 1, rangeInt)) lineList.add(A5DD_arc_restricted_2nd);
             micLine A6DD_arc_restricted_2nd = createLineAxtoDD_along_arc_edge(A6, E6, DD_2nd);
-            if(isRangeOk(A6DD_arc_restricted_2nd, 1, rangeInt)) lineList.add(A6DD_arc_restricted_2nd);
+            if(A6DD_arc_restricted_2nd != null) if(isRangeOk(A6DD_arc_restricted_2nd, 1, rangeInt)) lineList.add(A6DD_arc_restricted_2nd);
         }
         //Attacker's edge to defender's closest vertex
         micLine AAD1 = createLineAAtoD1(A1D1, AA, D1);
@@ -962,7 +982,7 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
         return ships;
     }
 
-    private static class FOVisualization implements Drawable {
+    private static class FOVisualization extends Command implements Drawable {
 
         private final List<Shape> shapes;
         private final List<ShapeWithText> shapesWithText;
@@ -994,23 +1014,34 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
         public void addShapeWithText(ShapeWithText swt){ this.shapesWithText.add(swt); }
         public int getCount() {
             int count = 0;
-            Iterator<Shape> it = this.shapes.iterator();
-            while(it.hasNext()) {
+            Iterator<micLine> it = this.lines.iterator();
+            while(it.hasNext()){
                 count++;
                 it.next();
             }
-            Iterator<ShapeWithText> it2 = this.shapesWithText.iterator();
-            while(it2.hasNext()){
-                count++;
-                it2.next();
-            }
-            Iterator<micLine> it3 = this.lines.iterator();
-            while(it3.hasNext()){
-                count++;
-                it3.next();
-            }
             return count;
         }
+
+
+        protected void executeCommand() {
+            final VASSAL.build.module.Map map = VASSAL.build.module.Map.getMapById("Map0");
+            int count = getCount();
+            if(count > 0) {
+
+                map.addDrawComponent(this);
+                draw(map.getView().getGraphics(), map);
+                //logToChat("executing with " + Integer.toString(count) + " stuff to draw.");
+            }
+            else {
+                map.removeDrawComponent(FOVisualization.this);
+                //logToChat("removing components with " + Integer.toString(count) + " stuff to draw.");
+            }
+        }
+
+        protected Command myUndoCommand() {
+            return null;
+        }
+
         public void draw(Graphics graphics, VASSAL.build.module.Map map) {
             Graphics2D graphics2D = (Graphics2D) graphics;
 
@@ -1066,8 +1097,77 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
             return t.getOutline(null);
         }
 
+        public List<Shape> getShapes() {
+            return this.shapes;
+        }
+
+
+        public List<ShapeWithText> getTextShapes() {
+            return this.shapesWithText;
+        }
+
+        public List<micLine> getMicLines() {
+            return this.lines;
+        }
+
         public boolean drawAboveCounters() {
             return true;
+        }
+    }
+
+    public static class AutorangeVisualizationEncoder implements CommandEncoder {
+        private static final Logger logger = LoggerFactory.getLogger(AutoBumpDecorator.class);
+        private static String commandPrefix = "CollisionVis=";
+
+        public Command decode(String command) {
+            if (command == null || !command.contains(commandPrefix)) {
+                return null;
+            }
+
+            logger.info("Decoding CollisionVisualization");
+
+            command = command.substring(commandPrefix.length());
+
+            try {
+                String[] newCommandStrs = command.split("\t");
+                FOVisualization visualization = new FOVisualization();
+                for (String bytesBase64Str : newCommandStrs) {
+                    ByteArrayInputStream strIn = new ByteArrayInputStream(org.apache.commons.codec.binary.Base64.decodeBase64(bytesBase64Str));
+                    ObjectInputStream in = new ObjectInputStream(strIn);
+                    micLine line = (micLine) in.readObject();
+                    visualization.addLine(line);
+                    in.close();
+                }
+                logger.info("Decoded CollisionVisualization with {} shapes", visualization.getShapes().size());
+                return visualization;
+            } catch (Exception e) {
+                logger.error("Error decoding CollisionVisualization", e);
+                return null;
+            }
+        }
+
+        public String encode(Command c) {
+            if (!(c instanceof FOVisualization)) {
+                return null;
+            }
+            logger.info("Encoding autorange visualization");
+            FOVisualization visualization = (FOVisualization) c;
+            try {
+                List<String> commandStrs = Lists.newArrayList();
+                for (micLine line : visualization.getMicLines()) {
+                    ByteArrayOutputStream bos = new ByteArrayOutputStream();
+                    ObjectOutputStream out = new ObjectOutputStream(bos);
+                    out.writeObject(line);
+                    out.close();
+                    byte[] bytes = bos.toByteArray();
+                    String bytesBase64 = org.apache.commons.codec.binary.Base64.encodeBase64String(bytes);
+                    commandStrs.add(bytesBase64);
+                }
+                return commandPrefix + Joiner.on('\t').join(commandStrs);
+            } catch (Exception e) {
+                logger.error("Error encoding autorange visualization", e);
+                return null;
+            }
         }
     }
 
