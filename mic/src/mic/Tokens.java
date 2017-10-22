@@ -87,7 +87,7 @@ public enum Tokens {
             none,
             Lists.newArrayList("jammingbeam"),
             none
-            
+
     );
 
     private List<String> actions = Lists.newArrayList();
