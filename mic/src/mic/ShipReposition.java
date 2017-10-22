@@ -390,7 +390,6 @@ public class ShipReposition extends Decorator implements EditablePiece {
         {
 
             logToChatWithTime("* -- " + yourShipName + " flew out of bounds");
-            ShipReposition.CollisionVisualization collisionVisualization = new ShipReposition.CollisionVisualization(shapeForOutOfBounds);
             this.previousCollisionVisualization.add(shapeForOutOfBounds);
         }
     }
