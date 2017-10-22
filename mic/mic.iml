@@ -31,5 +31,6 @@
     <orderEntry type="library" name="com.google.guava:guava-jdk5:17.0" level="project" />
     <orderEntry type="library" name="Vengine" level="project" />
     <orderEntry type="library" name="org.slf4j:slf4j-api:1.7.7" level="project" />
+    <orderEntry type="library" name="commons-codec:commons-codec:1.6" level="project" />
   </component>
 </module>

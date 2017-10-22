@@ -3,20 +3,29 @@ package mic;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.geom.AffineTransform;
-import java.awt.geom.Area;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.*;
 import java.util.List;
+import java.util.Map;
 import java.util.Timer;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.swing.*;
 
 import VASSAL.build.GameModule;
-import VASSAL.build.module.GlobalOptions;
 import VASSAL.build.module.map.boardPicker.Board;
 import VASSAL.build.widget.PieceSlot;
+import VASSAL.command.CommandEncoder;
 import VASSAL.counters.*;
+import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.apache.commons.codec.binary.Base64;
 
 import VASSAL.build.module.documentation.HelpFile;
 import VASSAL.build.module.map.Drawable;
@@ -27,7 +36,6 @@ import VASSAL.configure.HotKeyConfigurer;
 import mic.manuvers.ManeuverPaths;
 import mic.manuvers.PathPart;
 
-import static java.awt.event.InputEvent.ALT_DOWN_MASK;
 import static mic.Util.*;
 
 /**
@@ -36,21 +44,15 @@ import static mic.Util.*;
  * Second role: to completely intercept every maneuver shortcut and deal with movement AND autobump AND out of bound detection
  */
 public class AutoBumpDecorator extends Decorator implements EditablePiece {
+    private static final Logger logger = LoggerFactory.getLogger(AutoBumpDecorator.class);
     public static final String ID = "auto-bump;";
-    static final int NBFLASHES = 5;
-    static final int DELAYBETWEENFLASHES = 150;
-
-    // Set to true to enable visualizations of collision objects.
-    // They will be drawn after a collision resolution, select the colliding
-    // ship and press x to remove it.
-    private static boolean DRAW_COLLISIONS = true;
-
     private final FreeRotator testRotator;
 
     private ShipPositionState prevPosition = null;
     private ManeuverPaths lastManeuver = null;
     private FreeRotator myRotator = null;
-    public CollisionVisualization previousCollisionVisualization = null;
+    //public CollisionVisualization previousCollisionVisualization = null;
+    MapVisualizations previousCollisionVisualization = null;
 
     private static Map<String, ManeuverPaths> keyStrokeToManeuver = ImmutableMap.<String, ManeuverPaths>builder()
             .put("SHIFT 1", ManeuverPaths.Str1)
@@ -99,7 +101,6 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
     public AutoBumpDecorator(GamePiece piece) {
         setInner(piece);
         this.testRotator = new FreeRotator("rotate;360;;;;;;;", null);
-        previousCollisionVisualization = new CollisionVisualization();
     }
 
     @Override
@@ -168,11 +169,7 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
 
     @Override
     public Command keyEvent(KeyStroke stroke) {
-        //Any keystroke made on a ship will remove the orange shades
-
-        if(this.previousCollisionVisualization == null) {
-            this.previousCollisionVisualization = new CollisionVisualization();
-        }
+        this.previousCollisionVisualization = new MapVisualizations();
 
         ManeuverPaths path = getKeystrokePath(stroke);
         // Is this a keystroke for a maneuver? Deal with the 'no' cases first
@@ -181,15 +178,11 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
             if(KeyStroke.getKeyStroke(KeyEvent.VK_C, 0, false).equals(stroke) && lastManeuver != null) {
                 List<BumpableWithShape> otherShipShapes = getShipsWithShapes();
 
-
-
-                // Whenever I want to resume template placement with java, this is where it happens
                     if(lastManeuver != null) {
                         Command placeCollisionAide = spawnRotatedPiece(lastManeuver);
                         placeCollisionAide.execute();
                         GameModule.getGameModule().sendAndLog(placeCollisionAide);
                     }
-
 
                 boolean isCollisionOccuring = findCollidingEntity(BumpableWithShape.getBumpableCompareShape(this), otherShipShapes) != null ? true : false;
                 //backtracking requested with a detected bumpable overlap, deal with it
@@ -205,22 +198,12 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
 
         // We know we're dealing with a maneuver keystroke
         if (stroke.isOnKeyRelease() == false) {
-
-
-            if (this.previousCollisionVisualization != null && this.previousCollisionVisualization.getCount() > 0) {
-                getMap().removeDrawComponent(this.previousCollisionVisualization);
-                this.previousCollisionVisualization.shapes.clear();
-            }
             // find the list of other bumpables
             List<BumpableWithShape> otherBumpableShapes = getBumpablesWithShapes();
 
-
             //safeguard old position and path
-
             this.prevPosition = getCurrentState();
             this.lastManeuver = path;
-
-
 
             //This PathPart list will be used everywhere: moving, bumping, out of boundsing
             //maybe fetch it for both 'c' behavior and movement
@@ -238,17 +221,13 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
             String yourShipName = getShipStringForReports(true, this.getProperty("Pilot Name").toString(), this.getProperty("Craft ID #").toString());
             //Start the Command chain
             Command innerCommand = piece.keyEvent(stroke);
-
             innerCommand.append(buildTranslateCommand(part, path.getAdditionalAngleForShip()));
 
             //check for Tallon rolls and spawn the template
             if(lastManeuver == ManeuverPaths.TrollL2 || lastManeuver == ManeuverPaths.TrollL3 || lastManeuver == ManeuverPaths.TrollR2 || lastManeuver == ManeuverPaths.TrollR3) {
                 Command placeTrollTemplate = spawnRotatedPiece(lastManeuver);
                 innerCommand.append(placeTrollTemplate);
-
             }
-
-
             //These lines fetch the Shape of the last movement template used
             FreeRotator rotator = (FreeRotator) (Decorator.getDecorator(Decorator.getOutermost(this), FreeRotator.class));
             Shape lastMoveShapeUsed = path.getTransformedTemplateShape(this.getPosition().getX(),
@@ -269,61 +248,41 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
             checkIfOutOfBounds(yourShipName);
 
             //Add all the detected overlapping shapes to the map drawn components here
-            if(this.previousCollisionVisualization != null &&  this.previousCollisionVisualization.getCount() > 0){
-
-                final Timer timer = new Timer();
-                timer.schedule(new TimerTask() {
-                    int count = 0;
-                    @Override
-                    public void run() {
-                        try{
-                            previousCollisionVisualization.draw(getMap().getView().getGraphics(),getMap());
-                            count++;
-                            if(count == NBFLASHES * 2) {
-                                getMap().removeDrawComponent(previousCollisionVisualization);
-                                timer.cancel();
-                            }
-                        } catch (Exception e) {
-
-                        }
-                    }
-                }, 0,DELAYBETWEENFLASHES);
+            if(this.previousCollisionVisualization != null &&  this.previousCollisionVisualization.getShapes().size() > 0){
+                innerCommand.append(this.previousCollisionVisualization);
+                this.previousCollisionVisualization.execute();
             }
-
-return innerCommand;
+            return innerCommand;
         }
         //the maneuver has finished. return control of the event to vassal to do nothing
         return piece.keyEvent(stroke);
     }
 
     private void checkTemplateOverlap(Shape lastMoveShapeUsed, List<BumpableWithShape> otherBumpableShapes) {
-
         List<BumpableWithShape> collidingEntities = findCollidingEntities(lastMoveShapeUsed, otherBumpableShapes);
-        CollisionVisualization cvFoundHere = new CollisionVisualization(lastMoveShapeUsed);
+        MapVisualizations cvFoundHere = new MapVisualizations(lastMoveShapeUsed);
 
         int howManyBumped = 0;
         for (BumpableWithShape bumpedBumpable : collidingEntities) {
-            if (DRAW_COLLISIONS) {
-                String yourShipName = getShipStringForReports(true, this.getProperty("Pilot Name").toString(), this.getProperty("Craft ID #").toString());
-                if (bumpedBumpable.type.equals("Asteroid")) {
-                    String bumpAlertString = "* --- Overlap detected with " + yourShipName + "'s maneuver template and an asteroid.";
-                    logToChatWithTime(bumpAlertString);
-                    cvFoundHere.add(bumpedBumpable.shape);
-                    this.previousCollisionVisualization.add(bumpedBumpable.shape);
-                    howManyBumped++;
-                } else if (bumpedBumpable.type.equals("Debris")) {
-                    String bumpAlertString = "* --- Overlap detected with " + yourShipName + "'s maneuver template and a debris cloud.";
-                    logToChatWithTime(bumpAlertString);
-                    cvFoundHere.add(bumpedBumpable.shape);
-                    this.previousCollisionVisualization.add(bumpedBumpable.shape);
-                    howManyBumped++;
-                } else if (bumpedBumpable.type.equals("Mine")) {
-                    String bumpAlertString = "* --- Overlap detected with " + yourShipName + "'s maneuver template and a mine.";
-                    logToChatWithTime(bumpAlertString);
-                    cvFoundHere.add(bumpedBumpable.shape);
-                    this.previousCollisionVisualization.add(bumpedBumpable.shape);
-                    howManyBumped++;
-                }
+            String yourShipName = getShipStringForReports(true, this.getProperty("Pilot Name").toString(), this.getProperty("Craft ID #").toString());
+            if (bumpedBumpable.type.equals("Asteroid")) {
+                String bumpAlertString = "* --- Overlap detected with " + yourShipName + "'s maneuver template and an asteroid.";
+                logToChatWithTime(bumpAlertString);
+                cvFoundHere.add(bumpedBumpable.shape);
+                this.previousCollisionVisualization.add(bumpedBumpable.shape);
+                howManyBumped++;
+            } else if (bumpedBumpable.type.equals("Debris")) {
+                String bumpAlertString = "* --- Overlap detected with " + yourShipName + "'s maneuver template and a debris cloud.";
+                logToChatWithTime(bumpAlertString);
+                cvFoundHere.add(bumpedBumpable.shape);
+                this.previousCollisionVisualization.add(bumpedBumpable.shape);
+                howManyBumped++;
+            } else if (bumpedBumpable.type.equals("Mine")) {
+                String bumpAlertString = "* --- Overlap detected with " + yourShipName + "'s maneuver template and a mine.";
+                logToChatWithTime(bumpAlertString);
+                cvFoundHere.add(bumpedBumpable.shape);
+                this.previousCollisionVisualization.add(bumpedBumpable.shape);
+                howManyBumped++;
             }
         }
         if (howManyBumped > 0) {
@@ -350,7 +309,6 @@ return innerCommand;
         {
 
             logToChatWithTime("* -- " + yourShipName + " flew out of bounds");
-            CollisionVisualization collisionVisualization = new CollisionVisualization(theShape);
             this.previousCollisionVisualization.add(theShape);
         }
     }
@@ -362,36 +320,33 @@ return innerCommand;
 
         int howManyBumped = 0;
         for (BumpableWithShape bumpedBumpable : collidingEntities) {
-            if (DRAW_COLLISIONS) {
-                String yourShipName = getShipStringForReports(true, this.getProperty("Pilot Name").toString(), this.getProperty("Craft ID #").toString());
-                if (bumpedBumpable.type.equals("Ship")) {
-                    String otherShipName = getShipStringForReports(false, bumpedBumpable.pilotName, bumpedBumpable.shipName);
-                    String bumpAlertString = "* --- Overlap detected with " + yourShipName + " and " + otherShipName + ". Resolve this by hitting the 'c' key.";
-                    logToChatWithTime(bumpAlertString);
-                    this.previousCollisionVisualization.add(bumpedBumpable.shape);
-                    howManyBumped++;
-                } else if (bumpedBumpable.type.equals("Asteroid")) {
-                    String bumpAlertString = "* --- Overlap detected with " + yourShipName + " and an asteroid.";
-                    logToChatWithTime(bumpAlertString);
-                    this.previousCollisionVisualization.add(bumpedBumpable.shape);
-                    howManyBumped++;
-                } else if (bumpedBumpable.type.equals("Debris")) {
-                    String bumpAlertString = "* --- Overlap detected with " + yourShipName + " and a debris cloud.";
-                    logToChatWithTime(bumpAlertString);
-                    this.previousCollisionVisualization.add(bumpedBumpable.shape);
-                    howManyBumped++;
-                } else if (bumpedBumpable.type.equals("Mine")) {
-                    String bumpAlertString = "* --- Overlap detected with " + yourShipName + " and a mine.";
-                    logToChatWithTime(bumpAlertString);
-                    this.previousCollisionVisualization.add(bumpedBumpable.shape);
-                    howManyBumped++;
-                }
+            String yourShipName = getShipStringForReports(true, this.getProperty("Pilot Name").toString(), this.getProperty("Craft ID #").toString());
+            if (bumpedBumpable.type.equals("Ship")) {
+                String otherShipName = getShipStringForReports(false, bumpedBumpable.pilotName, bumpedBumpable.shipName);
+                String bumpAlertString = "* --- Overlap detected with " + yourShipName + " and " + otherShipName + ". Resolve this by hitting the 'c' key.";
+                logToChatWithTime(bumpAlertString);
+                this.previousCollisionVisualization.add(bumpedBumpable.shape);
+                howManyBumped++;
+            } else if (bumpedBumpable.type.equals("Asteroid")) {
+                String bumpAlertString = "* --- Overlap detected with " + yourShipName + " and an asteroid.";
+                logToChatWithTime(bumpAlertString);
+                this.previousCollisionVisualization.add(bumpedBumpable.shape);
+                howManyBumped++;
+            } else if (bumpedBumpable.type.equals("Debris")) {
+                String bumpAlertString = "* --- Overlap detected with " + yourShipName + " and a debris cloud.";
+                logToChatWithTime(bumpAlertString);
+                this.previousCollisionVisualization.add(bumpedBumpable.shape);
+                howManyBumped++;
+            } else if (bumpedBumpable.type.equals("Mine")) {
+                String bumpAlertString = "* --- Overlap detected with " + yourShipName + " and a mine.";
+                logToChatWithTime(bumpAlertString);
+                this.previousCollisionVisualization.add(bumpedBumpable.shape);
+                howManyBumped++;
             }
         }
         if (howManyBumped > 0) {
             this.previousCollisionVisualization.add(theShape);
         }
-
     }
 
 
@@ -427,11 +382,6 @@ return innerCommand;
 
             BumpableWithShape bumpedBumpable = findCollidingEntity(movedShape, otherBumpableShapes);
             if (bumpedBumpable == null) {
-                if (DRAW_COLLISIONS) {
-                    if (this.previousCollisionVisualization != null) {
-                        getMap().removeDrawComponent(this.previousCollisionVisualization);
-                    }
-                }
                 return buildTranslateCommand(part,0.0f);
             }
         }
@@ -664,7 +614,10 @@ return innerCommand;
         return BumpableWithShape.getRawShape(ship).getBounds().getWidth() > 114;
     }
 
-    private static class CollisionVisualization implements Drawable {
+    /*
+    public static class CollisionVisualization extends Command implements Drawable {
+        static final int NBFLASHES = 6;
+        static final int DELAYBETWEENFLASHES = 250;
 
         private final List<Shape> shapes;
         private boolean tictoc = false;
@@ -673,23 +626,45 @@ return innerCommand;
         CollisionVisualization() {
             this.shapes = new ArrayList<Shape>();
         }
+
         CollisionVisualization(Shape shipShape) {
             this.shapes = new ArrayList<Shape>();
             this.shapes.add(shipShape);
+        }
+
+        protected void executeCommand() {
+            final Timer timer = new Timer();
+            final VASSAL.build.module.Map map = VASSAL.build.module.Map.getMapById("Map0");
+            logger.info("Rendering CollisionVisualization command");
+            this.tictoc = false;
+            final AtomicInteger count = new AtomicInteger(0);
+            timer.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    try{
+                        if(count.getAndIncrement() >= NBFLASHES * 2) {
+                            timer.cancel();
+                            map.removeDrawComponent(CollisionVisualization.this);
+                            return;
+                        }
+                        draw(map.getView().getGraphics(), map);
+                    } catch (Exception e) {
+                        logger.error("Error rendering collision visualization", e);
+                    }
+                }
+            }, 0,DELAYBETWEENFLASHES);
+        }
+
+        protected Command myUndoCommand() {
+            return null;
         }
 
         public void add(Shape bumpable) {
             this.shapes.add(bumpable);
         }
 
-        public int getCount() {
-            int count = 0;
-            Iterator<Shape> it = this.shapes.iterator();
-            while(it.hasNext()) {
-                count++;
-                it.next();
-            }
-            return count;
+        public List<Shape> getShapes() {
+            return this.shapes;
         }
 
         public void draw(Graphics graphics, VASSAL.build.module.Map map) {
@@ -707,8 +682,6 @@ return innerCommand;
                 map.getView().repaint();
                 tictoc = false;
             }
-
-
         }
 
         public boolean drawAboveCounters() {
@@ -716,9 +689,84 @@ return innerCommand;
         }
     }
 
+    public static class CollsionVisualizationEncoder implements CommandEncoder {
+        private static String commandPrefix = "CollisionVis=";
+
+        public Command decode(String command) {
+            if (command == null || !command.contains(commandPrefix)) {
+                return null;
+            }
+
+            logger.info("Decoding CollisionVisualization");
+
+            command = command.substring(commandPrefix.length());
+
+            try {
+                String[] newCommandStrs = command.split("\t");
+                CollisionVisualization visualization = new CollisionVisualization();
+                for (String bytesBase64Str : newCommandStrs) {
+                    ByteArrayInputStream strIn = new ByteArrayInputStream(Base64.decodeBase64(bytesBase64Str));
+                    ObjectInputStream in = new ObjectInputStream(strIn);
+                    Shape shape = (Shape) in.readObject();
+                    visualization.add(shape);
+                    in.close();
+                }
+                logger.info("Decoded CollisionVisualization with {} shapes", visualization.getShapes().size());
+                return visualization;
+            } catch (Exception e) {
+                logger.error("Error decoding CollisionVisualization", e);
+                return null;
+            }
+        }
+
+        public String encode(Command c) {
+            if (!(c instanceof CollisionVisualization)) {
+                return null;
+            }
+            logger.info("Encoding CollisionVisualization");
+            CollisionVisualization visualization = (CollisionVisualization) c;
+            try {
+                List<String> commandStrs = Lists.newArrayList();
+                for (Shape shape : visualization.getShapes()) {
+                    ByteArrayOutputStream bos = new ByteArrayOutputStream();
+                    ObjectOutputStream out = new ObjectOutputStream(bos);
+                    out.writeObject(shape);
+                    out.close();
+                    byte[] bytes = bos.toByteArray();
+                    String bytesBase64 = Base64.encodeBase64String(bytes);
+                    commandStrs.add(bytesBase64);
+                }
+                return commandPrefix + Joiner.on('\t').join(commandStrs);
+            } catch (Exception e) {
+                logger.error("Error encoding CollisionVisualization", e);
+                return null;
+            }
+        }
+    }
+*/
     private static class ShipPositionState {
         double x;
         double y;
         double angle;
     }
+
+//    public static void main(String[] args) throws Exception {
+//        CollisionVisualization visualization = new CollisionVisualization();
+//        Path2D.Double path = new Path2D.Double();
+//        path.moveTo(0.0, 0.0);
+//        path.lineTo(0.0, 1.0);
+//        visualization.add(path);
+//        path = new Path2D.Double();
+//        path.moveTo(0.0, 0.0);
+//        path.lineTo(0.0, 0.10);
+//        visualization.add(path);
+//
+//        CommandEncoder encoder = new CollsionVisualizationEncoder();
+//
+//        String encoded = encoder.encode(visualization);
+//        System.out.println("encoded = " + encoded);
+//
+//        CollisionVisualization newVis = (CollisionVisualization) encoder.decode(encoded);
+//        System.out.println("decoded = " + newVis.getShapes().size())     ;
+//    }
 }
