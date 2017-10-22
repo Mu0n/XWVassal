@@ -31,8 +31,46 @@ public class PatreonWindow extends AbstractConfigurable  {
     private JButton patreonButton = new JButton();
     private static String defaultURL =        "https://www.patreon.com/mu0n";
     private static String listofPatronsURL = "https://raw.githubusercontent.com/Mu0n/XWVassal/master/patrons";
+
     private synchronized void PatreonWindow() {
-logToChat("WORKED!");
+        String msg ="";
+        try {
+
+            URL urlPatchNotes = new URL(listofPatronsURL);
+            URLConnection con = urlPatchNotes.openConnection();
+            con.setUseCaches(false);
+            BufferedReader in = new BufferedReader(new InputStreamReader(urlPatchNotes.openStream()));
+            String urlPatchString = in.readLine();
+            in.close();
+            
+            JFrame frame = new JFrame();
+            JPanel panel = new JPanel();
+            JLabel spacer;
+            panel.setMinimumSize(new Dimension(1000,700));
+
+            panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+
+            SwingLink link = new SwingLink("Patreon page", defaultURL);
+
+            panel.add(link);
+
+            JOptionPane optionPane = new JOptionPane();
+            optionPane.setMessage(msg);
+            //optionPane.setMessageType(JOptionPane.INFORMATION_MESSAGE);
+            optionPane.add(panel);
+            JDialog dialog = optionPane.createDialog(frame, "Patreon for the X-Wing Vassal module - Thank You!");
+
+            dialog.setVisible(true);
+            frame.toFront();
+            frame.repaint();
+        }catch (MalformedURLException e) {
+            System.out.println("Malformed URL: " + e.getMessage());
+
+        } catch (IOException e) {
+            System.out.println("I/O Error: " + e.getMessage());
+        }
+
+
     }
     public void addTo(Buildable parent) {
         JButton b = new JButton("Patreon");
