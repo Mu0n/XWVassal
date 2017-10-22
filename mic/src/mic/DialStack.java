@@ -70,7 +70,7 @@ public class DialStack  extends Decorator implements EditablePiece {
                 double deltax = Math.pow(getBumpableCompareShape(this).getBounds().getX() - b.shape.getBounds().getX(),2.0);
                 double deltay = Math.pow(getBumpableCompareShape(this).getBounds().getY() - b.shape.getBounds().getY(),2.0);
                 double distance = Math.sqrt(deltax + deltay);
-                if(shapesOverlap(getBumpableCompareShape(this),b.shape) && distance < DIALRAYLEIGH) logToChat("(((POTENTIAL CHEAT ATTEMPT WARNING))) The dial for "
+                if(shapesOverlap(getBumpableCompareShape(this),b.shape) && distance < DIALRAYLEIGH) logToChat("* (((POTENTIAL CHEAT ATTEMPT WARNING))) The dial for "
                         + piece.getProperty("Pilot Name").toString() + "(" + piece.getProperty("Craft ID #").toString()
                 + ") is overlapping the dial for " + b.pilotName + "(" + b.shipName + ")");
             }

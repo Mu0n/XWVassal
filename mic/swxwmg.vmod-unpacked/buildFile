@@ -2712,4 +2712,5 @@
     <mic.AutoSquadSpawn/>
     <mic.EpicDeckTrayToggle/>
     <mic.AnnouncementOnLog/>
+    <mic.MultipleVassalInstanceCheck/>
 </VASSAL.launch.BasicModule>
