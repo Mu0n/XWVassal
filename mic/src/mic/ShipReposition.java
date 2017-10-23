@@ -2,7 +2,6 @@ package mic;
 
 import VASSAL.build.GameModule;
 import VASSAL.build.module.documentation.HelpFile;
-import VASSAL.build.module.map.Drawable;
 import VASSAL.build.module.map.boardPicker.Board;
 import VASSAL.build.widget.PieceSlot;
 import VASSAL.command.ChangeTracker;
@@ -19,9 +18,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.geom.AffineTransform;
-import java.util.*;
 import java.util.List;
-import java.util.Timer;
+import java.util.Map;
 
 import static mic.Util.*;
 
@@ -482,6 +480,12 @@ public class ShipReposition extends Decorator implements EditablePiece {
             else{
                 result.append(repoCommand);
                 result.append(piece.keyEvent(stroke));
+                if(this.previousCollisionVisualization != null &&  this.previousCollisionVisualization.getShapes().size() > 0){
+                    result.append(previousCollisionVisualization);
+                    previousCollisionVisualization.execute();
+
+                }
+                return result;
             }
             //detect that the template used overlaps an obstacle
 
