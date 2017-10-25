@@ -365,11 +365,11 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
         ArrayList<micLine> lineList = new ArrayList<micLine>();
 
         //Closest Attacker to Closest Defender
-        micLine A1D1 = new micLine(A1, D1);
+        micLine A1D1 = new micLine(A1, D1, "A1D1", 0.1);
         //Closest Attacker to 2nd Closest Defender
-        micLine A1D2 = new micLine(A1, D2);
+        micLine A1D2 = new micLine(A1, D2, "A1D2", 0.3);
         //Closest Defender to 2nd Closest Attacker
-        micLine A2D1 = new micLine(A2, D1);
+        micLine A2D1 = new micLine(A2, D1, "A2D1", 0.5);
         //Closest Attacker Edge
         micLine AA = new micLine(A1, A2);
         //Closest Defender Edge
@@ -380,18 +380,27 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
         lineList.add(A2D1);
 
         micLine A1DD = createLineAxtoDD(A1, DD);
-        if(A1DD != null) lineList.add(A1DD);
+        if(A1DD != null) {
+            micLine A1DDcopy = new micLine(A1DD.first, A1DD.second, "A1DD", 0.2);
+            //lineList.add(A1DD);
+            lineList.add(A1DDcopy);
+        }
         micLine A2DD = createLineAxtoDD(A2, DD);
-        if(A2DD != null) lineList.add(A2DD);
+        if(A2DD != null) {
+            micLine A2DDcopy = new micLine(A2DD.first, A2DD.second, "A2DD", 0.4);
+            //lineList.add(A2DD);
+            lineList.add(A2DDcopy);
+        }
 
         micLine D1AA = createLineAAtoD1(A1D1, AA, D1);
-        lineList.add(D1AA);
-
+        micLine D1AAcopy = new micLine(D1AA.first, D1AA.second, "D1AA", 0.6);
+        //lineList.add(D1AA);
+        lineList.add(D1AAcopy);
 
         //ALLLINES: if all lines have to been added to the visuals, then, uncomment this section
-        /*for(micLine everyline : lineList) {
+        for(micLine everyline : lineList) {
             fov.addLine(everyline);
-        }*/
+        }
         //end of section
 
         //First criterium, find the best distance and make it the best Line
@@ -485,9 +494,9 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
 
 
         //ALLLINES: if all lines have to been added to the visuals, then, uncomment this section
-        /*for(micLine everyline : lineList) {
+        for(micLine everyline : lineList) {
             fov.addLine(everyline);
-        }*/
+        }
         //end of section
 
 
@@ -564,6 +573,8 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
 
         micLine tempAD1 = new micLine(A, new Point2D.Double(DD.first.x, DD.first.y));
 
+        if(Double.compare(dotProduct(DD, tempAD1),0)<0) return null;
+
         double segmentPartialDist = Math.sqrt(Math.pow(tempAD1.pixelLength,2.0) - Math.pow(shortestdist,2.0));
         double segmentFullDist = DD.pixelLength;
         double gapx = (x2-x1)/segmentFullDist*segmentPartialDist;
@@ -579,6 +590,15 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
         return new micLine(A, new Point2D.Double(vector_x, vector_y));
     }
 
+    private double dotProduct(micLine l1, micLine l2) {
+        double x1 = l1.second.x - l1.first.x;
+        double x2 = l2.second.x - l2.first.x;
+
+        double y1 = l1.second.y - l1.first.y;
+        double y2 = l2.second.y - l2.first.y;
+
+        return x1*x2 + y1*y2;
+    }
     private micLine createLineAxtoDD_along_arc_edge(Point2D.Double A, Point2D.Double E, micLine DD) {
         //getting D1 again
         double x1 = DD.first.getX();
@@ -1085,11 +1105,20 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
                         .createTransformedShape(textShape);
                 graphics2D.draw(textShape);
             }
+
+            int colorNb = 100;
             for(micLine line : lines){
                 if(line.isBestLine == true) graphics2D.setColor(bestLineColor);
                 else graphics2D.setColor(badLineColor);
 
                 if(line.isArcLine == true) graphics2D.setColor(arcLineColor);
+
+/*ALLLines COlor Hijack*/
+                Color gradiant = new Color(colorNb,colorNb, 255, 255);
+                colorNb+=20;
+                graphics2D.setColor(gradiant);
+  /*end*/
+
 
                 Line2D.Double lineShape = new Line2D.Double(line.first, line.second);
                 graphics2D.draw(scaler.createTransformedShape(lineShape));
@@ -1235,26 +1264,36 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
         micLine(int x1, int y1, int x2, int y2) {
             this.first = new Point2D.Double(x1, y1);
             this.second = new Point2D.Double(x2, y2);
-            doRest();
+            doRest("", 0.5);
         }
 
+        //default constructor, lets the range be converted into a string
         micLine(Point2D.Double first, Point2D.Double second) {
             this.first = first;
             this.second = second;
-            doRest();
+            doRest("", 0.5);
         }
 
-        void doRest() {
+        //for when you want to set a manual string and an arbitrary string position
+        micLine(Point2D.Double first, Point2D.Double second, String label, double percentage) {
+            this.first = first;
+            this.second = second;
+            doRest(label, percentage);
+        }
+
+        void doRest(String label, double percentage) {
             pixelLength = Math.sqrt(nonSRPyth(first, second));
             rangeLength = (int) Math.ceil(pixelLength / 282.5);
-            rangeString += Integer.toString(rangeLength);
+            if("".equals(label)) rangeString += Integer.toString(rangeLength);
+            else rangeString = label;
             line = new Line2D.Double(first, second);
-            calculateCenter();
+            calculateCenter(percentage);
         }
 
-    void calculateCenter(){
-        centerX = (int)(this.first.getX() + 0.5*(this.second.getX()-this.first.getX()));
-        centerY = (int)(this.first.getY() + 0.5*(this.second.getY()-this.first.getY()));
+        //get a % of the length
+        void calculateCenter(double percentage){
+            centerX = (int)(this.first.getX() + percentage*(this.second.getX()-this.first.getX()));
+            centerY = (int)(this.first.getY() + percentage*(this.second.getY()-this.first.getY()));
         }
     }
 
