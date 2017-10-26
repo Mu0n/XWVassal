@@ -1,5 +1,6 @@
 package mic;
 
+import VASSAL.build.GameModule;
 import VASSAL.build.module.documentation.HelpFile;
 import VASSAL.build.module.map.Drawable;
 import VASSAL.command.Command;
@@ -10,13 +11,15 @@ import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import mic.manuvers.ManeuverPaths;
-import org.apache.commons.codec.binary.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 import java.awt.font.FontRenderContext;
 import java.awt.font.TextAttribute;
 import java.awt.font.TextLayout;
@@ -37,10 +40,37 @@ import static mic.Util.*;
 /**
  * Created by Mic on 23/03/2017.
  */
+class FluidAnim extends TimerTask {
+
+    AutoRangeFinder myARF;
 
 
-public class AutoRangeFinder extends Decorator implements EditablePiece {
+    FluidAnim ( AutoRangeFinder ARF )
+    {
+        this.myARF = ARF;
+    }
 
+    public void run() {
+        final Timer timer = new Timer();
+        final VASSAL.build.module.Map map = VASSAL.build.module.Map.getMapById("Map0");
+        final AtomicInteger count = new AtomicInteger(0);
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                try{
+                    logToChat("anim run");
+                    myARF.justRunLines();
+                } catch (Exception e) {
+                }
+            }
+        }, 0,8);
+    }
+}
+
+public class AutoRangeFinder extends Decorator implements EditablePiece, MouseListener, MouseMotionListener {
+
+
+    protected VASSAL.build.module.Map map;
     private static final int frontArcOption = 1;
     private static final int turretArcOption = 2;
     private static final int frontAuxArcOption = 3;
@@ -54,7 +84,7 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
     private ShipPositionState prevPosition = null;
     private ManeuverPaths lastManeuver = null;
     private FreeRotator myRotator = null;
-    private FOVisualization fov = null;
+    public FOVisualization fov = null;
     private static Map<String, Integer> keyStrokeToOptions = ImmutableMap.<String, Integer>builder()
             .put("CTRL SHIFT F", frontArcOption) //primary arc
             .put("CTRL SHIFT L", turretArcOption) //turret/TL
@@ -67,11 +97,15 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
     private static double RANGE3 = 847.5;
     int whichOption = -1; //which autorange option. See the Map above. -1 if none is selected.
     String bigAnnounce = "";
-    BumpableWithShape thisShip; //ship's full combined name string
+    public BumpableWithShape thisShip; //ship's full combined name string
     Point2D.Double A1, A2, A3, A4, A5, A6; //attacker ship's best start points. A3 through A6 only used if a second disjointed aux arc is active, like YV-666 or Auzituck
     Point2D.Double E1, E2, E3, E4, E5, E6; //attacker ship's end points. Used in order to properly calculate an angle to determine if a best shot is wedged between arc extremities
-
-
+Boolean isThisTheOne = false;
+    // Mouse stuff
+    protected Point anchor;
+    protected String anchorLocation = "";
+    protected String lastLocation = "";
+    protected Point lastAnchor = new Point();
 
     public AutoRangeFinder() {
         this(null);
@@ -81,6 +115,15 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
         setInner(piece);
         this.testRotator = new FreeRotator("rotate;360;;;;;;;", null);
         this.fov = new FOVisualization();
+       // launch();
+        map = VASSAL.build.module.Map.getMapById("Map0");
+        map.getView().addMouseMotionListener(this);
+
+    }
+
+    protected void launch() {
+            map.pushMouseListener(this);
+            anchor.move(0, 0);
     }
 
     @Override
@@ -111,13 +154,22 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
         return -1;
     }
 
+
     public Command keyEvent(KeyStroke stroke) {
 
         ArrayList<rangeFindings> rfindings = new ArrayList<rangeFindings>(); //findings compiled here
 
+        String hotKey = HotKeyConfigurer.getString(stroke);
+
+        // check to see if the this code needs to respond to the event
+
         //identify which autorange option was used by using the static Map defined above in the globals, store it in an int
         whichOption = getKeystrokeToOptions(stroke);
         if (whichOption != -1 && stroke.isOnKeyRelease() == false) {
+
+            isThisTheOne = true;
+            FluidAnim FA = new FluidAnim(this);
+            FA.run();
             Command bigCommand = piece.keyEvent(stroke);
             //if the firing options were already activated, remove the visuals and exit right away
             if (this.fov != null && this.fov.getCount() > 0) {
@@ -161,7 +213,44 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
                 return goToHell;
             }
         }
+
         return piece.keyEvent(stroke);
+    }
+
+    public void justRunLines(){
+
+        ArrayList<rangeFindings> rfindings = new ArrayList<rangeFindings>();
+
+        logToChat("doing something about lines");
+        //if the firing options were already activated, remove the visuals and exit right away
+        if (this.fov != null && this.fov.getCount() > 0) {
+            //logToChatCommand("toggle off");
+            clearVisu();
+            this.fov.execute();
+            return;
+        }
+        thisShip = new BumpableWithShape(this, "Ship",
+                this.getInner().getProperty("Pilot Name").toString(), this.getInner().getProperty("Craft ID #").toString());
+
+        //Prepare the start of the appropriate chat announcement string - which ship are we doing this from, which kind of autorange
+        prepAnnouncementStart();
+
+        //Loop over every other target ship
+        List<BumpableWithShape> BWS = getOtherShipsOnMap();
+        for (BumpableWithShape b : BWS) {
+            //Preliminary check, eliminate attempt to calculate this if the target is overlapping the attacker, could lead to exception error
+            if (shapesOverlap(thisShip.shape, b.shape)) continue;
+
+            //Do everything method here:
+            figureOutAutoRange(b, rfindings);
+        }
+
+        //draw visuals and announce the results in the chat
+        Command bigAnnounceCommand = makeBigAnnounceCommand(bigAnnounce, rfindings);
+        if(this.fov !=null && this.fov.getCount() > 0) {
+            this.fov.execute();
+            //logToChatCommand("launch execute");
+        }
     }
 
     private void clearVisu() {
@@ -360,40 +449,40 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
 
     //this finds the line that links the attacker ship to someplace on the line formed by the closest edge of the target, using
     //the closest and 2nd closest lines to the target's vertices.
-    //using an algorithm based on this: http://www.ahristov.com/tutorial/geometry-games/point-line-distance.html
+
     private micLine findBestLine(Point2D.Double D1, Point2D.Double D2, int rangeInt) {
         ArrayList<micLine> lineList = new ArrayList<micLine>();
 
         //Closest Attacker to Closest Defender
-        micLine A1D1 = new micLine(A1, D1, "A1D1", 0.1);
+        micLine A1D1 = new micLine(A1, D1, false, "A1D1", 0.1);
         //Closest Attacker to 2nd Closest Defender
-        micLine A1D2 = new micLine(A1, D2, "A1D2", 0.3);
+        micLine A1D2 = new micLine(A1, D2, false,"A1D2", 0.3);
         //Closest Defender to 2nd Closest Attacker
-        micLine A2D1 = new micLine(A2, D1, "A2D1", 0.5);
+        micLine A2D1 = new micLine(A2, D1, false,"A2D1", 0.5);
         //Closest Attacker Edge
-        micLine AA = new micLine(A1, A2);
+        micLine AA = new micLine(A1, A2, false);
         //Closest Defender Edge
-        micLine DD = new micLine(D1, D2);
+        micLine DD = new micLine(D1, D2, false);
 
         lineList.add(A1D1);
         lineList.add(A1D2);
         lineList.add(A2D1);
 
-        micLine A1DD = createLineAxtoDD(A1, DD);
+        micLine A1DD = createLinePtoAB(A1, DD, true);
         if(A1DD != null) {
-            micLine A1DDcopy = new micLine(A1DD.first, A1DD.second, "A1DD", 0.2);
+            micLine A1DDcopy = new micLine(A1DD.first, A1DD.second, A1DD.markedAsDead, "A1DD", 0.2);
             //lineList.add(A1DD);
             lineList.add(A1DDcopy);
         }
-        micLine A2DD = createLineAxtoDD(A2, DD);
+        micLine A2DD = createLinePtoAB(A2, DD, true);
         if(A2DD != null) {
-            micLine A2DDcopy = new micLine(A2DD.first, A2DD.second, "A2DD", 0.4);
+            micLine A2DDcopy = new micLine(A2DD.first, A2DD.second, A2DD.markedAsDead,"A2DD", 0.4);
             //lineList.add(A2DD);
             lineList.add(A2DDcopy);
         }
 
-        micLine D1AA = createLineAAtoD1(A1D1, AA, D1);
-        micLine D1AAcopy = new micLine(D1AA.first, D1AA.second, "D1AA", 0.6);
+        micLine D1AA = createLinePtoAB(D1, AA, false);
+        micLine D1AAcopy = new micLine(D1AA.first, D1AA.second, D1AA.markedAsDead, "D1AA", 0.6);
         //lineList.add(D1AA);
         lineList.add(D1AAcopy);
 
@@ -407,7 +496,7 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
         double bestDist = rangeInt*282.5;
         micLine best = null;
         for(micLine l : lineList){
-            if(Double.compare(bestDist,l.pixelLength) > 0) {
+            if(l.markedAsDead == false && Double.compare(bestDist,l.pixelLength) > 0) {
                 bestDist = l.pixelLength;
                 best = l;
             }
@@ -423,22 +512,22 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
         ArrayList<micLine> lineList = new ArrayList<micLine>();
 
         //Closest Attacker to Closest Defender
-        micLine A1D1 = new micLine(A1, D1);
+        micLine A1D1 = new micLine(A1, D1, false);
         //Closest Defender to 2nd Closest Attacker
-        micLine A2D1 = new micLine(A2, D1);
+        micLine A2D1 = new micLine(A2, D1, false);
         //Closest Attacker Edge
-        micLine AA = new micLine(A1, A2);
+        micLine AA = new micLine(A1, A2, false);
         //Closest Defender Edge
-        micLine DD = new micLine(D1, D2);
+        micLine DD = new micLine(D1, D2, false);
         //2nd closest defender edge
-        micLine DD_2nd = new micLine(D1, D3);
+        micLine DD_2nd = new micLine(D1, D3, false);
 
         if(isRangeOk(A1D1, 1, rangeInt)) lineList.add(A1D1);
         if(isRangeOk(A2D1, 1, rangeInt)) lineList.add(A2D1);
 
         if(whichOption == frontAuxArcOption){
-            micLine A3D1 = new micLine(A3, D1);
-            micLine A4D1 = new micLine(A4, D1);
+            micLine A3D1 = new micLine(A3, D1, false);
+            micLine A4D1 = new micLine(A4, D1, false);
 
             if(isRangeOk(A3D1, 1, rangeInt)) lineList.add(A3D1);
             if(isRangeOk(A4D1, 1, rangeInt)) lineList.add(A4D1);
@@ -446,10 +535,10 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
 
 
         //Closest attacker's point to the defender's closest edge
-        micLine A1DD = createLineAxtoDD(A1, DD);
+        micLine A1DD = createLinePtoAB(A1, DD, false);
         if(A1DD != null)
             if(isRangeOk(A1DD, 1, rangeInt)) lineList.add(A1DD);
-        micLine A2DD = createLineAxtoDD(A2, DD);
+        micLine A2DD = createLinePtoAB(A2, DD, false);
         if(A2DD != null)
             if(isRangeOk(A2DD, 1, rangeInt)) lineList.add(A2DD);
 
@@ -554,51 +643,86 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
         }
         return Math.atan2(deltaY, deltaX) + Math.PI;
     }
+    private micLine createLineAAtoD1(micLine A1D1, micLine AA, Point2D.Double D1)
+    {
+        //Find A1 again
+        double x1 = AA.first.getX();
+        double y1 = AA.first.getY();
+        //Find A2 again
+        double x2 = AA.second.getX();
+        double y2 = AA.second.getY();
+        //find D1 again
+        double xp = A1D1.second.getX();
+        double yp = A1D1.second.getY();
+//getting the shortest distance in pixels to the line formed by both (x1,y1) and (x2,y2)
+        double numerator = Math.abs((xp - x1) * (y2 - y1) - (yp - y1) * (x2 - x1));
+        double denominator = Math.sqrt(Math.pow(x2 - x1, 2.0) + Math.pow(y2 - y1, 2.0));
+        double shortestdist = numerator / denominator;
 
-    private micLine createLineAxtoDD(Point2D.Double A, micLine DD) {
-        //getting D1 again
-        double x1 = DD.first.getX();
-        double y1 = DD.first.getY();
-        //getting D2 again
-        double x2 = DD.second.getX();
-        double y2 = DD.second.getY();
-        //getting A1 or A2 again
-        double xp = A.getX();
-        double yp = A.getY();
+        double segmentPartialDist = Math.sqrt(Math.pow(A1D1.pixelLength,2.0) - Math.pow(shortestdist,2.0));
+        double segmentFullDist = AA.pixelLength;
+        double gapx = (x2-x1)/segmentFullDist*segmentPartialDist;
+        double gapy = (y2-y1)/segmentFullDist*segmentPartialDist;
+        double vector_x = x1 + gapx;
+        double vector_y = y1 + gapy;
+
+        //returns AAD1 - closest defender vertex to an attacker's edge point satisfying the 90 degrees shortest distance requirement
+        return new micLine(new Point2D.Double(vector_x,vector_y), D1, false);
+    }
+
+    //P is the closest vertex; AB are the end points of the segments that is being used to draw a line
+    //using an algorithm based on this: http://www.ahristov.com/tutorial/geometry-games/point-line-distance.html
+    //isPOnAttacker == true makes P a point that is part of the attacker; if false, P is a point that's part of the defender
+    //this is important in order to produce a micLine that will be oriented from attacker to defender, in order to check for proper shooting angles
+    //in-arc stuff has to throw lines which don't have the right angle
+    //if the attacker segment is being used, A1D1 dotproduct A1A2 needs to be positive and the partialsegment has to be land on the attacker segment in order to be retained
+    private micLine createLinePtoAB(Point2D.Double P, micLine AB, boolean isPOnAttacker) {
+        Boolean markAsDead = false;
+
+        double x1 = AB.first.getX();
+        double y1 = AB.first.getY();
+        double x2 = AB.second.getX();
+        double y2 = AB.second.getY();
+        double xp = P.getX();
+        double yp = P.getY();
 
         //getting the shortest distance in pixels to the line formed by both (x1,y1) and (x2,y2)
         double numerator = Math.abs((xp - x1) * (y2 - y1) - (yp - y1) * (x2 - x1));
         double denominator = Math.sqrt(Math.pow(x2 - x1, 2.0) + Math.pow(y2 - y1, 2.0));
         double shortestdist = numerator / denominator;
 
-        micLine tempAD1 = new micLine(A, new Point2D.Double(DD.first.x, DD.first.y));
+        micLine AP = new micLine(new Point2D.Double(AB.first.x, AB.first.y), P, false);
 
-        if(Double.compare(dotProduct(DD, tempAD1),0)<0) return null;
+        double segmentPartialDist = Math.sqrt(Math.pow(AP.pixelLength,2.0) - Math.pow(shortestdist,2.0));
+        double segmentFullDist = AB.pixelLength;
 
-        double segmentPartialDist = Math.sqrt(Math.pow(tempAD1.pixelLength,2.0) - Math.pow(shortestdist,2.0));
-        double segmentFullDist = DD.pixelLength;
-        double gapx = (x2-x1)/segmentFullDist*segmentPartialDist;
-        double gapy = (y2-y1)/segmentFullDist*segmentPartialDist;
+        //check if the partial distance has point outside AB
+        //whichWay = 1: points inward the segment, -1: points outward, line should be marked as dead
+        int whichWay = 1;
+        if(Double.compare(micLineDotProduct(AB, AP),0)<0) {
+            whichWay = -1;
+            markAsDead = true;
+        }
 
-        double gapLength = Math.sqrt(Math.pow(gapx,2.0) + Math.pow(gapy,2.0));
-        if(Double.compare(gapLength, thisShip.getChassisWidth()) > 0) return null;
 
-        double vector_x = x1 + gapx;
-        double vector_y = y1 + gapy;
+        //if it points inward, it might be too long for its segment, mark it as dead if so.
+        if(whichWay==1 && Double.compare(segmentPartialDist,segmentFullDist)>0)  {
+            markAsDead = true;
+        }
+
+        //compute the partial vector's components
+        double partialX = whichWay*(x2-x1)/segmentFullDist*segmentPartialDist;
+        double partialY = whichWay*(y2-y1)/segmentFullDist*segmentPartialDist;
+
+
+        double vector_x = x1 + partialX;
+        double vector_y = y1 + partialY;
 
         //returns A1DD - closest attacker point (vertex or in-arc edge) to an defender's edge point satisfying the 90 degrees shortest distance requirement
-        return new micLine(A, new Point2D.Double(vector_x, vector_y));
+        if(isPOnAttacker == true) return new micLine(P, new Point2D.Double(vector_x, vector_y), markAsDead);
+        else return new micLine(new Point2D.Double(vector_x, vector_y), P, markAsDead);
     }
 
-    private double dotProduct(micLine l1, micLine l2) {
-        double x1 = l1.second.x - l1.first.x;
-        double x2 = l2.second.x - l2.first.x;
-
-        double y1 = l1.second.y - l1.first.y;
-        double y2 = l2.second.y - l2.first.y;
-
-        return x1*x2 + y1*y2;
-    }
     private micLine createLineAxtoDD_along_arc_edge(Point2D.Double A, Point2D.Double E, micLine DD) {
         //getting D1 again
         double x1 = DD.first.getX();
@@ -610,10 +734,10 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
         double xp = A.getX();
         double yp = A.getY();
 
-        micLine AE = new micLine(A, E);
+        micLine AE = new micLine(A, E, false);
         Point2D.Double D3 = null;
         D3 = findSegmentCrossPoint(AE,DD);
-        if(D3 != null) return new micLine(A,D3);
+        if(D3 != null) return new micLine(A,D3, false);
         return null;
     }
 
@@ -634,7 +758,7 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
         double sx = DD.second.x - DD.first.x;
         double sy = DD.second.y - DD.first.y;
 
-        micLine qmpLine = new micLine(new Point2D.Double(px, py), new Point2D.Double(qx, qy));
+        micLine qmpLine = new micLine(new Point2D.Double(px, py), new Point2D.Double(qx, qy), false);
 
         Boolean checkColinearity_1 = Double.compare(micLineCrossProduct(A1E1, DD),0.0) == 0;
         Boolean checkColinearity_2 = Double.compare(micLineCrossProduct(qmpLine, A1E1), 0.0) == 0;
@@ -680,32 +804,7 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
         return ax * bx + ay * by;
     }
 
-    private micLine createLineAAtoD1(micLine A1D1, micLine AA, Point2D.Double D1)
-    {
-        //Find A1 again
-        double x1 = AA.first.getX();
-        double y1 = AA.first.getY();
-        //Find A2 again
-        double x2 = AA.second.getX();
-        double y2 = AA.second.getY();
-        //find D1 again
-        double xp = A1D1.second.getX();
-        double yp = A1D1.second.getY();
-//getting the shortest distance in pixels to the line formed by both (x1,y1) and (x2,y2)
-        double numerator = Math.abs((xp - x1) * (y2 - y1) - (yp - y1) * (x2 - x1));
-        double denominator = Math.sqrt(Math.pow(x2 - x1, 2.0) + Math.pow(y2 - y1, 2.0));
-        double shortestdist = numerator / denominator;
 
-        double segmentPartialDist = Math.sqrt(Math.pow(A1D1.pixelLength,2.0) - Math.pow(shortestdist,2.0));
-        double segmentFullDist = AA.pixelLength;
-        double gapx = (x2-x1)/segmentFullDist*segmentPartialDist;
-        double gapy = (y2-y1)/segmentFullDist*segmentPartialDist;
-        double vector_x = x1 + gapx;
-        double vector_y = y1 + gapy;
-
-        //returns AAD1 - closest defender vertex to an attacker's edge point satisfying the 90 degrees shortest distance requirement
-        return new micLine(new Point2D.Double(vector_x,vector_y), D1);
-    }
     //FindClosestVertex: first argument is the ship for which all 4 vertices will be considered
     //second argument is the ship for which you get a vertex
     private Point2D.Double findClosestVertex(BumpableWithShape shipWithVertex, BumpableWithShape target) {
@@ -1021,6 +1120,54 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
         return ships;
     }
 
+    public void mouseClicked(MouseEvent e) {
+
+    }
+
+    public void mousePressed(MouseEvent e) {
+
+        Point p = e.getPoint();
+            anchor = p;
+            anchorLocation = map.localizedLocationName(anchor);
+            lastLocation = anchorLocation;
+        }
+
+
+    public void mouseReleased(MouseEvent e) {
+
+    }
+
+    public void mouseEntered(MouseEvent e) {
+
+    }
+
+    public void mouseExited(MouseEvent e) {
+
+    }
+
+    public void mouseDragged(MouseEvent e) {
+        if(isThisTheOne == false) return;
+            Point p = e.getPoint();
+            map.scrollAtEdge(p, 15);
+
+            Point mapAnchor = lastAnchor;
+
+            int fudge = this.piece.getShape().getBounds().width * 12;
+
+            this.piece.setPosition(p);
+            Rectangle r = new Rectangle(this.piece.getPosition().x-fudge,
+                    this.piece.getPosition().y-fudge,
+                    this.piece.getShape().getBounds().width+fudge*2,
+                    this.piece.getShape().getBounds().height+fudge*2);
+            map.repaint(r);
+
+
+    }
+
+    public void mouseMoved(MouseEvent e) {
+
+    }
+
     private static class FOVisualization extends Command implements Drawable {
 
         private final List<Shape> shapes;
@@ -1114,9 +1261,13 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
                 if(line.isArcLine == true) graphics2D.setColor(arcLineColor);
 
 /*ALLLines COlor Hijack*/
-                Color gradiant = new Color(colorNb,colorNb, 255, 255);
-                colorNb+=20;
-                graphics2D.setColor(gradiant);
+if(line.markedAsDead == true) graphics2D.setColor(new Color(255,0,0,255));
+else {
+    Color gradiant = new Color(colorNb, colorNb, 255, 255);
+    colorNb += 20;
+    graphics2D.setColor(gradiant);
+}
+if(line.isBestLine == true) graphics2D.setColor(new Color(200, 18, 194,255));
   /*end*/
 
 
@@ -1260,6 +1411,7 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
         public int centerX, centerY;
         public Point2D.Double first, second;
         public Line2D.Double line = null;
+        public Boolean markedAsDead = false;
 
         micLine(int x1, int y1, int x2, int y2) {
             this.first = new Point2D.Double(x1, y1);
@@ -1268,17 +1420,19 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
         }
 
         //default constructor, lets the range be converted into a string
-        micLine(Point2D.Double first, Point2D.Double second) {
+        micLine(Point2D.Double first, Point2D.Double second, Boolean markAsDead) {
             this.first = first;
             this.second = second;
             doRest("", 0.5);
+            markedAsDead = markAsDead;
         }
 
         //for when you want to set a manual string and an arbitrary string position
-        micLine(Point2D.Double first, Point2D.Double second, String label, double percentage) {
+        micLine(Point2D.Double first, Point2D.Double second, Boolean markAsDead, String label, double percentage) {
             this.first = first;
             this.second = second;
             doRest(label, percentage);
+            markedAsDead = markAsDead;
         }
 
         void doRest(String label, double percentage) {
