@@ -88,7 +88,7 @@ public class AutoRangeFinder extends Decorator implements EditablePiece, MouseLi
     private static Map<String, Integer> keyStrokeToOptions = ImmutableMap.<String, Integer>builder()
             .put("CTRL SHIFT F", frontArcOption) //primary arc
             .put("CTRL SHIFT L", turretArcOption) //turret/TL
-            //.put("CTRL SHIFT N", frontAuxArcOption) //front pairs of aux arc (YV-666, Auzituck)
+            .put("CTRL SHIFT N", frontAuxArcOption) //front pairs of aux arc (YV-666, Auzituck)
             .put("CTRL SHIFT V", backArcOption) //back aux arc
             //.put("ALT SHIFT V", mobileSideArcOption) //mobile turret arc, must detect which one is selected on the ship
             .build();
@@ -99,7 +99,7 @@ public class AutoRangeFinder extends Decorator implements EditablePiece, MouseLi
     String bigAnnounce = "";
     public BumpableWithShape thisShip; //ship's full combined name string
     Point2D.Double A1, A2, A3, A4, A5, A6; //attacker ship's best start points. A3 through A6 only used if a second disjointed aux arc is active, like YV-666 or Auzituck
-    Point2D.Double E1, E2, E3, E4, E5, E6; //attacker ship's end points. Used in order to properly calculate an angle to determine if a best shot is wedged between arc extremities
+    Point2D.Double E1, E2, E3, E6; //attacker ship's end points. Used in order to properly calculate an angle to determine if a best shot is wedged between arc extremities
 Boolean isThisTheOne = false;
     // Mouse stuff
     protected Point anchor;
@@ -336,7 +336,7 @@ whichOption = savedOption;
             A1 = findClosestVertex(thisShip, b);
             A2 = find2ndClosestVertex(thisShip, b);
         }
-        else {
+        else if(whichOption == frontArcOption || whichOption == backArcOption){
             // Assuming an upward facing ship,
             // firing arc edges used to restrict best lines if they are crossing (unused for turret/TL.
             // 0 and 2 for CCW primary arc (start and end)
@@ -349,17 +349,28 @@ whichOption = savedOption;
             ArrayList<Point2D.Double> edges = thisShip.getFiringArcEdges(whichOption,3); //TO DO: take into account huge ships eventually; not needed if you're checking turret/TL
             A1 = edges.get(0);
             A2 = edges.get(1);
-            A3 = edges.get(4);
-            A4 = edges.get(5);
-            A5 = edges.get(8);
-            A6 = edges.get(9);
 
             E1 = edges.get(2); //associated with A1 as the edge A1E1
             E2 = edges.get(3); //associated with A2 as the edge A2E2
+        }
+        else if(whichOption == frontAuxArcOption){
+
+            ArrayList<Point2D.Double> edges = thisShip.getFiringArcEdges(whichOption,3); //TO DO: take into account huge ships eventually; not needed if you're checking turret/TL
+            A1 = edges.get(0);
+            A2 = edges.get(1);
+            E1 = edges.get(2); //associated with A1 as the edge A1E1
+            E2 = edges.get(3); //associated with A2 as the edge A2E2
+
+            A3 = edges.get(4); //first start of left arc
+            E3 = edges.get(6);  //end of left edge of left arc
+
+            A4 = edges.get(5); //corner of left arc
+
+            A5 = edges.get(7); //corner of right arc
+            A6 = edges.get(8); //last start of right arc
+
             E3 = edges.get(6); //associated with A3 as the edge A3E3
-            E4 = edges.get(7); //associated with A4 as the edge A4E4
-            E5 = edges.get(10); //associated with A5 as the edge A5E5
-            E6 = edges.get(11); //associated with A4 as the edge A6E6
+            E6 = edges.get(9); //associated with A4 as the edge A6E6
         }
     }
 
@@ -368,14 +379,18 @@ whichOption = savedOption;
         bigAnnounce = "*** Firing Options ";
 
         switch (whichOption) {
-            case 1:
+            case frontArcOption:
                 bigAnnounce += "for the primary arc - from ";
                 break;
-            case 2:
+            case turretArcOption:
                 bigAnnounce += "for Target Lock/Turrets - from ";
                 break;
-            case 4:
+            case backArcOption:
                 bigAnnounce += "for the backward auxiliary arc - from";
+                break;
+            case frontAuxArcOption:
+                bigAnnounce += "for the front pair of auxiliary arcs - from";
+                break;
         }
 
         String fullShipName = thisShip.pilotName + "(" + thisShip.shipName + ")";
@@ -589,23 +604,30 @@ whichOption = savedOption;
             }
         }
         if(whichOption == frontAuxArcOption) {
-            micLine A3DD_arc_restricted_2nd = createLineAxtoDD_along_arc_edge(A3, E3, DD_2nd);
+            micLine A3DD_arc_restricted_2nd = createLineAxtoDD_along_arc_edge(A3, E3, DD);
             if(A3DD_arc_restricted_2nd != null) if(isRangeOk(A3DD_arc_restricted_2nd, 1, rangeInt)) {
-                lineList.add(A3DD_arc_restricted_2nd);
+                micLine A3DD_arc_restricted_2ndcopy = new micLine(A3DD_arc_restricted_2nd.first, A3DD_arc_restricted_2nd.second, A3DD_arc_restricted_2nd.markedAsDead, "A3DD_ea", 0.6);
+                lineList.add(A3DD_arc_restricted_2ndcopy);
             }
             micLine A4DD_arc_restricted_2nd = createLineAxtoDD_along_arc_edge(A4, E4, DD_2nd);
             if(A4DD_arc_restricted_2nd != null) if(isRangeOk(A4DD_arc_restricted_2nd, 1, rangeInt)) {
-                lineList.add(A4DD_arc_restricted_2nd);
+
+                micLine A4DD_arc_restricted_2ndcopy = new micLine(A4DD_arc_restricted_2nd.first, A4DD_arc_restricted_2nd.second, A4DD_arc_restricted_2nd.markedAsDead, "A4DD_ea", 0.7);
+                lineList.add(A4DD_arc_restricted_2ndcopy);
             }
 
 
             micLine A5DD_arc_restricted_2nd = createLineAxtoDD_along_arc_edge(A5, E5, DD_2nd);
             if(A5DD_arc_restricted_2nd != null) if(isRangeOk(A5DD_arc_restricted_2nd, 1, rangeInt)) {
-                lineList.add(A5DD_arc_restricted_2nd);
+                micLine A5DD_arc_restricted_2ndcopy = new micLine(A5DD_arc_restricted_2nd.first, A5DD_arc_restricted_2nd.second, A5DD_arc_restricted_2nd.markedAsDead, "A5DD_ea", 0.9);
+
+                lineList.add(A5DD_arc_restricted_2ndcopy);
             }
             micLine A6DD_arc_restricted_2nd = createLineAxtoDD_along_arc_edge(A6, E6, DD_2nd);
             if(A6DD_arc_restricted_2nd != null) if(isRangeOk(A6DD_arc_restricted_2nd, 1, rangeInt)) {
-                lineList.add(A6DD_arc_restricted_2nd);
+                micLine A6DD_arc_restricted_2ndcopy = new micLine(A6DD_arc_restricted_2nd.first, A6DD_arc_restricted_2nd.second, A6DD_arc_restricted_2nd.markedAsDead, "A6DD_ea", 0.1);
+
+                lineList.add(A6DD_arc_restricted_2ndcopy);
             }
         }
         //Attacker's edge to defender's closest vertex
