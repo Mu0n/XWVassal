@@ -61,6 +61,25 @@ public class BumpableWithShape {
     private static final int backArcOption = 4;
     private static final int mobileSideArcOption = 5;
 
+    private Point2D.Double frontLeftArcBase = new Point2D.Double(0.0, 0.0); //used to get from center to a ship's arc start points
+    private Point2D.Double frontRightArcBase = new Point2D.Double(0.0, 0.0);
+
+    private Point2D.Double frontLeftArcEnd = new Point2D.Double(0.0, 0.0); //end of the edge-of-arc segment
+    private Point2D.Double frontRightArcEnd = new Point2D.Double(0.0, 0.0);
+
+    private Point2D.Double backLeftArcBase = new Point2D.Double(0.0, 0.0); // back arc start points
+    private Point2D.Double backRightArcBase = new Point2D.Double(0.0, 0.0);
+
+    private Point2D.Double backLeftArcEnd = new Point2D.Double(0.0, 0.0); // back arc end points
+    private Point2D.Double backRightArcEnd = new Point2D.Double(0.0, 0.0);
+
+    private Point2D.Double leftMidBase = new Point2D.Double(0.0, 0.0); //left mid point on the base
+    private Point2D.Double rightMidBase = new Point2D.Double(0.0, 0.0); //right mid point on the base
+
+    private Point2D.Double leftMidEnd = new Point2D.Double(0.0, 0.0); //end of mid segment
+    private Point2D.Double rightMidEnd = new Point2D.Double(0.0, 0.0);
+
+    public ArrayList<Point2D.Double> tPts = new ArrayList<Point2D.Double>(); //array of transformed (rotated and translated) special points
 
     BumpableWithShape(Decorator bumpable, String type, boolean wantFlip) {
         this.bumpable = bumpable;
@@ -76,6 +95,7 @@ public class BumpableWithShape {
         this.pilotName = pilotName;
         this.shipName = shipName;
         this.chassis = figureOutChassis();
+        this.figureOutLocalPoints(3);
     }
 
     private chassisInfo figureOutChassis() {
@@ -131,83 +151,63 @@ public class BumpableWithShape {
         return vertices;
     }
 
-    //gets the firing arc edges on a ship. First 2 are on the ship (left and right), last 2 are at the end of the arc edge (left and right)
-    //Use these points to reject a best (shortest) autorange firing line if it crosses these edges; eg a ship that could be in turret range 1 but it out of arc
-    public ArrayList<Point2D.Double> getFiringArcEdges(int whichOption, int maxRange){
 
-        //whichOption: 1 = primary arc; 3 = front aux arcs; 4 = back aux arc; 5 = mobile side arc
-        //common to any arc requested
+    public void figureOutLocalPoints(int maxRange){
         double pixelMaxRange = maxRange * 282.5f;
-        double angle = getAngle();
-        Point center = bumpable.getPosition();
         double halfsize = getChassisWidth()/2.0;
-        ArrayList<Point2D.Double> firingArcEdgePoints = new ArrayList<Point2D.Double>();
-        double frontLeftArcBaseX = 0.0, frontLeftArcBaseY = 0.0, frontRightArcBaseX = 0.0, frontRightArcBaseY = 0.0; //used to get from center to a ship's arc start points
-        double frontLeftArcEndX = 0.0, frontLeftArcEndY = 0.0, frontRightArcEndX = 0.0, frontRightArcEndY = 0.0; //used to get from center to a ship's arc end points
-
-        double backLeftArcBaseX = 0.0, backLeftArcBaseY = 0.0, backRightArcBaseX = 0.0, backRightArcBaseY = 0.0; //used to get from center to a ship's aux arc start points
-        double backLeftArcEndX = 0.0, backLeftArcEndY = 0.0, backRightArcEndX = 0.0, backRightArcEndY = 0.0; //used to get from center to a ship's aux arc end points
-
-        double leftMidBaseX = 0.0, leftMidBaseY = 0.0, rightMidBaseX = 0.0, rightMidBaseY = 0.0; //used to get from center to a ship's side left mid points
-        double leftMidEndX = 0.0, leftMidEndY = 0.0, rightMidEndX = 0.0, rightMidEndY = 0.0; //used to get from center to a ship's side right mid points
-
 
         double arcAngleInRad = Math.PI*chassis.getArcHalfAngle()/180.0; //half angle of the arc being used TO DO: get the proper mobile turret arc angle, front aux arc, etc or just ignore it inside the switch
 
-        frontLeftArcBaseX = -halfsize + chassis.getCornerToFiringArc();
-        frontLeftArcBaseY = -halfsize;
-        frontRightArcBaseX = halfsize - chassis.getCornerToFiringArc();
-        frontRightArcBaseY = frontLeftArcBaseY;
+        frontLeftArcBase = new Point2D.Double(-halfsize + chassis.getCornerToFiringArc(), -halfsize);
+        frontRightArcBase = new Point2D.Double(halfsize - chassis.getCornerToFiringArc(), -halfsize);
 
-        frontLeftArcEndX = - Math.sin(arcAngleInRad)*pixelMaxRange;
-        frontLeftArcEndY = - Math.cos(arcAngleInRad)*pixelMaxRange;
-        frontRightArcEndX = Math.sin(arcAngleInRad)*pixelMaxRange;
-        frontRightArcEndY = frontLeftArcEndY;
+        frontLeftArcEnd = new Point2D.Double(- Math.sin(arcAngleInRad)*pixelMaxRange,- Math.cos(arcAngleInRad)*pixelMaxRange);
+        frontRightArcEnd = new Point2D.Double(- frontLeftArcEnd.x, frontLeftArcEnd.y);
 
-        backLeftArcBaseX = -halfsize + chassis.getCornerToFiringArc();
-        backLeftArcBaseY = halfsize;
-        backRightArcBaseX = halfsize - chassis.getCornerToFiringArc();
-        backRightArcBaseY = halfsize;
+        backLeftArcBase = new Point2D.Double(-halfsize + chassis.getCornerToFiringArc(),halfsize);
+        backRightArcBase = new Point2D.Double(halfsize - chassis.getCornerToFiringArc(),halfsize);
 
-        backLeftArcEndX = - Math.sin(arcAngleInRad)*pixelMaxRange;
-        backLeftArcEndY = Math.cos(arcAngleInRad)*pixelMaxRange;
-        backRightArcEndX = -backLeftArcEndX;
-        backRightArcEndY = backLeftArcEndY;
+        backLeftArcEnd = new Point2D.Double(- Math.sin(arcAngleInRad)*pixelMaxRange,Math.cos(arcAngleInRad)*pixelMaxRange);
+        backRightArcEnd= new Point2D.Double(- backLeftArcEnd.x, backLeftArcEnd.y);
 
-        leftMidBaseX = -halfsize;
-        rightMidBaseX = halfsize;
+        leftMidBase= new Point2D.Double(-halfsize, 0.0);
+        rightMidBase= new Point2D.Double(halfsize, 0.0);
 
+        leftMidEnd = new Point2D.Double(-halfsize - pixelMaxRange, 0.0);
+        rightMidEnd = new Point2D.Double(halfsize + pixelMaxRange, 0.0);
+    }
 
-        if(whichOption == frontArcOption || whichOption == backArcOption){
+    public void refreshSpecialPoints(){
+        figureOutSpecialPoints(3);
+    }
 
-            //calculate the rotated, translated coordinates of the firing arc start points
-            firingArcEdgePoints.add(getATransformedPoint(frontLeftArcBaseX, frontLeftArcBaseY, 0.0, 0.0, angle, center.getX(), center.getY())); //0
-            firingArcEdgePoints.add(getATransformedPoint(frontRightArcBaseX, frontRightArcBaseY, 0.0, 0.0, angle, center.getX(), center.getY()));  //1
+    public void refreshSpecialPoints(int maxRange){
+        figureOutSpecialPoints(maxRange);
+    }
 
-            //calculate the rotated, translated coordinates of the firing arc end points
-            firingArcEdgePoints.add(getATransformedPoint(frontLeftArcBaseX, frontLeftArcBaseY, firstEndX, firstEndY, angle, center.getX(), center.getY()));  //2
-            firingArcEdgePoints.add(getATransformedPoint(frontRightArcBaseX, frontRightArcBaseY, secondEndX, secondEndY, angle, center.getX(), center.getY()));  //3
-        }
-        else if(whichOption == frontAuxArcOption){
-            //calculate the rotated, translated coordinates of the firing arc start points
-            firingArcEdgePoints.add(getATransformedPoint(frontLeftArcBaseX, frontLeftArcBaseY, 0.0, 0.0, angle, center.getX(), center.getY())); //0
-            firingArcEdgePoints.add(getATransformedPoint(frontRightArcBaseX, frontRightArcBaseY, 0.0, 0.0, angle, center.getX(), center.getY()));  //1
+    //gets the firing arc edges on a ship. First 2 are on the ship (left and right), last 2 are at the end of the arc edge (left and right)
+    //Use these points to reject a best (shortest) autorange firing line if it crosses these edges; eg a ship that could be in turret range 1 but it out of arc
+    private void figureOutSpecialPoints(int maxRange){
+        Point center = bumpable.getPosition();
+        double angle = getAngle();
 
-            //calculate the rotated, translated coordinates of the firing arc end points
-            firingArcEdgePoints.add(getATransformedPoint(frontLeftArcBaseX, frontLeftArcBaseY, firstEndX, firstEndY, angle, center.getX(), center.getY()));  //2
-            firingArcEdgePoints.add(getATransformedPoint(frontRightArcBaseX, frontRightArcBaseY, secondEndX, secondEndY, angle, center.getX(), center.getY()));  //3
+        tPts.add(getATransformedPoint(frontLeftArcBase.x, frontLeftArcBase.y, 0.0, 0.0, angle, center.getX(), center.getY())); //0
+        tPts.add(getATransformedPoint(frontRightArcBase.x, frontRightArcBase.y, 0.0, 0.0, angle, center.getX(), center.getY()));  //1
 
-            //add the same in the case of the 2nd arc needed for YV-666 and Auzituck
-            firingArcEdgePoints.add(getATransformedPoint(thirdStartX, thirdStartY, 0.0, 0.0, angle, center.getX(), center.getY()));  //4
-            firingArcEdgePoints.add(getATransformedPoint(fourthStartX, fourthStartY, 0.0, 0.0, angle, center.getX(), center.getY()));  //5
-            firingArcEdgePoints.add(getATransformedPoint(thirdStartX, thirdStartY, thirdEndX, thirdEndY, angle, center.getX(), center.getY()));  //6
+        tPts.add(getATransformedPoint(frontLeftArcBase.x, frontLeftArcBase.x, frontLeftArcEnd.x, frontLeftArcEnd.y, angle, center.getX(), center.getY())); //2
+        tPts.add(getATransformedPoint(frontRightArcBase.x, frontRightArcBase.y, frontRightArcEnd.x, frontRightArcEnd.y, angle, center.getX(), center.getY())); //3
 
-            firingArcEdgePoints.add(getATransformedPoint(fifthStartX, fifthStartY, 0.0, 0.0, angle, center.getX(), center.getY()));  //7
-            firingArcEdgePoints.add(getATransformedPoint(sixthStartX, sixthStartY, 0.0, 0.0, angle, center.getX(), center.getY()));  //8
-            firingArcEdgePoints.add(getATransformedPoint(sixthStartX, sixthStartY, sixthEndX, sixthEndY, angle, center.getX(), center.getY()));  //9
-        }
+        tPts.add(getATransformedPoint(backRightArcBase.x, backRightArcBase.y, 0.0, 0.0, angle, center.getX(), center.getY())); //4
+        tPts.add(getATransformedPoint(backLeftArcBase.x, backLeftArcBase.y, 0.0, 0.0, angle, center.getX(), center.getY()));  //5
 
-        return firingArcEdgePoints;
+        tPts.add(getATransformedPoint(backRightArcBase.x, backRightArcBase.y, backRightArcEnd.x, backRightArcEnd.y, angle, center.getX(), center.getY())); //6
+        tPts.add(getATransformedPoint(backLeftArcBase.x, backLeftArcBase.y, backLeftArcEnd.x, backLeftArcEnd.y, angle, center.getX(), center.getY())); //7
+
+        tPts.add(getATransformedPoint(leftMidBase.x, leftMidBase.y, 0.0, 0.0, angle, center.getX(), center.getY())); //8
+        tPts.add(getATransformedPoint(rightMidBase.x, rightMidBase.y, 0.0, 0.0, angle, center.getX(), center.getY())); //9
+
+        tPts.add(getATransformedPoint(leftMidEnd.x, leftMidEnd.y, leftMidEnd.x, leftMidEnd.y, angle, center.getX(), center.getY())); //10
+        tPts.add(getATransformedPoint(rightMidBase.x, rightMidBase.y, rightMidEnd.x, rightMidEnd.y, angle, center.getX(), center.getY()));  //11
     }
 
     Point2D.Double getATransformedPoint(double offX, double offY, double extraOffX, double extraOffY, double shipAngle, double centerX, double centerY)

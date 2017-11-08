@@ -1,6 +1,5 @@
 package mic;
 
-import VASSAL.build.GameModule;
 import VASSAL.build.module.documentation.HelpFile;
 import VASSAL.build.module.map.Drawable;
 import VASSAL.command.Command;
@@ -69,6 +68,7 @@ Integer savedOption = 0;
 
 public class AutoRangeFinder extends Decorator implements EditablePiece, MouseListener, MouseMotionListener {
 
+    private static final Boolean DEBUGMODE = false;
 
     protected VASSAL.build.module.Map map;
     private static final int frontArcOption = 1;
@@ -90,7 +90,7 @@ public class AutoRangeFinder extends Decorator implements EditablePiece, MouseLi
             .put("CTRL SHIFT L", turretArcOption) //turret/TL
             .put("CTRL SHIFT N", frontAuxArcOption) //front pairs of aux arc (YV-666, Auzituck)
             .put("CTRL SHIFT V", backArcOption) //back aux arc
-            //.put("ALT SHIFT V", mobileSideArcOption) //mobile turret arc, must detect which one is selected on the ship
+            .put("CTRL ALT SHIFT V", mobileSideArcOption) //mobile turret arc, must detect which one is selected on the ship
             .build();
     private static double RANGE1 = 282.5;
     private static double RANGE2 = 565;
@@ -98,8 +98,8 @@ public class AutoRangeFinder extends Decorator implements EditablePiece, MouseLi
     int whichOption = -1; //which autorange option. See the Map above. -1 if none is selected.
     String bigAnnounce = "";
     public BumpableWithShape thisShip; //ship's full combined name string
-    Point2D.Double A1, A2, A3, A4, A5, A6; //attacker ship's best start points. A3 through A6 only used if a second disjointed aux arc is active, like YV-666 or Auzituck
-    Point2D.Double E1, E2, E3, E6; //attacker ship's end points. Used in order to properly calculate an angle to determine if a best shot is wedged between arc extremities
+    Point2D.Double A1, A2, A3, A4; //attacker ship's arc start points, case by case basis according to whichOption
+    Point2D.Double E1, E2, E3, E4; //attacker ship's end points. Associated with the corresponding A's.
 Boolean isThisTheOne = false;
     // Mouse stuff
     protected Point anchor;
@@ -168,10 +168,12 @@ Boolean isThisTheOne = false;
         if (whichOption != -1 && stroke.isOnKeyRelease() == false) {
 
             isThisTheOne = true;
-            FluidAnim FA = new FluidAnim(this, whichOption);
+            if(DEBUGMODE == true) {
+                FluidAnim FA = new FluidAnim(this, whichOption);
+                logToChat("whichOption = " + Integer.toString(whichOption));
+                FA.run();
+            }
 
-            logToChat("whichOption = " + Integer.toString(whichOption));
-            FA.run();
             Command bigCommand = piece.keyEvent(stroke);
             //if the firing options were already activated, remove the visuals and exit right away
             if (this.fov != null && this.fov.getCount() > 0) {
@@ -183,6 +185,9 @@ Boolean isThisTheOne = false;
             }
             thisShip = new BumpableWithShape(this, "Ship",
                     this.getInner().getProperty("Pilot Name").toString(), this.getInner().getProperty("Craft ID #").toString());
+
+            findAttackerBestPoints(thisShip);
+            thisShip.refreshSpecialPoints();
 
             //Prepare the start of the appropriate chat announcement string - which ship are we doing this from, which kind of autorange
             prepAnnouncementStart();
@@ -219,7 +224,7 @@ Boolean isThisTheOne = false;
         return piece.keyEvent(stroke);
     }
 
-    public void justRunLines(int savedOption){
+public void justRunLines(int savedOption){
 whichOption = savedOption;
         ArrayList<rangeFindings> rfindings = new ArrayList<rangeFindings>();
         //if the firing options were already activated, remove the visuals and exit right away
@@ -232,6 +237,9 @@ whichOption = savedOption;
         thisShip = new BumpableWithShape(this, "Ship",
                 this.getInner().getProperty("Pilot Name").toString(), this.getInner().getProperty("Craft ID #").toString());
 
+
+        findAttackerBestPoints(thisShip);
+        thisShip.refreshSpecialPoints();
         //Prepare the start of the appropriate chat announcement string - which ship are we doing this from, which kind of autorange
         prepAnnouncementStart();
 
@@ -261,9 +269,6 @@ whichOption = savedOption;
     }
 
     private void figureOutAutoRange(BumpableWithShape b, ArrayList<rangeFindings> rfindings) {
-        //Compute the A's and E's
-        findAttackerBestPoints(b);
-
         Point2D.Double D1 = findClosestVertex(b, thisShip);
         Point2D.Double D2 = find2ndClosestVertex(b, thisShip);
         Point2D.Double D3 = find3rdClosestVertex(b, thisShip);
@@ -331,12 +336,11 @@ whichOption = savedOption;
     }
 
     private void findAttackerBestPoints(BumpableWithShape b) {
-
         if(whichOption == turretArcOption) {
             A1 = findClosestVertex(thisShip, b);
             A2 = find2ndClosestVertex(thisShip, b);
         }
-        else if(whichOption == frontArcOption || whichOption == backArcOption){
+        else if(whichOption == frontArcOption){
             // Assuming an upward facing ship,
             // firing arc edges used to restrict best lines if they are crossing (unused for turret/TL.
             // 0 and 2 for CCW primary arc (start and end)
@@ -346,31 +350,71 @@ whichOption = savedOption;
             // 8 and 10 for CW aux arc, CCW edge
             // 9 and 11 for CW aux arc, CW edge
 
-            ArrayList<Point2D.Double> edges = thisShip.getFiringArcEdges(whichOption,3); //TO DO: take into account huge ships eventually; not needed if you're checking turret/TL
-            A1 = edges.get(0);
-            A2 = edges.get(1);
+            A1 = b.tPts.get(0);
+            A2 = b.tPts.get(1);
 
-            E1 = edges.get(2); //associated with A1 as the edge A1E1
-            E2 = edges.get(3); //associated with A2 as the edge A2E2
+            E1 = b.tPts.get(2); //associated with A1 as the edge A1E1
+            E2 = b.tPts.get(3); //associated with A2 as the edge A2E2
+        }
+        else if(whichOption == backArcOption){
+            A1 = b.tPts.get(4);
+            A2 = b.tPts.get(5);
+
+            E1 = b.tPts.get(6);
+            E2 = b.tPts.get(7);
         }
         else if(whichOption == frontAuxArcOption){
+            A1 = b.tPts.get(8);
+            A2 = b.tPts.get(0);
 
-            ArrayList<Point2D.Double> edges = thisShip.getFiringArcEdges(whichOption,3); //TO DO: take into account huge ships eventually; not needed if you're checking turret/TL
-            A1 = edges.get(0);
-            A2 = edges.get(1);
-            E1 = edges.get(2); //associated with A1 as the edge A1E1
-            E2 = edges.get(3); //associated with A2 as the edge A2E2
+            E1 = b.tPts.get(10);
+            E2 = b.tPts.get(2);
 
-            A3 = edges.get(4); //first start of left arc
-            E3 = edges.get(6);  //end of left edge of left arc
+            A3 = b.tPts.get(1);
+            A4 = b.tPts.get(9);
 
-            A4 = edges.get(5); //corner of left arc
+            E3 = b.tPts.get(3);
+            E4 = b.tPts.get(11);
+        }
+        else if(whichOption == mobileSideArcOption){
+            String sideCheck ="";
+            try{
+                sideCheck = ((Decorator) piece).getDecorator(piece,piece.getClass()).getProperty("whichShape").toString();
+            } catch (Exception e){
+logToChat("tried to find a mobile turret definition, couldn't.");
+            }
+            if(sideCheck.equals("4")) {
+                //left side check
+                A1 = b.tPts.get(5);
+                A2 = b.tPts.get(0);
 
-            A5 = edges.get(7); //corner of right arc
-            A6 = edges.get(8); //last start of right arc
+                E1 = b.tPts.get(7);
+                E2 = b.tPts.get(2);
+            }
+            else if(sideCheck.equals("2")){
+                //right side check
+                A1 = b.tPts.get(1);
+                A2 = b.tPts.get(4);
 
-            E3 = edges.get(6); //associated with A3 as the edge A3E3
-            E6 = edges.get(9); //associated with A4 as the edge A6E6
+                E1 = b.tPts.get(3);
+                E2 = b.tPts.get(6);
+            }
+            else if(sideCheck.equals("1")){
+                //do like front arc
+                A1 = b.tPts.get(0);
+                A2 = b.tPts.get(1);
+
+                E1 = b.tPts.get(2); //associated with A1 as the edge A1E1
+                E2 = b.tPts.get(3); //associated with A2 as the edge A2E2
+            }
+            else if(sideCheck.equals("3")){
+                //do like back aux
+                A1 = b.tPts.get(4);
+                A2 = b.tPts.get(5);
+
+                E1 = b.tPts.get(6);
+                E2 = b.tPts.get(7);
+            }
         }
     }
 
@@ -479,7 +523,7 @@ whichOption = savedOption;
         //Closest Defender Edge
         micLine DD = new micLine(D1, D2, false);
 
-        lineList.add(A1D1);
+        if(A1D1 != null) lineList.add(A1D1);
         lineList.add(A1D2);
         lineList.add(A2D1);
 
@@ -497,13 +541,17 @@ whichOption = savedOption;
         }
 
         micLine D1AA = createLinePtoAB(D1, AA, false);
-        micLine D1AAcopy = new micLine(D1AA.first, D1AA.second, D1AA.markedAsDead, "D1AA", 0.6);
-        //lineList.add(D1AA);
-        lineList.add(D1AAcopy);
+        if(D1AA != null){
+            micLine D1AAcopy = new micLine(D1AA.first, D1AA.second, D1AA.markedAsDead, "D1AA", 0.6);
+            //lineList.add(D1AA);
+            lineList.add(D1AAcopy);
+        }
 
         //ALLLINES: if all lines have to been added to the visuals, then, uncomment this section
-        for(micLine everyline : lineList) {
-            fov.addLine(everyline);
+        if(DEBUGMODE == true){
+            for(micLine everyline : lineList) {
+                fov.addLine(everyline);
+            }
         }
         //end of section
 
@@ -577,7 +625,7 @@ whichOption = savedOption;
             }
 
 
-        if(whichOption == frontArcOption || whichOption == backArcOption) {
+        if(whichOption == frontArcOption || whichOption == backArcOption || whichOption == frontAuxArcOption) {
             //Closest attacker's point to the defender's closest edge along the arc edge
             micLine A1DD_arc_restricted = createLineAxtoDD_along_arc_edge(A1, E1, DD);
             if(A1DD_arc_restricted != null) if(isRangeOk(A1DD_arc_restricted, 1, rangeInt)) {
@@ -609,26 +657,13 @@ whichOption = savedOption;
                 micLine A3DD_arc_restricted_2ndcopy = new micLine(A3DD_arc_restricted_2nd.first, A3DD_arc_restricted_2nd.second, A3DD_arc_restricted_2nd.markedAsDead, "A3DD_ea", 0.6);
                 lineList.add(A3DD_arc_restricted_2ndcopy);
             }
-            micLine A4DD_arc_restricted_2nd = createLineAxtoDD_along_arc_edge(A4, E4, DD_2nd);
-            if(A4DD_arc_restricted_2nd != null) if(isRangeOk(A4DD_arc_restricted_2nd, 1, rangeInt)) {
+            micLine A4DD_arc_restricted = createLineAxtoDD_along_arc_edge(A4, E4, DD);
+            if(A4DD_arc_restricted != null) if(isRangeOk(A4DD_arc_restricted, 1, rangeInt)) {
 
-                micLine A4DD_arc_restricted_2ndcopy = new micLine(A4DD_arc_restricted_2nd.first, A4DD_arc_restricted_2nd.second, A4DD_arc_restricted_2nd.markedAsDead, "A4DD_ea", 0.7);
-                lineList.add(A4DD_arc_restricted_2ndcopy);
+                micLine A4DD_arc_restricted_copy = new micLine(A4DD_arc_restricted.first, A4DD_arc_restricted.second, A4DD_arc_restricted.markedAsDead, "A4DD_ea", 0.7);
+                lineList.add(A4DD_arc_restricted_copy);
             }
 
-
-            micLine A5DD_arc_restricted_2nd = createLineAxtoDD_along_arc_edge(A5, E5, DD_2nd);
-            if(A5DD_arc_restricted_2nd != null) if(isRangeOk(A5DD_arc_restricted_2nd, 1, rangeInt)) {
-                micLine A5DD_arc_restricted_2ndcopy = new micLine(A5DD_arc_restricted_2nd.first, A5DD_arc_restricted_2nd.second, A5DD_arc_restricted_2nd.markedAsDead, "A5DD_ea", 0.9);
-
-                lineList.add(A5DD_arc_restricted_2ndcopy);
-            }
-            micLine A6DD_arc_restricted_2nd = createLineAxtoDD_along_arc_edge(A6, E6, DD_2nd);
-            if(A6DD_arc_restricted_2nd != null) if(isRangeOk(A6DD_arc_restricted_2nd, 1, rangeInt)) {
-                micLine A6DD_arc_restricted_2ndcopy = new micLine(A6DD_arc_restricted_2nd.first, A6DD_arc_restricted_2nd.second, A6DD_arc_restricted_2nd.markedAsDead, "A6DD_ea", 0.1);
-
-                lineList.add(A6DD_arc_restricted_2ndcopy);
-            }
         }
         //Attacker's edge to defender's closest vertex
 
@@ -648,8 +683,10 @@ whichOption = savedOption;
 
 
         //ALLLINES: if all lines have to been added to the visuals, then, uncomment this section
-        for(micLine everyline : lineList) {
-            fov.addLine(everyline);
+        if(DEBUGMODE == true){
+            for(micLine everyline : lineList) {
+                fov.addLine(everyline);
+            }
         }
         //end of section
 
@@ -681,15 +718,11 @@ whichOption = savedOption;
         double thirdArcEdgePolarAngle = getEdgeAngle(A3, E3) - fudgefactor;
         double fourthArcEdgePolarAngle = getEdgeAngle(A4, E4) + fudgefactor;
 
-        double fifthArcEdgePolarAngle = getEdgeAngle(A5, E5) - fudgefactor;
-        double sixthArcEdgePolarAngle = getEdgeAngle(A6, E6) + fudgefactor;
-
         double bestLinePolarAngle = getEdgeAngle(theCandidateLine.first, theCandidateLine.second);
 
         //logToChatCommand("arc1: " + Double.toString(firstArcEdgePolarAngle) + " arc2: " + Double.toString(secondArcEdgePolarAngle) + " checkedLine: "+ Double.toString(bestLinePolarAngle));
         if(whichOption == frontAuxArcOption) {
-            if(Double.compare(bestLinePolarAngle, thirdArcEdgePolarAngle) < 0 || Double.compare(bestLinePolarAngle, fourthArcEdgePolarAngle) > 0)
-                if(Double.compare(bestLinePolarAngle, fifthArcEdgePolarAngle) < 0 || Double.compare(bestLinePolarAngle, sixthArcEdgePolarAngle) > 0) return false;
+            if(Double.compare(bestLinePolarAngle, thirdArcEdgePolarAngle) < 0 || Double.compare(bestLinePolarAngle, fourthArcEdgePolarAngle) > 0) return false;
         }
         if (Double.compare(bestLinePolarAngle, firstArcEdgePolarAngle) < 0 || Double.compare(bestLinePolarAngle, secondArcEdgePolarAngle) > 0)
             return false;
@@ -1190,7 +1223,7 @@ whichOption = savedOption;
     }
 
     public void mousePressed(MouseEvent e) {
-
+        if(DEBUGMODE == false) return;
         Point p = e.getPoint();
             anchor = p;
             anchorLocation = map.localizedLocationName(anchor);
@@ -1211,6 +1244,7 @@ whichOption = savedOption;
     }
 
     public void mouseDragged(MouseEvent e) {
+        if(DEBUGMODE == false) return;
         if(isThisTheOne == false) return;
             Point p = e.getPoint();
             map.scrollAtEdge(p, 15);
