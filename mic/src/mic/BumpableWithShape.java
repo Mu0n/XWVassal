@@ -79,6 +79,13 @@ public class BumpableWithShape {
     private Point2D.Double leftMidEnd = new Point2D.Double(0.0, 0.0); //end of mid segment
     private Point2D.Double rightMidEnd = new Point2D.Double(0.0, 0.0);
 
+    private Point2D.Double upLeftVertex = new Point2D.Double(0.0, 0.0);
+    private Point2D.Double upRightVertex = new Point2D.Double(0.0, 0.0);
+
+    private Point2D.Double downLeftVertex = new Point2D.Double(0.0, 0.0);
+    private Point2D.Double downRightVertex = new Point2D.Double(0.0, 0.0);
+
+
     public ArrayList<Point2D.Double> tPts = new ArrayList<Point2D.Double>(); //array of transformed (rotated and translated) special points
 
     BumpableWithShape(Decorator bumpable, String type, boolean wantFlip) {
@@ -95,9 +102,17 @@ public class BumpableWithShape {
         this.pilotName = pilotName;
         this.shipName = shipName;
         this.chassis = figureOutChassis();
+        this.figureVertices();
         this.figureOutLocalPoints(3);
     }
-
+    public ArrayList<Point2D.Double> getVertices(){
+        ArrayList<Point2D.Double> list = new ArrayList<Point2D.Double>();
+        list.add(upLeftVertex);
+        list.add(upRightVertex);
+        list.add(downRightVertex);
+        list.add(downLeftVertex);
+        return list;
+    }
     private chassisInfo figureOutChassis() {
         Shape rawShape = getRawShape(bumpable);
         double rawWidth = rawShape.getBounds().width;
@@ -128,27 +143,24 @@ public class BumpableWithShape {
     public double getChassisWidth(){
         return chassis.getWidth();
     }
-    public ArrayList<Point2D.Double> getVertices(){
+    public void figureVertices(){
         double angle = getAngle();
         Point center = bumpable.getPosition();
         double halfWidth = getChassisWidth()/2.0;
         double halfHeight = getChassisHeight()/2.0;
-        ArrayList<Point2D.Double> vertices = new ArrayList<Point2D.Double>();
 
         //top left
-        vertices.add(new Point2D.Double(Util.rotX(-halfWidth, -halfHeight, angle) + center.getX(),
-                Util.rotY(-halfWidth, -halfHeight, angle) + center.getY()));
+        upLeftVertex = new Point2D.Double(Util.rotX(-halfWidth, -halfHeight, angle) + center.getX(),
+                Util.rotY(-halfWidth, -halfHeight, angle) + center.getY());
         //top right
-        vertices.add(new Point2D.Double(Util.rotX(halfWidth, -halfHeight, angle) + center.getX(),
-                Util.rotY(halfWidth, -halfHeight, angle) + center.getY()));
+        upRightVertex = new Point2D.Double(Util.rotX(halfWidth, -halfHeight, angle) + center.getX(),
+                Util.rotY(halfWidth, -halfHeight, angle) + center.getY());
         //bottom right
-        vertices.add(new Point2D.Double(Util.rotX(halfWidth, halfHeight, angle) + center.getX(),
-                Util.rotY(halfWidth, halfHeight, angle) + center.getY()));
+        downRightVertex = new Point2D.Double(Util.rotX(halfWidth, halfHeight, angle) + center.getX(),
+                Util.rotY(halfWidth, halfHeight, angle) + center.getY());
         //bottom left
-        vertices.add(new Point2D.Double(Util.rotX(-halfWidth, halfHeight, angle) + center.getX(),
-                Util.rotY(-halfWidth, halfHeight, angle) + center.getY()));
-
-        return vertices;
+        downLeftVertex = new Point2D.Double(Util.rotX(-halfWidth, halfHeight, angle) + center.getX(),
+                Util.rotY(-halfWidth, halfHeight, angle) + center.getY());
     }
 
 
