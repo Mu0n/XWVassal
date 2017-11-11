@@ -68,8 +68,8 @@ Integer savedOption = 0;
 
 public class AutoRangeFinder extends Decorator implements EditablePiece, MouseListener, MouseMotionListener {
 
-    private static final Boolean DEBUGMODE = false;
-    private static final Boolean MULTILINES = true;
+    private static Boolean DEBUGMODE = false;
+    private static Boolean MULTILINES = true;
 
     protected VASSAL.build.module.Map map;
     private static final int frontArcOption = 1;
@@ -92,6 +92,8 @@ public class AutoRangeFinder extends Decorator implements EditablePiece, MouseLi
             .put("CTRL SHIFT N", frontAuxArcOption) //front pairs of aux arc (YV-666, Auzituck)
             .put("CTRL SHIFT V", backArcOption) //back aux arc
             .put("CTRL ALT SHIFT V", mobileSideArcOption) //mobile turret arc, must detect which one is selected on the ship
+            .put("F5", 12)
+            .put("F6", 13)
             .build();
     private static double RANGE1 = 282.5;
     private static double RANGE2 = 565;
@@ -168,6 +170,13 @@ Boolean isThisTheOne = false;
         whichOption = getKeystrokeToOptions(stroke);
         if (whichOption != -1 && stroke.isOnKeyRelease() == false) {
 
+            if(whichOption == 12) {
+                MULTILINES = true;
+            }
+            if(whichOption == 13) {
+                MULTILINES = false;
+            }
+
             isThisTheOne = true;
             if(DEBUGMODE == true) {
                 FluidAnim FA = new FluidAnim(this, whichOption);
@@ -188,8 +197,6 @@ Boolean isThisTheOne = false;
                     this.getInner().getProperty("Pilot Name").toString(), this.getInner().getProperty("Craft ID #").toString());
 
             thisShip.refreshSpecialPoints();
-            findAttackerBestPoints(thisShip);
-
             //Prepare the start of the appropriate chat announcement string - which ship are we doing this from, which kind of autorange
             prepAnnouncementStart();
 
@@ -199,6 +206,7 @@ Boolean isThisTheOne = false;
                 //Preliminary check, eliminate attempt to calculate this if the target is overlapping the attacker, could lead to exception error
                 if (shapesOverlap(thisShip.shape, b.shape)) continue;
 
+                findAttackerBestPoints(b);
                 //Do everything method here:
                 figureOutAutoRange(b, rfindings);
             }
@@ -239,16 +247,17 @@ whichOption = savedOption;
                 this.getInner().getProperty("Pilot Name").toString(), this.getInner().getProperty("Craft ID #").toString());
 
         thisShip.refreshSpecialPoints();
-        findAttackerBestPoints(thisShip);
         //Prepare the start of the appropriate chat announcement string - which ship are we doing this from, which kind of autorange
         prepAnnouncementStart();
 
         //Loop over every other target ship
         List<BumpableWithShape> BWS = getOtherShipsOnMap();
         for (BumpableWithShape b : BWS) {
+
+
             //Preliminary check, eliminate attempt to calculate this if the target is overlapping the attacker, could lead to exception error
             if (shapesOverlap(thisShip.shape, b.shape)) continue;
-
+            findAttackerBestPoints(b);
             //Do everything method here:
             figureOutAutoRange(b, rfindings);
         }
@@ -352,12 +361,205 @@ whichOption = savedOption;
     }
 
     private micLine findBestLineInFrontAuxArcs(Point2D.Double D1, Point2D.Double D2, Point2D.Double D3, int rangeInt) {
+        ArrayList<micLine> lineList = new ArrayList<micLine>(); //reserved for front arc lines
+        ArrayList<micLine> leftLineList = new ArrayList<micLine>(); //reserved for left aux arc lines
+        ArrayList<micLine> rightLineList = new ArrayList<micLine>(); //reserved for right aux arc lines
+        ArrayList<micLine> noAngleCheckList = new ArrayList<micLine>(); //along the arc edge, so already angle valid
+
+        Point2D.Double LC = thisShip.getVertices().get(0);
+        Point2D.Double RC = thisShip.getVertices().get(1);
+
+        //Prep segments along ships (attacker and defender) used to figure out some of the firing lines
+        //Left Edge
+        micLine LE = new micLine(A1, LC, false);
+        //Left Front Edge
+        micLine LFE = new micLine(LC, A2, false);
+        //Right Edge
+        micLine RE = new micLine(RC, A4, false);
+        //Right Front Edge
+        micLine RFE = new micLine(A3, RC, false);
+        //Front arc Edge
+        micLine AA = new micLine(A2, A3, false);
+        //Closest Defender Edge
+        micLine DD = new micLine(D1, D2, false);
+        //2nd closest defender edge
+        micLine DD_2nd = new micLine(D1, D3, false);
+
+
+        micLine lineToVet; //temp micLine object used for debug testing
+
+        //Left Corner Attacker to Closest Defender
+        micLine LCD1 = new micLine(LC, D1, false);
+        lineToVet = vetThisLine(LCD1, "LCD1", 0.1);
+        if(lineToVet != null) leftLineList.add(lineToVet);
+
+        //Left Corner Attacker to 2nd closest Defender
+        micLine LCD2 = new micLine(LC, D2, false);
+        lineToVet = vetThisLine(LCD2, "LCD2", 0.1);
+        if(lineToVet != null) leftLineList.add(lineToVet);
+
+        //Right Corner Attacker to Closest Defender
+        micLine RCD1 = new micLine(RC, D1, false);
+        lineToVet = vetThisLine(RCD1, "RCD1", 0.1);
+        if(lineToVet != null) rightLineList.add(lineToVet);
+
+        //Right Corner Attacker to 2nd closest Defender
+        micLine RCD2 = new micLine(RC, D2, false);
+        lineToVet = vetThisLine(RCD2, "RCD2", 0.1);
+        if(lineToVet != null) rightLineList.add(lineToVet);
+
+
+        //first arc edge
+        micLine A1DD_arc_restricted = createLineAxtoDD_along_arc_edge(A1, E1, DD);
+        lineToVet = vetThisLine(A1DD_arc_restricted, "A1DD_ea", 0.5);
+        if(lineToVet != null) noAngleCheckList.add(lineToVet);
+        //first arc edge to 2nd def edge
+        micLine A1DD_arc_restricted_2nd = createLineAxtoDD_along_arc_edge(A1, E1, DD_2nd);
+        lineToVet = vetThisLine(A1DD_arc_restricted_2nd, "A1DD_2nd_ea", 0.7);
+        if(lineToVet != null) noAngleCheckList.add(lineToVet);
+
+        //2nd arc edge
+        micLine A2DD_arc_restricted = createLineAxtoDD_along_arc_edge(A2, E2, DD);
+        lineToVet = vetThisLine(A2DD_arc_restricted, "A2DD_ea", 0.5);
+        if(lineToVet != null) noAngleCheckList.add(lineToVet);
+        //2nd arc edge to 2nd def edge
+        micLine A2DD_arc_restricted_2nd = createLineAxtoDD_along_arc_edge(A2, E2, DD_2nd);
+        lineToVet = vetThisLine(A2DD_arc_restricted_2nd, "A2DD_2nd_ea", 0.7);
+        if(lineToVet != null) noAngleCheckList.add(lineToVet);
+
+        //3rd arc edge
+        micLine A3DD_arc_restricted = createLineAxtoDD_along_arc_edge(A3, E3, DD);
+        lineToVet = vetThisLine(A3DD_arc_restricted, "A3DD_ea", 0.5);
+        if(lineToVet != null) noAngleCheckList.add(lineToVet);
+        //3rd arc edge to 2nd def edge
+        micLine A3DD_arc_restricted_2nd = createLineAxtoDD_along_arc_edge(A3, E3, DD_2nd);
+        lineToVet = vetThisLine(A3DD_arc_restricted_2nd, "A3DD_2nd_ea", 0.7);
+        if(lineToVet != null) noAngleCheckList.add(lineToVet);
+
+        //4th arc edge
+        micLine A4DD_arc_restricted = createLineAxtoDD_along_arc_edge(A4, E4, DD);
+        lineToVet = vetThisLine(A4DD_arc_restricted, "A4DD_ea", 0.5);
+        if(lineToVet != null) noAngleCheckList.add(lineToVet);
+        //4th arc edge to 2nd def edge
+        micLine A4DD_arc_restricted_2nd = createLineAxtoDD_along_arc_edge(A4, E4, DD_2nd);
+        lineToVet = vetThisLine(A4DD_arc_restricted_2nd, "A4DD_2nd_ea", 0.7);
+        if(lineToVet != null) noAngleCheckList.add(lineToVet);
+
+
+        //front arc lines
+        micLine A2D1 = new micLine(A2, D1, false);
+        lineToVet = vetThisLine(A2D1, "A2D1", 0.3);
+        if(lineToVet != null) lineList.add(lineToVet);
+        micLine A2D2 = new micLine(A2, D2, false);
+        lineToVet = vetThisLine(A2D2, "A2D2", 0.5);
+        if(lineToVet != null) lineList.add(lineToVet);
+
+        micLine A3D1 = new micLine(A3, D1, false);
+        lineToVet = vetThisLine(A3D1, "A3D1", 0.3);
+        if(lineToVet != null) lineList.add(lineToVet);
+        micLine A3D2 = new micLine(A3, D2, false);
+        lineToVet = vetThisLine(A3D2, "A3D2", 0.5);
+        if(lineToVet != null) lineList.add(lineToVet);
+
+        //normal to defender's edges
+        //Closest attacker's point to the defender's closest edge
+        micLine A1DD = createLinePtoAB(A1, DD, true);
+        lineToVet = vetThisLine(A1DD, "A1DD", 0.2);
+        if(lineToVet != null) lineList.add(lineToVet);
+
+        micLine A2DD = createLinePtoAB(A2, DD, true);
+        lineToVet = vetThisLine(A2DD, "A2DD", 0.4);
+        if(lineToVet != null) lineList.add(lineToVet);
+
+        //Attacker's edge to defender's closest vertex
+        micLine AAD1 = createLinePtoAB(D1, AA, false);
+        if(doesAAforInArcPassTest(AAD1, AA)== true && isRangeOk(AAD1, 1, rangeInt))
+        {
+            lineToVet = vetThisLine(AAD1, "AAD1", 0.8);
+            if(lineToVet != null) noAngleCheckList.add(lineToVet);
+        }
+
+        micLine LED1 = createLinePtoAB(D1, LE, false);
+        if(doesAAforInArcPassTest(LED1, LE)== true && isRangeOk(LED1, 1, rangeInt))
+        {
+            lineToVet = vetThisLine(LED1, "LED1", 0.8);
+            if(lineToVet != null) noAngleCheckList.add(lineToVet);
+        }
+        micLine RED1 = createLinePtoAB(D1, RE, false);
+        if(doesAAforInArcPassTest(RED1, RE)== true && isRangeOk(RED1, 1, rangeInt))
+        {
+            lineToVet = vetThisLine(RED1, "RED1", 0.8);
+            if(lineToVet != null) noAngleCheckList.add(lineToVet);
+        }
+
+
+        ArrayList<micLine> filteredList = new ArrayList<micLine>();
+        ArrayList<micLine> deadList = new ArrayList<micLine>();
+
+        //Filter out shots that aren't inside the left aux arc
+        for(micLine l: leftLineList)
+        {
+            if(isEdgeInArc(l, A1, E1, A2, E2) == true) filteredList.add(l);
+            else deadList.add(l);
+        }
+        //Same, right side
+        for(micLine l: rightLineList)
+        {
+            if(isEdgeInArc(l, A3, E3, A4, E4) == true) filteredList.add(l);
+            else deadList.add(l);
+        }
+        //Same, front side
+        for(micLine l: lineList)
+        {
+            if(isEdgeInArc(l, A2, E2, A3, E3) == true) filteredList.add(l);
+            else deadList.add(l);
+        }
+        //add the rest of the safe angle lines
+        for(micLine l: noAngleCheckList) {
+            filteredList.add(l);
+        }
+
+        //ALLLINES: if all lines have to been added to the visuals, then, uncomment this section
+        if(MULTILINES == true){
+            for(micLine everyline : filteredList) {
+                fov.addLine(everyline);
+            }
+            for(micLine l: deadList){
+                l.markedAsDead = true;
+                fov.addLine(l);
+            }
+        }
+        //end of section
+
+
+        //First criterium, find the best distance and make it the best Line
+        double bestDist = rangeInt * 282.5;
         micLine best = null;
+        for (micLine l : filteredList) {
+            if (l.markedAsDead == false && Double.compare(bestDist, l.pixelLength) > 0) {
+                bestDist = l.pixelLength;
+                best = l;
+            }
+        }
+        //nothing under the requested range was found, no best lines can be submitted
+        if (best == null) {
+            return null;
+        }
+
+        best.isArcLine = true;
         return best;
     }
 
+
+    private micLine vetThisLine(micLine A1D1, String label, double v) {
+        if(DEBUGMODE == false) return A1D1;
+        return new micLine(A1D1.first, A1D1.second, A1D1.markedAsDead, label, v);
+    }
+
+
     private micLine findBestLineInSimpleArcs(Point2D.Double D1, Point2D.Double D2, Point2D.Double D3, int rangeInt) {
         ArrayList<micLine> lineList = new ArrayList<micLine>();
+        ArrayList<micLine> noAngleCheckList = new ArrayList<micLine>(); //along the arc edge, so already angle valid
 
         //Closest Attacker Edge
         micLine AA = new micLine(A1, A2, false);
@@ -366,112 +568,74 @@ whichOption = savedOption;
         //2nd closest defender edge
         micLine DD_2nd = new micLine(D1, D3, false);
 
+        micLine lineToVet;
 
         //Closest Attacker to Closest Defender
         micLine A1D1 = new micLine(A1, D1, false);
-        if(A1D1 != null) {
-            if(DEBUGMODE == false){
-                lineList.add(A1D1);
-            }
-            else{
-                micLine A1D1copy = new micLine(A1D1.first, A1D1.second, A1D1.markedAsDead, "A1D1", 0.1);
-                lineList.add(A1D1copy);
-            }
-        }
+        lineToVet = vetThisLine(A1D1, "A1D1", 0.1);
+        if(lineToVet != null) lineList.add(lineToVet);
+
         //Closest Defender to 2nd Closest Attacker
         micLine A2D1 = new micLine(A2, D1, false);
-        if(A2D1 != null) {
-            if (DEBUGMODE == false) {
-                lineList.add(A2D1);
-            } else {
-                micLine A2D1copy = new micLine(A2D1.first, A2D1.second, A2D1.markedAsDead, "A2D1", 0.5);
-                lineList.add(A2D1copy);
-            }
-        }
+        lineToVet = vetThisLine(A2D1, "A2D1", 0.5);
+        if(lineToVet != null) lineList.add(lineToVet);
 
         //Closest attacker's point to the defender's closest edge
         micLine A1DD = createLinePtoAB(A1, DD, true);
-        if(A1DD != null) {
-            if (DEBUGMODE == false) {
-                lineList.add(A1DD);
-            } else {
-                micLine A1DDcopy = new micLine(A1DD.first, A1DD.second, A1DD.markedAsDead, "A1DD", 0.2);
-                lineList.add(A1DDcopy);
-            }
-        }
+        lineToVet = vetThisLine(A1DD, "A1DD", 0.2);
+        if(lineToVet != null) lineList.add(lineToVet);
 
         micLine A2DD = createLinePtoAB(A2, DD, true);
-        if(A2DD != null){
-            if (DEBUGMODE == false) {
-                lineList.add(A2DD);
-            } else {
-                micLine A2DDcopy = new micLine(A2DD.first, A2DD.second, A2DD.markedAsDead, "A2DD", 0.4);
-                lineList.add(A2DDcopy);
-            }
-        }
+        lineToVet = vetThisLine(A2DD, "A2DD", 0.4);
+        if(lineToVet != null) lineList.add(lineToVet);
 
-            //Closest attacker's point to the defender's closest edge along the arc edge
-            micLine A1DD_arc_restricted = createLineAxtoDD_along_arc_edge(A1, E1, DD);
-            if(A1DD_arc_restricted != null) {
-                if (DEBUGMODE == false) {
-                    lineList.add(A1DD_arc_restricted);
-                } else {
-                    micLine A1DD_arc_restrictedcopy = new micLine(A1DD_arc_restricted.first, A1DD_arc_restricted.second, A1DD_arc_restricted.markedAsDead, "A1DD_ea", 0.5);
-                    lineList.add(A1DD_arc_restrictedcopy);
-                }
-            }
+        //Closest attacker's point to the defender's closest edge along the arc edge
+        micLine A1DD_arc_restricted = createLineAxtoDD_along_arc_edge(A1, E1, DD);
+        lineToVet = vetThisLine(A1DD_arc_restricted, "A1DD_ea", 0.5);
+        if(lineToVet != null) noAngleCheckList.add(lineToVet);
 
-            micLine A2DD_arc_restricted = createLineAxtoDD_along_arc_edge(A2, E2, DD);
-            if(A2DD_arc_restricted != null) {
-                if (DEBUGMODE == false) {
-                    lineList.add(A2DD_arc_restricted);
-                } else {
-                    micLine A2DD_arc_restrictedcopy = new micLine(A2DD_arc_restricted.first, A2DD_arc_restricted.second, A2DD_arc_restricted.markedAsDead, "A2DD_ea", 0.7);
-                    lineList.add(A2DD_arc_restrictedcopy);
-                }
-            }
+        micLine A2DD_arc_restricted = createLineAxtoDD_along_arc_edge(A2, E2, DD);
+        lineToVet = vetThisLine(A2DD_arc_restricted, "A2DD_ea", 0.7);
+        if(lineToVet != null) noAngleCheckList.add(lineToVet);
 
-            //Closest attacker's point to the defender's 2nd closest edge along the arc edge
-            micLine A1DD_arc_restricted_2nd = createLineAxtoDD_along_arc_edge(A1, E1, DD_2nd);
-            if(A1DD_arc_restricted_2nd != null) {
-                if (DEBUGMODE == false) {
-                    lineList.add(A1DD_arc_restricted_2nd);
-                } else {
-                    micLine A1DD_arc_restricted_2ndcopy = new micLine(A1DD_arc_restricted_2nd.first, A1DD_arc_restricted_2nd.second, A1DD_arc_restricted_2nd.markedAsDead, "A1DD_2nd_ea", 0.1);
-                    lineList.add(A1DD_arc_restricted_2ndcopy);
-                }
-            }
+        //Closest attacker's point to the defender's 2nd closest edge along the arc edge
+        micLine A1DD_arc_restricted_2nd = createLineAxtoDD_along_arc_edge(A1, E1, DD_2nd);
+        lineToVet = vetThisLine(A1DD_arc_restricted_2nd, "A1DD_2nd_ea", 0.1);
+        if(lineToVet != null) noAngleCheckList.add(lineToVet);
 
-            micLine A2DD_arc_restricted_2nd = createLineAxtoDD_along_arc_edge(A2, E2, DD_2nd);
-            if(A2DD_arc_restricted_2nd != null) {
-                if (DEBUGMODE == false) {
-                    lineList.add(A2DD_arc_restricted_2nd);
-                } else {
-                    micLine A2DD_arc_restricted_2ndcopy = new micLine(A2DD_arc_restricted_2nd.first, A2DD_arc_restricted_2nd.second, A2DD_arc_restricted_2nd.markedAsDead, "A2DD_2nd_ea", 0.9);
-                    lineList.add(A2DD_arc_restricted_2ndcopy);
-                }
-            }
+        micLine A2DD_arc_restricted_2nd = createLineAxtoDD_along_arc_edge(A2, E2, DD_2nd);
+        lineToVet = vetThisLine(A2DD_arc_restricted_2nd, "A2DD_2nd_ea", 0.9);
+        if(lineToVet != null) noAngleCheckList.add(lineToVet);
 
         //Attacker's edge to defender's closest vertex
         micLine AAD1 = createLinePtoAB(D1, AA, false);
-        if(doesAAforInArcPassTest(AAD1, AA)== true)
-            if(isRangeOk(AAD1, 1, rangeInt)) {
-                micLine AAD1copy = new micLine(AAD1.first, AAD1.second, AAD1.markedAsDead, "AAD1", 0.8);
-                lineList.add(AAD1copy);
-            }
-        ArrayList<micLine> filteredList = new ArrayList<micLine>();
-        //Filter out shots that aren't in-arc if the turret option is not chosen
-       /* for(micLine l: lineList)
+        if(doesAAforInArcPassTest(AAD1, AA)== true && isRangeOk(AAD1, 1, rangeInt))
         {
-            if(isEdgeInArc(l) == true) filteredList.add(l);
-            else l.markedAsDead = true;
+            lineToVet = vetThisLine(AAD1, "AAD1", 0.8);
+            if(lineToVet != null) noAngleCheckList.add(lineToVet);
         }
-*/
+
+        ArrayList<micLine> filteredList = new ArrayList<micLine>();
+        ArrayList<micLine> deadList = new ArrayList<micLine>();
+        //Filter out shots that aren't in-arc if the turret option is not chosen
+        for(micLine l: lineList)
+        {
+            if(isEdgeInArc(l, A1, E1, A2, E2) == true) filteredList.add(l);
+            else deadList.add(l);
+        }
+        //Add already vetted lines
+        for(micLine l: noAngleCheckList){
+            filteredList.add(l);
+        }
 
         //ALLLINES: if all lines have to been added to the visuals, then, uncomment this section
         if(MULTILINES == true){
             for(micLine everyline : lineList) {
                 fov.addLine(everyline);
+            }
+            for(micLine l: deadList){
+                l.markedAsDead = true;
+                fov.addLine(l);
             }
         }
         //end of section
@@ -499,6 +663,8 @@ whichOption = savedOption;
     }
 
     private void findAttackerBestPoints(BumpableWithShape b) {
+
+
         if(whichOption == turretArcOption) {
             A1 = findClosestVertex(thisShip, b);
             A2 = find2ndClosestVertex(thisShip, b);
@@ -513,31 +679,31 @@ whichOption = savedOption;
             // 8 and 10 for CW aux arc, CCW edge
             // 9 and 11 for CW aux arc, CW edge
 
-            A1 = b.tPts.get(0);
-            A2 = b.tPts.get(1);
+            A1 = thisShip.tPts.get(0);
+            A2 = thisShip.tPts.get(1);
 
-            E1 = b.tPts.get(2); //associated with A1 as the edge A1E1
-            E2 = b.tPts.get(3); //associated with A2 as the edge A2E2
+            E1 = thisShip.tPts.get(2); //associated with A1 as the edge A1E1
+            E2 = thisShip.tPts.get(3); //associated with A2 as the edge A2E2
         }
         else if(whichOption == backArcOption){
-            A1 = b.tPts.get(4);
-            A2 = b.tPts.get(5);
+            A1 = thisShip.tPts.get(4);
+            A2 = thisShip.tPts.get(5);
 
-            E1 = b.tPts.get(6);
-            E2 = b.tPts.get(7);
+            E1 = thisShip.tPts.get(6);
+            E2 = thisShip.tPts.get(7);
         }
         else if(whichOption == frontAuxArcOption){
-            A1 = b.tPts.get(8);
-            A2 = b.tPts.get(0);
+            A1 = thisShip.tPts.get(8);
+            A2 = thisShip.tPts.get(0);
 
-            E1 = b.tPts.get(10);
-            E2 = b.tPts.get(2);
+            E1 = thisShip.tPts.get(10);
+            E2 = thisShip.tPts.get(2);
 
-            A3 = b.tPts.get(1);
-            A4 = b.tPts.get(9);
+            A3 = thisShip.tPts.get(1);
+            A4 = thisShip.tPts.get(9);
 
-            E3 = b.tPts.get(3);
-            E4 = b.tPts.get(11);
+            E3 = thisShip.tPts.get(3);
+            E4 = thisShip.tPts.get(11);
         }
         else if(whichOption == mobileSideArcOption){
             String sideCheck ="";
@@ -548,35 +714,35 @@ logToChat("tried to find a mobile turret definition, couldn't.");
             }
             if(sideCheck.equals("4")) {
                 //left side check
-                A1 = b.tPts.get(5);
-                A2 = b.tPts.get(0);
+                A1 = thisShip.tPts.get(5);
+                A2 = thisShip.tPts.get(0);
 
-                E1 = b.tPts.get(7);
-                E2 = b.tPts.get(2);
+                E1 = thisShip.tPts.get(7);
+                E2 = thisShip.tPts.get(2);
             }
             else if(sideCheck.equals("2")){
                 //right side check
-                A1 = b.tPts.get(1);
-                A2 = b.tPts.get(4);
+                A1 = thisShip.tPts.get(1);
+                A2 = thisShip.tPts.get(4);
 
-                E1 = b.tPts.get(3);
-                E2 = b.tPts.get(6);
+                E1 = thisShip.tPts.get(3);
+                E2 = thisShip.tPts.get(6);
             }
             else if(sideCheck.equals("1")){
                 //do like front arc
-                A1 = b.tPts.get(0);
-                A2 = b.tPts.get(1);
+                A1 = thisShip.tPts.get(0);
+                A2 = thisShip.tPts.get(1);
 
-                E1 = b.tPts.get(2); //associated with A1 as the edge A1E1
-                E2 = b.tPts.get(3); //associated with A2 as the edge A2E2
+                E1 = thisShip.tPts.get(2); //associated with A1 as the edge A1E1
+                E2 = thisShip.tPts.get(3); //associated with A2 as the edge A2E2
             }
             else if(sideCheck.equals("3")){
                 //do like back aux
-                A1 = b.tPts.get(4);
-                A2 = b.tPts.get(5);
+                A1 = thisShip.tPts.get(4);
+                A2 = thisShip.tPts.get(5);
 
-                E1 = b.tPts.get(6);
-                E2 = b.tPts.get(7);
+                E1 = thisShip.tPts.get(6);
+                E2 = thisShip.tPts.get(7);
             }
         }
     }
@@ -680,71 +846,36 @@ logToChat("tried to find a mobile turret definition, couldn't.");
         //Closest Defender Edge
         micLine DD = new micLine(D1, D2, false);
 
+        micLine lineToVet;
+
         //Closest Attacker to Closest Defender
         micLine A1D1 = new micLine(A1, D1, false);
-        if(A1D1 != null) {
-            if(DEBUGMODE == false){
-                lineList.add(A1D1);
-            }
-            else{
-                micLine A1D1copy = new micLine(A1D1.first, A1D1.second, A1D1.markedAsDead, "A1D1", 0.1);
-                lineList.add(A1D1copy);
-            }
-        }
+        lineToVet = vetThisLine(A1D1, "A1D1", 0.1);
+        if(lineToVet != null) lineList.add(lineToVet);
 
         //Closest Attacker to 2nd Closest Defender
         micLine A1D2 = new micLine(A1, D2, false);
-        if(A1D2 != null) {
-            if (DEBUGMODE == false) {
-                lineList.add(A1D2);
-            } else {
-                micLine A1D2copy = new micLine(A1D2.first, A1D2.second, A1D2.markedAsDead, "A1D2", 0.3);
-                lineList.add(A1D2copy);
-            }
-        }
+        lineToVet = vetThisLine(A1D2, "A1D2", 0.3);
+        if(lineToVet != null) lineList.add(lineToVet);
+
 
         //Closest Defender to 2nd Closest Attacker
         micLine A2D1 = new micLine(A2, D1, false);
-        if(A2D1 != null) {
-            if (DEBUGMODE == false) {
-                lineList.add(A2D1);
-            } else {
-                micLine A2D1copy = new micLine(A2D1.first, A2D1.second, A2D1.markedAsDead, "A2D1", 0.5);
-                lineList.add(A2D1copy);
-            }
-        }
+        lineToVet = vetThisLine(A2D1, "A2D1", 0.5);
+        if(lineToVet != null) lineList.add(lineToVet);
 
         micLine A1DD = createLinePtoAB(A1, DD, true);
-        if(A1DD != null) {
-            if(DEBUGMODE == false) {
-                lineList.add(A1DD);
-            }
-            else{
-                micLine A1DDcopy = new micLine(A1DD.first, A1DD.second, A1DD.markedAsDead, "A1DD", 0.2);
-                lineList.add(A1DDcopy);
-            }
-        }
+        lineToVet = vetThisLine(A1DD, "A1DD", 0.2);
+        if(lineToVet != null) lineList.add(lineToVet);
+
+
         micLine A2DD = createLinePtoAB(A2, DD, true);
-        if(A2DD != null) {
-            if(DEBUGMODE == false) {
-                lineList.add(A2DD);
-            }
-            else {
-                micLine A2DDcopy = new micLine(A2DD.first, A2DD.second, A2DD.markedAsDead, "A2DD", 0.4);
-                lineList.add(A2DDcopy);
-            }
-        }
+        lineToVet = vetThisLine(A2DD, "A2DD", 0.4);
+        if(lineToVet != null) lineList.add(lineToVet);
 
         micLine D1AA = createLinePtoAB(D1, AA, false);
-        if(D1AA != null){
-            if(DEBUGMODE == false) {
-                lineList.add(D1AA);
-            }
-            else {
-                micLine D1AAcopy = new micLine(D1AA.first, D1AA.second, D1AA.markedAsDead, "D1AA", 0.6);
-                lineList.add(D1AAcopy);
-            }
-        }
+        lineToVet = vetThisLine(D1AA, "D1AA", 0.6);
+        if(lineToVet != null) lineList.add(lineToVet);
 
         //MULTILINES: if all lines have to been added to the visuals, then, uncomment this section
         if(MULTILINES == true){
@@ -975,21 +1106,15 @@ logToChat("tried to find a mobile turret definition, couldn't.");
         return best;
     }
 
-    private boolean isEdgeInArc(micLine theCandidateLine)
+    private boolean isEdgeInArc(micLine theCandidateLine, Point2D.Double leftMostStart, Point2D.Double leftMostEnd, Point2D.Double rightMostStart, Point2D.Double  rightMostEnd)
     {
         double fudgefactor = 0.00001; //open up the arc just slightly to better allow along-the-arc firing lines
-        double firstArcEdgePolarAngle = getEdgeAngle(A1, E1) - fudgefactor; //edge most counter-clockwise
-        double secondArcEdgePolarAngle = getEdgeAngle(A2, E2) + fudgefactor; //edge most clockwise
+        double firstArcEdgePolarAngle = getEdgeAngle(leftMostStart, leftMostEnd) - fudgefactor; //edge most counter-clockwise
+        double secondArcEdgePolarAngle = getEdgeAngle(rightMostStart, rightMostEnd) + fudgefactor; //edge most clockwise
 
         double bestLinePolarAngle = getEdgeAngle(theCandidateLine.first, theCandidateLine.second);
 
-        //logToChatCommand("arc1: " + Double.toString(firstArcEdgePolarAngle) + " arc2: " + Double.toString(secondArcEdgePolarAngle) + " checkedLine: "+ Double.toString(bestLinePolarAngle));
-        if(whichOption == frontAuxArcOption) {
-            double thirdArcEdgePolarAngle = getEdgeAngle(A3, E3) - fudgefactor;
-            double fourthArcEdgePolarAngle = getEdgeAngle(A4, E4) + fudgefactor;
-            if(Double.compare(bestLinePolarAngle, thirdArcEdgePolarAngle) < 0 || Double.compare(bestLinePolarAngle, fourthArcEdgePolarAngle) > 0) return false;
-        }
-        if (Double.compare(bestLinePolarAngle, firstArcEdgePolarAngle) < 0 || Double.compare(bestLinePolarAngle, secondArcEdgePolarAngle) > 0)
+       if(Double.compare(bestLinePolarAngle, firstArcEdgePolarAngle) < 0 || Double.compare(bestLinePolarAngle, secondArcEdgePolarAngle) > 0)
             return false;
         return true;
     }

@@ -106,6 +106,7 @@ public class BumpableWithShape {
         this.figureOutLocalPoints(3);
     }
     public ArrayList<Point2D.Double> getVertices(){
+        figureVertices();
         ArrayList<Point2D.Double> list = new ArrayList<Point2D.Double>();
         list.add(upLeftVertex);
         list.add(upRightVertex);
@@ -206,7 +207,7 @@ public class BumpableWithShape {
         tPts.add(getATransformedPoint(frontLeftArcBase.x, frontLeftArcBase.y, 0.0, 0.0, angle, center.getX(), center.getY())); //0
         tPts.add(getATransformedPoint(frontRightArcBase.x, frontRightArcBase.y, 0.0, 0.0, angle, center.getX(), center.getY()));  //1
 
-        tPts.add(getATransformedPoint(frontLeftArcBase.x, frontLeftArcBase.x, frontLeftArcEnd.x, frontLeftArcEnd.y, angle, center.getX(), center.getY())); //2
+        tPts.add(getATransformedPoint(frontLeftArcBase.x, frontLeftArcBase.y, frontLeftArcEnd.x, frontLeftArcEnd.y, angle, center.getX(), center.getY())); //2
         tPts.add(getATransformedPoint(frontRightArcBase.x, frontRightArcBase.y, frontRightArcEnd.x, frontRightArcEnd.y, angle, center.getX(), center.getY())); //3
 
         tPts.add(getATransformedPoint(backRightArcBase.x, backRightArcBase.y, 0.0, 0.0, angle, center.getX(), center.getY())); //4
@@ -218,7 +219,7 @@ public class BumpableWithShape {
         tPts.add(getATransformedPoint(leftMidBase.x, leftMidBase.y, 0.0, 0.0, angle, center.getX(), center.getY())); //8
         tPts.add(getATransformedPoint(rightMidBase.x, rightMidBase.y, 0.0, 0.0, angle, center.getX(), center.getY())); //9
 
-        tPts.add(getATransformedPoint(leftMidEnd.x, leftMidEnd.y, leftMidEnd.x, leftMidEnd.y, angle, center.getX(), center.getY())); //10
+        tPts.add(getATransformedPoint(leftMidBase.x, leftMidBase.y, leftMidEnd.x, leftMidEnd.y, angle, center.getX(), center.getY())); //10
         tPts.add(getATransformedPoint(rightMidBase.x, rightMidBase.y, rightMidEnd.x, rightMidEnd.y, angle, center.getX(), center.getY()));  //11
     }
 
