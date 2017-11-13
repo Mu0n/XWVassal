@@ -23,10 +23,7 @@ import java.awt.font.FontRenderContext;
 import java.awt.font.TextAttribute;
 import java.awt.font.TextLayout;
 import java.awt.geom.*;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.io.*;
 import java.text.AttributedString;
 import java.util.*;
 import java.util.List;
@@ -69,7 +66,7 @@ Integer savedOption = 0;
 public class AutoRangeFinder extends Decorator implements EditablePiece, MouseListener, MouseMotionListener {
 
     private static Boolean DEBUGMODE = false;
-    private static Boolean MULTILINES = true;
+    private static Boolean MULTILINES = false;
 
     protected VASSAL.build.module.Map map;
     private static final int frontArcOption = 1;
@@ -1688,13 +1685,7 @@ logToChat("tried to find a mobile turret definition, couldn't.");
         }
         public void addShapeWithText(ShapeWithText swt){ this.shapesWithText.add(swt); }
         public int getCount() {
-            int count = 0;
-            Iterator<micLine> it = this.lines.iterator();
-            while(it.hasNext()){
-                count++;
-                it.next();
-            }
-            return count;
+            return lines.size() + shapesWithText.size();
         }
 
 
@@ -1819,11 +1810,37 @@ if(line.isBestLine == true && line.markedAsDead == false) graphics2D.setColor(ne
             try {
                 String[] newCommandStrs = command.split("\t");
                 FOVisualization visualization = new FOVisualization();
-                for (String bytesBase64Str : newCommandStrs) {
+                String howManyLines ="";
+                ByteArrayInputStream strIn2 = new ByteArrayInputStream(org.apache.commons.codec.binary.Base64.decodeBase64(howManyLines));
+                ObjectInputStream in2 = new ObjectInputStream(strIn2);
+                String thisHowManyLines = (String) in2.readObject();
+                int noLines = Integer.parseInt(thisHowManyLines);
+                in2.close();
+
+                //for (String bytesBase64Str : newCommandStrs) {
+                for (int i = 0; i < noLines; i++) {
+                    String bytesBase64Str = newCommandStrs[i];
                     ByteArrayInputStream strIn = new ByteArrayInputStream(org.apache.commons.codec.binary.Base64.decodeBase64(bytesBase64Str));
                     ObjectInputStream in = new ObjectInputStream(strIn);
                     micLine line = (micLine) in.readObject();
                     visualization.addLine(line);
+                    in.close();
+                }
+
+                String howManySWT ="";
+                ByteArrayInputStream strIn3 = new ByteArrayInputStream(org.apache.commons.codec.binary.Base64.decodeBase64(howManySWT));
+                ObjectInputStream in3 = new ObjectInputStream(strIn3);
+                String thisHowManySWT = (String) in3.readObject();
+                int noSWT = Integer.parseInt(thisHowManySWT);
+
+
+                //for (String bytesBase64Str : newCommandStrs) {
+                for (int i = 0; i < noSWT; i++) {
+                    String bytesBase64Str = newCommandStrs[i];
+                    ByteArrayInputStream strIn = new ByteArrayInputStream(org.apache.commons.codec.binary.Base64.decodeBase64(bytesBase64Str));
+                    ObjectInputStream in = new ObjectInputStream(strIn);
+                    ShapeWithText swt = (ShapeWithText) in.readObject();
+                    visualization.addShapeWithText(swt);
                     in.close();
                 }
                 logger.info("Decoded CollisionVisualization with {} shapes", visualization.getShapes().size());
@@ -1842,10 +1859,23 @@ if(line.isBestLine == true && line.markedAsDead == false) graphics2D.setColor(ne
             FOVisualization visualization = (FOVisualization) c;
             try {
                 List<String> commandStrs = Lists.newArrayList();
+                int howManyLines = ((FOVisualization) c).lines.size();
+                commandStrs.add(Integer.toString(howManyLines));
                 for (micLine line : visualization.getMicLines()) {
                     ByteArrayOutputStream bos = new ByteArrayOutputStream();
                     ObjectOutputStream out = new ObjectOutputStream(bos);
                     out.writeObject(line);
+                    out.close();
+                    byte[] bytes = bos.toByteArray();
+                    String bytesBase64 = org.apache.commons.codec.binary.Base64.encodeBase64String(bytes);
+                    commandStrs.add(bytesBase64);
+                }
+                int howManySWT = ((FOVisualization) c).shapesWithText.size();
+                commandStrs.add(Integer.toString(howManySWT));
+                for(ShapeWithText swt : visualization.shapesWithText) {
+                    ByteArrayOutputStream bos = new ByteArrayOutputStream();
+                    ObjectOutputStream out = new ObjectOutputStream(bos);
+                    out.writeObject(swt);
                     out.close();
                     byte[] bytes = bos.toByteArray();
                     String bytesBase64 = org.apache.commons.codec.binary.Base64.encodeBase64String(bytes);
