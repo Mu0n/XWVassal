@@ -9,6 +9,7 @@ import VASSAL.counters.*;
 import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import mic.manuvers.ManeuverPaths;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -161,6 +162,7 @@ Boolean isThisTheOne = false;
         ArrayList<RangeFindings> rfindings = new ArrayList<RangeFindings>(); //findings compiled here
 
         String hotKey = HotKeyConfigurer.getString(stroke);
+        Command bigCommand = piece.keyEvent(stroke);
 
         // check to see if the this code needs to respond to the event
 
@@ -182,12 +184,9 @@ Boolean isThisTheOne = false;
                 FA.run();
             }
 
-            Command bigCommand = piece.keyEvent(stroke);
             //if the firing options were already activated, remove the visuals and exit right away
             if (this.fov != null && this.fov.getCount() > 0) {
-                //logToChatCommand("toggle off");
-                clearVisu();
-                bigCommand.append(this.fov);
+                bigCommand.append(clearVisu());
                 this.fov.execute();
                 return bigCommand;
             }
@@ -217,18 +216,14 @@ Boolean isThisTheOne = false;
                 this.fov.execute();
                 //logToChatCommand("launch execute");
             }
-            return bigCommand;
         } else if (KeyStroke.getKeyStroke(KeyEvent.VK_D, KeyEvent.CTRL_DOWN_MASK, false).equals(stroke)) {
             if (this.fov != null && this.fov.getCount() > 0) {
-                clearVisu();
-                Command goToHell = piece.keyEvent(stroke);
-                goToHell.append(this.fov);
+                bigCommand.append(clearVisu());
                 this.fov.execute();
-                return goToHell;
             }
         }
 
-        return piece.keyEvent(stroke);
+        return bigCommand;
     }
 
     public void justRunLines(int savedOption){
@@ -266,11 +261,12 @@ Boolean isThisTheOne = false;
         }
     }
 
-    private void clearVisu() {
+    private FOVisualizationClear clearVisu() {
         getMap().removeDrawComponent(this.fov);
         this.fov.shapes.clear();
         this.fov.lines.clear();
         this.fov.shapesWithText.clear();
+        return new FOVisualizationClear(this.fov.getId());
     }
 
     private void figureOutAutoRange(BumpableWithShape b, ArrayList<RangeFindings> rfindings) {
@@ -1651,21 +1647,76 @@ Boolean isThisTheOne = false;
 
     }
 
+    private static class FOVisualizationClear extends Command {
+
+        private final String id;
+
+        public FOVisualizationClear(String id) {
+            this.id = id;
+        }
+
+        protected void executeCommand() {
+            final VASSAL.build.module.Map map = VASSAL.build.module.Map.getMapById("Map0");
+            FOVisualization component = AutorangeVisualizationEncoder.INSTANCE.getVisualizations().get(this.id);
+            if (component != null) {
+                map.removeDrawComponent(component);
+                AutorangeVisualizationEncoder.INSTANCE.getVisualizations().remove(this.id);
+            }
+        }
+
+        protected Command myUndoCommand() {
+            return null;
+        }
+    }
+
+    public static class FOVisualizationClearEncoder implements CommandEncoder {
+        private static final String prefix = "FoVisClearId=";
+        private static final Logger logger = LoggerFactory.getLogger(FOVisualizationClearEncoder.class);
+
+        public Command decode(String command) {
+            if (command == null || !command.contains(prefix)) {
+                return null;
+            }
+            String id = command.substring(prefix.length());
+            logger.info("Decoded clear visualization with id = {}", id);
+            return new FOVisualizationClear(id);
+        }
+
+        public String encode(Command c) {
+            if(!(c instanceof FOVisualizationClear)) {
+                return null;
+            }
+            FOVisualizationClear visClear = (FOVisualizationClear) c;
+            logger.info("Encoded clear visualization with id = {}", visClear.id);
+            return prefix + visClear.id;
+        }
+    }
+
     private static class FOVisualization extends Command implements Drawable {
 
         private final List<Shape> shapes;
         private final List<ShapeWithText> shapesWithText;
         private final List<MicLine> lines;
+        private final String id;
 
         public Color badLineColor = new Color(0, 121,255,110);
         public Color bestLineColor = new Color(0, 180, 200,255);
         public Color shipsObstaclesColor = new Color(255,99,71, 150);
         public Color arcLineColor = new Color(246, 255, 41,180);
 
-        FOVisualization() {
+        FOVisualization(String id) {
+            this.id = id;
             this.shapes = new ArrayList<Shape>();
             this.lines = new ArrayList<MicLine>();
             this.shapesWithText = new ArrayList<ShapeWithText>();
+        }
+
+        FOVisualization() {
+            this(UUID.randomUUID().toString());
+        }
+
+        public String getId() {
+            return this.id;
         }
 
         public void add(Shape bumpable) {
@@ -1683,15 +1734,11 @@ Boolean isThisTheOne = false;
         protected void executeCommand() {
             final VASSAL.build.module.Map map = VASSAL.build.module.Map.getMapById("Map0");
             int count = getCount();
-            if(count > 0) {
-
+            if (count > 0) {
                 map.addDrawComponent(this);
-                draw(map.getView().getGraphics(), map);
-                //logToChat("executing with " + Integer.toString(count) + " stuff to draw.");
             }
             else {
                 map.removeDrawComponent(FOVisualization.this);
-                //logToChat("removing components with " + Integer.toString(count) + " stuff to draw.");
             }
         }
 
@@ -1793,6 +1840,14 @@ Boolean isThisTheOne = false;
         private static final String partDelim = "!";
         private static final String itemDelim = "\t";
 
+        public static AutorangeVisualizationEncoder INSTANCE = new AutorangeVisualizationEncoder();
+
+        private Map<String, FOVisualization> visualizationsById = Maps.newHashMap();
+
+        public Map<String, FOVisualization> getVisualizations() {
+            return this.visualizationsById;
+        }
+
         public Command decode(String command) {
             if (command == null || !command.contains(commandPrefix)) {
                 return null;
@@ -1804,21 +1859,26 @@ Boolean isThisTheOne = false;
 
             try {
                 String[] parts = command.split(partDelim);
-                FOVisualization visualization = new FOVisualization();
+                if (parts.length != 3) {
+                    throw new IllegalStateException("Invalid command format " + command);
+                }
+                FOVisualization visualization = new FOVisualization(parts[0]);
 
-                String[] encodedLines = parts[0].equals(nullPart) ? new String[0] : parts[0].split(itemDelim);
+                String[] encodedLines = parts[1].equals(nullPart) ? new String[0] : parts[1].split(itemDelim);
                 logger.info("Decoding {} lines", encodedLines.length);
                 for (String base64Line : encodedLines) {
                     MicLine line = (MicLine) deserializeBase64Obj(base64Line);
                     visualization.addLine(line);
                 }
 
-                String[] encodedSwt = parts[1].equals(nullPart) ? new String[0] : parts[1].split(itemDelim);
+                String[] encodedSwt = parts[2].equals(nullPart) ? new String[0] : parts[2].split(itemDelim);
                 logger.info("Decoding {} shapesWithText", encodedLines.length);
                 for (String base64Shape : encodedSwt) {
                     ShapeWithText swt = (ShapeWithText) deserializeBase64Obj(base64Shape);
                     visualization.addShapeWithText(swt);
                 }
+
+                this.visualizationsById.put(visualization.getId(), visualization);
 
                 logger.info("Decoded AutorangeVisualization with {} shapes", visualization.getShapes().size());
                 return visualization;
@@ -1847,7 +1907,7 @@ Boolean isThisTheOne = false;
                 }
                 String linesPart = lines.size() > 0 ? Joiner.on(itemDelim).join(lines) : null;
                 String swtPart = shapesWithText.size() > 0 ? Joiner.on(itemDelim).join(shapesWithText) : null;
-                return commandPrefix + Joiner.on(partDelim).useForNull(nullPart).join(linesPart, swtPart);
+                return commandPrefix + Joiner.on(partDelim).useForNull(nullPart).join(visualization.getId(), linesPart, swtPart);
             } catch (Exception e) {
                 logger.error("Error encoding autorange visualization", e);
                 return null;
