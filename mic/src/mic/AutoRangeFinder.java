@@ -1625,7 +1625,7 @@ Boolean isThisTheOne = false;
     }
 
     public void mouseDragged(MouseEvent e) {
-        if(DEBUGMODE == false) return;
+        if( DEBUGMODE == false) return;
         if(isThisTheOne == false) return;
 
         Point p = e.getPoint();
@@ -1657,10 +1657,10 @@ Boolean isThisTheOne = false;
 
         protected void executeCommand() {
             final VASSAL.build.module.Map map = VASSAL.build.module.Map.getMapById("Map0");
-            FOVisualization component = AutorangeVisualizationEncoder.INSTANCE.getVisualizations().get(this.id);
+            FOVisualization component = FOVisualization.AutorangeVisualizationEncoder.INSTANCE.getVisualizations().get(this.id);
             if (component != null) {
                 map.removeDrawComponent(component);
-                AutorangeVisualizationEncoder.INSTANCE.getVisualizations().remove(this.id);
+                FOVisualization.AutorangeVisualizationEncoder.INSTANCE.getVisualizations().remove(this.id);
             }
         }
 
@@ -1669,30 +1669,9 @@ Boolean isThisTheOne = false;
         }
     }
 
-    public static class FOVisualizationClearEncoder implements CommandEncoder {
-        private static final String prefix = "FoVisClearId=";
-        private static final Logger logger = LoggerFactory.getLogger(FOVisualizationClearEncoder.class);
 
-        public Command decode(String command) {
-            if (command == null || !command.contains(prefix)) {
-                return null;
-            }
-            String id = command.substring(prefix.length());
-            logger.info("Decoded clear visualization with id = {}", id);
-            return new FOVisualizationClear(id);
-        }
 
-        public String encode(Command c) {
-            if(!(c instanceof FOVisualizationClear)) {
-                return null;
-            }
-            FOVisualizationClear visClear = (FOVisualizationClear) c;
-            logger.info("Encoded clear visualization with id = {}", visClear.id);
-            return prefix + visClear.id;
-        }
-    }
-
-    private static class FOVisualization extends Command implements Drawable {
+    public static class FOVisualization extends Command implements Drawable {
 
         private final List<Shape> shapes;
         private final List<ShapeWithText> shapesWithText;
@@ -1833,89 +1812,114 @@ Boolean isThisTheOne = false;
         public boolean drawAboveCounters() {
             return true;
         }
+
+        public static class AutorangeVisualizationEncoder implements CommandEncoder {
+            private static final Logger logger = LoggerFactory.getLogger(AutoRangeFinder.class);
+            private static final String commandPrefix = "AutorangeVisualizationEncoder=";
+            private static final String nullPart = "nullPart";
+            private static final String partDelim = "!";
+            private static final String itemDelim = "\t";
+
+            public static AutorangeVisualizationEncoder INSTANCE = new AutorangeVisualizationEncoder();
+
+            private Map<String, FOVisualization> visualizationsById = Maps.newHashMap();
+
+            public Map<String, FOVisualization> getVisualizations() {
+                return this.visualizationsById;
+            }
+
+            public Command decode(String command) {
+                if (command == null || !command.contains(commandPrefix)) {
+                    return null;
+                }
+
+                logger.info("Decoding AutorangeVisualization");
+
+                command = command.substring(commandPrefix.length());
+
+                try {
+                    String[] parts = command.split(partDelim);
+                    if (parts.length != 3) {
+                        throw new IllegalStateException("Invalid command format " + command);
+                    }
+                    FOVisualization visualization = new FOVisualization(parts[0]);
+
+                    String[] encodedLines = parts[1].equals(nullPart) ? new String[0] : parts[1].split(itemDelim);
+                    logger.info("Decoding {} lines", encodedLines.length);
+                    for (String base64Line : encodedLines) {
+                        MicLine line = (MicLine) deserializeBase64Obj(base64Line);
+                        visualization.addLine(line);
+                    }
+
+                    String[] encodedSwt = parts[2].equals(nullPart) ? new String[0] : parts[2].split(itemDelim);
+                    logger.info("Decoding {} shapesWithText", encodedLines.length);
+                    for (String base64Shape : encodedSwt) {
+                        ShapeWithText swt = (ShapeWithText) deserializeBase64Obj(base64Shape);
+                        visualization.addShapeWithText(swt);
+                    }
+
+                    this.visualizationsById.put(visualization.getId(), visualization);
+
+                    logger.info("Decoded AutorangeVisualization with {} shapes", visualization.getShapes().size());
+                    return visualization;
+                } catch (Exception e) {
+                    logger.error("Error decoding AutorangeVisualization", e);
+                    return null;
+                }
+            }
+
+            public String encode(Command c) {
+                if (!(c instanceof FOVisualization)) {
+                    return null;
+                }
+                logger.info("Encoding autorange visualization");
+                FOVisualization visualization = (FOVisualization) c;
+                try {
+                    List<String> lines = Lists.newArrayList();
+                    logger.info("Encoding {} lines", visualization.getMicLines().size());
+                    for (MicLine line : visualization.getMicLines()) {
+                        lines.add(serializeToBase64(line));
+                    }
+                    List<String> shapesWithText = Lists.newArrayList();
+                    logger.info("Encoding {} shapesWithText", visualization.getTextShapes().size());
+                    for(ShapeWithText swt : visualization.getTextShapes()) {
+                        shapesWithText.add(serializeToBase64(swt));
+                    }
+                    String linesPart = lines.size() > 0 ? Joiner.on(itemDelim).join(lines) : null;
+                    String swtPart = shapesWithText.size() > 0 ? Joiner.on(itemDelim).join(shapesWithText) : null;
+                    return commandPrefix + Joiner.on(partDelim).useForNull(nullPart).join(visualization.getId(), linesPart, swtPart);
+                } catch (Exception e) {
+                    logger.error("Error encoding autorange visualization", e);
+                    return null;
+                }
+            }
+        }
+
+        public static class FOVisualizationClearEncoder implements CommandEncoder {
+            private static final String prefix = "FoVisClearId=";
+            private static final Logger logger = LoggerFactory.getLogger(FOVisualizationClearEncoder.class);
+
+            public Command decode(String command) {
+                if (command == null || !command.contains(prefix)) {
+                    return null;
+                }
+                String id = command.substring(prefix.length());
+                logger.info("Decoded clear visualization with id = {}", id);
+                return new FOVisualizationClear(id);
+            }
+
+            public String encode(Command c) {
+                if(!(c instanceof FOVisualizationClear)) {
+                    return null;
+                }
+                FOVisualizationClear visClear = (FOVisualizationClear) c;
+                logger.info("Encoded clear visualization with id = {}", visClear.id);
+                return prefix + visClear.id;
+            }
+        }
     }
 
-    public static class AutorangeVisualizationEncoder implements CommandEncoder {
-        private static final Logger logger = LoggerFactory.getLogger(AutoRangeFinder.class);
-        private static final String commandPrefix = "AutorangeVisualizationEncoder=";
-        private static final String nullPart = "nullPart";
-        private static final String partDelim = "!";
-        private static final String itemDelim = "\t";
 
-        public static AutorangeVisualizationEncoder INSTANCE = new AutorangeVisualizationEncoder();
-
-        private Map<String, FOVisualization> visualizationsById = Maps.newHashMap();
-
-        public Map<String, FOVisualization> getVisualizations() {
-            return this.visualizationsById;
-        }
-
-        public Command decode(String command) {
-            if (command == null || !command.contains(commandPrefix)) {
-                return null;
-            }
-
-            logger.info("Decoding AutorangeVisualization");
-
-            command = command.substring(commandPrefix.length());
-
-            try {
-                String[] parts = command.split(partDelim);
-                if (parts.length != 3) {
-                    throw new IllegalStateException("Invalid command format " + command);
-                }
-                FOVisualization visualization = new FOVisualization(parts[0]);
-
-                String[] encodedLines = parts[1].equals(nullPart) ? new String[0] : parts[1].split(itemDelim);
-                logger.info("Decoding {} lines", encodedLines.length);
-                for (String base64Line : encodedLines) {
-                    MicLine line = (MicLine) deserializeBase64Obj(base64Line);
-                    visualization.addLine(line);
-                }
-
-                String[] encodedSwt = parts[2].equals(nullPart) ? new String[0] : parts[2].split(itemDelim);
-                logger.info("Decoding {} shapesWithText", encodedLines.length);
-                for (String base64Shape : encodedSwt) {
-                    ShapeWithText swt = (ShapeWithText) deserializeBase64Obj(base64Shape);
-                    visualization.addShapeWithText(swt);
-                }
-
-                this.visualizationsById.put(visualization.getId(), visualization);
-
-                logger.info("Decoded AutorangeVisualization with {} shapes", visualization.getShapes().size());
-                return visualization;
-            } catch (Exception e) {
-                logger.error("Error decoding AutorangeVisualization", e);
-                return null;
-            }
-        }
-
-        public String encode(Command c) {
-            if (!(c instanceof FOVisualization)) {
-                return null;
-            }
-            logger.info("Encoding autorange visualization");
-            FOVisualization visualization = (FOVisualization) c;
-            try {
-                List<String> lines = Lists.newArrayList();
-                logger.info("Encoding {} lines", visualization.getMicLines().size());
-                for (MicLine line : visualization.getMicLines()) {
-                    lines.add(serializeToBase64(line));
-                }
-                List<String> shapesWithText = Lists.newArrayList();
-                logger.info("Encoding {} shapesWithText", visualization.getTextShapes().size());
-                for(ShapeWithText swt : visualization.getTextShapes()) {
-                    shapesWithText.add(serializeToBase64(swt));
-                }
-                String linesPart = lines.size() > 0 ? Joiner.on(itemDelim).join(lines) : null;
-                String swtPart = shapesWithText.size() > 0 ? Joiner.on(itemDelim).join(shapesWithText) : null;
-                return commandPrefix + Joiner.on(partDelim).useForNull(nullPart).join(visualization.getId(), linesPart, swtPart);
-            } catch (Exception e) {
-                logger.error("Error encoding autorange visualization", e);
-                return null;
-            }
-        }
-    }
 
     public static class ShapeWithText implements Serializable {
         public String rangeString = "Range ";
