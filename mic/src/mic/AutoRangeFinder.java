@@ -1771,6 +1771,7 @@ Boolean isThisTheOne = false;
                 drawText(line.rangeString, scale, line.centerX, line.centerY, graphics2D);
             }
             graphics2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING, prevAntiAliasing);
+            map.repaint(true);
         }
 
 
