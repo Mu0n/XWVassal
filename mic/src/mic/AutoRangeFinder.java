@@ -305,57 +305,57 @@ whichOption = savedOption;
         RangeFindings found = new RangeFindings(bestLine.rangeLength, bShipName);
 
 
-            //deal with the case where's there no chance of having multiple best lines first
-            if ((!isTargetOutsideofRectangles(thisShip, b, true) && are90degreesAligned(thisShip, b) == false) ||
-                    isTargetOutsideofRectangles(thisShip, b, true)) {
-                //TO DO: replace with a different range cap later, associated with the type of arc (for huge ships)
-                if (bestLine.rangeLength > 3) return;
+        //deal with the case where's there no chance of having multiple best lines first
+        if ((!isTargetOutsideofRectangles(thisShip, b, true) && are90degreesAligned(thisShip, b) == false) ||
+                isTargetOutsideofRectangles(thisShip, b, true)) {
+            //TO DO: replace with a different range cap later, associated with the type of arc (for huge ships)
+            if (bestLine.rangeLength > 3) return;
 
-                //find if there's an obstruction
-                List<BumpableWithShape> obstructions = getObstructionsOnMap();
-                for (BumpableWithShape obstruction : obstructions) {
-                    if (isLine2DOverlapShape(bestLine.line, obstruction.shape)) {
-                        bestLine.rangeString += " obstructed";
-                        fov.add(obstruction.shape);
-                        found.isObstructed = true;
-                        break;
-                    }
+            //find if there's an obstruction
+            List<BumpableWithShape> obstructions = getObstructionsOnMap();
+            for (BumpableWithShape obstruction : obstructions) {
+                if (isLine2DOverlapShape(bestLine.line, obstruction.shape)) {
+                    bestLine.rangeString += " obstructed";
+                    fov.add(obstruction.shape);
+                    found.isObstructed = true;
+                    break;
                 }
-
-                rfindings.add(found);
-                fov.addLine(bestLine);
-            } else { //multiple lines case
-                int quickDist = (int) Math.ceil(Math.sqrt(Math.pow(A1.getX() - D1.getX(), 2.0) + Math.pow(A1.getY() - D1.getY(), 2.0)) / 282.5);
-                if (quickDist > 3) return;
-
-                double wantedWidth = 0.0;
-                if (whichOption == turretArcOption) wantedWidth = thisShip.getChassisWidth();
-                else wantedWidth = thisShip.getChassisWidth() - thisShip.chassis.getCornerToFiringArc() * 2.0;
-
-                Shape fromShip = findInBetweenRectangle(thisShip, b, wantedWidth, whichOption); //use only the sides you need
-                Shape fromTarget = findInBetweenRectangle(b, thisShip, b.getChassisWidth(), turretArcOption); //use all 4 sides
-
-                if (fromShip == null) return;
-                Area a1 = new Area(fromShip);
-                Area a2 = new Area(fromTarget);
-                a1.intersect(a2);
-
-                //TO DO:
-                //Initial step: if an obstacle intersects this rectangle, get this rectangular shape and find its 2 lengthwise edges
-                //case 1: the 2 lines intersect the SAME obstacle. Then, no chance of finding a non-obstructed line. Case closed
-                //case 2: if the 2 lines are crossed by different obstacles, then ray-cast all the possible lines and check for an obstacle free line
-                double extra = getExtraAngleDuringRectDetection(thisShip, b);
-                ShapeWithText bestBand = new ShapeWithText(a1, thisShip.getAngleInRadians() + extra);
-                rfindings.add(found);
-                fov.addShapeWithText(bestBand);
             }
 
+            rfindings.add(found);
+            fov.addLine(bestLine);
+        }
+        else {
+            //multiple lines case
+            int quickDist = (int) Math.ceil(Math.sqrt(Math.pow(A1.getX() - D1.getX(), 2.0) + Math.pow(A1.getY() - D1.getY(), 2.0)) / 282.5);
+            if (quickDist > 3) return;
+
+            double wantedWidth = 0.0;
+            if (whichOption == turretArcOption) wantedWidth = thisShip.getChassisWidth();
+            else wantedWidth = thisShip.getChassisWidth() - thisShip.chassis.getCornerToFiringArc() * 2.0;
+
+            Shape fromShip = findInBetweenRectangle(thisShip, b, wantedWidth, whichOption); //use only the sides you need
+            Shape fromTarget = findInBetweenRectangle(b, thisShip, b.getChassisWidth(), turretArcOption); //use all 4 sides
+
+            if (fromShip == null) return;
+            Area a1 = new Area(fromShip);
+            Area a2 = new Area(fromTarget);
+            a1.intersect(a2);
+
+            //TO DO:
+            //Initial step: if an obstacle intersects this rectangle, get this rectangular shape and find its 2 lengthwise edges
+            //case 1: the 2 lines intersect the SAME obstacle. Then, no chance of finding a non-obstructed line. Case closed
+            //case 2: if the 2 lines are crossed by different obstacles, then ray-cast all the possible lines and check for an obstacle free line
+            double extra = getExtraAngleDuringRectDetection(thisShip, b);
+            ShapeWithText bestBand = new ShapeWithText(a1, thisShip.getAngleInRadians() + extra);
+            rfindings.add(found);
+            fov.addShapeWithText(bestBand);
+        }
     }
 
     private MicLine findBestLineInMobileArc(Point2D.Double D1, Point2D.Double D2, Point2D.Double D3, int rangeInt) {
-    MicLine best = null;
-    return best;
-
+        MicLine best = null;
+        return best;
     }
 
     private MicLine findBestLineInFrontAuxArcs(Point2D.Double D1, Point2D.Double D2, Point2D.Double D3, int rangeInt) {
