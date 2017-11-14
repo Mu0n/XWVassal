@@ -1719,6 +1719,7 @@ Boolean isThisTheOne = false;
             else {
                 map.removeDrawComponent(FOVisualization.this);
             }
+            map.repaint();
         }
 
         protected Command myUndoCommand() {
