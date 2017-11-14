@@ -1749,6 +1749,9 @@ Boolean isThisTheOne = false;
         public void draw(Graphics graphics, VASSAL.build.module.Map map) {
             Graphics2D graphics2D = (Graphics2D) graphics;
 
+            Object prevAntiAliasing = graphics2D.getRenderingHint(RenderingHints.KEY_ANTIALIASING);
+            graphics2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
             double scale = map.getZoom();
             AffineTransform scaler = AffineTransform.getScaleInstance(scale, scale);
 
@@ -1761,14 +1764,8 @@ Boolean isThisTheOne = false;
             for(ShapeWithText SWT : shapesWithText){
                 graphics2D.setColor(badLineColor);
                 graphics2D.fill(scaler.createTransformedShape(SWT.shape));
-                graphics2D.setFont(new Font("Arial",0,42));
-                graphics2D.setColor(bestLineColor);
-                Shape textShape = getTextShape(graphics2D, SWT.rangeString, graphics2D.getFont(), true);
-                textShape = AffineTransform.getTranslateInstance(SWT.x, SWT.y)
-                        .createTransformedShape(textShape);
-                textShape = AffineTransform.getScaleInstance(scale, scale)
-                        .createTransformedShape(textShape);
-                graphics2D.draw(textShape);
+
+                drawText(SWT.rangeString, scale, SWT.x, SWT.y + 80, graphics2D);
             }
 
             int colorNb = 100;
@@ -1792,33 +1789,38 @@ Boolean isThisTheOne = false;
                 Line2D.Double lineShape = new Line2D.Double(line.first, line.second);
                 graphics2D.draw(scaler.createTransformedShape(lineShape));
 
-                //create a shape in the form of the string that's needed
-                graphics2D.setFont(new Font("Arial",0,42));
-                Shape textShape = getTextShape(graphics2D, line.rangeString, graphics2D.getFont(), true);
-
-                //transform the textShape into place, near the center of the line
-                textShape = AffineTransform.getTranslateInstance(line.centerX, line.centerY)
-                        .createTransformedShape(textShape);
-                textShape = AffineTransform.getScaleInstance(scale, scale)
-                        .createTransformedShape(textShape);
-                graphics2D.draw(textShape);
-
+                drawText(line.rangeString, scale, line.centerX, line.centerY, graphics2D);
             }
+            graphics2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING, prevAntiAliasing);
         }
 
-        public static Shape getTextShape(Graphics2D g2d, String text, Font font, boolean ltr) {
+
+        private static void drawText(String text, double scale, double x, double y, Graphics2D graphics2D) {
             AttributedString attstring = new AttributedString(text);
-            attstring.addAttribute(TextAttribute.FONT, font);
-            attstring.addAttribute(TextAttribute.RUN_DIRECTION, ltr ? TextAttribute.RUN_DIRECTION_LTR : TextAttribute.RUN_DIRECTION_RTL);
-            FontRenderContext frc = g2d.getFontRenderContext();
+            attstring.addAttribute(TextAttribute.FONT, new Font("Arial", 0,55));
+            attstring.addAttribute(TextAttribute.RUN_DIRECTION, TextAttribute.RUN_DIRECTION_LTR);
+            FontRenderContext frc = graphics2D.getFontRenderContext();
             TextLayout t = new TextLayout(attstring.getIterator(), frc);
-            return t.getOutline(null);
+            Shape textShape = t.getOutline(null);
+
+            textShape = AffineTransform.getTranslateInstance(x, y)
+                    .createTransformedShape(textShape);
+            textShape = AffineTransform.getScaleInstance(scale, scale)
+                    .createTransformedShape(textShape);
+            graphics2D.setColor(Color.white);
+            graphics2D.fill(textShape);
+
+            if (scale > 0.60) {
+                // stroke makes it muddy at low scale
+                graphics2D.setColor(Color.black);
+                graphics2D.setStroke(new BasicStroke(0.8f));
+                graphics2D.draw(textShape);
+            }
         }
 
         public List<Shape> getShapes() {
             return this.shapes;
         }
-
 
         public List<ShapeWithText> getTextShapes() {
             return this.shapesWithText;
