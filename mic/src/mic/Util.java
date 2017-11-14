@@ -2,8 +2,7 @@ package mic;
 
 import java.awt.*;
 import java.awt.geom.*;
-import java.io.BufferedInputStream;
-import java.io.InputStream;
+import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
@@ -23,6 +22,7 @@ import VASSAL.build.module.GlobalOptions;
 import VASSAL.build.module.PlayerRoster;
 import VASSAL.build.widget.PieceSlot;
 import VASSAL.command.Command;
+import org.apache.commons.codec.binary.Base64;
 
 /**
  * Created by amatheny on 2/9/17.
@@ -304,5 +304,22 @@ public class Util {
         public String toString() {
             return String.format("side=%s, id=%s, name=%s", this.side, this.id, this.name);
         }
+    }
+
+    public static String serializeToBase64(Serializable obj) throws Exception {
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        ObjectOutputStream out = new ObjectOutputStream(bos);
+        out.writeObject(obj);
+        out.close();
+        byte[] bytes = bos.toByteArray();
+        return org.apache.commons.codec.binary.Base64.encodeBase64String(bytes);
+    }
+
+    public static Object deserializeBase64Obj(String base64) throws Exception {
+        ByteArrayInputStream strIn = new ByteArrayInputStream(org.apache.commons.codec.binary.Base64.decodeBase64(base64));
+        ObjectInputStream in = new ObjectInputStream(strIn);
+        Object obj = in.readObject();
+        in.close();
+        return obj;
     }
 }
