@@ -341,7 +341,7 @@ Boolean isThisTheOne = false;
             //case 1: the 2 lines intersect the SAME obstacle. Then, no chance of finding a non-obstructed line. Case closed
             //case 2: if the 2 lines are crossed by different obstacles, then ray-cast all the possible lines and check for an obstacle free line
             double extra = getExtraAngleDuringRectDetection(thisShip, b);
-            ShapeWithText bestBand = new ShapeWithText(a1.getBounds2D(), thisShip.getAngleInRadians() + extra);
+            ShapeWithText bestBand = new ShapeWithText(new Path2D.Double(a1), thisShip.getAngleInRadians() + extra);
             rfindings.add(found);
             fov.addShapeWithText(bestBand);
         }
