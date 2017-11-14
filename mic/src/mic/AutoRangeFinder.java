@@ -231,8 +231,8 @@ Boolean isThisTheOne = false;
         return piece.keyEvent(stroke);
     }
 
-public void justRunLines(int savedOption){
-whichOption = savedOption;
+    public void justRunLines(int savedOption){
+        whichOption = savedOption;
         ArrayList<RangeFindings> rfindings = new ArrayList<RangeFindings>();
         //if the firing options were already activated, remove the visuals and exit right away
         if (this.fov != null && this.fov.getCount() > 0) {
@@ -251,8 +251,6 @@ whichOption = savedOption;
         //Loop over every other target ship
         List<BumpableWithShape> BWS = getOtherShipsOnMap();
         for (BumpableWithShape b : BWS) {
-
-
             //Preliminary check, eliminate attempt to calculate this if the target is overlapping the attacker, could lead to exception error
             if (shapesOverlap(thisShip.shape, b.shape)) continue;
             findAttackerBestPoints(b);
@@ -661,8 +659,6 @@ whichOption = savedOption;
     }
 
     private void findAttackerBestPoints(BumpableWithShape b) {
-
-
         if(whichOption == turretArcOption) {
             A1 = findClosestVertex(thisShip, b);
             A2 = find2ndClosestVertex(thisShip, b);
@@ -708,7 +704,7 @@ whichOption = savedOption;
             try{
                 sideCheck = ((Decorator) piece).getDecorator(piece,piece.getClass()).getProperty("whichShape").toString();
             } catch (Exception e){
-logToChat("tried to find a mobile turret definition, couldn't.");
+                logToChat("tried to find a mobile turret definition, couldn't.");
             }
             if(sideCheck.equals("4")) {
                 //left side check
@@ -802,8 +798,7 @@ logToChat("tried to find a mobile turret definition, couldn't.");
     }
 
 
-    private Boolean isRangeOk(MicLine theLine, int rangeMin, int rangeMax)
-    {
+    private Boolean isRangeOk(MicLine theLine, int rangeMin, int rangeMax) {
         if(theLine == null) return false;
         double minPixelDist = rangeMin * 282.5 - 282.5;
         double maxPixelDist = rangeMax * 282.5;
@@ -827,7 +822,7 @@ logToChat("tried to find a mobile turret definition, couldn't.");
         double dist1 = Math.sqrt(Math.pow(xp - x1, 2.0) + Math.pow(yp - y1, 2.0));
         double dist2 = Math.sqrt(Math.pow(xp - x2, 2.0) + Math.pow(yp - y2, 2.0));
         double distaa = Math.sqrt(Math.pow(x2 - x1, 2.0) + Math.pow(y2 - y1, 2.0));
-//is the point used in D1AA between A1 and A2?
+        //is the point used in D1AA between A1 and A2?
         if(Double.compare(distaa,dist1) > 0 && Double.compare(distaa,dist2) > 0) return true;
         return false;
     }
@@ -1129,6 +1124,7 @@ logToChat("tried to find a mobile turret definition, couldn't.");
         }
         return Math.atan2(deltaY, deltaX) + Math.PI;
     }
+
     private MicLine createLineAAtoD1(MicLine A1D1, MicLine AA, Point2D.Double D1)
     {
         //Find A1 again
@@ -1395,8 +1391,9 @@ logToChat("tried to find a mobile turret definition, couldn't.");
         Shape crossZone = findUnionOfRectangularExtensions(thisShip, wantBoost);
         return !shapesOverlap(crossZone, targetBWS.shape);
     }
+
     public  java.util.List<BumpableWithShape> getObstructionsOnMap() {
-        java.util.List<BumpableWithShape> bumpables = Lists.newArrayList();
+        List<BumpableWithShape> bumpables = Lists.newArrayList();
 
         GamePiece[] pieces = getMap().getAllPieces();
         for (GamePiece piece : pieces) {
@@ -1634,21 +1631,20 @@ logToChat("tried to find a mobile turret definition, couldn't.");
     public void mouseDragged(MouseEvent e) {
         if(DEBUGMODE == false) return;
         if(isThisTheOne == false) return;
-            Point p = e.getPoint();
-            map.scrollAtEdge(p, 15);
 
-            Point mapAnchor = lastAnchor;
+        Point p = e.getPoint();
+        map.scrollAtEdge(p, 15);
 
-            int fudge = this.piece.getShape().getBounds().width * 12;
+        Point mapAnchor = lastAnchor;
 
-            this.piece.setPosition(p);
-            Rectangle r = new Rectangle(this.piece.getPosition().x-fudge,
-                    this.piece.getPosition().y-fudge,
-                    this.piece.getShape().getBounds().width+fudge*2,
-                    this.piece.getShape().getBounds().height+fudge*2);
-            map.repaint(r);
+        int fudge = this.piece.getShape().getBounds().width * 12;
 
-
+        this.piece.setPosition(p);
+        Rectangle r = new Rectangle(this.piece.getPosition().x-fudge,
+                this.piece.getPosition().y-fudge,
+                this.piece.getShape().getBounds().width+fudge*2,
+                this.piece.getShape().getBounds().height+fudge*2);
+        map.repaint(r);
     }
 
     public void mouseMoved(MouseEvent e) {
@@ -1735,15 +1731,15 @@ logToChat("tried to find a mobile turret definition, couldn't.");
 
                 if(line.isArcLine == true) graphics2D.setColor(arcLineColor);
 
-/*ALLLines COlor Hijack*/
-if(line.markedAsDead == true) graphics2D.setColor(new Color(255,0,0,255));
-else {
-    Color gradiant = new Color(colorNb, colorNb, 255, 255);
-    colorNb += 20;
-    graphics2D.setColor(gradiant);
-}
-if(line.isBestLine == true && line.markedAsDead == false) graphics2D.setColor(new Color(200, 18, 194,255));
-  /*end*/
+                /*ALLLines COlor Hijack*/
+                if(line.markedAsDead == true) graphics2D.setColor(new Color(255,0,0,255));
+                else {
+                    Color gradiant = new Color(colorNb, colorNb, 255, 255);
+                    colorNb += 20;
+                    graphics2D.setColor(gradiant);
+                }
+                if(line.isBestLine == true && line.markedAsDead == false) graphics2D.setColor(new Color(200, 18, 194,255));
+                  /*end*/
 
 
                 Line2D.Double lineShape = new Line2D.Double(line.first, line.second);
@@ -1753,7 +1749,7 @@ if(line.isBestLine == true && line.markedAsDead == false) graphics2D.setColor(ne
                 graphics2D.setFont(new Font("Arial",0,42));
                 Shape textShape = getTextShape(graphics2D, line.rangeString, graphics2D.getFont(), true);
 
-//transform the textShape into place, near the center of the line
+                //transform the textShape into place, near the center of the line
                 textShape = AffineTransform.getTranslateInstance(line.centerX, line.centerY)
                         .createTransformedShape(textShape);
                 textShape = AffineTransform.getScaleInstance(scale, scale)
@@ -1762,6 +1758,7 @@ if(line.isBestLine == true && line.markedAsDead == false) graphics2D.setColor(ne
 
             }
         }
+
         public static Shape getTextShape(Graphics2D g2d, String text, Font font, boolean ltr) {
             AttributedString attstring = new AttributedString(text);
             attstring.addAttribute(TextAttribute.FONT, font);
