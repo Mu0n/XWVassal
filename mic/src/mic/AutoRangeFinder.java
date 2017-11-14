@@ -1744,7 +1744,7 @@ Boolean isThisTheOne = false;
                 graphics2D.setColor(badLineColor);
                 graphics2D.fill(scaler.createTransformedShape(SWT.shape));
 
-                drawText(SWT.rangeString, scale, SWT.x, SWT.y + 80, graphics2D);
+                drawText(SWT.rangeString, scale, SWT.x, SWT.y, graphics2D);
             }
 
             int colorNb = 100;
@@ -1925,7 +1925,8 @@ Boolean isThisTheOne = false;
         public String rangeString = "Range ";
         public int rangeLength = 0;
         public Shape shape;
-        public int x, y;
+        public double x;
+        public double y;
         //angle should be the calling detection angle for the multiple best line case, but add an extra angle to account for
         //if it's the right, left or bottom band required.
         public double angle = 0.0;
@@ -1935,19 +1936,15 @@ Boolean isThisTheOne = false;
             this.angle = angle;
             rangeLength = (int)Math.ceil(((double)calculateRange()/282.5));
             rangeString += Integer.toString(rangeLength);
-            this.x = shape.getBounds().x;
-            this.y = shape.getBounds().y;
+            this.x = shape.getBounds().getCenterX();
+            this.y = shape.getBounds().getCenterY();
         }
 
         private int calculateRange() {
-            Shape temp = this.shape;
-            double centerX = shape.getBounds().getCenterX();
-            double centerY = shape.getBounds().getCenterY();
-
             //unrotate the shape so we can get the range through its width
-            temp = AffineTransform
-                    .getRotateInstance(-angle, centerX, centerY)
-                    .createTransformedShape(temp);
+            Shape temp = AffineTransform
+                    .getRotateInstance(-angle, this.x, this.y)
+                    .createTransformedShape(this.shape);
 
             return (int)temp.getBounds().getWidth();
         }
