@@ -61,14 +61,14 @@ Integer savedOption = 0;
                 } catch (Exception e) {
                 }
             }
-        }, 0,8);
+        }, 0,60);
     }
 }
 
 public class AutoRangeFinder extends Decorator implements EditablePiece, MouseListener, MouseMotionListener {
 
     private static Boolean DEBUGMODE = false;
-    private static Boolean MULTILINES = false;
+    private static Boolean MULTILINES = true;
 
     protected VASSAL.build.module.Map map;
     private static final int frontArcOption = 1;
@@ -186,7 +186,7 @@ Boolean isThisTheOne = false;
 
             //if the firing options were already activated, remove the visuals and exit right away
             if (this.fov != null && this.fov.getCount() > 0) {
-                bigCommand.append(clearVisu());
+                bigCommand.append(clearVisu(map));
                 this.fov.execute();
                 return bigCommand;
             }
@@ -218,7 +218,7 @@ Boolean isThisTheOne = false;
             }
         } else if (KeyStroke.getKeyStroke(KeyEvent.VK_D, KeyEvent.CTRL_DOWN_MASK, false).equals(stroke)) {
             if (this.fov != null && this.fov.getCount() > 0) {
-                bigCommand.append(clearVisu());
+                bigCommand.append(clearVisu(map));
                 this.fov.execute();
             }
         }
@@ -232,7 +232,7 @@ Boolean isThisTheOne = false;
         //if the firing options were already activated, remove the visuals and exit right away
         if (this.fov != null && this.fov.getCount() > 0) {
             //logToChatCommand("toggle off");
-            clearVisu();
+            clearVisu(map);
             this.fov.execute();
             return;
         }
@@ -261,12 +261,15 @@ Boolean isThisTheOne = false;
         }
     }
 
-    private FOVisualizationClear clearVisu() {
-        getMap().removeDrawComponent(this.fov);
-        this.fov.shapes.clear();
-        this.fov.lines.clear();
-        this.fov.shapesWithText.clear();
-        return new FOVisualizationClear(this.fov.getId());
+    private FOVisualizationClear clearVisu(VASSAL.build.module.Map itsMap) {
+        if(this.fov != null) {
+            itsMap.removeDrawComponent(this.fov);
+            this.fov.shapes.clear();
+            this.fov.lines.clear();
+            this.fov.shapesWithText.clear();
+            return new FOVisualizationClear(this.fov.getId());
+        }
+        return null;
     }
 
     private void figureOutAutoRange(BumpableWithShape b, ArrayList<RangeFindings> rfindings) {
@@ -280,6 +283,8 @@ Boolean isThisTheOne = false;
                 bestLine = findBestLine(D1, D2, 3);
                 break;
             case frontArcOption:
+                bestLine = findBestLineInSimpleArcs(D1, D2, D3, 3);
+                break;
             case backArcOption:
                 bestLine = findBestLineInSimpleArcs(D1, D2, D3, 3);
                 break;
@@ -321,7 +326,7 @@ Boolean isThisTheOne = false;
         }
         else {
             //multiple lines case
-            int quickDist = (int) Math.ceil(Math.sqrt(Math.pow(A1.getX() - D1.getX(), 2.0) + Math.pow(A1.getY() - D1.getY(), 2.0)) / 282.5);
+            int quickDist = (int)Math.ceil(((double)getLengthOfLinePtoAB(A1, D1, D2)/282.5));
             if (quickDist > 3) return;
 
             double wantedWidth = 0.0;
@@ -331,7 +336,7 @@ Boolean isThisTheOne = false;
             Shape fromShip = findInBetweenRectangle(thisShip, b, wantedWidth, whichOption); //use only the sides you need
             Shape fromTarget = findInBetweenRectangle(b, thisShip, b.getChassisWidth(), turretArcOption); //use all 4 sides
 
-            if (fromShip == null) return;
+            if (fromShip == null || fromTarget == null) return;
             Area a1 = new Area(fromShip);
             Area a2 = new Area(fromTarget);
             a1.intersect(a2);
@@ -544,7 +549,7 @@ Boolean isThisTheOne = false;
 
 
     private MicLine vetThisLine(MicLine A1D1, String label, double v) {
-        if(DEBUGMODE == false) return A1D1;
+        if(A1D1 == null || DEBUGMODE == false) return A1D1;
         return new MicLine(A1D1.first, A1D1.second, A1D1.markedAsDead, label, v);
     }
 
@@ -1101,8 +1106,18 @@ Boolean isThisTheOne = false;
         double firstArcEdgePolarAngle = getEdgeAngle(leftMostStart, leftMostEnd) - fudgefactor; //edge most counter-clockwise
         double secondArcEdgePolarAngle = getEdgeAngle(rightMostStart, rightMostEnd) + fudgefactor; //edge most clockwise
 
-        double bestLinePolarAngle = getEdgeAngle(theCandidateLine.first, theCandidateLine.second);
+        double firstAdjustment = 0.0;
+        if(Double.compare(firstArcEdgePolarAngle, 0.0 + fudgefactor) > 0 && Double.compare(firstArcEdgePolarAngle, Math.PI + fudgefactor) < 0) firstAdjustment = -Math.PI;
+        firstArcEdgePolarAngle += firstAdjustment;
+        secondArcEdgePolarAngle += firstAdjustment;
 
+        double bestLinePolarAngle = getEdgeAngle(theCandidateLine.first, theCandidateLine.second);
+        bestLinePolarAngle += firstAdjustment;
+
+        if(Double.compare(secondArcEdgePolarAngle, -Math.PI + fudgefactor) < 0) secondArcEdgePolarAngle += 2.0*Math.PI;
+        if(Double.compare(bestLinePolarAngle, -Math.PI + fudgefactor) < 0 ) bestLinePolarAngle += 2.0*Math.PI;
+
+        //logToChat("1: " + Double.toString(firstArcEdgePolarAngle) + " line: " + Double.toString(bestLinePolarAngle) + " 2: " + Double.toString(secondArcEdgePolarAngle));
        if(Double.compare(bestLinePolarAngle, firstArcEdgePolarAngle) < 0 || Double.compare(bestLinePolarAngle, secondArcEdgePolarAngle) > 0)
             return false;
         return true;
@@ -1112,13 +1127,7 @@ Boolean isThisTheOne = false;
         double deltaX = end.x - start.x;
         double deltaY = end.y - start.y;
 
-        //returns a polar angle in rad, keeps it positive for easy ordering (might not be necessary)
-        if(whichOption == frontAuxArcOption) {//back aux arc, hits the transition between 0 and 360, breaking the test
-            double angle = Math.atan2(deltaY, deltaX);
-            if(Double.compare(angle, 0.0) < 0) angle += Math.PI*2.0;
-            return angle;
-        }
-        return Math.atan2(deltaY, deltaX) + Math.PI;
+        return Math.atan2(deltaY, deltaX);
     }
 
     private MicLine createLineAAtoD1(MicLine A1D1, MicLine AA, Point2D.Double D1)
@@ -1217,6 +1226,75 @@ Boolean isThisTheOne = false;
         D3 = findSegmentCrossPoint(AE,DD);
         if(D3 != null) return new MicLine(A,D3, false);
         return null;
+    }
+
+    private double getLengthOfAxtoDD(Point2D.Double A, Point2D.Double E, MicLine DD) {
+        //getting D1 again
+        double x1 = DD.first.getX();
+        double y1 = DD.first.getY();
+        //getting D2 again
+        double x2 = DD.second.getX();
+        double y2 = DD.second.getY();
+        //getting A1 again
+        double xp = A.getX();
+        double yp = A.getY();
+
+        MicLine AE = new MicLine(A, E, false);
+        Point2D.Double D3 = null;
+        D3 = findSegmentCrossPoint(AE,DD);
+        if(D3 != null) {
+            MicLine temp = new MicLine(A,D3, false);
+            return temp.pixelLength;
+        }
+        return 0.0;
+    }
+
+    private double getLengthOfLinePtoAB(Point2D.Double P, Point2D.Double A, Point2D.Double B) {
+        Boolean markAsDead = false;
+
+        MicLine AB = new MicLine(A,B, false);
+        double x1 = A.getX();
+        double y1 = A.getY();
+        double x2 = B.getX();
+        double y2 = B.getY();
+        double xp = P.getX();
+        double yp = P.getY();
+
+        //getting the shortest distance in pixels to the line formed by both (x1,y1) and (x2,y2)
+        double numerator = Math.abs((xp - x1) * (y2 - y1) - (yp - y1) * (x2 - x1));
+        double denominator = Math.sqrt(Math.pow(x2 - x1, 2.0) + Math.pow(y2 - y1, 2.0));
+        double shortestdist = numerator / denominator;
+
+        MicLine AP = new MicLine(new Point2D.Double(A.x, A.y), P, false);
+
+        double segmentPartialDist = Math.sqrt(Math.pow(AP.pixelLength, 2.0) - Math.pow(shortestdist, 2.0));
+        double segmentFullDist = AB.pixelLength;
+
+        //check if the partial distance has point outside AB
+        //whichWay = 1: points inward the segment, -1: points outward, line should be marked as dead
+        int whichWay = 1;
+        if (Double.compare(micLineDotProduct(AB, AP), 0) < 0) {
+            whichWay = -1;
+            markAsDead = true;
+        }
+
+
+        //if it points inward, it might be too long for its segment, mark it as dead if so.
+        if (whichWay == 1 && Double.compare(segmentPartialDist, segmentFullDist) > 0) {
+            markAsDead = true;
+        }
+
+        //compute the partial vector's components
+        double partialX = whichWay * (x2 - x1) / segmentFullDist * segmentPartialDist;
+        double partialY = whichWay * (y2 - y1) / segmentFullDist * segmentPartialDist;
+
+
+        double vector_x = x1 + partialX;
+        double vector_y = y1 + partialY;
+
+        //returns A1DD - closest attacker point (vertex or in-arc edge) to an defender's edge point satisfying the 90 degrees shortest distance requirement
+        MicLine temp = new MicLine(P, new Point2D.Double(vector_x, vector_y), markAsDead);
+        return temp.pixelLength;
     }
 
     //Using this algorithm to detect if the two segments cross
@@ -1440,28 +1518,39 @@ Boolean isThisTheOne = false;
 
             for(Shape s : listShape){
                 Shape transformed = transformRectShapeForBestLines(atk, def, s, centerX, centerY);
-                if(shapesOverlap(transformed, def.shape)) return transformed;
+                if(shapesOverlap(transformed, def.getRectWithNoNubs())) return transformed;
             }
         }
         if(chosenOption == frontAuxArcOption) { //auzituck YV-666
-
             Shape front = new Rectangle2D.Double(-wantedWidth/2.0, -RANGE3 - chassisHeight/2.0, wantedWidth, RANGE3);
             Shape left = new Rectangle2D.Double(-chassisWidth/2.0 - RANGE3, -chassisHeight/2.0, RANGE3, chassisHeight/2.0);
             Shape right = new Rectangle2D.Double(chassisWidth/2.0, -chassisHeight/2.0, RANGE3, chassisHeight/2.0);
+            GeneralPath frontLeftTri = new GeneralPath(GeneralPath.WIND_EVEN_ODD,2);
+            frontLeftTri.moveTo(-chassisWidth/2.0, -chassisHeight/2.0);
+            frontLeftTri.lineTo(-chassisWidth/2.0,
+                    -chassisHeight/2.0 -(chassisWidth/2.0 - wantedWidth/2.0)/Math.tan(atk.chassis.getArcHalfAngle()));
+            frontLeftTri.closePath();
 
             ArrayList<Shape> listShape = new ArrayList<Shape>();
             listShape.add(front);
             listShape.add(left);
             listShape.add(right);
+            listShape.add(frontLeftTri);
 
+            ArrayList<Shape> keptTransformedlistShape = new ArrayList<Shape>();
             for(Shape s : listShape){
                 Shape transformed = transformRectShapeForBestLines(atk, def, s, centerX, centerY);
-                if(shapesOverlap(transformed, def.shape)) return transformed;
+                if(shapesOverlap(transformed, def.getRectWithNoNubs())) keptTransformedlistShape.add(transformed);
             }
+            Area fusion = new Area();
+            for(Shape s : keptTransformedlistShape){
+                fusion.add(new Area(s));
+            }
+            return fusion;
         }
         //common to all options except turret/TL shots
         Shape tShape = transformRectShapeForBestLines(atk, def, testShape, centerX, centerY);
-        if(shapesOverlap(tShape, def.shape)) return tShape;
+        if(tShape !=null) if(shapesOverlap(tShape, def.getRectWithNoNubs())) return tShape;
         return null;
     }
 
@@ -1531,7 +1620,11 @@ Boolean isThisTheOne = false;
         zone.add(new Area(leftRight));
 
         if(whichOption == frontArcOption) zone = new Area(front);
-        if(whichOption == frontAuxArcOption) zone = new Area(leftRight_reduced);
+        if(whichOption == frontAuxArcOption)
+        {
+            zone = new Area(front);
+            zone.add(new Area(leftRight_reduced));
+        }
 
         zone.exclusiveOr(new Area(rawShape));
 
@@ -1759,7 +1852,7 @@ Boolean isThisTheOne = false;
                 if(line.markedAsDead == true) graphics2D.setColor(new Color(255,0,0,255));
                 else {
                     Color gradiant = new Color(colorNb, colorNb, 255, 255);
-                    colorNb += 20;
+                    colorNb += 5;
                     graphics2D.setColor(gradiant);
                 }
                 if(line.isBestLine == true && line.markedAsDead == false) graphics2D.setColor(new Color(200, 18, 194,255));
