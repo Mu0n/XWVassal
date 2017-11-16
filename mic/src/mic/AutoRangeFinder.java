@@ -353,7 +353,9 @@ Boolean isThisTheOne = false;
     }
 
     private MicLine findBestLineInMobileArc(Point2D.Double D1, Point2D.Double D2, Point2D.Double D3, int rangeInt) {
-        MicLine best = null;
+        MicLine best = new MicLine(D1, D2, false);
+        logToChat("mobile turret autorange reached");
+        best.isArcLine = true;
         return best;
     }
 
@@ -701,44 +703,19 @@ Boolean isThisTheOne = false;
             E4 = thisShip.tPts.get(11);
         }
         else if(whichOption == mobileSideArcOption){
-            String sideCheck ="";
-            try{
-                sideCheck = ((Decorator) piece).getDecorator(piece,piece.getClass()).getProperty("whichShape").toString();
-            } catch (Exception e){
-                logToChat("tried to find a mobile turret definition, couldn't.");
-            }
-            if(sideCheck.equals("4")) {
                 //left side check
                 A1 = thisShip.tPts.get(5);
                 A2 = thisShip.tPts.get(0);
 
                 E1 = thisShip.tPts.get(7);
                 E2 = thisShip.tPts.get(2);
-            }
-            else if(sideCheck.equals("2")){
+
                 //right side check
-                A1 = thisShip.tPts.get(1);
-                A2 = thisShip.tPts.get(4);
+                A3 = thisShip.tPts.get(1);
+                A4 = thisShip.tPts.get(4);
 
-                E1 = thisShip.tPts.get(3);
-                E2 = thisShip.tPts.get(6);
-            }
-            else if(sideCheck.equals("1")){
-                //do like front arc
-                A1 = thisShip.tPts.get(0);
-                A2 = thisShip.tPts.get(1);
-
-                E1 = thisShip.tPts.get(2); //associated with A1 as the edge A1E1
-                E2 = thisShip.tPts.get(3); //associated with A2 as the edge A2E2
-            }
-            else if(sideCheck.equals("3")){
-                //do like back aux
-                A1 = thisShip.tPts.get(4);
-                A2 = thisShip.tPts.get(5);
-
-                E1 = thisShip.tPts.get(6);
-                E2 = thisShip.tPts.get(7);
-            }
+                E3 = thisShip.tPts.get(3);
+                E4 = thisShip.tPts.get(6);
         }
     }
 
@@ -1117,7 +1094,7 @@ Boolean isThisTheOne = false;
         if(Double.compare(secondArcEdgePolarAngle, -Math.PI + fudgefactor) < 0) secondArcEdgePolarAngle += 2.0*Math.PI;
         if(Double.compare(bestLinePolarAngle, -Math.PI + fudgefactor) < 0 ) bestLinePolarAngle += 2.0*Math.PI;
 
-        //logToChat("1: " + Double.toString(firstArcEdgePolarAngle) + " line: " + Double.toString(bestLinePolarAngle) + " 2: " + Double.toString(secondArcEdgePolarAngle));
+        logToChat("1: " + Double.toString(firstArcEdgePolarAngle) + " line: " + Double.toString(bestLinePolarAngle) + " 2: " + Double.toString(secondArcEdgePolarAngle));
        if(Double.compare(bestLinePolarAngle, firstArcEdgePolarAngle) < 0 || Double.compare(bestLinePolarAngle, secondArcEdgePolarAngle) > 0)
             return false;
         return true;
