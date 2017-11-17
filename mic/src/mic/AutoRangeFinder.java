@@ -90,7 +90,7 @@ public class AutoRangeFinder extends Decorator implements EditablePiece, MouseLi
             .put("CTRL SHIFT L", turretArcOption) //turret/TL
             .put("CTRL SHIFT N", frontAuxArcOption) //front pairs of aux arc (YV-666, Auzituck)
             .put("CTRL SHIFT V", backArcOption) //back aux arc
-            .put("CTRL ALT SHIFT V", mobileSideArcOption) //mobile turret arc, must detect which one is selected on the ship
+            .put("ALT SHIFT F", mobileSideArcOption) //mobile turret arc, must detect which one is selected on the ship
             .put("F5", 12)
             .put("F6", 13)
             .build();
@@ -354,7 +354,19 @@ Boolean isThisTheOne = false;
 
     private MicLine findBestLineInMobileArc(Point2D.Double D1, Point2D.Double D2, Point2D.Double D3, int rangeInt) {
         MicLine best = new MicLine(D1, D2, false);
-        logToChat("mobile turret autorange reached");
+
+        GeneralPath tri = new GeneralPath();
+        tri.moveTo(100,100);
+        tri.lineTo(200,200);
+        tri.lineTo(300,50);
+        tri.closePath();
+
+        Shape theTriShape = (Shape) tri;
+        fov.shapes.add(theTriShape);
+
+        Rectangle2D rect = new Rectangle2D.Double(10.0,20.0,500.0,25.0);
+        fov.shapes.add(rect);
+        
         best.isArcLine = true;
         return best;
     }
@@ -475,20 +487,20 @@ Boolean isThisTheOne = false;
         if(doesAAforInArcPassTest(AAD1, AA)== true && isRangeOk(AAD1, 1, rangeInt))
         {
             lineToVet = vetThisLine(AAD1, "AAD1", 0.8);
-            if(lineToVet != null) noAngleCheckList.add(lineToVet);
+            if(lineToVet != null) lineList.add(lineToVet);
         }
 
         MicLine LED1 = createLinePtoAB(D1, LE, false);
         if(doesAAforInArcPassTest(LED1, LE)== true && isRangeOk(LED1, 1, rangeInt))
         {
             lineToVet = vetThisLine(LED1, "LED1", 0.8);
-            if(lineToVet != null) noAngleCheckList.add(lineToVet);
+            if(lineToVet != null) leftLineList.add(lineToVet);
         }
         MicLine RED1 = createLinePtoAB(D1, RE, false);
         if(doesAAforInArcPassTest(RED1, RE)== true && isRangeOk(RED1, 1, rangeInt))
         {
             lineToVet = vetThisLine(RED1, "RED1", 0.8);
-            if(lineToVet != null) noAngleCheckList.add(lineToVet);
+            if(lineToVet != null) rightLineList.add(lineToVet);
         }
 
 
@@ -611,7 +623,7 @@ Boolean isThisTheOne = false;
         if(doesAAforInArcPassTest(AAD1, AA)== true && isRangeOk(AAD1, 1, rangeInt))
         {
             lineToVet = vetThisLine(AAD1, "AAD1", 0.8);
-            if(lineToVet != null) noAngleCheckList.add(lineToVet);
+            if(lineToVet != null) lineList.add(lineToVet);
         }
 
         ArrayList<MicLine> filteredList = new ArrayList<MicLine>();
@@ -1094,7 +1106,7 @@ Boolean isThisTheOne = false;
         if(Double.compare(secondArcEdgePolarAngle, -Math.PI + fudgefactor) < 0) secondArcEdgePolarAngle += 2.0*Math.PI;
         if(Double.compare(bestLinePolarAngle, -Math.PI + fudgefactor) < 0 ) bestLinePolarAngle += 2.0*Math.PI;
 
-        logToChat("1: " + Double.toString(firstArcEdgePolarAngle) + " line: " + Double.toString(bestLinePolarAngle) + " 2: " + Double.toString(secondArcEdgePolarAngle));
+        //logToChat("1: " + Double.toString(firstArcEdgePolarAngle) + " line: " + Double.toString(bestLinePolarAngle) + " 2: " + Double.toString(secondArcEdgePolarAngle));
        if(Double.compare(bestLinePolarAngle, firstArcEdgePolarAngle) < 0 || Double.compare(bestLinePolarAngle, secondArcEdgePolarAngle) > 0)
             return false;
         return true;
