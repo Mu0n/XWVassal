@@ -366,7 +366,7 @@ Boolean isThisTheOne = false;
 
         Rectangle2D rect = new Rectangle2D.Double(10.0,20.0,500.0,25.0);
         fov.shapes.add(rect);
-        
+
         best.isArcLine = true;
         return best;
     }
