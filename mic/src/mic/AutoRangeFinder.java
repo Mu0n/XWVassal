@@ -363,40 +363,49 @@ Boolean isThisTheOne = false;
                     Shape temp4 = findInBetweenRectangle(thisShip, b, wantedWidth, bullseyeArcOption);
                     if(temp4!=null)atkShapes.add(temp4);
                     break;
-                case mobileSideArcOption:
-                    break;
                 case frontAuxArcOption:
-                    Shape temp5 = findInBetweenRectangle(thisShip, b, wantedWidth, frontArcOption);
+                    Shape temp5 = findInBetweenRectangle(thisShip, b, wantedWidth, frontAuxArcOption);
                     if(temp5!=null)atkShapes.add(temp5);
+                    break;
+                case mobileSideArcOption:
                     Shape temp6 = findInBetweenRectangle(thisShip, b, wantedWidth, frontArcOption);
                     if(temp6!=null)atkShapes.add(temp6);
-                    Shape temp7 = findInBetweenRectangle(thisShip, b, wantedWidth, frontArcOption);
+                    Shape temp7 = findInBetweenRectangle(thisShip, b, wantedWidth, mobileSideArcOption);
                     if(temp7!=null)atkShapes.add(temp7);
                     break;
-            }
-            //this is always used no matter the option including bullseye
-            Shape frontFromAttacker = findInBetweenRectangle(thisShip, b, wantedWidth, frontArcOption); //use only the sides you need
 
-            //simple cases first
-            if(whichOption == turretArcOption || whichOption == backArcOption || whichOption == frontArcOption){
             }
-            Shape fromShip = findInBetweenRectangle(thisShip, b, wantedWidth, whichOption); //use only the sides you need
+/*
 
-            if (fromAttacker == null || fromTarget == null) {
-                return;
+        GeneralPath tri = new GeneralPath();
+        tri.moveTo(100,100);
+        tri.lineTo(200,200);
+        tri.lineTo(300,50);
+        tri.closePath();
+
+        Shape theTriShape = (Shape) tri;
+        fov.shapes.add(theTriShape);
+
+ */
+            if(atkShapes.size() == 0) return;
+
+            for(Shape s : atkShapes){
+                Area a1 = new Area(s);
+                Area a2 = new Area(fromTarget);
+
+                a1.intersect(a2);
+
+                double extra = getExtraAngleDuringRectDetection(thisShip, b);
+                ShapeWithText bestBand = new ShapeWithText(new Path2D.Double(a1), thisShip.getAngleInRadians() + extra);
+                rfindings.add(found);
+                fov.addShapeWithText(bestBand);
             }
-            Area a1 = new Area(frontFromAttacker);
-            Area a2 = new Area(fromTarget);
-            a1.intersect(a2);
 
             //TO DO:
             //Initial step: if an obstacle intersects this rectangle, get this rectangular shape and find its 2 lengthwise edges
             //case 1: the 2 lines intersect the SAME obstacle. Then, no chance of finding a non-obstructed line. Case closed
             //case 2: if the 2 lines are crossed by different obstacles, then ray-cast all the possible lines and check for an obstacle free line
-            double extra = getExtraAngleDuringRectDetection(thisShip, b);
-            ShapeWithText bestBand = new ShapeWithText(new Path2D.Double(a1), thisShip.getAngleInRadians() + extra);
-            rfindings.add(found);
-            fov.addShapeWithText(bestBand);
+
         }
     }
 
@@ -502,7 +511,8 @@ Boolean isThisTheOne = false;
         MicLine lineToVet;
 
 
-        //Along front arc edges
+
+
         //2nd arc edge
         MicLine A2DD_arc_restricted = createLineAxtoDD_along_arc_edge(A2, E2, DD);
         lineToVet = vetThisLine(A2DD_arc_restricted, "A2DD_ea", 0.5);
@@ -521,6 +531,24 @@ Boolean isThisTheOne = false;
         lineToVet = vetThisLine(A3DD_arc_restricted_2nd, "A3DD_2nd_ea", 0.7);
         if(lineToVet != null) noAngleCheckList.add(lineToVet);
         //////////////////
+
+
+
+        //1st arc edge
+        MicLine A1DD_arc_restricted = createLineAxtoDD_along_arc_edge(A1, E1, DD);
+
+        //2nd arc edge to 2nd def edge
+        MicLine A1DD_arc_restricted_2nd = createLineAxtoDD_along_arc_edge(A1, E1, DD_2nd);
+
+
+
+        //4th front arc edge
+        MicLine A4DD_arc_restricted = createLineAxtoDD_along_arc_edge(A4, E4, DD);
+        //2nd arc edge to 2nd def edge
+        MicLine A4DD_arc_restricted_2nd = createLineAxtoDD_along_arc_edge(A4, E4, DD_2nd);
+
+
+
 
 
         //Lines from front arc extremes and front arc edge
@@ -559,18 +587,32 @@ Boolean isThisTheOne = false;
         }
 
 
-
-
-
-        GeneralPath tri = new GeneralPath();
-        tri.moveTo(100,100);
-        tri.lineTo(200,200);
-        tri.lineTo(300,50);
-        tri.closePath();
-
-        Shape theTriShape = (Shape) tri;
-        fov.shapes.add(theTriShape);
-
+        int mobileSide = getMobileEdge();
+        switch(mobileSide){
+            case 2:
+                lineToVet = vetThisLine(A4DD_arc_restricted, "A4DD_ea", 0.5);
+                if(lineToVet != null) noAngleCheckList.add(lineToVet);
+                lineToVet = vetThisLine(A4DD_arc_restricted_2nd, "A4DD_2nd_ea", 0.7);
+                if(lineToVet != null) noAngleCheckList.add(lineToVet);
+                break;
+            case 3:
+                lineToVet = vetThisLine(A1DD_arc_restricted, "A1DD_ea", 0.5);
+                if(lineToVet != null) noAngleCheckList.add(lineToVet);
+                lineToVet = vetThisLine(A1DD_arc_restricted_2nd, "A1DD_2nd_ea", 0.7);
+                if(lineToVet != null) noAngleCheckList.add(lineToVet);
+                lineToVet = vetThisLine(A4DD_arc_restricted, "A4DD_ea", 0.5);
+                if(lineToVet != null) noAngleCheckList.add(lineToVet);
+                lineToVet = vetThisLine(A4DD_arc_restricted_2nd, "A4DD_2nd_ea", 0.7);
+                if(lineToVet != null) noAngleCheckList.add(lineToVet);
+                break;
+            case 4:
+                lineToVet = vetThisLine(A1DD_arc_restricted, "A1DD_ea", 0.5);
+                if(lineToVet != null) noAngleCheckList.add(lineToVet);
+                lineToVet = vetThisLine(A1DD_arc_restricted_2nd, "A1DD_2nd_ea", 0.7);
+                if(lineToVet != null) noAngleCheckList.add(lineToVet);
+                break;
+        }
+        
         ArrayList<MicLine> filteredList = new ArrayList<MicLine>();
         ArrayList<MicLine> deadList = new ArrayList<MicLine>();
 
@@ -1647,10 +1689,9 @@ Boolean isThisTheOne = false;
             int mobileSide = getMobileEdge();
 
             ArrayList<Shape> listShape = new ArrayList<Shape>();
-            if(mobileSide == 1) listShape.add(new Rectangle2D.Double(-wantedWidth/2.0, -RANGE3 - chassisHeight/2.0, wantedWidth, RANGE3));
-            if(mobileSide == 2) listShape.add(new Rectangle2D.Double(chassisWidth/2.0, -chassisHeight/2.0, RANGE3, chassisHeight));
-            if(mobileSide == 3) listShape.add(new Rectangle2D.Double(-wantedWidth/2.0, chassisHeight/2.0, wantedWidth, RANGE3));
-            if(mobileSide == 4) listShape.add(new Rectangle2D.Double(-chassisWidth/2.0 - RANGE3, -chassisHeight/2.0, RANGE3, chassisHeight));
+            if(mobileSide == 2) listShape.add(new Rectangle2D.Double(chassisWidth/2.0, -chassisHeight/2.0, RANGE3, chassisHeight)); //right
+            if(mobileSide == 3) listShape.add(new Rectangle2D.Double(-wantedWidth/2.0, chassisHeight/2.0, wantedWidth, RANGE3)); //back
+            if(mobileSide == 4) listShape.add(new Rectangle2D.Double(-chassisWidth/2.0 - RANGE3, -chassisHeight/2.0, RANGE3, chassisHeight)); //left
 
             ArrayList<Shape> keptTransformedlistShape = new ArrayList<Shape>();
             for(Shape s : listShape){
