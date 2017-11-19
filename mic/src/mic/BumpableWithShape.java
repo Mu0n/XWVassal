@@ -10,19 +10,17 @@ import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 
-import static mic.Util.logToChat;
-
 /**
  * Created by mjuneau on 2017-06-08.
  */
 
 //TO DO great place to add nub to corner distance, blue line
 enum chassisInfo{
-    unknown("unknown", 0.0, 0.0, 0.0, 0.0, 0.0),
-    small("small", 113.0, 113.0, 9.0, 8.3296, 40.45),
-    large("large", 226.0, 226.0, 10.0, 11.1650, 42.025),
-    hugeLittle("GR-75 size", 226.0, 551.0, 10.0, 11.1650, 40.45),
-    hugeBig("CR90 size", 226.0, 635.0, 10.0, 11.1650, 40.45);
+    unknown("unknown", 0.0, 0.0, 0.0, 0.0, 0.0, 0.0),
+    small("small", 113.0, 113.0, 9.0, 8.3296, 40.45, 44.52),
+    large("large", 226.0, 226.0, 10.0, 11.1650, 42.025, 0.0),
+    hugeLittle("GR-75 size", 226.0, 551.0, 10.0, 11.1650, 40.45, 0.0),
+    hugeBig("CR90 size", 226.0, 635.0, 10.0, 11.1650, 40.45, 0.0);
 
     private final String chassisName;
     private final double width;
@@ -30,14 +28,16 @@ enum chassisInfo{
     private final double nubFudge;
     private final double cornerToFiringArc;
     private final double arcHalfAngle;
+    private final double bullseyeWidth;
 
-    chassisInfo(String chassisName, double width, double height, double nubFudge, double cornerToFiringArc, double arcHalfAngle) {
+    chassisInfo(String chassisName, double width, double height, double nubFudge, double cornerToFiringArc, double arcHalfAngle, double bullseyeWidth) {
         this.chassisName = chassisName;
         this.width = width;
         this.height = height;
         this.nubFudge = nubFudge;
         this.cornerToFiringArc = cornerToFiringArc;
         this.arcHalfAngle = arcHalfAngle;
+        this.bullseyeWidth = bullseyeWidth;
     }
     public String getChassisName() { return this.chassisName; }
     public double getWidth() { return this.width; }
@@ -45,6 +45,8 @@ enum chassisInfo{
     public double getNubFudge() { return this.nubFudge; }
     public double getCornerToFiringArc() { return this.cornerToFiringArc; }
     public double getArcHalfAngle() { return this.arcHalfAngle; }
+
+    public double getBullsEyeWidth() {return this.bullseyeWidth;}
 }
 public class BumpableWithShape {
     Shape shape;
@@ -54,12 +56,6 @@ public class BumpableWithShape {
     String shipName = "";
     String pilotName = "";
     chassisInfo chassis = chassisInfo.unknown;
-    int nubAdjust = 10;
-    private static final int frontArcOption = 1;
-    private static final int turretArcOption = 2;
-    private static final int frontAuxArcOption = 3;
-    private static final int backArcOption = 4;
-    private static final int mobileSideArcOption = 5;
 
     private Point2D.Double frontLeftArcBase = new Point2D.Double(0.0, 0.0); //used to get from center to a ship's arc start points
     private Point2D.Double frontRightArcBase = new Point2D.Double(0.0, 0.0);
@@ -84,6 +80,11 @@ public class BumpableWithShape {
 
     private Point2D.Double downLeftVertex = new Point2D.Double(0.0, 0.0);
     private Point2D.Double downRightVertex = new Point2D.Double(0.0, 0.0);
+
+
+    private Point2D.Double leftBullseye = new Point2D.Double(0.0, 0.0);
+    private Point2D.Double rightBullseye = new Point2D.Double(0.0, 0.0);
+
 
 
     public ArrayList<Point2D.Double> tPts = new ArrayList<Point2D.Double>(); //array of transformed (rotated and translated) special points
@@ -188,6 +189,9 @@ public class BumpableWithShape {
 
         leftMidEnd = new Point2D.Double(-halfsize - pixelMaxRange, 0.0);
         rightMidEnd = new Point2D.Double(halfsize + pixelMaxRange, 0.0);
+
+        leftBullseye = new Point2D.Double(-chassis.getBullsEyeWidth()/2.0, -halfsize);
+        rightBullseye = new Point2D.Double(chassis.getBullsEyeWidth()/2.0, -halfsize);
     }
 
     public void refreshSpecialPoints(){
@@ -201,6 +205,8 @@ public class BumpableWithShape {
     //gets the firing arc edges on a ship. First 2 are on the ship (left and right), last 2 are at the end of the arc edge (left and right)
     //Use these points to reject a best (shortest) autorange firing line if it crosses these edges; eg a ship that could be in turret range 1 but it out of arc
     private void figureOutSpecialPoints(int maxRange){
+
+        double pixelMaxRange = maxRange * 282.5f;
         Point center = bumpable.getPosition();
         double angle = getAngle();
 
@@ -221,6 +227,11 @@ public class BumpableWithShape {
 
         tPts.add(getATransformedPoint(leftMidBase.x, leftMidBase.y, leftMidEnd.x, leftMidEnd.y, angle, center.getX(), center.getY())); //10
         tPts.add(getATransformedPoint(rightMidBase.x, rightMidBase.y, rightMidEnd.x, rightMidEnd.y, angle, center.getX(), center.getY()));  //11
+
+        tPts.add(getATransformedPoint(leftBullseye.x, leftBullseye.y, 0.0, 0.0, angle, center.getX(), center.getY())); //12
+        tPts.add(getATransformedPoint(leftBullseye.x, leftBullseye.y, 0.0, -pixelMaxRange, angle, center.getX(), center.getY())); //13
+        tPts.add(getATransformedPoint(rightBullseye.x, rightBullseye.y, 0.0, 0.0, angle, center.getX(), center.getY())); //14
+        tPts.add(getATransformedPoint(rightBullseye.x, rightBullseye.y, 0.0, -pixelMaxRange, angle, center.getX(), center.getY())); //15
     }
 
     Point2D.Double getATransformedPoint(double offX, double offY, double extraOffX, double extraOffY, double shipAngle, double centerX, double centerY)
