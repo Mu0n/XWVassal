@@ -593,11 +593,6 @@ Boolean isThisTheOne = false;
         MicLine RCFDD = createLinePtoAB(RCF, DD, true);
         MicLine RCBDD = createLinePtoAB(RCB, DD, true);
 
-        //normals to small segments
-        MicLine LFEDD = createLinePtoAB(D1, LFE, false);
-        MicLine LBEDD = createLinePtoAB(D1, LBE, false);
-
-
         int mobileSide = getMobileEdge();
         switch(mobileSide){
             case 2:
@@ -964,6 +959,20 @@ Boolean isThisTheOne = false;
             if(lineToVet != null) rightLineList.add(lineToVet);
         }
 
+        //from the corners, normal
+        MicLine LCDD = createLinePtoAB(LC, DD, false);
+        if(findSegmentCrossPoint(LCDD, new MicLine(center, E2, false))==null &&
+                findSegmentCrossPoint(LCDD, new MicLine(center, E1, false))==null){
+            lineToVet = vetThisLine(LCDD, "LCDD", 0.4);
+            if(lineToVet != null) noAngleCheckList.add(lineToVet);
+        }
+        MicLine RCDD = createLinePtoAB(RC, DD, false);
+        if(findSegmentCrossPoint(RCDD, new MicLine(center, E3, false))==null &&
+                findSegmentCrossPoint(RCDD, new MicLine(center, E4, false))==null){
+            lineToVet = vetThisLine(RCDD, "RCDD", 0.4);
+            if(lineToVet != null) noAngleCheckList.add(lineToVet);
+        }
+
         //small edges normal to attacker
         MicLine LFED1 = createLinePtoAB(D1, LFE, false);
         if(doesAAforInArcPassTest(LFED1, LFE)== true && isRangeOk(LFED1, 1, rangeInt) &&
@@ -980,6 +989,8 @@ Boolean isThisTheOne = false;
             lineToVet = vetThisLine(RFED1, "RFED1", 0.8);
             if(lineToVet != null) noAngleCheckList.add(lineToVet);
         }
+
+
         ArrayList<MicLine> filteredList = new ArrayList<MicLine>();
         ArrayList<MicLine> deadList = new ArrayList<MicLine>();
 
@@ -2109,7 +2120,7 @@ Boolean isThisTheOne = false;
         private final String id;
 
         public Color badLineColor = new Color(0, 121,255,110);
-        public Color bestLineColor = new Color(0, 180, 200,255);
+        public Color bestLineColor = new Color(246, 255, 41,255);
         public Color shipsObstaclesColor = new Color(255,99,71, 150);
         public Color arcLineColor = new Color(246, 255, 41,180);
 
