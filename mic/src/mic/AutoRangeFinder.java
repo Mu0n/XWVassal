@@ -42,6 +42,7 @@ class FluidAnim extends TimerTask {
 
     AutoRangeFinder myARF;
 Integer savedOption = 0;
+    int tictoc = 0;
 
     FluidAnim ( AutoRangeFinder ARF, int whichOption )
     {
@@ -61,14 +62,16 @@ Integer savedOption = 0;
                 } catch (Exception e) {
                 }
             }
-        }, 0,60);
+        }, 0,(tictoc==0)?25:150);
+        tictoc++;
+        if(tictoc==1) tictoc=0;
     }
 }
 
 public class AutoRangeFinder extends Decorator implements EditablePiece, MouseListener, MouseMotionListener {
 
     private static Boolean DEBUGMODE = false;
-    private static Boolean MULTILINES = true;
+    private static Boolean MULTILINES = false;
 
     protected VASSAL.build.module.Map map;
     private static final int frontArcOption = 1;
@@ -390,6 +393,7 @@ Boolean isThisTheOne = false;
             if(atkShapes.size() == 0) return;
 
             for(Shape s : atkShapes){
+                if(fromTarget == null || s == null) continue;
                 Area a1 = new Area(s);
                 Area a2 = new Area(fromTarget);
 
@@ -481,6 +485,8 @@ Boolean isThisTheOne = false;
         ArrayList<MicLine> leftList = new ArrayList<MicLine>(); //reserved for left side arc lines
         ArrayList<MicLine> noAngleCheckList = new ArrayList<MicLine>(); //reserved lines that are sure to be angle-ok
 
+        Point2D.Double center = new Point2D.Double(thisShip.bumpable.getPosition().x, thisShip.bumpable.getPosition().y);
+
         Point2D.Double LCF = thisShip.getVertices().get(0); //left corner front
         Point2D.Double RCF = thisShip.getVertices().get(1); //right corner front
         Point2D.Double RCB = thisShip.getVertices().get(2); //right corner back
@@ -510,9 +516,6 @@ Boolean isThisTheOne = false;
 
         MicLine lineToVet;
 
-
-
-
         //2nd arc edge
         MicLine A2DD_arc_restricted = createLineAxtoDD_along_arc_edge(A2, E2, DD);
         lineToVet = vetThisLine(A2DD_arc_restricted, "A2DD_ea", 0.5);
@@ -532,23 +535,14 @@ Boolean isThisTheOne = false;
         if(lineToVet != null) noAngleCheckList.add(lineToVet);
         //////////////////
 
-
-
-        //1st arc edge
+        //1st arc edge, back left
         MicLine A1DD_arc_restricted = createLineAxtoDD_along_arc_edge(A1, E1, DD);
-
-        //2nd arc edge to 2nd def edge
+        //1st arc edge, back left to 2nd def edge
         MicLine A1DD_arc_restricted_2nd = createLineAxtoDD_along_arc_edge(A1, E1, DD_2nd);
-
-
-
-        //4th front arc edge
+        //4th front arc edge, back right
         MicLine A4DD_arc_restricted = createLineAxtoDD_along_arc_edge(A4, E4, DD);
-        //2nd arc edge to 2nd def edge
+        //4th front arc edge, back right to 2nd def edge
         MicLine A4DD_arc_restricted_2nd = createLineAxtoDD_along_arc_edge(A4, E4, DD_2nd);
-
-
-
 
 
         //Lines from front arc extremes and front arc edge
@@ -567,6 +561,10 @@ Boolean isThisTheOne = false;
         lineToVet = vetThisLine(A3D2, "A3D2", 0.5);
         if(lineToVet != null) frontList.add(lineToVet);
 
+        //other 2 lines from other arc edges
+        MicLine A1D1 = new MicLine(A1, D1, false);
+        MicLine A4D1 = new MicLine(A4, D1, false);
+
         //normal to defender's edges
         //Closest attacker's point to the defender's closest edge
         MicLine A2DD = createLinePtoAB(A2, DD, true);
@@ -576,26 +574,95 @@ Boolean isThisTheOne = false;
         MicLine A3DD = createLinePtoAB(A3, DD, true);
         lineToVet = vetThisLine(A3DD, "A3DD", 0.4);
         if(lineToVet != null) frontList.add(lineToVet);
+
+        //normal to attacker's front part
+        MicLine AAD1 = createLinePtoAB(D1, AAF, false);
+        lineToVet = vetThisLine(AAD1, "AAD1", 0.4);
+        if(lineToVet != null) frontList.add(lineToVet);
         ////////////////////////
 
-        //Attacker's front edge to defender's closest vertex
-        MicLine AAFD1 = createLinePtoAB(D1, AAF, false);
-        if(doesAAforInArcPassTest(AAFD1, AAF)== true && isRangeOk(AAFD1, 1, rangeInt))
-        {
-            lineToVet = vetThisLine(AAFD1, "AAD1", 0.8);
-            if(lineToVet != null) noAngleCheckList.add(lineToVet);
-        }
+        //corners
+        MicLine LCFD1 = new MicLine(LCF, D1, false);
+        MicLine RCFD1 = new MicLine(RCF, D1, false);
+        MicLine LCBD1 = new MicLine(LCB, D1, false);
+        MicLine RCBD1 = new MicLine(RCB, D1, false);
+
+        //corners falling into defender's normal
+        MicLine LCFDD = createLinePtoAB(LCF, DD, true);
+        MicLine LCBDD = createLinePtoAB(LCB, DD, true);
+        MicLine RCFDD = createLinePtoAB(RCF, DD, true);
+        MicLine RCBDD = createLinePtoAB(RCB, DD, true);
+
+        //normals to small segments
+        MicLine LFEDD = createLinePtoAB(D1, LFE, false);
+        MicLine LBEDD = createLinePtoAB(D1, LBE, false);
 
 
         int mobileSide = getMobileEdge();
         switch(mobileSide){
             case 2:
+                //along arc edges
                 lineToVet = vetThisLine(A4DD_arc_restricted, "A4DD_ea", 0.5);
                 if(lineToVet != null) noAngleCheckList.add(lineToVet);
                 lineToVet = vetThisLine(A4DD_arc_restricted_2nd, "A4DD_2nd_ea", 0.7);
                 if(lineToVet != null) noAngleCheckList.add(lineToVet);
+
+                //from the arc extremities, free-style direction
+                lineToVet = vetThisLine(A3D1, "A3D1_right", 0.2);
+                if(lineToVet != null) rightList.add(lineToVet);
+                lineToVet = vetThisLine(A4D1, "A4D1_right", 0.8);
+                if(lineToVet != null) rightList.add(lineToVet);
+
+                //from the corners
+                if(findSegmentCrossPoint(RCFD1, new MicLine(center, E3, false))==null &&
+                        findSegmentCrossPoint(RCFD1, new MicLine(center, E4, false))==null ){
+                    lineToVet = vetThisLine(RCFD1, "RCFD1", 0.4);
+                    if(lineToVet != null) noAngleCheckList.add(lineToVet);
+                }
+                if(findSegmentCrossPoint(RCBD1, new MicLine(A4, E4, false))==null &&
+                        findSegmentCrossPoint(RCFD1, new MicLine(center, E4, false))==null){
+                    lineToVet = vetThisLine(RCBD1, "RCBD1", 0.4);
+                    if(lineToVet != null) noAngleCheckList.add(lineToVet);
+                }
+
+                //from the corners, normal
+                if(findSegmentCrossPoint(RCFDD, new MicLine(A3, E3, false))==null &&
+                        findSegmentCrossPoint(RCFD1, new MicLine(center, E4, false))==null){
+                    lineToVet = vetThisLine(RCFDD, "RCFDD", 0.4);
+                    if(lineToVet != null) noAngleCheckList.add(lineToVet);
+                }
+                if(findSegmentCrossPoint(RCBDD, new MicLine(A4, E4, false))==null &&
+                        findSegmentCrossPoint(RCFD1, new MicLine(center, E4, false))==null) {
+                    lineToVet = vetThisLine(RCBDD, "RCBDD", 0.4);
+                    if (lineToVet != null) noAngleCheckList.add(lineToVet);
+                }
+                //normal to attacker
+                MicLine RED1 = createLinePtoAB(D1, RE, false);
+                if(doesAAforInArcPassTest(RED1, RE)== true && isRangeOk(RED1, 1, rangeInt))
+                {
+                    lineToVet = vetThisLine(RED1, "RED1", 0.8);
+                    if(lineToVet != null) rightList.add(lineToVet);
+                }
+
+                //small edges normal to attacker
+                MicLine RFED1 = createLinePtoAB(D1, RFE, false);
+                if(doesAAforInArcPassTest(RFED1, RFE)== true && isRangeOk(RFED1, 1, rangeInt) &&
+                        findSegmentCrossPoint(RFED1, new MicLine(center, E3, false))==null &&
+                        findSegmentCrossPoint(RFED1, new MicLine(center, E4, false))==null) {
+                    lineToVet = vetThisLine(RFED1, "RFED1", 0.8);
+                    if(lineToVet != null) noAngleCheckList.add(lineToVet);
+                }
+
+                MicLine RBED1 = createLinePtoAB(D1, RBE, false);
+                if(doesAAforInArcPassTest(RBED1, RBE)== true && isRangeOk(RBED1, 1, rangeInt) &&
+                        findSegmentCrossPoint(RBED1, new MicLine(center, E3, false))==null &&
+                        findSegmentCrossPoint(RBED1, new MicLine(center, E4, false))==null) {
+                    lineToVet = vetThisLine(RBED1, "RBED1", 0.8);
+                    if(lineToVet != null) noAngleCheckList.add(lineToVet);
+                }
                 break;
             case 3:
+                //along arc edges
                 lineToVet = vetThisLine(A1DD_arc_restricted, "A1DD_ea", 0.5);
                 if(lineToVet != null) noAngleCheckList.add(lineToVet);
                 lineToVet = vetThisLine(A1DD_arc_restricted_2nd, "A1DD_2nd_ea", 0.7);
@@ -604,12 +671,85 @@ Boolean isThisTheOne = false;
                 if(lineToVet != null) noAngleCheckList.add(lineToVet);
                 lineToVet = vetThisLine(A4DD_arc_restricted_2nd, "A4DD_2nd_ea", 0.7);
                 if(lineToVet != null) noAngleCheckList.add(lineToVet);
+
+                //from the arc extremities, free-style direction
+                lineToVet = vetThisLine(A1D1, "A1D1_back", 0.2);
+                if(lineToVet != null) backList.add(lineToVet);
+                lineToVet = vetThisLine(A4D1, "A4D1_back", 0.8);
+                if(lineToVet != null) backList.add(lineToVet);
+
+                //normal to attacker
+                MicLine BED1 = createLinePtoAB(D1, AAB, false);
+                if(doesAAforInArcPassTest(BED1, AAB)== true && isRangeOk(BED1, 1, rangeInt))
+                {
+                    lineToVet = vetThisLine(BED1, "BED1", 0.8);
+                    if(lineToVet != null) backList.add(lineToVet);
+                }
+                //normal to attacker's front part
+                MicLine AABD1 = createLinePtoAB(D1, AAB, false);
+                lineToVet = vetThisLine(AABD1, "AAD1", 0.4);
+                if(lineToVet != null) backList.add(lineToVet);
                 break;
             case 4:
+                //along the arc edges
                 lineToVet = vetThisLine(A1DD_arc_restricted, "A1DD_ea", 0.5);
                 if(lineToVet != null) noAngleCheckList.add(lineToVet);
                 lineToVet = vetThisLine(A1DD_arc_restricted_2nd, "A1DD_2nd_ea", 0.7);
                 if(lineToVet != null) noAngleCheckList.add(lineToVet);
+
+                //from the arc extremeties, free-style direction
+                lineToVet = vetThisLine(A1D1, "A1D1_left", 0.2);
+                if(lineToVet != null) leftList.add(lineToVet);
+                lineToVet = vetThisLine(A2D1, "A2D1_left", 0.8);
+                if(lineToVet != null) leftList.add(lineToVet);
+
+                //from the corners
+                if(findSegmentCrossPoint(LCFD1, new MicLine(center, E2, false))==null &&
+                        findSegmentCrossPoint(LCFD1, new MicLine(center, E1, false))==null){
+                    lineToVet = vetThisLine(LCFD1, "LCFD1", 0.4);
+                    if(lineToVet != null) noAngleCheckList.add(lineToVet);
+                }
+                if(findSegmentCrossPoint(LCBD1, new MicLine(center, E1, false))==null &&
+                        findSegmentCrossPoint(LCFD1, new MicLine(center, E2, false))==null){
+                    lineToVet = vetThisLine(LCBD1, "LCBD1", 0.4);
+                    if(lineToVet != null) noAngleCheckList.add(lineToVet);
+                }
+
+                //from the corners, normal
+                if(findSegmentCrossPoint(LCFDD, new MicLine(center, E2, false))==null &&
+                        findSegmentCrossPoint(LCFD1, new MicLine(center, E1, false))==null){
+                    lineToVet = vetThisLine(LCFDD, "LCFDD", 0.4);
+                    if(lineToVet != null) noAngleCheckList.add(lineToVet);
+                }
+                if(findSegmentCrossPoint(LCBDD, new MicLine(center, E1, false))==null &&
+                        findSegmentCrossPoint(LCFD1, new MicLine(center, E2, false))==null){
+                    lineToVet = vetThisLine(LCBDD, "LCBDD", 0.4);
+                    if(lineToVet != null) noAngleCheckList.add(lineToVet);
+                }
+
+                //normal to attacker
+                MicLine LED1 = createLinePtoAB(D1, LE, false);
+                if(doesAAforInArcPassTest(LED1, LE)== true && isRangeOk(LED1, 1, rangeInt))
+                {
+                    lineToVet = vetThisLine(LED1, "LED1", 0.8);
+                    if(lineToVet != null) leftList.add(lineToVet);
+                }
+                //small edges normal to attacker
+                MicLine LFED1 = createLinePtoAB(D1, LFE, false);
+                if(doesAAforInArcPassTest(LFED1, LFE)== true && isRangeOk(LFED1, 1, rangeInt) &&
+                        findSegmentCrossPoint(LFED1, new MicLine(center, E1, false))==null &&
+                        findSegmentCrossPoint(LFED1, new MicLine(center, E2, false))==null) {
+                    lineToVet = vetThisLine(LFED1, "LFED1", 0.8);
+                    if(lineToVet != null) noAngleCheckList.add(lineToVet);
+                }
+
+                MicLine LBED1 = createLinePtoAB(D1, LBE, false);
+                if(doesAAforInArcPassTest(LBED1, LBE)== true && isRangeOk(LBED1, 1, rangeInt) &&
+                        findSegmentCrossPoint(LBED1, new MicLine(center, E1, false))==null &&
+                        findSegmentCrossPoint(LBED1, new MicLine(center, E2, false))==null) {
+                    lineToVet = vetThisLine(LBED1, "LBED1", 0.8);
+                    if(lineToVet != null) noAngleCheckList.add(lineToVet);
+                }
                 break;
         }
         
@@ -632,6 +772,12 @@ Boolean isThisTheOne = false;
         for(MicLine l: frontList)
         {
             if(isEdgeInArc(l, A2, E2, A3, E3) == true) filteredList.add(l);
+            else deadList.add(l);
+        }
+        //Same, back side
+        for(MicLine l: backList)
+        {
+            if(isEdgeInArc(l, A4, E4, A1, E1) == true) filteredList.add(l);
             else deadList.add(l);
         }
         //add the rest of the safe angle lines
@@ -679,6 +825,8 @@ Boolean isThisTheOne = false;
         Point2D.Double LC = thisShip.getVertices().get(0);
         Point2D.Double RC = thisShip.getVertices().get(1);
 
+        Point2D.Double center = new Point2D.Double(thisShip.bumpable.getPosition().x, thisShip.bumpable.getPosition().y);
+
         //Prep segments along ships (attacker and defender) used to figure out some of the firing lines
         //Left Edge
         MicLine LE = new MicLine(A1, LC, false);
@@ -700,23 +848,35 @@ Boolean isThisTheOne = false;
 
         //Left Corner Attacker to Closest Defender
         MicLine LCD1 = new MicLine(LC, D1, false);
-        lineToVet = vetThisLine(LCD1, "LCD1", 0.1);
-        if(lineToVet != null) leftLineList.add(lineToVet);
+        if(findSegmentCrossPoint(LCD1, new MicLine(center, E1, false))==null &&
+                findSegmentCrossPoint(LCD1, new MicLine(center, E2, false))==null){
+            lineToVet = vetThisLine(LCD1, "LCD1", 0.1);
+            if(lineToVet != null) noAngleCheckList.add(lineToVet);
+        }
 
         //Left Corner Attacker to 2nd closest Defender
         MicLine LCD2 = new MicLine(LC, D2, false);
-        lineToVet = vetThisLine(LCD2, "LCD2", 0.1);
-        if(lineToVet != null) leftLineList.add(lineToVet);
+        if(findSegmentCrossPoint(LCD2, new MicLine(center, E1, false))==null &&
+                findSegmentCrossPoint(LCD2, new MicLine(center, E2, false))==null){
+            lineToVet = vetThisLine(LCD2, "LCD2", 0.1);
+            if(lineToVet != null) noAngleCheckList.add(lineToVet);
+        }
 
         //Right Corner Attacker to Closest Defender
         MicLine RCD1 = new MicLine(RC, D1, false);
-        lineToVet = vetThisLine(RCD1, "RCD1", 0.1);
-        if(lineToVet != null) rightLineList.add(lineToVet);
+        if(findSegmentCrossPoint(RCD1, new MicLine(center, E3, false))==null &&
+                findSegmentCrossPoint(RCD1, new MicLine(center, E4, false))==null){
+            lineToVet = vetThisLine(RCD1, "RCD1", 0.1);
+            if(lineToVet != null) noAngleCheckList.add(lineToVet);
+        }
 
         //Right Corner Attacker to 2nd closest Defender
         MicLine RCD2 = new MicLine(RC, D2, false);
-        lineToVet = vetThisLine(RCD2, "RCD2", 0.1);
-        if(lineToVet != null) rightLineList.add(lineToVet);
+        if(findSegmentCrossPoint(RCD2, new MicLine(center, E3, false))==null &&
+                findSegmentCrossPoint(RCD2, new MicLine(center, E4, false))==null){
+            lineToVet = vetThisLine(RCD2, "RCD2", 0.1);
+            if(lineToVet != null) noAngleCheckList.add(lineToVet);
+        }
 
 
         //first arc edge
@@ -789,12 +949,14 @@ Boolean isThisTheOne = false;
             if(lineToVet != null) lineList.add(lineToVet);
         }
 
+        //Attacker's left long edge to defender's closest vertex
         MicLine LED1 = createLinePtoAB(D1, LE, false);
         if(doesAAforInArcPassTest(LED1, LE)== true && isRangeOk(LED1, 1, rangeInt))
         {
             lineToVet = vetThisLine(LED1, "LED1", 0.8);
             if(lineToVet != null) leftLineList.add(lineToVet);
         }
+        //same but right side
         MicLine RED1 = createLinePtoAB(D1, RE, false);
         if(doesAAforInArcPassTest(RED1, RE)== true && isRangeOk(RED1, 1, rangeInt))
         {
@@ -802,7 +964,22 @@ Boolean isThisTheOne = false;
             if(lineToVet != null) rightLineList.add(lineToVet);
         }
 
+        //small edges normal to attacker
+        MicLine LFED1 = createLinePtoAB(D1, LFE, false);
+        if(doesAAforInArcPassTest(LFED1, LFE)== true && isRangeOk(LFED1, 1, rangeInt) &&
+                findSegmentCrossPoint(LFED1, new MicLine(center, E1, false))==null &&
+                findSegmentCrossPoint(LFED1, new MicLine(center, E2, false))==null) {
+            lineToVet = vetThisLine(LFED1, "LFED1", 0.8);
+            if(lineToVet != null) noAngleCheckList.add(lineToVet);
+        }
 
+        MicLine RFED1 = createLinePtoAB(D1, RFE, false);
+        if(doesAAforInArcPassTest(RFED1, RFE)== true && isRangeOk(RFED1, 1, rangeInt) &&
+                findSegmentCrossPoint(RFED1, new MicLine(center, E3, false))==null &&
+                findSegmentCrossPoint(RFED1, new MicLine(center, E4, false))==null) {
+            lineToVet = vetThisLine(RFED1, "RFED1", 0.8);
+            if(lineToVet != null) noAngleCheckList.add(lineToVet);
+        }
         ArrayList<MicLine> filteredList = new ArrayList<MicLine>();
         ArrayList<MicLine> deadList = new ArrayList<MicLine>();
 
@@ -1602,7 +1779,7 @@ Boolean isThisTheOne = false;
 
     private Boolean isTargetOutsideofRectangles(BumpableWithShape thisShip, BumpableWithShape targetBWS, boolean wantBoost) {
         Shape crossZone = findUnionOfRectangularExtensions(thisShip, wantBoost);
-        return !shapesOverlap(crossZone, targetBWS.shape);
+        return !shapesOverlap(crossZone, targetBWS.getRectWithNoNubs());
     }
 
     public  java.util.List<BumpableWithShape> getObstructionsOnMap() {
