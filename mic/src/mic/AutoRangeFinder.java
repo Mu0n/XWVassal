@@ -392,8 +392,10 @@ Boolean isThisTheOne = false;
                     if(case5){
                         //deal with triangle
                         logToChat("triangles!");
+                        /*
                         Shape temp5b = findInBetweenTriangle(thisShip, b, wantedWidth, frontAuxArcOption, 1);
                         Shape temp5c = findInBetweenTriangle(thisShip, b, wantedWidth, frontAuxArcOption, 2);
+                        */
                     }
                     break;
                 case mobileSideArcOption:
@@ -404,8 +406,10 @@ Boolean isThisTheOne = false;
                     if(case5){
                         //deal with triangle
                         logToChat("triangles!");
+                        /*
                         Shape temp7b = findInBetweenTriangle(thisShip, b, wantedWidth, mobileSideArcOption, 1);
                         Shape temp7c = findInBetweenTriangle(thisShip, b, wantedWidth, mobileSideArcOption, 2);
+                        */
                     }
                     break;
 
@@ -1841,7 +1845,7 @@ Boolean isThisTheOne = false;
 
     private Boolean isTargetInsideWeirdCase(BumpableWithShape thisShip, BumpableWithShape targetBWS){
         Shape dualRects = findDualRects(thisShip);
-        fov.shapes.add(dualRects);
+        //fov.shapes.add(dualRects);
         return shapesOverlap(dualRects, targetBWS.getRectWithNoNubs());
     }
 
@@ -2322,7 +2326,7 @@ Boolean isThisTheOne = false;
                     colorNb += 5;
                     graphics2D.setColor(gradiant);
                 }
-                if(line.isBestLine == true && line.markedAsDead == false) graphics2D.setColor(new Color(200, 18, 194,255));
+                if(line.isBestLine == true && line.markedAsDead == false) graphics2D.setColor(arcLineColor);
                   /*end*/
 
 
