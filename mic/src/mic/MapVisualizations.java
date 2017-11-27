@@ -11,13 +11,13 @@ import org.slf4j.LoggerFactory;
 
 import java.awt.*;
 import java.awt.geom.AffineTransform;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.io.*;
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
+
+import static mic.Util.deserializeBase64Obj;
+import static mic.Util.serializeToBase64;
 
 /**
  * Created by Mic on 12/10/2017.
@@ -119,11 +119,8 @@ public class MapVisualizations extends Command implements Drawable {
                 String[] newCommandStrs = command.split("\t");
                 MapVisualizations visualization = new MapVisualizations();
                 for (String bytesBase64Str : newCommandStrs) {
-                    ByteArrayInputStream strIn = new ByteArrayInputStream(Base64.decodeBase64(bytesBase64Str));
-                    ObjectInputStream in = new ObjectInputStream(strIn);
-                    Shape shape = (Shape) in.readObject();
+                    Shape shape = (Shape) deserializeBase64Obj(bytesBase64Str);
                     visualization.add(shape);
-                    in.close();
                 }
                 logger.info("Decoded CollisionVisualization with {} shapes", visualization.getShapes().size());
                 return visualization;
@@ -142,13 +139,9 @@ public class MapVisualizations extends Command implements Drawable {
             try {
                 List<String> commandStrs = Lists.newArrayList();
                 for (Shape shape : visualization.getShapes()) {
-                    ByteArrayOutputStream bos = new ByteArrayOutputStream();
-                    ObjectOutputStream out = new ObjectOutputStream(bos);
-                    out.writeObject(shape);
-                    out.close();
-                    byte[] bytes = bos.toByteArray();
-                    String bytesBase64 = Base64.encodeBase64String(bytes);
-                    commandStrs.add(bytesBase64);
+                    Serializable serialShape = (Serializable) shape;
+                    // ^^ this is dirty but okay since the shapes we're dealing with implement serializable
+                    commandStrs.add(serializeToBase64(serialShape));
                 }
                 return commandPrefix + Joiner.on('\t').join(commandStrs);
             } catch (Exception e) {

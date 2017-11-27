@@ -32,7 +32,7 @@ public enum ManeuverPaths {
 
     RT1(CurvedPaths.RT1, "Right Turn 1", 1, 0.0f, "521", 180.0f, 35.0f, 120.0f, 35.0f, 176.5f, "3656", 203.0f, -48.0f, 203.0f, 8.0f),
     RT2(CurvedPaths.RT2, "Right Turn 2", 2, 0.0f, "522", 180.0f, 74.0f, 159.0f, 74.0f, 215.5f, "3657", 244.0f, -8.0f, 244.0f, 48.0f),
-    RT3(CurvedPaths.RT3, "Right Turn 3", 3, 0.0f, "523", 180.0f, 113.0f, 198.0f, 113.0f, 254.5f, "3658", 282.0f, -30.0f, 282.0f, 86.0f),
+    RT3(CurvedPaths.RT3, "Right Turn 3", 3, 0.0f, "523", 180.0f, 113.0f, 198.0f, 113.0f, 254.5f, "3658", 282.0f, 30.0f, 282.0f, 86.0f),
 
     Str1(StraightPaths.Str1, "Forward 1", 1, 0.0f, "524", 0.0f, 0.0f, 113.0f, 0.0f, 169.5f, "528", 0.0f, 339.0f, 0.0f, 395.5f),
     Str2(StraightPaths.Str2, "Forward 2", 2, 0.0f, "525", 0.0f, 0.0f, 169.5f, 0.0f, 226.0f, "528", 0.0f, 339.0f, 0.0f, 395.5f),
