@@ -4566,7 +4566,7 @@
     "image": "pilots/Scum and Villainy/M12-L Kimogila Fighter/dalan-oberos.png",
     "text": "At the start of the Combat phase, you may acquire a target lock on an enemy ship inside your bullseye firing arc at Range 1-3.",
     "name": "Dalan Oberos",
-    "xws": "dalanoberos",
+    "xws": "dalanoberos-swx70",
     "ship": "M12-L Kimogila Fighter",
     "unique": true,
     "skill": 7,
