@@ -20,6 +20,7 @@ public class Canonicalizer {
             .put("hansolo2", "hansolo-swx57")
             .put("chewbacca2", "chewbacca-swx57")
             .put("poedameron2", "poedameron-swx57")
+            .put("dalanoberosm12l","dalanoberos-swx70")
             .build();
 
     static Map<String, String> shipFixes = ImmutableMap.<String, String>builder()
