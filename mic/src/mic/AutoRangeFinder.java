@@ -441,10 +441,51 @@ Boolean isThisTheOne = false;
                     if(temp7!=null)atkShapes.add(temp7);
                     if(case5){
                         //deal with triangle
-                        logToChat("triangles!");
+                        Shape dualRects = findDualRects(thisShip);
+                        Area filteredShape = new Area(dualRects);
 
-                        Shape temp7b = thisShip.getFrontSubstractionTriangle(true);
-                        Shape temp7c = thisShip.getFrontSubstractionTriangle(false);
+                        MicLine DD = new MicLine(D1,D2,false);
+
+                        switch(getMobileEdge()){
+                            case 4:
+                                Point2D.Double ArcIntersectsDD = findSegmentCrossPoint(new MicLine(A2,E2, false), DD, true);
+                                if(ArcIntersectsDD == null || (int)ArcIntersectsDD.getX() == 0 && (int)ArcIntersectsDD.getY() == 0) {
+                                    //the defender ext rects will limit things anyway, let DualRects do its thing
+                                }
+                                else{
+                                    MicLine A2DD = createLinePtoAB(A2, DD, true);
+                                    Point2D.Double the4thPoint = new Point2D.Double(ArcIntersectsDD.x + (A2DD.first.x-A2DD.second.x), ArcIntersectsDD.y + + (A2DD.first.y-A2DD.second.y));
+                                    GeneralPath excessLeft = new GeneralPath();
+                                    excessLeft.moveTo(ArcIntersectsDD.x, ArcIntersectsDD.y);
+                                    excessLeft.lineTo(the4thPoint.x, the4thPoint.y);
+                                    excessLeft.lineTo(A2.x, A2.y);
+                                    excessLeft.lineTo(A2DD.second.x, A2DD.second.y);
+                                    excessLeft.closePath();
+
+                                    filteredShape.subtract(new Area(excessLeft));
+                                }
+                                break;
+                            case 2:
+                                Point2D.Double ArcIntersectsDDright = findSegmentCrossPoint(new MicLine(A3,E3, false), DD, false);
+                                if(ArcIntersectsDDright == null || (int)ArcIntersectsDDright.getX() == 0 && (int)ArcIntersectsDDright.getY() == 0) {
+
+                                }
+                                else{
+                                    MicLine A3DD = createLinePtoAB(A3, DD, true);
+                                    Point2D.Double the4thPoint = new Point2D.Double(ArcIntersectsDDright.x + (A3DD.first.x-A3DD.second.x), ArcIntersectsDDright.y + + (A3DD.first.y-A3DD.second.y));
+                                    GeneralPath excessRight = new GeneralPath();
+                                    excessRight.moveTo(ArcIntersectsDDright.x, ArcIntersectsDDright.y);
+                                    excessRight.lineTo(the4thPoint.x, the4thPoint.y);
+                                    excessRight.lineTo(A3.x, A3.y);
+                                    excessRight.lineTo(A3DD.second.x, A3DD.second.y);
+                                    excessRight.closePath();
+
+                                    filteredShape.subtract(new Area(excessRight));
+                                }
+                                break;
+                        }
+
+                        if(filteredShape!=null) atkShapes.add(filteredShape);
 
                     }
                     break;
