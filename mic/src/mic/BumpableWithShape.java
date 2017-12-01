@@ -6,6 +6,7 @@ import VASSAL.counters.NonRectangular;
 
 import java.awt.*;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.GeneralPath;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
@@ -84,6 +85,13 @@ public class BumpableWithShape {
 
     private Point2D.Double leftBullseye = new Point2D.Double(0.0, 0.0);
     private Point2D.Double rightBullseye = new Point2D.Double(0.0, 0.0);
+
+
+    private Point2D.Double leftFrontalEnd = new Point2D.Double(0.0, 0.0);//these last 4 are for finding a perpendicular intersection to the defender in the weird front aux arc and mobile case
+    private Point2D.Double rightFrontalEnd = new Point2D.Double(0.0, 0.0);
+
+    private Point2D.Double leftBackwardEnd = new Point2D.Double(0.0, 0.0);
+    private Point2D.Double rightBackwardEnd = new Point2D.Double(0.0, 0.0);
 
 
 
@@ -165,6 +173,41 @@ public class BumpableWithShape {
                 Util.rotY(-halfWidth, halfHeight, angle) + center.getY());
     }
 
+    //used to cut a triangle-shaped hole in the best blue band inside AutoRange, front aux or mobile turret autoranges, when the ship is parallel and close the front or back, rare usage method
+    public Shape getFrontSubstractionTriangle(Boolean isLeft){
+        //local coords first
+
+        GeneralPath tri = new GeneralPath();
+        double lastDirection = -1.0;
+
+        double startX = frontLeftArcBase.x, startY = frontLeftArcBase.y;
+        if(isLeft == false){
+            startX = frontRightArcBase.x;
+            startY = frontRightArcBase.y;
+            lastDirection = 1.0;
+        }
+        double deltaY = getTriMaxVert();
+
+        tri.moveTo(startX, startY);
+        tri.lineTo(startX, startY - deltaY);
+        tri.lineTo(startX + lastDirection * chassis.getCornerToFiringArc(),startY - deltaY);
+
+        double centerX = bumpable.getPosition().getX();
+        double centerY = bumpable.getPosition().getY();
+
+        Shape transformed = AffineTransform
+                .getTranslateInstance(centerX,centerY)
+                .createTransformedShape(tri);
+
+        transformed = AffineTransform
+                .getRotateInstance(getAngleInRadians(), centerX, centerY)
+                .createTransformedShape(transformed);
+        return transformed;
+    }
+    public double getTriMaxVert(){
+        return chassis.getCornerToFiringArc()/(Math.PI*Math.tan(chassis.getArcHalfAngle()/180.0));
+    }
+
 
     public void figureOutLocalPoints(int maxRange){
         double pixelMaxRange = maxRange * 282.5f;
@@ -192,6 +235,14 @@ public class BumpableWithShape {
 
         leftBullseye = new Point2D.Double(-chassis.getBullsEyeWidth()/2.0, -halfsize);
         rightBullseye = new Point2D.Double(chassis.getBullsEyeWidth()/2.0, -halfsize);
+
+        leftFrontalEnd = new Point2D.Double(-halfsize + chassis.getCornerToFiringArc(), -halfsize  - pixelMaxRange);//these last 4 are for finding a perpendicular intersection to the defender in the weird front aux arc and mobile case
+        rightFrontalEnd = new Point2D.Double(halfsize - chassis.getCornerToFiringArc(), -halfsize  - pixelMaxRange);
+
+        leftBackwardEnd = new Point2D.Double(-halfsize + chassis.getCornerToFiringArc(), halfsize  + pixelMaxRange);
+        rightBackwardEnd = new Point2D.Double(halfsize - chassis.getCornerToFiringArc(), halfsize  + pixelMaxRange);
+
+
     }
 
     public void refreshSpecialPoints(){
@@ -225,13 +276,18 @@ public class BumpableWithShape {
         tPts.add(getATransformedPoint(leftMidBase.x, leftMidBase.y, 0.0, 0.0, angle, center.getX(), center.getY())); //8
         tPts.add(getATransformedPoint(rightMidBase.x, rightMidBase.y, 0.0, 0.0, angle, center.getX(), center.getY())); //9
 
-        tPts.add(getATransformedPoint(leftMidBase.x, leftMidBase.y, leftMidEnd.x, leftMidEnd.y, angle, center.getX(), center.getY())); //10
-        tPts.add(getATransformedPoint(rightMidBase.x, rightMidBase.y, rightMidEnd.x, rightMidEnd.y, angle, center.getX(), center.getY()));  //11
+        tPts.add(getATransformedPoint(leftMidEnd.x, leftMidEnd.y, 0.0, 0.0, angle, center.getX(), center.getY())); //10
+        tPts.add(getATransformedPoint(rightMidEnd.x, rightMidEnd.y, 0.0, 0.0, angle, center.getX(), center.getY()));  //11
 
         tPts.add(getATransformedPoint(leftBullseye.x, leftBullseye.y, 0.0, 0.0, angle, center.getX(), center.getY())); //12
         tPts.add(getATransformedPoint(leftBullseye.x, leftBullseye.y, 0.0, -pixelMaxRange, angle, center.getX(), center.getY())); //13
         tPts.add(getATransformedPoint(rightBullseye.x, rightBullseye.y, 0.0, 0.0, angle, center.getX(), center.getY())); //14
         tPts.add(getATransformedPoint(rightBullseye.x, rightBullseye.y, 0.0, -pixelMaxRange, angle, center.getX(), center.getY())); //15
+
+        tPts.add(getATransformedPoint(leftFrontalEnd.x, leftFrontalEnd.y, 0.0, 0.0, angle, center.getX(), center.getY())); //16
+        tPts.add(getATransformedPoint(rightFrontalEnd.x, rightFrontalEnd.y, 0.0,  0.0, angle, center.getX(), center.getY())); //17
+        tPts.add(getATransformedPoint(leftBackwardEnd.x, leftBackwardEnd.y, 0.0, 0.0, angle, center.getX(), center.getY())); //18
+        tPts.add(getATransformedPoint(rightBackwardEnd.x, rightBackwardEnd.y, 0.0, 0.0, angle, center.getX(), center.getY())); //19
     }
 
     Point2D.Double getATransformedPoint(double offX, double offY, double extraOffX, double extraOffY, double shipAngle, double centerX, double centerY)
