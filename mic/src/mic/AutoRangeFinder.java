@@ -322,19 +322,50 @@ Boolean isThisTheOne = false;
         Boolean checkWeirdCase = isTargetInsideWeirdCase(thisShip, b);
         Boolean trickyBandCase = whichOption == frontAuxArcOption || whichOption == mobileSideArcOption;
         Boolean checkInsideArcRects = isTargetInsideofRectangles(thisShip, b, true, true);
+        Boolean aligned = are90degreesAligned(thisShip, b);
+        Boolean forCase6 = false;
 
+        //hyper special case where yes, there's an overlap outside the firing arc but inside the full width, but we'll still use a line instead of a band because the latter can't cross over the firing arc
+        if(checkWeirdCase == true && trickyBandCase == true && aligned == true){
+            MicLine AA = new MicLine(A2,A3, false);
+            MicLine AAB = new MicLine(A1, A4, false);
+            Point2D.Double CC = findClosestVertex(thisShip, b);
+
+            MicLine AAD1 = createLinePtoAB(D1, AA, false);
+            MicLine AABD1 = createLinePtoAB(D1, AA, false);
+
+            MicLine D1CC = new MicLine(D1,CC, false);
+            Boolean firstCondition = (findSegmentCrossPoint(AAD1,new MicLine(A1,E1,false),true)!=null ||
+                    findSegmentCrossPoint(AAD1,new MicLine(A2,E2,false),true)!=null ||
+                    findSegmentCrossPoint(AAD1,new MicLine(A3,E3,false),true)!=null ||
+                    findSegmentCrossPoint(AAD1,new MicLine(A4,E4,false),true)!=null);
+            if(whichOption == mobileSideArcOption) firstCondition = firstCondition ||
+                    (findSegmentCrossPoint(AABD1,new MicLine(A1,E1,false),true)!=null ||
+                            findSegmentCrossPoint(AABD1,new MicLine(A2,E2,false),true)!=null ||
+                            findSegmentCrossPoint(AABD1,new MicLine(A3,E3,false),true)!=null ||
+                            findSegmentCrossPoint(AABD1,new MicLine(A4,E4,false),true)!=null);
+
+            Boolean secondCondition = (findSegmentCrossPoint(D1CC,new MicLine(A1,E1,false),true)!=null ||
+                            findSegmentCrossPoint(D1CC,new MicLine(A2,E2,false),true)!=null ||
+                            findSegmentCrossPoint(D1CC,new MicLine(A3,E3,false),true)!=null ||
+                            findSegmentCrossPoint(D1CC,new MicLine(A4,E4,false),true)!=null)
+                    ? true:false;
+
+            forCase6 = firstCondition && secondCondition;
+        }
         //1st case, the target is completely outside of the total width rectangles of the attacker, absolutely no chance of best firing bands
         Boolean case1 = checkOutsideFullRects == true;
         //2nd case: the target is inside the rectangles of the attacker (bound by arc lines if necessary in front and back for non-turret shots)
         //and both ships are NOT 90 degrees aligned
-        Boolean case2 = checkInsideArcRects == true && are90degreesAligned(thisShip, b) == false;
+        Boolean case2 = checkInsideArcRects == true && aligned == false;
         //3rd case: the target is outside of the arc bound rectangles not front aux arc nor mobile turret arcs
         Boolean case3 = checkInsideArcRects == false && trickyBandCase == false;
         //4th case: the target is outside of the arc bound rectangles, with front aux arc or mobile, but not 90 degrees aligned
-        Boolean case4 = checkWeirdCase == true && trickyBandCase == true && are90degreesAligned(thisShip, b) == false;
+        Boolean case4 = checkWeirdCase == true && trickyBandCase == true && aligned == false;
+        //6th case: keep a simple firing line if the target is inside the full rect, outside the front arc but no bands could be found because they'd cross over the arc line
+        Boolean case6 = checkWeirdCase == true && trickyBandCase == true && aligned == true && forCase6 == true;
 
-
-        if(case1 || case2 || case3 || case4){
+        if(case1 || case2 || case3 || case4 || case6){
             //TO DO: replace with a different range cap later, associated with the type of arc (for huge ships)
             if (bestLine.rangeLength > 3) return;
 
@@ -442,8 +473,8 @@ Boolean isThisTheOne = false;
                     if(case5){
                         //deal with triangle
                         Shape dualRects = findDualRects(thisShip);
-                        Area filteredShape = new Area(dualRects);
-
+                        Area protoFilteredShape = new Area(dualRects);
+                        Area filteredShape=null;
                         MicLine DD = new MicLine(D1,D2,false);
 
                         switch(getMobileEdge()){
@@ -462,7 +493,11 @@ Boolean isThisTheOne = false;
                                     excessLeft.lineTo(A2DD.second.x, A2DD.second.y);
                                     excessLeft.closePath();
 
-                                    filteredShape.subtract(new Area(excessLeft));
+                                    protoFilteredShape.subtract(new Area(excessLeft));
+                                    double fullWidth = thisShip.getChassisWidth();
+                                    Shape sideSelector = findInBetweenRectangle(thisShip, b, fullWidth, turretArcOption);
+                                    filteredShape = new Area(sideSelector);
+                                    filteredShape.intersect(protoFilteredShape);
                                 }
                                 break;
                             case 2:
@@ -480,7 +515,11 @@ Boolean isThisTheOne = false;
                                     excessRight.lineTo(A3DD.second.x, A3DD.second.y);
                                     excessRight.closePath();
 
-                                    filteredShape.subtract(new Area(excessRight));
+                                    protoFilteredShape.subtract(new Area(excessRight));
+                                    double fullWidth = thisShip.getChassisWidth();
+                                    Shape sideSelector = findInBetweenRectangle(thisShip, b, fullWidth, turretArcOption);
+                                    filteredShape = new Area(sideSelector);
+                                    filteredShape.intersect(protoFilteredShape);
                                 }
                                 break;
                         }
@@ -500,11 +539,20 @@ Boolean isThisTheOne = false;
                 Area a2 = new Area(fromTarget);
 
                 a1.intersect(a2);
+                if(checkBandObstruction(a1, new MicLine(D1,D2,false))==true) {
+                    found.isObstructed = true;
+                }
+                else found.isObstructed = false;
 
+                
                 double extra = getExtraAngleDuringRectDetection(thisShip, b);
                 ShapeWithText bestBand = new ShapeWithText(new Path2D.Double(a1), thisShip.getAngleInRadians() + extra);
+                if(found.isObstructed == true) {
+                    fov.shapes.add(bestBand.shape);
+                    bestBand.rangeString += " obstructed";
+                }
                 rfindings.add(found);
-                fov.addShapeWithText(bestBand);
+                fov.addShapeWithText(bestBand); 
             }
 
             //TO DO:
@@ -513,6 +561,98 @@ Boolean isThisTheOne = false;
             //case 2: if the 2 lines are crossed by different obstacles, then ray-cast all the possible lines and check for an obstacle free line
 
         }
+    }
+
+    private Boolean checkBandObstruction(Area a1, MicLine DD) {
+        //case 1, if no obstacles are found, just carry on
+        Boolean passesCase1 = true;
+        List<BumpableWithShape> obstructions = getObstructionsOnMap();
+
+        List<BumpableWithShape> obstructionsFound = new ArrayList<BumpableWithShape>();
+
+        for (BumpableWithShape obstruction : obstructions) {
+            if (shapesOverlap(a1, obstruction.shape)) {
+                passesCase1 = false;
+                obstructionsFound.add(obstruction);
+            }
+        }
+        if(passesCase1 == true) return false; //no obstacle found, carry on
+
+
+        //case 2, check the lateral edges and see if they cross the SAME obstacle; if so, it's globally obstructed
+        FlatteningPathIterator iter = new FlatteningPathIterator(a1.getPathIterator(new AffineTransform()), 1);
+        ArrayList<Point2D.Double> points=new ArrayList<Point2D.Double>();
+        double[] coords=new double[6];
+        while (!iter.isDone()) {
+            iter.currentSegment(coords);
+            double x=coords[0];
+            double y=coords[1];
+            points.add(new Point2D.Double(x,y));
+            iter.next();
+        }
+        if(points.size() <4){
+            logToChat("bad rectangle");
+            return false;
+        }
+
+        MicLine first = new MicLine(points.get(0), points.get(1), false);
+        MicLine second = new MicLine(points.get(1), points.get(2), false);
+        MicLine third = new MicLine(points.get(3), points.get(2), false);
+        MicLine fourth = new MicLine(points.get(0), points.get(3), false);
+
+        MicLine edge1 = first;
+        MicLine edge2 = third;
+
+        if(areMicLineParallel(first,DD)==true){
+            edge1 = second;
+            edge2 = fourth;
+        }
+        Boolean passesCase2 = true;
+        for (BumpableWithShape obstruction : obstructions) {
+            if (isLine2DOverlapShape(new Line2D.Double(edge1.first, edge1.second), obstruction.shape)) {
+                if (isLine2DOverlapShape(new Line2D.Double(edge2.first, edge2.second), obstruction.shape)) {
+                    fov.shapes.add(obstruction.shape);
+                    passesCase2 = false;
+                }
+            }
+        }
+        if(passesCase2 == false) return true; //the same obstacle blocked the whole width of the rectangle, obstruction found
+
+            //case 3, gotta ray cast from edge 1 to edge 2 and check all those lines. Assume it's false until you find a solid passthrough line
+        Boolean passesCase3 = false;
+        int count = (int)thisShip.chassis.getWidth();
+        for (int i = 0; i < count; i++) {
+            MicLine test = new MicLine(new Point2D.Double(edge1.first.x + (1.0/count)* i * (edge2.first.x - edge1.first.x),
+                    edge1.first.y + (1.0/count)* i * (edge2.first.y - edge1.first.y)),
+                    new Point2D.Double(edge1.second.x + (1.0/count)* i * (edge2.second.x - edge1.second.x),
+                            edge1.second.y + (1.0/count)* i * (edge2.second.y - edge1.second.y)), false);
+
+
+            for (BumpableWithShape obstruction : obstructionsFound) {
+                if(isLine2DOverlapShape(new Line2D.Double(test.first, test.second), obstruction.shape)==false) { //finds a way for this rock, but check other rocks
+                    passesCase3 = true;
+                }
+                else { //didn't find a way, check next line
+                    passesCase3 = false;
+                    break;
+                }
+            }
+            if(passesCase3==true) return false; //found a way despite checking all rocks? then you have a non-obstructed shot
+        }
+
+         //no passthrough found, so it's blocked
+        for(BumpableWithShape obstruction : obstructionsFound) fov.shapes.add(obstruction.shape);
+        return true;
+
+    }
+
+    private boolean areMicLineParallel(MicLine border1, MicLine dd) {
+        int angle1 = (int)((1/Math.PI)*180.0*getEdgeAngle(border1.first,border1.second));
+        double angle2 = (int)((1/Math.PI)*180.0*getEdgeAngle(dd.first,dd.second));
+        double angle3 = (int)((1/Math.PI)*180.0*getEdgeAngle(dd.second, dd.first));
+
+        if(angle1 == angle2 || angle1 == angle3) return true;
+        return false;
     }
 
     private boolean bestLineDoesntCrossArcEdge(MicLine bestLine) {
@@ -720,19 +860,19 @@ Boolean isThisTheOne = false;
                     lineToVet = vetThisLine(RCFD1, "RCFD1", 0.4);
                     if(lineToVet != null) noAngleCheckList.add(lineToVet);
                 }
-                if(findSegmentCrossPoint(RCBD1, new MicLine(A4, E4, false), true)==null &&
+                if(findSegmentCrossPoint(RCBD1, new MicLine(center, E4, false), true)==null &&
                         findSegmentCrossPoint(RCFD1, new MicLine(center, E4, false), true)==null){
                     lineToVet = vetThisLine(RCBD1, "RCBD1", 0.4);
                     if(lineToVet != null) noAngleCheckList.add(lineToVet);
                 }
 
                 //from the corners, normal
-                if(findSegmentCrossPoint(RCFDD, new MicLine(A3, E3, false), true)==null &&
+                if(findSegmentCrossPoint(RCFDD, new MicLine(center, E3, false), true)==null &&
                         findSegmentCrossPoint(RCFD1, new MicLine(center, E4, false), true)==null){
                     lineToVet = vetThisLine(RCFDD, "RCFDD", 0.4);
                     if(lineToVet != null) noAngleCheckList.add(lineToVet);
                 }
-                if(findSegmentCrossPoint(RCBDD, new MicLine(A4, E4, false), true)==null &&
+                if(findSegmentCrossPoint(RCBDD, new MicLine(center, E4, false), true)==null &&
                         findSegmentCrossPoint(RCFD1, new MicLine(center, E4, false), true)==null) {
                     lineToVet = vetThisLine(RCBDD, "RCBDD", 0.4);
                     if (lineToVet != null) noAngleCheckList.add(lineToVet);
@@ -2396,7 +2536,7 @@ Boolean isThisTheOne = false;
                 if(line.markedAsDead == true) graphics2D.setColor(new Color(255,0,0,255));
                 else {
                     Color gradiant = new Color(colorNb, colorNb, 255, 255);
-                    colorNb += 5;
+                    if(colorNb < 250) colorNb += 5;
                     graphics2D.setColor(gradiant);
                 }
                 if(line.isBestLine == true && line.markedAsDead == false) graphics2D.setColor(arcLineColor);
