@@ -334,7 +334,7 @@ Boolean isThisTheOne = false;
             MicLine AAD1 = createLinePtoAB(D1, AA, false);
             MicLine AABD1 = createLinePtoAB(D1, AA, false);
 
-            MicLine D1CC = new MicLine(D1,CC, false)
+            MicLine D1CC = new MicLine(D1,CC, false);
             fov.lines.add(AAD1);
             fov.lines.add(D1CC);
             Boolean firstCondition = (findSegmentCrossPoint(AAD1,new MicLine(A1,E1,false),true)!=null ||
