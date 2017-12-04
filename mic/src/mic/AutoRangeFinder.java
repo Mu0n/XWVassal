@@ -329,19 +329,19 @@ Boolean isThisTheOne = false;
         if(checkWeirdCase == true && trickyBandCase == true && aligned == true){
             MicLine AA = new MicLine(A2,A3, false);
             MicLine AAB = new MicLine(A1, A4, false);
+            MicLine DD = new MicLine(D1, D2, false);
             Point2D.Double CC = findClosestVertex(thisShip, b);
 
             MicLine AAD1 = createLinePtoAB(D1, AA, false);
-            MicLine AABD1 = createLinePtoAB(D1, AA, false);
-
+            MicLine AABD1 = createLinePtoAB(D1, AAB, false);
+            MicLine DDCC = createLinePtoAB(CC,DD, false);
             MicLine D1CC = new MicLine(D1,CC, false);
-            fov.lines.add(AAD1);
-            fov.lines.add(D1CC);
+
             Boolean firstCondition = (findSegmentCrossPoint(AAD1,new MicLine(A1,E1,false),true)!=null ||
                     findSegmentCrossPoint(AAD1,new MicLine(A2,E2,false),true)!=null ||
                     findSegmentCrossPoint(AAD1,new MicLine(A3,E3,false),true)!=null ||
                     findSegmentCrossPoint(AAD1,new MicLine(A4,E4,false),true)!=null);
-            if(whichOption == mobileSideArcOption) firstCondition = firstCondition ||
+            if(whichOption == mobileSideArcOption) if(getMobileEdge()==3) firstCondition = firstCondition ||
                     (findSegmentCrossPoint(AABD1,new MicLine(A1,E1,false),true)!=null ||
                             findSegmentCrossPoint(AABD1,new MicLine(A2,E2,false),true)!=null ||
                             findSegmentCrossPoint(AABD1,new MicLine(A3,E3,false),true)!=null ||
@@ -352,8 +352,14 @@ Boolean isThisTheOne = false;
                             findSegmentCrossPoint(D1CC,new MicLine(A3,E3,false),true)!=null ||
                             findSegmentCrossPoint(D1CC,new MicLine(A4,E4,false),true)!=null)
                     ? true:false;
+            Boolean thirdCondition = (findSegmentCrossPoint(DDCC,new MicLine(A1,E1,false),true)!=null ||
+                    findSegmentCrossPoint(DDCC,new MicLine(A2,E2,false),true)!=null ||
+                    findSegmentCrossPoint(DDCC,new MicLine(A3,E3,false),true)!=null ||
+                    findSegmentCrossPoint(DDCC,new MicLine(A4,E4,false),true)!=null)
+                    ?true:false;
+            forCase6 = firstCondition && secondCondition && thirdCondition;
 
-            forCase6 = firstCondition && secondCondition;
+            //logToChat("AAD1 or AABD1 crosses any arc line: " + Boolean.toString(firstCondition) + " D1CC crosses any arc line: " + Boolean.toString(secondCondition));
         }
         //1st case, the target is completely outside of the total width rectangles of the attacker, absolutely no chance of best firing bands
         Boolean case1 = checkOutsideFullRects == true;
@@ -463,15 +469,15 @@ Boolean isThisTheOne = false;
                             filteredShape.subtract(new Area(excessRight));
                         }
 
-                        if(filteredShape!=null) atkShapes.add(filteredShape);
+                        if(filteredShape!=null) if(filteredShape.getBounds2D().getWidth()!=0) atkShapes.add(filteredShape);
 
                     }
                     break;
                 case mobileSideArcOption:
                     Shape temp6 = findInBetweenRectangle(thisShip, b, wantedWidth, frontArcOption);
-                    if(temp6!=null)atkShapes.add(temp6);
+                    if(temp6!=null) if(temp6.getBounds2D().getWidth()!=0) atkShapes.add(temp6);
                     Shape temp7 = findInBetweenRectangle(thisShip, b, wantedWidth, mobileSideArcOption);
-                    if(temp7!=null)atkShapes.add(temp7);
+                    if(temp7!=null) if(temp7.getBounds2D().getWidth()!=0)atkShapes.add(temp7);
                     if(case5){
                         //deal with triangle
                         Shape dualRects = findDualRects(thisShip);
@@ -526,13 +532,13 @@ Boolean isThisTheOne = false;
                                 break;
                         }
 
-                        if(filteredShape!=null) atkShapes.add(filteredShape);
+                        if(filteredShape!=null)  if(filteredShape.getBounds2D().getWidth()!=0)atkShapes.add(filteredShape);
 
                     }
                     break;
 
             }
-
+//logToChat("nb of bands " + Integer.toString(atkShapes.size()));
             if(atkShapes.size() == 0) return;
 
             for(Shape s : atkShapes){
