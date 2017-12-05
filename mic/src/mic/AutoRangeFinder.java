@@ -359,7 +359,7 @@ Boolean isThisTheOne = false;
                     ?true:false;
             forCase6 = firstCondition && secondCondition && thirdCondition;
 
-            //logToChat("AAD1 or AABD1 crosses any arc line: " + Boolean.toString(firstCondition) + " D1CC crosses any arc line: " + Boolean.toString(secondCondition));
+            logToChat("AAD1 or AABD1 crosses any arc line: " + Boolean.toString(firstCondition) + " D1CC crosses any arc line: " + Boolean.toString(secondCondition) + " DDCC crosses any arc line: " + Boolean.toString(thirdCondition));
         }
         //1st case, the target is completely outside of the total width rectangles of the attacker, absolutely no chance of best firing bands
         Boolean case1 = checkOutsideFullRects == true;
