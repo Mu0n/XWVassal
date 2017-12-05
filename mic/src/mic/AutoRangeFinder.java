@@ -316,17 +316,28 @@ Boolean isThisTheOne = false;
         String bShipName = b.pilotName + "(" + b.shipName + ")";
         RangeFindings found = new RangeFindings(bestLine.rangeLength, bShipName);
 
-
         //deal with the cases where's there no chance of having multiple best lines first; check the rectangles extending from all 4 side of the attacker and check if you hit the defender
         Boolean checkOutsideFullRects = isTargetOutsideofRectangles(thisShip, b, true, false);
+        //weird case(s): the target ship is in front of the dual rects, the spaces between corners and firing arc edge start points (ie not directly in front of A2A3 (front edge), constrained by arcs)
         Boolean checkWeirdCase = isTargetInsideWeirdCase(thisShip, b);
+        //only activate checkWeirdCase if you're using the extra hard front aux arc and mobile turret arc options
         Boolean trickyBandCase = whichOption == frontAuxArcOption || whichOption == mobileSideArcOption;
+        //check if the ship is in front of the front edge of the arc
         Boolean checkInsideArcRects = isTargetInsideofRectangles(thisShip, b, true, true);
+        //check if parallel, or modulo 90 degrees rotated
         Boolean aligned = are90degreesAligned(thisShip, b);
         Boolean forCase6 = false;
-
+        int whichMobileSide = getMobileEdge();
         //hyper special case where yes, there's an overlap outside the firing arc but inside the full width, but we'll still use a line instead of a band because the latter can't cross over the firing arc
-        if(checkWeirdCase == true && trickyBandCase == true && aligned == true){
+        //In this section, we're trying to figure out if we should go on and keep a firing line (forCase6==true) or move on to checking best bands (forCase6==false)
+        //We check these conditions and mark them true IF we find an intersection point between them and any firing arc line (1 to 4)
+        //If ANY one of these 3 conditions are false, then the whole thing is false and we should move on to best band(s) instead of best line
+        //3 lines (conditions) are checked: (1) AAD1 from target's closest corner to attacker's closest attacking edge A2A3, if whichSide = 3 (back mobile), then use A1A4
+        //(2) D1CC from target's closest corner to attacker's closest corner
+        //(3) DDCC from attacker's closest corner to defender's closest edge
+        if(checkInsideArcRects == false && checkWeirdCase == true && trickyBandCase == true && aligned == true && (whichMobileSide !=2 && whichMobileSide !=4)){
+
+            Point2D.Double center = new Point2D.Double(thisShip.bumpable.getPosition().getX(), thisShip.bumpable.getPosition().getY());
             MicLine AA = new MicLine(A2,A3, false);
             MicLine AAB = new MicLine(A1, A4, false);
             MicLine DD = new MicLine(D1, D2, false);
@@ -337,25 +348,25 @@ Boolean isThisTheOne = false;
             MicLine DDCC = createLinePtoAB(CC,DD, false);
             MicLine D1CC = new MicLine(D1,CC, false);
 
-            Boolean firstCondition = (findSegmentCrossPoint(AAD1,new MicLine(A1,E1,false),true)!=null ||
-                    findSegmentCrossPoint(AAD1,new MicLine(A2,E2,false),true)!=null ||
-                    findSegmentCrossPoint(AAD1,new MicLine(A3,E3,false),true)!=null ||
-                    findSegmentCrossPoint(AAD1,new MicLine(A4,E4,false),true)!=null);
+            Boolean firstCondition = (findSegmentCrossPoint(AAD1,new MicLine(center,E1,false),true)!=null ||
+                    findSegmentCrossPoint(AAD1,new MicLine(center,E2,false),true)!=null ||
+                    findSegmentCrossPoint(AAD1,new MicLine(center,E3,false),true)!=null ||
+                    findSegmentCrossPoint(AAD1,new MicLine(center,E4,false),true)!=null);
             if(whichOption == mobileSideArcOption) if(getMobileEdge()==3) firstCondition = firstCondition ||
-                    (findSegmentCrossPoint(AABD1,new MicLine(A1,E1,false),true)!=null ||
-                            findSegmentCrossPoint(AABD1,new MicLine(A2,E2,false),true)!=null ||
-                            findSegmentCrossPoint(AABD1,new MicLine(A3,E3,false),true)!=null ||
-                            findSegmentCrossPoint(AABD1,new MicLine(A4,E4,false),true)!=null);
+                    (findSegmentCrossPoint(AABD1,new MicLine(center,E1,false),true)!=null ||
+                            findSegmentCrossPoint(AABD1,new MicLine(center,E2,false),true)!=null ||
+                            findSegmentCrossPoint(AABD1,new MicLine(center,E3,false),true)!=null ||
+                            findSegmentCrossPoint(AABD1,new MicLine(center,E4,false),true)!=null);
 
-            Boolean secondCondition = (findSegmentCrossPoint(D1CC,new MicLine(A1,E1,false),true)!=null ||
-                            findSegmentCrossPoint(D1CC,new MicLine(A2,E2,false),true)!=null ||
-                            findSegmentCrossPoint(D1CC,new MicLine(A3,E3,false),true)!=null ||
-                            findSegmentCrossPoint(D1CC,new MicLine(A4,E4,false),true)!=null)
+            Boolean secondCondition = (findSegmentCrossPoint(D1CC,new MicLine(center,E1,false),true)!=null ||
+                            findSegmentCrossPoint(D1CC,new MicLine(center,E2,false),true)!=null ||
+                            findSegmentCrossPoint(D1CC,new MicLine(center,E3,false),true)!=null ||
+                            findSegmentCrossPoint(D1CC,new MicLine(center,E4,false),true)!=null)
                     ? true:false;
-            Boolean thirdCondition = (findSegmentCrossPoint(DDCC,new MicLine(A1,E1,false),true)!=null ||
-                    findSegmentCrossPoint(DDCC,new MicLine(A2,E2,false),true)!=null ||
-                    findSegmentCrossPoint(DDCC,new MicLine(A3,E3,false),true)!=null ||
-                    findSegmentCrossPoint(DDCC,new MicLine(A4,E4,false),true)!=null)
+            Boolean thirdCondition = (findSegmentCrossPoint(DDCC,new MicLine(center,E1,false),true)!=null ||
+                    findSegmentCrossPoint(DDCC,new MicLine(center,E2,false),true)!=null ||
+                    findSegmentCrossPoint(DDCC,new MicLine(center,E3,false),true)!=null ||
+                    findSegmentCrossPoint(DDCC,new MicLine(center,E4,false),true)!=null)
                     ?true:false;
             forCase6 = firstCondition && secondCondition && thirdCondition;
 
@@ -478,7 +489,7 @@ Boolean isThisTheOne = false;
                     if(temp6!=null) if(temp6.getBounds2D().getWidth()!=0) atkShapes.add(temp6);
                     Shape temp7 = findInBetweenRectangle(thisShip, b, wantedWidth, mobileSideArcOption);
                     if(temp7!=null) if(temp7.getBounds2D().getWidth()!=0)atkShapes.add(temp7);
-                    if(case5 || case6){
+                    if(case5){
                         //deal with triangle
                         Shape dualRects = findDualRects(thisShip);
                         Area protoFilteredShape = new Area(dualRects);
