@@ -478,7 +478,7 @@ Boolean isThisTheOne = false;
                     if(temp6!=null) if(temp6.getBounds2D().getWidth()!=0) atkShapes.add(temp6);
                     Shape temp7 = findInBetweenRectangle(thisShip, b, wantedWidth, mobileSideArcOption);
                     if(temp7!=null) if(temp7.getBounds2D().getWidth()!=0)atkShapes.add(temp7);
-                    if(case5){
+                    if(case5 || case6){
                         //deal with triangle
                         Shape dualRects = findDualRects(thisShip);
                         Area protoFilteredShape = new Area(dualRects);
