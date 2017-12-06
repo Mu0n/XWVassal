@@ -110,7 +110,7 @@ public class AutoRangeFinder extends Decorator implements EditablePiece, MouseLi
     Point2D.Double E2B, E3B; //alternative perpendicular to front arc in mobile turret+front aux case
     Point2D.Double E1B, E4B; //same for mobile turret, back side
     Point2D.Double bestACorner; //attacker's best corner. In use inside method that quickly calculates band lengths
-
+    Boolean wantExtraBandsMorFA = false;
     int bestBandRange = 0;
 
 Boolean isThisTheOne = false;
@@ -316,78 +316,10 @@ Boolean isThisTheOne = false;
         String bShipName = b.pilotName + "(" + b.shipName + ")";
         RangeFindings found = new RangeFindings(bestLine.rangeLength, bShipName);
 
-        //deal with the cases where's there no chance of having multiple best lines first; check the rectangles extending from all 4 side of the attacker and check if you hit the defender
-        Boolean checkOutsideFullRects = isTargetOutsideofRectangles(thisShip, b, true, false);
-        //weird case(s): the target ship is in front of the dual rects, the spaces between corners and firing arc edge start points (ie not directly in front of A2A3 (front edge), constrained by arcs)
-        Boolean checkWeirdCase = isTargetInsideWeirdCase(thisShip, b);
-        //only activate checkWeirdCase if you're using the extra hard front aux arc and mobile turret arc options
-        Boolean trickyBandCase = whichOption == frontAuxArcOption || whichOption == mobileSideArcOption;
-        //check if the ship is in front of the front edge of the arc
-        Boolean checkInsideArcRects = isTargetInsideofRectangles(thisShip, b, true, true);
-        //check if parallel, or modulo 90 degrees rotated
-        Boolean aligned = are90degreesAligned(thisShip, b);
-        Boolean forCase6 = false;
-        int whichMobileSide = getMobileEdge();
-        //hyper special case where yes, there's an overlap outside the firing arc but inside the full width, but we'll still use a line instead of a band because the latter can't cross over the firing arc
-        //In this section, we're trying to figure out if we should go on and keep a firing line (forCase6==true) or move on to checking best bands (forCase6==false)
-        //We check these conditions and mark them true IF we find an intersection point between them and any firing arc line (1 to 4)
-        //If ANY one of these 3 conditions are false, then the whole thing is false and we should move on to best band(s) instead of best line
-        //3 lines (conditions) are checked: (1) AAD1 from target's closest corner to attacker's closest attacking edge A2A3, if whichSide = 3 (back mobile), then use A1A4
-        //(2) D1CC from target's closest corner to attacker's closest corner
-        //(3) DDCC from attacker's closest corner to defender's closest edge
-        if(checkInsideArcRects == false && checkWeirdCase == true && trickyBandCase == true && aligned == true && (whichMobileSide !=2 && whichMobileSide !=4)){
 
-            Point2D.Double center = new Point2D.Double(thisShip.bumpable.getPosition().getX(), thisShip.bumpable.getPosition().getY());
-            MicLine AA = new MicLine(A2,A3, false);
-            MicLine AAB = new MicLine(A1, A4, false);
-            MicLine DD = new MicLine(D1, D2, false);
-            Point2D.Double CC = findClosestVertex(thisShip, b);
-
-            MicLine AAD1 = createLinePtoAB(D1, AA, false);
-            MicLine AABD1 = createLinePtoAB(D1, AAB, false);
-            MicLine DDCC = createLinePtoAB(CC,DD, false);
-            MicLine D1CC = new MicLine(D1,CC, false);
-
-            Boolean firstCondition = (findSegmentCrossPoint(AAD1,new MicLine(center,E1,false),true)!=null ||
-                    findSegmentCrossPoint(AAD1,new MicLine(center,E2,false),true)!=null ||
-                    findSegmentCrossPoint(AAD1,new MicLine(center,E3,false),true)!=null ||
-                    findSegmentCrossPoint(AAD1,new MicLine(center,E4,false),true)!=null);
-            if(whichOption == mobileSideArcOption) if(getMobileEdge()==3) firstCondition = firstCondition ||
-                    (findSegmentCrossPoint(AABD1,new MicLine(center,E1,false),true)!=null ||
-                            findSegmentCrossPoint(AABD1,new MicLine(center,E2,false),true)!=null ||
-                            findSegmentCrossPoint(AABD1,new MicLine(center,E3,false),true)!=null ||
-                            findSegmentCrossPoint(AABD1,new MicLine(center,E4,false),true)!=null);
-
-            Boolean secondCondition = (findSegmentCrossPoint(D1CC,new MicLine(center,E1,false),true)!=null ||
-                            findSegmentCrossPoint(D1CC,new MicLine(center,E2,false),true)!=null ||
-                            findSegmentCrossPoint(D1CC,new MicLine(center,E3,false),true)!=null ||
-                            findSegmentCrossPoint(D1CC,new MicLine(center,E4,false),true)!=null)
-                    ? true:false;
-            Boolean thirdCondition = (findSegmentCrossPoint(DDCC,new MicLine(center,E1,false),true)!=null ||
-                    findSegmentCrossPoint(DDCC,new MicLine(center,E2,false),true)!=null ||
-                    findSegmentCrossPoint(DDCC,new MicLine(center,E3,false),true)!=null ||
-                    findSegmentCrossPoint(DDCC,new MicLine(center,E4,false),true)!=null)
-                    ?true:false;
-            forCase6 = firstCondition && secondCondition && thirdCondition;
-
-            logToChat("AAD1 or AABD1 crosses any arc line: " + Boolean.toString(firstCondition) + " D1CC crosses any arc line: " + Boolean.toString(secondCondition) + " DDCC crosses any arc line: " + Boolean.toString(thirdCondition));
-        }
-        //1st case, the target is completely outside of the total width rectangles of the attacker, absolutely no chance of best firing bands
-        Boolean case1 = checkOutsideFullRects == true;
-        //2nd case: the target is inside the rectangles of the attacker (bound by arc lines if necessary in front and back for non-turret shots)
-        //and both ships are NOT 90 degrees aligned
-        Boolean case2 = checkInsideArcRects == true && aligned == false;
-        //3rd case: the target is outside of the arc bound rectangles not front aux arc nor mobile turret arcs
-        Boolean case3 = checkInsideArcRects == false && trickyBandCase == false;
-        //4th case: the target is outside of the arc bound rectangles, with front aux arc or mobile, but not 90 degrees aligned
-        Boolean case4 = checkWeirdCase == true && trickyBandCase == true && aligned == false;
-        //6th case: keep a simple firing line if the target is inside the full rect, outside the front arc but no bands could be found because they'd cross over the arc line
-        Boolean case6 = checkWeirdCase == true && trickyBandCase == true && aligned == true && forCase6 == true;
-
-        if(case1 || case2 || case3 || case4 || case6){
+        if(shouldWeDoBandScenario(b) == false){
             //TO DO: replace with a different range cap later, associated with the type of arc (for huge ships)
             if (bestLine.rangeLength > 3) return;
-
             //find if there's an obstruction
             List<BumpableWithShape> obstructions = getObstructionsOnMap();
             for (BumpableWithShape obstruction : obstructions) {
@@ -401,11 +333,10 @@ Boolean isThisTheOne = false;
             rfindings.add(found);
             fov.addLine(bestLine);
         }
-        else { //multiple lines case
 
-
+        else { //multiple lines case; shouldWeDoBandScenario() == true
             //5th case: will be used in multiple bands, the triangles at the corners must be intersected with the rects of the defender
-            Boolean case5 = checkWeirdCase == true && trickyBandCase == true && are90degreesAligned(thisShip, b) == true && bestLineDoesntCrossArcEdge(bestLine);
+            //Boolean case5 = checkWeirdCase == true && trickyBandCase == true && are90degreesAligned(thisShip, b) == true && bestLineDoesntCrossArcEdge(bestLine);
 
             //step 1, make sure the distance is within acceptable ranges. Because of the multiple band
             //scenario that can happen with front aux and mobile turrets, this range should be checked in the line finding block above before this else
@@ -440,7 +371,7 @@ Boolean isThisTheOne = false;
                 case frontAuxArcOption:
                     Shape temp5 = findInBetweenRectangle(thisShip, b, wantedWidth, frontAuxArcOption);
                     if(temp5!=null)atkShapes.add(temp5);
-                    if(case5){
+                    if(wantExtraBandsMorFA){
                         //deal with triangle
                         Shape dualRects = findDualRects(thisShip);
                         Area filteredShape = new Area(dualRects);
@@ -489,7 +420,7 @@ Boolean isThisTheOne = false;
                     if(temp6!=null) if(temp6.getBounds2D().getWidth()!=0) atkShapes.add(temp6);
                     Shape temp7 = findInBetweenRectangle(thisShip, b, wantedWidth, mobileSideArcOption);
                     if(temp7!=null) if(temp7.getBounds2D().getWidth()!=0)atkShapes.add(temp7);
-                    if(case5){
+                    if(wantExtraBandsMorFA){
                         //deal with triangle
                         Shape dualRects = findDualRects(thisShip);
                         Area protoFilteredShape = new Area(dualRects);
@@ -518,6 +449,26 @@ Boolean isThisTheOne = false;
                                     filteredShape = new Area(sideSelector);
                                     filteredShape.intersect(protoFilteredShape);
                                 }
+                                Point2D.Double ArcIntersectsDD_back = findSegmentCrossPoint(new MicLine(A1,E1, false), DD, false);
+                                if(ArcIntersectsDD_back == null || (int)ArcIntersectsDD_back.getX() == 0 && (int)ArcIntersectsDD_back.getY() == 0) {
+
+                                }
+                                else{
+                                    MicLine A1DD = createLinePtoAB(A1, DD, true);
+                                    Point2D.Double the4thPoint = new Point2D.Double(ArcIntersectsDD_back.x + (A1DD.first.x-A1DD.second.x), ArcIntersectsDD_back.y + + (A1DD.first.y-A1DD.second.y));
+                                    GeneralPath excessRight = new GeneralPath();
+                                    excessRight.moveTo(ArcIntersectsDD_back.x, ArcIntersectsDD_back.y);
+                                    excessRight.lineTo(the4thPoint.x, the4thPoint.y);
+                                    excessRight.lineTo(A1.x, A1.y);
+                                    excessRight.lineTo(A1DD.second.x, A1DD.second.y);
+                                    excessRight.closePath();
+
+                                    protoFilteredShape.subtract(new Area(excessRight));
+                                    double fullWidth = thisShip.getChassisWidth();
+                                    Shape sideSelector = findInBetweenRectangle(thisShip, b, fullWidth, turretArcOption);
+                                    filteredShape = new Area(sideSelector);
+                                    filteredShape.intersect(protoFilteredShape);
+                                }
                                 break;
                             case 2:
                                 Point2D.Double ArcIntersectsDDright = findSegmentCrossPoint(new MicLine(A3,E3, false), DD, false);
@@ -532,6 +483,26 @@ Boolean isThisTheOne = false;
                                     excessRight.lineTo(the4thPoint.x, the4thPoint.y);
                                     excessRight.lineTo(A3.x, A3.y);
                                     excessRight.lineTo(A3DD.second.x, A3DD.second.y);
+                                    excessRight.closePath();
+
+                                    protoFilteredShape.subtract(new Area(excessRight));
+                                    double fullWidth = thisShip.getChassisWidth();
+                                    Shape sideSelector = findInBetweenRectangle(thisShip, b, fullWidth, turretArcOption);
+                                    filteredShape = new Area(sideSelector);
+                                    filteredShape.intersect(protoFilteredShape);
+                                }
+                                Point2D.Double ArcIntersectsDDright_back = findSegmentCrossPoint(new MicLine(A4,E4, false), DD, false);
+                                if(ArcIntersectsDDright_back == null || (int)ArcIntersectsDDright_back.getX() == 0 && (int)ArcIntersectsDDright_back.getY() == 0) {
+
+                                }
+                                else{
+                                    MicLine A4DD = createLinePtoAB(A4, DD, true);
+                                    Point2D.Double the4thPoint = new Point2D.Double(ArcIntersectsDDright_back.x + (A4DD.first.x-A4DD.second.x), ArcIntersectsDDright_back.y + + (A4DD.first.y-A4DD.second.y));
+                                    GeneralPath excessRight = new GeneralPath();
+                                    excessRight.moveTo(ArcIntersectsDDright_back.x, ArcIntersectsDDright_back.y);
+                                    excessRight.lineTo(the4thPoint.x, the4thPoint.y);
+                                    excessRight.lineTo(A4.x, A4.y);
+                                    excessRight.lineTo(A4DD.second.x, A4DD.second.y);
                                     excessRight.closePath();
 
                                     protoFilteredShape.subtract(new Area(excessRight));
@@ -580,6 +551,150 @@ Boolean isThisTheOne = false;
             //case 2: if the 2 lines are crossed by different obstacles, then ray-cast all the possible lines and check for an obstacle free line
 
         }
+    }
+
+    //complicated method that sorts out which situation needs bands; gets hairy for mobile turret arcs
+    private boolean shouldWeDoBandScenario(BumpableWithShape b) {
+        int whichMobileSide = getMobileEdge();
+
+        //deal with the cases where's there no chance of having multiple best lines first; check the rectangles extending from all 4 side of the attacker and check if you hit the defender
+
+        //CASE 1: no in each other's full length extended cross shapes
+        Boolean checkOutsideFullRects = isTargetOutsideofRectangles(thisShip, b, true, false);
+        if(checkOutsideFullRects==true) return false; //no chance of bands here!
+        //CERTIFICATION 1: from now on, the target is at least dipping into the full cross of the attacker
+
+        //check if parallel, or modulo 90 degrees rotated
+        //CASE 2: not parallel
+        Boolean aligned = are90degreesAligned(thisShip, b);
+        if(aligned == false) return false; //another case of no chance of bands here!
+        //CERTIFICATION 2: from now on, the target is 90 degrees modulo aligned with the attacker
+
+        //CASE 3: turret shots can be sorted easily now
+        if(whichOption == turretArcOption) return true; //we want bands
+        //CERTIFICATION 3: turretArcOption is no longer present
+
+
+
+        //FORK IN THE ROAD, use specialized isTargetInsideofRectangles for mobile turret later and front aux arcs
+
+        if(whichOption!=mobileSideArcOption && whichOption != frontAuxArcOption){
+            //CASE 4: the target is inside of the arc bound rectangles not front aux arc nor mobile turret arcs, could be aligned or not, irrelevant
+            //check if the ship is in front of the front edge of the arc
+            Boolean checkInsideArcRects = isTargetInsideofRectangles(thisShip, b, true, true);
+            if(checkInsideArcRects == false) return false; //another case of no chance of bands here!
+            else return true; //otherwise request a line
+            //CERTIFICATION 4: front, back, bullseye are no longer present at all;
+            //mobile is still possible in all cases where it's in front of of the full width
+            //same for front aux arc
+        }
+
+
+
+
+        //Getting line DDCC which will allow to settle things on allowing a secondary front-side band or not
+        Point2D.Double D1 = findClosestVertex(b, thisShip);
+        Point2D.Double D2 = find2ndClosestVertex(b, thisShip);
+        Point2D.Double center = new Point2D.Double(thisShip.bumpable.getPosition().getX(), thisShip.bumpable.getPosition().getY());
+        MicLine DD = new MicLine(D1, D2, false);
+        Point2D.Double CC = findClosestVertex(thisShip, b);
+
+        MicLine DDCC = createLinePtoAB(CC,DD, false);
+
+        Boolean firingArcAllowsBand = (findSegmentCrossPoint(DDCC,new MicLine(center,E1,false),true)!=null ||
+                findSegmentCrossPoint(DDCC,new MicLine(center,E2,false),true)!=null ||
+                findSegmentCrossPoint(DDCC,new MicLine(center,E3,false),true)!=null ||
+                findSegmentCrossPoint(DDCC,new MicLine(center,E4,false),true)!=null)
+                ?false:true;
+
+        //CASE 5: front aux arc can get a frontal band, or sideways band
+        //deal with easy front aux arc case that will at least get a frontal band
+        if(whichOption == frontAuxArcOption){
+            Boolean checkInsideArcRects = isTargetInsideofRectangles(thisShip, b, true, true);
+            if(checkInsideArcRects == true) return true;
+        }
+        //CERTIFICATION 5: front aux arc's only remaining case is if it's on frontal side, away from front arc, where it might have a band or not
+
+        //CASE 6: we must check if the firing arc line prevents bands for front aux arc
+        if(whichOption == frontAuxArcOption){
+            Boolean checkInsideArcRects = isTargetInsideofRectangles(thisShip, b, true, true);
+
+            //subcase 6a, line is blocked, but there might still be a frontal band allowed. decide on that limiting factor
+            if(firingArcAllowsBand == false) {
+                if(checkInsideArcRects == true) return true;
+                else return false;
+            }
+            //subcase 6b: there's a side front band allowed, so for sure go to the band scenario and global-variable activate the boolean flag for 2ndary band
+            else {
+                wantExtraBandsMorFA = true;
+                return true;
+            }
+        }
+        //CERTIFICATION 6: front aux arc is completely dealt with
+
+        //Completely deal with mobile turret cases that were not totally easy before the FORK above
+        if(whichOption==mobileSideArcOption) { //should be moot because it's supposed to be the last surviving option
+            Boolean checkFrontArcAlignment = isTargetInsideofFrontRectangle(thisShip, b, true);
+            Boolean checkClassicCross = isTargetInsideofRectangles(thisShip, b, true, true);
+            switch(whichMobileSide){
+                case 1:
+                    if(checkFrontArcAlignment==true) return true;
+                    else return false;
+                case 2:
+                    Boolean rightCheck = isTargetInsideofRightRectangle(thisShip, b, true);
+                    if(rightCheck== true) return true;
+                    Boolean rightFrontBackCheck = isTargetInsideofRightFrontBackRectangle(thisShip, b, true);
+                    if(rightFrontBackCheck == true){
+                        if(firingArcAllowsBand==true){
+                            if(verifyThatCCIsOnSideThatAllowsBands(CC, 2)) {
+                                wantExtraBandsMorFA = true;
+                            }
+                            return true;
+                        }
+                        if(checkClassicCross==true && verifyThatCCIsOnSideThatAllowsBands(CC, 2)) return true;
+                        else return false;
+                    }
+                    if(checkClassicCross==true) return true;
+                    break;
+                case 3:
+                    if(checkFrontArcAlignment==true) return true;
+                    Boolean checkBackArcAlignment_3 = isTargetInsideofBackRectangle(thisShip, b, true);
+                    if(checkBackArcAlignment_3==true) return true;
+                    return false;
+                case 4:
+                    Boolean leftCheck = isTargetInsideofLeftRectangle(thisShip, b, true);
+                    if(leftCheck== true) return true;
+                    Boolean leftFrontBackCheck = isTargetInsideofLeftFrontBackRectangle(thisShip, b, true);
+                    if(leftFrontBackCheck == true){
+                        if(firingArcAllowsBand==true){
+                            if(verifyThatCCIsOnSideThatAllowsBands(CC, 4)) {
+                                wantExtraBandsMorFA = true;
+                            }
+                            return true;
+                        }
+                        if(checkClassicCross==true  && verifyThatCCIsOnSideThatAllowsBands(CC, 4)) return true;
+                        else return false;
+                    }
+                    if(checkClassicCross==true) return true;
+                    break;
+            }
+        }
+        return false; //must request a line because that corner is not in the side that's selected
+    }
+
+
+
+    private boolean verifyThatCCIsOnSideThatAllowsBands(Point2D.Double CC, int side) {
+        ArrayList<Point2D.Double> vertices = thisShip.getVertices();
+        if(side==2) {
+            if(Math.abs(CC.x - vertices.get(1).x) < 0.01 && Math.abs(CC.y - vertices.get(1).y) < 0.01) return true;
+            return false;
+        }
+        if(side==4){
+            if(Math.abs(CC.x - vertices.get(0).x) < 0.01 && Math.abs(CC.y - vertices.get(0).y) < 0.01) return true;
+            return false;
+        }
+        return false;
     }
 
     private Boolean checkBandObstruction(Area a1, MicLine DD) {
@@ -822,6 +937,7 @@ Boolean isThisTheOne = false;
         MicLine A3D1 = new MicLine(A3, D1, false);
         lineToVet = vetThisLine(A3D1, "A3D1", 0.3);
         if(lineToVet != null) frontList.add(lineToVet);
+
         MicLine A3D2 = new MicLine(A3, D2, false);
         lineToVet = vetThisLine(A3D2, "A3D2", 0.5);
         if(lineToVet != null) frontList.add(lineToVet);
@@ -880,19 +996,19 @@ Boolean isThisTheOne = false;
                     if(lineToVet != null) noAngleCheckList.add(lineToVet);
                 }
                 if(findSegmentCrossPoint(RCBD1, new MicLine(center, E4, false), true)==null &&
-                        findSegmentCrossPoint(RCFD1, new MicLine(center, E4, false), true)==null){
+                        findSegmentCrossPoint(RCBD1, new MicLine(center, E4, false), true)==null){
                     lineToVet = vetThisLine(RCBD1, "RCBD1", 0.4);
                     if(lineToVet != null) noAngleCheckList.add(lineToVet);
                 }
 
                 //from the corners, normal
                 if(findSegmentCrossPoint(RCFDD, new MicLine(center, E3, false), true)==null &&
-                        findSegmentCrossPoint(RCFD1, new MicLine(center, E4, false), true)==null){
+                        findSegmentCrossPoint(RCFDD, new MicLine(center, E4, false), true)==null){
                     lineToVet = vetThisLine(RCFDD, "RCFDD", 0.4);
                     if(lineToVet != null) noAngleCheckList.add(lineToVet);
                 }
                 if(findSegmentCrossPoint(RCBDD, new MicLine(center, E4, false), true)==null &&
-                        findSegmentCrossPoint(RCFD1, new MicLine(center, E4, false), true)==null) {
+                        findSegmentCrossPoint(RCBDD, new MicLine(center, E4, false), true)==null) {
                     lineToVet = vetThisLine(RCBDD, "RCBDD", 0.4);
                     if (lineToVet != null) noAngleCheckList.add(lineToVet);
                 }
@@ -970,19 +1086,19 @@ Boolean isThisTheOne = false;
                     if(lineToVet != null) noAngleCheckList.add(lineToVet);
                 }
                 if(findSegmentCrossPoint(LCBD1, new MicLine(center, E1, false), true)==null &&
-                        findSegmentCrossPoint(LCFD1, new MicLine(center, E2, false), true)==null){
+                        findSegmentCrossPoint(LCBD1, new MicLine(center, E2, false), true)==null){
                     lineToVet = vetThisLine(LCBD1, "LCBD1", 0.4);
                     if(lineToVet != null) noAngleCheckList.add(lineToVet);
                 }
 
                 //from the corners, normal
                 if(findSegmentCrossPoint(LCFDD, new MicLine(center, E2, false), true)==null &&
-                        findSegmentCrossPoint(LCFD1, new MicLine(center, E1, false), true)==null){
+                        findSegmentCrossPoint(LCFDD, new MicLine(center, E1, false), true)==null){
                     lineToVet = vetThisLine(LCFDD, "LCFDD", 0.4);
                     if(lineToVet != null) noAngleCheckList.add(lineToVet);
                 }
                 if(findSegmentCrossPoint(LCBDD, new MicLine(center, E1, false), true)==null &&
-                        findSegmentCrossPoint(LCFD1, new MicLine(center, E2, false), true)==null){
+                        findSegmentCrossPoint(LCBDD, new MicLine(center, E2, false), true)==null){
                     lineToVet = vetThisLine(LCBDD, "LCBDD", 0.4);
                     if(lineToVet != null) noAngleCheckList.add(lineToVet);
                 }
@@ -1016,6 +1132,7 @@ Boolean isThisTheOne = false;
         ArrayList<MicLine> filteredList = new ArrayList<MicLine>();
         ArrayList<MicLine> deadList = new ArrayList<MicLine>();
 
+        //logToChat("before filtering; front: " + Integer.toString(frontList.size()) + " right: " + Integer.toString(rightList.size()) + " back: " + Integer.toString(backList.size()) + " left: " + Integer.toString(leftList.size()));
         //Filter out shots that aren't inside the left aux arc
         for(MicLine l: leftList)
         {
@@ -1045,6 +1162,8 @@ Boolean isThisTheOne = false;
             filteredList.add(l);
         }
 
+        //logToChat("after filtering: " + Integer.toString(filteredList.size()));
+
         //ALLLINES: if all lines have to been added to the visuals, then, uncomment this section
         if(MULTILINES == true){
             for(MicLine everyline : filteredList) {
@@ -1067,6 +1186,8 @@ Boolean isThisTheOne = false;
                 best = l;
             }
         }
+
+        //logToChat("found a best? " + Boolean.toString(best!=null?true:false));
         //nothing under the requested range was found, no best lines can be submitted
         if (best == null) {
             return null;
@@ -2071,14 +2192,109 @@ Boolean isThisTheOne = false;
     }
 
     private Boolean isTargetInsideofRectangles(BumpableWithShape thisShip, BumpableWithShape targetBWS, boolean wantBoost, boolean wantBoundByFrontAndBackArcs) {
+
         Shape crossZone = findUnionOfRectangularExtensions(thisShip, wantBoost, wantBoundByFrontAndBackArcs);
+
         return shapesOverlap(crossZone, targetBWS.getRectWithNoNubs());
     }
 
+    private Boolean isTargetInsideofFrontRectangle(BumpableWithShape thisShip, BumpableWithShape targetBWS, boolean wantBoost) {
+        Shape crossZone = findFrontRectangularExtension(thisShip, wantBoost);
+
+        return shapesOverlap(crossZone, targetBWS.getRectWithNoNubs());
+    }
+
+    private Boolean isTargetInsideofBackRectangle(BumpableWithShape thisShip, BumpableWithShape targetBWS, boolean wantBoost) {
+        Shape crossZone = findBackRectangularExtension(thisShip, wantBoost);
+
+        return shapesOverlap(crossZone, targetBWS.getRectWithNoNubs());
+    }
+    private Boolean isTargetInsideofRightRectangle(BumpableWithShape thisShip, BumpableWithShape targetBWS, boolean wantBoost) {
+        Shape crossZone = findRightRectangularExtension(thisShip, wantBoost);
+
+        return shapesOverlap(crossZone, targetBWS.getRectWithNoNubs());
+    }
+    private Boolean isTargetInsideofRightFrontBackRectangle(BumpableWithShape thisShip, BumpableWithShape targetBWS, boolean wantBoost) {
+        Shape crossZone = findRightFrontBackRectangularExtension(thisShip, wantBoost);
+
+        return shapesOverlap(crossZone, targetBWS.getRectWithNoNubs());
+    }
+    private Boolean isTargetInsideofLeftRectangle(BumpableWithShape thisShip, BumpableWithShape targetBWS, boolean wantBoost) {
+        Shape crossZone = findLeftRectangularExtension(thisShip, wantBoost);
+
+        return shapesOverlap(crossZone, targetBWS.getRectWithNoNubs());
+    }
+    private Boolean isTargetInsideofLeftFrontBackRectangle(BumpableWithShape thisShip, BumpableWithShape targetBWS, boolean wantBoost) {
+        Shape crossZone = findLeftFrontBackRectangularExtension(thisShip, wantBoost);
+
+        return shapesOverlap(crossZone, targetBWS.getRectWithNoNubs());
+    }
+
+    //only accessible if frontaux arc and turret shots anyway
     private Boolean isTargetInsideWeirdCase(BumpableWithShape thisShip, BumpableWithShape targetBWS){
-        Shape dualRects = findDualRects(thisShip);
+        Shape rects = new Rectangle2D.Double(-9999.0,-9999.0,0.0,0.0);//ugly null avoidance
+
+        if(whichOption == frontAuxArcOption) rects = findDualRects(thisShip);
+        else if(whichOption == mobileSideArcOption){
+            switch(getMobileEdge()){
+                case 1:
+                    rects = findDualRects(thisShip);
+                    break;
+                case 2:
+                    rects = findSoloRect(thisShip, true);
+                    break;
+                case 3:
+                    rects = findDualRects(thisShip);
+                    break;
+                case 4:
+                    rects = findSoloRect(thisShip, false);
+                    break;
+            }
+        }
         //fov.shapes.add(dualRects);
-        return shapesOverlap(dualRects, targetBWS.getRectWithNoNubs());
+        return shapesOverlap(rects, targetBWS.getRectWithNoNubs());
+    }
+
+    //only used to find the corner to firing arc edges during mobile turret shots
+    //only used if the mobile is facing right (then, grab front right, back right and front left rects)
+    //or mobile is facing left (then, grab front left, back left and front right)
+    private Shape findSoloRect(BumpableWithShape b, Boolean wantRightOtherwiseLeft){
+        double workingWidth = b.getChassisWidth();
+        double workingHeight = b.getChassisHeight();
+        double cornerToArc = b.getChassis().getCornerToFiringArc();
+
+        double boost = 30.0;
+
+        Area zone = new Area(new Rectangle2D.Double(0.0,0.0,0.0,0.0));
+
+
+
+        if(wantRightOtherwiseLeft==true){
+            Shape right = new Rectangle2D.Double(workingWidth/2.0 - cornerToArc, -boost*RANGE3 - workingHeight/2.0, cornerToArc, RANGE3*boost);
+            zone = new Area(right);
+            Shape backRight = new Rectangle2D.Double(workingWidth / 2.0 - cornerToArc, workingHeight / 2.0, cornerToArc, RANGE3 * boost);
+            zone.add(new Area(backRight));
+        }
+        else{
+            Shape left = new Rectangle2D.Double(-workingWidth/2.0, -boost*RANGE3 - workingHeight/2.0, cornerToArc, RANGE3*boost);
+            zone.add(new Area(left));
+            Shape backLeft = new Rectangle2D.Double(-workingWidth / 2.0,   workingHeight / 2.0, cornerToArc, RANGE3 * boost);
+            zone.add(new Area(backLeft));
+        }
+
+        double centerX = b.bumpable.getPosition().getX();
+        double centerY = b.bumpable.getPosition().getY();
+
+        Shape transformed = AffineTransform
+                .getTranslateInstance(centerX, centerY)
+                .createTransformedShape(zone);
+
+        transformed = AffineTransform
+                .getRotateInstance(b.getAngleInRadians(), centerX, centerY)
+                .createTransformedShape(transformed);
+
+        //fov.add(transformed);
+        return transformed;
     }
 
     private Shape findDualRects(BumpableWithShape b) {
@@ -2272,26 +2488,208 @@ Boolean isThisTheOne = false;
         return 0.0;
     }
 
+    //dedicated for front facing mobile turret, no use checking other options
+    private Shape findFrontRectangularExtension(BumpableWithShape b, boolean superLong) {
+        Shape rawShape = BumpableWithShape.getRawShape(b.bumpable);
+        double workingWidth = b.getChassisWidth() - b.getChassis().getCornerToFiringArc()*2.0;
+        double workingHeight = b.getChassisHeight();
+
+        double boost = 1.0f;
+        if(superLong) boost = 30.0f;
+
+        Shape front = new Rectangle2D.Double(-workingWidth/2.0, -boost*RANGE3 - workingHeight/2.0, workingWidth, RANGE3*boost);
+
+        //by default, get everything for turret/TL shots
+        Area zone = new Area(front);
+        zone.subtract(new Area(rawShape));
+
+        double centerX = b.bumpable.getPosition().getX();
+        double centerY = b.bumpable.getPosition().getY();
+
+        Shape transformed = AffineTransform
+                .getTranslateInstance(centerX, centerY)
+                .createTransformedShape(zone);
+
+        transformed = AffineTransform
+                .getRotateInstance(b.getAngleInRadians(), centerX, centerY)
+                .createTransformedShape(transformed);
+
+        //fov.add(transformed);
+        return transformed;
+    }
+
+    //dedicated for back facing mobile turret, no use checking other options
+    private Shape findBackRectangularExtension(BumpableWithShape b, boolean superLong) {
+        Shape rawShape = BumpableWithShape.getRawShape(b.bumpable);
+        double workingWidth = b.getChassisWidth() - b.getChassis().getCornerToFiringArc()*2.0;
+        double workingHeight = b.getChassisHeight();
+
+        double boost = 1.0f;
+        if(superLong) boost = 30.0f;
+
+        Shape back = new Rectangle2D.Double(-workingWidth/2.0, workingHeight/2.0, workingWidth, boost*RANGE3);
+
+        //by default, get everything for turret/TL shots
+        Area zone = new Area(back);
+        zone.subtract(new Area(rawShape));
+
+        double centerX = b.bumpable.getPosition().getX();
+        double centerY = b.bumpable.getPosition().getY();
+
+        Shape transformed = AffineTransform
+                .getTranslateInstance(centerX, centerY)
+                .createTransformedShape(zone);
+
+        transformed = AffineTransform
+                .getRotateInstance(b.getAngleInRadians(), centerX, centerY)
+                .createTransformedShape(transformed);
+
+        //fov.add(transformed);
+        return transformed;
+    }
+    //dedicated for right facing mobile turret, no use checking other options
+    private Shape findRightRectangularExtension(BumpableWithShape b, boolean superLong) {
+        Shape rawShape = BumpableWithShape.getRawShape(b.bumpable);
+        double chassisWidth = b.getChassisWidth();
+        double workingWidth = b.getChassisWidth() - b.getChassis().getCornerToFiringArc()*2.0;
+        double workingHeight = b.getChassisHeight();
+
+        double boost = 1.0f;
+        if(superLong) boost = 30.0f;
+
+        Shape right = new Rectangle2D.Double(chassisWidth/2.0, -workingHeight/2.0, boost*RANGE3, workingHeight);
+
+        //by default, get everything for turret/TL shots
+        Area zone = new Area(right);
+
+        zone.subtract(new Area(rawShape));
+
+        double centerX = b.bumpable.getPosition().getX();
+        double centerY = b.bumpable.getPosition().getY();
+
+        Shape transformed = AffineTransform
+                .getTranslateInstance(centerX, centerY)
+                .createTransformedShape(zone);
+
+        transformed = AffineTransform
+                .getRotateInstance(b.getAngleInRadians(), centerX, centerY)
+                .createTransformedShape(transformed);
+
+        //fov.add(transformed);
+        return transformed;
+    }
+    //dedicated for right facing mobile turret, no use checking other options
+    private Shape findRightFrontBackRectangularExtension(BumpableWithShape b, boolean superLong) {
+        Shape rawShape = BumpableWithShape.getRawShape(b.bumpable);
+        double chassisWidth = b.getChassisWidth();
+        double workingWidth = b.getChassisWidth() - b.getChassis().getCornerToFiringArc()*2.0;
+        double workingHeight = b.getChassisHeight();
+
+        double boost = 1.0f;
+        if(superLong) boost = 30.0f;
+
+        Shape rightFront = new Rectangle2D.Double(workingWidth/2.0,-workingHeight/2.0-boost*RANGE3, (chassisWidth - workingWidth)/2.0,boost*RANGE3);
+        Shape rightBack = new Rectangle2D.Double(workingWidth/2.0,workingHeight/2.0, (chassisWidth - workingWidth)/2.0,boost*RANGE3);
+
+        //by default, get everything for turret/TL shots
+        Area zone = new Area(rightFront);
+        zone.add(new Area(rightBack));
+
+        zone.subtract(new Area(rawShape));
+
+        double centerX = b.bumpable.getPosition().getX();
+        double centerY = b.bumpable.getPosition().getY();
+
+        Shape transformed = AffineTransform
+                .getTranslateInstance(centerX, centerY)
+                .createTransformedShape(zone);
+
+        transformed = AffineTransform
+                .getRotateInstance(b.getAngleInRadians(), centerX, centerY)
+                .createTransformedShape(transformed);
+
+        //fov.add(transformed);
+        return transformed;
+    }
+    private Shape findLeftFrontBackRectangularExtension(BumpableWithShape b, boolean superLong) {
+        Shape rawShape = BumpableWithShape.getRawShape(b.bumpable);
+        double chassisWidth = b.getChassisWidth();
+        double workingWidth = b.getChassisWidth() - b.getChassis().getCornerToFiringArc()*2.0;
+        double workingHeight = b.getChassisHeight();
+
+        double boost = 1.0f;
+        if(superLong) boost = 30.0f;
+
+        Shape leftFront = new Rectangle2D.Double(-chassisWidth/2.0,-workingHeight/2.0-boost*RANGE3, (chassisWidth - workingWidth)/2.0,boost*RANGE3);
+        Shape leftBack = new Rectangle2D.Double(-chassisWidth/2.0,workingHeight/2.0, (chassisWidth - workingWidth)/2.0,boost*RANGE3);
+
+        //by default, get everything for turret/TL shots
+        Area zone = new Area(leftFront);
+        zone.add(new Area(leftBack));
+
+        zone.subtract(new Area(rawShape));
+
+        double centerX = b.bumpable.getPosition().getX();
+        double centerY = b.bumpable.getPosition().getY();
+
+        Shape transformed = AffineTransform
+                .getTranslateInstance(centerX, centerY)
+                .createTransformedShape(zone);
+
+        transformed = AffineTransform
+                .getRotateInstance(b.getAngleInRadians(), centerX, centerY)
+                .createTransformedShape(transformed);
+
+        //fov.add(transformed);
+        return transformed;
+    }
+    //dedicated for left facing mobile turret, no use checking other options
+    private Shape findLeftRectangularExtension(BumpableWithShape b, boolean superLong) {
+        Shape rawShape = BumpableWithShape.getRawShape(b.bumpable);
+        double chassisWidth = b.getChassisWidth();
+        double workingWidth = b.getChassisWidth() - b.getChassis().getCornerToFiringArc()*2.0;
+        double workingHeight = b.getChassisHeight();
+
+        double boost = 1.0f;
+        if(superLong) boost = 30.0f;
+
+        Shape left = new Rectangle2D.Double(-chassisWidth/2.0 - boost*RANGE3, -workingHeight/2.0, boost*RANGE3, workingHeight);
+
+        //by default, get everything for turret/TL shots
+        Area zone = new Area(left);
+
+        zone.subtract(new Area(rawShape));
+
+        double centerX = b.bumpable.getPosition().getX();
+        double centerY = b.bumpable.getPosition().getY();
+
+        Shape transformed = AffineTransform
+                .getTranslateInstance(centerX, centerY)
+                .createTransformedShape(zone);
+
+        transformed = AffineTransform
+                .getRotateInstance(b.getAngleInRadians(), centerX, centerY)
+                .createTransformedShape(transformed);
+
+        //fov.add(transformed);
+        return transformed;
+    }
     private Shape findUnionOfRectangularExtensions(BumpableWithShape b, boolean superLong, boolean wantBoundByFrontAndBackArcs) {
         Shape rawShape = BumpableWithShape.getRawShape(b.bumpable);
         double chassisWidth = b.getChassisWidth();
         double workingWidth = b.getChassisWidth();
+        double workingHeight = b.getChassisHeight();
 
-        String whichSideString = "";
-        try {
-            whichSideString = ((Decorator) piece).getDecorator(piece, piece.getClass()).getProperty("whichSide").toString();
-        }catch(Exception e){
+        int whichMobileSide = getMobileEdge();
 
-        }
         //restrict the width of the check only if you're dealing with front or back arcs. Front aux arcs might need the full width of the front, same for mobile turrets
 
         //only modify the width of the rectangles in the front and back if requested
         if(wantBoundByFrontAndBackArcs == true){
-            if(whichOption == frontArcOption || whichOption == backArcOption) workingWidth = b.getChassisWidth() - b.getChassis().getCornerToFiringArc()*2.0;
+            if(whichOption == frontArcOption || whichOption == backArcOption || whichOption == mobileSideArcOption) workingWidth = b.getChassisWidth() - b.getChassis().getCornerToFiringArc()*2.0;
             if(whichOption == bullseyeArcOption) workingWidth = b.chassis.getBullsEyeWidth();
         }
 
-        double workingHeight = b.getChassisHeight();
 
         double boost = 1.0f;
         if(superLong) boost = 30.0f;
@@ -2299,6 +2697,8 @@ Boolean isThisTheOne = false;
         Shape front = new Rectangle2D.Double(-workingWidth/2.0, -boost*RANGE3 - workingHeight/2.0, workingWidth, RANGE3*boost);
         Shape back = new Rectangle2D.Double(-workingWidth/2.0, workingHeight/2.0, workingWidth, boost*RANGE3);
         Shape leftRight = new Rectangle2D.Double(-chassisWidth/2.0 - boost*RANGE3, -workingHeight/2.0, 2.0*boost*RANGE3+chassisWidth, workingHeight);
+        Shape right = new Rectangle2D.Double(chassisWidth/2.0, -workingHeight/2.0, boost*RANGE3, workingHeight);
+        Shape left = new Rectangle2D.Double(-chassisWidth/2.0 - boost*RANGE3, -workingHeight/2.0, boost*RANGE3, workingHeight);
 
         //half height reduced side rectangles for Auzituck/YV-666 arcs
         Shape leftRight_reduced = new Rectangle2D.Double(-chassisWidth/2.0 - boost*RANGE3, -workingHeight/2.0, 2.0*boost*RANGE3+chassisWidth, workingHeight/2.0);
@@ -2317,9 +2717,11 @@ Boolean isThisTheOne = false;
                 zone.add(new Area(leftRight_reduced));
                 break;
             case mobileSideArcOption:
-                zone = new Area(front);
-                if("3".equals(whichSideString)) zone.add(new Area(back));
-                if("2".equals(whichSideString) || "4".equals(whichSideString)) zone.add(new Area(leftRight));
+                zone = new Area(frontBack);
+                zone.add(new Area(leftRight));
+               /* if(whichMobileSide==2) zone.add(new Area(right));
+                if(whichMobileSide==3) zone.add(new Area(back));
+                if(whichMobileSide==4) zone.add(new Area(left));*/
                 break;
             case bullseyeArcOption:
                 zone = new Area(front);
