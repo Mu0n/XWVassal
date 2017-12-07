@@ -641,6 +641,11 @@ Boolean isThisTheOne = false;
                     if(checkFrontArcAlignment==true) return true;
                     else return false;
                 case 2:
+                    Boolean leftCheck = isTargetInsideofLeftRectangle(thisShip, b, true);
+                    if(leftCheck==true) {
+                        logToChat("last issue?");
+                        return false;
+                    }
                     Boolean rightCheck = isTargetInsideofRightRectangle(thisShip, b, true);
                     if(rightCheck== true) return true;
                     Boolean rightFrontBackCheck = isTargetInsideofRightFrontBackRectangle(thisShip, b, true);
@@ -662,8 +667,10 @@ Boolean isThisTheOne = false;
                     if(checkBackArcAlignment_3==true) return true;
                     return false;
                 case 4:
-                    Boolean leftCheck = isTargetInsideofLeftRectangle(thisShip, b, true);
-                    if(leftCheck== true) return true;
+                    Boolean rightCheck_4 = isTargetInsideofRightRectangle(thisShip, b, true);
+                    if(rightCheck_4== true) return false;
+                    Boolean leftCheck_4 = isTargetInsideofLeftRectangle(thisShip, b, true);
+                    if(leftCheck_4== true) return true;
                     Boolean leftFrontBackCheck = isTargetInsideofLeftFrontBackRectangle(thisShip, b, true);
                     if(leftFrontBackCheck == true){
                         if(firingArcAllowsBand==true){
