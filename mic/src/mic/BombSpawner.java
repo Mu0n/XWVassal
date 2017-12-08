@@ -70,13 +70,14 @@ enum BombToken {
 }
 
 enum BombManeuver {
-    Back1("Back 1", "1", "524", 0.0f, 0.0f, 0.0f, 113.0f),
-    Back2("Back 2", "2", "525", 0.0f, 0.0f, 0.0f, 226.0f),
-    Back3("Back 3", "3", "526", 0.0f, 0.0f, 0.0f, 339.0f),
-    LT1("Left Turn 1", "4", "521", 90.0f, 90.0f, -98.0f, 97.0f),
-    RT1("Right Turn 1", "5", "521", 180.0f, -90.0f, 98.0f, 97.0f),
-    LT3("Left Turn 3", "6", "523", 90.0f, 90.0f, -254.5f, 254.5f),
-    RT3("Right Turn 3", "7", "523", 180.0f, -90.0f, 254.5f, 254.5f);
+    Back1("Back 1", "1", "524", 0.0f, 0.0f, 0.0f, 0.0f),
+    Back2("Back 2", "2", "525", 0.0f, 0.0f, 0.0f, 113.0f),
+    Back3("Back 3", "3", "526", 0.0f, 0.0f, 0.0f, 226.0f),
+    Back5("Back 5", "8", "528", 0.0f, 0.0f, 0.0f, 452.0f),
+    LT1("Left Turn 1", "4", "521", 90.0f, 90.0f, -98.0f, -16.0f),
+    RT1("Right Turn 1", "5", "521", 180.0f, -90.0f, 98.0f, -16.0f),
+    LT3("Left Turn 3", "6", "523", 90.0f, 90.0f, -254.5f, 141.5f),
+    RT3("Right Turn 3", "7", "523", 180.0f, -90.0f, 254.5f, 141.5f);
 
     private final String templateName;
     private final String gfxLayer;
@@ -127,6 +128,7 @@ public class BombSpawner extends Decorator implements EditablePiece {
             .put("SHIFT 1", BombManeuver.Back1)
             .put("SHIFT 2", BombManeuver.Back2)
             .put("SHIFT 3", BombManeuver.Back3)
+            .put("SHIFT 5", BombManeuver.Back5)
             .put("CTRL SHIFT 1", BombManeuver.LT1)
             .put("ALT SHIFT 1", BombManeuver.RT1)
             .put("CTRL SHIFT 3", BombManeuver.LT3)
