@@ -1,17 +1,5 @@
 package mic;
 
-import static mic.Util.*;
-
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.net.URL;
-import java.util.List;
-
-import javax.swing.*;
-
-import com.google.common.collect.Lists;
-
 import VASSAL.build.AbstractConfigurable;
 import VASSAL.build.Buildable;
 import VASSAL.build.GameModule;
@@ -20,7 +8,17 @@ import VASSAL.build.module.documentation.HelpFile;
 import VASSAL.build.widget.PieceSlot;
 import VASSAL.command.Command;
 import VASSAL.counters.GamePiece;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.net.URL;
+import java.util.List;
+
+import static mic.Util.*;
 
 /**
  * Created by Mic on 12/02/2017.
@@ -156,6 +154,8 @@ public class AutoSquadSpawn extends AbstractConfigurable {
 
 
             for (VassalXWSPilotPieces.Upgrade upgrade : ship.getUpgrades()) {
+                logToChat("Slot:" + upgrade.getUpgradeData().getSlot());
+
                 GamePiece upgradePiece = upgrade.cloneGamePiece();
 
                 // if pilot has extra munitions, we will collect the positions of each card that can take it
@@ -198,11 +198,11 @@ public class AutoSquadSpawn extends AbstractConfigurable {
                 // so we can add the tokens later
                 if(squadHasJabba)
                 {
-                    // check to see if the upgrade card has the "illicit" and "acceptsOrdnanceToken" property set to true
+                    // check to see if the upgrade card has the "illicit" and "acceptsIllicitToken" property set to true
                     if (upgradePiece.getProperty("illicit") != null &&
                             (((String)upgradePiece.getProperty("illicit")).equalsIgnoreCase("true")) &&
-                            upgradePiece.getProperty("acceptsOrdnanceToken") != null &&
-                            (((String)upgradePiece.getProperty("acceptsOrdnanceToken")).equalsIgnoreCase("true")))
+                            upgradePiece.getProperty("acceptsIllicitToken") != null &&
+                            (((String)upgradePiece.getProperty("acceptsIllicitToken")).equalsIgnoreCase("true")))
                     {
                         // add the coordinates to the list of ordnance token locations
                         illicitLocations.add(new Point((int) startPosition.getX() + pilotWidth + totalUpgradeWidth + fudgePilotUpgradeFrontier,
@@ -333,6 +333,7 @@ public class AutoSquadSpawn extends AbstractConfigurable {
                 return null;
             }
             XWSList xwsList = loadRemoteJson(translatedURL, XWSList.class);
+
             xwsList.setXwsSource(userInput);
             return xwsList;
 
