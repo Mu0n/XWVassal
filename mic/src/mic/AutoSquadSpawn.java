@@ -107,7 +107,7 @@ public class AutoSquadSpawn extends AbstractConfigurable {
             // flag - does this pilot have the  Silos upgrade card assigned
             boolean pilotHasOrdnanceSilos = false;
 
-            logToChat("Spawning pilot: %s", ship.getPilotCard().getConfigureName());
+            //logToChat("Spawning pilot: %s", ship.getPilotCard().getConfigureName());
 
             if(ship.getPilotData().getXws().equals("nashtahpuppilot"))
             {
@@ -154,7 +154,7 @@ public class AutoSquadSpawn extends AbstractConfigurable {
 
 
             for (VassalXWSPilotPieces.Upgrade upgrade : ship.getUpgrades()) {
-                logToChat("Slot:" + upgrade.getUpgradeData().getSlot());
+
 
                 GamePiece upgradePiece = upgrade.cloneGamePiece();
 
