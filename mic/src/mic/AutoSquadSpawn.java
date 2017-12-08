@@ -198,7 +198,7 @@ public class AutoSquadSpawn extends AbstractConfigurable {
                 // so we can add the tokens later
                 if(squadHasJabba)
                 {
-                    // check to see if the upgrade card has the "illicit" and "acceptsOrdnanceToken" property set to true
+                    // check to see if the upgrade card has the "illicit" and "acceptsIllicitToken" property set to true
                     if (upgradePiece.getProperty("illicit") != null &&
                             (((String)upgradePiece.getProperty("illicit")).equalsIgnoreCase("true")) &&
                             upgradePiece.getProperty("acceptsIllicitToken") != null &&
