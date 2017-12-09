@@ -1,3 +1,8 @@
-September 23rd, 2017 X-Wing Vassal news
+December 9th, 2017 X-Wing Vassal news
 
 The X-Wing Vassal League home website is now officially live at this address: http://xwvassal.info
+
+KNOWN BUGS:
+-Chopper astromech will not be counted (1 point) during autospawn - beware of the squad point total
+-The sheathipede-class shuttle action icons (shift-a) are not rotated with the ship's rotation but are otherwise functioning
+-the TIE Silencer maneuver reference card shows the bank 3 moves as white but they are green. The dial, ordered open dial, ordered strip are all ok though.
