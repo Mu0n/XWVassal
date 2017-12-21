@@ -55,9 +55,9 @@ public class StemDial extends Decorator implements EditablePiece {
     public Command myKeyEvent(KeyStroke keyStroke) {
 
         //check to see if 'x' was pressed
-        if(KeyStroke.getKeyStroke(KeyEvent.VK_X, 0, false).equals(keyStroke)) {
+        if(KeyStroke.getKeyStroke(KeyEvent.VK_C, 0, false).equals(keyStroke)) {
 
-           logToChat("x was pressed");
+           logToChatWithTime("c was pressed");
         }
 
         return piece.keyEvent(keyStroke);
