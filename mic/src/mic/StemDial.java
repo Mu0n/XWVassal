@@ -9,6 +9,10 @@ import VASSAL.counters.KeyCommand;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.KeyEvent;
+
+import static mic.Util.logToChat;
+import static mic.Util.logToChatWithTime;
 
 /**
  * Created by Mic on 12/21/2017.
@@ -16,7 +20,7 @@ import java.awt.*;
  * Can be used to set a dial to a specific ship at autospawn-time
  */
 public class StemDial extends Decorator implements EditablePiece {
-    public static final String ID = "emptytest";
+    public static final String ID = "stemdial";
 
     public StemDial(){
         this(null);
@@ -49,7 +53,14 @@ public class StemDial extends Decorator implements EditablePiece {
     }
     @Override
     public Command myKeyEvent(KeyStroke keyStroke) {
-        return null;
+
+        //check to see if 'x' was pressed
+        if(KeyStroke.getKeyStroke(KeyEvent.VK_X, 0, false).equals(keyStroke)) {
+
+           logToChat("x was pressed");
+        }
+
+        return piece.keyEvent(keyStroke);
     }
 
     public String getDescription() {
@@ -65,7 +76,7 @@ public class StemDial extends Decorator implements EditablePiece {
     }
 
     public void draw(Graphics graphics, int i, int i1, Component component, double v) {
-
+        this.piece.draw(graphics, i, i1, component, v);
     }
 
     public Rectangle boundingBox() {
