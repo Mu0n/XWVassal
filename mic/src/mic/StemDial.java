@@ -28,6 +28,7 @@ public class StemDial extends Decorator implements EditablePiece {
 
     public StemDial(GamePiece piece){
         setInner(piece);
+        logToChatWithTime("StemDial constructed.");
     }
 
     @Override
@@ -55,7 +56,7 @@ public class StemDial extends Decorator implements EditablePiece {
     public Command myKeyEvent(KeyStroke keyStroke) {
 
         //check to see if 'x' was pressed
-        if(KeyStroke.getKeyStroke(KeyEvent.VK_I, KeyEvent.CTRL_DOWN_MASK, false).equals(keyStroke)) {
+        if(KeyStroke.getKeyStroke(KeyEvent.VK_I, KeyEvent.CTRL_DOWN_MASK, true).equals(keyStroke)) {
 
            logToChatWithTime("ctrl-i was pressed");
         }
@@ -64,7 +65,7 @@ public class StemDial extends Decorator implements EditablePiece {
     }
 
     public String getDescription() {
-        return "stemdial";
+        return "Custom StemDial (mic.StemDial)";
     }
 
     public void mySetType(String s) {
