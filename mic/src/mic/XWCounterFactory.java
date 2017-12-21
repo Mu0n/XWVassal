@@ -38,6 +38,8 @@ public class XWCounterFactory extends BasicCommandEncoder {
             piece = new MouseShipGUI(inner);
         }else if (type.startsWith(CritSpawner.ID)) {
             piece = new CritSpawner(inner);
+        }else if (type.startsWith(StemDial.ID)) {
+            piece = new StemDial(inner);
         }else {
             piece = super.createDecorator(type, inner);
         }
