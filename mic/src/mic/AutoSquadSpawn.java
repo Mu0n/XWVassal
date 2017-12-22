@@ -177,7 +177,9 @@ public class AutoSquadSpawn extends AbstractConfigurable {
                 if(pilotHasOrdnanceSilos)
                 {
                     // check to see if the upgrade card has the "acceptsOrdnanceToken" properties set to true
-                    if (upgradePiece.getProperty("acceptsOrdnanceToken") != null &&
+                    if (upgradePiece.getProperty("isABomb") != null &&
+                            (((String)upgradePiece.getProperty("isABomb")).equalsIgnoreCase("true")) &&
+                            upgradePiece.getProperty("acceptsOrdnanceToken") != null &&
                             (((String)upgradePiece.getProperty("acceptsOrdnanceToken")).equalsIgnoreCase("true")))
                     {
                         // add three ordnance token locations
