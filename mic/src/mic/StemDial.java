@@ -2,14 +2,12 @@ package mic;
 
 import VASSAL.build.module.documentation.HelpFile;
 import VASSAL.command.Command;
-import VASSAL.counters.Decorator;
-import VASSAL.counters.EditablePiece;
-import VASSAL.counters.GamePiece;
-import VASSAL.counters.KeyCommand;
+import VASSAL.counters.*;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
+import java.util.List;
 
 import static mic.Util.logToChat;
 import static mic.Util.logToChatWithTime;
@@ -21,6 +19,7 @@ import static mic.Util.logToChatWithTime;
  */
 public class StemDial extends Decorator implements EditablePiece {
     public static final String ID = "stemdial";
+    public String shipXWS = "xwing";
 
     public StemDial(){
         this(null);
@@ -28,12 +27,6 @@ public class StemDial extends Decorator implements EditablePiece {
 
     public StemDial(GamePiece piece){
         setInner(piece);
-        logToChatWithTime("StemDial constructed.");
-    }
-
-    @Override
-    public Command keyEvent(KeyStroke stroke) {
-        return piece.keyEvent(stroke);
     }
 
     @Override
@@ -54,16 +47,28 @@ public class StemDial extends Decorator implements EditablePiece {
     }
     @Override
     public Command myKeyEvent(KeyStroke keyStroke) {
-
-        //check to see if 'x' was pressed
-        if(KeyStroke.getKeyStroke(KeyEvent.VK_I, KeyEvent.CTRL_DOWN_MASK, true).equals(keyStroke)) {
-
-           logToChatWithTime("ctrl-i was pressed");
-        }
-
-        return piece.keyEvent(keyStroke);
+return null;
     }
 
+    @Override
+    public Command keyEvent(KeyStroke stroke) {
+        //check to see if 'x' was pressed
+        if(KeyStroke.getKeyStroke(KeyEvent.VK_I, KeyEvent.CTRL_DOWN_MASK, true).equals(stroke)) {
+            MasterShipData.ShipData shipData = MasterShipData.getShipData(shipXWS);
+
+            List<List<Integer>> moveList = shipData.getManeuvers();
+
+            for(List<Integer> li : moveList) {
+                for(Integer i : li) {
+                    logToChatWithTime(i.toString());
+                }
+            }
+
+
+        }
+
+        return piece.keyEvent(stroke);
+    }
     public String getDescription() {
         return "Custom StemDial (mic.StemDial)";
     }
