@@ -176,10 +176,8 @@ public class AutoSquadSpawn extends AbstractConfigurable {
                 // so we can add the tokens later
                 if(pilotHasOrdnanceSilos)
                 {
-                    // check to see if the upgrade card has the "bomb" and "acceptsOrdnanceToken" properties set to true
-                    if (upgradePiece.getProperty("bomb") != null &&
-                            (((String)upgradePiece.getProperty("bomb")).equalsIgnoreCase("true")) &&
-                            upgradePiece.getProperty("acceptsOrdnanceToken") != null &&
+                    // check to see if the upgrade card has the "acceptsOrdnanceToken" properties set to true
+                    if (upgradePiece.getProperty("acceptsOrdnanceToken") != null &&
                             (((String)upgradePiece.getProperty("acceptsOrdnanceToken")).equalsIgnoreCase("true")))
                     {
                         // add three ordnance token locations
@@ -198,10 +196,8 @@ public class AutoSquadSpawn extends AbstractConfigurable {
                 // so we can add the tokens later
                 if(squadHasJabba)
                 {
-                    // check to see if the upgrade card has the "illicit" and "acceptsIllicitToken" property set to true
-                    if (upgradePiece.getProperty("illicit") != null &&
-                            (((String)upgradePiece.getProperty("illicit")).equalsIgnoreCase("true")) &&
-                            upgradePiece.getProperty("acceptsIllicitToken") != null &&
+                    // check to see if the upgrade card has the "acceptsIllicitToken" property set to true
+                    if (upgradePiece.getProperty("acceptsIllicitToken") != null &&
                             (((String)upgradePiece.getProperty("acceptsIllicitToken")).equalsIgnoreCase("true")))
                     {
                         // add the coordinates to the list of ordnance token locations
