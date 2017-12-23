@@ -58,8 +58,9 @@ public class StemDial extends Decorator implements EditablePiece {
         //check to see if 'x' was pressed
         if(KeyStroke.getKeyStroke(KeyEvent.VK_I, KeyEvent.CTRL_DOWN_MASK, true).equals(stroke)) {
             logToChatWithTime("temporary trigger for Dial generation -will be eventually ported to autospawn\nPossibly to a right click menu as well with a dynamically fetched list of all ships??");
+            GamePiece piece = getInner();
 
-            DialGenerateCommand myDialGen = new DialGenerateCommand("xwing");
+            DialGenerateCommand myDialGen = new DialGenerateCommand("xwing", piece);
             Command stringOCommands = piece.keyEvent(stroke);
             stringOCommands.append(myDialGen);
 
@@ -100,26 +101,30 @@ public class StemDial extends Decorator implements EditablePiece {
 
     //this is the command that takes a ship xws name, fetches the maneuver info and constructs the dial layer by layer
     public static class DialGenerateCommand extends Command {
+        GamePiece piece;
         static String xwsShipName = "";
         List<List<Integer>> moveList; //possibly changed for a higher level class so it stays current with future xws spec changes
 
-        DialGenerateCommand(String thisName) {
+        DialGenerateCommand(String thisName, GamePiece piece) {
 
             // fetch the maneuver array of arrays according to the xws name passed on from autospawn or other means
             xwsShipName = thisName;
             MasterShipData.ShipData shipData = MasterShipData.getShipData(xwsShipName);
             moveList = shipData.getManeuvers();
-
+            this.piece = piece;
 
         }
 
-        protected void executeCommand() {
             // construct the dial Layers trait (Embellishment class) layer by layer according to the previous Array of Arrays.
+            protected void executeCommand() {
 
             //Fetch the existing Embellishment and pass it through a customLayers instance? Not clear here
             //customLayers myCustomLayers = new customLayers();
             //
             logToChat("execute command = current ship xws name is: " + xwsShipName);
+                String dialString = "emb2;;2;;Right;2;;Left;2;;;;;false;0;-38;Move_1_H-L_R.png,Move_1_G-L_G.png,Move_1_S_G.png,Move_1_G-R_G.png,Move_1_H-R_R.png,Move_2_H-L_W.png,Move_2_G-L_W.png,Move_2_S_G.png,Move_2_G-R_W.png,Move_2_H-R_W.png,Move_3_H-L_R.png,Move_3_G-L_W.png,Move_3_S_W.png,Move_3_G-R_W.png,Move_3_H-R_R.png,Move_4_S_W.png,Move_4_U_R.png;Hard Left 1,Bank Left 1,Forward 1,Bank Right 1,Hard Right 1,Hard Left 2,Bank Left 2,Forward 2,Bank Right 2,Hard Right 2,Hard Left 3,Bank Left 3,Forward 3,Bank Right 3,Hard Right 3,Forward 4,K-Turn 4;true;Move;;;false;;1;1;true;;46,0;44,0\\\\\\\\\tpiece;;;Dial_Rebel_n.png;dial for Attack Shuttle/\t\\\tnull;\\\\\t\\\\\\\t1\\\\\\\\";
+                Embellishment myEmb = new Embellishment(dialString, piece);
+                piece.setProperty(myEmb, dialString);
         }
 
         protected Command myUndoCommand() {
@@ -170,11 +175,6 @@ public class StemDial extends Decorator implements EditablePiece {
 
     }
 
-    //this is used to access the Layers trait (or Embellishment class) and circumvent the protection for its methods
-    //should be used by DialGenerateCommand while a dial is being constructed
-    public static class customLayers extends Embellishment {
-
-    }
-
-
 }
+
+
