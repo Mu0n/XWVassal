@@ -118,13 +118,20 @@ public class StemDial extends Decorator implements EditablePiece {
             // construct the dial Layers trait (Embellishment class) layer by layer according to the previous Array of Arrays.
             protected void executeCommand() {
 
-            //Fetch the existing Embellishment and pass it through a customLayers instance? Not clear here
-            //customLayers myCustomLayers = new customLayers();
-            //
+            //Now: take a hardcoded string (attack shuttle dial info taken from the build file, take note that the backslashes are doubled
+            //Pasting in intellij automatically added them in the context of a string value
+            //The key is to access the embellishment decorator associated with the piece and then use its mySetType method.
+            //Later: fetch the string from a helper function that constructs the string bit by bit
+            //hardcode some of them with a map because the order of moves is counterintuitive (ie the protectorate iirc).
+            //Usually, red sloops or red trolls are on separate sides, but some dials group them together at the end of the moves of the same speed
+            //ie sloop left, turn left, bank left, straight, bank right, turn right, sloop right can be found on some ships
+            //turn left, bank left, straight, bank right, turn right, sloop left, sloop right can be found in other ships
+            //the perfect order is also found on http://xwvassal.info/dialgen. The online builders that use the xws spec do not carry this exact information
             logToChat("execute command = current ship xws name is: " + xwsShipName);
                 String dialString = "emb2;;2;;Right;2;;Left;2;;;;;false;0;-38;Move_1_H-L_R.png,Move_1_G-L_G.png,Move_1_S_G.png,Move_1_G-R_G.png,Move_1_H-R_R.png,Move_2_H-L_W.png,Move_2_G-L_W.png,Move_2_S_G.png,Move_2_G-R_W.png,Move_2_H-R_W.png,Move_3_H-L_R.png,Move_3_G-L_W.png,Move_3_S_W.png,Move_3_G-R_W.png,Move_3_H-R_R.png,Move_4_S_W.png,Move_4_U_R.png;Hard Left 1,Bank Left 1,Forward 1,Bank Right 1,Hard Right 1,Hard Left 2,Bank Left 2,Forward 2,Bank Right 2,Hard Right 2,Hard Left 3,Bank Left 3,Forward 3,Bank Right 3,Hard Right 3,Forward 4,K-Turn 4;true;Move;;;false;;1;1;true;;46,0;44,0\\\\\\\\\tpiece;;;Dial_Rebel_n.png;dial for Attack Shuttle/\t\\\tnull;\\\\\t\\\\\\\t1\\\\\\\\";
-                Embellishment myEmb = new Embellishment(dialString, piece);
-                piece.setProperty(myEmb, dialString);
+                Embellishment myEmb = (Embellishment)Decorator.getDecorator(piece,Embellishment.class);
+
+                myEmb.mySetType(dialString);
         }
 
         protected Command myUndoCommand() {
