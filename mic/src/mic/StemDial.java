@@ -4,6 +4,7 @@ import VASSAL.build.module.documentation.HelpFile;
 import VASSAL.command.Command;
 import VASSAL.command.CommandEncoder;
 import VASSAL.counters.*;
+import com.google.common.collect.ImmutableMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -11,6 +12,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.util.List;
+import java.util.Map;
 
 import static mic.Util.logToChat;
 import static mic.Util.logToChatWithTime;
@@ -23,6 +25,126 @@ import static mic.Util.logToChatWithTime;
 public class StemDial extends Decorator implements EditablePiece {
     public static final String ID = "stemdial";
     public String shipXWS = "xwing";
+
+    private static Map<String, String> dialManeuverImages = ImmutableMap.<String, String>builder()
+            .put("0OG", "Move_0_G.png") // !No file exists
+            .put("0OW", "Move_0_W.png") // !No file exists
+            .put("0OR", "Move_0_R.png")
+            .put("1AG", "Move_1_RLB1_G.png") // !no file exists
+            .put("1AW", "Move_1_RLB1_W.png") // !no file exists
+            .put("1AR", "Move_1_RLB1_R.png")
+            .put("1SG", "Move_1_R_G.png") // !no file exists
+            .put("1SW", "Move_1_R_W.png") // !no file exists
+            .put("1SR", "Move_1_R_R.png")
+            .put("1DG", "Move_1_RRB1_G.png") // no file exists
+            .put("1DW", "Move_1_RRB1_W.png") // no file exists
+            .put("1DR", "Move_1_RRB1_R.png")
+            .put("1EG","") // no file exists
+            .put("1EW","") // no file exists
+            .put("1ER","") // no file exists
+            .put("1TG", "Move_1_H-L_G.png")
+            .put("1TW", "Move_1_H-L_W.png")
+            .put("1TR", "Move_1_H-L_R.png")
+            .put("1BG", "Move_1_G-L_G.png")
+            .put("1BW", "Move_1_G-L_W.png")
+            .put("1BR", "Move_1_G-L_R.png") // no file exists
+            .put("1FG", "Move_1_S_G.png")
+            .put("1FW", "Move_1_S_W.png")
+            .put("1FR", "Move_1_S_R.png") // no file exists
+            .put("1NG", "Move_1_G-R_G.png")
+            .put("1NW", "Move_1_G-R_W.png")
+            .put("1NR", "Move_1_G-R_R.png") // no file exists
+            .put("1YG", "Move_1_H-R_G.png")
+            .put("1YW", "Move_1_H-R_W.png")
+            .put("1YR", "Move_1_H-R_R.png")
+            .put("1LG","Move_1_TR_R_G.png") // no file exists
+            .put("1LW","Move_1_TR_R_W.png") // no file exists
+            .put("1LR","Move_1_TR_R_R.png") // no file exists
+            .put("1KG","Move_1_U_G.png") // no file exists
+            .put("1KW","Move_1_U_W.png") // no file exists
+            .put("1KR","Move_1_U_R.png")
+            .put("1PG","Move_1_SL_R_G.png") // no file exists
+            .put("1PW","Move_1_SL_R_W.png") // no file exists
+            .put("1PR","Move_1_SL_R_R.png") // no file exists
+            .put("1RG","Move_1_TR_L_G.png") // no file exists
+            .put("1RW","Move_1_TR_L_W.png") // no file exists
+            .put("1RR","Move_1_TR_L_R.png") // no file exists
+            .put("2EG", "Move_2_TR_R_G.png") // no file exists
+            .put("2EW", "Move_2_TR_R_W.png") // no file exists
+            .put("2ER", "Move_2_TR_R_R.png")
+            .put("2TG", "Move_2_H-L_G.png")
+            .put("2TW", "Move_2_H-L_W.png")
+            .put("2TR", "Move_2_H-L_R.png")
+            .put("2BG", "Move_2_G-L_G.png")
+            .put("2BW", "Move_2_G-L_W.png")
+            .put("2BR", "Move_2_G-L_R.png") // no file exists
+            .put("2FG", "Move_2_S_G.png")
+            .put("2FW", "Move_2_S_W.png")
+            .put("2FR", "Move_2_S_R.png") // no file exists
+            .put("2NG", "Move_2_G-R_G.png")
+            .put("2NW", "Move_2_G-R_W.png")
+            .put("2NR", "Move_2_G-R_R.png") // no file exists
+            .put("2YG", "Move_2_H-R_G.png")
+            .put("2YW", "Move_2_H-R_W.png")
+            .put("2YR", "Move_2_H-R_R.png")
+            .put("2LG", "Move_2_SL_L_G.png") // no file exists
+            .put("2LW", "Move_2_SL_L_W.png")
+            .put("2LR", "Move_2_SL_L_R.png")
+            .put("2KG", "Move_2_U_G.png") // no file exists
+            .put("2KW", "Move_2_U_W.png") // no file exists
+            .put("2KR", "Move_2_U_R.png")
+            .put("2PG", "Move_2_SL_R_G.png") // no file exists
+            .put("2PW", "Move_2_SL_R_W.png") // no file exists
+            .put("2PR", "Move_2_SL_R_R.png")
+            .put("2RG", "Move_2_TR_L_G.png") // no file exists
+            .put("2RW", "Move_2_TR_L_W.png") // no file exists
+            .put("2RR", "Move_2_TR_L_R.png")
+            .put("3EG", "Move_3_TR_R_G.png") // no file exists
+            .put("3EW", "Move_3_TR_R_W.png") // no file exists
+            .put("3ER", "Move_3_TR_R_R.png")
+            .put("3TG", "Move_3_H-L_G.png")
+            .put("3TW", "Move_3_H-L_W.png")
+            .put("3TR", "Move_3_H-L_R.png")
+            .put("3BG", "Move_3_G-L_G.png")
+            .put("3BW", "Move_3_G-L_W.png")
+            .put("3BR", "Move_3_G-L_R.png")
+            .put("3FG", "Move_3_S_G.png")
+            .put("3FW", "Move_3_S_W.png")
+            .put("3FR", "Move_3_S_R.png") // no file exists
+            .put("3NG", "Move_3_G-R_G.png")
+            .put("3NW", "Move_3_G-R_W.png")
+            .put("3NR", "Move_3_G-R_R.png")
+            .put("3YG", "Move_3_H-R_G.png")
+            .put("3YW", "Move_3_H-R_W.png")
+            .put("3YR", "Move_3_H-R_R.png")
+            .put("3LG", "Move_3_SL_L_G.png") // no file exists
+            .put("3LW", "Move_3_SL_L_W.png") // no file exists
+            .put("3LR", "Move_3_SL_L_R.png")
+            .put("3KG", "Move_3_U_G.png") // no file exists
+            .put("3KW", "Move_3_U_W.png") // no file exists
+            .put("3KR", "Move_3_U_R.png")
+            .put("3PG", "Move_3_SL_R_G.png") // no file exists
+            .put("3PW", "Move_3_SL_R_W.png") // no file exists
+            .put("3PR", "Move_3_SL_R_R.png")
+            .put("3RG", "Move_3_TR_L_G.png") // no file exists
+            .put("3RW", "Move_3_TR_L_W.png") // no file exists
+            .put("3RR", "Move_3_TR_L_R.png")
+            .put("4FG", "Move_4_S_G.png")
+            .put("4FW", "Move_4_S_W.png")
+            .put("4FR", "Move_4_S_R.png")
+            .put("4KG", "Move_4_U_G.png") // no file exists
+            .put("4KW", "Move_4_U_W.png")
+            .put("4KR", "Move_4_U_R.png")
+            .put("5FG", "Move_5_S_G.png")
+            .put("5FW", "Move_5_S_W.png")
+            .put("5FR", "Move_5_S_R.png")
+            .put("5KG", "Move_5_U_G.png") // no file exists
+            .put("5KW", "Move_5_U_W.png") // no file exists
+            .put("5KR", "Move_5_U_R.png")
+            .build();
+
+
+
 
     public StemDial(){
         this(null);
@@ -132,6 +254,8 @@ public class StemDial extends Decorator implements EditablePiece {
             // Take the incoming maneuvers and change them to the dialString needed
             // take care to keep them in order
             // add in the option for it to go to XWS data to get the "new" string (like DialGen)
+
+
 
             logToChat("execute command = current ship xws name is: " + xwsShipName);
                 String dialString = "emb2;;2;;Right;2;;Left;2;;;;;false;0;-38;Move_1_H-L_R.png,Move_1_G-L_G.png,Move_1_S_G.png,Move_1_G-R_G.png,Move_1_H-R_R.png,Move_2_H-L_W.png,Move_2_G-L_W.png,Move_2_S_G.png,Move_2_G-R_W.png,Move_2_H-R_W.png,Move_3_H-L_R.png,Move_3_G-L_W.png,Move_3_S_W.png,Move_3_G-R_W.png,Move_3_H-R_R.png,Move_4_S_W.png,Move_4_U_R.png;Hard Left 1,Bank Left 1,Forward 1,Bank Right 1,Hard Right 1,Hard Left 2,Bank Left 2,Forward 2,Bank Right 2,Hard Right 2,Hard Left 3,Bank Left 3,Forward 3,Bank Right 3,Hard Right 3,Forward 4,K-Turn 4;true;Move;;;false;;1;1;true;;46,0;44,0\\\\\\\\\tpiece;;;Dial_Rebel_n.png;dial for Attack Shuttle/\t\\\tnull;\\\\\t\\\\\\\t1\\\\\\\\";
