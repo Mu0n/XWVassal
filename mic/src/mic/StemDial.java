@@ -462,13 +462,21 @@ public class StemDial extends Decorator implements EditablePiece {
             stateString.append(";").append(moveNamesString.toString());
 
             // finish the type string
-            stateString.append(";true;Move;;;false;;1;1;true;;46,0;44,0\\\\\\\\\tpiece;;;\t\\\tnull;\\\\\t\\\\\\\t1\\\\\\\\");
+            stateString.append(";true;Move;;;false;;1;1;true;;46,0;44,0");
+            //\\\\\\\\\tpiece;;;\t\\\tnull;\\\\\t\\\\\\\t1\\\\\\\\");
             //String dialString = "emb2;;2;;Right;2;;Left;2;;;;;false;0;-38;Move_1_H-L_R.png,Move_1_G-L_G.png,Move_1_S_G.png,Move_1_G-R_G.png,Move_1_H-R_R.png,Move_2_H-L_W.png,Move_2_G-L_W.png,Move_2_S_G.png,Move_2_G-R_W.png,Move_2_H-R_W.png,Move_3_H-L_R.png,Move_3_G-L_W.png,Move_3_S_W.png,Move_3_G-R_W.png,Move_3_H-R_R.png,Move_4_S_W.png,Move_4_U_R.png;Hard Left 1,Bank Left 1,Forward 1,Bank Right 1,Hard Right 1,Hard Left 2,Bank Left 2,Forward 2,Bank Right 2,Hard Right 2,Hard Left 3,Bank Left 3,Forward 3,Bank Right 3,Hard Right 3,Forward 4,K-Turn 4;true;Move;;;false;;1;1;true;;46,0;44,0\\\\\\\\\tpiece;;;Dial_Rebel_n.png;dial for Attack Shuttle/\t\\\tnull;\\\\\t\\\\\\\t1\\\\\\\\";
 
             Embellishment myEmb = (Embellishment)Decorator.getDecorator(piece,Embellishment.class);
 
             //myEmb.mySetType(dialString);
+
+            //TODO remove me
+            logToChat(myEmb.myGetType());
+
             myEmb.mySetType(stateString.toString());
+
+            //TODO remove me
+            logToChat(myEmb.myGetType());
         }
 
         private void buildDialMask(GamePiece piece, String xwsShipName, String faction)
@@ -489,6 +497,7 @@ public class StemDial extends Decorator implements EditablePiece {
            // "obs;82,130;Dial_Back_Rebel_Auzituck_Gunship_n.png;Reveal;GDial_Hide_Rebel_Auzituck_Gunship.png;;player:;Peek\\"
 
             Obscurable myObs = (Obscurable)Decorator.getDecorator(piece,Obscurable.class);
+            myObs.mySetType(sb.toString());
 
         }
 
