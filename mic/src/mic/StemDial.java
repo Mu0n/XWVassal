@@ -10,12 +10,10 @@ import org.slf4j.LoggerFactory;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.KeyEvent;
 import java.util.List;
 import java.util.Map;
 
 import static mic.Util.logToChat;
-import static mic.Util.logToChatWithTime;
 
 /**
  * Created by Mic on 12/21/2017.
@@ -324,24 +322,25 @@ public class StemDial extends Decorator implements EditablePiece {
         return null;
     }
 
-    @Override
-    public Command keyEvent(KeyStroke stroke) {
-        //check to see if 'x' was pressed
-        if(KeyStroke.getKeyStroke(KeyEvent.VK_I, KeyEvent.CTRL_DOWN_MASK, true).equals(stroke)) {
-            logToChatWithTime("temporary trigger for Dial generation -will be eventually ported to autospawn\nPossibly to a right click menu as well with a dynamically fetched list of all ships??");
-            GamePiece piece = getInner();
+//    @Override
+//    public Command keyEvent(KeyStroke stroke) {
+//        //check to see if 'x' was pressed
+//        if(KeyStroke.getKeyStroke(KeyEvent.VK_I, KeyEvent.CTRL_DOWN_MASK, true).equals(stroke)) {
+//            logToChatWithTime("temporary trigger for Dial generation -will be eventually ported to autospawn\nPossibly to a right click menu as well with a dynamically fetched list of all ships??");
+//            GamePiece piece = getInner();
 
-            //TODO this is hardcoded - need to fix
-            DialGenerateCommand myDialGen = new DialGenerateCommand("attackshuttle", piece, "Rebel Alliance");
-            Command stringOCommands = piece.keyEvent(stroke);
-            stringOCommands.append(myDialGen);
+//            //TODO this is hardcoded - need to fix
+//            DialGenerateCommand myDialGen = new DialGenerateCommand("attackshuttle", piece, "Rebel Alliance");
+//            Command stringOCommands = piece.keyEvent(stroke);
+//            stringOCommands.append(myDialGen);
 
-            myDialGen.execute();
-            return stringOCommands;
-        }
+//            myDialGen.execute();
+//            return stringOCommands;
+//        }
 
-        return piece.keyEvent(stroke);
-    }
+//        return piece.keyEvent(stroke);
+//    }
+
     public String getDescription() {
         return "Custom StemDial (mic.StemDial)";
     }
@@ -375,48 +374,35 @@ public class StemDial extends Decorator implements EditablePiece {
     public static class DialGenerateCommand extends Command {
         GamePiece piece;
         static String xwsShipName = "";
-        //List<List<Integer>> moveList; //possibly changed for a higher level class so it stays current with future xws spec changes
 
         List<String> newMoveList;
         String shipName;
         String faction = "";
+
         DialGenerateCommand(String thisName, GamePiece piece, String thisFaction) {
 
             // fetch the maneuver array of arrays according to the xws name passed on from autospawn or other means
             xwsShipName = thisName;
             faction = thisFaction;
             MasterShipData.ShipData shipData = MasterShipData.getShipData(xwsShipName);
-           // moveList = shipData.getManeuvers();
             newMoveList = shipData.getDialManeuvers();
             shipName = shipData.getName();
             this.piece = piece;
 
         }
 
-            // construct the dial Layers trait (Embellishment class) layer by layer according to the previous Array of Arrays.
-            protected void executeCommand() {
+        // construct the dial Layers trait (Embellishment class) layer by layer according to the previous Array of Arrays.
+        protected void executeCommand() {
 
-            //Now: take a hardcoded string (attack shuttle dial info taken from the build file, take note that the backslashes are doubled
-            //Pasting in intellij automatically added them in the context of a string value
-            //The key is to access the embellishment decorator associated with the piece and then use its mySetType method.
-            //Later: fetch the string from a helper function that constructs the string bit by bit
-            //hardcode some of them with a map because the order of moves is counterintuitive (ie the protectorate iirc).
-            //Usually, red sloops or red trolls are on separate sides, but some dials group them together at the end of the moves of the same speed
-            //ie sloop left, turn left, bank left, straight, bank right, turn right, sloop right can be found on some ships
-            //turn left, bank left, straight, bank right, turn right, sloop left, sloop right can be found in other ships
-            //the perfect order is also found on http://xwvassal.info/dialgen/dialgen.html. The online builders that use the xws spec do not carry this exact information
+            // build the layers for the maneuvers on the dial
+            buildManeuvers(piece, newMoveList);
 
-                logToChat("execute command = current ship xws name is: " + xwsShipName);
-
-                // build the layers for the maneuvers on the dial
-                buildManeuvers(piece, newMoveList);
-
-                buildDialMask(piece,xwsShipName,faction);
-
-
+            // build the dial back and dial hide images
+            buildDialMask(piece,xwsShipName,faction);
 
         }
 
+        // build the maneuvers layer
         private void buildManeuvers(GamePiece piece, List moveList)
         {
             // build the type string
@@ -431,7 +417,6 @@ public class StemDial extends Decorator implements EditablePiece {
             String moveImage;
             for (String move : newMoveList)
             {
-
 
                 // look up the image for the maneuver
                 moveImage = (String)dialManeuverImages.get(move);
@@ -455,28 +440,19 @@ public class StemDial extends Decorator implements EditablePiece {
                     String moveName = maneuverNames.get(moveCode);
                     moveNamesString.append(moveName).append(" ").append(speed);
 
-
                 }
             }
+
             // add in move names
             stateString.append(";").append(moveNamesString.toString());
 
             // finish the type string
             stateString.append(";true;Move;;;false;;1;1;true;;46,0;44,0");
-            //\\\\\\\\\tpiece;;;\t\\\tnull;\\\\\t\\\\\\\t1\\\\\\\\");
-            //String dialString = "emb2;;2;;Right;2;;Left;2;;;;;false;0;-38;Move_1_H-L_R.png,Move_1_G-L_G.png,Move_1_S_G.png,Move_1_G-R_G.png,Move_1_H-R_R.png,Move_2_H-L_W.png,Move_2_G-L_W.png,Move_2_S_G.png,Move_2_G-R_W.png,Move_2_H-R_W.png,Move_3_H-L_R.png,Move_3_G-L_W.png,Move_3_S_W.png,Move_3_G-R_W.png,Move_3_H-R_R.png,Move_4_S_W.png,Move_4_U_R.png;Hard Left 1,Bank Left 1,Forward 1,Bank Right 1,Hard Right 1,Hard Left 2,Bank Left 2,Forward 2,Bank Right 2,Hard Right 2,Hard Left 3,Bank Left 3,Forward 3,Bank Right 3,Hard Right 3,Forward 4,K-Turn 4;true;Move;;;false;;1;1;true;;46,0;44,0\\\\\\\\\tpiece;;;Dial_Rebel_n.png;dial for Attack Shuttle/\t\\\tnull;\\\\\t\\\\\\\t1\\\\\\\\";
+
 
             Embellishment myEmb = (Embellishment)Decorator.getDecorator(piece,Embellishment.class);
-
-            //myEmb.mySetType(dialString);
-
-            //TODO remove me
-            logToChat(myEmb.myGetType());
-
             myEmb.mySetType(stateString.toString());
 
-            //TODO remove me
-            logToChat(myEmb.myGetType());
         }
 
         private void buildDialMask(GamePiece piece, String xwsShipName, String faction)
@@ -494,7 +470,6 @@ public class StemDial extends Decorator implements EditablePiece {
             sb.append(";Reveal;G");
             sb.append(dialHideImage);
             sb.append(";;player:;Peek");
-           // "obs;82,130;Dial_Back_Rebel_Auzituck_Gunship_n.png;Reveal;GDial_Hide_Rebel_Auzituck_Gunship.png;;player:;Peek\\"
 
             Obscurable myObs = (Obscurable)Decorator.getDecorator(piece,Obscurable.class);
             myObs.mySetType(sb.toString());
