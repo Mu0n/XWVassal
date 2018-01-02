@@ -24,7 +24,31 @@ import static mic.Util.logToChatWithTime;
  */
 public class StemDial extends Decorator implements EditablePiece {
     public static final String ID = "stemdial";
-    public String shipXWS = "xwing";
+
+    private static Map<String,String> dialFactionImages = ImmutableMap.<String,String>builder()
+            .put("Rebel Alliance","Dial_Rebel_n.png")
+            .put("Galactic Empire","Dial_Imperial_n.png")
+            .put("Scum and Villainy","Dial_Scum_n.png")
+            .put("First Order","Dial_Imperial_n.png")
+            .put("Resistance","Dial_Rebel_n.png")
+            .build();
+
+    private static Map<String, String> maneuverNames = ImmutableMap.<String, String>builder()
+            .put("O","Stop")
+            .put("A","Reverse Left Bank")
+            .put("S","Reverse")
+            .put("D","Reverse Right Bank")
+            .put("E","Tallon Roll Left")
+            .put("T","Hard Left")
+            .put("B","Bank Left")
+            .put("F","Forward")
+            .put("N","Bank Right")
+            .put("Y","Hard Right")
+            .put("L","Segnor's Loop Left")
+            .put("K","K-Turn")
+            .put("P","Segnor's Loop Right")
+            .put("R","Tallon Roll Right")
+            .build();
 
     private static Map<String, String> dialManeuverImages = ImmutableMap.<String, String>builder()
             .put("0OG", "Move_0_G.png")
@@ -182,7 +206,8 @@ public class StemDial extends Decorator implements EditablePiece {
             logToChatWithTime("temporary trigger for Dial generation -will be eventually ported to autospawn\nPossibly to a right click menu as well with a dynamically fetched list of all ships??");
             GamePiece piece = getInner();
 
-            DialGenerateCommand myDialGen = new DialGenerateCommand("xwing", piece);
+            //TODO this is hardcoded - need to fix
+            DialGenerateCommand myDialGen = new DialGenerateCommand("attackshuttle", piece, "Rebel Alliance");
             Command stringOCommands = piece.keyEvent(stroke);
             stringOCommands.append(myDialGen);
 
@@ -225,14 +250,20 @@ public class StemDial extends Decorator implements EditablePiece {
     public static class DialGenerateCommand extends Command {
         GamePiece piece;
         static String xwsShipName = "";
-        List<List<Integer>> moveList; //possibly changed for a higher level class so it stays current with future xws spec changes
+        //List<List<Integer>> moveList; //possibly changed for a higher level class so it stays current with future xws spec changes
 
-        DialGenerateCommand(String thisName, GamePiece piece) {
+        List<String> newMoveList;
+        String shipName;
+        String faction = "";
+        DialGenerateCommand(String thisName, GamePiece piece, String thisFaction) {
 
             // fetch the maneuver array of arrays according to the xws name passed on from autospawn or other means
             xwsShipName = thisName;
+            faction = thisFaction;
             MasterShipData.ShipData shipData = MasterShipData.getShipData(xwsShipName);
-            moveList = shipData.getManeuvers();
+           // moveList = shipData.getManeuvers();
+            newMoveList = shipData.getDialManeuvers();
+            shipName = shipData.getName();
             this.piece = piece;
 
         }
@@ -250,18 +281,70 @@ public class StemDial extends Decorator implements EditablePiece {
             //turn left, bank left, straight, bank right, turn right, sloop left, sloop right can be found in other ships
             //the perfect order is also found on http://xwvassal.info/dialgen/dialgen.html. The online builders that use the xws spec do not carry this exact information
 
-            //MrMurphM
-            // Take the incoming maneuvers and change them to the dialString needed
-            // take care to keep them in order
-            // add in the option for it to go to XWS data to get the "new" string (like DialGen)
+                logToChat("execute command = current ship xws name is: " + xwsShipName);
+
+                // build the state string
+                StringBuilder stateString = new StringBuilder();
+                StringBuilder moveNamesString = new StringBuilder();
+
+                // start the state string
+                stateString.append("emb2;;2;;Right;2;;Left;2;;;;;false;0;-38;");
+
+                // loop through the maneuvers from the xws-data
+                int count = 0;
+                String moveImage;
+                for (String move : newMoveList)
+                {
+
+
+                    // look up the image for the maneuver
+                    moveImage = (String)dialManeuverImages.get(move);
+                    if(moveImage == null)
+                    {
+                        logToChat("Can't find image for move: " + move);
+                    }else{
+
+                        count++;
+                        if(count != 1)
+                        {
+                            stateString.append(",");
+                            moveNamesString.append(",");
+                        }
+                        // add the maneuver image to the dial
+                        stateString.append(moveImage);
 
 
 
-            logToChat("execute command = current ship xws name is: " + xwsShipName);
-                String dialString = "emb2;;2;;Right;2;;Left;2;;;;;false;0;-38;Move_1_H-L_R.png,Move_1_G-L_G.png,Move_1_S_G.png,Move_1_G-R_G.png,Move_1_H-R_R.png,Move_2_H-L_W.png,Move_2_G-L_W.png,Move_2_S_G.png,Move_2_G-R_W.png,Move_2_H-R_W.png,Move_3_H-L_R.png,Move_3_G-L_W.png,Move_3_S_W.png,Move_3_G-R_W.png,Move_3_H-R_R.png,Move_4_S_W.png,Move_4_U_R.png;Hard Left 1,Bank Left 1,Forward 1,Bank Right 1,Hard Right 1,Hard Left 2,Bank Left 2,Forward 2,Bank Right 2,Hard Right 2,Hard Left 3,Bank Left 3,Forward 3,Bank Right 3,Hard Right 3,Forward 4,K-Turn 4;true;Move;;;false;;1;1;true;;46,0;44,0\\\\\\\\\tpiece;;;Dial_Rebel_n.png;dial for Attack Shuttle/\t\\\tnull;\\\\\t\\\\\\\t1\\\\\\\\";
+                        // build move names string
+                        String speed = move.substring(0,1);
+                        String moveCode = move.substring(1,2);
+                        String moveName = maneuverNames.get(moveCode);
+                        moveNamesString.append(moveName).append(" ").append(speed);
+
+
+                    }
+                }
+                // add in move names
+                stateString.append(";").append(moveNamesString.toString());
+
+                // finish the state string
+                stateString.append(";true;Move;;;false;;1;1;true;;46,0;44,0\\\\\\\\\tpiece;;;");
+
+                // set the dial face image
+                String dialFace = dialFactionImages.get(faction);
+                stateString.append(dialFace).append(";");
+
+                // set the name for the dial
+                stateString.append("dial for ").append(shipName).append("/");
+
+                // finish the state string
+                stateString.append("\t\\\tnull;\\\\\t\\\\\\\t1\\\\\\\\");
+                //String dialString = "emb2;;2;;Right;2;;Left;2;;;;;false;0;-38;Move_1_H-L_R.png,Move_1_G-L_G.png,Move_1_S_G.png,Move_1_G-R_G.png,Move_1_H-R_R.png,Move_2_H-L_W.png,Move_2_G-L_W.png,Move_2_S_G.png,Move_2_G-R_W.png,Move_2_H-R_W.png,Move_3_H-L_R.png,Move_3_G-L_W.png,Move_3_S_W.png,Move_3_G-R_W.png,Move_3_H-R_R.png,Move_4_S_W.png,Move_4_U_R.png;Hard Left 1,Bank Left 1,Forward 1,Bank Right 1,Hard Right 1,Hard Left 2,Bank Left 2,Forward 2,Bank Right 2,Hard Right 2,Hard Left 3,Bank Left 3,Forward 3,Bank Right 3,Hard Right 3,Forward 4,K-Turn 4;true;Move;;;false;;1;1;true;;46,0;44,0\\\\\\\\\tpiece;;;Dial_Rebel_n.png;dial for Attack Shuttle/\t\\\tnull;\\\\\t\\\\\\\t1\\\\\\\\";
+
                 Embellishment myEmb = (Embellishment)Decorator.getDecorator(piece,Embellishment.class);
 
-                myEmb.mySetType(dialString);
+                //myEmb.mySetType(dialString);
+                myEmb.mySetType(stateString.toString());
         }
 
         protected Command myUndoCommand() {

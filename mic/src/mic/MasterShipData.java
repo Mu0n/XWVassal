@@ -61,6 +61,9 @@ public class MasterShipData extends ArrayList<MasterShipData.ShipData> {
 
     public static class ShipData {
 
+        @JsonProperty("name")
+        private String name;
+
         @JsonProperty("attack")
         private int attack = 0;
 
@@ -91,6 +94,9 @@ public class MasterShipData extends ArrayList<MasterShipData.ShipData> {
         @JsonProperty("size")
         private String size;
 
+        public String getName() {
+            return name;
+        }
         public int getAttack() {
             return attack;
         }
