@@ -53,6 +53,9 @@ public class MasterPilotData extends ArrayList<MasterPilotData.PilotData> {
         @JsonProperty("points")
         private String points = "0";
 
+        @JsonProperty("faction")
+        private String faction;
+
         @JsonProperty("xws")
         private String xws;
 
@@ -93,6 +96,10 @@ public class MasterPilotData extends ArrayList<MasterPilotData.PilotData> {
             } catch (Exception e) {
                 return 0;
             }
+        }
+
+        public String getFaction(){
+            return faction;
         }
 
         public String getXws() {
