@@ -15,6 +15,9 @@ public class MasterShipData extends ArrayList<MasterShipData.ShipData> {
 
     private static String REMOTE_URL = "https://raw.githubusercontent.com/guidokessels/xwing-data/master/data/ships.js";
 
+    //TODO change this URL
+    private static String DISPATCHER_URL = "https://raw.githubusercontent.com/mrmurphm/XWVassal/new-dial/mic/swxwmg.vmod-unpacked/dispatcher_ships.json";
+
     private static Map<String, ShipData> loadedData = null;
 
     public static ShipData getShipData(String shipXwsId) {
@@ -25,6 +28,25 @@ public class MasterShipData extends ArrayList<MasterShipData.ShipData> {
     }
 
     protected static void loadData() {
+
+        // load data from xwing-data
+        loadFromXwingData();
+
+        // load data from dispatcher file
+        MasterShipData dispatcherData = loadFromDispatcher();
+
+        // add in any ships from dispatcher that aren't in xwing-data
+        for(ShipData ship : dispatcherData)
+        {
+            if(loadedData.get(ship.getXws()) == null)
+            {
+                Util.logToChat("Adding ship "+ship.getXws()+" from dispatcher file");
+                loadedData.put(ship.getXws(),ship);
+            }
+        }
+
+  /*
+        // load from xwing-data
         MasterShipData data = Util.loadRemoteJson(REMOTE_URL, MasterShipData.class);
         if (data == null) {
             Util.logToChat("Unable to load xwing-data for ships from the web, falling back to local copy");
@@ -36,28 +58,64 @@ public class MasterShipData extends ArrayList<MasterShipData.ShipData> {
         // Load the local copy of new ship maneuvers
         // if any of the ships from the XWing Data don't have the new maneuvers, pull them from the local copy
 
-        MasterShipData maneuversData = Util.loadClasspathJson("maneuvers.json", MasterShipData.class);
+ //       MasterShipData maneuversData = Util.loadClasspathJson("maneuvers.json", MasterShipData.class);
 
 
         loadedData = Maps.newHashMap();
         for(ShipData ship : data) {
             // if the ship doesn't have the new dial maneuvers, pull it from the local version
-            if(ship.getDialManeuvers() == null || ship.getDialManeuvers().size() == 0)
-            {
-                Util.logToChat("Ship %s doesn't have dial maneuvers in xwing-data, reading from local copy", ship.getXws());
-                for(ShipData localShip : maneuversData )
-                {
-                    if(localShip.getXws().equalsIgnoreCase(ship.getXws()))
-                    {
-                        // this is the ship
-                        ship.setDialManeuvers(localShip.getDialManeuvers());
-                        break;
-                    }
-                }
-            }
+         //   if(ship.getDialManeuvers() == null || ship.getDialManeuvers().size() == 0)
+        //    {
+         //       Util.logToChat("Ship %s doesn't have dial maneuvers in xwing-data, reading from local copy", ship.getXws());
+         //       for(ShipData localShip : maneuversData )
+         //       {
+          //          if(localShip.getXws().equalsIgnoreCase(ship.getXws()))
+          //          {
+          //              // this is the ship
+         //               ship.setDialManeuvers(localShip.getDialManeuvers());
+         //               break;
+          //          }
+         //       }
+          //  }
+            loadedData.put(ship.getXws(), ship);
+        }
+*/
+
+
+    }
+
+    private static void loadFromXwingData()
+    {
+        // load from xwing-data
+        MasterShipData data = Util.loadRemoteJson(REMOTE_URL, MasterShipData.class);
+        if (data == null) {
+            Util.logToChat("Unable to load xwing-data for ships from the web, falling back to local copy");
+            data = Util.loadClasspathJson("ships.json", MasterShipData.class);
+        }
+
+        loadedData = Maps.newHashMap();
+        for(ShipData ship : data) {
             loadedData.put(ship.getXws(), ship);
         }
     }
+
+    private static MasterShipData loadFromDispatcher()
+    {
+        // load from dispatch
+        MasterShipData data = Util.loadRemoteJson(DISPATCHER_URL, MasterShipData.class);
+        if (data == null) {
+            Util.logToChat("Unable to load dispatcher for ships from the web, falling back to local copy");
+            data = Util.loadClasspathJson("dispatcher_ships.json", MasterShipData.class);
+        }
+
+   //     loadedData = Maps.newHashMap();
+   ////     for(ShipData ship : data) {
+     //       loadedData.put(ship.getXws(), ship);
+   //     }
+
+        return data;
+    }
+
 
     public static class ShipData {
 
