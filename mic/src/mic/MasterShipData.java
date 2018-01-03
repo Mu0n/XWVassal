@@ -38,6 +38,8 @@ public class MasterShipData extends ArrayList<MasterShipData.ShipData> {
         // add in any ships from dispatcher that aren't in xwing-data
         for(ShipData ship : dispatcherData)
         {
+            //TODO DELETE ME
+            Util.logToChat("Checking ship "+ship.getXws());
             if(loadedData.get(ship.getXws()) == null)
             {
                 Util.logToChat("Adding ship "+ship.getXws()+" from dispatcher file");
