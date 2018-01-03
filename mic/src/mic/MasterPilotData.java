@@ -16,6 +16,9 @@ public class MasterPilotData extends ArrayList<MasterPilotData.PilotData> {
 
     private static String REMOTE_URL = "https://raw.githubusercontent.com/guidokessels/xwing-data/master/data/pilots.js";
 
+    //TODO change this URL
+    private static String DISPATCHER_URL = "https://raw.githubusercontent.com/mrmurphm/XWVassal/new-dial/mic/swxwmg.vmod-unpacked/dispatcher_pilots.json";
+
     private static Map<String, PilotData> loadedData = null;
 
     public static PilotData getPilotData(String ship, String pilot) {
@@ -26,6 +29,29 @@ public class MasterPilotData extends ArrayList<MasterPilotData.PilotData> {
     }
 
     protected static void loadData() {
+
+        // load data from xwing-data
+        loadFromXwingData();
+
+        // load data from dispatcher file
+        MasterPilotData dispatcherData = loadFromDispatcher();
+
+        // add in any pilots from dispatcher that aren't in xwing-data
+        for(PilotData pilot : dispatcherData)
+        {
+            String xwsShip = Canonicalizer.getCanonicalShipName(pilot.getShip());
+            if(loadedData.get(xwsShip + "/" + pilot.getXws()) == null)
+            {
+                Util.logToChat("Adding pilot "+xwsShip + "/" + pilot.getXws()+" from dispatcher file");
+                loadedData.put(xwsShip + "/" + pilot.getXws(),pilot);
+            }
+        }
+    }
+
+
+    private static void loadFromXwingData()
+    {
+        // load from xwing-data
         MasterPilotData data = Util.loadRemoteJson(REMOTE_URL, MasterPilotData.class);
         if (data == null) {
             Util.logToChat("Unable to load xwing-data for pilots from the web, falling back to local copy");
@@ -37,6 +63,18 @@ public class MasterPilotData extends ArrayList<MasterPilotData.PilotData> {
             String xwsShip = Canonicalizer.getCanonicalShipName(pilot.getShip());
             loadedData.put(xwsShip + "/" + pilot.getXws(), pilot);
         }
+    }
+
+    private static MasterPilotData loadFromDispatcher()
+    {
+        // load from dispatch
+        MasterPilotData data = Util.loadRemoteJson(DISPATCHER_URL, MasterPilotData.class);
+        if (data == null) {
+            Util.logToChat("Unable to load dispatcher for ships from the web, falling back to local copy");
+            data = Util.loadClasspathJson("dispatcher_pilots.json", MasterPilotData.class);
+        }
+
+        return data;
     }
 
     public static class PilotData {

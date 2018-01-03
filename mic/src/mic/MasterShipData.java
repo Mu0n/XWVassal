@@ -70,11 +70,6 @@ public class MasterShipData extends ArrayList<MasterShipData.ShipData> {
             data = Util.loadClasspathJson("dispatcher_ships.json", MasterShipData.class);
         }
 
-   //     loadedData = Maps.newHashMap();
-   ////     for(ShipData ship : data) {
-     //       loadedData.put(ship.getXws(), ship);
-   //     }
-
         return data;
     }
 
