@@ -221,6 +221,7 @@ public class StemDial extends Decorator implements EditablePiece {
             .put("sheathipedeclassshuttle","Dial_Hide_Rebel_Sheathipede.png")
             .put("tiesilencer","Dial_Hide_Empire_TIE-Silencer.png")
             .put("bsf17bomber","Dial_Hide_Rebel_BSF-17.png")
+            .put("unreleased","Dial_Hide_WIP.png")
             .build();
 
     // Dial Back images - images that the opposing player sees when the dial is hidden
@@ -290,6 +291,11 @@ public class StemDial extends Decorator implements EditablePiece {
             .put("sheathipedeclassshuttle/Rebel Alliance","Dial_Back_Rebel_Sheathipede.png")
             .put("tiesilencer/First Order","Dial_Back_Empire_TIE_Silencer.png")
             .put("bsf17bomber/Resistance","Dial_Back_Rebel_BSF-17.png")
+            .put("unreleased/Resistance","Dial_Back_Rebel_WIP.png")
+            .put("unreleased/Rebel Alliance","Dial_Back_Rebel_WIP.png")
+            .put("unreleased/First Order","Dial_Back_Empire_WIP.png")
+            .put("unreleased/Galactic Empire","Dial_Back_Empire_WIP.png")
+            .put("unreleased/Scum and Villainy","Dial_Back_Scum_WIP.png")
             .build();
 
     public StemDial(){
@@ -329,7 +335,7 @@ public class StemDial extends Decorator implements EditablePiece {
 //            logToChatWithTime("temporary trigger for Dial generation -will be eventually ported to autospawn\nPossibly to a right click menu as well with a dynamically fetched list of all ships??");
 //            GamePiece piece = getInner();
 
-//            //TODO this is hardcoded - need to fix
+//            // this is hardcoded - need to fix
 //            DialGenerateCommand myDialGen = new DialGenerateCommand("attackshuttle", piece, "Rebel Alliance");
 //            Command stringOCommands = piece.keyEvent(stroke);
 //            stringOCommands.append(myDialGen);
@@ -460,8 +466,19 @@ public class StemDial extends Decorator implements EditablePiece {
             // get the back image
             String dialBackImage = dialBackImages.get(xwsShipName+"/"+faction);
 
+            // if we don't have the image (unreleased ship), use a WIP image
+            if(dialBackImage == null)
+            {
+                dialBackImage = dialBackImages.get("unreleased/"+faction);
+            }
             // get the dial hide image
             String dialHideImage = dialHideImages.get(xwsShipName);
+
+            // if we don't have the image (unreleased ship), use a WIP image
+            if(dialHideImage == null)
+            {
+                dialHideImage = dialHideImages.get("unreleased/");
+            }
 
             // build the string
             StringBuilder sb = new StringBuilder();
@@ -479,9 +496,6 @@ public class StemDial extends Decorator implements EditablePiece {
         protected Command myUndoCommand() {
             return null;
         }
-
-
-
 
         //the following class is used to send the info to the other player whenever a dial generation command is issued, so it can be done locally on all machines playing/watching the game
         //only the ship XWS string is sent
