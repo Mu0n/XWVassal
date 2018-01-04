@@ -455,8 +455,9 @@ public class StemDial extends Decorator implements EditablePiece {
             // finish the type string
             stateString.append(";true;Move;;;false;;1;1;true;;46,0;44,0");
 
+            Embellishment myEmb = (Embellishment)Util.getEmbellishment(piece,"Layer - Move");
+            //Embellishment myEmb = (Embellishment)Decorator.getDecorator(piece,Embellishment.class);
 
-            Embellishment myEmb = (Embellishment)Decorator.getDecorator(piece,Embellishment.class);
             myEmb.mySetType(stateString.toString());
 
         }
@@ -537,6 +538,9 @@ public class StemDial extends Decorator implements EditablePiece {
         }
 
     }
+
+
+
 
 }
 
