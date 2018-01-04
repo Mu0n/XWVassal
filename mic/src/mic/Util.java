@@ -1,28 +1,25 @@
 package mic;
 
-import java.awt.*;
-import java.awt.geom.*;
-import java.io.*;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.text.SimpleDateFormat;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.List;
-import java.util.TimeZone;
-
-import VASSAL.counters.*;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.collect.Lists;
-
 import VASSAL.build.GameModule;
 import VASSAL.build.module.Chatter;
 import VASSAL.build.module.GlobalOptions;
 import VASSAL.build.module.PlayerRoster;
 import VASSAL.build.widget.PieceSlot;
 import VASSAL.command.Command;
-import org.apache.commons.codec.binary.Base64;
+import VASSAL.counters.*;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.Lists;
+
+import java.awt.*;
+import java.awt.geom.*;
+import java.io.*;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
+import java.util.TimeZone;
 
 /**
  * Created by amatheny on 2/9/17.
@@ -321,5 +318,17 @@ public class Util {
         Object obj = in.readObject();
         in.close();
         return obj;
+    }
+
+    public static GamePiece getEmbellishment(GamePiece p, String name) {
+
+        Class<?> type = Embellishment.class;
+        while (p instanceof Decorator) {
+            if (type.isInstance(p) && ((Embellishment) p).getDescription().equals(name)) {
+                return p;
+            }
+            p = ((Decorator) p).getInner();
+        }
+        return null;
     }
 }

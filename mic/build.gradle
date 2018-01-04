@@ -39,7 +39,10 @@ task downloadXwingData(type: de.undercouch.gradle.tasks.download.Download) {
     src([
             'https://raw.githubusercontent.com/guidokessels/xwing-data/master/data/pilots.js',
             'https://raw.githubusercontent.com/guidokessels/xwing-data/master/data/ships.js',
-            'https://raw.githubusercontent.com/guidokessels/xwing-data/master/data/upgrades.js'
+            'https://raw.githubusercontent.com/guidokessels/xwing-data/master/data/upgrades.js',
+			'https://raw.githubusercontent.com/mrmurphm/XWVassal/new-dial/mic/swxwmg.vmod-unpacked/dispatcher_ships.json',
+			'https://raw.githubusercontent.com/mrmurphm/XWVassal/new-dial/mic/swxwmg.vmod-unpacked/dispatcher_pilots.json',
+			'https://raw.githubusercontent.com/mrmurphm/XWVassal/new-dial/mic/swxwmg.vmod-unpacked/dispatcher_upgrades.json'
     ])
     dest destDir
     doLast {
