@@ -16,6 +16,7 @@ public class XWCounterFactory extends BasicCommandEncoder {
         GameModule.getGameModule().addCommandEncoder(new MapVisualizations.CollsionVisualizationEncoder());
         GameModule.getGameModule().addCommandEncoder(AutoRangeFinder.FOVisualization.AutorangeVisualizationEncoder.INSTANCE);
         GameModule.getGameModule().addCommandEncoder(new AutoRangeFinder.FOVisualization.FOVisualizationClearEncoder());
+        GameModule.getGameModule().addCommandEncoder(new StemDial.DialGenerateCommand.DialGeneratorEncoder());
     }
 
     public Decorator createDecorator(String type, GamePiece inner) {
@@ -38,6 +39,8 @@ public class XWCounterFactory extends BasicCommandEncoder {
             piece = new MouseShipGUI(inner);
         }else if (type.startsWith(CritSpawner.ID)) {
             piece = new CritSpawner(inner);
+        }else if (type.startsWith(StemDial.ID)) {
+            piece = new StemDial(inner);
         }else {
             piece = super.createDecorator(type, inner);
         }

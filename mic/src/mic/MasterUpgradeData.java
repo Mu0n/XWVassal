@@ -16,6 +16,9 @@ public class MasterUpgradeData extends ArrayList<MasterUpgradeData.UpgradeData> 
 
     private static String REMOTE_URL = "https://raw.githubusercontent.com/guidokessels/xwing-data/master/data/upgrades.js";
 
+    //TODO change this URL
+    private static String DISPATCHER_URL = "https://raw.githubusercontent.com/mrmurphm/XWVassal/new-dial/mic/swxwmg.vmod-unpacked/dispatcher_upgrades.json";
+
     private static Map<String, UpgradeData> loadedData = null;
 
     public static UpgradeData getUpgradeData(String upgradeXwsId) {
@@ -26,6 +29,27 @@ public class MasterUpgradeData extends ArrayList<MasterUpgradeData.UpgradeData> 
     }
 
     protected static void loadData() {
+
+        // load data from xwing-data
+        loadFromXwingData();
+
+        // load data from dispatcher file
+        MasterUpgradeData dispatcherData = loadFromDispatcher();
+
+        // add in any upgrades from dispatcher that aren't in xwing-data
+        for(UpgradeData upgrade : dispatcherData)
+        {
+            if(loadedData.get(upgrade.getXws()) == null)
+            {
+                Util.logToChat("Adding upgrade "+upgrade.getXws()+" from dispatcher file");
+                loadedData.put(upgrade.getXws(),upgrade);
+            }
+        }
+
+    }
+
+    private static void loadFromXwingData()
+    {
         MasterUpgradeData data = Util.loadRemoteJson(REMOTE_URL, MasterUpgradeData.class);
         if (data == null) {
             Util.logToChat("Unable to load xwing-data for upgrades from the web, falling back to local copy");
@@ -36,6 +60,18 @@ public class MasterUpgradeData extends ArrayList<MasterUpgradeData.UpgradeData> 
         for(UpgradeData upgrade : data) {
             loadedData.put(upgrade.getXws(), upgrade);
         }
+    }
+
+    private static MasterUpgradeData loadFromDispatcher()
+    {
+        // load from dispatch
+        MasterUpgradeData data = Util.loadRemoteJson(DISPATCHER_URL, MasterUpgradeData.class);
+        if (data == null) {
+            Util.logToChat("Unable to load dispatcher for upgrades from the web, falling back to local copy");
+            data = Util.loadClasspathJson("dispatcher_upgrades.json", MasterUpgradeData.class);
+        }
+
+        return data;
     }
 
     public static class UpgradeData {
