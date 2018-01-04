@@ -4490,5 +4490,69 @@
       "3FW",
       "3NW"
     ] 
+  },
+    {
+    "name": "TEST",
+    "xws": "testship",
+    "faction": [
+      "Resistance"
+    ],
+    "actions": [
+      "Focus",
+      "Target Lock"
+    ],
+    "size": "large",
+    "attack": 2,
+    "agility": 1,
+    "hull": 9,
+    "shields": 3,
+    "firing_arcs": [
+      "Front",
+      "Turret"
+    ],
+    "id": 54,
+    "maneuvers": [
+      [
+        0,
+        0,
+        3
+      ],
+      [
+        3,
+        2,
+        2,
+        2,
+        3
+      ],
+      [
+        1,
+        1,
+        2,
+        1,
+        1
+      ],
+      [
+        0,
+        1,
+        1,
+        1
+      ]
+    ],
+    "dial": [
+      "0OR",
+      "1TR",
+      "1BG",
+      "1FG",
+      "1NG",
+      "1YR",
+      "2TW",
+      "2BW",
+      "2FG",
+      "2NW",
+      "2YW",
+      "3BW",
+      "3FW",
+      "3NW"
+    ] 
   }
 ]
