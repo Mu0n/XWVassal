@@ -36,12 +36,12 @@ public class MasterShipData extends ArrayList<MasterShipData.ShipData> {
         MasterShipData dispatcherData = loadFromDispatcher();
 
         // add in any ships from dispatcher that aren't in xwing-data
-        for(ShipData ship : dispatcherData)
-        {
-            if(loadedData.get(ship.getXws()) == null)
-            {
-                Util.logToChat("Adding ship "+ship.getXws()+" from dispatcher file");
-                loadedData.put(ship.getXws(),ship);
+        if(dispatcherData != null) {
+            for (ShipData ship : dispatcherData) {
+                if (loadedData.get(ship.getXws()) == null) {
+                    Util.logToChat("Adding ship " + ship.getXws() + " from dispatcher file");
+                    loadedData.put(ship.getXws(), ship);
+                }
             }
         }
     }
@@ -68,6 +68,10 @@ public class MasterShipData extends ArrayList<MasterShipData.ShipData> {
         if (data == null) {
             Util.logToChat("Unable to load dispatcher for ships from the web, falling back to local copy");
             data = Util.loadClasspathJson("dispatcher_ships.json", MasterShipData.class);
+            if(data == null)
+            {
+                Util.logToChat("Unable to load dispatcher for ships from the local copy.  Error in JSON format?");
+            }
         }
 
         return data;

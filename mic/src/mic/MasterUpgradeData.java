@@ -37,12 +37,12 @@ public class MasterUpgradeData extends ArrayList<MasterUpgradeData.UpgradeData> 
         MasterUpgradeData dispatcherData = loadFromDispatcher();
 
         // add in any upgrades from dispatcher that aren't in xwing-data
-        for(UpgradeData upgrade : dispatcherData)
-        {
-            if(loadedData.get(upgrade.getXws()) == null)
-            {
-                Util.logToChat("Adding upgrade "+upgrade.getXws()+" from dispatcher file");
-                loadedData.put(upgrade.getXws(),upgrade);
+        if(dispatcherData != null) {
+            for (UpgradeData upgrade : dispatcherData) {
+                if (loadedData.get(upgrade.getXws()) == null) {
+                    Util.logToChat("Adding upgrade " + upgrade.getXws() + " from dispatcher file");
+                    loadedData.put(upgrade.getXws(), upgrade);
+                }
             }
         }
 
@@ -69,6 +69,10 @@ public class MasterUpgradeData extends ArrayList<MasterUpgradeData.UpgradeData> 
         if (data == null) {
             Util.logToChat("Unable to load dispatcher for upgrades from the web, falling back to local copy");
             data = Util.loadClasspathJson("dispatcher_upgrades.json", MasterUpgradeData.class);
+            if(data == null)
+            {
+                Util.logToChat("Unable to load dispatcher for upgrades from the local copy.  Error in JSON format?");
+            }
         }
 
         return data;
