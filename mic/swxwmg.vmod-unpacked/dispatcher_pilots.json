@@ -4749,7 +4749,7 @@
   {
     "name": "TESTPILOT",
     "id": 285,
-    "ship": "testship",
+    "ship": "TEST",
     "skill": 2,
     "points": 22,
     "slots": [
