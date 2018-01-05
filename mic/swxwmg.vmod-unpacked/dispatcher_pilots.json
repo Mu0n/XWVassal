@@ -4745,5 +4745,21 @@
     ],
     "id": 284,
     "image": "pilots/First Order/TIE Silencer/first-order-test-pilot.png"
+  },
+  {
+    "name": "TESTPILOT",
+    "id": 285,
+    "ship": "testship",
+    "skill": 2,
+    "points": 22,
+    "slots": [
+      "System",
+      "Cannon",
+      "Torpedo",
+      "Torpedo"
+    ],
+    "image": "pilots/Rebel Alliance/B-wing/blue-squadron-pilot.png",
+    "faction": "Rebel Alliance",
+    "xws": "testpilot"
   }
 ]
