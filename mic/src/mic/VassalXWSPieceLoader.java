@@ -210,6 +210,12 @@ public class VassalXWSPieceLoader {
 
                             String slotName = stemUpgradeSlotNames.get(upgradeType);
 
+                            if(slotName == null)
+                            {
+                                // this might be a new upgrade type, so use the WIP version
+                                slotName = "Stem Upgrade WIP";
+                            }
+
                             List<PieceSlot> pieceSlots = GameModule.getGameModule().getAllDescendantComponentsOf(PieceSlot.class);
 
                             for (PieceSlot pieceSlot : pieceSlots) {
