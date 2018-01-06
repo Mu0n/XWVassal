@@ -16,20 +16,37 @@ import java.util.Map;
  */
 public class VassalXWSPieceLoader {
     private static Map<String, String> stemUpgradeSlotNames = ImmutableMap.<String, String>builder()
-            .put("Turret","Stem Upgrade Turret")
-            .put("Torpedo","Stem Upgrade Torpedo")
-            .put("Astromech","Stem Upgrade Astromech")
-            .put("Elite","Stem Upgrade Elite")
-            .put("Missile","Stem Upgrade Missile")
-            .put("Crew","Stem Upgrade Crew")
-            .put("Cannon","Stem Upgrade Cannon")
-            .put("Bomb","Stem Upgrade Bomb")
-            .put("Illicit","Stem Upgrade Illicit")
-            .put("Modification","Stem Upgrade Modification")
-            .put("Salvaged Astromech","Stem Upgrade Salvaged Astromech")
-            .put("System","Stem Upgrade System")
-            .put("Tech","Stem Upgrade Tech")
-            .put("Title","Stem Upgrade Title")
+            //.put("Turret","Stem Upgrade Turret")
+            .put("turret","Stem Upgrade Turret")
+            //.put("Torpedo","Stem Upgrade Torpedo")
+            .put("torpedo","Stem Upgrade Torpedo")
+            //.put("Astromech","Stem Upgrade Astromech")
+            .put("amd","Stem Upgrade Astromech")
+            //.put("Elite","Stem Upgrade Elite")
+            .put("ept","Stem Upgrade Elite")
+            //.put("Missile","Stem Upgrade Missile")
+            .put("missile","Stem Upgrade Missile")
+            //.put("Crew","Stem Upgrade Crew")
+            .put("crew","Stem Upgrade Crew")
+            //.put("Cannon","Stem Upgrade Cannon")
+            .put("cannon","Stem Upgrade Cannon")
+            //.put("Bomb","Stem Upgrade Bomb")
+            .put("bomb","Stem Upgrade Bomb")
+            //.put("Illicit","Stem Upgrade Illicit")
+            .put("illicit","Stem Upgrade Illicit")
+            //.put("Modification","Stem Upgrade Modification")
+            .put("mod","Stem Upgrade Modification")
+            //.put("Salvaged Astromech","Stem Upgrade Salvaged Astromech")
+            .put("samd","Stem Upgrade Salvaged Astromech")
+            //.put("System","Stem Upgrade System")
+            .put("system","Stem Upgrade System")
+            //.put("Tech","Stem Upgrade Tech")
+            .put("tech","Stem Upgrade Tech")
+            //.put("Title","Stem Upgrade Title")
+            .put("title","Stem Upgrade Title")
+
+
+
             .build();
 
     private static List<String> obstacleTabNames = Lists.newArrayList(
@@ -185,12 +202,14 @@ public class VassalXWSPieceLoader {
                         //TODO need to handle custom upgrades here
                         // It's stored by xws...
                         // key is type/name
-                        MasterUpgradeData.UpgradeData newUpgradeData = MasterUpgradeData.getUpgradeData(upgradeKey);
+
+                        MasterUpgradeData.UpgradeData newUpgradeData = MasterUpgradeData.getUpgradeData(upgradeName);
 
                         if(newUpgradeData != null)
                         {
 
                             String slotName = stemUpgradeSlotNames.get(upgradeType);
+
                             List<PieceSlot> pieceSlots = GameModule.getGameModule().getAllDescendantComponentsOf(PieceSlot.class);
 
                             for (PieceSlot pieceSlot : pieceSlots) {
@@ -204,9 +223,6 @@ public class VassalXWSPieceLoader {
                                     continue;
                                 }
                             }
-
-
-
 
 
                         }else {

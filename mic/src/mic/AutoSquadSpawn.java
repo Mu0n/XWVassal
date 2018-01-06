@@ -165,6 +165,14 @@ public class AutoSquadSpawn extends AbstractConfigurable {
 
                 GamePiece upgradePiece = upgrade.cloneGamePiece();
 
+                // if this is an unreleased upgrade, we have to set the name
+                if(upgrade.getPieceSlot().getConfigureName().startsWith("Stem"))
+                {
+                    // we need to set the upgrade name
+                    upgradePiece.setProperty("Upgrade Name",upgrade.getUpgradeData().getName());
+                }
+
+
                 // if pilot has extra munitions, we will collect the positions of each card that can take it
                 // so we can add the tokens later
                 if(pilotHasExtraMunitions)

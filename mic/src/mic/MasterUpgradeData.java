@@ -30,18 +30,20 @@ public class MasterUpgradeData extends ArrayList<MasterUpgradeData.UpgradeData> 
 
     protected static void loadData() {
 
-        // load data from xwing-data
-        loadFromXwingData();
+        if(loadedData != null) {
+            // load data from xwing-data
+            loadFromXwingData();
 
-        // load data from dispatcher file
-        MasterUpgradeData dispatcherData = loadFromDispatcher();
+            // load data from dispatcher file
+            MasterUpgradeData dispatcherData = loadFromDispatcher();
 
-        // add in any upgrades from dispatcher that aren't in xwing-data
-        if(dispatcherData != null) {
-            for (UpgradeData upgrade : dispatcherData) {
-                if (loadedData.get(upgrade.getXws()) == null) {
-                    Util.logToChat("Adding upgrade " + upgrade.getXws() + " from dispatcher file");
-                    loadedData.put(upgrade.getXws(), upgrade);
+            // add in any upgrades from dispatcher that aren't in xwing-data
+            if (dispatcherData != null) {
+                for (UpgradeData upgrade : dispatcherData) {
+                    if (loadedData.get(upgrade.getXws()) == null) {
+                        Util.logToChat("Adding upgrade " + upgrade.getXws() + " from dispatcher file");
+                        loadedData.put(upgrade.getXws(), upgrade);
+                    }
                 }
             }
         }
