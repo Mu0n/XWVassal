@@ -30,7 +30,7 @@ public class MasterUpgradeData extends ArrayList<MasterUpgradeData.UpgradeData> 
 
     protected static void loadData() {
 
-        if(loadedData != null) {
+        if(loadedData == null) {
             // load data from xwing-data
             loadFromXwingData();
 
