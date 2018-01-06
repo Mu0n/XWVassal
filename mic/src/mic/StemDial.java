@@ -478,7 +478,7 @@ public class StemDial extends Decorator implements EditablePiece {
             // if we don't have the image (unreleased ship), use a WIP image
             if(dialHideImage == null)
             {
-                dialHideImage = dialHideImages.get("unreleased/");
+                dialHideImage = dialHideImages.get("unreleased");
             }
 
             // build the string
