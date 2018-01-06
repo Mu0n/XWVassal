@@ -4139,5 +4139,15 @@
     "slot": "Salvaged Astromech",
     "id": 353,
     "image": "upgrades/Salvaged Astromech/r5-tk.png"
+  },
+  {
+    "text": "This is a test upgrade",
+    "name": "TEST",
+    "xws": "testupgrade",
+    "unique": true,
+    "points": 0,
+    "slot": "Salvaged Astromech",
+    "id": 354,
+    "image": "upgrades/Salvaged Astromech/r5-tk.png"
   }
 ]
