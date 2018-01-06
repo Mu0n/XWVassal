@@ -1,19 +1,18 @@
 package mic;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-
-import com.google.common.collect.HashMultiset;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Multiset;
-
 import VASSAL.build.GameModule;
 import VASSAL.build.Widget;
 import VASSAL.build.widget.ListWidget;
 import VASSAL.build.widget.PieceSlot;
 import VASSAL.build.widget.TabWidget;
+import com.google.common.collect.HashMultiset;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Multiset;
+
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by amatheny on 2/8/17.
@@ -49,7 +48,106 @@ public class VassalXWSPieceLoader {
             VassalXWSPilotPieces barePieces = this.pilotPiecesMap.get(pilotKey);
             if (barePieces == null) {
                 Util.logToChat("Could not find pilot: " + pilotKey);
-                continue;
+
+                // TODO - this is where we have to grab the stem stuff
+                // it all should be in MasterPilotData and MasterShipData
+                String xwsShip = Canonicalizer.getCanonicalShipName(pilot.getShip());
+                MasterShipData.ShipData shipData = MasterShipData.getShipData(pilot.getShip());
+                MasterPilotData.PilotData pilotData = MasterPilotData.getPilotData(xwsShip,pilot.getName() );
+
+                if(pilotData != null && shipData != null) {
+                    // these will now be generated because they are unreleased
+
+                    // generate the pilot card
+                    barePieces = new VassalXWSPilotPieces();
+                    barePieces.setPilotData(pilotData);
+                    barePieces.setShipData(shipData);
+
+                    // get the pilot card slot
+                    PieceSlot rebelCardSlot = null;
+                    PieceSlot resistanceCardSlot = null;
+                    PieceSlot empireCardSlot = null;
+                    PieceSlot firstOrderCardSlot = null;
+                    PieceSlot scumOrderCardSlot = null;
+
+                    // add the stem ship
+
+                    PieceSlot smallShipSlot = null;
+                    PieceSlot largeShipSlot = null;
+
+
+                    // Add the stem pilot card
+                    List<PieceSlot> pieceSlots = GameModule.getGameModule().getAllDescendantComponentsOf(PieceSlot.class);
+
+                    for (PieceSlot pieceSlot : pieceSlots) {
+                        String slotName = pieceSlot.getConfigureName();
+                        if (slotName.startsWith("Stem Rebel Pilot") && rebelCardSlot == null) {
+                            rebelCardSlot = pieceSlot;
+                            continue;
+                        } else if (slotName.startsWith("Stem Emperial Pilot") && empireCardSlot == null) {
+                            empireCardSlot = pieceSlot;
+                            continue;
+                        } else if (slotName.startsWith("Stem S&V Pilot") && scumOrderCardSlot == null) {
+                            scumOrderCardSlot = pieceSlot;
+                            continue;
+                        } else if (slotName.startsWith("Stem First Order Pilot") && firstOrderCardSlot == null) {
+                            firstOrderCardSlot = pieceSlot;
+                            continue;
+                        } else if (slotName.startsWith("Stem Resistance Pilot") && resistanceCardSlot == null) {
+                            resistanceCardSlot = pieceSlot;
+                            continue;
+                        } else if(slotName.startsWith("ship -- Small Stem Ship")&& smallShipSlot == null)
+                        {
+                            smallShipSlot = pieceSlot;
+                            continue;
+                        } else if(slotName.startsWith("ship -- Large Stem Ship")&& largeShipSlot == null) {
+                            largeShipSlot = pieceSlot;
+                        }
+                    }
+
+                    // fill in the pilot cards
+                    if (pilotData.getFaction().equals("Rebel Alliance"))
+                    {
+                        barePieces.setPilotCard(rebelCardSlot);
+                    } else if (pilotData.getFaction().equals("Resistance"))
+                    {
+                        barePieces.setPilotCard(resistanceCardSlot);
+                    }else if(pilotData.getFaction().equals("Galactic Empire"))
+                    {
+                        barePieces.setPilotCard(empireCardSlot);
+                    }else if(pilotData.getFaction().equals("First Order"))
+                    {
+                        barePieces.setPilotCard(firstOrderCardSlot);
+                    } else if(pilotData.getFaction().equals("Scum & Villainy"))
+                    {
+                        barePieces.setPilotCard(scumOrderCardSlot);
+                    }
+
+                    // fill in the ships
+                    if(shipData.getSize().equals("small"))
+                    {
+                        barePieces.setShip(smallShipSlot);
+                    }else if(shipData.getSize().equals("large"))
+                    {
+                        barePieces.setShip(largeShipSlot);
+                    }
+                }else{
+
+                    if(pilotData == null)
+                    {
+                        Util.logToChat("Could not find pilot: " + xwsShip + "/" + pilot.getName());
+                    }
+
+                    if(shipData == null)
+                    {
+                        Util.logToChat("Could not find ship: " + pilot.getShip());
+                    }
+
+                    continue;
+                }
+
+
+
             }
 
             VassalXWSPilotPieces pilotPieces = new VassalXWSPilotPieces(barePieces);

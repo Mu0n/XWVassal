@@ -110,6 +110,9 @@ public class MasterShipData extends ArrayList<MasterShipData.ShipData> {
         @JsonProperty("maneuvers")
         private List<List<Integer>> maneuvers = Lists.newArrayList();
 
+        @JsonProperty("firing_arcs")
+        private List<String> firingArcs = Lists.newArrayList();
+
         @JsonProperty("size")
         private String size;
 
@@ -140,8 +143,17 @@ public class MasterShipData extends ArrayList<MasterShipData.ShipData> {
             return xws;
         }
 
+        public String getSize()
+        {
+            return size;
+        }
+
         public List<String> getActions() {
             return this.actions;
+        }
+
+        public List<String> getFiringArcs() {
+            return this.firingArcs;
         }
 
         public List<String> getDialManeuvers()

@@ -1,14 +1,13 @@
 package mic;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
+import VASSAL.build.widget.PieceSlot;
+import VASSAL.counters.GamePiece;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
-import VASSAL.build.widget.PieceSlot;
-import VASSAL.counters.GamePiece;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by amatheny on 2/8/17.
@@ -123,6 +122,15 @@ public class VassalXWSPilotPieces {
         this.shipNumber = number;
     }
 
+    public Integer getShipNumber()
+    {
+        if(shipNumber == null)
+        {
+            return null;
+        }
+        return shipNumber;
+    }
+
     public void setPilotData(MasterPilotData.PilotData pilotData) {
         this.pilotData = pilotData;
     }
@@ -133,6 +141,13 @@ public class VassalXWSPilotPieces {
             piece.setProperty("Pilot ID #", shipNumber);
         } else {
             piece.setProperty("Pilot ID #", "");
+        }
+
+        if(this.pilotCard.getConfigureName().startsWith("Stem"))
+        {
+            // this is a stem card = fill it in
+            piece.setProperty("Ship Type",this.shipData.getName());
+            piece.setProperty("Pilot Name",this.pilotData.getName());
         }
         return piece;
     }
@@ -212,6 +227,62 @@ public class VassalXWSPilotPieces {
 
         setPilotShipName(piece);
 
+        if(this.ship.getConfigureName().startsWith("Stem"))
+        {
+            // this is a stem ship, so we need to set the arcs and actions
+
+            // find the faction
+            // set the correct arc for the faction
+            String factionInt = "1";
+            if(this.pilotData.getFaction().equals("Rebel Alliance") || this.pilotData.getFaction().equals("Resistance"))
+            {
+                factionInt = "2";
+            }else if(this.pilotData.getFaction().equals("Galactic Empire") || this.pilotData.getFaction().equals("First Order"))
+            {
+                factionInt = "3";
+            }else if(this.pilotData.getFaction().equals("Scum & Villainy"))
+            {
+                factionInt = "4";
+            }
+
+
+            // arcs
+            for(String arc : shipData.getFiringArcs())
+            {
+
+              //  Embellishment emb = null;
+                if(arc.equals("Front"))
+                {
+                    piece.setProperty("Front Arc",factionInt);
+               //    emb = (Embellishment)Util.getEmbellishment(piece,"Front Firing Arc");
+                }else if(arc.equals("Turret"))
+                {
+                    piece.setProperty("Turret Arc",factionInt);
+               //     emb = (Embellishment)Util.getEmbellishment(piece,"Turret Firing Arc");
+                }else if(arc.equals("Auxiliary Rear"))
+                {
+                    piece.setProperty("Aux Rear Arc",factionInt);
+                //    emb = (Embellishment)Util.getEmbellishment(piece,"Aux Rear Firing Arc");
+                }else if(arc.equals("Auxiliary 180"))
+                {
+                    piece.setProperty("Aux 180 Arc",factionInt);
+                    // property "Aux 180 Arc"
+                 //   emb = (Embellishment)Util.getEmbellishment(piece,"Aux 180 Firing Arc");
+                }else if(arc.equals("Mobile"))
+                {
+                    piece.setProperty("Mobile Arc",factionInt);
+                    // property "Mobile Arc"
+                  //  emb = (Embellishment)Util.getEmbellishment(piece,"Mobile Firing Arc");
+                }else if(arc.equals("Bullseye"))
+                {
+                    piece.setProperty("Bullseye Arc",factionInt);
+                    // property "Bullseye Arc"
+                 //   emb = (Embellishment)Util.getEmbellishment(piece,"Bullseye Firing Arc");
+                }
+
+
+            }
+        }
         return piece;
     }
 

@@ -334,11 +334,38 @@ public class AutoSquadSpawn extends AbstractConfigurable {
         myDialGen.execute();
 
         dial.setProperty("ShipXwsId",ship.getShipData().getXws());
-        dial.setProperty("Pilot Name", ship.cloneDial().getProperty("Pilot Name"));
-        dial.setProperty("Craft ID #", ship.cloneDial().getProperty("Craft ID #"));
-
+        dial.setProperty("Pilot Name", getDisplayShipName(ship.getPilotData(),shipData));
+        dial.setProperty("Craft ID #", getDisplayPilotName(ship.getPilotData(),shipData,ship.getShipNumber()));
         return dial;
     }
+
+    private String getDisplayPilotName(MasterPilotData.PilotData pilotData, MasterShipData.ShipData shipData, Integer shipNumber )
+    {
+        String pilotName = "";
+        if (pilotData != null) {
+            pilotName = Acronymizer.acronymizer(
+                    pilotData.getName(),
+                    pilotData.isUnique(),
+                    shipData.hasSmallBase());
+        }
+
+        if (shipNumber != null && shipNumber > 0) {
+            pilotName += " " + shipNumber;
+        }
+        return pilotName;
+    }
+    private String getDisplayShipName(MasterPilotData.PilotData pilotData, MasterShipData.ShipData shipData) {
+        String shipName = "";
+        if (pilotData != null) {
+            shipName = Acronymizer.acronymizer(
+                    pilotData.getShip(),
+                    pilotData.isUnique(),
+                    shipData.hasSmallBase());
+        }
+
+        return shipName;
+    }
+
 
     public void addTo(Buildable parent) {
         loadData();

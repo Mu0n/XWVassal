@@ -4747,9 +4747,9 @@
     "image": "pilots/First Order/TIE Silencer/first-order-test-pilot.png"
   },
   {
-    "name": "TESTPILOT",
+    "name": "Test Pilot",
     "id": 285,
-    "ship": "testship",
+    "ship": "Test Ship",
     "skill": 2,
     "points": 22,
     "slots": [

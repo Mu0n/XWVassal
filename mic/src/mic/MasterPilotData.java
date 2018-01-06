@@ -30,24 +30,31 @@ public class MasterPilotData extends ArrayList<MasterPilotData.PilotData> {
 
     protected static void loadData() {
 
-        // load data from xwing-data
-        loadFromXwingData();
+        if(loadedData == null) {
+            // load data from xwing-data
+            loadFromXwingData();
 
-        // load data from dispatcher file
-        MasterPilotData dispatcherData = loadFromDispatcher();
+            // load data from dispatcher file
+            MasterPilotData dispatcherData = loadFromDispatcher();
 
-        // add in any pilots from dispatcher that aren't in xwing-data
-        if(dispatcherData != null) {
-            for (PilotData pilot : dispatcherData) {
-                String xwsShip = Canonicalizer.getCanonicalShipName(pilot.getShip());
-                if (loadedData.get(xwsShip + "/" + pilot.getXws()) == null) {
-                    Util.logToChat("Adding pilot " + xwsShip + "/" + pilot.getXws() + " from dispatcher file");
-                    loadedData.put(xwsShip + "/" + pilot.getXws(), pilot);
+            // add in any pilots from dispatcher that aren't in xwing-data
+            if (dispatcherData != null) {
+                for (PilotData pilot : dispatcherData) {
+                    String xwsShip = Canonicalizer.getCanonicalShipName(pilot.getShip());
+                    if (loadedData.get(xwsShip + "/" + pilot.getXws()) == null) {
+                        Util.logToChat("Adding pilot " + xwsShip + "/" + pilot.getXws() + " from dispatcher file");
+                        loadedData.put(xwsShip + "/" + pilot.getXws(), pilot);
+                    }
                 }
             }
         }
     }
 
+    //TODO DELETE ME
+    public static Map getLoadedData()
+    {
+        return loadedData;
+    }
 
     private static void loadFromXwingData()
     {

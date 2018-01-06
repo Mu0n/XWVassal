@@ -4492,7 +4492,7 @@
     ] 
   },
     {
-    "name": "TEST",
+    "name": "Test Ship",
     "xws": "testship",
     "faction": [
       "Rebel Alliance"
@@ -4501,7 +4501,7 @@
       "Focus",
       "Target Lock"
     ],
-    "size": "large",
+    "size": "small",
     "attack": 2,
     "agility": 1,
     "hull": 9,
@@ -4510,7 +4510,7 @@
       "Front",
       "Turret"
     ],
-    "id": 54,
+    "id": 55,
     "maneuvers": [
       [
         0,
