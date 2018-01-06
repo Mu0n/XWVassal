@@ -4269,5 +4269,25 @@
     "slot": "Crew",
     "id": 366,
     "image": "upgrades/Salvaged Astromech/r5-tk.png"
+  },
+  {
+    "text": "This is a test Tech",
+    "name": "TESTTech",
+    "xws": "testupgrade13",
+    "unique": false,
+    "points": 0,
+    "slot": "Tech",
+    "id": 367,
+    "image": "upgrades/Salvaged Astromech/r5-tk.png"
+  },
+  {
+    "text": "This is a test Astromech",
+    "name": "TESTAstromech",
+    "xws": "testupgrade4",
+    "unique": false,
+    "points": 0,
+    "slot": "Astromech",
+    "id": 368,
+    "image": "upgrades/Salvaged Astromech/r5-tk.png"
   }
 ]
