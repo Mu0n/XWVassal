@@ -5,10 +5,7 @@ import VASSAL.build.Widget;
 import VASSAL.build.widget.ListWidget;
 import VASSAL.build.widget.PieceSlot;
 import VASSAL.build.widget.TabWidget;
-import com.google.common.collect.HashMultiset;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Multiset;
+import com.google.common.collect.*;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -18,6 +15,22 @@ import java.util.Map;
  * Created by amatheny on 2/8/17.
  */
 public class VassalXWSPieceLoader {
+    private static Map<String, String> stemUpgradeSlotNames = ImmutableMap.<String, String>builder()
+            .put("Turret","Stem Upgrade Turret")
+            .put("Torpedo","Stem Upgrade Torpedo")
+            .put("Astromech","Stem Upgrade Astromech")
+            .put("Elite","Stem Upgrade Elite")
+            .put("Missile","Stem Upgrade Missile")
+            .put("Crew","Stem Upgrade Crew")
+            .put("Cannon","Stem Upgrade Cannon")
+            .put("Bomb","Stem Upgrade Bomb")
+            .put("Illicit","Stem Upgrade Illicit")
+            .put("Modification","Stem Upgrade Modification")
+            .put("Salvaged Astromech","Stem Upgrade Salvaged Astromech")
+            .put("System","Stem Upgrade System")
+            .put("Tech","Stem Upgrade Tech")
+            .put("Title","Stem Upgrade Title")
+            .build();
 
     private static List<String> obstacleTabNames = Lists.newArrayList(
             "Asteroids", "New Asteroids", "Debris"
@@ -168,7 +181,38 @@ public class VassalXWSPieceLoader {
                     VassalXWSPilotPieces.Upgrade upgrade = upgradePiecesMap.get(upgradeKey);
                     if (upgrade == null) {
                         Util.logToChat("Could not find upgrade: " + upgradeKey);
-                        continue;
+
+                        //TODO need to handle custom upgrades here
+                        // It's stored by xws...
+                        // key is type/name
+                        MasterUpgradeData.UpgradeData newUpgradeData = MasterUpgradeData.getUpgradeData(upgradeKey);
+
+                        if(newUpgradeData != null)
+                        {
+
+                            String slotName = stemUpgradeSlotNames.get(upgradeType);
+                            List<PieceSlot> pieceSlots = GameModule.getGameModule().getAllDescendantComponentsOf(PieceSlot.class);
+
+                            for (PieceSlot pieceSlot : pieceSlots) {
+                                String stemUpgradeSlotName = pieceSlot.getConfigureName();
+                                if (slotName.equals(stemUpgradeSlotName)) {
+
+                                    // this is the correct slot
+                                    upgrade = new VassalXWSPilotPieces.Upgrade(upgradeName, pieceSlot);
+                                    upgrade.setUpgradeData(newUpgradeData);
+
+                                    continue;
+                                }
+                            }
+
+
+
+
+
+                        }else {
+                            Util.logToChat("Could not find upgrade: " + upgradeName);
+                            continue;
+                        }
                     }
 
                     if (upgrade.getUpgradeData() != null) {
