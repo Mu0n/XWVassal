@@ -2,6 +2,7 @@ package mic;
 
 import VASSAL.build.widget.PieceSlot;
 import VASSAL.counters.GamePiece;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
@@ -13,6 +14,21 @@ import java.util.Map;
  * Created by amatheny on 2/8/17.
  */
 public class VassalXWSPilotPieces {
+
+    private static Map<String, String> actionLayers = ImmutableMap.<String, String>builder()
+            .put("","1")
+            .put("Focus","2")
+            .put("Target Lock","3")
+            .put("Boost","4")
+            .put("Evade","5")
+            .put("Barrel Roll","6")
+            .put("Cloak","7")
+            .put("SLAM","8")
+            .put("Rotate Arc","9")
+            .put("Reinforce","10")
+            .put("Reload","11")
+            .build();
+
     private PieceSlot pilotCard;
     private PieceSlot dial;
     private PieceSlot movementCard;
@@ -227,7 +243,7 @@ public class VassalXWSPilotPieces {
 
         setPilotShipName(piece);
 
-        if(this.ship.getConfigureName().startsWith("Stem"))
+        if(this.ship.getConfigureName().equals("ship -- Small Stem Ship") || this.ship.getConfigureName().equals("ship -- Large Stem Ship"))
         {
             // this is a stem ship, so we need to set the arcs and actions
 
@@ -249,38 +265,74 @@ public class VassalXWSPilotPieces {
             // arcs
             for(String arc : shipData.getFiringArcs())
             {
-
-              //  Embellishment emb = null;
+                Util.logToChat("Setting arc "+arc);
                 if(arc.equals("Front"))
                 {
+                    Util.logToChat(arc + " setting was "+piece.getProperty("Front Arc"));
+                    Util.logToChat("Setting to "+factionInt);
                     piece.setProperty("Front Arc",factionInt);
-               //    emb = (Embellishment)Util.getEmbellishment(piece,"Front Firing Arc");
+                    Util.logToChat(arc + " new setting is "+piece.getProperty("Front Arc"));
                 }else if(arc.equals("Turret"))
                 {
+                    Util.logToChat(arc + " setting was "+piece.getProperty("Turret Arc"));
+                    Util.logToChat("Setting to "+factionInt);
                     piece.setProperty("Turret Arc",factionInt);
-               //     emb = (Embellishment)Util.getEmbellishment(piece,"Turret Firing Arc");
+                    Util.logToChat(arc + " new setting is "+piece.getProperty("Turret Arc"));
                 }else if(arc.equals("Auxiliary Rear"))
                 {
+                    Util.logToChat(arc + " setting was "+piece.getProperty("Aux Rear Arc"));
+                    Util.logToChat("Setting to "+factionInt);
                     piece.setProperty("Aux Rear Arc",factionInt);
-                //    emb = (Embellishment)Util.getEmbellishment(piece,"Aux Rear Firing Arc");
+                    Util.logToChat(arc + " new setting is "+piece.getProperty("Aux Rear Arc"));
                 }else if(arc.equals("Auxiliary 180"))
                 {
+                    Util.logToChat(arc + " setting was "+piece.getProperty("Aux 180 Arc"));
+                    Util.logToChat("Setting to "+factionInt);
                     piece.setProperty("Aux 180 Arc",factionInt);
-                    // property "Aux 180 Arc"
-                 //   emb = (Embellishment)Util.getEmbellishment(piece,"Aux 180 Firing Arc");
+                    Util.logToChat(arc + " new setting is "+piece.getProperty("Aux 180 Arc"));
                 }else if(arc.equals("Mobile"))
                 {
+                    Util.logToChat(arc + " setting was "+piece.getProperty("Mobile Arc"));
+                    Util.logToChat("Setting to "+factionInt);
                     piece.setProperty("Mobile Arc",factionInt);
-                    // property "Mobile Arc"
-                  //  emb = (Embellishment)Util.getEmbellishment(piece,"Mobile Firing Arc");
+                    Util.logToChat(arc + " new setting is "+piece.getProperty("Mobile Arc"));
                 }else if(arc.equals("Bullseye"))
                 {
+                    Util.logToChat(arc + " setting was "+piece.getProperty("Bullseye Arc"));
+                    Util.logToChat("Setting to "+factionInt);
                     piece.setProperty("Bullseye Arc",factionInt);
-                    // property "Bullseye Arc"
-                 //   emb = (Embellishment)Util.getEmbellishment(piece,"Bullseye Firing Arc");
+                    Util.logToChat(arc + " new setting is "+piece.getProperty("Bullseye Arc"));
                 }
 
 
+            }
+
+            //actions
+            int actionCounter = 0;
+            for(String action : shipData.getActions())
+            {
+                actionCounter++;
+                String layerNumber = actionLayers.get(action);
+                if(layerNumber != null)
+                {
+                    switch(actionCounter){
+                        case 1:
+                            piece.setProperty("ActionLayer1",layerNumber);
+                            break;
+                        case 2:
+                            piece.setProperty("ActionLayer2",layerNumber);
+                            break;
+                        case 3:
+                            piece.setProperty("ActionLayer3",layerNumber);
+                            break;
+                        case 4:
+                            piece.setProperty("ActionLayer4",layerNumber);
+                            break;
+                        case 5:
+                            piece.setProperty("ActionLayer5",layerNumber);
+                            break;
+                    }
+                }
             }
         }
         return piece;
