@@ -183,7 +183,7 @@ public class VassalXWSPieceLoader {
             VassalXWSPilotPieces pilotPieces = new VassalXWSPilotPieces(barePieces);
 
             if (pilotPieces.getPilotData() != null) {
-                List<PieceSlot> foundConditions = getConditionsForCard(pilotPieces.getPilotData().getConditions());
+                List<VassalXWSPilotPieces.Upgrade> foundConditions = getConditionsForCard(pilotPieces.getPilotData().getConditions());
                 pilotPieces.getConditions().addAll(foundConditions);
             }
 
@@ -238,7 +238,7 @@ public class VassalXWSPieceLoader {
                     }
 
                     if (upgrade.getUpgradeData() != null) {
-                        List<PieceSlot> foundConditions = getConditionsForCard(upgrade.getUpgradeData().getConditions());
+                        List<VassalXWSPilotPieces.Upgrade> foundConditions = getConditionsForCard(upgrade.getUpgradeData().getConditions());
                         pilotPieces.getConditions().addAll(foundConditions);
                     }
 
@@ -270,8 +270,8 @@ public class VassalXWSPieceLoader {
         return pieces;
     }
 
-    private List<PieceSlot> getConditionsForCard(List<String> conditions) {
-        List<PieceSlot> conditionSlots = Lists.newArrayList();
+    private List<VassalXWSPilotPieces.Upgrade> getConditionsForCard(List<String> conditions) {
+        List<VassalXWSPilotPieces.Upgrade> conditionSlots = Lists.newArrayList();
         for (String conditionName : conditions) {
             String canonicalConditionName = Canonicalizer.getCanonicalUpgradeName(
                     "conditions", conditionName);
@@ -279,9 +279,25 @@ public class VassalXWSPieceLoader {
             VassalXWSPilotPieces.Upgrade condition = this.upgradePiecesMap.get(mapKey);
             if (condition == null) {
                 Util.logToChat("Unable to load condition: " + conditionName);
-                continue;
+
+                // need to grab stem condition here
+                String stemConditionSlotName = "Stem Condition WIP";
+                List<PieceSlot> pieceSlots = GameModule.getGameModule().getAllDescendantComponentsOf(PieceSlot.class);
+
+                for (PieceSlot pieceSlot : pieceSlots) {
+                    String slotName = pieceSlot.getConfigureName();
+                    if (slotName.equals(stemConditionSlotName))
+                    {
+                        // this is the correct slot
+
+                        condition = new VassalXWSPilotPieces.Upgrade(conditionName, pieceSlot);
+
+                        continue;
+                    }
+                }
+
             }
-            conditionSlots.add(condition.getPieceSlot());
+            conditionSlots.add(condition);
         }
         return conditionSlots;
     }

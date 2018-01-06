@@ -33,7 +33,7 @@ public class VassalXWSPilotPieces {
     private PieceSlot dial;
     private PieceSlot movementCard;
     private List<Upgrade> upgrades = new ArrayList<Upgrade>();
-    private List<PieceSlot> conditions = new ArrayList<PieceSlot>();
+    private List<Upgrade> conditions = new ArrayList<Upgrade>();
     private PieceSlot movementStrip;
     private PieceSlot openDial;
     private MasterShipData.ShipData shipData;
@@ -57,7 +57,7 @@ public class VassalXWSPilotPieces {
         this.pilotData = pieces.pilotData;
     }
 
-    public List<PieceSlot> getConditions() {
+    public List<Upgrade> getConditions() {
         return this.conditions;
     }
 
@@ -379,6 +379,7 @@ public class VassalXWSPilotPieces {
     public MasterPilotData.PilotData getPilotData() {
         return pilotData;
     }
+
 
     public static class Upgrade {
         private String xwsName;
