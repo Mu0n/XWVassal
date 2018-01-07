@@ -39,7 +39,7 @@ public class MasterShipData extends ArrayList<MasterShipData.ShipData> {
         if(dispatcherData != null) {
             for (ShipData ship : dispatcherData) {
                 if (loadedData.get(ship.getXws()) == null) {
-                    Util.logToChat("Adding ship " + ship.getXws() + " from dispatcher file");
+//                    Util.logToChat("Adding ship " + ship.getXws() + " from dispatcher file");
                     loadedData.put(ship.getXws(), ship);
                 }
             }

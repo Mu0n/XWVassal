@@ -41,7 +41,7 @@ public class MasterUpgradeData extends ArrayList<MasterUpgradeData.UpgradeData> 
             if (dispatcherData != null) {
                 for (UpgradeData upgrade : dispatcherData) {
                     if (loadedData.get(upgrade.getXws()) == null) {
-                        Util.logToChat("Adding upgrade " + upgrade.getXws() + " from dispatcher file");
+//                        Util.logToChat("Adding upgrade " + upgrade.getXws() + " from dispatcher file");
                         loadedData.put(upgrade.getXws(), upgrade);
                     }
                 }

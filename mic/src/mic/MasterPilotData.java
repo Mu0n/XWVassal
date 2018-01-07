@@ -42,7 +42,7 @@ public class MasterPilotData extends ArrayList<MasterPilotData.PilotData> {
                 for (PilotData pilot : dispatcherData) {
                     String xwsShip = Canonicalizer.getCanonicalShipName(pilot.getShip());
                     if (loadedData.get(xwsShip + "/" + pilot.getXws()) == null) {
-                        Util.logToChat("Adding pilot " + xwsShip + "/" + pilot.getXws() + " from dispatcher file");
+//                        Util.logToChat("Adding pilot " + xwsShip + "/" + pilot.getXws() + " from dispatcher file");
                         loadedData.put(xwsShip + "/" + pilot.getXws(), pilot);
                     }
                 }

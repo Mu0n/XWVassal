@@ -258,7 +258,7 @@ public class VassalXWSPieceLoader {
             VassalXWSPilotPieces.Upgrade condition = this.upgradePiecesMap.get(mapKey);
             if (condition == null)
             {
-                Util.logToChat("Condition: " + conditionName +" is not yet included in XWVassal.  Generating it.");
+                Util.logToChat("Condition " + conditionName +" is not yet included in XWVassal.  Generating it.");
 
                 // need to grab stem condition here
                 String stemConditionSlotName = "Stem Condition WIP";

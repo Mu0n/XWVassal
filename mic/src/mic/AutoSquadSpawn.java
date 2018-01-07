@@ -129,7 +129,7 @@ public class AutoSquadSpawn extends AbstractConfigurable {
 
 
 
-            // Generate the dial 
+            // Generate the dial
             GamePiece dialPiece = generateDial(ship);
 
             int dialWidth = (int) dialPiece.boundingBox().getWidth();
