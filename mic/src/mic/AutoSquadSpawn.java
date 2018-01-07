@@ -129,10 +129,7 @@ public class AutoSquadSpawn extends AbstractConfigurable {
 
 
 
-            // MrMurphM
-            // somewhat temporary.  ignore the dial set on the ship for now so we can grab the new one
-            // eventually, i need to move this
-            //GamePiece dialPiece = ship.cloneDial();
+            // Generate the dial 
             GamePiece dialPiece = generateDial(ship);
 
             int dialWidth = (int) dialPiece.boundingBox().getWidth();
@@ -230,7 +227,7 @@ public class AutoSquadSpawn extends AbstractConfigurable {
                 totalUpgradeWidth += upgradePiece.boundingBox().getWidth();
             } //loop to next upgrade
 
-//            for (PieceSlot conditionSlot : ship.getConditions()) {
+
             for (VassalXWSPilotPieces.Upgrade condition: ship.getConditions()) {
                 GamePiece conditionPiece = newPiece(condition.getPieceSlot());
                 if(condition.getPieceSlot().getConfigureName().startsWith("Stem"))

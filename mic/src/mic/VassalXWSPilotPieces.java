@@ -265,43 +265,24 @@ public class VassalXWSPilotPieces {
             // arcs
             for(String arc : shipData.getFiringArcs())
             {
-                Util.logToChat("Setting arc "+arc);
                 if(arc.equals("Front"))
                 {
-                    Util.logToChat(arc + " setting was "+piece.getProperty("Front Arc"));
-                    Util.logToChat("Setting to "+factionInt);
                     piece.setProperty("Front Arc",factionInt);
-                    Util.logToChat(arc + " new setting is "+piece.getProperty("Front Arc"));
                 }else if(arc.equals("Turret"))
                 {
-                    Util.logToChat(arc + " setting was "+piece.getProperty("Turret Arc"));
-                    Util.logToChat("Setting to "+factionInt);
                     piece.setProperty("Turret Arc",factionInt);
-                    Util.logToChat(arc + " new setting is "+piece.getProperty("Turret Arc"));
                 }else if(arc.equals("Auxiliary Rear"))
                 {
-                    Util.logToChat(arc + " setting was "+piece.getProperty("Aux Rear Arc"));
-                    Util.logToChat("Setting to "+factionInt);
                     piece.setProperty("Aux Rear Arc",factionInt);
-                    Util.logToChat(arc + " new setting is "+piece.getProperty("Aux Rear Arc"));
                 }else if(arc.equals("Auxiliary 180"))
                 {
-                    Util.logToChat(arc + " setting was "+piece.getProperty("Aux 180 Arc"));
-                    Util.logToChat("Setting to "+factionInt);
                     piece.setProperty("Aux 180 Arc",factionInt);
-                    Util.logToChat(arc + " new setting is "+piece.getProperty("Aux 180 Arc"));
                 }else if(arc.equals("Mobile"))
                 {
-                    Util.logToChat(arc + " setting was "+piece.getProperty("Mobile Arc"));
-                    Util.logToChat("Setting to "+factionInt);
                     piece.setProperty("Mobile Arc",factionInt);
-                    Util.logToChat(arc + " new setting is "+piece.getProperty("Mobile Arc"));
                 }else if(arc.equals("Bullseye"))
                 {
-                    Util.logToChat(arc + " setting was "+piece.getProperty("Bullseye Arc"));
-                    Util.logToChat("Setting to "+factionInt);
                     piece.setProperty("Bullseye Arc",factionInt);
-                    Util.logToChat(arc + " new setting is "+piece.getProperty("Bullseye Arc"));
                 }
 
 

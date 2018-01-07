@@ -16,37 +16,20 @@ import java.util.Map;
  */
 public class VassalXWSPieceLoader {
     private static Map<String, String> stemUpgradeSlotNames = ImmutableMap.<String, String>builder()
-            //.put("Turret","Stem Upgrade Turret")
             .put("turret","Stem Upgrade Turret")
-            //.put("Torpedo","Stem Upgrade Torpedo")
             .put("torpedo","Stem Upgrade Torpedo")
-            //.put("Astromech","Stem Upgrade Astromech")
             .put("amd","Stem Upgrade Astromech")
-            //.put("Elite","Stem Upgrade Elite")
             .put("ept","Stem Upgrade Elite")
-            //.put("Missile","Stem Upgrade Missile")
             .put("missile","Stem Upgrade Missile")
-            //.put("Crew","Stem Upgrade Crew")
             .put("crew","Stem Upgrade Crew")
-            //.put("Cannon","Stem Upgrade Cannon")
             .put("cannon","Stem Upgrade Cannon")
-            //.put("Bomb","Stem Upgrade Bomb")
             .put("bomb","Stem Upgrade Bomb")
-            //.put("Illicit","Stem Upgrade Illicit")
             .put("illicit","Stem Upgrade Illicit")
-            //.put("Modification","Stem Upgrade Modification")
             .put("mod","Stem Upgrade Modification")
-            //.put("Salvaged Astromech","Stem Upgrade Salvaged Astromech")
             .put("samd","Stem Upgrade Salvaged Astromech")
-            //.put("System","Stem Upgrade System")
             .put("system","Stem Upgrade System")
-            //.put("Tech","Stem Upgrade Tech")
             .put("tech","Stem Upgrade Tech")
-            //.put("Title","Stem Upgrade Title")
             .put("title","Stem Upgrade Title")
-
-
-
             .build();
 
     private static List<String> obstacleTabNames = Lists.newArrayList(
@@ -77,16 +60,19 @@ public class VassalXWSPieceLoader {
             String pilotKey = getPilotMapKey(list.getFaction(), pilot.getShip(), pilot.getName());
             VassalXWSPilotPieces barePieces = this.pilotPiecesMap.get(pilotKey);
             if (barePieces == null) {
-                Util.logToChat("Could not find pilot: " + pilotKey);
 
-                // TODO - this is where we have to grab the stem stuff
-                // it all should be in MasterPilotData and MasterShipData
+                // Pilot wasn't found in the pallet.  Need to check to see if it exists in xws-data or the dispatcher
                 String xwsShip = Canonicalizer.getCanonicalShipName(pilot.getShip());
                 MasterShipData.ShipData shipData = MasterShipData.getShipData(pilot.getShip());
                 MasterPilotData.PilotData pilotData = MasterPilotData.getPilotData(xwsShip,pilot.getName() );
 
-                if(pilotData != null && shipData != null) {
-                    // these will now be generated because they are unreleased
+                if(pilotData != null && shipData != null)
+                {
+
+                    Util.logToChat("Ship "+pilot.getShip() + " is not yet included in XWVassal.  Generating it.");
+                    Util.logToChat("Pilot "+xwsShip + "/" + pilot.getName() + " is not yet included in XWVassal.  Generating it.");
+                    // The pilot and ship did exist in either XWS-data or dispatcher
+                    // these will now be generated
 
                     // generate the pilot card
                     barePieces = new VassalXWSPilotPieces();
@@ -101,7 +87,6 @@ public class VassalXWSPieceLoader {
                     PieceSlot scumOrderCardSlot = null;
 
                     // add the stem ship
-
                     PieceSlot smallShipSlot = null;
                     PieceSlot largeShipSlot = null;
 
@@ -176,8 +161,6 @@ public class VassalXWSPieceLoader {
                     continue;
                 }
 
-
-
             }
 
             VassalXWSPilotPieces pilotPieces = new VassalXWSPilotPieces(barePieces);
@@ -192,22 +175,20 @@ public class VassalXWSPieceLoader {
                 pilotPieces.setShipNumber(genericPilotsAdded.count(pilot.getName()));
             }
 
-            for (String upgradeType : pilot.getUpgrades().keySet()) {
+            for (String upgradeType : pilot.getUpgrades().keySet())
+            {
                 for (String upgradeName : pilot.getUpgrades().get(upgradeType)) {
                     String upgradeKey = getUpgradeMapKey(upgradeType, upgradeName);
                     VassalXWSPilotPieces.Upgrade upgrade = upgradePiecesMap.get(upgradeKey);
-                    if (upgrade == null) {
-                        Util.logToChat("Could not find upgrade: " + upgradeKey);
+                    if (upgrade == null)
+                    {
 
-                        //TODO need to handle custom upgrades here
-                        // It's stored by xws...
-                        // key is type/name
-
+                        // Upgrade wasn't found in the pallet.  Check xws-data and dispatcher
                         MasterUpgradeData.UpgradeData newUpgradeData = MasterUpgradeData.getUpgradeData(upgradeName);
 
                         if(newUpgradeData != null)
                         {
-
+                            Util.logToChat("Upgrade "+upgradeName + " is not yet included in XWVassal.  Generating it.");
                             String slotName = stemUpgradeSlotNames.get(upgradeType);
 
                             if(slotName == null)
@@ -230,7 +211,6 @@ public class VassalXWSPieceLoader {
                                 }
                             }
 
-
                         }else {
                             Util.logToChat("Could not find upgrade: " + upgradeName);
                             continue;
@@ -241,7 +221,6 @@ public class VassalXWSPieceLoader {
                         List<VassalXWSPilotPieces.Upgrade> foundConditions = getConditionsForCard(upgrade.getUpgradeData().getConditions());
                         pilotPieces.getConditions().addAll(foundConditions);
                     }
-
 
                     pilotPieces.getUpgrades().add(upgrade);
                 }
@@ -277,8 +256,9 @@ public class VassalXWSPieceLoader {
                     "conditions", conditionName);
             String mapKey = getUpgradeMapKey("conditions", canonicalConditionName);
             VassalXWSPilotPieces.Upgrade condition = this.upgradePiecesMap.get(mapKey);
-            if (condition == null) {
-                Util.logToChat("Unable to load condition: " + conditionName);
+            if (condition == null)
+            {
+                Util.logToChat("Condition: " + conditionName +" is not yet included in XWVassal.  Generating it.");
 
                 // need to grab stem condition here
                 String stemConditionSlotName = "Stem Condition WIP";
@@ -289,7 +269,6 @@ public class VassalXWSPieceLoader {
                     if (slotName.equals(stemConditionSlotName))
                     {
                         // this is the correct slot
-
                         condition = new VassalXWSPilotPieces.Upgrade(conditionName, pieceSlot);
 
                         continue;
