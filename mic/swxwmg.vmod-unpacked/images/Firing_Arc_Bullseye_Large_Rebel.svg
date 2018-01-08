@@ -1,0 +1,30 @@
+<svg xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" width="226" xmlns:svg="http://www.w3.org/2000/svg" id="svg2" height="240" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns="http://www.w3.org/2000/svg" version="1.1">
+  <metadata id="metadata3033">
+    <rdf:RDF>
+      <cc:Work rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+        <dc:title/>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <defs id="defs3031"/>
+  
+  <!-- Arc -->
+  <line y2="104" style="stroke:#ff0000;stroke-width:1" x1="113" x2="99.0696" y1="120"/>
+  <line y2="104" style="stroke:#ff0000;stroke-width:1" x1="113" x2="126.9304" y1="120"/>
+
+
+  <!-- left bullseye line -->
+  <g fill="none" stroke-width="1.5" stroke="#ff0000">
+    <path stroke-dasharray="6,6" d="M 99.0696,8 L 99.0696,104"/>
+  </g>
+  
+  <!-- right bullseye line -->
+  <g fill="none" stroke-width="1.5" stroke="#ff0000">
+    <path stroke-dasharray="6,6" d="M 126.9304,8 L 126.9304,104"/>
+  </g>
+
+  <!-- fill -->
+  <path style="fill:#ff0000;fill-opacity:.30" d="M 113,120 L 99.0696,104 L 99.0696,8 L 126.9304,8 L 126.9304,104 L 113,120 Z"/>
+</svg>
