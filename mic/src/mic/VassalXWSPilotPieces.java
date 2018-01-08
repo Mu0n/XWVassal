@@ -243,10 +243,16 @@ public class VassalXWSPilotPieces {
 
         setPilotShipName(piece);
 
-        if(this.ship.getConfigureName().equals("ship -- Small Stem Ship") || this.ship.getConfigureName().equals("ship -- Large Stem Ship"))
+        if(this.ship.getConfigureName().equals("ship -- Small Rebel Stem Ship") ||
+                this.ship.getConfigureName().equals("ship -- Small Empire Stem Ship") ||
+                this.ship.getConfigureName().equals("ship -- Small Scum Stem Ship") ||
+                this.ship.getConfigureName().equals("ship -- Large Rebel Stem Ship") ||
+                this.ship.getConfigureName().equals("ship -- Large Empire Stem Ship") ||
+                this.ship.getConfigureName().equals("ship -- Large Scum Stem Ship"))
         {
             // this is a stem ship, so we need to set the arcs and actions
 
+            /*
             // find the faction
             // set the correct arc for the faction
             String factionInt = "1";
@@ -261,28 +267,28 @@ public class VassalXWSPilotPieces {
                 factionInt = "4";
             }
 
-
+*/
             // arcs
             for(String arc : shipData.getFiringArcs())
             {
                 if(arc.equals("Front"))
                 {
-                    piece.setProperty("Front Arc",factionInt);
+                    piece.setProperty("Front Arc",2);
                 }else if(arc.equals("Turret"))
                 {
-                    piece.setProperty("Turret Arc",factionInt);
+                    piece.setProperty("Turret Arc",2);
                 }else if(arc.equals("Auxiliary Rear"))
                 {
-                    piece.setProperty("Aux Rear Arc",factionInt);
+                    piece.setProperty("Aux Rear Arc",2);
                 }else if(arc.equals("Auxiliary 180"))
                 {
-                    piece.setProperty("Aux 180 Arc",factionInt);
+                    piece.setProperty("Aux 180 Arc",2);
                 }else if(arc.equals("Mobile"))
                 {
-                    piece.setProperty("Mobile Arc",factionInt);
+                    piece.setProperty("Mobile Arc",2);
                 }else if(arc.equals("Bullseye"))
                 {
-                    piece.setProperty("Bullseye Arc",factionInt);
+                    piece.setProperty("Bullseye Arc",2);
                 }
 
 
