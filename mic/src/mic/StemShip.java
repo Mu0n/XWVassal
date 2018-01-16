@@ -22,42 +22,42 @@ public class StemShip extends Decorator implements EditablePiece {
     public static final String ID = "stemship";
 
     private static Map<String, String> cardboardFiringArcImages = ImmutableMap.<String, String>builder()
-            .put("small/rebel/Front","Stem Small Rebel Cardboard Front Arc")
-            .put("small/rebel/Turret","Stem Small Rebel Cardboard Turret Arc")
-            .put("small/rebel/Auxiliary Rear","Stem Small Rebel Cardboard Aux Rear Arc")
-            .put("small/rebel/Auxiliary 180","Stem Small Rebel Cardboard Aux 180 Arc")
-            .put("small/rebel/Mobile","Stem Small Rebel Cardboard Mobile Arc")
-            .put("small/rebel/Bullseye","Stem Small Rebel Cardboard Bullseye Arc")
-            .put("small/imperial/Front","Stem Small Imperial Cardboard Front Arc")
-            .put("small/imperial/Turret","Stem Small Imperial Cardboard Turret Arc")
-            .put("small/imperial/Auxiliary Rear","Stem Small Imperial Cardboard Aux Rear Arc")
-            .put("small/imperial/Auxiliary 180","Stem Small Imperial Cardboard Aux 180 Arc")
-            .put("small/imperial/Mobile","Stem Small Imperial Cardboard Mobile Arc")
-            .put("small/imperial/Bullseye","Stem Small Imperial Cardboard Bullseye Arc")
-            .put("small/scum/Front","Stem Small Scum Cardboard Front Arc")
-            .put("small/scum/Turret","Stem Small Scum Cardboard Turret Arc")
-            .put("small/scum/Auxiliary Rear","Stem Small Scum Cardboard Aux Rear Arc")
-            .put("small/scum/Auxiliary 180","Stem Small Scum Cardboard Aux 180 Arc")
-            .put("small/scum/Mobile","Stem Small Scum Cardboard Mobile Arc")
-            .put("small/scum/Bullseye","Stem Small Scum Cardboard Bullseye Arc")
-            .put("large/rebel/Front","Stem Large Rebel Cardboard Front Arc")
-            .put("large/rebel/Turret","Stem Large Rebel Cardboard Turret Arc")
-            .put("large/rebel/Auxiliary Rear","Stem Large Rebel Cardboard Aux Rear Arc")
-            .put("large/rebel/Auxiliary 180","Stem Large Rebel Cardboard Aux 180 Arc")
-            .put("large/rebel/Mobile","Stem Large Rebel Cardboard Mobile Arc")
-            .put("large/rebel/Bullseye","Stem Large Rebel Cardboard Bullseye Arc")
-            .put("large/imperial/Front","Stem Large Imperial Cardboard Front Arc")
-            .put("large/imperial/Turret","Stem Large Imperial Cardboard Turret Arc")
-            .put("large/imperial/Auxiliary Rear","Stem Large Imperial Cardboard Aux Rear Arc")
-            .put("large/imperial/Auxiliary 180","Stem Large Imperial Cardboard Aux 180 Arc")
-            .put("large/imperial/Mobile","Stem Large Imperial Cardboard Mobile Arc")
-            .put("large/imperial/Bullseye","Stem Large Imperial Cardboard Bullseye Arc")
-            .put("large/scum/Front","Stem Large Scum Cardboard Front Arc")
-            .put("large/scum/Turret","Stem Large Scum Cardboard Turret Arc")
-            .put("large/scum/Auxiliary Rear","Stem Large Scum Cardboard Aux Rear Arc")
-            .put("large/scum/Auxiliary 180","Stem Large Scum Cardboard Aux 180 Arc")
-            .put("large/scum/Mobile","Stem Large Scum Cardboard Mobile Arc")
-            .put("large/scum/Bullseye","Stem Large Scum Cardboard Bullseye Arc")
+            .put("small/rebel/Front","Firing_Arc_Front_Small_Rebel.svg")
+            .put("small/rebel/Turret","Firing_Arc_Turret_Small_Rebel.svg")
+            .put("small/rebel/Auxiliary Rear","Firing_Arc_Aux_Rear_Small_Rebel.svg")
+            .put("small/rebel/Auxiliary 180","Firing_Arc_Aux_180_Small_Rebel.svg")
+            .put("small/rebel/Mobile","Firing_Arc_Mobile_Small_Rebel.svg")
+            .put("small/rebel/Bullseye","Firing_Arc_Bullseye_Small_Rebel.svg")
+            .put("small/imperial/Front","Firing_Arc_Front_Small_Empire.svg")
+            .put("small/imperial/Turret","Firing_Arc_Turret_Small_Empire.svg")
+            .put("small/imperial/Auxiliary Rear","Firing_Arc_Aux_Rear_Small_Empire.svg")
+            .put("small/imperial/Auxiliary 180","Firing_Arc_Aux_180_Small_Empire.svg")
+            .put("small/imperial/Mobile","Firing_Arc_Mobile_Small_Empire.svg")
+            .put("small/imperial/Bullseye","Firing_Arc_Bullseye_Small_Empire.svg")
+            .put("small/scum/Front","Firing_Arc_Front_Small_Scum.svg")
+            .put("small/scum/Turret","Firing_Arc_Turret_Small_Scum.svg")
+            .put("small/scum/Auxiliary Rear","Firing_Arc_Aux_Rear_Small_Scum.svg")
+            .put("small/scum/Auxiliary 180","Firing_Arc_Aux_180_Small_Scum.svg")
+            .put("small/scum/Mobile","Firing_Arc_Mobile_Small_Scum.svg")
+            .put("small/scum/Bullseye","Firing_Arc_Bullseye_Small_Scum.svg")
+            .put("large/rebel/Front","Firing_Arc_Front_Large_Rebel.svg")
+            .put("large/rebel/Turret","Firing_Arc_Turret_Large_Rebel.svg")
+            .put("large/rebel/Auxiliary Rear","Firing_Arc_Aux_Rear_Large_Rebel.svg")
+            .put("large/rebel/Auxiliary 180","Firing_Arc_Aux_180_Large_Rebel.svg")
+            .put("large/rebel/Mobile","Firing_Arc_Mobile_Large_Rebel.svg")
+            .put("large/rebel/Bullseye","Firing_Arc_Bullseye_Large_Rebel.svg")
+            .put("large/imperial/Front","Firing_Arc_Front_Large_Empire.svg")
+            .put("large/imperial/Turret","Firing_Arc_Turret_Large_Empire.svg")
+            .put("large/imperial/Auxiliary Rear","Firing_Arc_Aux_Rear_Large_Empire.svg")
+            .put("large/imperial/Auxiliary 180","Firing_Arc_Aux_180_Large_Empire.svg")
+            .put("large/imperial/Mobile","Firing_Arc_Mobile_Large_Empire.svg")
+            .put("large/imperial/Bullseye","Firing_Arc_Bullseye_Large_Empire.svg")
+            .put("large/scum/Front","Firing_Arc_Front_Large_Scum.svg")
+            .put("large/scum/Turret","Firing_Arc_Turret_Large_Scum.svg")
+            .put("large/scum/Auxiliary Rear","Firing_Arc_Aux_Rear_Large_Scum.svg")
+            .put("large/scum/Auxiliary 180","Firing_Arc_Aux_180_Large_Scum.svg")
+            .put("large/scum/Mobile","Firing_Arc_Mobile_Large_Scum.svg")
+            .put("large/scum/Bullseye","Firing_Arc_Bullseye_Large_Scum.svg")
             .build();
 
     public StemShip(){
@@ -216,8 +216,11 @@ public class StemShip extends Decorator implements EditablePiece {
             String arcImage = "";
             for(String arc : arcList)
             {
+                Util.logToChat("adding arc "+arc);
+
                 // look up the image for the arc
                 arcImage = (String)cardboardFiringArcImages.get(arcImagePrefixSB.toString() + arc);
+                Util.logToChat("Arc image "+arcImage);
 
                 StringBuilder sb = new StringBuilder();
                 sb.append("emb2;Activate;2;;;2;;;2;;;;1;false;0;0;");
@@ -226,22 +229,28 @@ public class StemShip extends Decorator implements EditablePiece {
                 // add the arc
                 Embellishment arcEmb = new Embellishment();
                 arcEmb.mySetType(sb.toString());
+                arcEmb.setInner(piece);
 
+                piece = arcEmb;
+/*
 
-
-                GamePiece p = piece;
+                GamePiece p = ((Decorator) piece).getInner();
 
                GamePiece innermostPiece = piece;
-
+                GamePiece firstDecorator = null;
                 while (p instanceof Decorator) {
+                    if(firstDecorator == null)
+                    {
+                        firstDecorator = p;
+                    }
                     Util.logToChat(p.getName() + " " + p.getClass().getName());
 
                     p = ((Decorator) p).getInner();
 
                 }
+                p.setProperty(arcEmb,sb.toString());
 
-
-
+*/
             }
 
         }
