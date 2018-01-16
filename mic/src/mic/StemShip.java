@@ -60,6 +60,33 @@ public class StemShip extends Decorator implements EditablePiece {
             .put("large/scum/Bullseye","Firing_Arc_Bullseye_Large_Scum.svg")
             .build();
 
+    private static Map<String, String> cardboardActionImages = ImmutableMap.<String, String>builder()
+            .put("Focus","Action_Focus.png")
+            .put("Target Lock","Action_Target_Lock.png")
+            .put("Boost","Action_Boost.png")
+            .put("Evade","Action_Evade.png")
+            .put("Barrel Roll","Action_Barrel_Roll.png")
+            .put("Cloak","Action_Cloak.png")
+            .put("SLAM","Action_Slam.png")
+            .put("Rotate Arc","Action_Rotate_Arc.png")
+            .put("Reinforce","Action_Reinforce.png")
+            .put("Reload","Action_Reload.png")
+            .put("Coordinate","Action_Coordinate.png")
+            .build();
+
+    private static Map<String, String> cardboardActionCoordinates = ImmutableMap.<String, String>builder()
+            .put("small1","47;-40")
+            .put("small2","47;-23")
+            .put("small3","47;-6")
+            .put("small4","47;11")
+            .put("small5","47;28")
+            .put("large1","95;-40")
+            .put("large2","95;-23")
+            .put("large3","95;-6")
+            .put("large4","95;11")
+            .put("large5","95;28")
+            .build();
+
     public StemShip(){
         this(null);
     }
@@ -147,6 +174,7 @@ public class StemShip extends Decorator implements EditablePiece {
         String shipName;
         String faction = "";
         String size = "";
+        List<String> actionList;
         ShipGenerateCommand(String thisName, GamePiece piece, String thisFaction, String thisSize) {
 
             // fetch the maneuver array of arrays according to the xws name passed on from autospawn or other means
@@ -157,20 +185,20 @@ public class StemShip extends Decorator implements EditablePiece {
             shipName = shipData.getName();
             this.piece = piece;
             this.size = shipData.getSize();
-
+            this.actionList = shipData.getActions();
         }
 
         // construct the arcs Layers trait (Embellishment class)
         protected void executeCommand()
         {
+            // set the firing arcs on the cardboard
+            buildCardboardFiringArcs(piece,faction,arcList,size);
 
-            //TODO set cardboard arcs
-           buildCardboardFiringArcs(piece,faction,arcList,size);
 
-/*
             // TODO set the actual Firing Arcs
 
             //TODO Add the cardboard actions
+            buildCardboardActions(piece, actionList, size);
             //TODO add the actions
             //TODO add the ship layer
             //TODO add the rotate & pivot
@@ -180,9 +208,40 @@ public class StemShip extends Decorator implements EditablePiece {
 
             // build the dial back and dial hide images
  //           buildDialMask(piece,xwsShipName,faction);
-*/
+
         }
 
+        private void buildCardboardActions(GamePiece piece, List<String> actionList, String size)
+        {
+
+            String actionImage = null;
+            int actionNumber = 0;
+            for(String action : actionList)
+            {
+                actionImage = (String)cardboardActionImages.get(action);
+
+                actionNumber++;
+
+                // build the action string
+                StringBuilder sb = new StringBuilder();
+                sb.append("emb2;Activate;2;;;2;;;2;;;;1;false;");
+                sb.append((String)cardboardActionCoordinates.get(size+actionNumber));
+                sb.append(";");
+                sb.append(actionImage);
+                sb.append(";;false;Action_");
+                sb.append(action);
+                sb.append(";;;false;;1;1;true;65,130;;");
+
+                // add the action
+                Embellishment actionEmb = new Embellishment();
+                actionEmb.mySetType(sb.toString());
+                actionEmb.setInner(piece);
+
+                // the embellishment is now the outer piece
+                piece = actionEmb;
+            }
+
+        }
         private void buildCardboardFiringArcs(GamePiece piece,String faction, List<String> arcList, String size)
         {
             StringBuilder arcImagePrefixSB = new StringBuilder();
@@ -213,7 +272,9 @@ public class StemShip extends Decorator implements EditablePiece {
                 StringBuilder sb = new StringBuilder();
                 sb.append("emb2;Activate;2;;;2;;;2;;;;1;false;0;0;");
                 sb.append(arcImage);
-                sb.append(";;false;Arc;;;false;;1;1;true;65,130;;");
+                sb.append(";;false;Arc_");
+                sb.append(arc); // add arc name to name of Emb
+                sb.append(";;;false;;1;1;true;65,130;;");
 
                 // add the arc
                 Embellishment arcEmb = new Embellishment();
