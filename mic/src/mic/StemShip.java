@@ -164,16 +164,6 @@ public class StemShip extends Decorator implements EditablePiece {
         protected void executeCommand()
         {
 
-            //TODO TEMP CODE to pick up details
-
-
-/*
-            Embellishment myEmb = (Embellishment)Util.getEmbellishment(piece,"Layer - Arc");
-            Util.logToChat(myEmb.myGetType());
-            Util.logToChat("====");
-            Util.logToChat(myEmb.getType());
-            */
-
             //TODO set cardboard arcs
            buildCardboardFiringArcs(piece,faction,arcList,size);
 
@@ -216,107 +206,33 @@ public class StemShip extends Decorator implements EditablePiece {
             String arcImage = "";
             for(String arc : arcList)
             {
-                Util.logToChat("adding arc "+arc);
-
                 // look up the image for the arc
                 arcImage = (String)cardboardFiringArcImages.get(arcImagePrefixSB.toString() + arc);
-                Util.logToChat("Arc image "+arcImage);
 
+                // build the arc string
                 StringBuilder sb = new StringBuilder();
                 sb.append("emb2;Activate;2;;;2;;;2;;;;1;false;0;0;");
                 sb.append(arcImage);
                 sb.append(";;false;Arc;;;false;;1;1;true;65,130;;");
+
                 // add the arc
                 Embellishment arcEmb = new Embellishment();
                 arcEmb.mySetType(sb.toString());
                 arcEmb.setInner(piece);
 
+                // the embellishment is now the outer piece
                 piece = arcEmb;
-/*
 
-                GamePiece p = ((Decorator) piece).getInner();
-
-               GamePiece innermostPiece = piece;
-                GamePiece firstDecorator = null;
-                while (p instanceof Decorator) {
-                    if(firstDecorator == null)
-                    {
-                        firstDecorator = p;
-                    }
-                    Util.logToChat(p.getName() + " " + p.getClass().getName());
-
-                    p = ((Decorator) p).getInner();
-
-                }
-                p.setProperty(arcEmb,sb.toString());
-
-*/
             }
 
         }
 
-/*
-        // build the maneuvers layer
-        private void buildManeuvers(GamePiece piece, List moveList)
-        {
-            // build the type string
-            StringBuilder stateString = new StringBuilder();
-            StringBuilder moveNamesString = new StringBuilder();
-
-            // start the state string
-            stateString.append("emb2;;2;;Right;2;;Left;2;;;;;false;0;-38;");
-
-            // loop through the maneuvers from the xws-data
-            int count = 0;
-            String moveImage;
-            for (String move : newMoveList)
-            {
-
-                // look up the image for the maneuver
-                moveImage = (String)dialManeuverImages.get(move);
-                if(moveImage == null)
-                {
-                    logToChat("Can't find image for move: " + move);
-                }else{
-
-                    count++;
-                    if(count != 1)
-                    {
-                        stateString.append(",");
-                        moveNamesString.append(",");
-                    }
-                    // add the maneuver image to the dial
-                    stateString.append(moveImage);
-
-                    // build move names string
-                    String speed = move.substring(0,1);
-                    String moveCode = move.substring(1,2);
-                    String moveName = maneuverNames.get(moveCode);
-                    moveNamesString.append(moveName).append(" ").append(speed);
-
-                }
-            }
-
-            // add in move names
-            stateString.append(";").append(moveNamesString.toString());
-
-            // finish the type string
-            stateString.append(";true;Move;;;false;;1;1;true;;46,0;44,0");
-
-            Embellishment myEmb = (Embellishment)Util.getEmbellishment(piece,"Layer - Move");
-            //Embellishment myEmb = (Embellishment)Decorator.getDecorator(piece,Embellishment.class);
-
-            myEmb.mySetType(stateString.toString());
-
-        }
-
-*/
 
         protected Command myUndoCommand() {
             return null;
         }
 
-        //the following class is used to send the info to the other player whenever a dial generation command is issued, so it can be done locally on all machines playing/watching the game
+        //the following class is used to send the info to the other player whenever a ship generation command is issued, so it can be done locally on all machines playing/watching the game
         //only the ship XWS string is sent
         public static class ShipGeneratorEncoder implements CommandEncoder {
             private static final Logger logger = LoggerFactory.getLogger(StemShip.class);
