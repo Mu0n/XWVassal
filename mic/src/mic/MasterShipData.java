@@ -15,6 +15,7 @@ public class MasterShipData extends ArrayList<MasterShipData.ShipData> {
 
     private static String REMOTE_URL = "https://raw.githubusercontent.com/guidokessels/xwing-data/master/data/ships.js";
 
+    //private static String REMOTE_URL = "https://raw.githubusercontent.com/guidokessels/xwing-data/custom-ship/data/ships.js";
     //TODO change this URL
     private static String DISPATCHER_URL = "https://raw.githubusercontent.com/mrmurphm/XWVassal/new-dial/mic/swxwmg.vmod-unpacked/dispatcher_ships.json";
 

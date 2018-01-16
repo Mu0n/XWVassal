@@ -15,7 +15,7 @@ import java.util.Map;
 public class MasterPilotData extends ArrayList<MasterPilotData.PilotData> {
 
     private static String REMOTE_URL = "https://raw.githubusercontent.com/guidokessels/xwing-data/master/data/pilots.js";
-
+  //  private static String REMOTE_URL = "https://raw.githubusercontent.com/guidokessels/xwing-data/custom-ship/data/pilots.js";
     //TODO change this URL
     private static String DISPATCHER_URL = "https://raw.githubusercontent.com/mrmurphm/XWVassal/new-dial/mic/swxwmg.vmod-unpacked/dispatcher_pilots.json";
 

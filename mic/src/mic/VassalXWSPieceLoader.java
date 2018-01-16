@@ -87,12 +87,9 @@ public class VassalXWSPieceLoader {
                     PieceSlot scumOrderCardSlot = null;
 
                     // add the stem ship
-                    PieceSlot smallRebelShipSlot = null;
-                    PieceSlot largeRebelShipSlot = null;
-                    PieceSlot smallEmpireShipSlot = null;
-                    PieceSlot largeEmpireShipSlot = null;
-                    PieceSlot smallScumShipSlot = null;
-                    PieceSlot largeScumShipSlot = null;
+                    PieceSlot smallShipSlot = null;
+                    PieceSlot largeShipSlot = null;
+
 
                     // Add the stem pilot card
                     List<PieceSlot> pieceSlots = GameModule.getGameModule().getAllDescendantComponentsOf(PieceSlot.class);
@@ -114,25 +111,12 @@ public class VassalXWSPieceLoader {
                         } else if (slotName.startsWith("Stem Resistance Pilot") && resistanceCardSlot == null) {
                             resistanceCardSlot = pieceSlot;
                             continue;
-                        } else if(slotName.startsWith("ship -- Small Rebel Stem Ship")&& smallRebelShipSlot == null)
+                        } else if(slotName.startsWith("ship -- Nu Stem Small Ship")&& smallShipSlot == null)
                         {
-                            smallRebelShipSlot = pieceSlot;
+                            smallShipSlot = pieceSlot;
                             continue;
-                        } else if(slotName.startsWith("ship -- Small Empire Stem Ship")&& smallEmpireShipSlot == null) {
-                            smallEmpireShipSlot = pieceSlot;
-                            continue;
-                        }else if(slotName.startsWith("ship -- Small Scum Stem Ship")&& smallScumShipSlot == null) {
-                            smallScumShipSlot = pieceSlot;
-                            continue;
-                        }else if(slotName.startsWith("ship -- Large Rebel Stem Ship")&& largeRebelShipSlot == null)
-                        {
-                            largeRebelShipSlot = pieceSlot;
-                            continue;
-                        } else if(slotName.startsWith("ship -- Large Empire Stem Ship")&& largeEmpireShipSlot == null) {
-                            largeEmpireShipSlot = pieceSlot;
-                            continue;
-                        }else if(slotName.startsWith("ship -- Large Scum Stem Ship")&& largeScumShipSlot == null) {
-                            largeScumShipSlot = pieceSlot;
+                        } else if(slotName.startsWith("ship -- Nu Stem Large Ship")&& largeShipSlot == null) {
+                            largeShipSlot = pieceSlot;
                             continue;
                         }
 
@@ -157,34 +141,14 @@ public class VassalXWSPieceLoader {
                     }
 
                     // fill in the ships
-                    if(pilotData.getFaction().equals("Resistance") || pilotData.getFaction().equals("Rebel Alliance" ))
+
+                    if(shipData.getSize().equals("small"))
                     {
-                        if(shipData.getSize().equals("small"))
-                        {
-                            barePieces.setShip(smallRebelShipSlot);
-                        }else if(shipData.getSize().equals("large"))
-                        {
-                            barePieces.setShip(largeRebelShipSlot);
-                        }
-                    }else if(pilotData.getFaction().equals("Galactic Empire") || pilotData.getFaction().equals("First Order" ))
-                    {
-                        if(shipData.getSize().equals("small"))
-                        {
-                            barePieces.setShip(smallEmpireShipSlot);
-                        }else if(shipData.getSize().equals("large"))
-                        {
-                            barePieces.setShip(largeEmpireShipSlot);
-                        }
-                    }else if(pilotData.getFaction().equals("Scum & Villainy"))
-                    {
-                        if(shipData.getSize().equals("small"))
-                        {
-                            barePieces.setShip(smallScumShipSlot);
-                        }else if(shipData.getSize().equals("large"))
-                        {
-                            barePieces.setShip(largeScumShipSlot);
-                        }
+                        barePieces.setShip(smallShipSlot);
+                    }else if(shipData.getSize().equals("large")) {
+                        barePieces.setShip(largeShipSlot);
                     }
+
 
                 }else{
 
