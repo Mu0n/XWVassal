@@ -192,14 +192,19 @@ public class StemShip extends Decorator implements EditablePiece {
         protected void executeCommand()
         {
             // set the firing arcs on the cardboard
-            buildCardboardFiringArcs(piece,faction,arcList,size);
+            piece = buildCardboardFiringArcs(piece,faction,arcList,size);
 
 
             // TODO set the actual Firing Arcs
 
-            //TODO Add the cardboard actions
-            buildCardboardActions(piece, actionList, size);
+            // set the actions on the cardboard
+            piece = buildCardboardActions(piece, actionList, size);
+
             //TODO add the actions
+            //TODO add the side actions
+            piece =  buildSideActions(piece,size);
+
+
             //TODO add the ship layer
             //TODO add the rotate & pivot
 
@@ -211,7 +216,58 @@ public class StemShip extends Decorator implements EditablePiece {
 
         }
 
-        private void buildCardboardActions(GamePiece piece, List<String> actionList, String size)
+        private GamePiece buildSideActions(GamePiece piece, String size)
+        {
+            String action1 = "";
+            String action2 = "";
+            String action3 = "";
+            //large
+            if(size.equals("large"))
+            {
+                action3 = "emb2;;2;;Cycle 3rd Action;2;;;2;;Clear 3rd Action;90,195;1;false;128;30;,Action-Focus.png,Action-Evade.png,Action-Barrel_Roll.png,Action-Boost.png,Action-Elite.png,Action-Crew.png,Action-Bomb.png,Action-Reinforce.png,Action-Coordinate.png,Action-Illicit.png,Action-Rotate_Arc.png,Action-SLAM.png,Action-Cloak.png,Action-Reload.png,Action-Target_Lock.png,Action-Mech.png;,,,,,,,,,,,,,,,,;true;Actions_Side1;;;false;;1;1;true;;65,195;";
+                action2 = "emb2;;2;;Cycle 2nd Action;2;;;2;;Clear 2nd Action;90,130;1;false;128;0;,Action-Focus.png,Action-Evade.png,Action-Barrel_Roll.png,Action-Boost.png,Action-Elite.png,Action-Crew.png,Action-Bomb.png,Action-Reinforce.png,Action-Coordinate.png,Action-Illicit.png,Action-Rotate_Arc.png,Action-SLAM.png,Action-Cloak.png,Action-Reload.png,Action-Target_Lock.png,Action-Mech.png;,,,,,,,,,,,,,,,,;true;Actions_Side2;;;false;;1;1;true;;65,130;";
+                action1 = "emb2;;2;;Cycle 1st Action;2;;;2;;Clear 1st Action;90,65;1;false;128;-30;,Action-Focus.png,Action-Evade.png,Action-Barrel_Roll.png,Action-Boost.png,Action-Elite.png,Action-Crew.png,Action-Bomb.png,Action-Reinforce.png,Action-Coordinate.png,Action-Illicit.png,Action-Rotate_Arc.png,Action-SLAM.png,Action-Cloak.png,Action-Reload.png,Action-Target_Lock.png,Action-Mech.png;,,,,,,,,,,,,,,,,;true;Actions_Side3;;;false;;1;1;true;;65,65;";
+            }else if(size.equals("small"))
+            {
+                action3 = "emb2;;2;;Cycle 3rd Action;2;;;2;;Clear 3rd Action;90,195;1;false;70;30;,Action-Focus.png,Action-Evade.png,Action-Barrel_Roll.png,Action-Boost.png,Action-Elite.png,Action-Crew.png,Action-Bomb.png,Action-Reinforce.png,Action-Coordinate.png,Action-Illicit.png,Action-Rotate_Arc.png,Action-SLAM.png,Action-Cloak.png,Action-Reload.png,Action-Target_Lock.png,Action-Mech.png;,,,,,,,,,,,,,,,,;true;Actions_Side1;;;false;;1;1;true;;65,195;";
+                action2 = "emb2;;2;;Cycle 2nd Action;2;;;2;;Clear 2nd Action;90,130;1;false;70;0;,Action-Focus.png,Action-Evade.png,Action-Barrel_Roll.png,Action-Boost.png,Action-Elite.png,Action-Crew.png,Action-Bomb.png,Action-Reinforce.png,Action-Coordinate.png,Action-Illicit.png,Action-Rotate_Arc.png,Action-SLAM.png,Action-Cloak.png,Action-Reload.png,Action-Target_Lock.png,Action-Mech.png;,,,,,,,,,,,,,,,,;true;Actions_Side2;;;false;;1;1;true;;65,130;";
+                action1 = "emb2;;2;;Cycle 1st Action;2;;;2;;Clear 1st Action;90,65;1;false;70;-30;,Action-Focus.png,Action-Evade.png,Action-Barrel_Roll.png,Action-Boost.png,Action-Elite.png,Action-Crew.png,Action-Bomb.png,Action-Reinforce.png,Action-Coordinate.png,Action-Illicit.png,Action-Rotate_Arc.png,Action-SLAM.png,Action-Cloak.png,Action-Reload.png,Action-Target_Lock.png,Action-Mech.png;,,,,,,,,,,,,,,,,;true;Actions_Side3;;;false;;1;1;true;;65,65;";
+            }
+            //small
+
+            Embellishment actionEmb = new Embellishment();
+            actionEmb.mySetType(action3);
+            actionEmb.setInner(piece);
+
+
+            piece = actionEmb;
+
+            actionEmb = new Embellishment();
+            actionEmb.mySetType(action2);
+            actionEmb.setInner(piece);
+
+            piece = actionEmb;
+
+            actionEmb = new Embellishment();
+            actionEmb.mySetType(action1);
+            actionEmb.setInner(piece);
+
+            piece = actionEmb;
+
+            /*
+            //3rd 128,30
+            emb2;;2;;Cycle 3rd Action;2;;;2;;Clear 3rd Action;90,195;1;false;128;30;,Action-Focus.png,Action-Evade.png,Action-Barrel_Roll.png,Action-Boost.png,Action-Elite.png,Action-Crew.png,Action-Bomb.png,Action-Reinforce.png,Action-Coordinate.png,Action-Illicit.png,Action-Rotate_Arc.png,Action-SLAM.png,Action-Cloak.png,Action-Reload.png,Action-Target_Lock.png,Action-Mech.png;,,,,,,,,,,,,,,,,;true;Actions_Side1;;;false;;1;1;true;;65,195;
+
+            //2nd 128,0
+            emb2;;2;;Cycle 2nd Action;2;;;2;;Clear 2nd Action;90,130;1;false;128;0;,Action-Focus.png,Action-Evade.png,Action-Barrel_Roll.png,Action-Boost.png,Action-Elite.png,Action-Crew.png,Action-Bomb.png,Action-Reinforce.png,Action-Coordinate.png,Action-Illicit.png,Action-Rotate_Arc.png,Action-SLAM.png,Action-Cloak.png,Action-Reload.png,Action-Target_Lock.png,Action-Mech.png;,,,,,,,,,,,,,,,,;true;Actions_Side2;;;false;;1;1;true;;65,130;
+
+            //1st 128,-30
+            emb2;;2;;Cycle 1st Action;2;;;2;;Clear 1st Action;90,65;1;false;128;-30;,Action-Focus.png,Action-Evade.png,Action-Barrel_Roll.png,Action-Boost.png,Action-Elite.png,Action-Crew.png,Action-Bomb.png,Action-Reinforce.png,Action-Coordinate.png,Action-Illicit.png,Action-Rotate_Arc.png,Action-SLAM.png,Action-Cloak.png,Action-Reload.png,Action-Target_Lock.png,Action-Mech.png;,,,,,,,,,,,,,,,,;true;Actions_Side3;;;false;;1;1;true;;65,65;
+*/
+            return piece;
+        }
+
+        private GamePiece buildCardboardActions(GamePiece piece, List<String> actionList, String size)
         {
 
             String actionImage = null;
@@ -240,9 +296,11 @@ public class StemShip extends Decorator implements EditablePiece {
                 // the embellishment is now the outer piece
                 piece = actionEmb;
             }
+            return piece;
 
         }
-        private void buildCardboardFiringArcs(GamePiece piece,String faction, List<String> arcList, String size)
+
+        private GamePiece buildCardboardFiringArcs(GamePiece piece,String faction, List<String> arcList, String size)
         {
             StringBuilder arcImagePrefixSB = new StringBuilder();
             arcImagePrefixSB.append(size);
@@ -285,6 +343,7 @@ public class StemShip extends Decorator implements EditablePiece {
                 piece = arcEmb;
 
             }
+            return piece;
 
         }
 
