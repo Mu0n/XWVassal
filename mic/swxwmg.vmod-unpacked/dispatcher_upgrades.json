@@ -4139,5 +4139,155 @@
     "slot": "Salvaged Astromech",
     "id": 353,
     "image": "upgrades/Salvaged Astromech/r5-tk.png"
+  },
+  {
+    "text": "This is a test upgrade",
+    "name": "TEST",
+    "xws": "testupgrade",
+    "unique": true,
+    "points": 0,
+    "slot": "Salvaged Astromech",
+    "id": 354,
+    "image": "upgrades/Salvaged Astromech/r5-tk.png"
+  },
+  {
+    "text": "This is a test turret",
+    "name": "TESTTURRET",
+    "xws": "testupgrade2",
+    "unique": false,
+    "points": 0,
+    "slot": "Turret",
+    "id": 355,
+    "image": "upgrades/Salvaged Astromech/r5-tk.png"
+  },
+  {
+    "text": "This is a test torpedo",
+    "name": "TESTTORPEDO",
+    "xws": "testupgrade3",
+    "unique": false,
+    "points": 0,
+    "slot": "Torpedo",
+    "id": 356,
+    "image": "upgrades/Salvaged Astromech/r5-tk.png"
+  },
+  {
+    "text": "This is a test EPT",
+    "name": "TESTEPT",
+    "xws": "testupgrade5",
+    "unique": false,
+    "points": 0,
+    "slot": "Elite",
+    "id": 357,
+    "image": "upgrades/Salvaged Astromech/r5-tk.png"
+  },
+  {
+    "text": "This is a test Modification",
+    "name": "TESTModification",
+    "xws": "testupgrade11",
+    "unique": false,
+    "points": 0,
+    "slot": "Modification",
+    "id": 358,
+    "image": "upgrades/Salvaged Astromech/r5-tk.png"
+  },
+  {
+    "text": "This is a test Title",
+    "name": "TESTTITLE",
+    "xws": "testupgrade14",
+    "unique": false,
+    "points": 0,
+    "slot": "Title",
+    "id": 359,
+    "image": "upgrades/Salvaged Astromech/r5-tk.png"
+  },
+  {
+    "text": "This is a test Cannon",
+    "name": "TESTCannon",
+    "xws": "testupgrade8",
+    "unique": false,
+    "points": 0,
+    "slot": "Cannon",
+    "id": 360,
+    "image": "upgrades/Salvaged Astromech/r5-tk.png"
+  },
+  {
+    "text": "This is a test Bomb",
+    "name": "TESTBomb",
+    "xws": "testupgrade9",
+    "unique": false,
+    "points": 0,
+    "slot": "Bomb",
+    "id": 361,
+    "image": "upgrades/Salvaged Astromech/r5-tk.png"
+  },
+  {
+    "text": "This is a test Illicit",
+    "name": "TESTIllicit",
+    "xws": "testupgrade10",
+    "unique": false,
+    "points": 0,
+    "slot": "Illicit",
+    "id": 362,
+    "image": "upgrades/Salvaged Astromech/r5-tk.png"
+  },
+  {
+    "text": "This is a test System",
+    "name": "TESTSystem",
+    "xws": "testupgrade12",
+    "unique": false,
+    "points": 0,
+    "slot": "System",
+    "id": 363,
+    "image": "upgrades/Salvaged Astromech/r5-tk.png"
+  },
+  {
+    "text": "This is a test Missile",
+    "name": "TESTMissile",
+    "xws": "testupgrade6",
+    "unique": false,
+    "points": 0,
+    "slot": "Missile",
+    "id": 364,
+    "image": "upgrades/Salvaged Astromech/r5-tk.png"
+  },
+  {
+    "text": "This is a test Missile",
+    "name": "TESTMissile",
+    "xws": "testupgrade6",
+    "unique": false,
+    "points": 0,
+    "slot": "Missile",
+    "id": 365,
+    "image": "upgrades/Salvaged Astromech/r5-tk.png"
+  },
+  {
+    "text": "This is a test Crew",
+    "name": "TESTCrew",
+    "xws": "testupgrade7",
+    "unique": false,
+    "points": 0,
+    "slot": "Crew",
+    "id": 366,
+    "image": "upgrades/Salvaged Astromech/r5-tk.png"
+  },
+  {
+    "text": "This is a test Tech",
+    "name": "TESTTech",
+    "xws": "testupgrade13",
+    "unique": false,
+    "points": 0,
+    "slot": "Tech",
+    "id": 367,
+    "image": "upgrades/Salvaged Astromech/r5-tk.png"
+  },
+  {
+    "text": "This is a test Astromech",
+    "name": "TESTAstromech",
+    "xws": "testupgrade4",
+    "unique": false,
+    "points": 0,
+    "slot": "Astromech",
+    "id": 368,
+    "image": "upgrades/Salvaged Astromech/r5-tk.png"
   }
 ]

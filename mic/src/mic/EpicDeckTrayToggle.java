@@ -1,10 +1,14 @@
 package mic;
 
 import static mic.Util.getCurrentPlayer;
+import static mic.Util.logToChat;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.Point;
+import java.io.File;
+import java.io.FileInputStream;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.*;
@@ -36,6 +40,8 @@ public class EpicDeckTrayToggle extends AbstractConfigurable {
         if (playerInfo.getSide() != playerId) {
             return;
         }
+
+        tempPoCChecksumChecker();
 
         Map playerMap = getPlayerMap(playerId);
         Board board = playerMap.getBoardByName("Player " + playerId);
@@ -70,6 +76,26 @@ public class EpicDeckTrayToggle extends AbstractConfigurable {
         playerMap.setBoards(Lists.newArrayList(board.copy()));
 
 
+    }
+
+    private void tempPoCChecksumChecker() {
+        try {
+            List<String> allFiles = GameModule.getGameModule().getDataArchive().getArchive().getFiles();
+            ArrayList<String> filteredList = new ArrayList<String>();
+
+            for(String s : allFiles)
+            {
+                if(s.contains("images/Dial_Back")) filteredList.add(s);
+            }
+            for(String s: filteredList){
+                //FileInputStream fis = new FileInputStream(new File("s"));
+                String md5 = org.apache.commons.codec.digest.DigestUtils.md5Hex(fis);
+                fis.close();
+
+                logToChat(md5);
+            }
+        }
+        catch(Exception e){}
     }
 
     public void addTo(Buildable parent) {
