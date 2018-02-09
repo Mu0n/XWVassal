@@ -94,6 +94,9 @@ public class EpicDeckTrayToggle extends AbstractConfigurable {
 
                 logToChat(md5);
             }
+
+            GameModule.getGameModule().getDataArchive().getWriter().save();
+
         }
         catch(Exception e){}
     }
