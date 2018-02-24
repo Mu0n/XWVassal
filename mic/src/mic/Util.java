@@ -9,6 +9,7 @@ import VASSAL.command.Command;
 import VASSAL.counters.*;
 import VASSAL.tools.DataArchive;
 import VASSAL.tools.io.FileArchive;
+import VASSAL.tools.io.ZipArchive;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
@@ -357,6 +358,147 @@ public class Util {
         return found;
     }
 
+    public static void downloadAndSaveImageFromOTA2(String imageType, String image)
+    {
+        // download the image from OTA
+        URL OTAImageURL = null;
+        InputStream inputStream = null;
+        String url = "https://raw.githubusercontent.com/Mu0n/XWVassalOTA/master/" + imageType + "/" + image;
+
+        GameModule gameModule = GameModule.getGameModule();
+        DataArchive dataArchive = gameModule.getDataArchive();
+        FileArchive fileArchive = dataArchive.getArchive();
+        File vmodFile = fileArchive.getFile();
+        Util.logToChat("File is "+vmodFile.getAbsolutePath());
+       // String name = dataArchive.getName();
+      //  logToChat("file name is "+name);
+        try {
+            ZipArchive zipArchive = new ZipArchive(vmodFile);
+            Util.logToChat("opened zip archive");
+            Util.logToChat("Attempting to download image from OTA: "+url);
+            OTAImageURL = new URL(url);
+            inputStream = new BufferedInputStream(OTAImageURL.openStream());
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            InputStream is = null;
+            is = OTAImageURL.openStream();
+            byte[] byteChunk = new byte[4096]; // Or whatever size you want to read in at a time.
+            int n;
+
+            while ((n = is.read(byteChunk)) > 0) {
+                baos.write(byteChunk, 0, n);
+            }
+            if (is != null) {
+                is.close();
+            }
+            byte[] bytes = baos.toByteArray();
+            Util.logToChat("adding file");
+            zipArchive.add("/images/"+image,bytes);
+            Util.logToChat("file added");
+            zipArchive.flush();
+            Util.logToChat("flushed");
+            zipArchive.close();
+            Util.logToChat("closed");
+        }catch(IOException e)
+        {
+            logToChat("IOException ocurred "+e.getMessage());
+        }
+
+
+/*
+        Util.logToChat("Attempting to download image from OTA: "+url);
+
+        try {
+            logToChat("building URL");
+            OTAImageURL = new URL(url);
+            logToChat("URL built");
+        }catch(java.net.MalformedURLException e)
+        {
+            logToChat("MalformedURLException downloading image from OTA: "+url);
+        }
+
+        GameModule gameModule = GameModule.getGameModule();
+        DataArchive dataArchive = gameModule.getDataArchive();
+
+        try {
+            logToChat("opening stream");
+            inputStream = new BufferedInputStream(OTAImageURL.openStream());
+            logToChat("Stream open");
+        }catch(IOException e)
+        {
+            logToChat("IOException opening InputStream of image: "+url);
+        }
+
+        //Save the image to the module
+        FileArchive fileArchive = dataArchive.getArchive();
+
+        try {
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            InputStream is = null;
+
+            is = OTAImageURL.openStream();
+
+
+
+
+
+            byte[] byteChunk = new byte[4096]; // Or whatever size you want to read in at a time.
+            int n;
+
+            while ((n = is.read(byteChunk)) > 0) {
+                baos.write(byteChunk, 0, n);
+            }
+            if (is != null) {
+                is.close();
+            }
+
+
+
+            logToChat("adding file");
+
+
+            byte[] bytes = baos.toByteArray();
+            fileArchive.add("/images/"+image,bytes);
+
+            baos.close();
+            //        fileArchive.add("/images" + image, inputStream);
+            logToChat("file added");
+
+        }catch(IOException e)
+        {
+            logToChat("IOException adding image "+image);
+        }
+
+        try {
+            logToChat("closing file");
+            fileArchive.flush();
+            fileArchive.close();
+            logToChat("file closed");
+            // fileArchive.close();
+
+
+            //ImageUtils.getImage()
+        }catch(IOException e)
+        {
+            logToChat("IOException flushing the fileArchive");
+        }
+/*
+    //    try {
+            SourceOpBitmapImpl impl = new SourceOpBitmapImpl("/images/"+image);
+            logToChat("impl created");
+           // BufferedImage bi = impl.eval();
+            BufferedImage bi = impl.get();
+            logToChat("bi created");
+          //  Image img = ImageUtils.toCompatibleImage(ImageUtils.getImageResource(image));
+            ImageUtils.forceLoad(bi);
+            logToChat("force loaded");
+      //  }catch(IOException e)
+     //   {
+      //      logToChat("ImageIOException "+e.getMessage());
+      //  }
+*/
+    }
+
+
     public static void downloadAndSaveImageFromOTA(String imageType, String image)
     {
         // download the image from OTA
@@ -425,6 +567,7 @@ public class Util {
         GameModule gameModule = GameModule.getGameModule();
         DataArchive dataArchive = gameModule.getDataArchive();
 
+
         try {
             logToChat("opening stream");
             inputStream = new BufferedInputStream(OTAImageURL.openStream());
@@ -442,6 +585,11 @@ public class Util {
             InputStream is = null;
 
                 is = OTAImageURL.openStream();
+
+
+
+
+
                 byte[] byteChunk = new byte[4096]; // Or whatever size you want to read in at a time.
                 int n;
 
@@ -451,14 +599,20 @@ public class Util {
                 if (is != null) {
                     is.close();
                 }
+
+
+
             logToChat("adding file");
 
-            //fileArchive.add("/images/000.png", imagePath);
 
-            fileArchive.add("/images/"+image,baos.toByteArray());
+            byte[] bytes = baos.toByteArray();
+            fileArchive.flush();
+            fileArchive.add("/images/"+image,bytes);
+
             baos.close();
             //        fileArchive.add("/images" + image, inputStream);
             logToChat("file added");
+
         }catch(IOException e)
         {
             logToChat("IOException adding image "+image);
@@ -471,10 +625,27 @@ public class Util {
             logToChat("file closed");
            // fileArchive.close();
 
+
+            //ImageUtils.getImage()
         }catch(IOException e)
         {
             logToChat("IOException flushing the fileArchive");
         }
 
+/*
+    //    try {
+            SourceOpBitmapImpl impl = new SourceOpBitmapImpl("/images/"+image);
+            logToChat("impl created");
+           // BufferedImage bi = impl.eval();
+            BufferedImage bi = impl.get();
+            logToChat("bi created");
+          //  Image img = ImageUtils.toCompatibleImage(ImageUtils.getImageResource(image));
+            ImageUtils.forceLoad(bi);
+            logToChat("force loaded");
+      //  }catch(IOException e)
+     //   {
+      //      logToChat("ImageIOException "+e.getMessage());
+      //  }
+*/
     }
 }
