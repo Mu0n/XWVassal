@@ -56,9 +56,171 @@ public class VassalXWSPieceLoader {
 
         Multiset<String> genericPilotsAdded = HashMultiset.create();
 
-        for (XWSList.XWSPilot pilot : list.getPilots()) {
-            String pilotKey = getPilotMapKey(list.getFaction(), pilot.getShip(), pilot.getName());
-            VassalXWSPilotPieces barePieces = this.pilotPiecesMap.get(pilotKey);
+        for (XWSList.XWSPilot pilot : list.getPilots())
+        {
+            //MrMurphM - replacing pallet-born stuff here
+            String xwsShip = Canonicalizer.getCanonicalShipName(pilot.getShip());
+            MasterShipData.ShipData shipData = MasterShipData.getShipData(pilot.getShip());
+            MasterPilotData.PilotData pilotData = MasterPilotData.getPilotData(xwsShip,pilot.getName() );
+
+            // generate the pilot card
+            VassalXWSPilotPieces barePieces = new VassalXWSPilotPieces();
+            barePieces.setPilotData(pilotData);
+            barePieces.setShipData(shipData);
+
+            // Add the pilot card
+            // get the pilot card slot
+            PieceSlot stemPilotSlot = null;
+
+
+            // add the stem ship
+            PieceSlot smallShipSlot = null;
+            PieceSlot largeShipSlot = null;
+
+            // Add the stem pilot card
+            List<PieceSlot> stempPieceSlots = GameModule.getGameModule().getAllDescendantComponentsOf(PieceSlot.class);
+
+            for (PieceSlot pieceSlot : stempPieceSlots) {
+                String slotName = pieceSlot.getConfigureName();
+                if (slotName.startsWith("Stem Pilot") && stemPilotSlot == null) {
+                    stemPilotSlot = pieceSlot;
+                    continue;
+                    /*
+                } else if (slotName.startsWith("Stem Emperial Pilot") && empireCardSlot == null) {
+                    empireCardSlot = pieceSlot;
+                    continue;
+                } else if (slotName.startsWith("Stem S&V Pilot") && scumOrderCardSlot == null) {
+                    scumOrderCardSlot = pieceSlot;
+                    continue;
+                } else if (slotName.startsWith("Stem First Order Pilot") && firstOrderCardSlot == null) {
+                    firstOrderCardSlot = pieceSlot;
+                    continue;
+                } else if (slotName.startsWith("Stem Resistance Pilot") && resistanceCardSlot == null) {
+                    resistanceCardSlot = pieceSlot;
+                    continue;
+                    */
+                } else if(slotName.startsWith("ship -- Nu Stem Small Ship")&& smallShipSlot == null)
+                {
+                    smallShipSlot = pieceSlot;
+                    continue;
+                } else if(slotName.startsWith("ship -- Nu Stem Large Ship")&& largeShipSlot == null) {
+                    largeShipSlot = pieceSlot;
+                    continue;
+                }
+
+            }
+
+            // fill in the pilot cards
+            barePieces.setPilotCard(stemPilotSlot);
+            /*
+            if (pilotData.getFaction().equals("Rebel Alliance"))
+            {
+                barePieces.setPilotCard(rebelCardSlot);
+            } else if (pilotData.getFaction().equals("Resistance"))
+            {
+                barePieces.setPilotCard(resistanceCardSlot);
+            }else if(pilotData.getFaction().equals("Galactic Empire"))
+            {
+                barePieces.setPilotCard(empireCardSlot);
+            }else if(pilotData.getFaction().equals("First Order"))
+            {
+                barePieces.setPilotCard(firstOrderCardSlot);
+            } else if(pilotData.getFaction().equals("Scum & Villainy"))
+            {
+                barePieces.setPilotCard(scumOrderCardSlot);
+            }
+*/
+            // fill in the ships
+
+            if(shipData.getSize().equals("small"))
+            {
+                barePieces.setShip(smallShipSlot);
+            }else if(shipData.getSize().equals("large")) {
+                barePieces.setShip(largeShipSlot);
+            }
+
+            VassalXWSPilotPieces pilotPieces = new VassalXWSPilotPieces(barePieces);
+
+            if (pilotPieces.getPilotData() != null) {
+                List<VassalXWSPilotPieces.Upgrade> foundConditions = getConditionsForCard(pilotPieces.getPilotData().getConditions());
+                pilotPieces.getConditions().addAll(foundConditions);
+            }
+
+            if (pilotCounts.count(pilot.getName()) > 1) {
+                genericPilotsAdded.add(pilot.getName());
+                pilotPieces.setShipNumber(genericPilotsAdded.count(pilot.getName()));
+            }
+
+            for (String upgradeType : pilot.getUpgrades().keySet())
+            {
+                for (String upgradeName : pilot.getUpgrades().get(upgradeType)) {
+                    String upgradeKey = getUpgradeMapKey(upgradeType, upgradeName);
+                    VassalXWSPilotPieces.Upgrade upgrade = upgradePiecesMap.get(upgradeKey);
+                    if (upgrade == null)
+                    {
+
+                        // Upgrade wasn't found in the pallet.  Check xws-data and dispatcher
+                        MasterUpgradeData.UpgradeData newUpgradeData = MasterUpgradeData.getUpgradeData(upgradeName);
+
+                        if(newUpgradeData != null)
+                        {
+                            Util.logToChat("Upgrade "+upgradeName + " is not yet included in XWVassal.  Generating it.");
+                            String slotName = stemUpgradeSlotNames.get(upgradeType);
+
+                            if(slotName == null)
+                            {
+                                // this might be a new upgrade type, so use the WIP version
+                                slotName = "Stem Upgrade WIP";
+                            }
+
+                            List<PieceSlot> pieceSlots = GameModule.getGameModule().getAllDescendantComponentsOf(PieceSlot.class);
+
+                            for (PieceSlot pieceSlot : pieceSlots) {
+                                String stemUpgradeSlotName = pieceSlot.getConfigureName();
+                                if (slotName.equals(stemUpgradeSlotName)) {
+
+                                    // this is the correct slot
+                                    upgrade = new VassalXWSPilotPieces.Upgrade(upgradeName, pieceSlot);
+                                    upgrade.setUpgradeData(newUpgradeData);
+
+                                    continue;
+                                }
+                            }
+
+                        }else {
+                            Util.logToChat("Could not find upgrade: " + upgradeName);
+                            continue;
+                        }
+                    }
+
+                    if (upgrade.getUpgradeData() != null) {
+                        List<VassalXWSPilotPieces.Upgrade> foundConditions = getConditionsForCard(upgrade.getUpgradeData().getConditions());
+                        pilotPieces.getConditions().addAll(foundConditions);
+                    }
+
+                    pilotPieces.getUpgrades().add(upgrade);
+                }
+            }
+
+            List<Tokens> tokens = Tokens.loadForPilot(pilotPieces);
+            for (Tokens token : tokens) {
+                PieceSlot tokenSlot = tokenPiecesMap.get(token);
+                if (tokenSlot != null) {
+                    pilotPieces.getTokens().put(token, tokenSlot);
+                }
+            }
+
+            pieces.getShips().add(pilotPieces);
+
+            // find the stem pilot card for the correct faction
+            // set the stats
+            // set the image
+
+
+
+           // String pilotKey = getPilotMapKey(list.getFaction(), pilot.getShip(), pilot.getName());
+           // VassalXWSPilotPieces barePieces = this.pilotPiecesMap.get(pilotKey);
+ /*
             if (barePieces == null) {
 
                 // Pilot wasn't found in the pallet.  Need to check to see if it exists in xws-data or the dispatcher
@@ -167,7 +329,7 @@ public class VassalXWSPieceLoader {
 
             }
 
-            VassalXWSPilotPieces pilotPieces = new VassalXWSPilotPieces(barePieces);
+           // VassalXWSPilotPieces pilotPieces = new VassalXWSPilotPieces(barePieces);
 
             if (pilotPieces.getPilotData() != null) {
                 List<VassalXWSPilotPieces.Upgrade> foundConditions = getConditionsForCard(pilotPieces.getPilotData().getConditions());
@@ -239,6 +401,7 @@ public class VassalXWSPieceLoader {
             }
 
             pieces.getShips().add(pilotPieces);
+            */
         }
 
         for (String xwsObstacleName : list.getObstacles()) {

@@ -61,7 +61,55 @@ public class AutoSquadSpawn extends AbstractConfigurable {
 
         // If the list includes a yv666 with Hound's Tooth upgrade, add the nashtah pup ship
         xwsList = handleHoundsTooth(xwsList);
+/*
+        //TODO remove this - TEST
 
+        String imagePath = "c:\\temp\\000.png";
+        // SOMETHING IS NULL HERE
+
+        GameModule gameModule = GameModule.getGameModule();
+
+        if(gameModule == null)
+        {
+            logToChat("gameModule is null");
+        }else{
+            DataArchive dataArchive = gameModule.getDataArchive();
+
+            if(dataArchive == null)
+            {
+                logToChat("dataArchive is null");
+            }else {
+
+                FileArchive fileArchive = dataArchive.getArchive();
+
+
+                if(fileArchive == null)
+                {
+                    logToChat("fileArchive is null");
+                }else {
+                   // File imageFile = new File(imagePath+"\\"+imageName);
+                    try {
+                        fileArchive.add("/images/000.png", imagePath);
+                    }catch(IOException e)
+                    {
+                        logToChat("IOException adding image "+e.getMessage() );
+                    }
+                    //archiveWriter.addImage(imagePath, name);
+                    logToChat("Image Added");
+                    logToChat("Saving Module");
+                    try{
+                        fileArchive.close();
+                    }catch(IOException e)
+                    {
+                        logToChat("IOException occurred closing fileArchive "+e.getMessage());
+                    }
+
+
+
+                }
+            }
+        }
+*/
 
         VassalXWSListPieces pieces = slotLoader.loadListFromXWS(xwsList);
 
@@ -117,7 +165,7 @@ public class AutoSquadSpawn extends AbstractConfigurable {
 
             }
 
-            //TODO injecting code here
+            //TODO injecting ship generation code here
             GamePiece shipPiece = generateShip(ship);
 
 
@@ -125,7 +173,10 @@ public class AutoSquadSpawn extends AbstractConfigurable {
             shipBases.add(shipPiece);
         //    shipBases.add(ship.cloneShip());
 
-            GamePiece pilotPiece = ship.clonePilotCard();
+            // TODO inject pilot card generation code here
+            GamePiece pilotPiece = generatePilot(ship);
+           // GamePiece pilotPiece = ship.clonePilotCard();
+
             int pilotWidth = (int) pilotPiece.boundingBox().getWidth();
             int pilotHeight = (int) pilotPiece.boundingBox().getHeight();
             totalPilotHeight += pilotHeight;
@@ -305,6 +356,82 @@ public class AutoSquadSpawn extends AbstractConfigurable {
         String listName = xwsList.getName();
         logToChat("%s point list%s loaded from %s", pieces.getSquadPoints(),
                 listName != null ? " '" + listName + "'" : "", xwsList.getXwsSource());
+    }
+
+    private GamePiece generatePilot(VassalXWSPilotPieces ship)
+    {
+
+        GamePiece newPilot = mic.Util.newPiece(ship.getPilotCard());
+        if (ship.getShipNumber() != null && ship.getShipNumber() > 0) {
+            newPilot.setProperty("Pilot ID #", ship.getShipNumber());
+        } else {
+            newPilot.setProperty("Pilot ID #", "");
+        }
+
+        // this is a stem card = fill it in
+
+        MasterShipData.ShipData shipData = ship.getShipData();
+        MasterPilotData.PilotData pilotData = ship.getPilotData();
+        newPilot.setProperty("Ship Type",shipData.getName());
+        newPilot.setProperty("Pilot Name",pilotData.getName());
+
+        // execute the command
+
+
+
+
+        StemPilot.PilotGenerateCommand myShipGen = new StemPilot.PilotGenerateCommand(pilotData.getXws(),newPilot,pilotData.getFaction(),shipData.getXws(),pilotData.getName());
+
+        myShipGen.execute();
+
+        return newPilot;
+
+
+
+
+/*
+
+        // find the 2 slots for the stem ships
+
+        List<PieceSlot> pieceSlots = GameModule.getGameModule().getAllDescendantComponentsOf(PieceSlot.class);
+
+        PieceSlot smallShipSlot = null;
+        PieceSlot largeShipSlot = null;
+
+        for (PieceSlot pieceSlot : pieceSlots) {
+            String slotName = pieceSlot.getConfigureName();
+            if(slotName.startsWith("ship -- Nu Stem Small Ship")&& smallShipSlot == null)
+            {
+                smallShipSlot = pieceSlot;
+                continue;
+            } else if(slotName.startsWith("ship -- Nu Stem Large Ship")&& largeShipSlot == null) {
+                largeShipSlot = pieceSlot;
+                continue;
+            }
+        }
+
+        // grab the correct ship for the size of the ship
+        GamePiece newShip = null;
+        if(shipData.getSize().contentEquals("small"))
+        {
+            newShip = mic.Util.newPiece(smallShipSlot);
+        }else if(shipData.getSize().contentEquals("large"))
+        {
+            newShip = mic.Util.newPiece(largeShipSlot);
+        }
+
+
+        // execute the command
+        StemShip.ShipGenerateCommand myShipGen = new StemShip.ShipGenerateCommand(ship.getShipData().getXws(), newShip, faction, shipData.getSize());
+
+        myShipGen.execute();
+
+        //TODO add stats
+        //       dial.setProperty("ShipXwsId",ship.getShipData().getXws());
+        //      dial.setProperty("Pilot Name", getDisplayShipName(ship.getPilotData(),shipData));
+        //     dial.setProperty("Craft ID #", getDisplayPilotName(ship.getPilotData(),shipData,ship.getShipNumber()));
+        return newShip;
+        */
     }
 
     private GamePiece generateShip(VassalXWSPilotPieces ship)

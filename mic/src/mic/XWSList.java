@@ -1,14 +1,13 @@
 package mic;
 
-import java.net.URL;
-import java.util.List;
-import java.util.Map;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by amatheny on 2/8/17.
@@ -105,6 +104,9 @@ public class XWSList {
         @JsonProperty("multisection_id")
         private Integer multisectionId;
 
+        @JsonProperty("xws")
+        private String xws;
+
         @JsonProperty("name")
         private String name;
 
@@ -126,6 +128,10 @@ public class XWSList {
 
         public String getName() {
             return name;
+        }
+
+        public String getXws() {
+            return xws;
         }
 
         public String getShip() {

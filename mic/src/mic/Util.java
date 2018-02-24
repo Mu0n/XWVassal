@@ -7,6 +7,8 @@ import VASSAL.build.module.PlayerRoster;
 import VASSAL.build.widget.PieceSlot;
 import VASSAL.command.Command;
 import VASSAL.counters.*;
+import VASSAL.tools.DataArchive;
+import VASSAL.tools.io.FileArchive;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
@@ -17,9 +19,8 @@ import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.util.*;
 import java.util.List;
-import java.util.TimeZone;
 
 /**
  * Created by amatheny on 2/9/17.
@@ -324,11 +325,137 @@ public class Util {
 
         Class<?> type = Embellishment.class;
         while (p instanceof Decorator) {
+
             if (type.isInstance(p) && ((Embellishment) p).getDescription().equals(name)) {
                 return p;
             }
             p = ((Decorator) p).getInner();
         }
         return null;
+    }
+
+
+    public static boolean imageExistsInModule(String imageName)
+    {
+        GameModule gameModule = GameModule.getGameModule();
+        DataArchive dataArchive = gameModule.getDataArchive();
+        //FileArchive fileArchive = dataArchive.getArchive();
+
+        SortedSet set = dataArchive.getImageNameSet();
+        Iterator<String> i = set.iterator();
+        boolean found = false;
+        String name = null;
+        while(i.hasNext() && !found)
+        {
+            name = i.next();
+            if(name.equals(imageName))
+            {
+                found = true;
+            }
+        }
+
+        return found;
+    }
+
+    public static void downloadAndSaveImageFromOTA(String imageType, String image)
+    {
+        // download the image from OTA
+        URL OTAImageURL = null;
+        InputStream inputStream = null;
+        String url = "https://raw.githubusercontent.com/Mu0n/XWVassalOTA/master/" + imageType + "/" + image;
+
+        Util.logToChat("Attempting to download image from OTA: "+url);
+
+
+
+/*
+        GameModule gameModule = GameModule.getGameModule();
+        DataArchive dataArchive = gameModule.getDataArchive();
+        ArchiveWriter writer = gameModule.getArchiveWriter();
+
+        if(writer == null)
+        {
+            logToChat("writer is null");
+        }else {
+            byte[] bytes;
+            try {
+                logToChat("building URL");
+                OTAImageURL = new URL(url);
+                logToChat("URL built");
+            } catch (java.net.MalformedURLException e) {
+                logToChat("MalformedURLException downloading image from OTA: " + url);
+            }
+
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            InputStream is = null;
+            try {
+                is = OTAImageURL.openStream();
+                byte[] byteChunk = new byte[4096]; // Or whatever size you want to read in at a time.
+                int n;
+
+                while ((n = is.read(byteChunk)) > 0) {
+                    baos.write(byteChunk, 0, n);
+                }
+                if (is != null) {
+                    is.close();
+                }
+                writer.addImage(image, baos.toByteArray());
+                writer.close();
+                gameModule.save();
+            } catch (IOException e) {
+                System.err.printf("Failed while reading bytes from %s: %s", OTAImageURL.toExternalForm(), e.getMessage());
+                e.printStackTrace();
+                // Perform any other exception handling that's appropriate.
+            }
+        }
+
+*/
+
+
+
+        try {
+            logToChat("building URL");
+            OTAImageURL = new URL(url);
+            logToChat("URL built");
+        }catch(java.net.MalformedURLException e)
+        {
+            logToChat("MalformedURLException downloading image from OTA: "+url);
+        }
+
+        GameModule gameModule = GameModule.getGameModule();
+        DataArchive dataArchive = gameModule.getDataArchive();
+        try {
+            logToChat("opening stream");
+            inputStream = new BufferedInputStream(OTAImageURL.openStream());
+            logToChat("Stream open");
+        }catch(IOException e)
+        {
+            logToChat("IOException opening InputStream of image: "+url);
+        }
+
+        //Save the image to the module
+        FileArchive fileArchive = dataArchive.getArchive();
+
+        try {
+            logToChat("adding file");
+            fileArchive.add("/images" + image, inputStream);
+            logToChat("file added");
+        }catch(IOException e)
+        {
+            logToChat("IOException adding image "+image);
+        }
+
+        try {
+            logToChat("flushing file");
+            fileArchive.flush();
+            //fileArchive.close();
+            logToChat("file flushed");
+            fileArchive.close();
+
+        }catch(IOException e)
+        {
+            logToChat("IOException flushing the fileArchive");
+        }
+
     }
 }
