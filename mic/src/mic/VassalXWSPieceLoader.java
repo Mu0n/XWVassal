@@ -61,7 +61,7 @@ public class VassalXWSPieceLoader {
             //MrMurphM - replacing pallet-born stuff here
             String xwsShip = Canonicalizer.getCanonicalShipName(pilot.getShip());
             MasterShipData.ShipData shipData = MasterShipData.getShipData(pilot.getShip());
-            MasterPilotData.PilotData pilotData = MasterPilotData.getPilotData(xwsShip,pilot.getName() );
+            MasterPilotData.PilotData pilotData = MasterPilotData.getPilotData(xwsShip,pilot.getName(),list.getFaction() );
 
             // generate the pilot card
             VassalXWSPilotPieces barePieces = new VassalXWSPilotPieces();
@@ -603,7 +603,7 @@ public class VassalXWSPieceLoader {
         for (PieceSlot pilot : pilots) {
             String pilotName = Canonicalizer.getCanonicalPilotName(pilot.getConfigureName());
 
-            MasterPilotData.PilotData pilotData = MasterPilotData.getPilotData(shipName, pilotName);
+            MasterPilotData.PilotData pilotData = MasterPilotData.getPilotData(shipName, pilotName, faction.name());
 
             String mapKey = getPilotMapKey(faction.name(), shipName, pilotName);
             VassalXWSPilotPieces pilotPieces = new VassalXWSPilotPieces();

@@ -1,8 +1,8 @@
 package mic;
 
-import java.util.Map;
-
 import com.google.common.collect.ImmutableMap;
+
+import java.util.Map;
 
 /**
  * Created by amatheny on 2/11/17.
@@ -74,6 +74,12 @@ public class Canonicalizer {
     public static String getCanonicalPilotName(String pilotName) {
         pilotName = getCleanedName(pilotName);
         return pilotFixes.containsKey(pilotName) ? pilotFixes.get(pilotName) : pilotName;
+    }
+
+    public static String getCanonicalFactionName(String factionName)
+    {
+        factionName = getCleanedName(factionName).toLowerCase().replaceAll(" ","");
+        return factionName;
     }
 
     public static String getCanonicalUpgradeName(String upgradeType, String upgradeName) {

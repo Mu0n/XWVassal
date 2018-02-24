@@ -55,61 +55,16 @@ public class AutoSquadSpawn extends AbstractConfigurable {
 
         String userInput = JOptionPane.showInputDialog("Please paste (CTRL-V can be used to paste text copied with CTRL-C from a browser) a voidstate url or ID, YASB url, FABS url, or raw XWS JSON.\nIf the list uses new elements, a download delay may occur");
         XWSList xwsList = loadListFromUserInput(userInput);
+
+
+
         if (xwsList == null) {
             return;
         }
 
         // If the list includes a yv666 with Hound's Tooth upgrade, add the nashtah pup ship
         xwsList = handleHoundsTooth(xwsList);
-/*
-        //TODO remove this - TEST
 
-        String imagePath = "c:\\temp\\000.png";
-        // SOMETHING IS NULL HERE
-
-        GameModule gameModule = GameModule.getGameModule();
-
-        if(gameModule == null)
-        {
-            logToChat("gameModule is null");
-        }else{
-            DataArchive dataArchive = gameModule.getDataArchive();
-
-            if(dataArchive == null)
-            {
-                logToChat("dataArchive is null");
-            }else {
-
-                FileArchive fileArchive = dataArchive.getArchive();
-
-
-                if(fileArchive == null)
-                {
-                    logToChat("fileArchive is null");
-                }else {
-                   // File imageFile = new File(imagePath+"\\"+imageName);
-                    try {
-                        fileArchive.add("/images/000.png", imagePath);
-                    }catch(IOException e)
-                    {
-                        logToChat("IOException adding image "+e.getMessage() );
-                    }
-                    //archiveWriter.addImage(imagePath, name);
-                    logToChat("Image Added");
-                    logToChat("Saving Module");
-                    try{
-                        fileArchive.close();
-                    }catch(IOException e)
-                    {
-                        logToChat("IOException occurred closing fileArchive "+e.getMessage());
-                    }
-
-
-
-                }
-            }
-        }
-*/
 
         VassalXWSListPieces pieces = slotLoader.loadListFromXWS(xwsList);
 
@@ -155,9 +110,7 @@ public class AutoSquadSpawn extends AbstractConfigurable {
             // flag - does this pilot have the  Silos upgrade card assigned
             boolean pilotHasOrdnanceSilos = false;
 
-            //logToChat("Spawning pilot: %s", ship.getPilotCard().getConfigureName());
-
-            if(ship.getPilotData().getXws().equals("nashtahpuppilot"))
+            if(ship.getPilotData().getXws().equals("nashtahpuppilot")) //<- NULL HERE?
             {
                 MasterPilotData.PilotData nashtahPilotData = ship.getPilotData();
                 nashtahPilotData.setSkill(houndsToothPilotSkill);
@@ -606,6 +559,7 @@ public class AutoSquadSpawn extends AbstractConfigurable {
     private XWSList loadListFromUrl(String userInput) {
         try {
             URL translatedURL = XWSUrlHelper.translate(userInput);
+
             if (translatedURL == null) {
                 logToChat("Invalid list url detected, please try again");
                 return null;
@@ -654,7 +608,7 @@ public class AutoSquadSpawn extends AbstractConfigurable {
 
                             listHasHoundsTooth = true;
 
-                            houndsToothPilotSkill = MasterPilotData.getPilotData("yv666", pilot.getName()).getSkill();
+                            houndsToothPilotSkill = MasterPilotData.getPilotData("yv666", pilot.getName(),list.getFaction()).getSkill();
                             break;
                         }
                     }

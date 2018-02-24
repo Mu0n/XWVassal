@@ -122,7 +122,8 @@ public class StemPilot extends Decorator implements EditablePiece {
             shipXWS = xwsShipName;
             faction = thisFaction;
             pilotName = inPilotName;
-            String factionXWS = faction.toLowerCase().replaceAll(" ","");
+            String factionXWS = Canonicalizer.getCanonicalFactionName(faction);
+
             pilotXWSencoding = factionXWS+"_"+shipXWS+"_"+pilotXWS;
 
             this.piece = piece;
