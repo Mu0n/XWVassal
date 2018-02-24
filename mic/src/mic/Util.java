@@ -358,203 +358,53 @@ public class Util {
         return found;
     }
 
-    public static void downloadAndSaveImageFromOTA(String imageType, String image)
+    public static void downloadAndSaveImageFromOTA(String imageType, String imageName)
     {
-        // download the image from OTA
-        URL OTAImageURL = null;
-        InputStream inputStream = null;
-        String url = "https://raw.githubusercontent.com/Mu0n/XWVassalOTA/master/" + imageType + "/" + image;
-
-        GameModule gameModule = GameModule.getGameModule();
-        DataArchive dataArchive = gameModule.getDataArchive();
-        FileArchive fileArchive = dataArchive.getArchive();
-      //  File vmodFile = fileArchive.getFile();
-      //  Util.logToChat("File is "+vmodFile.getAbsolutePath());
-       // String name = dataArchive.getName();
-      //  logToChat("file name is "+name);
         try {
+            // download the image
+            byte[] imageBytes = downloadFileFromOTA(imageType,imageName);
 
-            ArchiveWriter writer = new ArchiveWriter(fileArchive);
+            // add the image to the module
+            addImageToModule(imageName,imageBytes);
 
-            OTAImageURL = new URL(url);
-            inputStream = new BufferedInputStream(OTAImageURL.openStream());
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            InputStream is = null;
-            is = OTAImageURL.openStream();
-            byte[] byteChunk = new byte[4096]; // Or whatever size you want to read in at a time.
-            int n;
-
-            while ((n = is.read(byteChunk)) > 0) {
-                baos.write(byteChunk, 0, n);
-            }
-            if (is != null) {
-                is.close();
-            }
-            byte[] bytes = baos.toByteArray();
-            Util.logToChat("adding file");
-           writer.addImage(image,bytes);
-            Util.logToChat("added");
-            Util.logToChat("saving");
-           writer.save();
-
-            Util.logToChat("saved");
         }catch(IOException e)
         {
             logToChat("IOException ocurred "+e.getMessage());
         }
 
+    }
 
+    private static byte[] downloadFileFromOTA(String imageType, String fileName) throws IOException
+    {
+        Util.logToChat("Downloading image: "+fileName);
+        URL OTAImageURL = null;
+        String url = "https://raw.githubusercontent.com/Mu0n/XWVassalOTA/master/" + imageType + "/" + fileName;
+        OTAImageURL = new URL(url);
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        InputStream is = null;
+        is = OTAImageURL.openStream();
+        byte[] byteChunk = new byte[4096];
+        int n;
 
+        while ((n = is.read(byteChunk)) > 0) {
+            baos.write(byteChunk, 0, n);
+        }
+        if (is != null) {
+            is.close();
+        }
+        byte[] bytes = baos.toByteArray();
+        baos.close();
+        return bytes;
     }
 
 
-    public static void downloadAndSaveImageFromOTA2(String imageType, String image)
+    private static void addImageToModule(String imageName,byte[] imageBytes) throws IOException
     {
-        // download the image from OTA
-        URL OTAImageURL = null;
-        InputStream inputStream = null;
-        String url = "https://raw.githubusercontent.com/Mu0n/XWVassalOTA/master/" + imageType + "/" + image;
-
-        Util.logToChat("Attempting to download image from OTA: "+url);
-
-
-
-/*
         GameModule gameModule = GameModule.getGameModule();
         DataArchive dataArchive = gameModule.getDataArchive();
-        ArchiveWriter writer = gameModule.getArchiveWriter();
-
-        if(writer == null)
-        {
-            logToChat("writer is null");
-        }else {
-            byte[] bytes;
-            try {
-                logToChat("building URL");
-                OTAImageURL = new URL(url);
-                logToChat("URL built");
-            } catch (java.net.MalformedURLException e) {
-                logToChat("MalformedURLException downloading image from OTA: " + url);
-            }
-
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            InputStream is = null;
-            try {
-                is = OTAImageURL.openStream();
-                byte[] byteChunk = new byte[4096]; // Or whatever size you want to read in at a time.
-                int n;
-
-                while ((n = is.read(byteChunk)) > 0) {
-                    baos.write(byteChunk, 0, n);
-                }
-                if (is != null) {
-                    is.close();
-                }
-                writer.addImage(image, baos.toByteArray());
-                writer.close();
-                gameModule.save();
-            } catch (IOException e) {
-                System.err.printf("Failed while reading bytes from %s: %s", OTAImageURL.toExternalForm(), e.getMessage());
-                e.printStackTrace();
-                // Perform any other exception handling that's appropriate.
-            }
-        }
-
-*/
-
-
-
-        try {
-            logToChat("building URL");
-            OTAImageURL = new URL(url);
-            logToChat("URL built");
-        }catch(java.net.MalformedURLException e)
-        {
-            logToChat("MalformedURLException downloading image from OTA: "+url);
-        }
-
-        GameModule gameModule = GameModule.getGameModule();
-        DataArchive dataArchive = gameModule.getDataArchive();
-
-
-        try {
-            logToChat("opening stream");
-            inputStream = new BufferedInputStream(OTAImageURL.openStream());
-            logToChat("Stream open");
-        }catch(IOException e)
-        {
-            logToChat("IOException opening InputStream of image: "+url);
-        }
-
-        //Save the image to the module
         FileArchive fileArchive = dataArchive.getArchive();
-
-        try {
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            InputStream is = null;
-
-                is = OTAImageURL.openStream();
-
-
-
-
-
-                byte[] byteChunk = new byte[4096]; // Or whatever size you want to read in at a time.
-                int n;
-
-                while ((n = is.read(byteChunk)) > 0) {
-                    baos.write(byteChunk, 0, n);
-                }
-                if (is != null) {
-                    is.close();
-                }
-
-
-
-            logToChat("adding file");
-
-
-            byte[] bytes = baos.toByteArray();
-            fileArchive.flush();
-            fileArchive.add("/images/"+image,bytes);
-
-            baos.close();
-            //        fileArchive.add("/images" + image, inputStream);
-            logToChat("file added");
-
-        }catch(IOException e)
-        {
-            logToChat("IOException adding image "+image);
-        }
-
-        try {
-            logToChat("closing file");
-            fileArchive.flush();
-            fileArchive.close();
-            logToChat("file closed");
-           // fileArchive.close();
-
-
-            //ImageUtils.getImage()
-        }catch(IOException e)
-        {
-            logToChat("IOException flushing the fileArchive");
-        }
-
-/*
-    //    try {
-            SourceOpBitmapImpl impl = new SourceOpBitmapImpl("/images/"+image);
-            logToChat("impl created");
-           // BufferedImage bi = impl.eval();
-            BufferedImage bi = impl.get();
-            logToChat("bi created");
-          //  Image img = ImageUtils.toCompatibleImage(ImageUtils.getImageResource(image));
-            ImageUtils.forceLoad(bi);
-            logToChat("force loaded");
-      //  }catch(IOException e)
-     //   {
-      //      logToChat("ImageIOException "+e.getMessage());
-      //  }
-*/
+        ArchiveWriter writer = new ArchiveWriter(fileArchive);
+        writer.addImage(imageName,imageBytes);
+        writer.save();
     }
 }

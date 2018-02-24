@@ -53,7 +53,7 @@ public class AutoSquadSpawn extends AbstractConfigurable {
             return;
         }
 
-        String userInput = JOptionPane.showInputDialog("Please paste (CTRL-V can be used to paste text copied with CTRL-C from a browser) a voidstate url or ID, YASB url, FABS url, or raw XWS JSON");
+        String userInput = JOptionPane.showInputDialog("Please paste (CTRL-V can be used to paste text copied with CTRL-C from a browser) a voidstate url or ID, YASB url, FABS url, or raw XWS JSON.\nIf the list uses new elements, a download delay may occur");
         XWSList xwsList = loadListFromUserInput(userInput);
         if (xwsList == null) {
             return;
