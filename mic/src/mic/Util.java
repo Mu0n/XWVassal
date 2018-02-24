@@ -424,6 +424,7 @@ public class Util {
 
         GameModule gameModule = GameModule.getGameModule();
         DataArchive dataArchive = gameModule.getDataArchive();
+
         try {
             logToChat("opening stream");
             inputStream = new BufferedInputStream(OTAImageURL.openStream());
@@ -437,8 +438,26 @@ public class Util {
         FileArchive fileArchive = dataArchive.getArchive();
 
         try {
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            InputStream is = null;
+
+                is = OTAImageURL.openStream();
+                byte[] byteChunk = new byte[4096]; // Or whatever size you want to read in at a time.
+                int n;
+
+                while ((n = is.read(byteChunk)) > 0) {
+                    baos.write(byteChunk, 0, n);
+                }
+                if (is != null) {
+                    is.close();
+                }
             logToChat("adding file");
-            fileArchive.add("/images" + image, inputStream);
+
+            //fileArchive.add("/images/000.png", imagePath);
+
+            fileArchive.add("/images/"+image,baos.toByteArray());
+            baos.close();
+            //        fileArchive.add("/images" + image, inputStream);
             logToChat("file added");
         }catch(IOException e)
         {
@@ -446,11 +465,11 @@ public class Util {
         }
 
         try {
-            logToChat("flushing file");
+            logToChat("closing file");
             fileArchive.flush();
-            //fileArchive.close();
-            logToChat("file flushed");
             fileArchive.close();
+            logToChat("file closed");
+           // fileArchive.close();
 
         }catch(IOException e)
         {
