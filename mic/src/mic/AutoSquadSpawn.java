@@ -104,7 +104,7 @@ public class AutoSquadSpawn extends AbstractConfigurable {
         PieceSlot illicitPieceSlot = null;
 
         // TODO loop through each pilot/ship to see what images to download
-        downloadNecessaryImage(pieces.getShips());
+        downloadNecessaryImages(pieces.getShips());
 
 
 
@@ -319,8 +319,9 @@ public class AutoSquadSpawn extends AbstractConfigurable {
                 listName != null ? " '" + listName + "'" : "", xwsList.getXwsSource());
     }
 
-    private void downloadNecessaryImage(List<VassalXWSPilotPieces> ships)
+    private void downloadNecessaryImages(List<VassalXWSPilotPieces> ships)
     {
+
         // send the command to download the images
 
         // loop through each ship/pilot to see what images are needed

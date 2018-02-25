@@ -14,10 +14,18 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
 
+
 public class OTAImageDownloader extends Decorator implements EditablePiece {
 
     public static final String ID = "otaImageDownloader";
-
+    public final static int ONE_SECOND = 1000;
+    private static int percentComplete = 0;
+    private static String progressText = "";
+    private static boolean downloadComplete = false;
+    private static ArrayList<String> pilotImageDownloadList = new ArrayList();
+  //  private static ProgressBar2 pg;
+    private static  ProgressBar progressBar;
+    private static Timer timer;
     public OTAImageDownloader(){
         this(null);
     }
@@ -78,6 +86,24 @@ public class OTAImageDownloader extends Decorator implements EditablePiece {
     }
 
 
+    public static void updateProgress(int percent, String text)
+    {
+
+        percentComplete = percent;
+        progressText = text;
+        Util.logToChat("OTAID: ProgressUpdated: "+ percent + " "+text);
+    }
+
+
+    public static void setComplete(boolean complete)
+    {
+        downloadComplete = complete;
+    }
+
+    public static ArrayList<String> getPilotImageDownloadList()
+    {
+        return pilotImageDownloadList;
+    }
 
     //this is the command that takes a ship xws name, fetches the maneuver info and constructs the dial layer by layer
     public static class ImageDownloadCommand extends Command {
@@ -109,7 +135,11 @@ public class OTAImageDownloader extends Decorator implements EditablePiece {
         // construct the Pilot Card piece
         protected void executeCommand()
         {
-            ArrayList<String> pilotImageDownloadList = new ArrayList();
+
+            // Spawn a new Thread
+
+
+
             // loop through each image to see which ones we need
             if(pilotImages != null)
             {
@@ -129,21 +159,124 @@ public class OTAImageDownloader extends Decorator implements EditablePiece {
             {
                 // TODO pop up a progress bar
 
-                // download each one
+
                 for(String pilotImage: pilotImageDownloadList)
                 {
+                   // Util.logToChat("OTAIDT: Downloading "+pilotImage);
+                   // text = "Downloading "+pilotImage;
+                   // OTAImageDownloader.updateProgress(percent,text);
                     Util.downloadAndSaveImageFromOTA("pilots",pilotImage);
+                  //  Util.logToChat("OTAIDT: Download Complete: "+pilotImage);
+                  //  done++;
+
+                   // percent = (done * 100/total) ;
+                   // OTAImageDownloader.updateProgress(percent,text);
+
+                }
+
+
+
+
+
+
+
+              /*
+                progressBar = new ProgressBar();
+                progressBar.openFrame();
+
+
+                // start the new worker thread
+                OTAImageDownloaderThread workerThread = new OTAImageDownloaderThread();
+                Thread thread = new Thread(workerThread);
+                thread.start();
+
+                final java.util.Timer timer = new java.util.Timer();
+                timer.schedule(new TimerTask() {
+                    @Override
+                    public void run() {
+                        try{
+                            if(downloadComplete) {
+                                timer.cancel();
+                                progressBar.closeFrame();
+                                return;
+                            }
+                            progressBar.updateBar(percentComplete,progressText);
+                        } catch (Exception e) {
+                            //logger.error("Error rendering collision visualization", e);
+                        }
+                    }
+                }, 0,ONE_SECOND);
+*/
+
+
+/*
+                while(!downloadComplete)
+                {
+                    progressBar.updateBar(percentComplete,progressText);
+
+                    try {
+                        Thread.sleep(500);
+                    }catch(InterruptedException e)
+                    {
+
+                    }
+                }
+                progressBar.closeFrame();
+                */
+/*
+                timer = new Timer(ONE_SECOND, new ActionListener() {
+                    public void actionPerformed(ActionEvent evt) {
+                        progressBar.updateBar(percentComplete,progressText);
+                        progressBar.repaint();
+                        if (downloadComplete) {
+                            timer.stop();
+                            progressBar.closeFrame();
+                        }
+                    }
+                });*/
+
+
+/*
+                // loop until complete
+                while(!downloadComplete) {
+
+                    Timer timer = new Timer(100, this);
+                    timer.setInitialDelay(1900);
+                    timer.start();
+                    // update the progress bar
+                }
+
+
+
+                pg.start("Downloading required images");
+                // download each one
+                int percent = 0;
+                int total = pilotImageDownloadList.size();
+                int done = 0;
+                String text = "";
+                for(String pilotImage: pilotImageDownloadList)
+                {
+                    text = "Downloading "+pilotImage;
+                    pg.updateBar(percent,text);
+                    Util.downloadAndSaveImageFromOTA("pilots",pilotImage);
+
+                    done++;
+
                     // TODO update progress bar
+                    percent = (done * 100/total) ;
+                    pg.updateBar(percent,text);
+*/
                 }
 
                 // TODO close progress bar
             }
 
-        }
+
 
         protected Command myUndoCommand() {
             return null;
         }
+
         public static class ImageDownloaderEncoder implements CommandEncoder {
             private static final Logger logger = LoggerFactory.getLogger(StemPilot.class);
             private static final String commandPrefix = "ImageDownloaderEncoder=";
