@@ -340,7 +340,46 @@ public class Util {
     {
         GameModule gameModule = GameModule.getGameModule();
         DataArchive dataArchive = gameModule.getDataArchive();
-        //FileArchive fileArchive = dataArchive.getArchive();
+        FileArchive fileArchive = dataArchive.getArchive();
+
+        boolean found = false;
+        try {
+
+            found = fileArchive.contains("images/" + imageName);
+
+        }catch(Exception e)
+        {
+            Util.logToChat("Exception searching for image in module");
+        }
+
+        return found;
+
+    }
+    /*
+    public static boolean imageExistsInModule(String imageName)
+    {
+        // TODO DELETEME
+        Util.logToChat("Looking for image: "+imageName);
+
+        GameModule gameModule = GameModule.getGameModule();
+        DataArchive dataArchive = gameModule.getDataArchive();
+
+
+        // TODO DELETEME
+        try {
+            FileArchive fileArchive = dataArchive.getArchive();
+
+            Util.logToChat("contains /images/" + imageName+": " + fileArchive.contains("/images/" + imageName));
+            Util.logToChat( "contains "+imageName+": " + fileArchive.contains(imageName));
+            Util.logToChat("contains images/" + imageName+": " + fileArchive.contains("images/" + imageName));
+            Util.logToChat("contains \\images\\" + imageName+": " + fileArchive.contains("\\images\\" + imageName));
+            Util.logToChat("contains images\\" + imageName+": " + fileArchive.contains("images\\" + imageName));
+
+        }catch(Exception e)
+        {
+
+        }
+
 
         SortedSet set = dataArchive.getImageNameSet();
         Iterator<String> i = set.iterator();
@@ -349,15 +388,22 @@ public class Util {
         while(i.hasNext() && !found)
         {
             name = i.next();
+            // TODO DELETEME
+ //           Util.logToChat("Checking against: "+name);
             if(name.equals(imageName))
             {
+                // TODO DELETEME
+    //            Util.logToChat("We have a match!!!!!!!!!");
+
+
                 found = true;
             }
         }
 
+        Util.logToChat("found: "+found);
         return found;
     }
-
+*/
     public static void downloadAndSaveImageFromOTA(String imageType, String imageName)
     {
         try {
