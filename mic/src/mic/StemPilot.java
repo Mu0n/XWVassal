@@ -109,7 +109,7 @@ public class StemPilot extends Decorator implements EditablePiece {
 
         GamePiece piece;
 //        static String xwsPilotName = "";
-        String shipName;
+ //       String shipName;
         static String faction = "";
         static String pilotName = "";
         String shipXWS = "";
@@ -146,14 +146,14 @@ public class StemPilot extends Decorator implements EditablePiece {
             String pilotCardImage = "Pilot_"+pilotXWSencoding+".jpg";
 
             // check to see if the image for the pilot card exists locally
-            if(!Util.imageExistsInModule(pilotCardImage.trim()))
-            {
-                // image doesn't exist
-                Util.logToChat("Pilot image not found: "+pilotCardImage);
+ //           if(!Util.imageExistsInModule(pilotCardImage.trim()))
+//            {
+ //               // image doesn't exist
+ //               Util.logToChat("Pilot image not found: "+pilotCardImage);
 
-                // download the image from OTA
-                Util.downloadAndSaveImageFromOTA("pilots", pilotCardImage);
-            }
+ //               // download the image from OTA
+ //               Util.downloadAndSaveImageFromOTA("pilots", pilotCardImage);
+ //           }
 
 
 
@@ -162,30 +162,6 @@ public class StemPilot extends Decorator implements EditablePiece {
 
             piece = buildImageLayer(piece,pilotCardImage.trim(),pilotName, faction);
 
-
-/*
-            // set the firing arcs on the cardboard
-            piece = buildCardboardFiringArcs(piece,faction,arcList,size);
-
-
-            // TODO set the actual Firing Arcs
-
-            // set the actions on the cardboard
-            piece = buildCardboardActions(piece, actionList, size);
-
-            //TODO add the actions
-            //TODO add the side actions
-            piece =  buildSideActions(piece,size);
-
-*/
-            //TODO add the ship layer
-            //TODO add the rotate & pivot
-
-            // build the layers for the maneuvers on the dial
-  //          buildManeuvers(piece, newMoveList);
-
-            // build the dial back and dial hide images
- //           buildDialMask(piece,xwsShipName,faction);
 
         }
 

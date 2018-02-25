@@ -16,6 +16,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 
 import static mic.Util.*;
@@ -101,6 +102,13 @@ public class AutoSquadSpawn extends AbstractConfigurable {
         List<Point> illicitLocations = Lists.newArrayList(); // list of coordinates to place illicit tokens
         int illicitYOffset = 50; // Y-Offset of where to place illicit tokens relative to the upgrade card
         PieceSlot illicitPieceSlot = null;
+
+        // TODO loop through each pilot/ship to see what images to download
+        downloadNecessaryImage(pieces.getShips());
+
+
+
+
 
         for (VassalXWSPilotPieces ship : pieces.getShips()) {
 
@@ -311,6 +319,27 @@ public class AutoSquadSpawn extends AbstractConfigurable {
                 listName != null ? " '" + listName + "'" : "", xwsList.getXwsSource());
     }
 
+    private void downloadNecessaryImage(List<VassalXWSPilotPieces> ships)
+    {
+        // send the command to download the images
+
+        // loop through each ship/pilot to see what images are needed
+        // collect every image, because we don't know what other clients might not have
+        ArrayList pilotImageList = new ArrayList();
+        for (VassalXWSPilotPieces ship : ships) {
+
+            // get the pilotImageName
+            MasterShipData.ShipData shipData = ship.getShipData();
+            MasterPilotData.PilotData pilotData = ship.getPilotData();
+
+            String pilotCardImage = "Pilot_" + Canonicalizer.getCanonicalFactionName(pilotData.getFaction()) + "_" + shipData.getXws() + "_" + pilotData.getXws() + ".jpg";
+            pilotImageList.add(pilotCardImage);
+        }
+
+        OTAImageDownloader.ImageDownloadCommand myImageDownloader = new OTAImageDownloader.ImageDownloadCommand(pilotImageList);
+        myImageDownloader.executeCommand();
+    }
+
     private GamePiece generatePilot(VassalXWSPilotPieces ship)
     {
 
@@ -327,11 +356,6 @@ public class AutoSquadSpawn extends AbstractConfigurable {
         MasterPilotData.PilotData pilotData = ship.getPilotData();
         newPilot.setProperty("Ship Type",shipData.getName());
         newPilot.setProperty("Pilot Name",pilotData.getName());
-
-        // execute the command
-
-
-
 
         StemPilot.PilotGenerateCommand myShipGen = new StemPilot.PilotGenerateCommand(pilotData.getXws(),newPilot,pilotData.getFaction(),shipData.getXws(),pilotData.getName());
 
@@ -502,6 +526,7 @@ public class AutoSquadSpawn extends AbstractConfigurable {
         }
         return pilotName;
     }
+
     private String getDisplayShipName(MasterPilotData.PilotData pilotData, MasterShipData.ShipData shipData) {
         String shipName = "";
         if (pilotData != null) {

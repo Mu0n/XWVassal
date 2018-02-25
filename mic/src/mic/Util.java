@@ -429,6 +429,9 @@ public class Util {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         InputStream is = null;
         is = OTAImageURL.openStream();
+
+
+
         byte[] byteChunk = new byte[4096];
         int n;
 
