@@ -51,9 +51,7 @@ public class MasterPilotData extends ArrayList<MasterPilotData.PilotData> {
 
     protected static void loadData()
     {
-        Util.logToChat("Inside loadData");
         if(loadedData == null) {
-            Util.logToChat("loadedData is null");
             // load data from xwing-data
             loadFromXwingData();
 
