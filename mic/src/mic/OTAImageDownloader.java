@@ -165,6 +165,8 @@ public class OTAImageDownloader extends Decorator implements EditablePiece {
                    // Util.logToChat("OTAIDT: Downloading "+pilotImage);
                    // text = "Downloading "+pilotImage;
                    // OTAImageDownloader.updateProgress(percent,text);
+                    //TODO DELETE ME
+                    Util.logToChat("Looking for image:"+pilotImage);
                     Util.downloadAndSaveImageFromOTA("pilots",pilotImage);
                   //  Util.logToChat("OTAIDT: Download Complete: "+pilotImage);
                   //  done++;
