@@ -135,11 +135,6 @@ public class OTAImageDownloader extends Decorator implements EditablePiece {
         // construct the Pilot Card piece
         protected void executeCommand()
         {
-
-            // Spawn a new Thread
-
-
-
             // loop through each image to see which ones we need
             if(pilotImages != null)
             {
@@ -165,8 +160,7 @@ public class OTAImageDownloader extends Decorator implements EditablePiece {
                    // Util.logToChat("OTAIDT: Downloading "+pilotImage);
                    // text = "Downloading "+pilotImage;
                    // OTAImageDownloader.updateProgress(percent,text);
-                    //TODO DELETE ME
-                    Util.logToChat("Looking for image:"+pilotImage);
+
                     Util.downloadAndSaveImageFromOTA("pilots",pilotImage);
                   //  Util.logToChat("OTAIDT: Download Complete: "+pilotImage);
                   //  done++;
@@ -181,9 +175,10 @@ public class OTAImageDownloader extends Decorator implements EditablePiece {
 
 
 
+/*
 
-              /*
                 progressBar = new ProgressBar();
+                progressBar.setVisible(true);
                 progressBar.openFrame();
 
 
@@ -203,6 +198,7 @@ public class OTAImageDownloader extends Decorator implements EditablePiece {
                                 return;
                             }
                             progressBar.updateBar(percentComplete,progressText);
+                            Thread.yield();
                         } catch (Exception e) {
                             //logger.error("Error rendering collision visualization", e);
                         }

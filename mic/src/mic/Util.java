@@ -422,7 +422,7 @@ public class Util {
 
     private static byte[] downloadFileFromOTA(String imageType, String fileName) throws IOException
     {
-        Util.logToChat("Downloading image: "+fileName);
+       // Util.logToChat("Downloading image: "+fileName);
         URL OTAImageURL = null;
         String url = "https://raw.githubusercontent.com/Mu0n/XWVassalOTA/master/" + imageType + "/" + fileName;
         OTAImageURL = new URL(url);
