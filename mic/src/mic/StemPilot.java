@@ -20,7 +20,7 @@ public class StemPilot extends Decorator implements EditablePiece {
             .put("Resistance","Pilot-Resistance_Back.jpg")
             .put("Galactic Empire","Pilot-Imperial_Back.jpg")
             .put("First Order","Pilot-First_Order_Back.jpg")
-            .put("Scum & Villainy","Pilot-S&V_Back.jpg")
+            .put("Scum and Villainy","Pilot-S&V_Back.jpg")
             .build();
 
     public static final String ID = "stemPilot";
@@ -167,7 +167,7 @@ public class StemPilot extends Decorator implements EditablePiece {
 
         private GamePiece buildImageLayer(GamePiece piece, String pilotCardImage, String pilotName, String faction)
         {
-
+            
             String backImage = factionBacks.get(faction);
 
             StringBuilder sb = new StringBuilder();
