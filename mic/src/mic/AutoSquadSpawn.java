@@ -333,33 +333,6 @@ public class AutoSquadSpawn extends AbstractConfigurable {
             MasterShipData.ShipData shipData = ship.getShipData();
             MasterPilotData.PilotData pilotData = ship.getPilotData();
 
-            //TODO DELETEME
-            if(shipData == null)
-            {
-                mic.Util.logToChat("shipData is null");
-            }else if(shipData.getXws() == null)
-            {
-                mic.Util.logToChat("shipData.getXws() is null");
-            }
-
-            //pilotData is null here... why?
-            if(pilotData == null)
-            {
-                mic.Util.logToChat("pilotData is null");
-            }else
-            {
-                if(pilotData.getFaction() == null)
-                {
-                    mic.Util.logToChat("pilotData.getFaction() is null");
-                }
-                if(pilotData.getXws() == null)
-                {
-                    mic.Util.logToChat("pilotData.getXws() is null");
-                }
-            }
-
-
-
 
             Canonicalizer.getCanonicalFactionName(pilotData.getFaction());
             shipData.getXws();

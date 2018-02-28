@@ -17,7 +17,7 @@ public class MasterPilotData extends ArrayList<MasterPilotData.PilotData> {
 
 
     private static Map<String, String> factionConversion = ImmutableMap.<String, String>builder()
-            .put("rebelalliance ","rebel")
+            .put("rebelalliance","rebel")
             .put("resistance","rebel")
             .put("galacticempire","imperial")
             .put("firstorder","imperial")
@@ -46,12 +46,17 @@ public class MasterPilotData extends ArrayList<MasterPilotData.PilotData> {
 
         //return loadedData.get(ship + "/" + pilot);
 
+
         return loadedData.get(pilotKey);
     }
 
+
+
     protected static void loadData()
     {
+
         if(loadedData == null) {
+
             // load data from xwing-data
             loadFromXwingData();
 
@@ -75,6 +80,7 @@ public class MasterPilotData extends ArrayList<MasterPilotData.PilotData> {
                     if(loadedData.get(pilotKey) == null)
                     {
 
+
                         loadedData.put(pilotKey, pilot);
                     }
 
@@ -84,13 +90,10 @@ public class MasterPilotData extends ArrayList<MasterPilotData.PilotData> {
                 }
             }
         }
+
     }
 
-    //TODO DELETE ME
-    public static Map getLoadedData()
-    {
-        return loadedData;
-    }
+
 
     private static void loadFromXwingData()
     {
@@ -108,8 +111,13 @@ public class MasterPilotData extends ArrayList<MasterPilotData.PilotData> {
             //MrMurphM - need to add in faction or pilots like Boba Fett will not work properly
             String xwsFaction = Canonicalizer.getCanonicalFactionName(pilot.getFaction());
 
+
+
             String convFaction = factionConversion.get(xwsFaction);
+
+
             String pilotKey = convFaction+"/"+xwsShip+"/"+pilot.getXws();
+
 
 
             loadedData.put(pilotKey,pilot);
