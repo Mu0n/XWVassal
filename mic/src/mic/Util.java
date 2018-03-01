@@ -406,28 +406,34 @@ public class Util {
 */
     public static void downloadAndSaveImageFromOTA(String imageType, String imageName)
     {
-        try {
+        boolean imageFound = false;
+        byte[] imageBytes = null;
+
             // download the image
-            byte[] imageBytes = null;
-            try {
-                imageBytes = downloadFileFromOTA(imageType, imageName);
-            }catch(Exception e)
+
+        try {
+            imageBytes = downloadFileFromOTA(imageType, imageName);
+
+            if(imageBytes != null)
             {
-                Util.logToChat("Exception occurred: "+e.toString()+" "+e.getMessage());
-
+                imageFound = true;
             }
-
-            if(imageBytes == null)
-            {
-                Util.logToChat("imageBytes is null");
-            }
-
-            // add the image to the module
-            addImageToModule(imageName,imageBytes);
-
         }catch(IOException e)
         {
-            logToChat("IOException ocurred "+e.getMessage());
+            // OTA doesn't have the image
+            imageFound = false;
+        }
+
+
+        if(imageFound)
+        {
+            try {
+                // add the image to the module
+                addImageToModule(imageName, imageBytes);
+
+            } catch (IOException e) {
+                logToChat("IOException ocurred adding an image " + e.getMessage());
+            }
         }
 
     }

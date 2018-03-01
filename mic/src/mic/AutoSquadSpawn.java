@@ -360,10 +360,10 @@ public class AutoSquadSpawn extends AbstractConfigurable {
 
         MasterShipData.ShipData shipData = ship.getShipData();
         MasterPilotData.PilotData pilotData = ship.getPilotData();
-        newPilot.setProperty("Ship Type",shipData.getName());
-        newPilot.setProperty("Pilot Name",pilotData.getName());
+    //    newPilot.setProperty("Ship Type",shipData.getName());
+    //    newPilot.setProperty("Pilot Name",pilotData.getName());
 
-        StemPilot.PilotGenerateCommand myShipGen = new StemPilot.PilotGenerateCommand(pilotData.getXws(),newPilot,pilotData.getFaction(),shipData.getXws(),pilotData.getName());
+        StemPilot.PilotGenerateCommand myShipGen = new StemPilot.PilotGenerateCommand(pilotData.getXws(),newPilot,pilotData.getFaction(),shipData.getXws(),pilotData.getName(),shipData.getName());
 
         myShipGen.execute();
 

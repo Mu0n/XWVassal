@@ -23,6 +23,15 @@ public class StemPilot extends Decorator implements EditablePiece {
             .put("Scum and Villainy","Pilot-S&V_Back.jpg")
             .build();
 
+
+    private static Map<String, String> wipImages = ImmutableMap.<String, String>builder()
+            .put("Rebel Alliance","Pilot_WIP_Rebel.jpg")
+            .put("Resistance","Pilot_WIP_Resistance.jpg")
+            .put("Galactic Empire","Pilot_WIP_Empire.jpg")
+            .put("First Order","Pilot_WIP_First_Order.jpg")
+            .put("Scum and Villainy","Pilot_WIP_Scum.jpg")
+            .build();
+
     public static final String ID = "stemPilot";
 
 
@@ -115,13 +124,15 @@ public class StemPilot extends Decorator implements EditablePiece {
         String shipXWS = "";
         static String pilotXWSencoding = "";
         //static String stemPieceName = "";
-        PilotGenerateCommand(String pilotXWS, GamePiece piece, String thisFaction, String xwsShipName, String inPilotName)
+        static String shipName = "";
+        PilotGenerateCommand(String pilotXWS, GamePiece piece, String thisFaction, String xwsShipName, String inPilotName, String inShipName )
         {
             //xwsPilotName = pilotXWS;
 
             shipXWS = xwsShipName;
             faction = thisFaction;
             pilotName = inPilotName;
+            shipName = inShipName;
             String factionXWS = Canonicalizer.getCanonicalFactionName(faction);
 
             pilotXWSencoding = factionXWS+"_"+shipXWS+"_"+pilotXWS;
@@ -145,24 +156,24 @@ public class StemPilot extends Decorator implements EditablePiece {
             String factionXWS = faction.toLowerCase().replaceAll(" ","");
             String pilotCardImage = "Pilot_"+pilotXWSencoding+".jpg";
 
-            // check to see if the image for the pilot card exists locally
- //           if(!Util.imageExistsInModule(pilotCardImage.trim()))
-//            {
- //               // image doesn't exist
- //               Util.logToChat("Pilot image not found: "+pilotCardImage);
+            // check to see that the pilot card image exists in the module.
+            // if it doesn't then use a WIP image
+            boolean useWipImage = false;
+            if(!Util.imageExistsInModule(pilotCardImage))
+            {
+                pilotCardImage = wipImages.get(faction);
+                useWipImage = true;
+            }
 
- //               // download the image from OTA
- //               Util.downloadAndSaveImageFromOTA("pilots", pilotCardImage);
- //           }
+            piece = buildImageLayer(piece, pilotCardImage, pilotName, faction);
 
+            // if we used a WIP image, we need to add the ship and pilot Name to the card
 
-
-
-            // now add the image front and back
-
-            piece = buildImageLayer(piece,pilotCardImage.trim(),pilotName, faction);
-
-
+            if(useWipImage)
+            {
+                piece.setProperty("Ship Type",shipName);
+                piece.setProperty("Pilot Name",pilotName);
+            }
         }
 
         private GamePiece buildImageLayer(GamePiece piece, String pilotCardImage, String pilotName, String faction)
