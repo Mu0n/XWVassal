@@ -408,7 +408,19 @@ public class Util {
     {
         try {
             // download the image
-            byte[] imageBytes = downloadFileFromOTA(imageType,imageName);
+            byte[] imageBytes = null;
+            try {
+                imageBytes = downloadFileFromOTA(imageType, imageName);
+            }catch(Exception e)
+            {
+                Util.logToChat("Exception occurred: "+e.toString()+" "+e.getMessage());
+
+            }
+
+            if(imageBytes == null)
+            {
+                Util.logToChat("imageBytes is null");
+            }
 
             // add the image to the module
             addImageToModule(imageName,imageBytes);
