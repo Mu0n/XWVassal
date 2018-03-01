@@ -167,7 +167,7 @@ public class StemPilot extends Decorator implements EditablePiece {
 
         private GamePiece buildImageLayer(GamePiece piece, String pilotCardImage, String pilotName, String faction)
         {
-            
+
             String backImage = factionBacks.get(faction);
 
             StringBuilder sb = new StringBuilder();
