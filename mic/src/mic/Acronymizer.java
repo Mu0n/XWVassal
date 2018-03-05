@@ -5,6 +5,7 @@ import java.util.List;
 
 /**
  * Created by TerTer on 2017-02-24.
+ * testing
  */
 public class Acronymizer {
     private static String THE = "The";
