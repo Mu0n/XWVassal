@@ -412,6 +412,9 @@ public class ShipReposition extends Decorator implements EditablePiece {
 
     @Override
     public Command keyEvent(KeyStroke stroke) {
+
+        Boolean hasSomethingHappened  = false;
+
         //Any keystroke made on a ship will remove the orange shades
         previousCollisionVisualization = new MapVisualizations();
 
@@ -425,6 +428,7 @@ public class ShipReposition extends Decorator implements EditablePiece {
             Shape shipShape = getBumpableCompareShape(this);
             List<BumpableWithShape> overlappingObstacles = findCollidingEntities(shipShape, BWS);
                 if(overlappingObstacles.size() > 0) {
+                    hasSomethingHappened = true;
                     for(BumpableWithShape bws : overlappingObstacles)
                     {
                         previousCollisionVisualization.add(bws.shape);
@@ -442,6 +446,7 @@ public class ShipReposition extends Decorator implements EditablePiece {
         RepoManeuver repoTemplateDrop = getKeystrokeTemplateDrop(stroke);
         // Template drop requested
         if (repoTemplateDrop != null && stroke.isOnKeyRelease() == false) {
+            hasSomethingHappened = true;
             Command tempCommand = spawnRepoTemplate(repoTemplateDrop);
             result.append(tempCommand);
 
@@ -465,6 +470,7 @@ public class ShipReposition extends Decorator implements EditablePiece {
         RepoManeuver repoShip = getKeystrokeRepoManeuver(stroke);
         //Ship reposition requested
         if(repoShip != null  && stroke.isOnKeyRelease() == false) {
+            hasSomethingHappened = true;
             /*
             if (this.previousCollisionVisualization != null && this.previousCollisionVisualization.getCount() > 0) {
                 getMap().removeDrawComponent(this.previousCollisionVisualization);
@@ -495,6 +501,7 @@ public class ShipReposition extends Decorator implements EditablePiece {
             previousCollisionVisualization.execute();
             return result;
         }
+        if(hasSomethingHappened == true) return result;
         return piece.keyEvent(stroke);
     }
 
