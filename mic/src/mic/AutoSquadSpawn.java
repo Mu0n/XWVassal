@@ -461,6 +461,14 @@ public class AutoSquadSpawn extends AbstractConfigurable {
         myShipGen.execute();
 
         //TODO add stats
+        newShip.setProperty("Craft ID #", getDisplayPilotName(ship.getPilotData(),shipData,ship.getShipNumber())); //is actually the pilot name
+        newShip.setProperty("Pilot Skill", Integer.toString(ship.getPilotData().getSkill()));
+
+        newShip.setProperty("Pilot Name", getDisplayShipName(ship.getPilotData(),shipData)); //is actually the ship name
+        newShip.setProperty("Attack Rating", Integer.toString(ship.getShipData().getAttack()));
+        newShip.setProperty("Defense Rating", Integer.toString(ship.getShipData().getAgility()));
+        newShip.setProperty("Hull Rating", Integer.toString(ship.getShipData().getHull()));
+        newShip.setProperty("Shield Rating", Integer.toString(ship.getShipData().getShields()));
  //       dial.setProperty("ShipXwsId",ship.getShipData().getXws());
   //      dial.setProperty("Pilot Name", getDisplayShipName(ship.getPilotData(),shipData));
    //     dial.setProperty("Craft ID #", getDisplayPilotName(ship.getPilotData(),shipData,ship.getShipNumber()));
