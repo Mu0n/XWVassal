@@ -26,7 +26,7 @@ public class ContentsChecker  extends AbstractConfigurable {
     private synchronized void ContentsCheckerWindow() {
         ModuleIntegrityChecker mic = new ModuleIntegrityChecker();
 
-        
+
         String msg = mic.getTestString();;
             JFrame frame = new JFrame();
             JPanel panel = new JPanel();
@@ -83,11 +83,10 @@ public class ContentsChecker  extends AbstractConfigurable {
         return null;
     }
 
-    @Override
+
     public void removeFrom(Buildable parent) {
-
+        GameModule.getGameModule().getToolBar().remove(OKButton);
     }
-
     @Override
     public HelpFile getHelpFile() {
         return null;
