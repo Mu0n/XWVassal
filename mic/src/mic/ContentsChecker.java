@@ -58,6 +58,10 @@ public class ContentsChecker  extends AbstractConfigurable {
         GameModule.getGameModule().getToolBar().add(b);
     }
 
+    public String getDescription() {
+        return "Contents Checker (mic.ContentsChecker)";
+    }
+
     @Override
     public String[] getAttributeDescriptions() {
         return new String[0];

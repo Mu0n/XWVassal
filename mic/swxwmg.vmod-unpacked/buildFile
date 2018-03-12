@@ -2853,4 +2853,5 @@
         <VASSAL.build.widget.PieceSlot entryName="Stem Condition WIP" gpid="12325" height="300" width="194">+/null/obs;70,130;Cond-WIP_Back.png;Flip;P;?;player:;Peek	PROP;Upgrade Name;false,0,100,false;Set Upgrade Name:78\,65:R\,Upgrade Name?\	label;;;18;;0,0,0;t;40;l;100;c;c;;Dialog;0;0;TextLabel - Pilot Name;\\	delete;Delete;68,130\\\	clone;Copy;67,130\\\\	mark;Layers\\\\\	placemark;Spawn Token;84,130;VASSAL.build.module.PieceWindow:Stem Upgrades\/VASSAL.build.widget.PieceSlot:Stem Condition Token WIP;null;0;0;false;;;12332;0;false\\\\\\	prototype;Observe\\\\\\\	piece;;;Cond-WIP.png;Stem Condition WIP/null;	Upgrade Name\	$Upgrade Name$\\	\\\	\\\\	Upgrades\\\\\	\\\\\\	\\\\\\\	null;0;0;12325</VASSAL.build.widget.PieceSlot>
         <VASSAL.build.widget.PieceSlot entryName="Stem Condition Token WIP" gpid="12329" height="300" width="194">+/null/prototype;Observe	mark;Layers\	clone;Copy;67,130\\	delete;Delete;68,130\\\	piece;;;Cond-WIP_Token.png;Stem Condition Token WIP/	Upgrades\	\\	\\\	null;0;0;12329</VASSAL.build.widget.PieceSlot>
     </VASSAL.build.module.PieceWindow>
+    <mic.ContentsChecker/>
 </VASSAL.launch.BasicModule>
