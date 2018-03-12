@@ -94,6 +94,14 @@ public class MasterPilotData extends ArrayList<MasterPilotData.PilotData> {
     }
 
 
+    public Object[] getAllPilots()
+    {
+        if(loadedData == null)
+        {
+            loadData();
+        }
+        return loadedData.values().toArray();
+    }
 
     private static void loadFromXwingData()
     {

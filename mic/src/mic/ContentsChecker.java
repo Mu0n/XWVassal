@@ -4,18 +4,11 @@ import VASSAL.build.AbstractConfigurable;
 import VASSAL.build.Buildable;
 import VASSAL.build.GameModule;
 import VASSAL.build.module.documentation.HelpFile;
-import sun.security.pkcs11.Secmod;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLConnection;
 
 /**
  * Created by Mic on 12/03/2018.
@@ -26,12 +19,17 @@ public class ContentsChecker  extends AbstractConfigurable {
     private synchronized void ContentsCheckerWindow() {
         ModuleIntegrityChecker mic = new ModuleIntegrityChecker();
 
+        String[][] pilotResults = mic.checkPilots();
+
+
 
         String msg = mic.getTestString();;
             JFrame frame = new JFrame();
+          //  frame.setSize(1000,1000);
+            frame.setResizable(true);
             JPanel panel = new JPanel();
             JLabel spacer;
-            panel.setMinimumSize(new Dimension(1000, 700));
+          //  panel.setMinimumSize(new Dimension(5000, 3500));
 
             panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
 
@@ -40,6 +38,23 @@ public class ContentsChecker  extends AbstractConfigurable {
             //optionPane.setMessageType(JOptionPane.INFORMATION_MESSAGE);
             optionPane.add(panel);
             JDialog dialog = optionPane.createDialog(frame, "Contents Checker");
+            dialog.setSize(1000,500);
+        String[] columnNames = {"Faction","Ship","Pilot","Image","Status"};
+
+        JTable table = new JTable(pilotResults,columnNames);
+        table.getColumnModel().getColumn(0).setPreferredWidth(125);;
+        table.getColumnModel().getColumn(1).setPreferredWidth(150);
+        table.getColumnModel().getColumn(2).setPreferredWidth(150);
+        table.getColumnModel().getColumn(3).setPreferredWidth(325);
+        table.getColumnModel().getColumn(4).setPreferredWidth(75);
+       // table.setSize(300,300);
+        // Turn off JTable's auto resize so that JScrollPane will show a horizontal
+        // scroll bar.
+        table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+
+        JScrollPane pane = new JScrollPane(table);
+        panel.add(pane, BorderLayout.CENTER);
+
 
             dialog.setVisible(true);
             frame.toFront();

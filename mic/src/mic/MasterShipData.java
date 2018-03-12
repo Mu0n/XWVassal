@@ -4,9 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by amatheny on 2/11/17.
@@ -20,6 +18,26 @@ public class MasterShipData extends ArrayList<MasterShipData.ShipData> {
     private static String DISPATCHER_URL = "https://raw.githubusercontent.com/mrmurphm/XWVassal/new-dial/mic/swxwmg.vmod-unpacked/dispatcher_ships.json";
 
     private static Map<String, ShipData> loadedData = null;
+
+    public static ShipData getShipDataForShipName(String shipName)
+    {
+        if (loadedData == null) {
+            loadData();
+        }
+        Collection data = loadedData.values();
+        Iterator i = data.iterator();
+        boolean found = false;
+        ShipData sd = null;
+        while(i.hasNext() && !found)
+        {
+            sd = (ShipData)i.next();
+            if(sd.getName().equalsIgnoreCase(shipName))
+            {
+                found = true;
+            }
+        }
+        return sd;
+    }
 
     public static ShipData getShipData(String shipXwsId) {
         if (loadedData == null) {

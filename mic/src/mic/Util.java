@@ -404,6 +404,28 @@ public class Util {
         return found;
     }
 */
+
+    public static void downloadAnyMissingImages()
+    {
+        // check xwing-data
+        // check dispatcher
+
+        // compile list of pilot images
+
+        // compile list of ship images
+
+        // compile list of upgrade images
+
+        // compile list of condition images
+
+        // loop through each required image
+            // if that image doesn't exist locally, add it to a list to download
+
+        // popup progress bar
+        // loop through the list of missing images
+            // download and save each one
+    }
+
     public static void downloadAndSaveImageFromOTA(String imageType, String imageName)
     {
         boolean imageFound = false;
