@@ -4,6 +4,8 @@ package mic;
 import java.util.ArrayList;
 import java.util.List;
 
+import static mic.Util.logToChat;
+
 /**
  * Created by Mic on 03/11/2018.
  *
@@ -13,6 +15,10 @@ import java.util.List;
  */
 
 public class ModuleIntegrityChecker {
+    private static String REMOTE_URL = "https://raw.githubusercontent.com/guidokessels/xwing-data/master/data/pilots.js";
+
+    public String testString ="";
+
     private ArrayList<String> pilotsRebelAlliance, pilotsRebelAllianceMissing,
                         pilotsResistance, pilotsResistanceMissing,
                         pilotsGalacticEmpire, pilotsGalacticEmpireMissing,
@@ -42,7 +48,16 @@ public class ModuleIntegrityChecker {
     }
 
     public void checkAll(){
-MasterPilotData allo =
+        MasterPilotData mpd = new MasterPilotData();
+        mpd.loadData();
+
+        for(MasterPilotData.PilotData pd : mpd){
+            testString+=pd.getFaction();
+        }
+    }
+
+    public String getTestString(){
+        return testString;
     }
 
 }
