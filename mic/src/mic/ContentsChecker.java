@@ -6,9 +6,12 @@ import VASSAL.build.GameModule;
 import VASSAL.build.module.documentation.HelpFile;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.Iterator;
 
 /**
  * Created by Mic on 12/03/2018.
@@ -16,14 +19,68 @@ import java.awt.event.ActionListener;
 public class ContentsChecker  extends AbstractConfigurable {
     private JButton OKButton = new JButton();
 
-    private synchronized void ContentsCheckerWindow() {
-        ModuleIntegrityChecker mic = new ModuleIntegrityChecker();
+    private ArrayList<String> missingPilots;
+    private JTable pilotTable;
+    private final String[] columnNames = {"Faction","Ship","Pilot","Image","Status"};
+    private ModuleIntegrityChecker modIntChecker = null;
 
-        String[][] pilotResults = mic.checkPilots();
+    private synchronized void downloadMissingPilots() {
+
+        // download the pilots
+        Iterator i = missingPilots.iterator();
+        while(i.hasNext()) {
+            String pilotImage = (String)i.next();
+            mic.Util.downloadAndSaveImageFromOTA("pilots",pilotImage );
+        }
+
+        // refresh the list
+        String[][] pilotResults = modIntChecker.checkPilots();
+        missingPilots = new ArrayList<String>();
+        for(int j=0;j<pilotResults.length;j++)
+        {
+            if(pilotResults[j][4].equals("Not Found")) {
+                missingPilots.add(pilotResults[j][3]);
+            }
+        }
+
+        // refresh the table
+        refreshTable(pilotResults);
+    }
+
+    private void refreshTable(String[][] pilotResults)
+    {
+
+        DefaultTableModel model = (DefaultTableModel) pilotTable.getModel();
+
+        model.setNumRows(pilotResults.length);
+        model.setDataVector(pilotResults,columnNames);
+        pilotTable.getColumnModel().getColumn(0).setPreferredWidth(125);;
+        pilotTable.getColumnModel().getColumn(1).setPreferredWidth(150);
+        pilotTable.getColumnModel().getColumn(2).setPreferredWidth(150);
+        pilotTable.getColumnModel().getColumn(3).setPreferredWidth(325);
+        pilotTable.getColumnModel().getColumn(4).setPreferredWidth(75);
+        model.fireTableDataChanged();
+    }
 
 
+    private synchronized void ContentsCheckerWindow()
+    {
 
-        String msg = mic.getTestString();;
+        modIntChecker = new ModuleIntegrityChecker();
+
+        String[][] pilotResults = modIntChecker.checkPilots();
+
+        // store the missing pilots
+        missingPilots = new ArrayList<String>();
+        for(int i=0;i<pilotResults.length;i++)
+        {
+            if(pilotResults[i][4].equals("Not Found")) {
+                missingPilots.add(pilotResults[i][3]);
+            }
+        }
+
+
+        String msg = modIntChecker.getTestString();;
             JFrame frame = new JFrame();
           //  frame.setSize(1000,1000);
             frame.setResizable(true);
@@ -39,22 +96,37 @@ public class ContentsChecker  extends AbstractConfigurable {
             optionPane.add(panel);
             JDialog dialog = optionPane.createDialog(frame, "Contents Checker");
             dialog.setSize(1000,500);
-        String[] columnNames = {"Faction","Ship","Pilot","Image","Status"};
 
-        JTable table = new JTable(pilotResults,columnNames);
-        table.getColumnModel().getColumn(0).setPreferredWidth(125);;
-        table.getColumnModel().getColumn(1).setPreferredWidth(150);
-        table.getColumnModel().getColumn(2).setPreferredWidth(150);
-        table.getColumnModel().getColumn(3).setPreferredWidth(325);
-        table.getColumnModel().getColumn(4).setPreferredWidth(75);
+
+        pilotTable = new JTable(pilotResults,columnNames);
+        DefaultTableModel model = new DefaultTableModel(pilotResults.length, columnNames.length);
+        model.setNumRows(pilotResults.length);
+        model.setDataVector(pilotResults,columnNames);
+
+        pilotTable.setModel(model);
+        pilotTable.getColumnModel().getColumn(0).setPreferredWidth(125);;
+        pilotTable.getColumnModel().getColumn(1).setPreferredWidth(150);
+        pilotTable.getColumnModel().getColumn(2).setPreferredWidth(150);
+        pilotTable.getColumnModel().getColumn(3).setPreferredWidth(325);
+        pilotTable.getColumnModel().getColumn(4).setPreferredWidth(75);
        // table.setSize(300,300);
         // Turn off JTable's auto resize so that JScrollPane will show a horizontal
         // scroll bar.
-        table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+        pilotTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 
-        JScrollPane pane = new JScrollPane(table);
+        JScrollPane pane = new JScrollPane(pilotTable);
         panel.add(pane, BorderLayout.CENTER);
 
+
+        JButton downloadButton = new JButton("Download");
+        downloadButton.setAlignmentY(0.0F);
+        downloadButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                downloadMissingPilots();
+            }
+        });
+
+        panel.add(downloadButton);
 
             dialog.setVisible(true);
             frame.toFront();
@@ -62,7 +134,7 @@ public class ContentsChecker  extends AbstractConfigurable {
     }
 
     public void addTo(Buildable parent) {
-        JButton b = new JButton("OK");
+        JButton b = new JButton("Content Checker");
         b.setAlignmentY(0.0F);
         b.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
