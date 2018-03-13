@@ -54,6 +54,7 @@ public class ModuleIntegrityChecker {
         for(MasterPilotData.PilotData pd : mpd){
             testString+=pd.getFaction();
         }
+        logToChat("test String = " + testString);
     }
 
     public String getTestString(){

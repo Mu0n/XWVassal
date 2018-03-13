@@ -25,9 +25,8 @@ public class ContentsChecker  extends AbstractConfigurable {
 
     private synchronized void ContentsCheckerWindow() {
         ModuleIntegrityChecker mic = new ModuleIntegrityChecker();
+        String msg = mic.getTestString();
 
-
-        String msg = mic.getTestString();;
             JFrame frame = new JFrame();
             JPanel panel = new JPanel();
             JLabel spacer;
@@ -47,7 +46,7 @@ public class ContentsChecker  extends AbstractConfigurable {
     }
 
     public void addTo(Buildable parent) {
-        JButton b = new JButton("OK");
+        JButton b = new JButton("Contents Integrity Checker");
         b.setAlignmentY(0.0F);
         b.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
