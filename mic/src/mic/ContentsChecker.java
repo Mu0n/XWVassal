@@ -21,10 +21,13 @@ public class ContentsChecker  extends AbstractConfigurable {
 
     private ArrayList<String> missingPilots;
     private ArrayList<String> missingArcs;
+    private ArrayList<String> missingShips;
     private JTable pilotTable;
     private JTable arcTable;
+    private JTable shipTable;
     private final String[] pilotColumnNames = {"Faction","Ship","Pilot","Image","Status"};
     private final String[] arcColumnNames = {"Size","Faction","Arc","Image","Status"};
+    private final String[] shipColumnNames = {"Name","XWS","Image","Status"};
     private ModuleIntegrityChecker modIntChecker = null;
 
     private synchronized void downloadMissingPilots() {
@@ -73,6 +76,31 @@ public class ContentsChecker  extends AbstractConfigurable {
         refreshArcTable(arcResults);
     }
 
+    private synchronized void downloadMissingShips() {
+
+        // download the ships
+        Iterator i = missingShips.iterator();
+
+        while(i.hasNext()) {
+            String shipImage = (String)i.next();
+
+            mic.Util.downloadAndSaveImageFromOTA("ships",shipImage );
+        }
+
+        // refresh the list
+        String[][] shipResults = modIntChecker.checkShips();
+        missingShips = new ArrayList<String>();
+        for(int j=0;j<shipResults.length;j++)
+        {
+            if(shipResults[j][3].equals("Not Found")) {
+                missingShips.add(shipResults[j][2]);
+            }
+        }
+
+        // refresh the table
+        refreshShipTable(shipResults);
+    }
+
     private void refreshPilotTable(String[][] pilotResults)
     {
 
@@ -103,6 +131,20 @@ public class ContentsChecker  extends AbstractConfigurable {
         model.fireTableDataChanged();
     }
 
+    private void refreshShipTable(String[][] shipResults)
+    {
+
+        DefaultTableModel model = (DefaultTableModel) shipTable.getModel();
+
+        model.setNumRows(shipResults.length);
+        model.setDataVector(shipResults,shipColumnNames);
+        shipTable.getColumnModel().getColumn(0).setPreferredWidth(150);
+        shipTable.getColumnModel().getColumn(1).setPreferredWidth(150);
+        shipTable.getColumnModel().getColumn(2).setPreferredWidth(325);
+        shipTable.getColumnModel().getColumn(3).setPreferredWidth(75);
+        model.fireTableDataChanged();
+    }
+
 
     private synchronized void ContentsCheckerWindow()
     {
@@ -111,7 +153,7 @@ public class ContentsChecker  extends AbstractConfigurable {
 
         String[][] pilotResults = modIntChecker.checkPilots();
         String[][] arcResults = modIntChecker.checkArcs();
-//        String[][] shipResults = modIntChecker.checkShips();
+        String[][] shipResults = modIntChecker.checkShips();
 //        String[][] actionResults = modIntChecker.checkActions();
  //       String[][] shipBaseResults = modIntChecker.checkShipBases();
 
@@ -130,6 +172,16 @@ public class ContentsChecker  extends AbstractConfigurable {
         {
             if(arcResults[i][4].equals("Not Found")) {
                 missingArcs.add(arcResults[i][3]);
+            }
+        }
+
+        // stopre the missing ships
+        missingShips = new ArrayList<String>();
+        for(int i=0;i<shipResults.length;i++)
+        {
+            if(shipResults[i][3].equals("Not Found")) {
+                missingShips.add(shipResults[i][2]);
+
             }
         }
 
@@ -153,30 +205,45 @@ public class ContentsChecker  extends AbstractConfigurable {
 
         pilotTable = buildPilotTable(pilotResults);
         arcTable = buildArcTable(arcResults);
+        shipTable = buildShipTable(shipResults);
 
         JScrollPane pilotPane = new JScrollPane(pilotTable);
         JScrollPane arcPane = new JScrollPane(arcTable);
+        JScrollPane shipPane = new JScrollPane(shipTable);
+
+        // pilots
         panel.add(pilotPane, BorderLayout.CENTER);
-        JButton downloadPilotButton = new JButton("Download");
+        JButton downloadPilotButton = new JButton("Download Pilots");
         downloadPilotButton.setAlignmentY(0.0F);
         downloadPilotButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
                 downloadMissingPilots();
             }
         });
-
         panel.add(downloadPilotButton);
 
+        // arcs
         panel.add(arcPane, BorderLayout.CENTER);
-        JButton downloadArcButton = new JButton("Download");
+        JButton downloadArcButton = new JButton("Download Arcs");
         downloadArcButton.setAlignmentY(0.0F);
         downloadArcButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
                 downloadMissingArcs();
             }
         });
-
         panel.add(downloadArcButton);
+
+        // ships
+        panel.add(shipPane, BorderLayout.CENTER);
+        JButton downloadShipButton = new JButton("Download Ships");
+        downloadShipButton.setAlignmentY(0.0F);
+        downloadShipButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                downloadMissingShips();
+            }
+        });
+        panel.add(downloadShipButton);
+
             dialog.setVisible(true);
             frame.toFront();
             frame.repaint();
@@ -200,6 +267,24 @@ public class ContentsChecker  extends AbstractConfigurable {
         // scroll bar.
         pilotTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
         return pilotTable;
+    }
+
+    private JTable buildShipTable(String[][] shipResults)
+    {
+        shipTable = new JTable(shipResults,shipColumnNames);
+        DefaultTableModel model = new DefaultTableModel(shipResults.length, shipColumnNames.length);
+        model.setNumRows(shipResults.length);
+        model.setDataVector(shipResults,shipColumnNames);
+
+        shipTable.setModel(model);
+       // shipTable.getColumnModel().getColumn(0).setPreferredWidth(50);;
+        shipTable.getColumnModel().getColumn(0).setPreferredWidth(150);
+        shipTable.getColumnModel().getColumn(1).setPreferredWidth(150);
+        shipTable.getColumnModel().getColumn(2).setPreferredWidth(325);
+        shipTable.getColumnModel().getColumn(3).setPreferredWidth(75);
+
+        shipTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+        return shipTable;
     }
 
     private JTable buildArcTable(String[][] arcResults)

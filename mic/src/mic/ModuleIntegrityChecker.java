@@ -171,6 +171,53 @@ public String[][] checkPilots()
         return arcResults;
     }
 
+    public String[][] checkShips()
+    {
+
+        MasterShipData msd = new MasterShipData();
+        msd.loadData();
+
+        Object[] allShips = msd.getAllShips();
+
+        // first get a list of all possible ships
+        HashMap possibleShips = new HashMap();
+        ArrayList<String[]> shipList = new ArrayList<String[]>();
+        for(int i=0;i<allShips.length;i++)
+        {
+            String shipName = ((MasterShipData.ShipData)allShips[i]).getName();
+            String shipXWS = ((MasterShipData.ShipData)allShips[i]).getXws();
+            if(possibleShips.get(shipXWS)==null)
+            {
+                String imageName = "Ship_"+shipXWS+".png";
+                possibleShips.put(shipXWS,imageName);
+
+                boolean exists = Util.imageExistsInModule(imageName);
+
+                // add it to the array
+                if(exists)
+                {
+                    String[] ship = {shipName,shipXWS,imageName,"Exists"};
+                    shipList.add(ship);
+                }else{
+                    String[] ship = {shipName,shipXWS,imageName,"Not Found"};
+                    shipList.add(ship);
+                }
+
+            }
+        }
+
+        // now we need to convert the Array<String[]> to String[][]
+        Object[] tempResults = shipList.toArray();
+        String[][] shipResults = new String[tempResults.length][5];
+
+        for(int i=0;i<tempResults.length;i++)
+        {
+            shipResults[i] = (String[])tempResults[i];
+        }
+
+        return shipResults;
+    }
+
 
     public void checkAll(){
 

@@ -28,46 +28,7 @@ import java.util.TimeZone;
  * Created by amatheny on 2/9/17.
  */
 public class Util {
-/*
-    private static Map<String, String> cardboardFiringArcImages = ImmutableMap.<String, String>builder()
-          //  .put("small/rebel/Front","Firing_Arc_Front_Small_Rebel.svg")
-          //  .put("small/rebel/Turret","Firing_Arc_Turret_Small_Rebel.svg")
-          //  .put("small/rebel/Auxiliary Rear","Firing_Arc_Aux_Rear_Small_Rebel.svg")
-          //  .put("small/rebel/Auxiliary 180","Firing_Arc_Aux_180_Small_Rebel.svg")
-          //  .put("small/rebel/Mobile","Firing_Arc_Mobile_Small_Rebel.svg")
-          //  .put("small/rebel/Bullseye","Firing_Arc_Bullseye_Small_Rebel.svg")
-          //  .put("small/imperial/Front","Firing_Arc_Front_Small_Empire.svg")
-          //  .put("small/imperial/Turret","Firing_Arc_Turret_Small_Empire.svg")
-          //  .put("small/imperial/Auxiliary Rear","Firing_Arc_Aux_Rear_Small_Empire.svg")
-            .put("small/imperial/Auxiliary 180","Firing_Arc_auxiliary180_small_galacticempire.svg")
-          //  .put("small/imperial/Mobile","Firing_Arc_Mobile_Small_Empire.svg")
-          //  .put("small/imperial/Bullseye","Firing_Arc_Bullseye_Small_Empire.svg")
-          //  .put("small/scum/Front","Firing_Arc_Front_Small_Scum.svg")
-          //  .put("small/scum/Turret","Firing_Arc_Turret_Small_Scum.svg")
-          //  .put("small/scum/Auxiliary Rear","Firing_Arc_Aux_Rear_Small_Scum.svg")
-          //  .put("small/scum/Auxiliary 180","Firing_Arc_Aux_180_Small_Scum.svg")
-           // .put("small/scum/Mobile","Firing_Arc_Mobile_Small_Scum.svg")
-          //  .put("small/scum/Bullseye","Firing_Arc_Bullseye_Small_Scum.svg")
-          //  .put("large/rebel/Front","Firing_Arc_Front_Large_Rebel.svg")
-          //  .put("large/rebel/Turret","Firing_Arc_Turret_Large_Rebel.svg")
-          //  .put("large/rebel/Auxiliary Rear","Firing_Arc_Aux_Rear_Large_Rebel.svg")
-            .put("large/rebel/Auxiliary 180","Firing_Arc_auxiliary180_large_rebelalliance.svg")
-         //   .put("large/rebel/Mobile","Firing_Arc_Mobile_Large_Rebel.svg")
-         //   .put("large/rebel/Bullseye","Firing_Arc_Bullseye_Large_Rebel.svg")
-         //   .put("large/imperial/Front","Firing_Arc_Front_Large_Empire.svg")
-         //   .put("large/imperial/Turret","Firing_Arc_Turret_Large_Empire.svg")
-          //  .put("large/imperial/Auxiliary Rear","Firing_Arc_Aux_Rear_Large_Empire.svg")
-            .put("large/imperial/Auxiliary 180","Firing_Arc_auxiliary180_large_galacticempire.svg")
-         //   .put("large/imperial/Mobile","Firing_Arc_Mobile_Large_Empire.svg")
-         //   .put("large/imperial/Bullseye","Firing_Arc_Bullseye_Large_Empire.svg")
-         //   .put("large/scum/Front","Firing_Arc_Front_Large_Scum.svg")
-        //    .put("large/scum/Turret","Firing_Arc_Turret_Large_Scum.svg")
-         //   .put("large/scum/Auxiliary Rear","Firing_Arc_Aux_Rear_Large_Scum.svg")
-            .put("large/scum/Auxiliary 180","Firing_Arc_auxiliary180_large_scumandvillainy.svg")
-         //   .put("large/scum/Mobile","Firing_Arc_Mobile_Large_Scum.svg")
-          //  .put("large/scum/Bullseye","Firing_Arc_Bullseye_Large_Scum.svg")
-            .build();
-*/
+
     private static ObjectMapper mapper = new ObjectMapper()
             .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
@@ -395,55 +356,7 @@ public class Util {
         return found;
 
     }
-    /*
-    public static boolean imageExistsInModule(String imageName)
-    {
-        // TODO DELETEME
-        Util.logToChat("Looking for image: "+imageName);
 
-        GameModule gameModule = GameModule.getGameModule();
-        DataArchive dataArchive = gameModule.getDataArchive();
-
-
-        // TODO DELETEME
-        try {
-            FileArchive fileArchive = dataArchive.getArchive();
-
-            Util.logToChat("contains /images/" + imageName+": " + fileArchive.contains("/images/" + imageName));
-            Util.logToChat( "contains "+imageName+": " + fileArchive.contains(imageName));
-            Util.logToChat("contains images/" + imageName+": " + fileArchive.contains("images/" + imageName));
-            Util.logToChat("contains \\images\\" + imageName+": " + fileArchive.contains("\\images\\" + imageName));
-            Util.logToChat("contains images\\" + imageName+": " + fileArchive.contains("images\\" + imageName));
-
-        }catch(Exception e)
-        {
-
-        }
-
-
-        SortedSet set = dataArchive.getImageNameSet();
-        Iterator<String> i = set.iterator();
-        boolean found = false;
-        String name = null;
-        while(i.hasNext() && !found)
-        {
-            name = i.next();
-            // TODO DELETEME
- //           Util.logToChat("Checking against: "+name);
-            if(name.equals(imageName))
-            {
-                // TODO DELETEME
-    //            Util.logToChat("We have a match!!!!!!!!!");
-
-
-                found = true;
-            }
-        }
-
-        Util.logToChat("found: "+found);
-        return found;
-    }
-*/
 
     public static void downloadAnyMissingImages()
     {
@@ -511,6 +424,7 @@ public class Util {
             // download the image
 
         try {
+
             imageBytes = downloadFileFromOTA(imageType, imageName);
 
             if(imageBytes != null)
