@@ -156,9 +156,11 @@ public class ContentsChecker  extends AbstractConfigurable {
 
             //TODO fix this
             if(!shipData.getSize().equals("huge")) {
-                mic.Util.buildBaseShipImage(missingFaction, missingXWS, arcs, actions, shipData.getSize());
-                //TODO fix this - only do 1
-                break;
+
+                //todo fix this - when ready to do large
+                if(shipData.getSize().equals("small")) {
+                    mic.Util.buildBaseShipImage(missingFaction, missingXWS, arcs, actions, shipData.getSize());
+                }
             }
             //mic.Util.downloadAndSaveImageFromOTA("ships",shipImage );
         }

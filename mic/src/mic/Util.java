@@ -33,6 +33,30 @@ import java.util.TimeZone;
  */
 public class Util {
 
+
+
+    private static final int[][] SMALL_SHIP_ACTION_COORD = {
+            {95,20},
+            {95,40},
+            {95,60},
+            {95,80},
+            {95,100}
+    };
+
+    private static final int[][] LARGE_SHIP_ACTION_COORD = {
+            {0,50},
+            {0,50},
+            {0,50},
+            {0,50},
+            {0,50}
+    };
+
+    private static final int[] LARGE_SHIP_ACTION_1_COORD = {0,0};
+    private static final int[] LARGE_SHIP_ACTION_2_COORD = {0,0};
+    private static final int[] LARGE_SHIP_ACTION_3_COORD = {0,0};
+    private static final int[] LARGE_SHIP_ACTION_4_COORD = {0,0};
+    private static final int[] LARGE_SHIP_ACTION_5_COORD = {0,0};
+
     private static ObjectMapper mapper = new ObjectMapper()
             .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
@@ -489,23 +513,6 @@ public class Util {
 
         }
 
-
-        // add the actions
-        for(String actionImageName : actionImageNames)
-        {
-            try {
-                InputStream is = dataArchive.getInputStream("images/" + actionImageName);
-                BufferedImage actionImage = ImageUtils.getImage(actionImageName, is);
-
-                Graphics g = combined.getGraphics();
-                g.drawImage(combined, 0, 0, null);
-                g.drawImage(actionImage, 0, 0, null);
-            }catch(IOException e)
-            {
-
-            }
-        }
-
         // add the arcs
         for(String arcImageName : arcImageNames)
         {
@@ -515,7 +522,7 @@ public class Util {
                 BufferedImage arcImage = ImageUtils.getImage(arcImageName, is);//doesn't recognize SVG
 
                 Graphics g = combined.getGraphics();
-                g.drawImage(combined, 0, 0, null);
+                //g.drawImage(combined, 0, 0, null);
                 g.drawImage(arcImage, 0, 0, null);
             }catch(IOException e)
             {
@@ -524,13 +531,67 @@ public class Util {
             }
         }
 
+        int numActions = actionImageNames.size();
+        int actionNum = 0;
+        // add the actions
+        for(String actionImageName : actionImageNames)
+        {
+
+            try {
+                InputStream is = dataArchive.getInputStream("images/" + actionImageName);
+                BufferedImage actionImage = ImageUtils.getImage(actionImageName, is);
+
+                Graphics g = combined.getGraphics();
+               // g.drawImage(combined, 0, 0, null);
+
+
+                // need to place the images properly
+
+                int actionX = 0;
+                int actionY = 0;
+                if(size.equals("small"))
+                {
+                    actionX = SMALL_SHIP_ACTION_COORD[actionNum][0];
+                    actionY = SMALL_SHIP_ACTION_COORD[actionNum][1];
+
+
+
+                }else if(size.equals("large"))
+                {
+                    actionX = LARGE_SHIP_ACTION_COORD[actionNum][0];
+                    actionY = LARGE_SHIP_ACTION_COORD[actionNum][1];
+                }
+
+                actionNum++;
+
+                // order of actions:
+                // cloak
+                // reload
+                // rotate arc
+                // evade
+                // reinforce
+                // coordinate
+                // SLAM
+                // boost
+                // barrel roll
+                // Target Lock
+                //  Focus
+                g.drawImage(actionImage, actionX, actionY, null);
+            }catch(IOException e)
+            {
+
+            }
+        }
+
+
+
         // add the ship
         try{
             InputStream is = dataArchive.getInputStream("images/" + shipImageName);
             BufferedImage shipImage = ImageUtils.getImage(shipImageName, is);
 
             Graphics g = combined.getGraphics();
-            g.drawImage(combined, 0, 0, null);
+           // g.drawImage(combined, 0, 0, null);
             g.drawImage(shipImage, 0, 0, null);
         }catch(IOException e)
         {
