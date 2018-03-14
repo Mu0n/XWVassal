@@ -9,17 +9,21 @@ import VASSAL.command.Command;
 import VASSAL.counters.*;
 import VASSAL.tools.ArchiveWriter;
 import VASSAL.tools.DataArchive;
+import VASSAL.tools.image.ImageUtils;
 import VASSAL.tools.io.FileArchive;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
 
+import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.geom.*;
+import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
@@ -408,12 +412,195 @@ public class Util {
             arcImagePrefixSB.append("scumandvillainy");
         }
 
-        arcImagePrefixSB.append(".svg");
+        //arcImagePrefixSB.append(".svg");
+        arcImagePrefixSB.append(".png");
 
       //  arcImagePrefixSB.append("/");
        // String arcImage = (String)cardboardFiringArcImages.get(arcImagePrefixSB.toString() + arc);
 
         return arcImagePrefixSB.toString();
+    }
+
+    public static void buildBaseShipImage(String faction,String shipXWS, List<String> arcs, List<String> actions, String size)
+    {
+        final String smallBlackBase = "Ship_generic_small.png";
+        final String largeBlackBase = "Ship_generic_large.png";
+
+        String targetBaseImageName = buildShipBaseImageName(faction,shipXWS);
+
+        String cardboardBaseImageName = null;
+        List<String> actionImageNames = new ArrayList<String>();
+        List<String> arcImageNames = new ArrayList<String>();
+
+        //TODO fix the location of each image
+
+        // determine which background to use (size)
+        if(size.equals("small"))
+        {
+            cardboardBaseImageName = smallBlackBase;
+        }else if(size.equals("huge"))
+        {
+
+        }else if(size.equals("large"))
+        {
+            cardboardBaseImageName = largeBlackBase;
+        }
+
+        // determine which action images to use
+        for(String action : actions)
+        {
+            String actionImage = "Action_"+action.toLowerCase().replaceAll(" ","")+".png";
+            actionImageNames.add(actionImage);
+        }
+
+        // determine which arcs to use
+        for(String arc : arcs)
+        {
+            String arcImage = buildFiringArcImageName(size,faction,arc);
+            arcImageNames.add(arcImage);
+        }
+
+        // determine the ship image to use
+        String shipImageName = "Ship_"+shipXWS+".png";
+
+        // now build the image
+        // start with the base
+        GameModule gameModule = GameModule.getGameModule();
+        DataArchive dataArchive = gameModule.getDataArchive();
+        FileArchive fileArchive = dataArchive.getArchive();
+
+        // create the new image, canvas size is the max. of both image sizes
+
+
+
+        BufferedImage combined = null;
+        try{
+            InputStream is = dataArchive.getInputStream("images/"+cardboardBaseImageName);
+            BufferedImage baseImage =ImageUtils.getImage(cardboardBaseImageName,is);
+
+
+            int w = baseImage.getWidth();
+            int h = baseImage.getHeight();
+            combined = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
+            Graphics g = combined.getGraphics();
+            g.drawImage(baseImage, 0, 0, null);
+        }catch(IOException e)
+        {
+
+        }
+
+
+        // add the actions
+        for(String actionImageName : actionImageNames)
+        {
+            try {
+                InputStream is = dataArchive.getInputStream("images/" + actionImageName);
+                BufferedImage actionImage = ImageUtils.getImage(actionImageName, is);
+
+                Graphics g = combined.getGraphics();
+                g.drawImage(combined, 0, 0, null);
+                g.drawImage(actionImage, 0, 0, null);
+            }catch(IOException e)
+            {
+
+            }
+        }
+
+        // add the arcs
+        for(String arcImageName : arcImageNames)
+        {
+            try {
+                InputStream is = dataArchive.getInputStream("images/" + arcImageName);
+
+                BufferedImage arcImage = ImageUtils.getImage(arcImageName, is);//doesn't recognize SVG
+
+                Graphics g = combined.getGraphics();
+                g.drawImage(combined, 0, 0, null);
+                g.drawImage(arcImage, 0, 0, null);
+            }catch(IOException e)
+            {
+                Util.logToChat("Exception getting image: images/" + arcImageName);
+                Util.logToChat(e.toString());
+            }
+        }
+
+        // add the ship
+        try{
+            InputStream is = dataArchive.getInputStream("images/" + shipImageName);
+            BufferedImage shipImage = ImageUtils.getImage(shipImageName, is);
+
+            Graphics g = combined.getGraphics();
+            g.drawImage(combined, 0, 0, null);
+            g.drawImage(shipImage, 0, 0, null);
+        }catch(IOException e)
+        {
+
+        }
+
+        // save the image to a temp file
+        File tempFile = null;
+        try {
+            tempFile = File.createTempFile("vassalBaseImage", "");
+
+            ImageIO.write(combined, "PNG", tempFile);
+        }catch(IOException e)
+        {
+
+        }
+        // save the image to the module
+
+        try {
+            FileInputStream fis = new FileInputStream(tempFile);
+            byte[] byteChunk = new byte[4096];
+            int n;
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            while ((n = fis.read(byteChunk)) > 0) {
+                baos.write(byteChunk, 0, n);
+            }
+            if (fis != null) {
+                fis.close();
+            }
+            byte[] bytes = baos.toByteArray();
+            baos.close();
+            addImageToModule(targetBaseImageName, bytes);
+        }catch(IOException e)
+        {
+
+        }
+
+
+    }
+
+    public static String buildShipBaseImageName(String faction, String shipXWS)
+    {
+
+        //Ship_Base_<faction lowercase no spaces>_<shipXWS>.png
+
+        StringBuilder shipBaseImageSB = new StringBuilder();
+
+        shipBaseImageSB.append("Ship_Base_");
+
+
+        // find the faction
+        if(faction.equals("Rebel Alliance") || faction.equals("Resistance"))
+        {
+            shipBaseImageSB.append("rebelalliance");
+        }else if(faction.equals("Galactic Empire") ||faction.equals("First Order"))
+        {
+            shipBaseImageSB.append("galacticempire");
+        }else if(faction.equals("Scum & Villainy") || faction.equals("Scum and Villainy"))
+        {
+            shipBaseImageSB.append("scumandvillainy");
+        }
+
+        shipBaseImageSB.append("_");
+        shipBaseImageSB.append(shipXWS);
+
+        shipBaseImageSB.append(".png");
+
+
+
+        return shipBaseImageSB.toString();
     }
 
     public static void downloadAndSaveImageFromOTA(String imageType, String imageName)

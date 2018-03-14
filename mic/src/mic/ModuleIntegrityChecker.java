@@ -218,6 +218,61 @@ public String[][] checkPilots()
         return shipResults;
     }
 
+    public String[][] checkShipBases()
+    {
+
+        MasterShipData msd = new MasterShipData();
+        msd.loadData();
+
+        Object[] allShips = msd.getAllShips();
+
+        HashMap possibleShipFactions = new HashMap();
+        ArrayList<String[]> shipList = new ArrayList<String[]>();
+        for(int i=0;i<allShips.length;i++)
+        {
+            String shipSize = ((MasterShipData.ShipData) allShips[i]).getSize();
+            String shipName = ((MasterShipData.ShipData) allShips[i]).getName();
+            String shipXWS = ((MasterShipData.ShipData) allShips[i]).getXws();
+
+            for (int j = 0; j < ((MasterShipData.ShipData) allShips[i]).getFactions().size(); j++)
+            {
+                String factionName = ((MasterShipData.ShipData) allShips[i]).getFactions().get(j);
+
+                String imageName = Util.buildShipBaseImageName(factionName,shipXWS);
+
+                if(possibleShipFactions.get(imageName)==null)
+                {
+                    // add it
+                    possibleShipFactions.put(imageName, "");
+
+                    // check for existence
+                    boolean exists = Util.imageExistsInModule(imageName);
+
+                    // add it to the array
+                    if(exists) {
+                        String[] ship = {shipName, shipXWS, shipSize, factionName, imageName, "Exists"};
+                        shipList.add(ship);
+                    }else{
+                        String[] ship = {shipName, shipXWS, shipSize, factionName, imageName,"Not Found"};
+                        shipList.add(ship);
+                    }
+                }
+
+            }
+        }
+
+        // now we need to convert the Array<String[]> to String[][]
+        Object[] tempResults = shipList.toArray();
+        String[][] shipBaseResults = new String[tempResults.length][5];
+
+        for(int i=0;i<tempResults.length;i++)
+        {
+            shipBaseResults[i] = (String[])tempResults[i];
+        }
+
+        return shipBaseResults;
+    }
+
     public String[][] checkActions()
     {
 
