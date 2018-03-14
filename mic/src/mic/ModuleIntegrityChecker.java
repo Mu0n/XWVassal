@@ -2,6 +2,7 @@ package mic;
 
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * Created by Mic on 03/11/2018.
@@ -116,6 +117,60 @@ public String[][] checkPilots()
 
     return pilots;
 }
+
+    public String[][] checkArcs()
+    {
+
+        MasterShipData msd = new MasterShipData();
+        msd.loadData();
+
+        Object[] allShips = msd.getAllShips();
+
+        // first get a list of all possible combinations of faction/arc from the json
+        HashMap possibleArcs = new HashMap();
+        ArrayList<String[]> arcCombinations = new ArrayList<String[]>();
+        for(int i=0;i<allShips.length;i++) {
+            String shipSize = ((MasterShipData.ShipData) allShips[i]).getSize();
+            for (int j = 0; j < ((MasterShipData.ShipData) allShips[i]).getFactions().size(); j++) {
+                String factionName = ((MasterShipData.ShipData) allShips[i]).getFactions().get(j);
+                for (int k = 0; k < ((MasterShipData.ShipData) allShips[i]).getFiringArcs().size(); k++) {
+                    String arcName = ((MasterShipData.ShipData) allShips[i]).getFiringArcs().get(k);
+
+                    String imageName = Util.buildFiringArcImageName(shipSize,factionName,arcName);
+
+                    if(possibleArcs.get(imageName)==null)
+                    {
+                        // add it
+                        possibleArcs.put(imageName, "");
+
+                        // check for existence
+                        boolean exists = Util.imageExistsInModule(imageName);
+
+                        // add it to the array
+                        if(exists) {
+                            String[] arc = {shipSize, factionName, arcName, imageName, "Exists"};
+                            arcCombinations.add(arc);
+                        }else{
+                            String[] arc = {shipSize, factionName, arcName, imageName, "Not Found"};
+                            arcCombinations.add(arc);
+                        }
+                    }
+                }
+            }
+        }
+
+        // now we need to convert the Array<String[]> to String[][]
+        Object[] tempResults = arcCombinations.toArray();
+        String[][] arcResults = new String[tempResults.length][5];
+
+        for(int i=0;i<tempResults.length;i++)
+        {
+            arcResults[i] = (String[])tempResults[i];
+        }
+
+        return arcResults;
+    }
+
 
     public void checkAll(){
 

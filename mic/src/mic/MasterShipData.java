@@ -19,6 +19,15 @@ public class MasterShipData extends ArrayList<MasterShipData.ShipData> {
 
     private static Map<String, ShipData> loadedData = null;
 
+    public Object[] getAllShips()
+    {
+        if(loadedData == null)
+        {
+            loadData();
+        }
+        return loadedData.values().toArray();
+    }
+
     public static ShipData getShipDataForShipName(String shipName)
     {
         if (loadedData == null) {
@@ -123,6 +132,9 @@ public class MasterShipData extends ArrayList<MasterShipData.ShipData> {
         @JsonProperty("actions")
         private List<String> actions = Lists.newArrayList();
 
+        @JsonProperty("faction")
+        private List<String> factions = Lists.newArrayList();
+
         @JsonProperty("dial")
         private List<String> dialManeuvers = Lists.newArrayList();
 
@@ -169,6 +181,10 @@ public class MasterShipData extends ArrayList<MasterShipData.ShipData> {
 
         public List<String> getActions() {
             return this.actions;
+        }
+
+        public List<String> getFactions() {
+            return this.factions;
         }
 
         public List<String> getFiringArcs() {

@@ -20,8 +20,11 @@ public class ContentsChecker  extends AbstractConfigurable {
     private JButton OKButton = new JButton();
 
     private ArrayList<String> missingPilots;
+    private ArrayList<String> missingArcs;
     private JTable pilotTable;
-    private final String[] columnNames = {"Faction","Ship","Pilot","Image","Status"};
+    private JTable arcTable;
+    private final String[] pilotColumnNames = {"Faction","Ship","Pilot","Image","Status"};
+    private final String[] arcColumnNames = {"Size","Faction","Arc","Image","Status"};
     private ModuleIntegrityChecker modIntChecker = null;
 
     private synchronized void downloadMissingPilots() {
@@ -44,21 +47,59 @@ public class ContentsChecker  extends AbstractConfigurable {
         }
 
         // refresh the table
-        refreshTable(pilotResults);
+        refreshPilotTable(pilotResults);
     }
 
-    private void refreshTable(String[][] pilotResults)
+    private synchronized void downloadMissingArcs() {
+
+        // download the arcs
+        Iterator i = missingArcs.iterator();
+        while(i.hasNext()) {
+            String arcImage = (String)i.next();
+            mic.Util.downloadAndSaveImageFromOTA("base_firing_arcs",arcImage );
+        }
+
+        // refresh the list
+        String[][] arcResults = modIntChecker.checkArcs();
+        missingArcs = new ArrayList<String>();
+        for(int j=0;j<arcResults.length;j++)
+        {
+            if(arcResults[j][4].equals("Not Found")) {
+                missingArcs.add(arcResults[j][3]);
+            }
+        }
+
+        // refresh the table
+        refreshArcTable(arcResults);
+    }
+
+    private void refreshPilotTable(String[][] pilotResults)
     {
 
         DefaultTableModel model = (DefaultTableModel) pilotTable.getModel();
 
         model.setNumRows(pilotResults.length);
-        model.setDataVector(pilotResults,columnNames);
+        model.setDataVector(pilotResults,pilotColumnNames);
         pilotTable.getColumnModel().getColumn(0).setPreferredWidth(125);;
         pilotTable.getColumnModel().getColumn(1).setPreferredWidth(150);
         pilotTable.getColumnModel().getColumn(2).setPreferredWidth(150);
         pilotTable.getColumnModel().getColumn(3).setPreferredWidth(325);
         pilotTable.getColumnModel().getColumn(4).setPreferredWidth(75);
+        model.fireTableDataChanged();
+    }
+
+    private void refreshArcTable(String[][] arcResults)
+    {
+
+        DefaultTableModel model = (DefaultTableModel) arcTable.getModel();
+
+        model.setNumRows(arcResults.length);
+        model.setDataVector(arcResults,arcColumnNames);
+        arcTable.getColumnModel().getColumn(0).setPreferredWidth(50);;
+        arcTable.getColumnModel().getColumn(1).setPreferredWidth(150);
+        arcTable.getColumnModel().getColumn(2).setPreferredWidth(150);
+        arcTable.getColumnModel().getColumn(3).setPreferredWidth(325);
+        arcTable.getColumnModel().getColumn(4).setPreferredWidth(75);
         model.fireTableDataChanged();
     }
 
@@ -69,6 +110,10 @@ public class ContentsChecker  extends AbstractConfigurable {
         modIntChecker = new ModuleIntegrityChecker();
 
         String[][] pilotResults = modIntChecker.checkPilots();
+        String[][] arcResults = modIntChecker.checkArcs();
+//        String[][] shipResults = modIntChecker.checkShips();
+//        String[][] actionResults = modIntChecker.checkActions();
+ //       String[][] shipBaseResults = modIntChecker.checkShipBases();
 
         // store the missing pilots
         missingPilots = new ArrayList<String>();
@@ -76,6 +121,15 @@ public class ContentsChecker  extends AbstractConfigurable {
         {
             if(pilotResults[i][4].equals("Not Found")) {
                 missingPilots.add(pilotResults[i][3]);
+            }
+        }
+
+        // store the missing arcs
+        missingArcs = new ArrayList<String>();
+        for(int i=0;i<arcResults.length;i++)
+        {
+            if(arcResults[i][4].equals("Not Found")) {
+                missingArcs.add(arcResults[i][3]);
             }
         }
 
@@ -97,11 +151,43 @@ public class ContentsChecker  extends AbstractConfigurable {
             JDialog dialog = optionPane.createDialog(frame, "Contents Checker");
             dialog.setSize(1000,500);
 
+        pilotTable = buildPilotTable(pilotResults);
+        arcTable = buildArcTable(arcResults);
 
-        pilotTable = new JTable(pilotResults,columnNames);
-        DefaultTableModel model = new DefaultTableModel(pilotResults.length, columnNames.length);
+        JScrollPane pilotPane = new JScrollPane(pilotTable);
+        JScrollPane arcPane = new JScrollPane(arcTable);
+        panel.add(pilotPane, BorderLayout.CENTER);
+        JButton downloadPilotButton = new JButton("Download");
+        downloadPilotButton.setAlignmentY(0.0F);
+        downloadPilotButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                downloadMissingPilots();
+            }
+        });
+
+        panel.add(downloadPilotButton);
+
+        panel.add(arcPane, BorderLayout.CENTER);
+        JButton downloadArcButton = new JButton("Download");
+        downloadArcButton.setAlignmentY(0.0F);
+        downloadArcButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                downloadMissingArcs();
+            }
+        });
+
+        panel.add(downloadArcButton);
+            dialog.setVisible(true);
+            frame.toFront();
+            frame.repaint();
+    }
+
+    private JTable buildPilotTable(String[][] pilotResults)
+    {
+        pilotTable = new JTable(pilotResults,pilotColumnNames);
+        DefaultTableModel model = new DefaultTableModel(pilotResults.length, pilotColumnNames.length);
         model.setNumRows(pilotResults.length);
-        model.setDataVector(pilotResults,columnNames);
+        model.setDataVector(pilotResults,pilotColumnNames);
 
         pilotTable.setModel(model);
         pilotTable.getColumnModel().getColumn(0).setPreferredWidth(125);;
@@ -109,28 +195,29 @@ public class ContentsChecker  extends AbstractConfigurable {
         pilotTable.getColumnModel().getColumn(2).setPreferredWidth(150);
         pilotTable.getColumnModel().getColumn(3).setPreferredWidth(325);
         pilotTable.getColumnModel().getColumn(4).setPreferredWidth(75);
-       // table.setSize(300,300);
+        // table.setSize(300,300);
         // Turn off JTable's auto resize so that JScrollPane will show a horizontal
         // scroll bar.
         pilotTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+        return pilotTable;
+    }
 
-        JScrollPane pane = new JScrollPane(pilotTable);
-        panel.add(pane, BorderLayout.CENTER);
+    private JTable buildArcTable(String[][] arcResults)
+    {
+        arcTable = new JTable(arcResults,arcColumnNames);
+        DefaultTableModel model = new DefaultTableModel(arcResults.length, arcColumnNames.length);
+        model.setNumRows(arcResults.length);
+        model.setDataVector(arcResults,arcColumnNames);
 
+        arcTable.setModel(model);
+        arcTable.getColumnModel().getColumn(0).setPreferredWidth(50);;
+        arcTable.getColumnModel().getColumn(1).setPreferredWidth(150);
+        arcTable.getColumnModel().getColumn(2).setPreferredWidth(150);
+        arcTable.getColumnModel().getColumn(3).setPreferredWidth(325);
+        arcTable.getColumnModel().getColumn(4).setPreferredWidth(75);
 
-        JButton downloadButton = new JButton("Download");
-        downloadButton.setAlignmentY(0.0F);
-        downloadButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
-                downloadMissingPilots();
-            }
-        });
-
-        panel.add(downloadButton);
-
-            dialog.setVisible(true);
-            frame.toFront();
-            frame.repaint();
+        arcTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+        return arcTable;
     }
 
     public void addTo(Buildable parent) {

@@ -21,44 +21,7 @@ import java.util.Map;
 public class StemShip extends Decorator implements EditablePiece {
     public static final String ID = "stemship";
 
-    private static Map<String, String> cardboardFiringArcImages = ImmutableMap.<String, String>builder()
-            .put("small/rebel/Front","Firing_Arc_Front_Small_Rebel.svg")
-            .put("small/rebel/Turret","Firing_Arc_Turret_Small_Rebel.svg")
-            .put("small/rebel/Auxiliary Rear","Firing_Arc_Aux_Rear_Small_Rebel.svg")
-            .put("small/rebel/Auxiliary 180","Firing_Arc_Aux_180_Small_Rebel.svg")
-            .put("small/rebel/Mobile","Firing_Arc_Mobile_Small_Rebel.svg")
-            .put("small/rebel/Bullseye","Firing_Arc_Bullseye_Small_Rebel.svg")
-            .put("small/imperial/Front","Firing_Arc_Front_Small_Empire.svg")
-            .put("small/imperial/Turret","Firing_Arc_Turret_Small_Empire.svg")
-            .put("small/imperial/Auxiliary Rear","Firing_Arc_Aux_Rear_Small_Empire.svg")
-            .put("small/imperial/Auxiliary 180","Firing_Arc_Aux_180_Small_Empire.svg")
-            .put("small/imperial/Mobile","Firing_Arc_Mobile_Small_Empire.svg")
-            .put("small/imperial/Bullseye","Firing_Arc_Bullseye_Small_Empire.svg")
-            .put("small/scum/Front","Firing_Arc_Front_Small_Scum.svg")
-            .put("small/scum/Turret","Firing_Arc_Turret_Small_Scum.svg")
-            .put("small/scum/Auxiliary Rear","Firing_Arc_Aux_Rear_Small_Scum.svg")
-            .put("small/scum/Auxiliary 180","Firing_Arc_Aux_180_Small_Scum.svg")
-            .put("small/scum/Mobile","Firing_Arc_Mobile_Small_Scum.svg")
-            .put("small/scum/Bullseye","Firing_Arc_Bullseye_Small_Scum.svg")
-            .put("large/rebel/Front","Firing_Arc_Front_Large_Rebel.svg")
-            .put("large/rebel/Turret","Firing_Arc_Turret_Large_Rebel.svg")
-            .put("large/rebel/Auxiliary Rear","Firing_Arc_Aux_Rear_Large_Rebel.svg")
-            .put("large/rebel/Auxiliary 180","Firing_Arc_Aux_180_Large_Rebel.svg")
-            .put("large/rebel/Mobile","Firing_Arc_Mobile_Large_Rebel.svg")
-            .put("large/rebel/Bullseye","Firing_Arc_Bullseye_Large_Rebel.svg")
-            .put("large/imperial/Front","Firing_Arc_Front_Large_Empire.svg")
-            .put("large/imperial/Turret","Firing_Arc_Turret_Large_Empire.svg")
-            .put("large/imperial/Auxiliary Rear","Firing_Arc_Aux_Rear_Large_Empire.svg")
-            .put("large/imperial/Auxiliary 180","Firing_Arc_Aux_180_Large_Empire.svg")
-            .put("large/imperial/Mobile","Firing_Arc_Mobile_Large_Empire.svg")
-            .put("large/imperial/Bullseye","Firing_Arc_Bullseye_Large_Empire.svg")
-            .put("large/scum/Front","Firing_Arc_Front_Large_Scum.svg")
-            .put("large/scum/Turret","Firing_Arc_Turret_Large_Scum.svg")
-            .put("large/scum/Auxiliary Rear","Firing_Arc_Aux_Rear_Large_Scum.svg")
-            .put("large/scum/Auxiliary 180","Firing_Arc_Aux_180_Large_Scum.svg")
-            .put("large/scum/Mobile","Firing_Arc_Mobile_Large_Scum.svg")
-            .put("large/scum/Bullseye","Firing_Arc_Bullseye_Large_Scum.svg")
-            .build();
+
 
     private static Map<String, String> cardboardActionImages = ImmutableMap.<String, String>builder()
             .put("Focus","Action_Focus.png")
@@ -300,31 +263,18 @@ public class StemShip extends Decorator implements EditablePiece {
 
         }
 
+
+
         private GamePiece buildCardboardFiringArcs(GamePiece piece,String faction, List<String> arcList, String size)
         {
-            StringBuilder arcImagePrefixSB = new StringBuilder();
-            arcImagePrefixSB.append(size);
-            arcImagePrefixSB.append("/");
 
-            // find the faction
-            if(faction.equals("Rebel Alliance") || faction.equals("Resistance"))
-            {
-                arcImagePrefixSB.append("rebel");
-            }else if(faction.equals("Galactic Empire") ||faction.equals("First Order"))
-            {
-                arcImagePrefixSB.append("imperial");
-            }else if(faction.equals("Scum & Villainy"))
-            {
-                arcImagePrefixSB.append("scum");
-            }
-
-            arcImagePrefixSB.append("/");
 
             String arcImage = "";
             for(String arc : arcList)
             {
                 // look up the image for the arc
-                arcImage = (String)cardboardFiringArcImages.get(arcImagePrefixSB.toString() + arc);
+                arcImage = Util.buildFiringArcImageName(size,faction,arc);
+                   //     (String)cardboardFiringArcImages.get(arcImagePrefixSB.toString() + arc);
 
                 // build the arc string
                 StringBuilder sb = new StringBuilder();

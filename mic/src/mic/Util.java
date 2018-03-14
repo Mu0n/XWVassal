@@ -20,14 +20,54 @@ import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 
 /**
  * Created by amatheny on 2/9/17.
  */
 public class Util {
-
+/*
+    private static Map<String, String> cardboardFiringArcImages = ImmutableMap.<String, String>builder()
+          //  .put("small/rebel/Front","Firing_Arc_Front_Small_Rebel.svg")
+          //  .put("small/rebel/Turret","Firing_Arc_Turret_Small_Rebel.svg")
+          //  .put("small/rebel/Auxiliary Rear","Firing_Arc_Aux_Rear_Small_Rebel.svg")
+          //  .put("small/rebel/Auxiliary 180","Firing_Arc_Aux_180_Small_Rebel.svg")
+          //  .put("small/rebel/Mobile","Firing_Arc_Mobile_Small_Rebel.svg")
+          //  .put("small/rebel/Bullseye","Firing_Arc_Bullseye_Small_Rebel.svg")
+          //  .put("small/imperial/Front","Firing_Arc_Front_Small_Empire.svg")
+          //  .put("small/imperial/Turret","Firing_Arc_Turret_Small_Empire.svg")
+          //  .put("small/imperial/Auxiliary Rear","Firing_Arc_Aux_Rear_Small_Empire.svg")
+            .put("small/imperial/Auxiliary 180","Firing_Arc_auxiliary180_small_galacticempire.svg")
+          //  .put("small/imperial/Mobile","Firing_Arc_Mobile_Small_Empire.svg")
+          //  .put("small/imperial/Bullseye","Firing_Arc_Bullseye_Small_Empire.svg")
+          //  .put("small/scum/Front","Firing_Arc_Front_Small_Scum.svg")
+          //  .put("small/scum/Turret","Firing_Arc_Turret_Small_Scum.svg")
+          //  .put("small/scum/Auxiliary Rear","Firing_Arc_Aux_Rear_Small_Scum.svg")
+          //  .put("small/scum/Auxiliary 180","Firing_Arc_Aux_180_Small_Scum.svg")
+           // .put("small/scum/Mobile","Firing_Arc_Mobile_Small_Scum.svg")
+          //  .put("small/scum/Bullseye","Firing_Arc_Bullseye_Small_Scum.svg")
+          //  .put("large/rebel/Front","Firing_Arc_Front_Large_Rebel.svg")
+          //  .put("large/rebel/Turret","Firing_Arc_Turret_Large_Rebel.svg")
+          //  .put("large/rebel/Auxiliary Rear","Firing_Arc_Aux_Rear_Large_Rebel.svg")
+            .put("large/rebel/Auxiliary 180","Firing_Arc_auxiliary180_large_rebelalliance.svg")
+         //   .put("large/rebel/Mobile","Firing_Arc_Mobile_Large_Rebel.svg")
+         //   .put("large/rebel/Bullseye","Firing_Arc_Bullseye_Large_Rebel.svg")
+         //   .put("large/imperial/Front","Firing_Arc_Front_Large_Empire.svg")
+         //   .put("large/imperial/Turret","Firing_Arc_Turret_Large_Empire.svg")
+          //  .put("large/imperial/Auxiliary Rear","Firing_Arc_Aux_Rear_Large_Empire.svg")
+            .put("large/imperial/Auxiliary 180","Firing_Arc_auxiliary180_large_galacticempire.svg")
+         //   .put("large/imperial/Mobile","Firing_Arc_Mobile_Large_Empire.svg")
+         //   .put("large/imperial/Bullseye","Firing_Arc_Bullseye_Large_Empire.svg")
+         //   .put("large/scum/Front","Firing_Arc_Front_Large_Scum.svg")
+        //    .put("large/scum/Turret","Firing_Arc_Turret_Large_Scum.svg")
+         //   .put("large/scum/Auxiliary Rear","Firing_Arc_Aux_Rear_Large_Scum.svg")
+            .put("large/scum/Auxiliary 180","Firing_Arc_auxiliary180_large_scumandvillainy.svg")
+         //   .put("large/scum/Mobile","Firing_Arc_Mobile_Large_Scum.svg")
+          //  .put("large/scum/Bullseye","Firing_Arc_Bullseye_Large_Scum.svg")
+            .build();
+*/
     private static ObjectMapper mapper = new ObjectMapper()
             .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
@@ -424,6 +464,43 @@ public class Util {
         // popup progress bar
         // loop through the list of missing images
             // download and save each one
+    }
+
+    public static String buildFiringArcImageName(String size, String faction, String arc)
+    {
+
+        //Firing_Arc_<xws firing_arc, lower case, remove spaces>_<xws size>_<xws faction, lower case, remove spaces>.svg
+        //Note: "Resistance" needs to be "rebelalliance" and "First Order" needs to be "galacticempire"
+
+        StringBuilder arcImagePrefixSB = new StringBuilder();
+
+        arcImagePrefixSB.append("Firing_Arc_");
+
+        String arcName = arc.toLowerCase().replaceAll(" ","");
+        arcImagePrefixSB.append(arcName);
+        arcImagePrefixSB.append("_");
+
+        arcImagePrefixSB.append(size.toLowerCase());
+        arcImagePrefixSB.append("_");
+
+        // find the faction
+        if(faction.equals("Rebel Alliance") || faction.equals("Resistance"))
+        {
+            arcImagePrefixSB.append("rebelalliance");
+        }else if(faction.equals("Galactic Empire") ||faction.equals("First Order"))
+        {
+            arcImagePrefixSB.append("galacticempire");
+        }else if(faction.equals("Scum & Villainy") || faction.equals("Scum and Villainy"))
+        {
+            arcImagePrefixSB.append("scumandvillainy");
+        }
+
+        arcImagePrefixSB.append(".svg");
+
+      //  arcImagePrefixSB.append("/");
+       // String arcImage = (String)cardboardFiringArcImages.get(arcImagePrefixSB.toString() + arc);
+
+        return arcImagePrefixSB.toString();
     }
 
     public static void downloadAndSaveImageFromOTA(String imageType, String imageName)
