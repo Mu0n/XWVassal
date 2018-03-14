@@ -22,12 +22,15 @@ public class ContentsChecker  extends AbstractConfigurable {
     private ArrayList<String> missingPilots;
     private ArrayList<String> missingArcs;
     private ArrayList<String> missingShips;
+    private ArrayList<String> missingActions;
     private JTable pilotTable;
     private JTable arcTable;
     private JTable shipTable;
+    private JTable actionTable;
     private final String[] pilotColumnNames = {"Faction","Ship","Pilot","Image","Status"};
     private final String[] arcColumnNames = {"Size","Faction","Arc","Image","Status"};
     private final String[] shipColumnNames = {"Name","XWS","Image","Status"};
+    private final String[] actionColumnNames = {"Name","Image","Status"};
     private ModuleIntegrityChecker modIntChecker = null;
 
     private synchronized void downloadMissingPilots() {
@@ -74,6 +77,29 @@ public class ContentsChecker  extends AbstractConfigurable {
 
         // refresh the table
         refreshArcTable(arcResults);
+    }
+
+    private synchronized void downloadMissingActions() {
+
+        // download the arcs
+        Iterator i = missingActions.iterator();
+        while(i.hasNext()) {
+            String actionImage = (String)i.next();
+            mic.Util.downloadAndSaveImageFromOTA("actions",actionImage );
+        }
+
+        // refresh the list
+        String[][] actionResults = modIntChecker.checkActions();
+        missingActions = new ArrayList<String>();
+        for(int j=0;j<actionResults.length;j++)
+        {
+            if(actionResults[j][2].equals("Not Found")) {
+                missingActions.add(actionResults[j][1]);
+            }
+        }
+
+        // refresh the table
+        refreshActionTable(actionResults);
     }
 
     private synchronized void downloadMissingShips() {
@@ -131,6 +157,19 @@ public class ContentsChecker  extends AbstractConfigurable {
         model.fireTableDataChanged();
     }
 
+    private void refreshActionTable(String[][] actionResults)
+    {
+
+        DefaultTableModel model = (DefaultTableModel) actionTable.getModel();
+
+        model.setNumRows(actionResults.length);
+        model.setDataVector(actionResults,actionColumnNames);
+        actionTable.getColumnModel().getColumn(0).setPreferredWidth(50);;
+        actionTable.getColumnModel().getColumn(1).setPreferredWidth(325);
+        actionTable.getColumnModel().getColumn(2).setPreferredWidth(75);
+        model.fireTableDataChanged();
+    }
+
     private void refreshShipTable(String[][] shipResults)
     {
 
@@ -154,6 +193,7 @@ public class ContentsChecker  extends AbstractConfigurable {
         String[][] pilotResults = modIntChecker.checkPilots();
         String[][] arcResults = modIntChecker.checkArcs();
         String[][] shipResults = modIntChecker.checkShips();
+        String[][] actionResults = modIntChecker.checkActions();
 //        String[][] actionResults = modIntChecker.checkActions();
  //       String[][] shipBaseResults = modIntChecker.checkShipBases();
 
@@ -175,12 +215,22 @@ public class ContentsChecker  extends AbstractConfigurable {
             }
         }
 
-        // stopre the missing ships
+        // store the missing ships
         missingShips = new ArrayList<String>();
         for(int i=0;i<shipResults.length;i++)
         {
             if(shipResults[i][3].equals("Not Found")) {
                 missingShips.add(shipResults[i][2]);
+
+            }
+        }
+
+        // store the missing actions
+        missingActions = new ArrayList<String>();
+        for(int i=0;i<actionResults.length;i++)
+        {
+            if(actionResults[i][2].equals("Not Found")) {
+                missingActions.add(actionResults[i][1]);
 
             }
         }
@@ -201,15 +251,17 @@ public class ContentsChecker  extends AbstractConfigurable {
             //optionPane.setMessageType(JOptionPane.INFORMATION_MESSAGE);
             optionPane.add(panel);
             JDialog dialog = optionPane.createDialog(frame, "Contents Checker");
-            dialog.setSize(1000,500);
+            dialog.setSize(1000,750);
 
         pilotTable = buildPilotTable(pilotResults);
         arcTable = buildArcTable(arcResults);
         shipTable = buildShipTable(shipResults);
+        actionTable = buildActionTable(actionResults);
 
         JScrollPane pilotPane = new JScrollPane(pilotTable);
         JScrollPane arcPane = new JScrollPane(arcTable);
         JScrollPane shipPane = new JScrollPane(shipTable);
+        JScrollPane actionPane = new JScrollPane(actionTable);
 
         // pilots
         panel.add(pilotPane, BorderLayout.CENTER);
@@ -243,6 +295,17 @@ public class ContentsChecker  extends AbstractConfigurable {
             }
         });
         panel.add(downloadShipButton);
+
+        // actions
+        panel.add(actionPane, BorderLayout.CENTER);
+        JButton downloadActionButton = new JButton("Download Actions");
+        downloadActionButton.setAlignmentY(0.0F);
+        downloadActionButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                downloadMissingActions();
+            }
+        });
+        panel.add(downloadActionButton);
 
             dialog.setVisible(true);
             frame.toFront();
@@ -303,6 +366,22 @@ public class ContentsChecker  extends AbstractConfigurable {
 
         arcTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
         return arcTable;
+    }
+
+    private JTable buildActionTable(String[][] actionResults)
+    {
+        actionTable = new JTable(actionResults,actionColumnNames);
+        DefaultTableModel model = new DefaultTableModel(actionResults.length, actionColumnNames.length);
+        model.setNumRows(actionResults.length);
+        model.setDataVector(actionResults,actionColumnNames);
+
+        actionTable.setModel(model);
+        actionTable.getColumnModel().getColumn(0).setPreferredWidth(50);;
+        actionTable.getColumnModel().getColumn(1).setPreferredWidth(325);
+        actionTable.getColumnModel().getColumn(2).setPreferredWidth(75);
+
+        actionTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+        return actionTable;
     }
 
     public void addTo(Buildable parent) {

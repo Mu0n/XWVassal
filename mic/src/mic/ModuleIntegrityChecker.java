@@ -218,6 +218,51 @@ public String[][] checkPilots()
         return shipResults;
     }
 
+    public String[][] checkActions()
+    {
+
+        MasterShipData msd = new MasterShipData();
+        msd.loadData();
+
+        Object[] allShips = msd.getAllShips();
+
+        // first get a list of all possible ships
+        HashMap possibleActions = new HashMap();
+        ArrayList<String[]> actionList = new ArrayList<String[]>();
+        for(int i=0;i<allShips.length;i++)
+        {
+            for(int j=0;j<((MasterShipData.ShipData)allShips[i]).getActions().size();j++)
+            {
+                String actionName = ((MasterShipData.ShipData)allShips[i]).getActions().get(j);
+                if(possibleActions.get(actionName)==null)
+                {
+                    String imageName = "Action_"+actionName.toLowerCase().replaceAll(" ","")+".png";
+                    possibleActions.put(actionName,imageName);
+                    boolean exists = Util.imageExistsInModule(imageName);
+                    if(exists)
+                    {
+                        String[] action = {actionName,imageName,"Exists"};
+                        actionList.add(action);
+                    }else{
+                        String[] action = {actionName,imageName,"Not Found"};
+                        actionList.add(action);
+                    }
+                }
+            }
+
+        }
+
+        // now we need to convert the Array<String[]> to String[][]
+        Object[] tempResults = actionList.toArray();
+        String[][] actionResults = new String[tempResults.length][5];
+
+        for(int i=0;i<tempResults.length;i++)
+        {
+            actionResults[i] = (String[])tempResults[i];
+        }
+
+        return actionResults;
+    }
 
     public void checkAll(){
 
