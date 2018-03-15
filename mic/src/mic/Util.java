@@ -33,6 +33,19 @@ import java.util.TimeZone;
  */
 public class Util {
 
+    private static String[] actionOrder = {
+            "cloak",
+        "rotatearc",
+        "reload",
+        "reinforce",
+        "coordinate",
+        "slam",
+        "evade",
+        "boost",
+        "barrelroll",
+        "targetlock",
+        "focus"
+};
 
 
     private static final int[][] SMALL_SHIP_ACTION_COORD = {
@@ -456,7 +469,7 @@ public class Util {
         List<String> actionImageNames = new ArrayList<String>();
         List<String> arcImageNames = new ArrayList<String>();
 
-        //TODO fix the location of each image
+
 
         // determine which background to use (size)
         if(size.equals("small"))
@@ -470,10 +483,12 @@ public class Util {
             cardboardBaseImageName = largeBlackBase;
         }
 
-        // determine which action images to use
+        //sort the action order
+        actions = sortActions(actions);
+
         for(String action : actions)
         {
-            String actionImage = "Action_"+action.toLowerCase().replaceAll(" ","")+".png";
+            String actionImage = "Action_"+action+".png";
             actionImageNames.add(actionImage);
         }
 
@@ -565,17 +580,19 @@ public class Util {
                 actionNum++;
 
                 // order of actions:
-                // cloak
-                // reload
-                // rotate arc
-                // evade
-                // reinforce
-                // coordinate
-                // SLAM
-                // boost
-                // barrel roll
-                // Target Lock
-                //  Focus
+              //  Cloak
+             //   Rotate Arc
+              //  Reload
+              //  Reinforce
+              //  Coordinate
+             //   SLAM
+             //   Evade
+             //   Boost
+             //   Barrel Roll
+              //  Target Lock
+              //  Focus
+
+
                 g.drawImage(actionImage, actionX, actionY, null);
             }catch(IOException e)
             {
@@ -634,6 +651,40 @@ public class Util {
         }
 
 
+    }
+
+    private static String simplifyActionName(String action)
+    {
+        return action.toLowerCase().replaceAll(" ","");
+    }
+
+    private static List<String> sortActions(List<String> actions)
+    {
+        List<String> sortedActions = new ArrayList<String>();
+
+        // loop through each action in order
+        for(int i=0;i<actionOrder.length;i++)
+        {
+            //see if this ship has that action
+            boolean found = false;
+
+            for(int j=0;j<actions.size() && !found ;j++)
+            {
+                if(actionOrder[i].equals(simplifyActionName(actions.get(j))))
+                {
+                    found = true;
+                    break;
+                }
+            }
+
+            if(found)
+            {
+                sortedActions.add(actionOrder[i]);
+            }
+        }
+
+
+        return sortedActions;
     }
 
     public static String buildShipBaseImageName(String faction, String shipXWS)
