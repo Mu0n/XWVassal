@@ -587,7 +587,9 @@ public class Util {
 
         // add the ship
         try{
+
             InputStream is = dataArchive.getInputStream("images/" + shipImageName);
+
             BufferedImage shipImage = ImageUtils.getImage(shipImageName, is);
 
             Graphics g = combined.getGraphics();
@@ -595,13 +597,13 @@ public class Util {
             g.drawImage(shipImage, 0, 0, null);
         }catch(IOException e)
         {
-
+            Util.logToChat("Exception occurred getting ship image "+shipImageName);
         }
 
         // save the image to a temp file
         File tempFile = null;
         try {
-            tempFile = File.createTempFile("vassalBaseImage", "");
+            tempFile = File.createTempFile("XWVassalBaseImage", "");
 
             ImageIO.write(combined, "PNG", tempFile);
         }catch(IOException e)
@@ -624,6 +626,8 @@ public class Util {
             byte[] bytes = baos.toByteArray();
             baos.close();
             addImageToModule(targetBaseImageName, bytes);
+
+            tempFile.delete();
         }catch(IOException e)
         {
 
