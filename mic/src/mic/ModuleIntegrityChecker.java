@@ -1,9 +1,7 @@
 package mic;
 
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by Mic on 03/11/2018.
@@ -17,7 +15,7 @@ public class ModuleIntegrityChecker {
     private static String REMOTE_URL = "https://raw.githubusercontent.com/guidokessels/xwing-data/master/data/pilots.js";
 
     public String testString = "";
-
+/*
     private ArrayList<String> pilotsRebelAlliance, pilotsRebelAllianceMissing,
             pilotsResistance, pilotsResistanceMissing,
             pilotsGalacticEmpire, pilotsGalacticEmpireMissing,
@@ -45,6 +43,7 @@ public class ModuleIntegrityChecker {
 
         checkAll();
     }
+    */
 /*
     public ArrayList<PilotResults> checkPilots()
     {
@@ -118,7 +117,7 @@ public String[][] checkPilots()
 
     return pilots;
 }
-
+/*
     public String[][] checkArcs()
     {
 
@@ -171,7 +170,7 @@ public String[][] checkPilots()
 
         return arcResults;
     }
-
+*/
     public String[][] checkShips()
     {
 
@@ -315,16 +314,35 @@ public String[][] checkPilots()
     public String[][] checkActions()
     {
 
-        MasterShipData msd = new MasterShipData();
-        msd.loadData();
+        // get list of Actions from OTAMasterActions
+        OTAMasterActions oma = new OTAMasterActions();
+        Collection<OTAMasterActions.OTAAction> actions = oma.getAllActions();
 
-        Object[] allShips = msd.getAllShips();
+
+ //       MasterShipData msd = new MasterShipData();
+ //       msd.loadData();
+
+  //      Object[] allShips = msd.getAllShips();
 
         // first get a list of all possible ships
-        HashMap possibleActions = new HashMap();
+//        HashMap possibleActions = new HashMap();
         ArrayList<String[]> actionList = new ArrayList<String[]>();
-        for(int i=0;i<allShips.length;i++)
+        Iterator<OTAMasterActions.OTAAction> i = actions.iterator();
+        while(i.hasNext())
         {
+ //       for(int i=0;i<actions.size();i++)
+//        {
+            OTAMasterActions.OTAAction action = (OTAMasterActions.OTAAction)i.next();
+            boolean exists = XWImageUtils.imageExistsInModule(action.getImage());
+            if(exists)
+            {
+                String[] actionLine = {action.getName(),action.getImage(),"Exists"};
+                actionList.add(actionLine);
+            }else{
+                String[] actionLine = {action.getName(),action.getImage(),"Not Found"};
+                actionList.add(actionLine);
+            }
+            /*
             for(int j=0;j<((MasterShipData.ShipData)allShips[i]).getActions().size();j++)
             {
                 String actionName = ((MasterShipData.ShipData)allShips[i]).getActions().get(j);
@@ -342,7 +360,7 @@ public String[][] checkPilots()
                         actionList.add(action);
                     }
                 }
-            }
+            }*/
 
         }
 
@@ -350,9 +368,9 @@ public String[][] checkPilots()
         Object[] tempResults = actionList.toArray();
         String[][] actionResults = new String[tempResults.length][5];
 
-        for(int i=0;i<tempResults.length;i++)
+        for(int j=0;j<tempResults.length;j++)
         {
-            actionResults[i] = (String[])tempResults[i];
+            actionResults[j] = (String[])tempResults[j];
         }
 
         return actionResults;

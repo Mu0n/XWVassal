@@ -130,7 +130,7 @@ public class XWImageUtils {
                     saveBaseShipImageToModule(faction, shipXWS, newBaseImage, newBaseImageName);
                 }
             }else {
-       
+
                 // build the base (cardbard of the ship base)
                 BufferedImage newBaseImage = buildShipBase(size, dataArchive);
 

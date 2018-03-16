@@ -20,17 +20,17 @@ public class ContentsChecker  extends AbstractConfigurable {
     private JButton OKButton = new JButton();
 
     private ArrayList<String> missingPilots;
-    private ArrayList<String> missingArcs;
+  //  private ArrayList<String> missingArcs;
     private ArrayList<String> missingShips;
     private ArrayList<String> missingActions;
     private ArrayList<String[]> missingShipBases;
     private JTable pilotTable;
-    private JTable arcTable;
+  //  private JTable arcTable;
     private JTable shipTable;
     private JTable actionTable;
     private JTable shipBaseTable;
     private final String[] pilotColumnNames = {"Faction","Ship","Pilot","Image","Status"};
-    private final String[] arcColumnNames = {"Size","Faction","Arc","Image","Status"};
+ //   private final String[] arcColumnNames = {"Size","Faction","Arc","Image","Status"};
     private final String[] shipColumnNames = {"Name","XWS","Image","Status"};
     private final String[] actionColumnNames = {"Name","Image","Status"};
     private final String[] shipBaseColumnNames = {"Name","XWS","Size","Faction","Image","Status"};
@@ -58,7 +58,7 @@ public class ContentsChecker  extends AbstractConfigurable {
         // refresh the table
         refreshPilotTable(pilotResults);
     }
-
+/*
     private synchronized void downloadMissingArcs() {
 
         // download the arcs
@@ -81,10 +81,10 @@ public class ContentsChecker  extends AbstractConfigurable {
         // refresh the table
         refreshArcTable(arcResults);
     }
-
+*/
     private synchronized void downloadMissingActions() {
 
-        // download the arcs
+        // download the actions
         Iterator i = missingActions.iterator();
         while(i.hasNext()) {
             String actionImage = (String)i.next();
@@ -195,7 +195,7 @@ public class ContentsChecker  extends AbstractConfigurable {
         pilotTable.getColumnModel().getColumn(4).setPreferredWidth(75);
         model.fireTableDataChanged();
     }
-
+/*
     private void refreshArcTable(String[][] arcResults)
     {
 
@@ -209,7 +209,7 @@ public class ContentsChecker  extends AbstractConfigurable {
         arcTable.getColumnModel().getColumn(3).setPreferredWidth(325);
         arcTable.getColumnModel().getColumn(4).setPreferredWidth(75);
         model.fireTableDataChanged();
-    }
+    }*/
 
     private void refreshActionTable(String[][] actionResults)
     {
@@ -260,7 +260,7 @@ public class ContentsChecker  extends AbstractConfigurable {
         modIntChecker = new ModuleIntegrityChecker();
 
         String[][] pilotResults = modIntChecker.checkPilots();
-        String[][] arcResults = modIntChecker.checkArcs();
+     //   String[][] arcResults = modIntChecker.checkArcs();
         String[][] shipResults = modIntChecker.checkShips();
         String[][] actionResults = modIntChecker.checkActions();
         String[][] shipBaseResults = modIntChecker.checkShipBases();
@@ -273,7 +273,7 @@ public class ContentsChecker  extends AbstractConfigurable {
                 missingPilots.add(pilotResults[i][3]);
             }
         }
-
+/*
         // store the missing arcs
         missingArcs = new ArrayList<String>();
         for(int i=0;i<arcResults.length;i++)
@@ -282,7 +282,7 @@ public class ContentsChecker  extends AbstractConfigurable {
                 missingArcs.add(arcResults[i][3]);
             }
         }
-
+*/
         // store the missing ships
         missingShips = new ArrayList<String>();
         for(int i=0;i<shipResults.length;i++)
@@ -332,13 +332,13 @@ public class ContentsChecker  extends AbstractConfigurable {
             dialog.setSize(1000,750);
 
         pilotTable = buildPilotTable(pilotResults);
-        arcTable = buildArcTable(arcResults);
+      //  arcTable = buildArcTable(arcResults);
         shipTable = buildShipTable(shipResults);
         actionTable = buildActionTable(actionResults);
         shipBaseTable = buildShipBaseTable(shipBaseResults);
 
         JScrollPane pilotPane = new JScrollPane(pilotTable);
-        JScrollPane arcPane = new JScrollPane(arcTable);
+    //    JScrollPane arcPane = new JScrollPane(arcTable);
         JScrollPane shipPane = new JScrollPane(shipTable);
         JScrollPane actionPane = new JScrollPane(actionTable);
         JScrollPane shipBasePane = new JScrollPane(shipBaseTable);
@@ -353,7 +353,7 @@ public class ContentsChecker  extends AbstractConfigurable {
             }
         });
         panel.add(downloadPilotButton);
-
+/*
         // arcs
         panel.add(arcPane, BorderLayout.CENTER);
         JButton downloadArcButton = new JButton("Download Arcs");
@@ -364,7 +364,7 @@ public class ContentsChecker  extends AbstractConfigurable {
             }
         });
         panel.add(downloadArcButton);
-
+*/
         // ships
         panel.add(shipPane, BorderLayout.CENTER);
         JButton downloadShipButton = new JButton("Download Ships");
@@ -460,7 +460,7 @@ public class ContentsChecker  extends AbstractConfigurable {
         shipTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
         return shipTable;
     }
-
+/*
     private JTable buildArcTable(String[][] arcResults)
     {
         arcTable = new JTable(arcResults,arcColumnNames);
@@ -478,7 +478,7 @@ public class ContentsChecker  extends AbstractConfigurable {
         arcTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
         return arcTable;
     }
-
+*/
     private JTable buildActionTable(String[][] actionResults)
     {
         actionTable = new JTable(actionResults,actionColumnNames);
