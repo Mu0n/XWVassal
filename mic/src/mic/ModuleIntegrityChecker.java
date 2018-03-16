@@ -259,6 +259,8 @@ public String[][] checkPilots()
         MasterShipData msd = new MasterShipData();
         msd.loadData();
 
+
+
         Object[] allShips = msd.getAllShips();
 
         HashMap possibleShipFactions = new HashMap();
@@ -295,6 +297,8 @@ public String[][] checkPilots()
 
             }
         }
+
+
 
         // now we need to convert the Array<String[]> to String[][]
         Object[] tempResults = shipList.toArray();

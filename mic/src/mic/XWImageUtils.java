@@ -46,6 +46,23 @@ public class XWImageUtils {
             {208,150}
     };
 
+    private static String simplifyFactionName(String faction)
+    {
+        String newFaction = null;
+        if(faction.equals("Rebel Alliance") || faction.equals("Resistance"))
+        {
+            newFaction = "rebelalliance";
+
+        }else if(faction.equals("Galactic Empire") ||faction.equals("First Order"))
+        {
+            newFaction = "galacticempire";
+        }else if(faction.equals("Scum & Villainy") || faction.equals("Scum and Villainy"))
+        {
+            newFaction = "scumandvillainy";
+        }
+        return newFaction;
+    }
+
     public static String buildFiringArcImageName(String size, String faction, String arc)
     {
 
@@ -64,16 +81,8 @@ public class XWImageUtils {
         arcImagePrefixSB.append("_");
 
         // find the faction
-        if(faction.equals("Rebel Alliance") || faction.equals("Resistance"))
-        {
-            arcImagePrefixSB.append("rebelalliance");
-        }else if(faction.equals("Galactic Empire") ||faction.equals("First Order"))
-        {
-            arcImagePrefixSB.append("galacticempire");
-        }else if(faction.equals("Scum & Villainy") || faction.equals("Scum and Villainy"))
-        {
-            arcImagePrefixSB.append("scumandvillainy");
-        }
+        arcImagePrefixSB.append(simplifyFactionName(faction));
+
 
         arcImagePrefixSB.append(".png");
 
@@ -87,41 +96,41 @@ public class XWImageUtils {
 
         try {
 
-            Util.logToChat("Getting ship exception list for "+shipXWS);
+
             // get the ship build exception data
             OTAShipBuildExceptions.ShipException shipException = OTAShipBuildExceptions.getShipException(shipXWS);
 
             // the ship could have multiple bases (i.e. the U-wing)
             if(shipException != null && shipException.getImages() != null && shipException.getImages().size() > 1)
             {
-                Util.logToChat("ShipException exists");
+
                 // an exception exists.  multiple bases needed
 
                 for(String shipImageName : shipException.getImages())
                 {
-                    Util.logToChat("Building for "+shipImageName);
+
                     // build the base (cardbard of the ship base)
                     BufferedImage newBaseImage = buildShipBase(size, dataArchive);
-                    Util.logToChat("Base built");
+
                     // add the arcs to the image
                     newBaseImage = addArcsToBaseShipImage(arcs, size, faction, newBaseImage, dataArchive);
-                    Util.logToChat("Arcs added");
+
                     // The ship image is what would be different
                     newBaseImage = addShipToBaseShipImage(shipXWS, newBaseImage, dataArchive,shipImageName);
-                    Util.logToChat("added ship");
+
                     // add the actions to the image
                     newBaseImage = addActionsToBaseShipImage(actions, size, newBaseImage, dataArchive);
-                    Util.logToChat("added actions");
-                    // also need to change the base image name to save to
-                    String newBaseImageName = determineAltShipBaseNameFromImage(shipImageName);
 
-                    Util.logToChat("New base image name is "+newBaseImageName);
+                    // also need to change the base image name to save to
+                    String newBaseImageName = determineAltShipBaseNameFromImage(faction, shipImageName);
+
+
 
                     // save the newly created base image to the module
                     saveBaseShipImageToModule(faction, shipXWS, newBaseImage, newBaseImageName);
                 }
             }else {
-                Util.logToChat("ShipException does not exist");
+       
                 // build the base (cardbard of the ship base)
                 BufferedImage newBaseImage = buildShipBase(size, dataArchive);
 
@@ -145,8 +154,9 @@ public class XWImageUtils {
 
     }
 
-    private static String determineAltShipBaseNameFromImage(String shipImageName){
-        return shipImageName.replace("Ship_","").replace(".png","");
+    private static String determineAltShipBaseNameFromImage(String faction, String shipImageName){
+        String coreName = shipImageName.replace("Ship_","").replace(".png","");
+        return "Ship_Base_"+simplifyFactionName(faction)+"_"+coreName+".png";
     }
 
 
@@ -294,9 +304,9 @@ public class XWImageUtils {
     private static BufferedImage addShipToBaseShipImage(String shipXWS, BufferedImage baseImage, DataArchive dataArchive, String shipImageName) throws IOException
     {
 
-        Util.logToChat("trying to grab image images/"+ shipImageName);
+
         InputStream is = dataArchive.getInputStream("images/" + shipImageName);
-        Util.logToChat("trying to grab image images/"+ shipImageName);
+
         BufferedImage shipImage = ImageUtils.getImage(shipImageName, is);
 
         Graphics g = baseImage.getGraphics();
@@ -402,18 +412,9 @@ public class XWImageUtils {
 
         shipBaseImageSB.append("Ship_Base_");
 
-
         // find the faction
-        if(faction.equals("Rebel Alliance") || faction.equals("Resistance"))
-        {
-            shipBaseImageSB.append("rebelalliance");
-        }else if(faction.equals("Galactic Empire") ||faction.equals("First Order"))
-        {
-            shipBaseImageSB.append("galacticempire");
-        }else if(faction.equals("Scum & Villainy") || faction.equals("Scum and Villainy"))
-        {
-            shipBaseImageSB.append("scumandvillainy");
-        }
+        shipBaseImageSB.append(simplifyFactionName(faction));
+
 
         shipBaseImageSB.append("_");
         shipBaseImageSB.append(shipXWS);
