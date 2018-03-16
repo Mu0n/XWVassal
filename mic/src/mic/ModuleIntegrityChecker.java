@@ -3,6 +3,7 @@ package mic;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * Created by Mic on 03/11/2018.
@@ -177,7 +178,11 @@ public String[][] checkPilots()
         MasterShipData msd = new MasterShipData();
         msd.loadData();
 
+        OTAShipBuildExceptions sbe = new OTAShipBuildExceptions();
+        sbe.loadData();
+
         Object[] allShips = msd.getAllShips();
+
 
         // first get a list of all possible ships
         HashMap possibleShips = new HashMap();
@@ -203,6 +208,36 @@ public String[][] checkPilots()
                     shipList.add(ship);
                 }
 
+            }
+        }
+
+        // now check the OTA exceptions
+        Object[] allShipExceptions = sbe.getAllShips();
+        for(int i=0;i<allShipExceptions.length;i++)
+        {
+            String shipName = ((OTAShipBuildExceptions.ShipException)allShipExceptions[i]).getName();
+            String shipXWS = ((OTAShipBuildExceptions.ShipException)allShipExceptions[i]).getXws();
+            List<String> shipImages = ((OTAShipBuildExceptions.ShipException)allShipExceptions[i]).getImages();
+
+            for(String altShipImage : shipImages)
+            {
+                if (possibleShips.get(shipXWS+"_"+altShipImage) == null)
+                {
+                    String imageName = altShipImage;
+                    possibleShips.put(shipXWS+"_"+altShipImage, imageName);
+
+                    boolean exists = XWImageUtils.imageExistsInModule(imageName);
+
+                    // add it to the array
+                    if (exists) {
+                        String[] ship = {shipName, shipXWS, imageName, "Exists"};
+                        shipList.add(ship);
+                    } else {
+                        String[] ship = {shipName, shipXWS, imageName, "Not Found"};
+                        shipList.add(ship);
+                    }
+
+                }
             }
         }
 

@@ -86,20 +86,57 @@ public class XWImageUtils {
         DataArchive dataArchive = gameModule.getDataArchive();
 
         try {
-            // build the base (cardbard of the ship base)
-            BufferedImage newBaseImage = buildShipBase(size, dataArchive);
 
-            // add the arcs to the image
-            newBaseImage = addArcsToBaseShipImage(arcs, size, faction, newBaseImage, dataArchive);
+            Util.logToChat("Getting ship exception list for "+shipXWS);
+            // get the ship build exception data
+            OTAShipBuildExceptions.ShipException shipException = OTAShipBuildExceptions.getShipException(shipXWS);
 
-            // add the ship to the image
-            newBaseImage = addShipToBaseShipImage(shipXWS, newBaseImage, dataArchive);
+            // the ship could have multiple bases (i.e. the U-wing)
+            if(shipException != null && shipException.getImages() != null && shipException.getImages().size() > 1)
+            {
+                Util.logToChat("ShipException exists");
+                // an exception exists.  multiple bases needed
 
-            // add the actions to the image
-            newBaseImage = addActionsToBaseShipImage(actions, size, newBaseImage, dataArchive);
+                for(String shipImageName : shipException.getImages())
+                {
+                    Util.logToChat("Building for "+shipImageName);
+                    // build the base (cardbard of the ship base)
+                    BufferedImage newBaseImage = buildShipBase(size, dataArchive);
+                    Util.logToChat("Base built");
+                    // add the arcs to the image
+                    newBaseImage = addArcsToBaseShipImage(arcs, size, faction, newBaseImage, dataArchive);
+                    Util.logToChat("Arcs added");
+                    // The ship image is what would be different
+                    newBaseImage = addShipToBaseShipImage(shipXWS, newBaseImage, dataArchive,shipImageName);
+                    Util.logToChat("added ship");
+                    // add the actions to the image
+                    newBaseImage = addActionsToBaseShipImage(actions, size, newBaseImage, dataArchive);
+                    Util.logToChat("added actions");
+                    // also need to change the base image name to save to
+                    String newBaseImageName = determineAltShipBaseNameFromImage(shipImageName);
 
-            // save the newly created base image to the module
-            saveBaseShipImageToModule(faction, shipXWS, newBaseImage);
+                    Util.logToChat("New base image name is "+newBaseImageName);
+
+                    // save the newly created base image to the module
+                    saveBaseShipImageToModule(faction, shipXWS, newBaseImage, newBaseImageName);
+                }
+            }else {
+                Util.logToChat("ShipException does not exist");
+                // build the base (cardbard of the ship base)
+                BufferedImage newBaseImage = buildShipBase(size, dataArchive);
+
+                // add the arcs to the image
+                newBaseImage = addArcsToBaseShipImage(arcs, size, faction, newBaseImage, dataArchive);
+
+                // add the ship to the image
+                newBaseImage = addShipToBaseShipImage(shipXWS, newBaseImage, dataArchive);
+
+                // add the actions to the image
+                newBaseImage = addActionsToBaseShipImage(actions, size, newBaseImage, dataArchive);
+
+                // save the newly created base image to the module
+                saveBaseShipImageToModule(faction, shipXWS, newBaseImage);
+            }
         }catch(IOException e)
         {
             Util.logToChat("Exception occurred generating base ship image for "+shipXWS);
@@ -108,9 +145,49 @@ public class XWImageUtils {
 
     }
 
+    private static String determineAltShipBaseNameFromImage(String shipImageName){
+        return shipImageName.replace("Ship_","").replace(".png","");
+    }
+
+
     private static void saveBaseShipImageToModule(String faction, String shipXWS, BufferedImage baseImage)
     {
         String targetBaseImageName = buildShipBaseImageName(faction,shipXWS);
+
+        File tempFile = null;
+        try {
+            tempFile = File.createTempFile("XWVassalBaseImage", "");
+
+            ImageIO.write(baseImage, "PNG", tempFile);
+        }catch(IOException e)
+        {
+
+        }
+        try {
+            FileInputStream fis = new FileInputStream(tempFile);
+            byte[] byteChunk = new byte[4096];
+            int n;
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            while ((n = fis.read(byteChunk)) > 0) {
+                baos.write(byteChunk, 0, n);
+            }
+            if (fis != null) {
+                fis.close();
+            }
+            byte[] bytes = baos.toByteArray();
+            baos.close();
+            addImageToModule(targetBaseImageName, bytes);
+
+            tempFile.delete();
+        }catch(IOException e)
+        {
+
+        }
+    }
+
+    private static void saveBaseShipImageToModule(String faction, String shipXWS, BufferedImage baseImage, String targetBaseImageName)
+    {
+    //    String targetBaseImageName = buildShipBaseImageName(faction,shipXWS);
 
         File tempFile = null;
         try {
@@ -204,6 +281,22 @@ public class XWImageUtils {
 
         InputStream is = dataArchive.getInputStream("images/" + shipImageName);
 
+        BufferedImage shipImage = ImageUtils.getImage(shipImageName, is);
+
+        Graphics g = baseImage.getGraphics();
+
+        g.drawImage(shipImage, 0, 0, null);
+
+        return baseImage;
+
+    }
+
+    private static BufferedImage addShipToBaseShipImage(String shipXWS, BufferedImage baseImage, DataArchive dataArchive, String shipImageName) throws IOException
+    {
+
+        Util.logToChat("trying to grab image images/"+ shipImageName);
+        InputStream is = dataArchive.getInputStream("images/" + shipImageName);
+        Util.logToChat("trying to grab image images/"+ shipImageName);
         BufferedImage shipImage = ImageUtils.getImage(shipImageName, is);
 
         Graphics g = baseImage.getGraphics();
@@ -368,11 +461,11 @@ public class XWImageUtils {
     }
 
 
-    private static byte[] downloadFileFromOTA(String imageType, String fileName) throws IOException
+    private static byte[] downloadFileFromOTA(String fileType, String fileName) throws IOException
     {
         // Util.logToChat("Downloading image: "+fileName);
         URL OTAImageURL = null;
-        String url = "https://raw.githubusercontent.com/Mu0n/XWVassalOTA/master/" + imageType + "/" + fileName;
+        String url = "https://raw.githubusercontent.com/Mu0n/XWVassalOTA/master/" + fileType + "/" + fileName;
         OTAImageURL = new URL(url);
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         InputStream is = null;

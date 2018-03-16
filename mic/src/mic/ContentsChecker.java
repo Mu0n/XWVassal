@@ -112,11 +112,12 @@ public class ContentsChecker  extends AbstractConfigurable {
 
         while(i.hasNext())
         {
-            String shipXWS = (String)i.next();
-            MasterShipData.ShipData shipData = MasterShipData.getShipData(shipXWS);
+          //  String shipXWS = (String)i.next();
+          //  MasterShipData.ShipData shipData = MasterShipData.getShipData(shipXWS);
+            String shipImage = (String)i.next();
+            XWImageUtils.downloadAndSaveImageFromOTA("ships",shipImage);
 
 
-            //mic.Util.downloadAndSaveImageFromOTA("ships",shipImage );
         }
 
         // refresh the list
@@ -125,6 +126,7 @@ public class ContentsChecker  extends AbstractConfigurable {
         for(int j=0;j<shipResults.length;j++)
         {
             if(shipResults[j][3].equals("Not Found")) {
+                mic.Util.logToChat("adding "+shipResults[j][2]);
                 missingShips.add(shipResults[j][2]);
             }
         }
@@ -160,7 +162,7 @@ public class ContentsChecker  extends AbstractConfigurable {
                 XWImageUtils.buildBaseShipImage(missingFaction, missingXWS, arcs, actions, shipData.getSize());
 
             }
-            //mic.Util.downloadAndSaveImageFromOTA("ships",shipImage );
+
         }
 
         // refresh the list
