@@ -126,7 +126,6 @@ public class ContentsChecker  extends AbstractConfigurable {
         for(int j=0;j<shipResults.length;j++)
         {
             if(shipResults[j][3].equals("Not Found")) {
-                mic.Util.logToChat("adding "+shipResults[j][2]);
                 missingShips.add(shipResults[j][2]);
             }
         }
