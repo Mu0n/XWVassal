@@ -45,11 +45,6 @@ public class XWImageUtils {
             {0,50},
             {0,50}
     };
- //   private static final int[] LARGE_SHIP_ACTION_1_COORD = {0,0};
- //   private static final int[] LARGE_SHIP_ACTION_2_COORD = {0,0};
- //   private static final int[] LARGE_SHIP_ACTION_3_COORD = {0,0};
- //   private static final int[] LARGE_SHIP_ACTION_4_COORD = {0,0};
- //   private static final int[] LARGE_SHIP_ACTION_5_COORD = {0,0};
 
     public static String buildFiringArcImageName(String size, String faction, String arc)
     {
@@ -80,7 +75,6 @@ public class XWImageUtils {
             arcImagePrefixSB.append("scumandvillainy");
         }
 
-        //arcImagePrefixSB.append(".svg");
         arcImagePrefixSB.append(".png");
 
         return arcImagePrefixSB.toString();
@@ -91,20 +85,25 @@ public class XWImageUtils {
         GameModule gameModule = GameModule.getGameModule();
         DataArchive dataArchive = gameModule.getDataArchive();
 
-        // build the base (cardbard of the ship base)
-        BufferedImage newBaseImage = buildShipBase(size, dataArchive);
+        try {
+            // build the base (cardbard of the ship base)
+            BufferedImage newBaseImage = buildShipBase(size, dataArchive);
 
-        // add the arcs to the image
-        newBaseImage = addArcsToBaseShipImage(arcs, size, faction, newBaseImage, dataArchive);
+            // add the arcs to the image
+            newBaseImage = addArcsToBaseShipImage(arcs, size, faction, newBaseImage, dataArchive);
 
-        // add the ship to the image
-        newBaseImage = addShipToBaseShipImage(shipXWS, newBaseImage, dataArchive);
+            // add the ship to the image
+            newBaseImage = addShipToBaseShipImage(shipXWS, newBaseImage, dataArchive);
 
-        // add the actions to the image
-        newBaseImage = addActionsToBaseShipImage(actions, size, newBaseImage, dataArchive);
+            // add the actions to the image
+            newBaseImage = addActionsToBaseShipImage(actions, size, newBaseImage, dataArchive);
 
-        // save the newly created base image to the module
-        saveBaseShipImageToModule(faction, shipXWS, newBaseImage);
+            // save the newly created base image to the module
+            saveBaseShipImageToModule(faction, shipXWS, newBaseImage);
+        }catch(IOException e)
+        {
+            Util.logToChat("Exception occurred generating base ship image for "+shipXWS);
+        }
 
 
     }
@@ -144,7 +143,7 @@ public class XWImageUtils {
         }
     }
 
-    private static BufferedImage buildShipBase(String size, DataArchive dataArchive)
+    private static BufferedImage buildShipBase(String size, DataArchive dataArchive) throws IOException
     {
 
         final String smallBlackBase = "Ship_Generic_Starfield_Small.png";
@@ -164,20 +163,13 @@ public class XWImageUtils {
             cardboardBaseImageName = largeBlackBase;
         }
 
-        BufferedImage image = null;
-        try{
-            InputStream is = dataArchive.getInputStream("images/"+cardboardBaseImageName);
-            image = ImageUtils.getImage(cardboardBaseImageName,is);
-
-        }catch(IOException e)
-        {
-
-        }
+        InputStream is = dataArchive.getInputStream("images/"+cardboardBaseImageName);
+        BufferedImage image = ImageUtils.getImage(cardboardBaseImageName,is);
 
         return image;
     }
 
-    private static BufferedImage addArcsToBaseShipImage(List<String> arcs,String size, String faction, BufferedImage baseImage, DataArchive dataArchive)
+    private static BufferedImage addArcsToBaseShipImage(List<String> arcs,String size, String faction, BufferedImage baseImage, DataArchive dataArchive) throws IOException
     {
 
         List<String> arcImageNames = new ArrayList<String>();
@@ -190,47 +182,39 @@ public class XWImageUtils {
         // add the arcs
         for(String arcImageName : arcImageNames)
         {
-            try {
-                InputStream is = dataArchive.getInputStream("images/" + arcImageName);
 
-                BufferedImage arcImage = ImageUtils.getImage(arcImageName, is);//doesn't recognize SVG
+            InputStream is = dataArchive.getInputStream("images/" + arcImageName);
 
-                Graphics g = baseImage.getGraphics();
+            BufferedImage arcImage = ImageUtils.getImage(arcImageName, is);//doesn't recognize SVG
 
-                g.drawImage(arcImage, 0, 0, null);
-            }catch(IOException e)
-            {
-                Util.logToChat("Exception getting image: images/" + arcImageName);
-                Util.logToChat(e.toString());
-            }
+            Graphics g = baseImage.getGraphics();
+            g.drawImage(arcImage, 0, 0, null);
+
         }
         return baseImage;
     }
 
-    private static BufferedImage addShipToBaseShipImage(String shipXWS, BufferedImage baseImage, DataArchive dataArchive)
+    private static BufferedImage addShipToBaseShipImage(String shipXWS, BufferedImage baseImage, DataArchive dataArchive) throws IOException
     {
 
         // add the ship
         // determine the ship image to use
         String shipImageName = "Ship_"+shipXWS+".png";
-        try{
 
-            InputStream is = dataArchive.getInputStream("images/" + shipImageName);
 
-            BufferedImage shipImage = ImageUtils.getImage(shipImageName, is);
+        InputStream is = dataArchive.getInputStream("images/" + shipImageName);
 
-            Graphics g = baseImage.getGraphics();
+        BufferedImage shipImage = ImageUtils.getImage(shipImageName, is);
 
-            g.drawImage(shipImage, 0, 0, null);
-        }catch(IOException e)
-        {
-            Util.logToChat("Exception occurred getting ship image "+shipImageName);
-        }
+        Graphics g = baseImage.getGraphics();
+
+        g.drawImage(shipImage, 0, 0, null);
+
         return baseImage;
 
     }
 
-    private static BufferedImage addActionsToBaseShipImage(List<String> actions, String size, BufferedImage baseImage, DataArchive dataArchive)
+    private static BufferedImage addActionsToBaseShipImage(List<String> actions, String size, BufferedImage baseImage, DataArchive dataArchive) throws IOException
     {
 
         List<String> actionImageNames = new ArrayList<String>();
@@ -248,39 +232,36 @@ public class XWImageUtils {
         for(String actionImageName : actionImageNames)
         {
 
-            try {
-                InputStream is = dataArchive.getInputStream("images/" + actionImageName);
-                BufferedImage actionImage = ImageUtils.getImage(actionImageName, is);
 
-                Graphics g = baseImage.getGraphics();
-                // g.drawImage(combined, 0, 0, null);
+            InputStream is = dataArchive.getInputStream("images/" + actionImageName);
+            BufferedImage actionImage = ImageUtils.getImage(actionImageName, is);
 
-
-                // need to place the images properly
-
-                int actionX = 0;
-                int actionY = 0;
-                if(size.equals("small"))
-                {
-                    actionX = SMALL_SHIP_ACTION_COORD[actionNum][0];
-                    actionY = SMALL_SHIP_ACTION_COORD[actionNum][1];
+            Graphics g = baseImage.getGraphics();
+            // g.drawImage(combined, 0, 0, null);
 
 
+            // need to place the images properly
 
-                }else if(size.equals("large"))
-                {
-                    actionX = LARGE_SHIP_ACTION_COORD[actionNum][0];
-                    actionY = LARGE_SHIP_ACTION_COORD[actionNum][1];
-                }
-
-                actionNum++;
-
-
-                g.drawImage(actionImage, actionX, actionY, null);
-            }catch(IOException e)
+            int actionX = 0;
+            int actionY = 0;
+            if(size.equals("small"))
             {
+                actionX = SMALL_SHIP_ACTION_COORD[actionNum][0];
+                actionY = SMALL_SHIP_ACTION_COORD[actionNum][1];
 
+
+
+            }else if(size.equals("large"))
+            {
+                actionX = LARGE_SHIP_ACTION_COORD[actionNum][0];
+                actionY = LARGE_SHIP_ACTION_COORD[actionNum][1];
             }
+
+            actionNum++;
+
+
+            g.drawImage(actionImage, actionX, actionY, null);
+
         }
         return baseImage;
     }
