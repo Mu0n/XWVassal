@@ -273,7 +273,7 @@ public class StemShip extends Decorator implements EditablePiece {
             for(String arc : arcList)
             {
                 // look up the image for the arc
-                arcImage = Util.buildFiringArcImageName(size,faction,arc);
+                arcImage = XWImageUtils.buildFiringArcImageName(size,faction,arc);
                    //     (String)cardboardFiringArcImages.get(arcImagePrefixSB.toString() + arc);
 
                 // build the arc string

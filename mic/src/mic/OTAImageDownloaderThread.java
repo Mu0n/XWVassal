@@ -21,7 +21,7 @@ public class OTAImageDownloaderThread implements Runnable {
             Util.logToChat("OTAIDT: Downloading "+pilotImage);
             text = "Downloading "+pilotImage;
             OTAImageDownloader.updateProgress(percent,text);
-            Util.downloadAndSaveImageFromOTA("pilots",pilotImage);
+            XWImageUtils.downloadAndSaveImageFromOTA("pilots",pilotImage);
             Util.logToChat("OTAIDT: Download Complete: "+pilotImage);
             done++;
 

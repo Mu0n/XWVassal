@@ -42,7 +42,7 @@ public class ContentsChecker  extends AbstractConfigurable {
         Iterator i = missingPilots.iterator();
         while(i.hasNext()) {
             String pilotImage = (String)i.next();
-            mic.Util.downloadAndSaveImageFromOTA("pilots",pilotImage );
+            XWImageUtils.downloadAndSaveImageFromOTA("pilots",pilotImage );
         }
 
         // refresh the list
@@ -65,7 +65,7 @@ public class ContentsChecker  extends AbstractConfigurable {
         Iterator i = missingArcs.iterator();
         while(i.hasNext()) {
             String arcImage = (String)i.next();
-            mic.Util.downloadAndSaveImageFromOTA("base_firing_arcs",arcImage );
+            XWImageUtils.downloadAndSaveImageFromOTA("base_firing_arcs",arcImage );
         }
 
         // refresh the list
@@ -88,7 +88,7 @@ public class ContentsChecker  extends AbstractConfigurable {
         Iterator i = missingActions.iterator();
         while(i.hasNext()) {
             String actionImage = (String)i.next();
-            mic.Util.downloadAndSaveImageFromOTA("actions",actionImage );
+            XWImageUtils.downloadAndSaveImageFromOTA("actions",actionImage );
         }
 
         // refresh the list
@@ -159,7 +159,7 @@ public class ContentsChecker  extends AbstractConfigurable {
 
                 //todo fix this - when ready to do large
                 if(shipData.getSize().equals("small")) {
-                    mic.Util.buildBaseShipImage(missingFaction, missingXWS, arcs, actions, shipData.getSize());
+                    XWImageUtils.buildBaseShipImage(missingFaction, missingXWS, arcs, actions, shipData.getSize());
                 }
             }
             //mic.Util.downloadAndSaveImageFromOTA("ships",shipImage );

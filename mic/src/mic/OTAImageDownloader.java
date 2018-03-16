@@ -141,7 +141,7 @@ public class OTAImageDownloader extends Decorator implements EditablePiece {
                 for(String pilotImage : pilotImages)
                 {
                     // check each one
-                    if(!Util.imageExistsInModule(pilotImage))
+                    if(!XWImageUtils.imageExistsInModule(pilotImage))
                     {
                         // this pilot image is not stored locally.  add it to the list to download
                         pilotImageDownloadList.add(pilotImage);
@@ -161,7 +161,7 @@ public class OTAImageDownloader extends Decorator implements EditablePiece {
                    // text = "Downloading "+pilotImage;
                    // OTAImageDownloader.updateProgress(percent,text);
 
-                    Util.downloadAndSaveImageFromOTA("pilots",pilotImage);
+                    XWImageUtils.downloadAndSaveImageFromOTA("pilots",pilotImage);
                   //  Util.logToChat("OTAIDT: Download Complete: "+pilotImage);
                   //  done++;
 

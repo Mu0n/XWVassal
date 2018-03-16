@@ -106,7 +106,7 @@ public String[][] checkPilots()
                 ".jpg";
 
         pilots[i][3] = pilotCardImage;
-        if(Util.imageExistsInModule(pilotCardImage))
+        if(XWImageUtils.imageExistsInModule(pilotCardImage))
         {
             pilots[i][4] = "Exists";
         }else{
@@ -136,7 +136,7 @@ public String[][] checkPilots()
                 for (int k = 0; k < ((MasterShipData.ShipData) allShips[i]).getFiringArcs().size(); k++) {
                     String arcName = ((MasterShipData.ShipData) allShips[i]).getFiringArcs().get(k);
 
-                    String imageName = Util.buildFiringArcImageName(shipSize,factionName,arcName);
+                    String imageName = XWImageUtils.buildFiringArcImageName(shipSize,factionName,arcName);
 
                     if(possibleArcs.get(imageName)==null)
                     {
@@ -144,7 +144,7 @@ public String[][] checkPilots()
                         possibleArcs.put(imageName, "");
 
                         // check for existence
-                        boolean exists = Util.imageExistsInModule(imageName);
+                        boolean exists = XWImageUtils.imageExistsInModule(imageName);
 
                         // add it to the array
                         if(exists) {
@@ -191,7 +191,7 @@ public String[][] checkPilots()
                 String imageName = "Ship_"+shipXWS+".png";
                 possibleShips.put(shipXWS,imageName);
 
-                boolean exists = Util.imageExistsInModule(imageName);
+                boolean exists = XWImageUtils.imageExistsInModule(imageName);
 
                 // add it to the array
                 if(exists)
@@ -238,7 +238,7 @@ public String[][] checkPilots()
             {
                 String factionName = ((MasterShipData.ShipData) allShips[i]).getFactions().get(j);
 
-                String imageName = Util.buildShipBaseImageName(factionName,shipXWS);
+                String imageName = XWImageUtils.buildShipBaseImageName(factionName,shipXWS);
 
                 if(possibleShipFactions.get(imageName)==null)
                 {
@@ -246,7 +246,7 @@ public String[][] checkPilots()
                     possibleShipFactions.put(imageName, "");
 
                     // check for existence
-                    boolean exists = Util.imageExistsInModule(imageName);
+                    boolean exists = XWImageUtils.imageExistsInModule(imageName);
 
                     // add it to the array
                     if(exists) {
@@ -293,7 +293,7 @@ public String[][] checkPilots()
                 {
                     String imageName = "Action_"+actionName.toLowerCase().replaceAll(" ","")+".png";
                     possibleActions.put(actionName,imageName);
-                    boolean exists = Util.imageExistsInModule(imageName);
+                    boolean exists = XWImageUtils.imageExistsInModule(imageName);
                     if(exists)
                     {
                         String[] action = {actionName,imageName,"Exists"};
