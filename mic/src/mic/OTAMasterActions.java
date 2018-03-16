@@ -24,7 +24,7 @@ public class OTAMasterActions extends ArrayList<OTAMasterActions.OTAAction> {
 
     }
 
-    public static OTAMasterActions.OTAAction getActions(String actionName) {
+    public static OTAMasterActions.OTAAction getAction(String actionName) {
         if (loadedData == null) {
             loadData();
         }

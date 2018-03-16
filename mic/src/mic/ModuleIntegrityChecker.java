@@ -76,14 +76,62 @@ public class ModuleIntegrityChecker {
     */
 public String[][] checkPilots()
 {
-    MasterPilotData mpd = new MasterPilotData();
-    mpd.loadData();
+// get list of Actions from OTAMasterActions
+    OTAMasterPilots omp = new OTAMasterPilots();
+    Collection<OTAMasterPilots.OTAPilot> pilots = omp.getAllPilots();
 
-    MasterShipData msd = new MasterShipData();
-    msd.loadData();
 
+    ArrayList<String[]> pilotList = new ArrayList<String[]>();
+    Iterator<OTAMasterPilots.OTAPilot> i = pilots.iterator();
+
+    while(i.hasNext())
+    {
+        OTAMasterPilots.OTAPilot pilot = (OTAMasterPilots.OTAPilot)i.next();
+        boolean exists = XWImageUtils.imageExistsInModule(pilot.getImage());
+        if(exists)
+        {
+            //"Faction","Ship","Pilot","Image","Status"
+            String[] pilotLine = {pilot.getFaction(),pilot.getShipXws(),pilot.getPilotXws(),pilot.getImage(),"Exists"};
+            pilotList.add(pilotLine);
+        }else{
+            String[] pilotLine = {pilot.getFaction(),pilot.getShipXws(),pilot.getPilotXws(),pilot.getImage(),"Not Found"};
+            pilotList.add(pilotLine);
+        }
+            /*
+            for(int j=0;j<((MasterShipData.ShipData)allShips[i]).getActions().size();j++)
+            {
+                String actionName = ((MasterShipData.ShipData)allShips[i]).getActions().get(j);
+                if(possibleActions.get(actionName)==null)
+                {
+                    String imageName = "Action_"+actionName.toLowerCase().replaceAll(" ","")+".png";
+                    possibleActions.put(actionName,imageName);
+                    boolean exists = XWImageUtils.imageExistsInModule(imageName);
+                    if(exists)
+                    {
+                        String[] action = {actionName,imageName,"Exists"};
+                        actionList.add(action);
+                    }else{
+                        String[] action = {actionName,imageName,"Not Found"};
+                        actionList.add(action);
+                    }
+                }
+            }*/
+
+    }
+
+    // now we need to convert the Array<String[]> to String[][]
+    Object[] tempResults = pilotList.toArray();
+    String[][] pilotResults = new String[tempResults.length][5];
+
+    for(int j=0;j<tempResults.length;j++)
+    {
+        pilotResults[j] = (String[])tempResults[j];
+    }
+
+    return pilotResults;
+    /*
     PilotResults pr = null;
-    Object[] allPilots = mpd.getAllPilots();
+//    Object[] allPilots = mpd.getAllPilots();
     String[][] pilots = new String[allPilots.length][5];
 
     MasterShipData.ShipData sd = null;
@@ -115,7 +163,7 @@ public String[][] checkPilots()
 
     }
 
-    return pilots;
+    return pilots;*/
 }
 /*
     public String[][] checkArcs()

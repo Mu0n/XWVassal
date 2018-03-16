@@ -33,6 +33,7 @@ public class Util {
         try {
             return loadRemoteJson(new URL(url), type);
         } catch (MalformedURLException e) {
+
             return null;
         }
     }
