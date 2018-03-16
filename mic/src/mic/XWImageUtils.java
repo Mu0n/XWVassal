@@ -39,11 +39,11 @@ public class XWImageUtils {
     };
 
     private static final int[][] LARGE_SHIP_ACTION_COORD = {
-            {0,50},
-            {0,50},
-            {0,50},
-            {0,50},
-            {0,50}
+            {208,70},
+            {208,90},
+            {208,110},
+            {208,130},
+            {208,150}
     };
 
     public static String buildFiringArcImageName(String size, String faction, String arc)
@@ -147,7 +147,7 @@ public class XWImageUtils {
     {
 
         final String smallBlackBase = "Ship_Generic_Starfield_Small.png";
-        final String largeBlackBase = "Ship_Generic_Starfield_Lmall.png";
+        final String largeBlackBase = "Ship_Generic_Starfield_Large.png";
         String cardboardBaseImageName = null;
 
 
