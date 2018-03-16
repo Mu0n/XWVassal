@@ -31,7 +31,7 @@ public class ContentsChecker  extends AbstractConfigurable {
     private JTable shipBaseTable;
     private final String[] pilotColumnNames = {"Faction","Ship","Pilot","Image","Status"};
  //   private final String[] arcColumnNames = {"Size","Faction","Arc","Image","Status"};
-    private final String[] shipColumnNames = {"Name","XWS","Image","Status"};
+    private final String[] shipColumnNames = {"XWS","Identifier","Image","Status"};
     private final String[] actionColumnNames = {"Name","Image","Status"};
     private final String[] shipBaseColumnNames = {"Name","XWS","Size","Faction","Image","Status"};
     private ModuleIntegrityChecker modIntChecker = null;

@@ -76,7 +76,7 @@ public class ModuleIntegrityChecker {
     */
 public String[][] checkPilots()
 {
-// get list of Actions from OTAMasterActions
+// get list of pilots from OTAMasterPilots
     OTAMasterPilots omp = new OTAMasterPilots();
     Collection<OTAMasterPilots.OTAPilot> pilots = omp.getAllPilots();
 
@@ -97,25 +97,6 @@ public String[][] checkPilots()
             String[] pilotLine = {pilot.getFaction(),pilot.getShipXws(),pilot.getPilotXws(),pilot.getImage(),"Not Found"};
             pilotList.add(pilotLine);
         }
-            /*
-            for(int j=0;j<((MasterShipData.ShipData)allShips[i]).getActions().size();j++)
-            {
-                String actionName = ((MasterShipData.ShipData)allShips[i]).getActions().get(j);
-                if(possibleActions.get(actionName)==null)
-                {
-                    String imageName = "Action_"+actionName.toLowerCase().replaceAll(" ","")+".png";
-                    possibleActions.put(actionName,imageName);
-                    boolean exists = XWImageUtils.imageExistsInModule(imageName);
-                    if(exists)
-                    {
-                        String[] action = {actionName,imageName,"Exists"};
-                        actionList.add(action);
-                    }else{
-                        String[] action = {actionName,imageName,"Not Found"};
-                        actionList.add(action);
-                    }
-                }
-            }*/
 
     }
 
@@ -129,41 +110,6 @@ public String[][] checkPilots()
     }
 
     return pilotResults;
-    /*
-    PilotResults pr = null;
-//    Object[] allPilots = mpd.getAllPilots();
-    String[][] pilots = new String[allPilots.length][5];
-
-    MasterShipData.ShipData sd = null;
-    for(int i=0;i<allPilots.length;i++)
-    {
-        pilots[i][0] = ((MasterPilotData.PilotData)allPilots[i]).getFaction();
-        pilots[i][1] = ((MasterPilotData.PilotData)allPilots[i]).getShip();
-        pilots[i][2] = ((MasterPilotData.PilotData)allPilots[i]).getName();
-
-
-        sd = MasterShipData.getShipDataForShipName(((MasterPilotData.PilotData)allPilots[i]).getShip());
-      //  String pilotCardImage = "Pilot_" + Canonicalizer.getCanonicalFactionName(((MasterPilotData.PilotData)allPilots[i]).getShip()) + "_" + sd.getXws() + "_" + ((MasterPilotData.PilotData)allPilots[i]).getXws() + ".jpg";
-
-        String pilotCardImage = "Pilot_" + Canonicalizer.getCanonicalFactionName(
-                ((MasterPilotData.PilotData)allPilots[i]).getFaction()) +
-                "_" +
-                sd.getXws() +
-                "_" +
-                ((MasterPilotData.PilotData)allPilots[i]).getXws() +
-                ".jpg";
-
-        pilots[i][3] = pilotCardImage;
-        if(XWImageUtils.imageExistsInModule(pilotCardImage))
-        {
-            pilots[i][4] = "Exists";
-        }else{
-            pilots[i][4] = "Not Found";
-        }
-
-    }
-
-    return pilots;*/
 }
 /*
     public String[][] checkArcs()
@@ -221,7 +167,44 @@ public String[][] checkPilots()
 */
     public String[][] checkShips()
     {
+        // get list of ships from OTAMasterShips
+        OTAMasterShips oms = new OTAMasterShips();
+        Collection<OTAMasterShips.OTAShip> ships = oms.getAllShips();
 
+
+        ArrayList<String[]> shipList = new ArrayList<String[]>();
+        Iterator<OTAMasterShips.OTAShip> i = ships.iterator();
+
+        while(i.hasNext())
+        {
+            OTAMasterShips.OTAShip ship = (OTAMasterShips.OTAShip)i.next();
+            boolean exists = XWImageUtils.imageExistsInModule(ship.getImage());
+            if(exists)
+            {
+                //{"XWS","Identifier","Image","Status"};
+                String[] shipLine = {ship.getXws(),ship.getIdentifier(),ship.getImage(),"Exists"};
+
+                shipList.add(shipLine);
+            }else{
+                String[] shipLine = {ship.getXws(),ship.getIdentifier(),ship.getImage(),"Not Found"};
+                shipList.add(shipLine);
+            }
+
+        }
+
+        // now we need to convert the Array<String[]> to String[][]
+        Object[] tempResults = shipList.toArray();
+        String[][] shipResults = new String[tempResults.length][4];
+
+        for(int j=0;j<tempResults.length;j++)
+        {
+            shipResults[j] = (String[])tempResults[j];
+        }
+
+        return shipResults;
+
+
+        /*
         MasterShipData msd = new MasterShipData();
         msd.loadData();
 
@@ -297,7 +280,7 @@ public String[][] checkPilots()
             shipResults[i] = (String[])tempResults[i];
         }
 
-        return shipResults;
+        return shipResults;*/
     }
 
     public String[][] checkShipBases()
