@@ -97,57 +97,22 @@ public class XWImageUtils {
 
         try {
 
+            // build the base (cardbard of the ship base)
+            BufferedImage newBaseImage = buildShipBase(size, dataArchive);
 
-            // get the ship build exception data
-  //          OTAShipBuildExceptions.ShipException shipException = OTAShipBuildExceptions.getShipException(shipXWS);
-/*
-            // the ship could have multiple bases (i.e. the U-wing)
-            if(shipException != null && shipException.getImages() != null && shipException.getImages().size() > 1)
-            {
+            // add the arcs to the image
+            newBaseImage = addArcsToBaseShipImage(arcs, size, faction, newBaseImage, dataArchive);
 
-                // an exception exists.  multiple bases needed
+            // add the ship to the image
+            newBaseImage = addShipToBaseShipImage(shipXWS, newBaseImage, dataArchive, shipImageName);
 
-                for(String shipImageName : shipException.getImages())
-                {
+            // add the actions to the image
+            newBaseImage = addActionsToBaseShipImage(actions, size, newBaseImage, dataArchive);
 
-                    // build the base (cardbard of the ship base)
-                    BufferedImage newBaseImage = buildShipBase(size, dataArchive);
-
-                    // add the arcs to the image
-                    newBaseImage = addArcsToBaseShipImage(arcs, size, faction, newBaseImage, dataArchive);
-
-                    // The ship image is what would be different
-                    newBaseImage = addShipToBaseShipImage(shipXWS, newBaseImage, dataArchive,shipImageName);
-
-                    // add the actions to the image
-                    newBaseImage = addActionsToBaseShipImage(actions, size, newBaseImage, dataArchive);
-
-                    // also need to change the base image name to save to
-                    String newBaseImageName = determineAltShipBaseNameFromImage(faction, shipImageName);
+            // save the newly created base image to the module
+            saveBaseShipImageToModule(faction, shipXWS, identifier, newBaseImage, writer);
 
 
-
-                    // save the newly created base image to the module
-                    saveBaseShipImageToModule(faction, shipXWS, newBaseImage, newBaseImageName);
-                }
-            }else {*/
-                Util.logToChat("building ship base ");
-                // build the base (cardbard of the ship base)
-                BufferedImage newBaseImage = buildShipBase(size, dataArchive);
-                Util.logToChat("adding arcs ");
-                // add the arcs to the image
-                newBaseImage = addArcsToBaseShipImage(arcs, size, faction, newBaseImage, dataArchive);
-            Util.logToChat("adding ship image ");
-                // add the ship to the image
-                newBaseImage = addShipToBaseShipImage(shipXWS, newBaseImage, dataArchive, shipImageName);
-            Util.logToChat("adding actions ");
-                // add the actions to the image
-                newBaseImage = addActionsToBaseShipImage(actions, size, newBaseImage, dataArchive);
-            Util.logToChat("saving to module ");
-                // save the newly created base image to the module
-                saveBaseShipImageToModule(faction, shipXWS, identifier, newBaseImage, writer);
-            Util.logToChat("done ");
-       //     }
         }catch(IOException e)
         {
             Util.logToChat("Exception occurred generating base ship image for "+shipXWS);
@@ -260,29 +225,21 @@ public class XWImageUtils {
 
     private static BufferedImage addArcsToBaseShipImage(List<String> arcs,String size, String faction, BufferedImage baseImage, DataArchive dataArchive) throws IOException
     {
-        Util.logToChat("inside addArcsToBaseShipImage()");
 
         List<String> arcImageNames = new ArrayList<String>();
         // determine which arcs to use
         for(String arc : arcs)
         {
-            Util.logToChat("building arc image name for "+size+","+faction+","+arc);
             String arcImage = buildFiringArcImageName(size,faction,arc);
-            Util.logToChat("arcImage: "+arcImage);
             arcImageNames.add(arcImage);
-            Util.logToChat("added to list");
         }
         // add the arcs
         for(String arcImageName : arcImageNames)
         {
-            Util.logToChat("adding arc image images/" + arcImageName);
             InputStream is = dataArchive.getInputStream("images/" + arcImageName);
-            Util.logToChat("we have the InputStream");
             BufferedImage arcImage = ImageUtils.getImage(arcImageName, is);//doesn't recognize SVG
-            Util.logToChat("we have the arcImage");
-            Graphics g = baseImage.getGraphics();
+             Graphics g = baseImage.getGraphics();
             g.drawImage(arcImage, 0, 0, null);
-            Util.logToChat("Arc drawn");
         }
         return baseImage;
     }
@@ -309,19 +266,10 @@ public class XWImageUtils {
 
     private static BufferedImage addShipToBaseShipImage(String shipXWS, BufferedImage baseImage, DataArchive dataArchive, String shipImageName) throws IOException
     {
-        Util.logToChat("Inside addShipToBaseShipImage()");
-        Util.logToChat("shipImageName: "+shipImageName);
-        Util.logToChat("Looking for images/" + shipImageName);
-
         InputStream is = dataArchive.getInputStream("images/" + shipImageName);
-        Util.logToChat("we have the InputStream");
-
         BufferedImage shipImage = ImageUtils.getImage(shipImageName, is);
-        Util.logToChat("We have the image");
         Graphics g = baseImage.getGraphics();
-
         g.drawImage(shipImage, 0, 0, null);
-        Util.logToChat("ship drawn");
         return baseImage;
 
     }
