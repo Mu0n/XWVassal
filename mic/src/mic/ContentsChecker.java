@@ -7,6 +7,8 @@ import VASSAL.build.module.documentation.HelpFile;
 import VASSAL.tools.ArchiveWriter;
 import VASSAL.tools.DataArchive;
 import VASSAL.tools.io.FileArchive;
+import mic.ota.OTAMasterPilots;
+import mic.ota.OTAShipBase;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -24,17 +26,14 @@ public class ContentsChecker  extends AbstractConfigurable {
     private JButton OKButton = new JButton();
 
     private ArrayList<String> missingPilots;
-  //  private ArrayList<String> missingArcs;
     private ArrayList<String> missingShips;
     private ArrayList<String> missingActions;
     private ArrayList<OTAShipBase> missingShipBases;
     private JTable pilotTable;
-  //  private JTable arcTable;
     private JTable shipTable;
     private JTable actionTable;
     private JTable shipBaseTable;
     private final String[] pilotColumnNames = {"Faction","Ship","Pilot","Image","Status"};
- //   private final String[] arcColumnNames = {"Size","Faction","Arc","Image","Status"};
     private final String[] shipColumnNames = {"XWS","Identifier","Image","Status"};
     private final String[] actionColumnNames = {"Name","Image","Status"};
     private final String[] shipBaseColumnNames = {"Name","XWS","Identifier","Faction","BaseImage","shipImage","Status"};
@@ -48,17 +47,24 @@ public class ContentsChecker  extends AbstractConfigurable {
 
 
         // refresh the list
-        String[][] pilotResults = modIntChecker.checkPilots();
+        ArrayList<OTAMasterPilots.OTAPilot> pilotResults = modIntChecker.checkPilots();
         missingPilots = new ArrayList<String>();
-        for(int j=0;j<pilotResults.length;j++)
+        Iterator<OTAMasterPilots.OTAPilot> pilotIterator = pilotResults.iterator();
+        OTAMasterPilots.OTAPilot pilot = null;
+        while(pilotIterator.hasNext())
+        //for(int j=0;j<pilotResults.size();j++)
         {
-            if(pilotResults[j][4].equals("Not Found")) {
-                missingPilots.add(pilotResults[j][3]);
+            pilot = pilotIterator.next();
+
+            if(!pilot.getStatus())
+            {
+           // if(pilotResults[j][4].equals("Not Found")) {
+                missingPilots.add(pilot.getImage());
             }
         }
 
         // refresh the table
-        refreshPilotTable(pilotResults);
+        refreshPilotTable();
     }
 
     private synchronized void downloadMissingActions() {
@@ -196,13 +202,31 @@ public class ContentsChecker  extends AbstractConfigurable {
         model.fireTableDataChanged();
     }
 
-    private void refreshPilotTable(String[][] pilotResults)
+    private void refreshPilotTable()
     {
+        ArrayList<OTAMasterPilots.OTAPilot> pilotResults = modIntChecker.checkPilots();
+        String[][] tableResults = new String[pilotResults.size()][5];
+
+        OTAMasterPilots.OTAPilot pilot = null;
+        for(int i=0;i<pilotResults.size();i++)
+        {
+            String[] pilotLine = new String[5];
+            pilot = pilotResults.get(i);
+           // {"Faction","Ship","Pilot","Image","Status"};
+            pilotLine[0] = pilot.getFaction();
+            pilotLine[1] = pilot.getShipXws();
+            pilotLine[2] = pilot.getPilotXws();
+            pilotLine[3] = pilot.getImage();
+            pilotLine[4] = pilot.getStatus() ? "Exists":"Not Found";
+
+            tableResults[i] = pilotLine;
+        }
+
 
         DefaultTableModel model = (DefaultTableModel) pilotTable.getModel();
 
-        model.setNumRows(pilotResults.length);
-        model.setDataVector(pilotResults,pilotColumnNames);
+        model.setNumRows(pilotResults.size());
+        model.setDataVector(tableResults,pilotColumnNames);
         pilotTable.getColumnModel().getColumn(0).setPreferredWidth(125);;
         pilotTable.getColumnModel().getColumn(1).setPreferredWidth(150);
         pilotTable.getColumnModel().getColumn(2).setPreferredWidth(150);
@@ -245,17 +269,21 @@ public class ContentsChecker  extends AbstractConfigurable {
 
         modIntChecker = new ModuleIntegrityChecker();
 
-        String[][] pilotResults = modIntChecker.checkPilots();
+        ArrayList<OTAMasterPilots.OTAPilot> pilotResults = modIntChecker.checkPilots();
         String[][] shipResults = modIntChecker.checkShips();
         String[][] actionResults = modIntChecker.checkActions();
         ArrayList<OTAShipBase> shipBaseResults = modIntChecker.checkShipBases();
 
         // store the missing pilots
         missingPilots = new ArrayList<String>();
-        for(int i=0;i<pilotResults.length;i++)
+        Iterator<OTAMasterPilots.OTAPilot> pilotIterator = pilotResults.iterator();
+        OTAMasterPilots.OTAPilot pilot = null;
+        while(pilotIterator.hasNext())
         {
-            if(pilotResults[i][4].equals("Not Found")) {
-                missingPilots.add(pilotResults[i][3]);
+            pilot = pilotIterator.next();
+            if(!pilot.getStatus())
+            {
+                missingPilots.add(pilot.getImage());
             }
         }
 
@@ -366,12 +394,29 @@ public class ContentsChecker  extends AbstractConfigurable {
             frame.repaint();
     }
 
-    private JTable buildPilotTable(String[][] pilotResults)
+    private JTable buildPilotTable(ArrayList<OTAMasterPilots.OTAPilot> pilotResults)
     {
-        pilotTable = new JTable(pilotResults,pilotColumnNames);
-        DefaultTableModel model = new DefaultTableModel(pilotResults.length, pilotColumnNames.length);
-        model.setNumRows(pilotResults.length);
-        model.setDataVector(pilotResults,pilotColumnNames);
+        String[][] tableResults = new String[pilotResults.size()][5];
+
+        OTAMasterPilots.OTAPilot pilot = null;
+        for(int i=0;i<pilotResults.size();i++)
+        {
+            String[] pilotLine = new String[5];
+            pilot = pilotResults.get(i);
+            // {"Faction","Ship","Pilot","Image","Status"};
+            pilotLine[0] = pilot.getFaction();
+            pilotLine[1] = pilot.getShipXws();
+            pilotLine[2] = pilot.getPilotXws();
+            pilotLine[3] = pilot.getImage();
+            pilotLine[4] = pilot.getStatus() ? "Exists":"Not Found";
+
+            tableResults[i] = pilotLine;
+        }
+
+        pilotTable = new JTable(tableResults,pilotColumnNames);
+        DefaultTableModel model = new DefaultTableModel(pilotResults.size(), pilotColumnNames.length);
+        model.setNumRows(pilotResults.size());
+        model.setDataVector(tableResults,pilotColumnNames);
 
         pilotTable.setModel(model);
         pilotTable.getColumnModel().getColumn(0).setPreferredWidth(125);;

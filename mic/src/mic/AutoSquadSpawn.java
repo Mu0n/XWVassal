@@ -10,6 +10,7 @@ import VASSAL.command.Command;
 import VASSAL.counters.GamePiece;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import mic.ota.OTAImageDownloader;
 
 import javax.swing.*;
 import java.awt.*;

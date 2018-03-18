@@ -1,6 +1,11 @@
 package mic;
 
 
+import mic.ota.OTAMasterActions;
+import mic.ota.OTAMasterPilots;
+import mic.ota.OTAMasterShips;
+import mic.ota.OTAShipBase;
+
 import java.util.*;
 
 /**
@@ -45,14 +50,14 @@ public class ModuleIntegrityChecker {
     }
     */
 
-public String[][] checkPilots()
+public ArrayList<OTAMasterPilots.OTAPilot> checkPilots()
 {
-// get list of pilots from OTAMasterPilots
+    // get list of pilots from OTAMasterPilots
     OTAMasterPilots omp = new OTAMasterPilots();
     Collection<OTAMasterPilots.OTAPilot> pilots = omp.getAllPilots();
 
 
-    ArrayList<String[]> pilotList = new ArrayList<String[]>();
+    ArrayList<OTAMasterPilots.OTAPilot> pilotList = new ArrayList<OTAMasterPilots.OTAPilot>();
     Iterator<OTAMasterPilots.OTAPilot> i = pilots.iterator();
 
     while(i.hasNext())
@@ -62,15 +67,18 @@ public String[][] checkPilots()
         if(exists)
         {
             //"Faction","Ship","Pilot","Image","Status"
-            String[] pilotLine = {pilot.getFaction(),pilot.getShipXws(),pilot.getPilotXws(),pilot.getImage(),"Exists"};
-            pilotList.add(pilotLine);
+            pilot.setStatus(true);
+          //  String[] pilotLine = {pilot.getFaction(),pilot.getShipXws(),pilot.getPilotXws(),pilot.getImage(),"Exists"};
+          //  pilotList.add(pilotLine);
         }else{
+            pilot.setStatus(false);
             String[] pilotLine = {pilot.getFaction(),pilot.getShipXws(),pilot.getPilotXws(),pilot.getImage(),"Not Found"};
-            pilotList.add(pilotLine);
+         //   pilotList.add(pilotLine);
         }
+        pilotList.add(pilot);
 
     }
-
+/*
     // now we need to convert the Array<String[]> to String[][]
     Object[] tempResults = pilotList.toArray();
     String[][] pilotResults = new String[tempResults.length][5];
@@ -79,8 +87,8 @@ public String[][] checkPilots()
     {
         pilotResults[j] = (String[])tempResults[j];
     }
-
-    return pilotResults;
+*/
+    return pilotList;
 }
 
     public String[][] checkShips()

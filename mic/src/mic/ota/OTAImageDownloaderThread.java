@@ -1,4 +1,7 @@
-package mic;
+package mic.ota;
+
+import mic.Util;
+import mic.XWImageUtils;
 
 import java.util.ArrayList;
 

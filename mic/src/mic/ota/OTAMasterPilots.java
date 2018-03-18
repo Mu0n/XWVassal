@@ -1,7 +1,8 @@
-package mic;
+package mic.ota;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.collect.Maps;
+import mic.Util;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -52,6 +53,7 @@ public class OTAMasterPilots extends ArrayList<OTAMasterPilots.OTAPilot> {
 
     public static class OTAPilot {
 
+
         @JsonProperty("shipxws")
         private String shipxws;
 
@@ -64,6 +66,7 @@ public class OTAMasterPilots extends ArrayList<OTAMasterPilots.OTAPilot> {
         @JsonProperty("image")
         private String image;
 
+        private boolean status;
 
         public String getShipXws() {
             return shipxws;
@@ -71,9 +74,35 @@ public class OTAMasterPilots extends ArrayList<OTAMasterPilots.OTAPilot> {
         public String getImage() {
             return image;
         }
-        public String getPilotXws() { return pilotxws;}
-        public String getFaction() {return faction;};
-
-
+        public String getPilotXws()
+        {
+            return pilotxws;
+        }
+        public String getFaction()
+        {
+            return faction;
+        }
+        public boolean getStatus()
+        {
+            return status;
+        }
+        public void setShipXws(String shipxws) {
+             this.shipxws = shipxws;
+        }
+        public void setImage(String image) {
+            this.image = image;
+        }
+        public void setPilotXws(String pilotxws)
+        {
+            this.pilotxws = pilotxws;
+        }
+        public void setFaction(String faction)
+        {
+            this.faction = faction;
+        }
+        public void setStatus(boolean status)
+        {
+            this.status = status;
+        }
     }
 }

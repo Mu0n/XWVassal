@@ -1,4 +1,4 @@
-package mic;
+package mic.ota;
 
 public class OTAShipBase {
     private String shipName;

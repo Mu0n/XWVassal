@@ -1,7 +1,8 @@
-package mic;
+package mic.ota;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.collect.Maps;
+import mic.Util;
 
 import java.util.ArrayList;
 import java.util.Collection;

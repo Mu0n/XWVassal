@@ -1,4 +1,4 @@
-package mic;
+package mic.ota;
 
 import VASSAL.build.module.documentation.HelpFile;
 import VASSAL.command.Command;
@@ -7,6 +7,10 @@ import VASSAL.counters.Decorator;
 import VASSAL.counters.EditablePiece;
 import VASSAL.counters.GamePiece;
 import VASSAL.counters.KeyCommand;
+import mic.ProgressBar;
+import mic.StemPilot;
+import mic.Util;
+import mic.XWImageUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,7 +28,7 @@ public class OTAImageDownloader extends Decorator implements EditablePiece {
     private static boolean downloadComplete = false;
     private static ArrayList<String> pilotImageDownloadList = new ArrayList();
   //  private static ProgressBar2 pg;
-    private static  ProgressBar progressBar;
+    private static ProgressBar progressBar;
     private static Timer timer;
     public OTAImageDownloader(){
         this(null);
@@ -49,7 +53,7 @@ public class OTAImageDownloader extends Decorator implements EditablePiece {
         return ID;
     }
     @Override
-    protected KeyCommand[] myGetKeyCommands() {
+    public KeyCommand[] myGetKeyCommands() {
         return new KeyCommand[0];
     }
     @Override
@@ -58,7 +62,7 @@ public class OTAImageDownloader extends Decorator implements EditablePiece {
     }
 
     public String getDescription() {
-        return "Custom OTA Image Downloader (mic.OTAImageDownloader)";
+        return "Custom OTA Image Downloader (mic.ota.OTAImageDownloader)";
     }
 
     public void mySetType(String s) {
@@ -110,7 +114,7 @@ public class OTAImageDownloader extends Decorator implements EditablePiece {
 
         ArrayList<String> pilotImages;
         static String imageEncodingString = "";
-        ImageDownloadCommand(ArrayList<String> pilotImagesToDownload)
+        public ImageDownloadCommand(ArrayList<String> pilotImagesToDownload)
         {
             pilotImages = pilotImagesToDownload;
 
@@ -133,7 +137,7 @@ public class OTAImageDownloader extends Decorator implements EditablePiece {
         }
 
         // construct the Pilot Card piece
-        protected void executeCommand()
+        public void executeCommand()
         {
             // loop through each image to see which ones we need
             if(pilotImages != null)
@@ -271,7 +275,7 @@ public class OTAImageDownloader extends Decorator implements EditablePiece {
 
 
 
-        protected Command myUndoCommand() {
+        public Command myUndoCommand() {
             return null;
         }
 
