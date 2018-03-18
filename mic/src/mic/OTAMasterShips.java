@@ -1,10 +1,12 @@
 package mic;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 public class OTAMasterShips extends ArrayList<OTAMasterShips.OTAShip> {
@@ -61,6 +63,8 @@ public class OTAMasterShips extends ArrayList<OTAMasterShips.OTAShip> {
         @JsonProperty("image")
         private String image;
 
+        @JsonProperty("faction")
+        private List<String> factions = Lists.newArrayList();
 
         public String getXws() {
             return xws;
@@ -68,8 +72,10 @@ public class OTAMasterShips extends ArrayList<OTAMasterShips.OTAShip> {
         public String getImage() {
             return image;
         }
-        public String getIdentifier() {return identifier;};
-
+        public String getIdentifier() {return identifier;}
+        public List<String> getFactions() {
+            return this.factions;
+        }
 
     }
 }

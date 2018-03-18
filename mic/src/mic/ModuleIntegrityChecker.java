@@ -283,9 +283,76 @@ public String[][] checkPilots()
         return shipResults;*/
     }
 
-    public String[][] checkShipBases()
+    public ArrayList<OTAShipBase> checkShipBases()
     {
+        OTAMasterShips oms = new OTAMasterShips();
+        Collection<OTAMasterShips.OTAShip> ships = oms.getAllShips();
 
+          MasterShipData msd = new MasterShipData();
+          msd.loadData();
+
+        ArrayList<OTAShipBase> shipList = new ArrayList<OTAShipBase>();
+        Iterator<OTAMasterShips.OTAShip> i1 = ships.iterator();
+
+        while(i1.hasNext())
+        {
+            OTAMasterShips.OTAShip ship = (OTAMasterShips.OTAShip)i1.next();
+
+            // check to see which factions to generate this ship base for
+            List<String> factions = ship.getFactions();
+
+            Iterator<String> i2 = factions.iterator();
+            while(i2.hasNext())
+            {
+
+                String factionName = i2.next();
+
+                String shipBaseImageName = XWImageUtils.buildShipBaseImageName(factionName,ship.getXws(),ship.getIdentifier());
+                boolean exists = XWImageUtils.imageExistsInModule(shipBaseImageName);
+
+                OTAShipBase shipBase = new OTAShipBase();
+                shipBase.setFaction(factionName);
+                shipBase.setIdentifier(ship.getIdentifier());
+                shipBase.setShipBaseImageName(shipBaseImageName);
+                shipBase.setshipImageName(ship.getImage());
+                shipBase.setShipName(msd.getShipData(ship.getXws()).getName());
+                shipBase.setShipXws(ship.getXws());
+                if(exists) {
+                    shipBase.setStatus(true);
+                   // String faction,String shipBaseImageName,String shipImageName, boolean status
+                   // shipResult = new OTAShipBase(msd.getShipData(ship.getXws()).getName(),ship.getXws(),ship.getIdentifier(),factionName,shipBaseImageName,ship.getImage(),true);
+                    //String[] shipLine = {msd.getShipData(ship.getXws()).getName(), ship.getXws(), ship.getIdentifier(), factionName, imageName, "Exists"};
+                   // shipList.add(shipResult);
+                }else{
+                    shipBase.setStatus(false);
+                 //   Util.logToChat("ship base not found");
+                //   Util.logToChat("XWS: "+ship.getXws());
+                 //   Util.logToChat("Name: "+msd.getShipData(ship.getXws()).getName());
+                //    Util.logToChat("Identifier: "+ship.getIdentifier());
+                 //   Util.logToChat("factionName: "+factionName);
+                //    Util.logToChat("imageName: "+imageName);
+                 //   shipResult = new OTAShipBase(msd.getShipData(ship.getXws()).getName(),ship.getXws(),ship.getIdentifier(),factionName,shipBaseImageName,ship.getImage(),false);
+                    //String[] shipLine = {msd.getShipData(ship.getXws()).getName(), ship.getXws(), ship.getIdentifier(), factionName, imageName,"Not Found"};
+                 //   shipList.add(shipResult);
+                }
+                shipList.add(shipBase);
+
+            }
+
+
+        }
+/*
+        // now we need to convert the Array<String[]> to String[][]
+        Object[] tempResults = shipList.toArray();
+        String[][] shipResults = new String[tempResults.length][4];
+
+        for(int j=0;j<tempResults.length;j++)
+        {
+            shipResults[j] = (String[])tempResults[j];
+        }
+*/
+        return shipList;
+        /*
         MasterShipData msd = new MasterShipData();
         msd.loadData();
 
@@ -340,6 +407,7 @@ public String[][] checkPilots()
         }
 
         return shipBaseResults;
+        */
     }
 
     public String[][] checkActions()
