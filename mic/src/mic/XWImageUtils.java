@@ -12,6 +12,7 @@ import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 public class XWImageUtils {
@@ -421,10 +422,61 @@ public class XWImageUtils {
 
         shipBaseImageSB.append(".png");
 
-
-
         return shipBaseImageSB.toString();
     }
+
+    public static void downloadAndSaveImagesFromOTA(String imageType, ArrayList<String> imageNames)
+    {
+
+        GameModule gameModule = GameModule.getGameModule();
+        DataArchive dataArchive = gameModule.getDataArchive();
+        FileArchive fileArchive = dataArchive.getArchive();
+        ArchiveWriter writer = new ArchiveWriter(fileArchive);
+
+        Iterator<String> i = imageNames.iterator();
+        while(i.hasNext())
+        {
+            boolean imageFound = false;
+            byte[] imageBytes = null;
+            String imageName = i.next();
+
+            try {
+
+                imageBytes = downloadFileFromOTA(imageType, imageName);
+
+                if(imageBytes != null)
+                {
+                    imageFound = true;
+                }
+            }catch(IOException e)
+            {
+                // OTA doesn't have the image
+                imageFound = false;
+            }
+
+
+            if(imageFound)
+            {
+                try {
+                    // add the image to the module
+                    addImageToModule(imageName, imageBytes, writer);
+
+                } catch (IOException e) {
+                    Util.logToChat("IOException ocurred adding an image " + e.getMessage());
+                }
+            }
+
+        }
+
+        try {
+            writer.save();
+        }catch(IOException e)
+        {
+            Util.logToChat("IOException ocurred saving images " + e.getMessage());
+        }
+
+    }
+
 
     public static void downloadAndSaveImageFromOTA(String imageType, String imageName)
     {
@@ -497,6 +549,13 @@ public class XWImageUtils {
         ArchiveWriter writer = new ArchiveWriter(fileArchive);
         writer.addImage(imageName,imageBytes);
         writer.save();
+    }
+
+    private static void addImageToModule(String imageName,byte[] imageBytes,  ArchiveWriter writer) throws IOException
+    {
+
+        writer.addImage(imageName,imageBytes);
+     //   writer.save();
     }
 
     public static boolean imageExistsInModule(String imageName)

@@ -40,10 +40,12 @@ public class ContentsChecker  extends AbstractConfigurable {
 
         // download the pilots
         Iterator i = missingPilots.iterator();
-        while(i.hasNext()) {
-            String pilotImage = (String)i.next();
-            XWImageUtils.downloadAndSaveImageFromOTA("pilots",pilotImage );
-        }
+        XWImageUtils.downloadAndSaveImagesFromOTA("pilots",missingPilots);
+
+   //     while(i.hasNext()) {
+      //      String pilotImage = (String)i.next();
+   //         XWImageUtils.downloadAndSaveImagesFromOTA("pilots",pilotImage );
+    //    }
 
         // refresh the list
         String[][] pilotResults = modIntChecker.checkPilots();
@@ -85,11 +87,12 @@ public class ContentsChecker  extends AbstractConfigurable {
     private synchronized void downloadMissingActions() {
 
         // download the actions
-        Iterator i = missingActions.iterator();
-        while(i.hasNext()) {
-            String actionImage = (String)i.next();
-            XWImageUtils.downloadAndSaveImageFromOTA("actions",actionImage );
-        }
+        XWImageUtils.downloadAndSaveImagesFromOTA("actions",missingActions );
+    //    Iterator i = missingActions.iterator();
+    //    while(i.hasNext()) {
+    //        String actionImage = (String)i.next();
+    //        XWImageUtils.downloadAndSaveImageFromOTA("actions",actionImage );
+     //   }
 
         // refresh the list
         String[][] actionResults = modIntChecker.checkActions();
@@ -109,16 +112,16 @@ public class ContentsChecker  extends AbstractConfigurable {
 
         // download the ships
         Iterator i = missingShips.iterator();
-
-        while(i.hasNext())
-        {
+        XWImageUtils.downloadAndSaveImagesFromOTA("ships",missingShips);
+    //    while(i.hasNext())
+    //    {
           //  String shipXWS = (String)i.next();
           //  MasterShipData.ShipData shipData = MasterShipData.getShipData(shipXWS);
-            String shipImage = (String)i.next();
-            XWImageUtils.downloadAndSaveImageFromOTA("ships",shipImage);
+     //       String shipImage = (String)i.next();
+     //       XWImageUtils.downloadAndSaveImageFromOTA("ships",shipImage);
 
 
-        }
+    //    }
 
         // refresh the list
         String[][] shipResults = modIntChecker.checkShips();
