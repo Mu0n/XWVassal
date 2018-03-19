@@ -7,6 +7,7 @@ import VASSAL.build.module.documentation.HelpFile;
 import VASSAL.tools.ArchiveWriter;
 import VASSAL.tools.DataArchive;
 import VASSAL.tools.io.FileArchive;
+import mic.ota.OTAMasterActions;
 import mic.ota.OTAMasterPilots;
 import mic.ota.OTAMasterShips;
 import mic.ota.OTAShipBase;
@@ -73,17 +74,22 @@ public class ContentsChecker  extends AbstractConfigurable {
 
 
         // refresh the list
-        String[][] actionResults = modIntChecker.checkActions();
+        ArrayList<OTAMasterActions.OTAAction> actionResults = modIntChecker.checkActions();
         missingActions = new ArrayList<String>();
-        for(int j=0;j<actionResults.length;j++)
+
+        Iterator<OTAMasterActions.OTAAction> i = actionResults.iterator();
+        OTAMasterActions.OTAAction action = null;
+        while(i.hasNext())
         {
-            if(actionResults[j][2].equals("Not Found")) {
-                missingActions.add(actionResults[j][1]);
+            action = i.next();
+            if(!action.getStatus())
+            {
+                missingActions.add(action.getImage());
             }
         }
 
         // refresh the table
-        refreshActionTable(actionResults);
+        refreshActionTable();
     }
 
     private synchronized void downloadMissingShips() {
@@ -239,13 +245,29 @@ public class ContentsChecker  extends AbstractConfigurable {
     }
 
 
-    private void refreshActionTable(String[][] actionResults)
+    private void refreshActionTable()
     {
+        ArrayList<OTAMasterActions.OTAAction> actionResults = modIntChecker.checkActions();
+        String[][] tableResults = new String[actionResults.size()][3];
+
+        OTAMasterActions.OTAAction action = null;
+        for(int i=0;i<actionResults.size();i++)
+        {
+            String[] actionLine = new String[3];
+            action = actionResults.get(i);
+            actionLine[0] = action.getName();
+            actionLine[1] = action.getImage();
+            actionLine[2] = action.getStatus() ? "Exists":"Not Found";
+
+
+            tableResults[i] = actionLine;
+        }
+
 
         DefaultTableModel model = (DefaultTableModel) actionTable.getModel();
 
-        model.setNumRows(actionResults.length);
-        model.setDataVector(actionResults,actionColumnNames);
+        model.setNumRows(tableResults.length);
+        model.setDataVector(tableResults,actionColumnNames);
         actionTable.getColumnModel().getColumn(0).setPreferredWidth(50);;
         actionTable.getColumnModel().getColumn(1).setPreferredWidth(325);
         actionTable.getColumnModel().getColumn(2).setPreferredWidth(75);
@@ -289,7 +311,7 @@ public class ContentsChecker  extends AbstractConfigurable {
 
         ArrayList<OTAMasterPilots.OTAPilot> pilotResults = modIntChecker.checkPilots();
         ArrayList<OTAMasterShips.OTAShip> shipResults = modIntChecker.checkShips();
-        String[][] actionResults = modIntChecker.checkActions();
+        ArrayList<OTAMasterActions.OTAAction> actionResults = modIntChecker.checkActions();
         ArrayList<OTAShipBase> shipBaseResults = modIntChecker.checkShipBases();
 
         // store the missing pilots
@@ -320,11 +342,14 @@ public class ContentsChecker  extends AbstractConfigurable {
 
         // store the missing actions
         missingActions = new ArrayList<String>();
-        for(int i=0;i<actionResults.length;i++)
+        Iterator<OTAMasterActions.OTAAction> actionIterator = actionResults.iterator();
+        OTAMasterActions.OTAAction action = null;
+        while(actionIterator.hasNext())
         {
-            if(actionResults[i][2].equals("Not Found")) {
-                missingActions.add(actionResults[i][1]);
-
+            action = actionIterator.next();
+            if(!action.getStatus())
+            {
+                missingActions.add(action.getImage());
             }
         }
 
@@ -526,12 +551,32 @@ public class ContentsChecker  extends AbstractConfigurable {
         return shipTable;
     }
 
-    private JTable buildActionTable(String[][] actionResults)
+    private JTable buildActionTable(ArrayList<OTAMasterActions.OTAAction> actionResults)
     {
-        actionTable = new JTable(actionResults,actionColumnNames);
-        DefaultTableModel model = new DefaultTableModel(actionResults.length, actionColumnNames.length);
-        model.setNumRows(actionResults.length);
-        model.setDataVector(actionResults,actionColumnNames);
+        String[][] tableResults = new String[actionResults.size()][3];
+
+        OTAMasterActions.OTAAction action = null;
+
+        for(int i=0;i<actionResults.size();i++)
+        {
+
+            String[] actionLine = new String[3];
+            action = actionResults.get(i);
+            actionLine[0] = action.getName();
+            actionLine[1] = action.getImage();
+            actionLine[2] = action.getStatus() ? "Exists":"Not Found";
+
+
+
+            tableResults[i] = actionLine;
+        }
+
+
+
+        actionTable = new JTable(tableResults,actionColumnNames);
+        DefaultTableModel model = new DefaultTableModel(tableResults.length, actionColumnNames.length);
+        model.setNumRows(tableResults.length);
+        model.setDataVector(tableResults,actionColumnNames);
 
         actionTable.setModel(model);
         actionTable.getColumnModel().getColumn(0).setPreferredWidth(50);;

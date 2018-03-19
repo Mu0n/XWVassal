@@ -63,31 +63,13 @@ public ArrayList<OTAMasterPilots.OTAPilot> checkPilots()
     while(i.hasNext())
     {
         OTAMasterPilots.OTAPilot pilot = (OTAMasterPilots.OTAPilot)i.next();
-        boolean exists = XWImageUtils.imageExistsInModule(pilot.getImage());
-        if(exists)
-        {
-            //"Faction","Ship","Pilot","Image","Status"
-            pilot.setStatus(true);
-          //  String[] pilotLine = {pilot.getFaction(),pilot.getShipXws(),pilot.getPilotXws(),pilot.getImage(),"Exists"};
-          //  pilotList.add(pilotLine);
-        }else{
-            pilot.setStatus(false);
-            String[] pilotLine = {pilot.getFaction(),pilot.getShipXws(),pilot.getPilotXws(),pilot.getImage(),"Not Found"};
-         //   pilotList.add(pilotLine);
-        }
+
+        pilot.setStatus(XWImageUtils.imageExistsInModule(pilot.getImage()));
+
         pilotList.add(pilot);
 
     }
-/*
-    // now we need to convert the Array<String[]> to String[][]
-    Object[] tempResults = pilotList.toArray();
-    String[][] pilotResults = new String[tempResults.length][5];
 
-    for(int j=0;j<tempResults.length;j++)
-    {
-        pilotResults[j] = (String[])tempResults[j];
-    }
-*/
     return pilotList;
 }
 
@@ -104,31 +86,12 @@ public ArrayList<OTAMasterPilots.OTAPilot> checkPilots()
         while(i.hasNext())
         {
             OTAMasterShips.OTAShip ship = (OTAMasterShips.OTAShip)i.next();
+            ship.setStatus( XWImageUtils.imageExistsInModule(ship.getImage()));
             boolean exists = XWImageUtils.imageExistsInModule(ship.getImage());
-            if(exists)
-            {
-                ship.setStatus(true);
-                //{"XWS","Identifier","Image","Status"};
-             //   String[] shipLine = {ship.getXws(),ship.getIdentifier(),ship.getImage(),"Exists"};
 
-            //    shipList.add(shipLine);
-            }else{
-                ship.setStatus(false);
-              //  String[] shipLine = {ship.getXws(),ship.getIdentifier(),ship.getImage(),"Not Found"};
-             //   shipList.add(shipLine);
-            }
             shipList.add(ship);
         }
-/*
-        // now we need to convert the Array<String[]> to String[][]
-        Object[] tempResults = shipList.toArray();
-        String[][] shipResults = new String[tempResults.length][4];
 
-        for(int j=0;j<tempResults.length;j++)
-        {
-            shipResults[j] = (String[])tempResults[j];
-        }
-*/
         return shipList;
 
     }
@@ -158,7 +121,7 @@ public ArrayList<OTAMasterPilots.OTAPilot> checkPilots()
                 String factionName = i2.next();
 
                 String shipBaseImageName = XWImageUtils.buildShipBaseImageName(factionName,ship.getXws(),ship.getIdentifier());
-                boolean exists = XWImageUtils.imageExistsInModule(shipBaseImageName);
+
 
                 OTAShipBase shipBase = new OTAShipBase();
                 shipBase.setFaction(factionName);
@@ -167,11 +130,8 @@ public ArrayList<OTAMasterPilots.OTAPilot> checkPilots()
                 shipBase.setshipImageName(ship.getImage());
                 shipBase.setShipName(msd.getShipData(ship.getXws()).getName());
                 shipBase.setShipXws(ship.getXws());
-                if(exists) {
-                    shipBase.setStatus(true);
-                }else{
-                    shipBase.setStatus(false);
-                }
+                shipBase.setStatus(XWImageUtils.imageExistsInModule(shipBaseImageName));
+
                 shipList.add(shipBase);
 
             }
@@ -183,42 +143,30 @@ public ArrayList<OTAMasterPilots.OTAPilot> checkPilots()
 
     }
 
-    public String[][] checkActions()
+    public ArrayList<OTAMasterActions.OTAAction> checkActions()
     {
 
         // get list of Actions from OTAMasterActions
         OTAMasterActions oma = new OTAMasterActions();
         Collection<OTAMasterActions.OTAAction> actions = oma.getAllActions();
 
-        ArrayList<String[]> actionList = new ArrayList<String[]>();
+        ArrayList<OTAMasterActions.OTAAction> actionList = new ArrayList<OTAMasterActions.OTAAction>();
         Iterator<OTAMasterActions.OTAAction> i = actions.iterator();
+        OTAMasterActions.OTAAction action = null;
         while(i.hasNext())
         {
 
-            OTAMasterActions.OTAAction action = (OTAMasterActions.OTAAction)i.next();
-            boolean exists = XWImageUtils.imageExistsInModule(action.getImage());
-            if(exists)
-            {
-                String[] actionLine = {action.getName(),action.getImage(),"Exists"};
-                actionList.add(actionLine);
-            }else{
-                String[] actionLine = {action.getName(),action.getImage(),"Not Found"};
-                actionList.add(actionLine);
-            }
+            action = i.next();
 
+            action.setStatus(XWImageUtils.imageExistsInModule(action.getImage()));
+
+            actionList.add(action);
 
         }
 
-        // now we need to convert the Array<String[]> to String[][]
-        Object[] tempResults = actionList.toArray();
-        String[][] actionResults = new String[tempResults.length][5];
 
-        for(int j=0;j<tempResults.length;j++)
-        {
-            actionResults[j] = (String[])tempResults[j];
-        }
 
-        return actionResults;
+        return actionList;
     }
 
     public void checkAll(){

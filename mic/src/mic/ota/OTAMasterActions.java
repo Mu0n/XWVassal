@@ -58,7 +58,17 @@ public class OTAMasterActions extends ArrayList<OTAMasterActions.OTAAction> {
         @JsonProperty("image")
         private String image;
 
+        private boolean status;
 
+        public void setStatus(boolean status)
+        {
+            this.status = status;
+        }
+
+        public boolean getStatus()
+        {
+            return status;
+        }
         public String getName() {
             return name;
         }
