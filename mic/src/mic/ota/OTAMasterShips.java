@@ -67,6 +67,8 @@ public class OTAMasterShips extends ArrayList<OTAMasterShips.OTAShip> {
         @JsonProperty("faction")
         private List<String> factions = Lists.newArrayList();
 
+        private boolean status;
+
         public String getXws() {
             return xws;
         }
@@ -78,5 +80,13 @@ public class OTAMasterShips extends ArrayList<OTAMasterShips.OTAShip> {
             return this.factions;
         }
 
+        public void setStatus(boolean status)
+        {
+            this.status = status;
+        }
+        public boolean getStatus()
+        {
+            return status;
+        }
     }
 }

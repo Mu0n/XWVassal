@@ -8,6 +8,7 @@ import VASSAL.tools.ArchiveWriter;
 import VASSAL.tools.DataArchive;
 import VASSAL.tools.io.FileArchive;
 import mic.ota.OTAMasterPilots;
+import mic.ota.OTAMasterShips;
 import mic.ota.OTAShipBase;
 
 import javax.swing.*;
@@ -52,13 +53,11 @@ public class ContentsChecker  extends AbstractConfigurable {
         Iterator<OTAMasterPilots.OTAPilot> pilotIterator = pilotResults.iterator();
         OTAMasterPilots.OTAPilot pilot = null;
         while(pilotIterator.hasNext())
-        //for(int j=0;j<pilotResults.size();j++)
         {
             pilot = pilotIterator.next();
 
             if(!pilot.getStatus())
             {
-           // if(pilotResults[j][4].equals("Not Found")) {
                 missingPilots.add(pilot.getImage());
             }
         }
@@ -90,21 +89,26 @@ public class ContentsChecker  extends AbstractConfigurable {
     private synchronized void downloadMissingShips() {
 
         // download the ships
-        Iterator i = missingShips.iterator();
         XWImageUtils.downloadAndSaveImagesFromOTA("ships",missingShips);
 
         // refresh the list
-        String[][] shipResults = modIntChecker.checkShips();
+        ArrayList<OTAMasterShips.OTAShip> shipResults = modIntChecker.checkShips();
         missingShips = new ArrayList<String>();
-        for(int j=0;j<shipResults.length;j++)
+
+        Iterator<OTAMasterShips.OTAShip> i = shipResults.iterator();
+        OTAMasterShips.OTAShip ship = null;
+        while(i.hasNext())
         {
-            if(shipResults[j][3].equals("Not Found")) {
-                missingShips.add(shipResults[j][2]);
+            ship = i.next();
+
+            if(!ship.getStatus())
+            {
+                missingShips.add(ship.getImage());
             }
         }
 
         // refresh the table
-        refreshShipTable(shipResults);
+        refreshShipTable();
     }
 
 
@@ -212,7 +216,6 @@ public class ContentsChecker  extends AbstractConfigurable {
         {
             String[] pilotLine = new String[5];
             pilot = pilotResults.get(i);
-           // {"Faction","Ship","Pilot","Image","Status"};
             pilotLine[0] = pilot.getFaction();
             pilotLine[1] = pilot.getShipXws();
             pilotLine[2] = pilot.getPilotXws();
@@ -249,13 +252,28 @@ public class ContentsChecker  extends AbstractConfigurable {
         model.fireTableDataChanged();
     }
 
-    private void refreshShipTable(String[][] shipResults)
+    private void refreshShipTable()
     {
+        ArrayList<OTAMasterShips.OTAShip> shipResults = modIntChecker.checkShips();
+
+        String[][] tableResults = new String[shipResults.size()][4];
+        OTAMasterShips.OTAShip ship = null;
+          for(int i=0;i<shipResults.size();i++)
+        {
+            String[] shipLine = new String[7];
+            ship = shipResults.get(i);
+            shipLine[0] = ship.getXws();
+            shipLine[1] = ship.getIdentifier();
+            shipLine[2] = ship.getImage();
+            shipLine[3] = ship.getStatus() ? "Exists":"Not Found";
+
+            tableResults[i] = shipLine;
+        }
 
         DefaultTableModel model = (DefaultTableModel) shipTable.getModel();
 
-        model.setNumRows(shipResults.length);
-        model.setDataVector(shipResults,shipColumnNames);
+        model.setNumRows(tableResults.length);
+        model.setDataVector(tableResults,shipColumnNames);
         shipTable.getColumnModel().getColumn(0).setPreferredWidth(150);
         shipTable.getColumnModel().getColumn(1).setPreferredWidth(150);
         shipTable.getColumnModel().getColumn(2).setPreferredWidth(325);
@@ -270,7 +288,7 @@ public class ContentsChecker  extends AbstractConfigurable {
         modIntChecker = new ModuleIntegrityChecker();
 
         ArrayList<OTAMasterPilots.OTAPilot> pilotResults = modIntChecker.checkPilots();
-        String[][] shipResults = modIntChecker.checkShips();
+        ArrayList<OTAMasterShips.OTAShip> shipResults = modIntChecker.checkShips();
         String[][] actionResults = modIntChecker.checkActions();
         ArrayList<OTAShipBase> shipBaseResults = modIntChecker.checkShipBases();
 
@@ -289,11 +307,14 @@ public class ContentsChecker  extends AbstractConfigurable {
 
         // store the missing ships
         missingShips = new ArrayList<String>();
-        for(int i=0;i<shipResults.length;i++)
+        Iterator<OTAMasterShips.OTAShip> shipIterator = shipResults.iterator();
+        OTAMasterShips.OTAShip ship = null;
+        while(shipIterator.hasNext())
         {
-            if(shipResults[i][3].equals("Not Found")) {
-                missingShips.add(shipResults[i][2]);
-
+            ship = shipIterator.next();
+            if(!ship.getStatus())
+            {
+                missingShips.add(ship.getImage());
             }
         }
 
@@ -311,7 +332,6 @@ public class ContentsChecker  extends AbstractConfigurable {
         missingShipBases = new ArrayList<OTAShipBase>();
         Iterator<OTAShipBase> shipBaseIterator = shipBaseResults.iterator();
         while(shipBaseIterator.hasNext())
-      //  for(int i=0;i<shipBaseResults.length;i++)
         {
             OTAShipBase shipBase = shipBaseIterator.next();
             if(!shipBase.getStatus())
@@ -403,7 +423,6 @@ public class ContentsChecker  extends AbstractConfigurable {
         {
             String[] pilotLine = new String[5];
             pilot = pilotResults.get(i);
-            // {"Faction","Ship","Pilot","Image","Status"};
             pilotLine[0] = pilot.getFaction();
             pilotLine[1] = pilot.getShipXws();
             pilotLine[2] = pilot.getPilotXws();
@@ -470,12 +489,32 @@ public class ContentsChecker  extends AbstractConfigurable {
         return shipBaseTable;
     }
 
-    private JTable buildShipTable(String[][] shipResults)
+    private JTable buildShipTable(ArrayList<OTAMasterShips.OTAShip> shipResults)
     {
-        shipTable = new JTable(shipResults,shipColumnNames);
-        DefaultTableModel model = new DefaultTableModel(shipResults.length, shipColumnNames.length);
-        model.setNumRows(shipResults.length);
-        model.setDataVector(shipResults,shipColumnNames);
+        String[][] tableResults = new String[shipResults.size()][4];
+
+        OTAMasterShips.OTAShip ship = null;
+
+        for(int i=0;i<shipResults.size();i++)
+        {
+            String[] shipLine = new String[5];
+            ship = shipResults.get(i);
+            shipLine[0] = ship.getXws();
+            shipLine[1] = ship.getIdentifier();
+            shipLine[2] = ship.getImage();
+            shipLine[3] = ship.getStatus() ? "Exists":"Not Found";
+
+
+            tableResults[i] = shipLine;
+        }
+
+
+
+
+        shipTable = new JTable(tableResults,shipColumnNames);
+        DefaultTableModel model = new DefaultTableModel(tableResults.length, shipColumnNames.length);
+        model.setNumRows(tableResults.length);
+        model.setDataVector(tableResults,shipColumnNames);
 
         shipTable.setModel(model);
         shipTable.getColumnModel().getColumn(0).setPreferredWidth(150);

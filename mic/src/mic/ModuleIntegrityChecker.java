@@ -91,14 +91,14 @@ public ArrayList<OTAMasterPilots.OTAPilot> checkPilots()
     return pilotList;
 }
 
-    public String[][] checkShips()
+    public ArrayList<OTAMasterShips.OTAShip> checkShips()
     {
         // get list of ships from OTAMasterShips
         OTAMasterShips oms = new OTAMasterShips();
         Collection<OTAMasterShips.OTAShip> ships = oms.getAllShips();
 
 
-        ArrayList<String[]> shipList = new ArrayList<String[]>();
+        ArrayList<OTAMasterShips.OTAShip> shipList = new ArrayList<OTAMasterShips.OTAShip>();
         Iterator<OTAMasterShips.OTAShip> i = ships.iterator();
 
         while(i.hasNext())
@@ -107,17 +107,19 @@ public ArrayList<OTAMasterPilots.OTAPilot> checkPilots()
             boolean exists = XWImageUtils.imageExistsInModule(ship.getImage());
             if(exists)
             {
+                ship.setStatus(true);
                 //{"XWS","Identifier","Image","Status"};
-                String[] shipLine = {ship.getXws(),ship.getIdentifier(),ship.getImage(),"Exists"};
+             //   String[] shipLine = {ship.getXws(),ship.getIdentifier(),ship.getImage(),"Exists"};
 
-                shipList.add(shipLine);
+            //    shipList.add(shipLine);
             }else{
-                String[] shipLine = {ship.getXws(),ship.getIdentifier(),ship.getImage(),"Not Found"};
-                shipList.add(shipLine);
+                ship.setStatus(false);
+              //  String[] shipLine = {ship.getXws(),ship.getIdentifier(),ship.getImage(),"Not Found"};
+             //   shipList.add(shipLine);
             }
-
+            shipList.add(ship);
         }
-
+/*
         // now we need to convert the Array<String[]> to String[][]
         Object[] tempResults = shipList.toArray();
         String[][] shipResults = new String[tempResults.length][4];
@@ -126,8 +128,8 @@ public ArrayList<OTAMasterPilots.OTAPilot> checkPilots()
         {
             shipResults[j] = (String[])tempResults[j];
         }
-
-        return shipResults;
+*/
+        return shipList;
 
     }
 
