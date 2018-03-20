@@ -47,7 +47,7 @@ public class XWImageUtils {
             {208,150}
     };
 
-    private static String simplifyFactionName(String faction)
+    public static String simplifyFactionName(String faction)
     {
         String newFaction = null;
         if(faction.equals("Rebel Alliance") || faction.equals("Resistance"))
@@ -60,6 +60,9 @@ public class XWImageUtils {
         }else if(faction.equals("Scum & Villainy") || faction.equals("Scum and Villainy"))
         {
             newFaction = "scumandvillainy";
+        }else if(faction.equals("rebelalliance") || faction.equals("galacticempire") || faction.equals("scumandvillainy"))
+        {
+            newFaction = faction;
         }
         return newFaction;
     }
@@ -82,7 +85,7 @@ public class XWImageUtils {
         arcImagePrefixSB.append("_");
 
         // find the faction
-        arcImagePrefixSB.append(faction);
+        arcImagePrefixSB.append(simplifyFactionName(faction));
 
 
         arcImagePrefixSB.append(".png");

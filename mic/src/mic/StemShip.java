@@ -21,7 +21,8 @@ import java.util.Map;
 public class StemShip extends Decorator implements EditablePiece {
     public static final String ID = "stemship";
 
-
+    private static final String BASE_SHIP_LAYER_NAME = "Layer - Base Ship";
+    private static final String SHIP_BASE_IMAGE_PREFIX = "Ship_Base";
 
     private static Map<String, String> cardboardActionImages = ImmutableMap.<String, String>builder()
             .put("Focus","Action_Focus.png")
@@ -136,36 +137,40 @@ public class StemShip extends Decorator implements EditablePiece {
         List<String> arcList;
         String shipName;
         String faction = "";
-        String size = "";
-        List<String> actionList;
-        ShipGenerateCommand(String thisName, GamePiece piece, String thisFaction, String thisSize) {
+      //  String size = "";
+       // List<String> actionList;
+        String xwsPilot = "";
+        ShipGenerateCommand(String shipXws,   GamePiece piece, String faction, String xwsPilot) {
 
             // fetch the maneuver array of arrays according to the xws name passed on from autospawn or other means
-            xwsShipName = thisName;
-            faction = thisFaction;
+            xwsShipName = shipXws;
+            this.faction = faction;
             MasterShipData.ShipData shipData = MasterShipData.getShipData(xwsShipName);
-            arcList = shipData.getFiringArcs();
+            //arcList = shipData.getFiringArcs();
             shipName = shipData.getName();
             this.piece = piece;
-            this.size = shipData.getSize();
-            this.actionList = shipData.getActions();
+            this.xwsPilot = xwsPilot;
+         //   this.size = shipData.getSize();
+           // this.actionList = shipData.getActions();
         }
 
         // construct the arcs Layers trait (Embellishment class)
         protected void executeCommand()
         {
+
+            // find the appropriate baseImage
+            piece = buildShipBaseLayer(piece,faction,xwsShipName,xwsPilot);
+
             // set the firing arcs on the cardboard
-            piece = buildCardboardFiringArcs(piece,faction,arcList,size);
+          //  piece = buildCardboardFiringArcs(piece,faction,arcList,size);
 
-
-            // TODO set the actual Firing Arcs
 
             // set the actions on the cardboard
-            piece = buildCardboardActions(piece, actionList, size);
+       //     piece = buildCardboardActions(piece, actionList, size);
 
             //TODO add the actions
             //TODO add the side actions
-            piece =  buildSideActions(piece,size);
+         //   piece =  buildSideActions(piece,size);
 
 
             //TODO add the ship layer
@@ -229,7 +234,7 @@ public class StemShip extends Decorator implements EditablePiece {
 */
             return piece;
         }
-
+/*
         private GamePiece buildCardboardActions(GamePiece piece, List<String> actionList, String size)
         {
 
@@ -261,10 +266,85 @@ public class StemShip extends Decorator implements EditablePiece {
             }
             return piece;
 
+        }*/
+
+        private GamePiece buildShipBaseLayer(GamePiece piece, String faction, String xwsShipName, String xwsPilot)
+        {
+            // first find the base image name
+            String shipBaseImage[] = findShipBaseImage(faction,xwsShipName, xwsPilot);
+
+            Util.logToChat(shipBaseImage[0]);
+
+            boolean dualArt = false;
+            if(shipBaseImage[1] != null && !shipBaseImage[1].equals(""))
+            {
+                dualArt = true;
+            }
+
+            //emb2;Activate;2;;Ghost;2;;;2;;;;1;false;0;0;Ship_generic_small.png,Ship_Small_SeeThrough.png;,;true;Base Ship;;;false;;1;1;true;65,130;71,130;
+
+            //  overwrite the layer with a new state
+            if(!dualArt) {
+                StringBuffer sb = new StringBuffer();
+                sb.append("emb2;Activate;2;;Ghost;2;;;2;;;;1;false;0;0;");
+                sb.append(shipBaseImage[0]);
+                sb.append(",Ship_Small_SeeThrough.png;,;true;Base Ship;;;false;;1;1;true;65,130;71,130;");
+
+                // now get the Layer
+                Embellishment myEmb = (Embellishment)Util.getEmbellishment(piece,BASE_SHIP_LAYER_NAME);
+                myEmb.mySetType(sb.toString());
+
+            }else{
+                // TODO handle dual base
+            }
+
+            return piece;
+
         }
 
+        private String[] findShipBaseImage(String faction, String xwsShipName, String xwsPilot)
+        {
+            StringBuffer sb = new StringBuffer();
+            sb.append(SHIP_BASE_IMAGE_PREFIX);
+            sb.append("_");
+            sb.append(XWImageUtils.simplifyFactionName(faction));
+            sb.append("_");
+            sb.append(xwsShipName);
 
+            boolean dualArt = false;
+            String dualBase = null;
+            // now check for alt art
+            String[] shipImage = AltArtShipPicker.getNewAltArtShip(xwsPilot, xwsShipName, faction);
 
+            // if there's a blank sting in shipImage[0], then it's a standard art
+            // if there's a string in shipImage[1], then it's a dual base ship
+            // otherwise, use the shipImage[0]
+            if(shipImage[0].equals(""))
+            {
+                // standard art
+                sb.append("_standard");
+            }else if(shipImage[1] != null && !shipImage[1].equals(""))
+            {
+                // this is a dual art card.
+                dualArt = true;
+                sb.append("-").append(shipImage[0]);
+                dualBase = sb.toString();
+            }else{
+                sb.append("_").append(shipImage[0]);
+            }
+            sb.append(".png");
+
+            String[] shipArt = new String[2];
+            shipArt[0] = sb.toString();
+            if(dualArt)
+            {
+
+                shipArt[1] = dualBase+shipImage[1]+".png";
+            }
+            return shipArt;
+        }
+
+/*
         private GamePiece buildCardboardFiringArcs(GamePiece piece,String faction, List<String> arcList, String size)
         {
 
@@ -273,8 +353,9 @@ public class StemShip extends Decorator implements EditablePiece {
             for(String arc : arcList)
             {
                 // look up the image for the arc
+
                 arcImage = XWImageUtils.buildFiringArcImageName(size,faction,arc);
-                   //     (String)cardboardFiringArcImages.get(arcImagePrefixSB.toString() + arc);
+
 
                 // build the arc string
                 StringBuilder sb = new StringBuilder();
@@ -295,7 +376,7 @@ public class StemShip extends Decorator implements EditablePiece {
             }
             return piece;
 
-        }
+        }*/
 
 
         protected Command myUndoCommand() {
