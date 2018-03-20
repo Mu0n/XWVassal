@@ -105,7 +105,7 @@ public class AltArtShipPicker {
 
     public static String[] getNewAltArtShip(String xwsPilot, String xwsShip, String faction)
     {
-        Util.logToChat(xwsShip+" "+faction+" "+xwsPilot);
+
         String[] altArt = new String[2];
         boolean found = false;
 
@@ -113,7 +113,6 @@ public class AltArtShipPicker {
         String normalAltArt = newPilotAltArts.get(xwsPilot);
         if(normalAltArt != null)
         {
-            Util.logToChat("Found normal alt art");
             altArt[0] = normalAltArt;
             found = true;
         }
@@ -121,13 +120,11 @@ public class AltArtShipPicker {
         // now check for faction/ship defaults
         if(!found)
         {
-            Util.logToChat("checking faction/ship");
             String factionShip = XWImageUtils.simplifyFactionName(faction)+"_"+xwsShip;
             String defaultArt = defaultShipArts.get(factionShip);
             if(defaultArt != null)
             {
 
-                Util.logToChat("Found faction/ship alt art");
                 altArt[0] = defaultArt;
                 found = true;
             }
@@ -136,11 +133,11 @@ public class AltArtShipPicker {
         // finally check for dual based ships (like the U-Wing)
         if(!found)
         {
-            Util.logToChat("checking dual base");
+
             String[] dualBase = dualBaseShips.get(xwsShip);
             if(dualBase != null && dualBase[0] != null)
             {
-                Util.logToChat("Found dual base alt art");
+
                 altArt = dualBase;
                 found = true;
             }
@@ -149,7 +146,7 @@ public class AltArtShipPicker {
         // if we still haven't found anything, then there is no alt art
         if(!found)
         {
-            Util.logToChat("found nothing");
+
             altArt[0] = "";
         }
 

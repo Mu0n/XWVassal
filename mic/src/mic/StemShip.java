@@ -137,10 +137,10 @@ public class StemShip extends Decorator implements EditablePiece {
         List<String> arcList;
         String shipName;
         String faction = "";
-      //  String size = "";
+        String size = "";
        // List<String> actionList;
         String xwsPilot = "";
-        ShipGenerateCommand(String shipXws,   GamePiece piece, String faction, String xwsPilot) {
+        ShipGenerateCommand(String shipXws,   GamePiece piece, String faction, String xwsPilot ) {
 
             // fetch the maneuver array of arrays according to the xws name passed on from autospawn or other means
             xwsShipName = shipXws;
@@ -150,7 +150,7 @@ public class StemShip extends Decorator implements EditablePiece {
             shipName = shipData.getName();
             this.piece = piece;
             this.xwsPilot = xwsPilot;
-         //   this.size = shipData.getSize();
+            this.size = shipData.getSize();
            // this.actionList = shipData.getActions();
         }
 
@@ -159,7 +159,7 @@ public class StemShip extends Decorator implements EditablePiece {
         {
 
             // find the appropriate baseImage
-            piece = buildShipBaseLayer(piece,faction,xwsShipName,xwsPilot);
+            piece = buildShipBaseLayer(piece,faction,xwsShipName,xwsPilot, size);
 
             // set the firing arcs on the cardboard
           //  piece = buildCardboardFiringArcs(piece,faction,arcList,size);
@@ -268,12 +268,11 @@ public class StemShip extends Decorator implements EditablePiece {
 
         }*/
 
-        private GamePiece buildShipBaseLayer(GamePiece piece, String faction, String xwsShipName, String xwsPilot)
+        private GamePiece buildShipBaseLayer(GamePiece piece, String faction, String xwsShipName, String xwsPilot, String size)
         {
             // first find the base image name
             String shipBaseImage[] = findShipBaseImage(faction,xwsShipName, xwsPilot);
 
-            Util.logToChat(shipBaseImage[0]);
 
             boolean dualArt = false;
             if(shipBaseImage[1] != null && !shipBaseImage[1].equals(""))
@@ -288,14 +287,53 @@ public class StemShip extends Decorator implements EditablePiece {
                 StringBuffer sb = new StringBuffer();
                 sb.append("emb2;Activate;2;;Ghost;2;;;2;;;;1;false;0;0;");
                 sb.append(shipBaseImage[0]);
-                sb.append(",Ship_Small_SeeThrough.png;,;true;Base Ship;;;false;;1;1;true;65,130;71,130;");
+                if(size.equals("small")) {
+                    sb.append(",Ship_Small_SeeThrough.png");
 
+                }else if(size.equals("large")) {
+                    sb.append(",Ship_Big_SeeThrough.png");
+
+                }
+                sb.append(";,;true;Base Ship;;;false;;1;1;true;65,130;71,130;");
                 // now get the Layer
                 Embellishment myEmb = (Embellishment)Util.getEmbellishment(piece,BASE_SHIP_LAYER_NAME);
                 myEmb.mySetType(sb.toString());
 
             }else{
-                // TODO handle dual base
+                // this is dual based
+                StringBuffer sb = new StringBuffer();
+                sb.append("emb2;Activate;2;;Ghost;2;;;2;;;;1;false;0;0;");
+                sb.append(shipBaseImage[0]);
+                if(size.equals("small")) {
+                    sb.append(",Ship_Small_SeeThrough.png,");
+                }else if(size.equals("large"))
+                {
+                    sb.append(",Ship_Big_SeeThrough.png,");
+                }
+                sb.append(shipBaseImage[1]);
+
+                if(size.equals("small")) {
+                    sb.append(",Ship_Small_SeeThrough.png;");
+                }else if(size.equals("large"))
+                {
+                    sb.append(",Ship_Big_SeeThrough.png;");
+                }
+                sb.append("Attack,Ghost1,Landing,Ghost2;false;Base Ship;;;true;ULevel;1;1;true;65,130;71,130;");
+
+                // now get the Layer
+                Embellishment myEmb = (Embellishment)Util.getEmbellishment(piece,BASE_SHIP_LAYER_NAME);
+                myEmb.mySetType(sb.toString());
+
+
+
+                //emb2;Activate;2;;Ghost;2;;;2;;;;1;false;0;0;Ship-U-Wing_Atk.png,Ship_Big_SeeThrough.png,
+                // Ship-U-Wing_Lan.png
+                // ,Ship_Big_SeeThrough.png;Attack,Ghost1,Landing,Ghost2;false;Base Ship;;;true;ULevel;1;1;true;65,130;71,130;
+
+
+                //Embellishment myEmb = (Embellishment)Util.getEmbellishment(piece,BASE_SHIP_LAYER_NAME);
+               // Util.logToChat(myEmb.myGetType());
+
             }
 
             return piece;
@@ -327,7 +365,7 @@ public class StemShip extends Decorator implements EditablePiece {
             {
                 // this is a dual art card.
                 dualArt = true;
-                sb.append("-").append(shipImage[0]);
+                sb.append("_").append(shipImage[0]);
                 dualBase = sb.toString();
             }else{
                 sb.append("_").append(shipImage[0]);
