@@ -1,6 +1,6 @@
 [
   {
-    "name": "Saw Gerrera",
+    "name": "Test Pilot",
     "id": 0,
     "unique": true,
     "ship": "U-Wing",
@@ -15,7 +15,7 @@
     "text": "Unknown",
     "image": "pilots/Rebel Alliance/X-wing/wedge-antilles.png",
     "faction": "Rebel Alliance",
-    "xws": "sawgerrera"
+    "xws": "testpilot"
   }
 
 ]
