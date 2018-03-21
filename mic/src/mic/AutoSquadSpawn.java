@@ -16,6 +16,8 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import static mic.Util.*;
@@ -56,9 +58,28 @@ public class AutoSquadSpawn extends AbstractConfigurable {
         String userInput = JOptionPane.showInputDialog("Please paste (CTRL-V can be used to paste text copied with CTRL-C from a browser) a voidstate url or ID, YASB url, FABS url, or raw XWS JSON.\nIf the list uses new elements, a download delay may occur");
         XWSList xwsList = loadListFromUserInput(userInput);
 
+        // validate the list
+
+        try {
+            validateList(xwsList);
+        }catch(XWSpawnException e)
+        {
+
+            // first replace the list with the "cleaned" list
+            xwsList = e.getNewList();
+
+            // now alert the user
+            ArrayList<String> messages = e.getMessages();
+            for(String message : messages)
+            {
+                mic.Util.logToChat(message);
+            }
 
 
-        if (xwsList == null) {
+        }
+
+
+        if (xwsList == null || xwsList.getPilots() == null || xwsList.getPilots().size() == 0) {
             return;
         }
 
@@ -101,12 +122,6 @@ public class AutoSquadSpawn extends AbstractConfigurable {
         List<Point> illicitLocations = Lists.newArrayList(); // list of coordinates to place illicit tokens
         int illicitYOffset = 50; // Y-Offset of where to place illicit tokens relative to the upgrade card
         PieceSlot illicitPieceSlot = null;
-
-        // TODO loop through each pilot/ship to see what images to download
-     //   downloadNecessaryImages(pieces.getShips());
-
-
-
 
 
         for (VassalXWSPilotPieces ship : pieces.getShips()) {
@@ -316,6 +331,69 @@ public class AutoSquadSpawn extends AbstractConfigurable {
         String listName = xwsList.getName();
         logToChat("%s point list%s loaded from %s", pieces.getSquadPoints(),
                 listName != null ? " '" + listName + "'" : "", xwsList.getXwsSource());
+    }
+
+    private void validateList(XWSList list) throws XWSpawnException
+    {
+        boolean error = false;
+        XWSpawnException exception = new XWSpawnException();
+        XWSList newList = null;
+        HashMap<String,String> skippedPilots = new HashMap<String,String>();
+        for (XWSList.XWSPilot pilot : list.getPilots())
+        {
+
+            String shipXws = pilot.getShip();
+            String pilotXws = pilot.getXws();
+
+            // check the ship
+            if(MasterShipData.getShipData(shipXws) == null)
+            {
+
+                // the ship is not valid
+                error = true;
+                exception.addMessage("Ship "+shipXws+" was not found.  Skipping.");
+               // skippedPilots.put(pilot.getXws(),"X");
+                skippedPilots.put(pilot.getName(),"X");
+
+            }else if(MasterPilotData.getPilotData(shipXws,pilotXws,list.getFaction()) == null && MasterPilotData.getPilotData(shipXws,pilot.getName(),list.getFaction()) == null)
+            {
+
+                error = true;
+                exception.addMessage("Pilot "+pilot.getName()+" was not found.  Skipping.");
+             //  skippedPilots.put(pilot.getXws(),"X");
+                skippedPilots.put(pilot.getName(),"X");
+            }
+
+        }
+
+        if(error)
+        {
+            // create a new list, removing the pilots/ships that aren't valid
+            newList = new XWSList();
+            newList.setDescription(list.getDescription());
+            newList.setFaction(list.getFaction());
+            newList.setName(list.getName());
+            newList.setObstacles(list.getObstacles());
+            newList.setPoints(list.getPoints());
+            newList.setVendor(list.getVendor());
+            newList.setVersion(list.getVersion());
+            newList.setXwsSource(list.getXwsSource());
+
+            for (XWSList.XWSPilot pilot : list.getPilots())
+            {
+
+
+                if(skippedPilots.get(pilot.getName()) == null)
+                {
+
+                    newList.addPilot(pilot);
+                }
+            }
+            exception.setNewList(newList);
+            // throw the exception
+            throw exception;
+        }
+
     }
 /*
     private void downloadNecessaryImages(List<VassalXWSPilotPieces> ships)

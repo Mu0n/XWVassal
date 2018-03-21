@@ -45,24 +45,51 @@ public class XWSList {
         return name;
     }
 
+    public void setName(String name)
+    {
+        this.name = name;
+    }
+
     public String getFaction() {
         return faction;
+    }
+    public void setFaction(String faction)
+    {
+        this.faction = faction;
     }
 
     public Integer getPoints() {
         return points;
     }
 
+    public void setPoints(Integer points)
+    {
+        this.points = points;
+    }
+
     public String getVersion() {
         return version;
+    }
+    public void setVersion(String version)
+    {
+        this.version = version;
     }
 
     public String getDescription() {
         return description;
     }
+    public void setDescription(String description)
+    {
+        this.description = description;
+    }
 
     public List<String> getObstacles() {
         return obstacles;
+    }
+
+    public void setObstacles(List<String> obstacles)
+    {
+        this.obstacles = obstacles;
     }
 
     public List<XWSPilot> getPilots() {
@@ -72,10 +99,15 @@ public class XWSList {
     public Map<String, Map<String, String>> getVendor() {
         return vendor;
     }
+    public void setVendor(Map<String,Map<String,String>> vendor)
+    {
+        this.vendor = vendor;
+    }
 
     public String getXwsSource() {
         return this.xwsSource;
     }
+
 
     public void setXwsSource(String xwsSource) {
         this.xwsSource = xwsSource;
