@@ -128,7 +128,7 @@
     ]
   },
   {
-    "name": "Test Ship3",
+    "name": "My Test Ship3",
     "xws": "testship3",
     "faction": [
       "Scum and Villainy"
@@ -175,7 +175,7 @@
       ]
     ],
     "dial": [
-      "0OR",
+
       "1TR",
       "1BG",
       "1FG",
