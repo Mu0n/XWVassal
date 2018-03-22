@@ -36,7 +36,6 @@ public class GamePieceGenerator
         }
 
         // execute the command to build the ship piece
-
         StemShip.ShipGenerateCommand myShipGen = new StemShip.ShipGenerateCommand(ship.getShipData().getXws(), newShip, faction, pilotData.getXws());
 
         myShipGen.execute();

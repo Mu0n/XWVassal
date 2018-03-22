@@ -271,7 +271,8 @@ public class StemShip extends Decorator implements EditablePiece {
         private GamePiece buildShipBaseLayer(GamePiece piece, String faction, String xwsShipName, String xwsPilot, String size)
         {
             // first find the base image name
-            String shipBaseImage[] = findShipBaseImage(faction,xwsShipName, xwsPilot);
+            String shipBaseImage[] = findShipBaseImage(faction,xwsShipName, xwsPilot, size);
+
 
 
             boolean dualArt = false;
@@ -340,7 +341,7 @@ public class StemShip extends Decorator implements EditablePiece {
 
         }
 
-        private String[] findShipBaseImage(String faction, String xwsShipName, String xwsPilot)
+        private String[] findShipBaseImage(String faction, String xwsShipName, String xwsPilot, String size)
         {
             StringBuffer sb = new StringBuffer();
             sb.append(SHIP_BASE_IMAGE_PREFIX);
@@ -379,6 +380,27 @@ public class StemShip extends Decorator implements EditablePiece {
 
                 shipArt[1] = dualBase+shipImage[1]+".png";
             }
+
+            // check to make sure the image(s) exist
+            if(!XWImageUtils.imageExistsInModule(shipArt[0]))
+            {
+                // image doesn't exist, so use a WIP image.
+
+
+                // build the name
+                sb = new StringBuffer();
+                sb.append(SHIP_BASE_IMAGE_PREFIX).append("_");
+                sb.append(XWImageUtils.simplifyFactionName(faction));
+                sb.append("_wip_");
+                sb.append(size);
+                sb.append(".png");
+
+                shipArt[0] = sb.toString();
+                shipArt[1] = "";
+
+            }
+
+
             return shipArt;
         }
 

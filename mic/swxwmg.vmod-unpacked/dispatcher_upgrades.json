@@ -110,16 +110,6 @@
     "image": "upgrades/Salvaged Astromech/r5-tk.png"
   },
   {
-    "text": "This is a test Missile",
-    "name": "TESTMissile",
-    "xws": "testupgrade6",
-    "unique": false,
-    "points": 0,
-    "slot": "Missile",
-    "id": 365,
-    "image": "upgrades/Salvaged Astromech/r5-tk.png"
-  },
-  {
     "text": "This is a test Crew",
     "name": "TESTCrew",
     "xws": "testupgrade7",

@@ -62,5 +62,133 @@
       "3FW",
       "3NW"
     ] 
+  },
+  {
+    "name": "Test Ship2",
+    "xws": "testship2",
+    "faction": [
+      "Rebel Alliance"
+    ],
+    "actions": [
+      "Focus",
+      "Target Lock"
+    ],
+    "size": "small",
+    "attack": 2,
+    "agility": 1,
+    "hull": 9,
+    "shields": 3,
+    "firing_arcs": [
+      "Front",
+      "Turret"
+    ],
+    "id": 55,
+    "maneuvers": [
+      [
+        0,
+        0,
+        3
+      ],
+      [
+        3,
+        2,
+        2,
+        2,
+        3
+      ],
+      [
+        1,
+        1,
+        2,
+        1,
+        1
+      ],
+      [
+        0,
+        1,
+        1,
+        1
+      ]
+    ],
+    "dial": [
+      "0OR",
+      "1TR",
+      "1BG",
+      "1FG",
+      "1NG",
+      "1YR",
+      "2TW",
+      "2BW",
+      "2FG",
+      "2NW",
+      "2YW",
+      "3BW",
+      "3FW",
+      "3NW"
+    ]
+  },
+  {
+    "name": "Test Ship3",
+    "xws": "testship3",
+    "faction": [
+      "Scum and Villainy"
+    ],
+    "actions": [
+      "Focus",
+      "Target Lock"
+    ],
+    "size": "small",
+    "attack": 2,
+    "agility": 1,
+    "hull": 9,
+    "shields": 3,
+    "firing_arcs": [
+      "Front",
+      "Turret"
+    ],
+    "id": 55,
+    "maneuvers": [
+      [
+        0,
+        0,
+        3
+      ],
+      [
+        3,
+        2,
+        2,
+        2,
+        3
+      ],
+      [
+        1,
+        1,
+        2,
+        1,
+        1
+      ],
+      [
+        0,
+        1,
+        1,
+        1
+      ]
+    ],
+    "dial": [
+      "0OR",
+      "1TR",
+      "1BG",
+      "1FG",
+      "1NG",
+      "1YR",
+      "2TW",
+      "2BW",
+      "2FG",
+      "2NW",
+      "2YW",
+      "3BW",
+      "3FW",
+      "3NW"
+    ]
   }
 ]

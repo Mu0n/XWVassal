@@ -3,7 +3,7 @@
     "name": "Test Pilot",
     "id": 0,
     "unique": true,
-    "ship": "U-Wing",
+    "ship": "testship",
     "skill": 6,
     "points": 100,
     "slots": [
@@ -16,6 +16,54 @@
     "image": "pilots/Rebel Alliance/X-wing/wedge-antilles.png",
     "faction": "Rebel Alliance",
     "xws": "testpilot"
+  },
+  {
+    "name": "Test Pilot2",
+    "id": 0,
+    "unique": true,
+    "ship": "testship2",
+    "skill": 6,
+    "points": 100,
+    "slots": [
+      "System",
+      "Torpedo",
+      "Crew",
+      "Crew"
+    ],
+    "text": "Unknown",
+    "image": "pilots/Rebel Alliance/X-wing/wedge-antilles.png",
+    "faction": "Rebel Alliance",
+    "xws": "testpilot2"
   }
+,
+  {
+    "name": "Test Pilot3",
+    "id": 0,
+    "unique": true,
+    "ship": "testship3",
+    "skill": 6,
+    "points": 100,
+    "slots": [
+      "Missile",
+      "Crew",
+      "Salvaged Astromech",
+      "Turret",
+      "Elite",
+      "Title",
+      "Cannon",
+      "Bomb",
+      "Illicit",
+      "System",
+      "Tech",
+      "Astromech"
 
+    ],
+    "text": "Unknown",
+    "image": "pilots/Rebel Alliance/X-wing/wedge-antilles.png",
+    "faction": "Scum and Villainy",
+    "xws": "testpilot3",
+    "conditions": [
+      "Test Condition"
+    ]
+  }
 ]
