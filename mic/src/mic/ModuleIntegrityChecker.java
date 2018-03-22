@@ -74,6 +74,31 @@ public class ModuleIntegrityChecker {
         return upgradeList;
     }
 
+    public ArrayList<OTAMasterConditions.OTACondition> checkConditions()
+    {
+        // get list of conditions from OTAMasterUpgrades
+        OTAMasterConditions omc = new OTAMasterConditions();
+        Collection<OTAMasterConditions.OTACondition> conditions = omc.getAllConditions();
+
+
+        ArrayList<OTAMasterConditions.OTACondition> conditionList = new ArrayList<OTAMasterConditions.OTACondition>();
+        Iterator<OTAMasterConditions.OTACondition> i = conditions.iterator();
+
+        OTAMasterConditions.OTACondition condition = null;
+        while(i.hasNext())
+        {
+            condition = (OTAMasterConditions.OTACondition)i.next();
+
+            condition.setStatus(XWImageUtils.imageExistsInModule(condition.getImage()));
+            condition.setTokenStatus(XWImageUtils.imageExistsInModule(condition.getTokenImage()));
+
+            conditionList.add(condition);
+
+        }
+
+        return conditionList;
+    }
+
 public ArrayList<OTAMasterPilots.OTAPilot> checkPilots()
 {
     // get list of pilots from OTAMasterPilots

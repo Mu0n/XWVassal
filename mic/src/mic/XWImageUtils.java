@@ -398,6 +398,7 @@ public class XWImageUtils {
         Iterator<String> i = imageNames.iterator();
         while(i.hasNext())
         {
+
             boolean imageFound = false;
             byte[] imageBytes = null;
             String imageName = i.next();
@@ -414,6 +415,7 @@ public class XWImageUtils {
             {
                 // OTA doesn't have the image
                 imageFound = false;
+
             }
 
 
