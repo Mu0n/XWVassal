@@ -16,6 +16,8 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import static mic.Util.*;
@@ -53,9 +55,31 @@ public class AutoSquadSpawn extends AbstractConfigurable {
             return;
         }
 
-        String userInput = JOptionPane.showInputDialog("Please paste (CTRL-V can be used to paste text copied with CTRL-C from a browser) a voidstate url or ID, YASB url, FABS url, or raw XWS JSON");
+        String userInput = JOptionPane.showInputDialog("Please paste (CTRL-V can be used to paste text copied with CTRL-C from a browser) a voidstate url or ID, YASB url, FABS url, or raw XWS JSON.\nIf the list uses new elements, a download delay may occur");
         XWSList xwsList = loadListFromUserInput(userInput);
-        if (xwsList == null) {
+
+        // validate the list
+
+        try {
+            validateList(xwsList);
+        }catch(XWSpawnException e)
+        {
+
+            // first replace the list with the "cleaned" list
+            xwsList = e.getNewList();
+
+            // now alert the user
+            ArrayList<String> messages = e.getMessages();
+            for(String message : messages)
+            {
+                mic.Util.logToChat(message);
+            }
+
+
+        }
+
+
+        if (xwsList == null || xwsList.getPilots() == null || xwsList.getPilots().size() == 0) {
             return;
         }
 
@@ -99,6 +123,7 @@ public class AutoSquadSpawn extends AbstractConfigurable {
         int illicitYOffset = 50; // Y-Offset of where to place illicit tokens relative to the upgrade card
         PieceSlot illicitPieceSlot = null;
 
+
         for (VassalXWSPilotPieces ship : pieces.getShips()) {
 
             // flag - does this pilot have the Extra Munitions upgrade card assigned
@@ -107,18 +132,26 @@ public class AutoSquadSpawn extends AbstractConfigurable {
             // flag - does this pilot have the  Silos upgrade card assigned
             boolean pilotHasOrdnanceSilos = false;
 
-            //logToChat("Spawning pilot: %s", ship.getPilotCard().getConfigureName());
-
-            if(ship.getPilotData().getXws().equals("nashtahpuppilot"))
+            if(ship.getPilotData().getXws().equals("nashtahpuppilot")) //<- NULL HERE?
             {
                 MasterPilotData.PilotData nashtahPilotData = ship.getPilotData();
                 nashtahPilotData.setSkill(houndsToothPilotSkill);
                 ship.setPilotData(nashtahPilotData);
 
             }
-            shipBases.add(ship.cloneShip());
 
-            GamePiece pilotPiece = ship.clonePilotCard();
+            //TODO injecting ship generation code here
+            GamePiece shipPiece = GamePieceGenerator.generateShip(ship);
+
+
+
+            shipBases.add(shipPiece);
+        //    shipBases.add(ship.cloneShip());
+
+            // TODO inject pilot card generation code here
+            GamePiece pilotPiece = GamePieceGenerator.generatePilot(ship);
+           // GamePiece pilotPiece = ship.clonePilotCard();
+
             int pilotWidth = (int) pilotPiece.boundingBox().getWidth();
             int pilotHeight = (int) pilotPiece.boundingBox().getHeight();
             totalPilotHeight += pilotHeight;
@@ -129,11 +162,8 @@ public class AutoSquadSpawn extends AbstractConfigurable {
 
 
 
-            // MrMurphM
-            // somewhat temporary.  ignore the dial set on the ship for now so we can grab the new one
-            // eventually, i need to move this
-            //GamePiece dialPiece = ship.cloneDial();
-            GamePiece dialPiece = generateDial(ship);
+            // Generate the dial
+            GamePiece dialPiece = GamePieceGenerator.generateDial(ship);
 
             int dialWidth = (int) dialPiece.boundingBox().getWidth();
             spawnPiece(dialPiece, new Point(
@@ -164,6 +194,14 @@ public class AutoSquadSpawn extends AbstractConfigurable {
 
 
                 GamePiece upgradePiece = upgrade.cloneGamePiece();
+
+                // if this is an unreleased upgrade, we have to set the name
+                if(upgrade.getPieceSlot().getConfigureName().startsWith("Stem"))
+                {
+                    // we need to set the upgrade name
+                    upgradePiece.setProperty("Upgrade Name",upgrade.getUpgradeData().getName());
+                }
+
 
                 // if pilot has extra munitions, we will collect the positions of each card that can take it
                 // so we can add the tokens later
@@ -222,8 +260,14 @@ public class AutoSquadSpawn extends AbstractConfigurable {
                 totalUpgradeWidth += upgradePiece.boundingBox().getWidth();
             } //loop to next upgrade
 
-            for (PieceSlot conditionSlot : ship.getConditions()) {
-                GamePiece conditionPiece = newPiece(conditionSlot);
+
+            for (VassalXWSPilotPieces.Upgrade condition: ship.getConditions()) {
+                GamePiece conditionPiece = newPiece(condition.getPieceSlot());
+                if(condition.getPieceSlot().getConfigureName().startsWith("Stem"))
+                {
+                    // this is an unreleased condition.  Need to set the name
+                    conditionPiece.setProperty("Upgrade Name",condition.getXwsName());
+                }
                 spawnPiece(conditionPiece, new Point(
                                 (int) startPosition.getX() + pilotWidth + totalUpgradeWidth + fudgePilotUpgradeFrontier,
                                 (int) startPosition.getY() + totalPilotHeight),
@@ -289,6 +333,225 @@ public class AutoSquadSpawn extends AbstractConfigurable {
                 listName != null ? " '" + listName + "'" : "", xwsList.getXwsSource());
     }
 
+    private void validateList(XWSList list) throws XWSpawnException
+    {
+        boolean error = false;
+        XWSpawnException exception = new XWSpawnException();
+        XWSList newList = null;
+        HashMap<String,String> skippedPilots = new HashMap<String,String>();
+        for (XWSList.XWSPilot pilot : list.getPilots())
+        {
+
+            String shipXws = pilot.getShip();
+            String pilotXws = pilot.getXws();
+
+            // check the ship
+            if(MasterShipData.getShipData(shipXws) == null)
+            {
+
+                // the ship is not valid
+                error = true;
+                exception.addMessage("Ship "+shipXws+" was not found.  Skipping.");
+               // skippedPilots.put(pilot.getXws(),"X");
+                skippedPilots.put(pilot.getName(),"X");
+
+            }else if(MasterPilotData.getPilotData(shipXws,pilotXws,list.getFaction()) == null && MasterPilotData.getPilotData(shipXws,pilot.getName(),list.getFaction()) == null)
+            {
+
+                error = true;
+                exception.addMessage("Pilot "+pilot.getName()+" was not found.  Skipping.");
+             //  skippedPilots.put(pilot.getXws(),"X");
+                skippedPilots.put(pilot.getName(),"X");
+            }
+
+        }
+
+        if(error)
+        {
+            // create a new list, removing the pilots/ships that aren't valid
+            newList = new XWSList();
+            newList.setDescription(list.getDescription());
+            newList.setFaction(list.getFaction());
+            newList.setName(list.getName());
+            newList.setObstacles(list.getObstacles());
+            newList.setPoints(list.getPoints());
+            newList.setVendor(list.getVendor());
+            newList.setVersion(list.getVersion());
+            newList.setXwsSource(list.getXwsSource());
+
+            for (XWSList.XWSPilot pilot : list.getPilots())
+            {
+
+
+                if(skippedPilots.get(pilot.getName()) == null)
+                {
+
+                    newList.addPilot(pilot);
+                }
+            }
+            exception.setNewList(newList);
+            // throw the exception
+            throw exception;
+        }
+
+    }
+/*
+    private void downloadNecessaryImages(List<VassalXWSPilotPieces> ships)
+    {
+
+        // send the command to download the images
+
+        // loop through each ship/pilot to see what images are needed
+        // collect every image, because we don't know what other clients might not have
+        ArrayList pilotImageList = new ArrayList();
+        for (VassalXWSPilotPieces ship : ships) {
+
+            // get the pilotImageName
+            MasterShipData.ShipData shipData = ship.getShipData();
+            MasterPilotData.PilotData pilotData = ship.getPilotData();
+
+
+            Canonicalizer.getCanonicalFactionName(pilotData.getFaction());
+            shipData.getXws();
+            pilotData.getXws();
+
+            String pilotCardImage = "Pilot_" + Canonicalizer.getCanonicalFactionName(pilotData.getFaction()) + "_" + shipData.getXws() + "_" + pilotData.getXws() + ".jpg";
+            pilotImageList.add(pilotCardImage);
+        }
+
+        OTAImageDownloader.ImageDownloadCommand myImageDownloader = new OTAImageDownloader.ImageDownloadCommand(pilotImageList);
+        myImageDownloader.executeCommand();
+    }
+*//*
+    private GamePiece generatePilot(VassalXWSPilotPieces ship)
+    {
+
+        GamePiece newPilot = mic.Util.newPiece(ship.getPilotCard());
+        if (ship.getShipNumber() != null && ship.getShipNumber() > 0) {
+            newPilot.setProperty("Pilot ID #", ship.getShipNumber());
+        } else {
+            newPilot.setProperty("Pilot ID #", "");
+        }
+
+        // this is a stem card = fill it in
+
+        MasterShipData.ShipData shipData = ship.getShipData();
+        MasterPilotData.PilotData pilotData = ship.getPilotData();
+    //    newPilot.setProperty("Ship Type",shipData.getName());
+    //    newPilot.setProperty("Pilot Name",pilotData.getName());
+
+        StemPilot.PilotGenerateCommand myShipGen = new StemPilot.PilotGenerateCommand(pilotData.getXws(),newPilot,pilotData.getFaction(),shipData.getXws(),pilotData.getName(),shipData.getName());
+
+        myShipGen.execute();
+
+        return newPilot;
+*/
+
+
+
+/*
+
+        // find the 2 slots for the stem ships
+
+        List<PieceSlot> pieceSlots = GameModule.getGameModule().getAllDescendantComponentsOf(PieceSlot.class);
+
+        PieceSlot smallShipSlot = null;
+        PieceSlot largeShipSlot = null;
+
+        for (PieceSlot pieceSlot : pieceSlots) {
+            String slotName = pieceSlot.getConfigureName();
+            if(slotName.startsWith("ship -- Nu Stem Small Ship")&& smallShipSlot == null)
+            {
+                smallShipSlot = pieceSlot;
+                continue;
+            } else if(slotName.startsWith("ship -- Nu Stem Large Ship")&& largeShipSlot == null) {
+                largeShipSlot = pieceSlot;
+                continue;
+            }
+        }
+
+        // grab the correct ship for the size of the ship
+        GamePiece newShip = null;
+        if(shipData.getSize().contentEquals("small"))
+        {
+            newShip = mic.Util.newPiece(smallShipSlot);
+        }else if(shipData.getSize().contentEquals("large"))
+        {
+            newShip = mic.Util.newPiece(largeShipSlot);
+        }
+
+
+        // execute the command
+        StemShip.ShipGenerateCommand myShipGen = new StemShip.ShipGenerateCommand(ship.getShipData().getXws(), newShip, faction, shipData.getSize());
+
+        myShipGen.execute();
+
+        //TODO add stats
+        //       dial.setProperty("ShipXwsId",ship.getShipData().getXws());
+        //      dial.setProperty("Pilot Name", getDisplayShipName(ship.getPilotData(),shipData));
+        //     dial.setProperty("Craft ID #", getDisplayPilotName(ship.getPilotData(),shipData,ship.getShipNumber()));
+        return newShip;
+
+    }*/
+/*
+    private GamePiece generateShip(VassalXWSPilotPieces ship)
+    {
+
+        MasterShipData.ShipData shipData = ship.getShipData();
+
+        String faction = ship.getPilotData().getFaction();
+
+
+        // find the 2 slots for the stem ships
+
+        List<PieceSlot> pieceSlots = GameModule.getGameModule().getAllDescendantComponentsOf(PieceSlot.class);
+
+        PieceSlot smallShipSlot = null;
+        PieceSlot largeShipSlot = null;
+
+        for (PieceSlot pieceSlot : pieceSlots) {
+            String slotName = pieceSlot.getConfigureName();
+            if(slotName.startsWith("ship -- Nu Stem Small Ship")&& smallShipSlot == null)
+            {
+                smallShipSlot = pieceSlot;
+                continue;
+            } else if(slotName.startsWith("ship -- Nu Stem Large Ship")&& largeShipSlot == null) {
+                largeShipSlot = pieceSlot;
+                continue;
+            }
+        }
+
+        // grab the correct ship for the size of the ship
+        GamePiece newShip = null;
+        if(shipData.getSize().contentEquals("small"))
+        {
+            newShip = mic.Util.newPiece(smallShipSlot);
+        }else if(shipData.getSize().contentEquals("large"))
+        {
+            newShip = mic.Util.newPiece(largeShipSlot);
+        }
+
+
+        // execute the command
+        StemShip.ShipGenerateCommand myShipGen = new StemShip.ShipGenerateCommand(ship.getShipData().getXws(), newShip, faction, shipData.getSize());
+
+        myShipGen.execute();
+
+        //TODO add stats
+        newShip.setProperty("Craft ID #", getDisplayPilotName(ship.getPilotData(),shipData,ship.getShipNumber())); //is actually the pilot name
+        newShip.setProperty("Pilot Skill", Integer.toString(ship.getPilotData().getSkill()));
+
+        newShip.setProperty("Pilot Name", getDisplayShipName(ship.getPilotData(),shipData)); //is actually the ship name
+        newShip.setProperty("Attack Rating", Integer.toString(ship.getShipData().getAttack()));
+        newShip.setProperty("Defense Rating", Integer.toString(ship.getShipData().getAgility()));
+        newShip.setProperty("Hull Rating", Integer.toString(ship.getShipData().getHull()));
+        newShip.setProperty("Shield Rating", Integer.toString(ship.getShipData().getShields()));
+ //       dial.setProperty("ShipXwsId",ship.getShipData().getXws());
+  //      dial.setProperty("Pilot Name", getDisplayShipName(ship.getPilotData(),shipData));
+   //     dial.setProperty("Craft ID #", getDisplayPilotName(ship.getPilotData(),shipData,ship.getShipNumber()));
+        return newShip;
+    }*/
+/*
     // generate an autogenerated dial
     private GamePiece generateDial(VassalXWSPilotPieces ship)
     {
@@ -334,11 +597,40 @@ public class AutoSquadSpawn extends AbstractConfigurable {
         myDialGen.execute();
 
         dial.setProperty("ShipXwsId",ship.getShipData().getXws());
-        dial.setProperty("Pilot Name", ship.cloneDial().getProperty("Pilot Name"));
-        dial.setProperty("Craft ID #", ship.cloneDial().getProperty("Craft ID #"));
-
+        dial.setProperty("Pilot Name", getDisplayShipName(ship.getPilotData(),shipData));
+        dial.setProperty("Craft ID #", getDisplayPilotName(ship.getPilotData(),shipData,ship.getShipNumber()));
         return dial;
+    }*/
+/*
+    private String getDisplayPilotName(MasterPilotData.PilotData pilotData, MasterShipData.ShipData shipData, Integer shipNumber )
+    {
+        String pilotName = "";
+        if (pilotData != null) {
+            pilotName = Acronymizer.acronymizer(
+                    pilotData.getName(),
+                    pilotData.isUnique(),
+                    shipData.hasSmallBase());
+        }
+
+        if (shipNumber != null && shipNumber > 0) {
+            pilotName += " " + shipNumber;
+        }
+        return pilotName;
     }
+*/
+/*
+    private String getDisplayShipName(MasterPilotData.PilotData pilotData, MasterShipData.ShipData shipData) {
+        String shipName = "";
+        if (pilotData != null) {
+            shipName = Acronymizer.acronymizer(
+                    pilotData.getShip(),
+                    pilotData.isUnique(),
+                    shipData.hasSmallBase());
+        }
+
+        return shipName;
+    }
+*/
 
     public void addTo(Buildable parent) {
         loadData();
@@ -384,6 +676,7 @@ public class AutoSquadSpawn extends AbstractConfigurable {
     private XWSList loadListFromUrl(String userInput) {
         try {
             URL translatedURL = XWSUrlHelper.translate(userInput);
+
             if (translatedURL == null) {
                 logToChat("Invalid list url detected, please try again");
                 return null;
@@ -432,7 +725,7 @@ public class AutoSquadSpawn extends AbstractConfigurable {
 
                             listHasHoundsTooth = true;
 
-                            houndsToothPilotSkill = MasterPilotData.getPilotData("yv666", pilot.getName()).getSkill();
+                            houndsToothPilotSkill = MasterPilotData.getPilotData("yv666", pilot.getName(),list.getFaction()).getSkill();
                             break;
                         }
                     }
