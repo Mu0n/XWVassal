@@ -7,10 +7,7 @@ import VASSAL.build.module.documentation.HelpFile;
 import VASSAL.tools.ArchiveWriter;
 import VASSAL.tools.DataArchive;
 import VASSAL.tools.io.FileArchive;
-import mic.ota.OTAMasterActions;
-import mic.ota.OTAMasterPilots;
-import mic.ota.OTAMasterShips;
-import mic.ota.OTAShipBase;
+import mic.ota.*;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -30,15 +27,19 @@ public class ContentsChecker  extends AbstractConfigurable {
     private ArrayList<String> missingPilots;
     private ArrayList<String> missingShips;
     private ArrayList<String> missingActions;
+    private ArrayList<String> missingUpgrades;
     private ArrayList<OTAShipBase> missingShipBases;
     private JTable pilotTable;
     private JTable shipTable;
     private JTable actionTable;
     private JTable shipBaseTable;
+    private JTable upgradeTable;
     private final String[] pilotColumnNames = {"Faction","Ship","Pilot","Image","Status"};
     private final String[] shipColumnNames = {"XWS","Identifier","Image","Status"};
     private final String[] actionColumnNames = {"Name","Image","Status"};
     private final String[] shipBaseColumnNames = {"Name","XWS","Identifier","Faction","BaseImage","shipImage","Status"};
+    private final String[] upgradeColumnNames = {"XWS","Slot","Image","Status"};
+
     private ModuleIntegrityChecker modIntChecker = null;
 
     private synchronized void downloadMissingPilots() {
@@ -65,6 +66,32 @@ public class ContentsChecker  extends AbstractConfigurable {
 
         // refresh the table
         refreshPilotTable();
+    }
+
+    private synchronized void downloadMissingUpgrades() {
+
+        // download the upgrades
+        Iterator<String> i = missingUpgrades.iterator();
+        XWImageUtils.downloadAndSaveImagesFromOTA("upgrades",missingUpgrades);
+
+
+        // refresh the list
+        ArrayList<OTAMasterUpgrades.OTAUpgrade> upgradeResults = modIntChecker.checkUpgrades();
+        missingUpgrades = new ArrayList<String>();
+        Iterator<OTAMasterUpgrades.OTAUpgrade> upgradeIterator = upgradeResults.iterator();
+        OTAMasterUpgrades.OTAUpgrade upgrade = null;
+        while(upgradeIterator.hasNext())
+        {
+            upgrade = upgradeIterator.next();
+
+            if(!upgrade.getStatus())
+            {
+                missingUpgrades.add(upgrade.getImage());
+            }
+        }
+
+        // refresh the table
+        refreshUpgradeTable();
     }
 
     private synchronized void downloadMissingActions() {
@@ -244,6 +271,40 @@ public class ContentsChecker  extends AbstractConfigurable {
         model.fireTableDataChanged();
     }
 
+    private void refreshUpgradeTable()
+    {
+        ArrayList<OTAMasterUpgrades.OTAUpgrade> upgradeResults = modIntChecker.checkUpgrades();
+        String[][] tableResults = new String[upgradeResults.size()][4];
+
+        OTAMasterUpgrades.OTAUpgrade upgrade = null;
+        for(int i=0;i<upgradeResults.size();i++)
+        {
+            String[] upgradeLine = new String[4];
+            upgrade = upgradeResults.get(i);
+
+            upgradeLine[0] = upgrade.getXws();
+            upgradeLine[1] = upgrade.getSlot();
+            upgradeLine[2] = upgrade.getImage();
+            upgradeLine[3] = upgrade.getStatus() ? "Exists":"Not Found";
+
+            tableResults[i] = upgradeLine;
+
+        }
+
+
+        DefaultTableModel model = (DefaultTableModel) upgradeTable.getModel();
+
+        model.setNumRows(upgradeResults.size());
+        model.setDataVector(tableResults,upgradeColumnNames);
+        upgradeTable.getColumnModel().getColumn(0).setPreferredWidth(100);;
+        upgradeTable.getColumnModel().getColumn(1).setPreferredWidth(100);
+        upgradeTable.getColumnModel().getColumn(2).setPreferredWidth(325);
+        upgradeTable.getColumnModel().getColumn(3).setPreferredWidth(75);
+        model.fireTableDataChanged();
+
+
+    }
+
 
     private void refreshActionTable()
     {
@@ -313,6 +374,7 @@ public class ContentsChecker  extends AbstractConfigurable {
         ArrayList<OTAMasterShips.OTAShip> shipResults = modIntChecker.checkShips();
         ArrayList<OTAMasterActions.OTAAction> actionResults = modIntChecker.checkActions();
         ArrayList<OTAShipBase> shipBaseResults = modIntChecker.checkShipBases();
+        ArrayList<OTAMasterUpgrades.OTAUpgrade> upgradeResults = modIntChecker.checkUpgrades();
 
         // store the missing pilots
         missingPilots = new ArrayList<String>();
@@ -324,6 +386,19 @@ public class ContentsChecker  extends AbstractConfigurable {
             if(!pilot.getStatus())
             {
                 missingPilots.add(pilot.getImage());
+            }
+        }
+
+        // store the missing upgrades
+        missingUpgrades = new ArrayList<String>();
+        Iterator<OTAMasterUpgrades.OTAUpgrade> upgradeIterator = upgradeResults.iterator();
+        OTAMasterUpgrades.OTAUpgrade upgrade = null;
+        while(upgradeIterator.hasNext())
+        {
+            upgrade = upgradeIterator.next();
+            if(!upgrade.getStatus())
+            {
+                missingUpgrades.add(upgrade.getImage());
             }
         }
 
@@ -384,11 +459,13 @@ public class ContentsChecker  extends AbstractConfigurable {
         shipTable = buildShipTable(shipResults);
         actionTable = buildActionTable(actionResults);
         shipBaseTable = buildShipBaseTable(shipBaseResults);
+        upgradeTable = buildUpgradeTable(upgradeResults);
 
         JScrollPane pilotPane = new JScrollPane(pilotTable);
         JScrollPane shipPane = new JScrollPane(shipTable);
         JScrollPane actionPane = new JScrollPane(actionTable);
         JScrollPane shipBasePane = new JScrollPane(shipBaseTable);
+        JScrollPane upgradePane = new JScrollPane(upgradeTable);
 
         // pilots
         panel.add(pilotPane, BorderLayout.CENTER);
@@ -422,6 +499,17 @@ public class ContentsChecker  extends AbstractConfigurable {
             }
         });
         panel.add(downloadActionButton);
+
+        // upgrades
+        panel.add(upgradePane, BorderLayout.CENTER);
+        JButton downloadUpgradeButton = new JButton("Download Upgrades");
+        downloadUpgradeButton.setAlignmentY(0.0F);
+        downloadUpgradeButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                downloadMissingUpgrades();
+            }
+        });
+        panel.add(downloadUpgradeButton);
 
         // ship bases
         panel.add(shipBasePane, BorderLayout.CENTER);
@@ -471,6 +559,38 @@ public class ContentsChecker  extends AbstractConfigurable {
 
         pilotTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
         return pilotTable;
+    }
+
+    private JTable buildUpgradeTable(ArrayList<OTAMasterUpgrades.OTAUpgrade> upgradeResults)
+    {
+        String[][] tableResults = new String[upgradeResults.size()][4];
+
+        OTAMasterUpgrades.OTAUpgrade upgrade = null;
+        for(int i=0;i<upgradeResults.size();i++)
+        {
+            String[] upgradeLine = new String[4];
+            upgrade = upgradeResults.get(i);
+            upgradeLine[0] = upgrade.getXws();
+            upgradeLine[1] = upgrade.getSlot();
+            upgradeLine[2] = upgrade.getImage();
+            upgradeLine[3] = upgrade.getStatus() ? "Exists":"Not Found";
+
+            tableResults[i] = upgradeLine;
+        }
+
+        upgradeTable = new JTable(tableResults,upgradeColumnNames);
+        DefaultTableModel model = new DefaultTableModel(upgradeResults.size(), upgradeColumnNames.length);
+        model.setNumRows(upgradeResults.size());
+        model.setDataVector(tableResults,upgradeColumnNames);
+
+        upgradeTable.setModel(model);
+        upgradeTable.getColumnModel().getColumn(0).setPreferredWidth(100);;
+        upgradeTable.getColumnModel().getColumn(1).setPreferredWidth(100);
+        upgradeTable.getColumnModel().getColumn(2).setPreferredWidth(325);
+        upgradeTable.getColumnModel().getColumn(3).setPreferredWidth(75);
+
+        upgradeTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+        return upgradeTable;
     }
 
     private JTable buildShipBaseTable(ArrayList<OTAShipBase> shipBaseResults)

@@ -1,12 +1,12 @@
 package mic;
 
 
-import mic.ota.OTAMasterActions;
-import mic.ota.OTAMasterPilots;
-import mic.ota.OTAMasterShips;
-import mic.ota.OTAShipBase;
+import mic.ota.*;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * Created by Mic on 03/11/2018.
@@ -49,6 +49,30 @@ public class ModuleIntegrityChecker {
         checkAll();
     }
     */
+
+    public ArrayList<OTAMasterUpgrades.OTAUpgrade> checkUpgrades()
+    {
+        // get list of upgrades from OTAMasterUpgrades
+        OTAMasterUpgrades omu = new OTAMasterUpgrades();
+        Collection<OTAMasterUpgrades.OTAUpgrade> upgrades = omu.getAllUpgrades();
+
+
+        ArrayList<OTAMasterUpgrades.OTAUpgrade> upgradeList = new ArrayList<OTAMasterUpgrades.OTAUpgrade>();
+        Iterator<OTAMasterUpgrades.OTAUpgrade> i = upgrades.iterator();
+
+        OTAMasterUpgrades.OTAUpgrade upgrade = null;
+        while(i.hasNext())
+        {
+            upgrade = (OTAMasterUpgrades.OTAUpgrade)i.next();
+
+            upgrade.setStatus(XWImageUtils.imageExistsInModule(upgrade.getImage()));
+
+            upgradeList.add(upgrade);
+
+        }
+
+        return upgradeList;
+    }
 
 public ArrayList<OTAMasterPilots.OTAPilot> checkPilots()
 {
