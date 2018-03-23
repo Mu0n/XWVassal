@@ -123,6 +123,17 @@ public class GamePieceGenerator
         return dial;
     }
 
+    public static GamePiece generateUpgrade(VassalXWSPilotPieces.Upgrade upgrade)
+    {
+
+        GamePiece newUpgrade = mic.Util.newPiece(upgrade.getPieceSlot());
+        StemUpgrade.UpgradeGenerateCommand myUpgradeGen = new StemUpgrade.UpgradeGenerateCommand(upgrade.getUpgradeData().getXws(), newUpgrade, upgrade.getUpgradeData().getName(), upgrade.getUpgradeData().getSlot());
+
+        myUpgradeGen.execute();
+
+        return newUpgrade;
+    }
+
     public static GamePiece generatePilot(VassalXWSPilotPieces ship) {
 
         GamePiece newPilot = mic.Util.newPiece(ship.getPilotCard());

@@ -157,30 +157,9 @@ public class StemShip extends Decorator implements EditablePiece {
         // construct the arcs Layers trait (Embellishment class)
         protected void executeCommand()
         {
-
             // find the appropriate baseImage
             piece = buildShipBaseLayer(piece,faction,xwsShipName,xwsPilot, size);
 
-            // set the firing arcs on the cardboard
-          //  piece = buildCardboardFiringArcs(piece,faction,arcList,size);
-
-
-            // set the actions on the cardboard
-       //     piece = buildCardboardActions(piece, actionList, size);
-
-            //TODO add the actions
-            //TODO add the side actions
-         //   piece =  buildSideActions(piece,size);
-
-
-            //TODO add the ship layer
-            //TODO add the rotate & pivot
-
-            // build the layers for the maneuvers on the dial
-  //          buildManeuvers(piece, newMoveList);
-
-            // build the dial back and dial hide images
- //           buildDialMask(piece,xwsShipName,faction);
 
         }
 
@@ -273,15 +252,11 @@ public class StemShip extends Decorator implements EditablePiece {
             // first find the base image name
             String shipBaseImage[] = findShipBaseImage(faction,xwsShipName, xwsPilot, size);
 
-
-
             boolean dualArt = false;
             if(shipBaseImage[1] != null && !shipBaseImage[1].equals(""))
             {
                 dualArt = true;
             }
-
-            //emb2;Activate;2;;Ghost;2;;;2;;;;1;false;0;0;Ship_generic_small.png,Ship_Small_SeeThrough.png;,;true;Base Ship;;;false;;1;1;true;65,130;71,130;
 
             //  overwrite the layer with a new state
             if(!dualArt) {
