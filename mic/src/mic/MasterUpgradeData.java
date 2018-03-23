@@ -18,12 +18,15 @@ public class MasterUpgradeData extends ArrayList<MasterUpgradeData.UpgradeData> 
     private static String DISPATCHER_URL = "https://raw.githubusercontent.com/Mu0n/XWVassalOTA/master/json/dispatcher_upgrades.json";
     private static Map<String, UpgradeData> loadedData = null;
 
+
     public static UpgradeData getUpgradeData(String upgradeXwsId) {
         if (loadedData == null) {
             loadData();
         }
         return loadedData.get(upgradeXwsId);
     }
+
+
 
     protected static void loadData() {
 
@@ -56,8 +59,12 @@ public class MasterUpgradeData extends ArrayList<MasterUpgradeData.UpgradeData> 
         }
 
         loadedData = Maps.newHashMap();
+
         for(UpgradeData upgrade : data) {
             loadedData.put(upgrade.getXws(), upgrade);
+
+
+
         }
     }
 

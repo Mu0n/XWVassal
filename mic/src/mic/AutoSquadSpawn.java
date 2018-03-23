@@ -264,13 +264,15 @@ public class AutoSquadSpawn extends AbstractConfigurable {
             // ======================================================
             //TODO Generate the Conditions
             // ======================================================
-            for (VassalXWSPilotPieces.Upgrade condition: ship.getConditions()) {
+            for (VassalXWSPilotPieces.Condition condition: ship.getConditions()) {
+                GamePiece conditionPiece = GamePieceGenerator.generateCondition(condition);
+                /*
                 GamePiece conditionPiece = newPiece(condition.getPieceSlot());
                 if(condition.getPieceSlot().getConfigureName().startsWith("Stem"))
                 {
                     // this is an unreleased condition.  Need to set the name
                     conditionPiece.setProperty("Upgrade Name",condition.getXwsName());
-                }
+                }*/
                 spawnPiece(conditionPiece, new Point(
                                 (int) startPosition.getX() + pilotWidth + totalUpgradeWidth + fudgePilotUpgradeFrontier,
                                 (int) startPosition.getY() + totalPilotHeight),

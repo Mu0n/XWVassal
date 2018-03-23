@@ -134,6 +134,22 @@ public class GamePieceGenerator
         return newUpgrade;
     }
 
+    public static GamePiece generateCondition(VassalXWSPilotPieces.Condition condition)
+    {
+        GamePiece newCondition = mic.Util.newPiece(condition.getPieceSlot());
+
+        if(condition.getConditionData() == null)
+        {
+            Util.logToChat("UpgradeData is null:"+condition.getXws());
+        }
+
+        StemCondition.ConditionGenerateCommand myConditionGen = new StemCondition.ConditionGenerateCommand(condition.getConditionData().getXws(), newCondition, condition.getConditionData().getName());
+
+        myConditionGen.execute();
+
+        return newCondition;
+    }
+
     public static GamePiece generatePilot(VassalXWSPilotPieces ship) {
 
         GamePiece newPilot = mic.Util.newPiece(ship.getPilotCard());

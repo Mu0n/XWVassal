@@ -41,6 +41,7 @@ public class VassalXWSPieceLoader {
     Map<String, VassalXWSPilotPieces.Upgrade> upgradePiecesMap = Maps.newHashMap();
     Map<Tokens, PieceSlot> tokenPiecesMap = Maps.newHashMap();
     Map<Obstacles, PieceSlot> obstaclesPiecesMap = Maps.newHashMap();
+  //  Map<String, VassalXWSPilotPieces.Condition> conditionPiecesMap = Maps.newHashMap();
 
     public VassalXWSListPieces loadListFromXWS(XWSList list) {
         if (pilotPiecesMap.isEmpty() || upgradePiecesMap.isEmpty()
@@ -134,7 +135,7 @@ public class VassalXWSPieceLoader {
             VassalXWSPilotPieces pilotPieces = new VassalXWSPilotPieces(barePieces);
 
             if (pilotPieces.getPilotData() != null) {
-                List<VassalXWSPilotPieces.Upgrade> foundConditions = getConditionsForCard(pilotPieces.getPilotData().getConditions(),stemConditionSlot);
+                List<VassalXWSPilotPieces.Condition> foundConditions = getConditionsForCard(pilotPieces.getPilotData().getConditions(),stemConditionSlot);
                 pilotPieces.getConditions().addAll(foundConditions);
             }
 
@@ -198,7 +199,7 @@ public class VassalXWSPieceLoader {
                     }*/
 
                     if (upgrade.getUpgradeData() != null) {
-                        List<VassalXWSPilotPieces.Upgrade> foundConditions = getConditionsForCard(upgrade.getUpgradeData().getConditions(),stemConditionSlot);
+                        List<VassalXWSPilotPieces.Condition> foundConditions = getConditionsForCard(upgrade.getUpgradeData().getConditions(),stemConditionSlot);
                         pilotPieces.getConditions().addAll(foundConditions);
                     }
 
@@ -420,16 +421,24 @@ public class VassalXWSPieceLoader {
         return pieces;
     }
 
-    private List<VassalXWSPilotPieces.Upgrade> getConditionsForCard(List<String> conditions, PieceSlot stemConditionSlot)
+    private List<VassalXWSPilotPieces.Condition> getConditionsForCard(List<String> conditions, PieceSlot stemConditionSlot)
     {
-        List<VassalXWSPilotPieces.Upgrade> conditionSlots = Lists.newArrayList();
+        List<VassalXWSPilotPieces.Condition> conditionSlots = Lists.newArrayList();
         for (String conditionName : conditions)
         {
-            String canonicalConditionName = Canonicalizer.getCanonicalUpgradeName(
-                    "conditions", conditionName);
-            String mapKey = getUpgradeMapKey("conditions", canonicalConditionName);
-            VassalXWSPilotPieces.Upgrade condition = this.upgradePiecesMap.get(mapKey);
-            condition = new VassalXWSPilotPieces.Upgrade(conditionName, stemConditionSlot);
+           // String canonicalConditionName = Canonicalizer.getCanonicalUpgradeName("conditions", conditionName);
+          //  String mapKey = getUpgradeMapKey("conditions", canonicalConditionName);
+           // M
+           // VassalXWSPilotPieces.Condition condition = this.conditionPiecesMap.get(mapKey);
+
+            // MrMurphM
+            MasterConditionData.ConditionData newConditionData = MasterConditionData.getConditionDataByName(conditionName);
+            VassalXWSPilotPieces.Condition condition = new VassalXWSPilotPieces.Condition(stemConditionSlot, conditionName,  newConditionData.getName());
+
+          //  MasterUpgradeData.UpgradeData newUpgradeData = MasterUpgradeData.getUpgradeData(conditionName);
+            condition.setConditionData(newConditionData);
+           // condition = new VassalXWSPilotPieces.Upgrade(conditionName, stemConditionSlot);
+
             conditionSlots.add(condition);
         }
         return conditionSlots;
@@ -563,6 +572,8 @@ public class VassalXWSPieceLoader {
             upgradePiecesMap.put(mapKey, upgradePiece);
         }
     }
+
+
 
     private void loadPilots(ListWidget shipList, ListParentType faction) {
 
