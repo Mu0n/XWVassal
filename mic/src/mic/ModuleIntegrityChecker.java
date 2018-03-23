@@ -1,12 +1,12 @@
 package mic;
 
 
-import mic.ota.OTAMasterActions;
-import mic.ota.OTAMasterPilots;
-import mic.ota.OTAMasterShips;
-import mic.ota.OTAShipBase;
+import mic.ota.*;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * Created by Mic on 03/11/2018.
@@ -49,6 +49,55 @@ public class ModuleIntegrityChecker {
         checkAll();
     }
     */
+
+    public ArrayList<OTAMasterUpgrades.OTAUpgrade> checkUpgrades()
+    {
+        // get list of upgrades from OTAMasterUpgrades
+        OTAMasterUpgrades omu = new OTAMasterUpgrades();
+        Collection<OTAMasterUpgrades.OTAUpgrade> upgrades = omu.getAllUpgrades();
+
+
+        ArrayList<OTAMasterUpgrades.OTAUpgrade> upgradeList = new ArrayList<OTAMasterUpgrades.OTAUpgrade>();
+        Iterator<OTAMasterUpgrades.OTAUpgrade> i = upgrades.iterator();
+
+        OTAMasterUpgrades.OTAUpgrade upgrade = null;
+        while(i.hasNext())
+        {
+            upgrade = (OTAMasterUpgrades.OTAUpgrade)i.next();
+
+            upgrade.setStatus(XWImageUtils.imageExistsInModule(upgrade.getImage()));
+
+            upgradeList.add(upgrade);
+
+        }
+
+        return upgradeList;
+    }
+
+    public ArrayList<OTAMasterConditions.OTACondition> checkConditions()
+    {
+        // get list of conditions from OTAMasterUpgrades
+        OTAMasterConditions omc = new OTAMasterConditions();
+        Collection<OTAMasterConditions.OTACondition> conditions = omc.getAllConditions();
+
+
+        ArrayList<OTAMasterConditions.OTACondition> conditionList = new ArrayList<OTAMasterConditions.OTACondition>();
+        Iterator<OTAMasterConditions.OTACondition> i = conditions.iterator();
+
+        OTAMasterConditions.OTACondition condition = null;
+        while(i.hasNext())
+        {
+            condition = (OTAMasterConditions.OTACondition)i.next();
+
+            condition.setStatus(XWImageUtils.imageExistsInModule(condition.getImage()));
+            condition.setTokenStatus(XWImageUtils.imageExistsInModule(condition.getTokenImage()));
+
+            conditionList.add(condition);
+
+        }
+
+        return conditionList;
+    }
 
 public ArrayList<OTAMasterPilots.OTAPilot> checkPilots()
 {
