@@ -4,6 +4,7 @@ public class OTAImage {
     private String imageType;
     private String objectName;
     private String imageName;
+    private String displayType;
 
     public OTAImage()
     {
@@ -18,6 +19,15 @@ public class OTAImage {
     public void setImageType(String imageType)
     {
         this.imageType = imageType;
+    }
+    public String getImageDisplayType()
+    {
+        return this.displayType;
+    }
+
+    public void setImageDisplayType(String displayType)
+    {
+        this.displayType = displayType;
     }
 
     public String getObjectName()

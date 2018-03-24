@@ -4,6 +4,9 @@ import VASSAL.build.AbstractConfigurable;
 import VASSAL.build.Buildable;
 import VASSAL.build.GameModule;
 import VASSAL.build.module.documentation.HelpFile;
+import VASSAL.tools.ArchiveWriter;
+import VASSAL.tools.DataArchive;
+import VASSAL.tools.io.FileArchive;
 import mic.ota.*;
 
 import javax.swing.*;
@@ -15,6 +18,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 import static mic.Util.logToChat;
 
@@ -32,7 +36,6 @@ public class AnnouncementOnLog extends AbstractConfigurable {
     private static String guideURL = "http://xwvassal.info/guide";
 
     private JFrame updateCheckFrame;
-
 
     private synchronized void AnnouncementOnLog() {
 
@@ -72,9 +75,10 @@ public class AnnouncementOnLog extends AbstractConfigurable {
                 imageToDownload = new OTAImage();
                 imageToDownload.setImageName(pilot.getImage());
                 imageToDownload.setImageType("pilots");
+                imageToDownload.setImageDisplayType("Pilot");
                 imageToDownload.setObjectName(MasterPilotData.getPilotData(pilot.getShipXws(), pilot.getPilotXws(), pilot.getFaction()).getName());
                 imagesToDownload.add(imageToDownload);
-                mic.Util.logToChat(imageToDownload.getImageType()+" "+imageToDownload.getObjectName());
+               // mic.Util.logToChat("Downloaded "+imageToDownload.getImageType()+" "+imageToDownload.getObjectName());
             }
         }
         pilots = null;
@@ -90,9 +94,10 @@ public class AnnouncementOnLog extends AbstractConfigurable {
                 imageToDownload = new OTAImage();
                 imageToDownload.setImageName(ship.getImage());
                 imageToDownload.setImageType("ships");
+                imageToDownload.setImageDisplayType("Ship");
                 imageToDownload.setObjectName(MasterShipData.getShipData(ship.getXws()).getName());
                 imagesToDownload.add(imageToDownload);
-                mic.Util.logToChat(imageToDownload.getImageType()+" "+imageToDownload.getObjectName());
+                //mic.Util.logToChat("Downloaded "+imageToDownload.getImageType()+" "+imageToDownload.getObjectName());
             }
         }
         ships = null;
@@ -108,9 +113,10 @@ public class AnnouncementOnLog extends AbstractConfigurable {
                 imageToDownload = new OTAImage();
                 imageToDownload.setImageName(upgrade.getImage());
                 imageToDownload.setImageType("upgrades");
+                imageToDownload.setImageDisplayType("Upgrade");
                 imageToDownload.setObjectName(MasterUpgradeData.getUpgradeData(upgrade.getXws()).getName());
                 imagesToDownload.add(imageToDownload);
-                mic.Util.logToChat(imageToDownload.getImageType()+" "+imageToDownload.getObjectName());
+               // mic.Util.logToChat("Downloaded "+imageToDownload.getImageType()+" "+imageToDownload.getObjectName());
             }
         }
         upgrades = null;
@@ -126,24 +132,112 @@ public class AnnouncementOnLog extends AbstractConfigurable {
                 imageToDownload = new OTAImage();
                 imageToDownload.setImageName(condition.getImage());
                 imageToDownload.setImageType("conditions");
+                imageToDownload.setImageDisplayType("Condition");
                 imageToDownload.setObjectName(MasterConditionData.getConditionData(condition.getXws()).getName());
                 imagesToDownload.add(imageToDownload);
-                mic.Util.logToChat(imageToDownload.getImageType()+" "+imageToDownload.getObjectName());
+                //mic.Util.logToChat("Downloaded "+imageToDownload.getImageType()+" "+imageToDownload.getObjectName());
+            }
+
+            if(!condition.getTokenStatus())
+            {
+                imageToDownload = new OTAImage();
+                imageToDownload.setImageName(condition.getTokenImage());
+                imageToDownload.setImageType("conditions");
+                imageToDownload.setImageDisplayType("Condition Token");
+                imageToDownload.setObjectName(MasterConditionData.getConditionData(condition.getXws()).getName());
+                imagesToDownload.add(imageToDownload);
             }
         }
         conditions = null;
 
-        // download missing images, generate any missing shipBases and save to module
+        // =============================================================
+        // Check Ship Bases
+        // =============================================================
+        ArrayList<OTAShipBase> shipBasesToGenerate = new ArrayList<OTAShipBase>();
+        ArrayList<OTAShipBase> shipBaseResults = modIntCheck.checkShipBases();
+        Iterator<OTAShipBase> i = shipBaseResults.iterator();
+        OTAShipBase missingShipBase = null;
+        while(i.hasNext())
+        {
+            missingShipBase = i.next();
+            if(!missingShipBase.getStatus())
+            {
+                shipBasesToGenerate.add(missingShipBase);
+            }
+        }
+
+        // TODO great time for a progress bar here
+
+
+        // =============================================================
+        // Download the missing images
+        // =============================================================
         XWOTAUtils.downloadAndSaveImagesFromOTA(imagesToDownload);
 
         // =============================================================
-        // TODO Ship Bases
+        // Generate the missing ship bases
         // =============================================================
+        OTAShipBase shipBase = null;
+        GameModule gameModule = GameModule.getGameModule();
+        DataArchive dataArchive = gameModule.getDataArchive();
+        FileArchive fileArchive = dataArchive.getArchive();
+        ArchiveWriter writer = new ArchiveWriter(fileArchive);
+        i = shipBasesToGenerate.iterator();
+        while(i.hasNext())
+        {
+            shipBase = i.next();
+            if(!shipBase.getStatus())
+            {
+                imageToDownload = new OTAImage();
+                imageToDownload.setImageName("");
+                imageToDownload.setImageType("Ship Base");
+                imageToDownload.setImageDisplayType("ShipBase");
+                MasterShipData.ShipData shipData = MasterShipData.getShipData(shipBase.getShipXws());
+                imageToDownload.setObjectName(shipData.getName());
+                java.util.List<String> arcs = shipData.getFiringArcs();
 
+                java.util.List<String> actions = shipData.getActions();
 
+                //TODO implement huge ships this
+                if(!shipData.getSize().equals("huge")) {
 
+                    XWOTAUtils.buildBaseShipImage(shipBase.getFaction(), shipBase.getShipXws(), arcs, actions, shipData.getSize(),shipBase.getIdentifier(),shipBase.getshipImageName(), writer);
+                }
+                //mic.Util.logToChat("Generated "+imageToDownload.getImageType()+" "+imageToDownload.getObjectName());
 
+            }
+        }
+        try {
+            writer.save();
+        }catch(IOException e)
+        {
+            mic.Util.logToChat("Exception occurred saving module");
+        }
+        shipBaseResults = null;
 
+        shipBasesToGenerate = null;
+
+        // =============================================================
+        // Generate a manifest
+        // =============================================================
+        if(imagesToDownload.size() == 0)
+        {
+            mic.Util.logToChat("All content is up to date");
+        }else {
+            Iterator<OTAImage> imageIterator = imagesToDownload.iterator();
+            OTAImage image = null;
+            String action = null;
+            while (imageIterator.hasNext()) {
+                image = imageIterator.next();
+                action = "Downloaded";
+                if (image.getImageType().equals("Ship Base")) {
+                    action = "Generated";
+                }
+                mic.Util.logToChat(action + " " + image.getImageDisplayType() + " " + image.getObjectName());
+            }
+        }
+
+        imagesToDownload = null;
     }
 
     public void addTo(Buildable parent) {
