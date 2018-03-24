@@ -110,7 +110,7 @@ public class MasterPilotData extends ArrayList<MasterPilotData.PilotData> {
         // load from xwing-data
         MasterPilotData data = Util.loadRemoteJson(REMOTE_URL, MasterPilotData.class);
         if (data == null) {
-            Util.logToChat("Unable to load xwing-data for pilots from the web, falling back to local copy");
+           // Util.logToChat("Unable to load xwing-data for pilots from the web, falling back to local copy");
             data = Util.loadClasspathJson("pilots.json", MasterPilotData.class);
         }
 
@@ -140,7 +140,7 @@ public class MasterPilotData extends ArrayList<MasterPilotData.PilotData> {
         // load from dispatch
         MasterPilotData data = Util.loadRemoteJson(DISPATCHER_URL, MasterPilotData.class);
         if (data == null) {
-            Util.logToChat("Unable to load dispatcher for ships from the web, falling back to local copy");
+           // Util.logToChat("Unable to load dispatcher for ships from the web, falling back to local copy");
             data = Util.loadClasspathJson("dispatcher_pilots.json", MasterPilotData.class);
             if(data == null)
             {

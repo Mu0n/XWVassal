@@ -75,7 +75,7 @@ public class MasterShipData extends ArrayList<MasterShipData.ShipData> {
         // load from xwing-data
         MasterShipData data = Util.loadRemoteJson(REMOTE_URL, MasterShipData.class);
         if (data == null) {
-            Util.logToChat("Unable to load xwing-data for ships from the web, falling back to local copy");
+           // Util.logToChat("Unable to load xwing-data for ships from the web, falling back to local copy");
             data = Util.loadClasspathJson("ships.json", MasterShipData.class);
         }
 
@@ -90,7 +90,7 @@ public class MasterShipData extends ArrayList<MasterShipData.ShipData> {
         // load from dispatch
         MasterShipData data = Util.loadRemoteJson(DISPATCHER_URL, MasterShipData.class);
         if (data == null) {
-            Util.logToChat("Unable to load dispatcher for ships from the web, falling back to local copy");
+           // Util.logToChat("Unable to load dispatcher for ships from the web, falling back to local copy");
             data = Util.loadClasspathJson("dispatcher_ships.json", MasterShipData.class);
             if(data == null)
             {

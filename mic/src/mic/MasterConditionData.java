@@ -67,7 +67,7 @@ public class MasterConditionData extends ArrayList<MasterConditionData.Condition
         // load from xwing-data
         MasterConditionData data = Util.loadRemoteJson(REMOTE_URL, MasterConditionData.class);
         if (data == null) {
-            Util.logToChat("Unable to load xwing-data for conditions from the web, falling back to local copy");
+          //  Util.logToChat("Unable to load xwing-data for conditions from the web, falling back to local copy");
             data = Util.loadClasspathJson("conditions.json", MasterConditionData.class);
         }
 
@@ -87,7 +87,7 @@ public class MasterConditionData extends ArrayList<MasterConditionData.Condition
         // load from dispatch
         MasterConditionData data = Util.loadRemoteJson(DISPATCHER_URL, MasterConditionData.class);
         if (data == null) {
-            Util.logToChat("Unable to load dispatcher for conditions from the web, falling back to local copy");
+          //  Util.logToChat("Unable to load dispatcher for conditions from the web, falling back to local copy");
             data = Util.loadClasspathJson("dispatcher_conditions.json", MasterConditionData.class);
             if(data == null)
             {

@@ -388,28 +388,25 @@ public class XWOTAUtils {
         return shipBaseImageSB.toString();
     }
 
-    public static void downloadJSONFilesFromGitHub(ArrayList<String> jsonFiles)
+    public static void downloadJSONFilesFromGitHub(ArrayList<String> jsonFiles) throws IOException
     {
         GameModule gameModule = GameModule.getGameModule();
         DataArchive dataArchive = gameModule.getDataArchive();
         FileArchive fileArchive = dataArchive.getArchive();
         ArchiveWriter writer = new ArchiveWriter(fileArchive);
         String fileName = null;
-        try {
-            byte[] fileContents = null;
-            for (String jsonFile : jsonFiles)
-            {
-                fileName = jsonFile.substring(jsonFile.lastIndexOf("/")+1,jsonFile.length());
-                fileContents = null;
-                fileContents = downlodFileFromOTA(jsonFile);
-                addFileToModule(fileName, fileContents, writer);
 
-            }
-            writer.save();
-        }catch(IOException e)
+        byte[] fileContents = null;
+        for (String jsonFile : jsonFiles)
         {
-            //TODO handle this
+            fileName = jsonFile.substring(jsonFile.lastIndexOf("/")+1,jsonFile.length());
+            fileContents = null;
+            fileContents = downlodFileFromOTA(jsonFile);
+            addFileToModule(fileName, fileContents, writer);
+
         }
+        writer.save();
+
     }
     public static void downloadAndSaveImagesFromOTA( ArrayList<OTAImage> imagesToDownload)
     {
