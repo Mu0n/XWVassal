@@ -2,6 +2,7 @@ package mic;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
@@ -14,40 +15,91 @@ import java.util.Map;
  */
 public class MasterPilotData extends ArrayList<MasterPilotData.PilotData> {
 
-    private static String REMOTE_URL = "https://raw.githubusercontent.com/guidokessels/xwing-data/master/data/pilots.js";
 
-    //TODO change this URL
-    private static String DISPATCHER_URL = "https://raw.githubusercontent.com/mrmurphm/XWVassal/new-dial/mic/swxwmg.vmod-unpacked/dispatcher_pilots.json";
+    private static Map<String, String> factionConversion = ImmutableMap.<String, String>builder()
+            .put("rebelalliance","rebel")
+            .put("resistance","rebel")
+            .put("galacticempire","imperial")
+            .put("firstorder","imperial")
+            .put("scumandvillainy","scum")
+            .build();
+
+    private static String REMOTE_URL = "https://raw.githubusercontent.com/guidokessels/xwing-data/master/data/pilots.js";
+    private static String DISPATCHER_URL = "https://raw.githubusercontent.com/Mu0n/XWVassalOTA/master/json/dispatcher_pilots.json";
 
     private static Map<String, PilotData> loadedData = null;
 
-    public static PilotData getPilotData(String ship, String pilot) {
+    public static PilotData getPilotData(String ship, String pilot, String faction) {
         if (loadedData == null) {
             loadData();
         }
-        return loadedData.get(ship + "/" + pilot);
+
+        String xwsShip = Canonicalizer.getCanonicalShipName(ship);
+
+        //MrMurphM - need to add in faction or pilots like Boba Fett will not work properly
+        String xwsFaction = Canonicalizer.getCanonicalFactionName(faction);
+    //    String convFaction = factionConversion.get(xwsFaction);
+     //   String pilotKey = convFaction+"/"+xwsShip+"/"+pilot;
+        String pilotKey = faction+"/"+xwsShip+"/"+pilot;
+
+        //return loadedData.get(ship + "/" + pilot);
+
+
+        return loadedData.get(pilotKey);
     }
 
-    protected static void loadData() {
 
-        // load data from xwing-data
-        loadFromXwingData();
 
-        // load data from dispatcher file
-        MasterPilotData dispatcherData = loadFromDispatcher();
+    protected static void loadData()
+    {
 
-        // add in any pilots from dispatcher that aren't in xwing-data
-        for(PilotData pilot : dispatcherData)
-        {
-            String xwsShip = Canonicalizer.getCanonicalShipName(pilot.getShip());
-            if(loadedData.get(xwsShip + "/" + pilot.getXws()) == null)
+        if(loadedData == null) {
+
+            // load data from xwing-data
+            loadFromXwingData();
+
+            // load data from dispatcher file
+            MasterPilotData dispatcherData = loadFromDispatcher();
+
+            // add in any pilots from dispatcher that aren't in xwing-data
+            if (dispatcherData != null)
             {
-                Util.logToChat("Adding pilot "+xwsShip + "/" + pilot.getXws()+" from dispatcher file");
-                loadedData.put(xwsShip + "/" + pilot.getXws(),pilot);
+                for (PilotData pilot : dispatcherData)
+                {
+                    String xwsShip = Canonicalizer.getCanonicalShipName(pilot.getShip());
+
+                    //MrMurphM - need to add in faction or pilots like Boba Fett will not work properly
+                    String xwsFaction = Canonicalizer.getCanonicalFactionName(pilot.getFaction());
+                    String convFaction = factionConversion.get(xwsFaction);
+
+
+                    String pilotKey = convFaction+"/"+xwsShip+"/"+pilot.getXws();
+
+                    if(loadedData.get(pilotKey) == null)
+                    {
+
+
+                        loadedData.put(pilotKey, pilot);
+                    }
+
+                  //  if (loadedData.get(xwsShip + "/" + pilot.getXws()) == null) {
+                  //      loadedData.put(xwsShip + "/" + pilot.getXws(), pilot);
+                  //  }
+                }
             }
         }
+
     }
 
+
+    public Object[] getAllPilots()
+    {
+        if(loadedData == null)
+        {
+            loadData();
+        }
+        return loadedData.values().toArray();
+    }
 
     private static void loadFromXwingData()
     {
@@ -61,7 +113,21 @@ public class MasterPilotData extends ArrayList<MasterPilotData.PilotData> {
         loadedData = Maps.newHashMap();
         for(PilotData pilot : data) {
             String xwsShip = Canonicalizer.getCanonicalShipName(pilot.getShip());
-            loadedData.put(xwsShip + "/" + pilot.getXws(), pilot);
+
+            //MrMurphM - need to add in faction or pilots like Boba Fett will not work properly
+            String xwsFaction = Canonicalizer.getCanonicalFactionName(pilot.getFaction());
+
+
+
+            String convFaction = factionConversion.get(xwsFaction);
+
+
+            String pilotKey = convFaction+"/"+xwsShip+"/"+pilot.getXws();
+
+
+
+            loadedData.put(pilotKey,pilot);
+            //loadedData.put(xwsShip + "/" + pilot.getXws(), pilot);
         }
     }
 
@@ -72,6 +138,10 @@ public class MasterPilotData extends ArrayList<MasterPilotData.PilotData> {
         if (data == null) {
             Util.logToChat("Unable to load dispatcher for ships from the web, falling back to local copy");
             data = Util.loadClasspathJson("dispatcher_pilots.json", MasterPilotData.class);
+            if(data == null)
+            {
+                Util.logToChat("Unable to load dispatcher for pilots from the local copy.  Error in JSON format?");
+            }
         }
 
         return data;
