@@ -78,7 +78,7 @@ public class VassalXWSPilotPieces {
     private PieceSlot dial;
     private PieceSlot movementCard;
     private List<Upgrade> upgrades = new ArrayList<Upgrade>();
-    private List<Upgrade> conditions = new ArrayList<Upgrade>();
+    private List<Condition> conditions = new ArrayList<Condition>();
     private PieceSlot movementStrip;
     private PieceSlot openDial;
     private MasterShipData.ShipData shipData;
@@ -102,7 +102,7 @@ public class VassalXWSPilotPieces {
         this.pilotData = pieces.pilotData;
     }
 
-    public List<Upgrade> getConditions() {
+    public List<Condition> getConditions() {
         return this.conditions;
     }
 
@@ -435,11 +435,46 @@ public class VassalXWSPilotPieces {
         return pilotData;
     }
 
+    public static class Condition {
+        private String xws;
+        private String name;
+        private PieceSlot pieceSlot;
+        private MasterConditionData.ConditionData conditionData;
+
+        public Condition(PieceSlot pieceSlot, String xws, String name)
+        {
+            this.xws = xws;
+            this.pieceSlot = pieceSlot;
+            this.name = name;
+        }
+
+        public String getXws()
+        {
+            return this.xws;
+        }
+        public PieceSlot getPieceSlot()
+        {
+            return this.pieceSlot;
+        }
+        public MasterConditionData.ConditionData getConditionData()
+        {
+            return this.conditionData;
+        }
+
+        public void setConditionData(MasterConditionData.ConditionData conditionData)
+        {
+            this.conditionData = conditionData;
+        }
+        public GamePiece cloneGamePiece() {
+            return Util.newPiece(pieceSlot);
+        }
+    }
 
     public static class Upgrade {
         private String xwsName;
         private PieceSlot pieceSlot;
         private MasterUpgradeData.UpgradeData upgradeData;
+
 
         public Upgrade(String xwsName, PieceSlot pieceSlot) {
             this.xwsName = xwsName;

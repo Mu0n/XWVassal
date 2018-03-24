@@ -123,6 +123,57 @@ public class GamePieceGenerator
         return dial;
     }
 
+    public static GamePiece generateUpgrade(VassalXWSPilotPieces.Upgrade upgrade)
+    {
+
+        GamePiece newUpgrade = mic.Util.newPiece(upgrade.getPieceSlot());
+        StemUpgrade.UpgradeGenerateCommand myUpgradeGen = new StemUpgrade.UpgradeGenerateCommand(upgrade.getUpgradeData().getXws(), newUpgrade, upgrade.getUpgradeData().getName(), upgrade.getUpgradeData().getSlot());
+
+        myUpgradeGen.execute();
+
+        return newUpgrade;
+    }
+
+    public static GamePiece generateCondition(VassalXWSPilotPieces.Condition condition)
+    {
+
+        GamePiece newCondition = mic.Util.newPiece(condition.getPieceSlot());
+
+        // build the condition card
+        StemCondition.ConditionGenerateCommand myConditionGen = new StemCondition.ConditionGenerateCommand(condition.getConditionData().getXws(), newCondition, condition.getConditionData().getName());
+        myConditionGen.execute();
+
+        return newCondition;
+    }
+
+    public static GamePiece generateConditionToken(VassalXWSPilotPieces.Condition condition)
+    {
+        // get the pieceslot for the StemConditionToken
+        List<PieceSlot> pieceSlots = GameModule.getGameModule().getAllDescendantComponentsOf(PieceSlot.class);
+        PieceSlot stemConditionTokenPieceSlot = null;
+        for (PieceSlot pieceSlot : pieceSlots)
+        {
+            String slotName = pieceSlot.getConfigureName();
+            if(slotName.equals("Stem Condition Token")) {
+
+                stemConditionTokenPieceSlot = pieceSlot;
+                break;
+            }
+
+        }
+
+        // get a copy of the stem token game piece
+        GamePiece conditionTokenPiece = mic.Util.newPiece(stemConditionTokenPieceSlot);
+
+
+        
+        // build the condition card
+        StemConditionToken.TokenGenerateCommand myTokenGen = new StemConditionToken.TokenGenerateCommand(condition.getConditionData().getXws(), conditionTokenPiece);
+        myTokenGen.execute();
+
+        return conditionTokenPiece;
+    }
+
     public static GamePiece generatePilot(VassalXWSPilotPieces ship) {
 
         GamePiece newPilot = mic.Util.newPiece(ship.getPilotCard());

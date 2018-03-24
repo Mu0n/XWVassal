@@ -64,7 +64,6 @@ public class AutoSquadSpawn extends AbstractConfigurable {
             validateList(xwsList);
         }catch(XWSpawnException e)
         {
-
             // first replace the list with the "cleaned" list
             xwsList = e.getNewList();
 
@@ -75,9 +74,7 @@ public class AutoSquadSpawn extends AbstractConfigurable {
                 mic.Util.logToChat(message);
             }
 
-
         }
-
 
         if (xwsList == null || xwsList.getPilots() == null || xwsList.getPilots().size() == 0) {
             return;
@@ -85,7 +82,6 @@ public class AutoSquadSpawn extends AbstractConfigurable {
 
         // If the list includes a yv666 with Hound's Tooth upgrade, add the nashtah pup ship
         xwsList = handleHoundsTooth(xwsList);
-
 
         VassalXWSListPieces pieces = slotLoader.loadListFromXWS(xwsList);
 
@@ -103,11 +99,10 @@ public class AutoSquadSpawn extends AbstractConfigurable {
 
         List<GamePiece> shipBases = Lists.newArrayList();
 
-        // check to see if any pilot in the squad has Jabba the Hutt equipped
-
         // flag - does this pilot have the Jabba The Hutt upgrade card assigned
         boolean squadHasJabba = false;
 
+        // check to see if any pilot in the squad has Jabba the Hutt Crew equipped
         for (VassalXWSPilotPieces ship : pieces.getShips()) {
             for (VassalXWSPilotPieces.Upgrade tempUpgrade : ship.getUpgrades()) {
                 GamePiece tempPiece = tempUpgrade.cloneGamePiece();
@@ -123,8 +118,8 @@ public class AutoSquadSpawn extends AbstractConfigurable {
         int illicitYOffset = 50; // Y-Offset of where to place illicit tokens relative to the upgrade card
         PieceSlot illicitPieceSlot = null;
 
-
-        for (VassalXWSPilotPieces ship : pieces.getShips()) {
+        for (VassalXWSPilotPieces ship : pieces.getShips())
+        {
 
             // flag - does this pilot have the Extra Munitions upgrade card assigned
             boolean pilotHasExtraMunitions = false;
@@ -140,17 +135,18 @@ public class AutoSquadSpawn extends AbstractConfigurable {
 
             }
 
-            //TODO injecting ship generation code here
+            // ======================================================
+            // Generate the ship base pieces
+            // ======================================================
             GamePiece shipPiece = GamePieceGenerator.generateShip(ship);
 
-
-
             shipBases.add(shipPiece);
-        //    shipBases.add(ship.cloneShip());
 
-            // TODO inject pilot card generation code here
+
+            // ======================================================
+            // Generate the Pilot Pieces
+            // ======================================================
             GamePiece pilotPiece = GamePieceGenerator.generatePilot(ship);
-           // GamePiece pilotPiece = ship.clonePilotCard();
 
             int pilotWidth = (int) pilotPiece.boundingBox().getWidth();
             int pilotHeight = (int) pilotPiece.boundingBox().getHeight();
@@ -161,15 +157,13 @@ public class AutoSquadSpawn extends AbstractConfigurable {
                     playerMap);
 
 
-
-            // Generate the dial
+            // ======================================================
+            // Generate the Dial
+            // ======================================================
             GamePiece dialPiece = GamePieceGenerator.generateDial(ship);
 
             int dialWidth = (int) dialPiece.boundingBox().getWidth();
-            spawnPiece(dialPiece, new Point(
-                            (int) dialstartPosition.getX() + totalDialsWidth,
-                            (int) dialstartPosition.getY()),
-                    playerMap);
+            spawnPiece(dialPiece, new Point((int) dialstartPosition.getX() + totalDialsWidth, (int) dialstartPosition.getY()), playerMap);
             totalDialsWidth += dialWidth;
 
             int totalUpgradeWidth = 0;
@@ -189,22 +183,29 @@ public class AutoSquadSpawn extends AbstractConfigurable {
             int ordnanceYOffset = 50; // Y-Offset of where to place ordnance tokens relative to the upgrade card
 
 
+            // ======================================================
+            //TODO Generate the Upgrades
+            // ======================================================
+            for (VassalXWSPilotPieces.Upgrade upgrade : ship.getUpgrades())
+            {
 
-            for (VassalXWSPilotPieces.Upgrade upgrade : ship.getUpgrades()) {
+                GamePiece upgradePiece = GamePieceGenerator.generateUpgrade(upgrade);
+
+              //  GamePiece upgradePiece = upgrade.cloneGamePiece();
 
 
-                GamePiece upgradePiece = upgrade.cloneGamePiece();
-
+/*
                 // if this is an unreleased upgrade, we have to set the name
                 if(upgrade.getPieceSlot().getConfigureName().startsWith("Stem"))
                 {
                     // we need to set the upgrade name
                     upgradePiece.setProperty("Upgrade Name",upgrade.getUpgradeData().getName());
+                }else{
+                    // we need to use a stem
                 }
+                */
 
-
-                // if pilot has extra munitions, we will collect the positions of each card that can take it
-                // so we can add the tokens later
+                // if pilot has extra munitions, we will collect the positions of each card that can take it so we can add the tokens later
                 if(pilotHasExtraMunitions)
                 {
                     // check to see if the upgrade card has the "acceptsOrdnanceToken" property set to true
@@ -217,8 +218,7 @@ public class AutoSquadSpawn extends AbstractConfigurable {
                     }
                 }
 
-                // if pilot has Ordnance Silos, we will collect the positions of each card that can take it
-                // so we can add the tokens later
+                // if pilot has Ordnance Silos, we will collect the positions of each card that can take it so we can add the tokens later
                 if(pilotHasOrdnanceSilos)
                 {
                     // check to see if the upgrade card has the "acceptsOrdnanceToken" properties set to true
@@ -261,20 +261,37 @@ public class AutoSquadSpawn extends AbstractConfigurable {
             } //loop to next upgrade
 
 
-            for (VassalXWSPilotPieces.Upgrade condition: ship.getConditions()) {
+            // ======================================================
+            //TODO Generate the Conditions
+            // ======================================================
+            for (VassalXWSPilotPieces.Condition condition: ship.getConditions()) {
+                GamePiece conditionPiece = GamePieceGenerator.generateCondition(condition);
+                /*
                 GamePiece conditionPiece = newPiece(condition.getPieceSlot());
                 if(condition.getPieceSlot().getConfigureName().startsWith("Stem"))
                 {
                     // this is an unreleased condition.  Need to set the name
                     conditionPiece.setProperty("Upgrade Name",condition.getXwsName());
-                }
+                }*/
                 spawnPiece(conditionPiece, new Point(
                                 (int) startPosition.getX() + pilotWidth + totalUpgradeWidth + fudgePilotUpgradeFrontier,
                                 (int) startPosition.getY() + totalPilotHeight),
                         playerMap);
                 totalUpgradeWidth += conditionPiece.boundingBox().getWidth();
+
+
+                // spawn the condition token
+                GamePiece conditionTokenPiece = GamePieceGenerator.generateConditionToken(condition);
+                spawnPiece(conditionTokenPiece, new Point(
+                                (int) startPosition.getX() + pilotWidth + totalUpgradeWidth + fudgePilotUpgradeFrontier,
+                                (int) startPosition.getY() + totalPilotHeight),
+                        playerMap);
+                totalUpgradeWidth += conditionTokenPiece.boundingBox().getWidth();
             } //loop to next condition
 
+            // ======================================================
+            // Add all of the appropriate tokens
+            // ======================================================
             for (GamePiece token : ship.getTokensForDisplay()) {
                 PieceSlot pieceSlot = new PieceSlot(token);
                 if ("Target Lock".equals(pieceSlot.getConfigureName())) {//if a target lock token, place elsewhere
@@ -305,7 +322,9 @@ public class AutoSquadSpawn extends AbstractConfigurable {
             }// loop to next token*/
         } //loop to next pilot
 
-        // place the illicit tokens throughout the squad
+        // ======================================================
+        // place necessary illicit tokens throughout the squad
+        // ======================================================
         for(Point aPoint : illicitLocations)
         {
             GamePiece illicitToken = newPiece(illicitPieceSlot);
