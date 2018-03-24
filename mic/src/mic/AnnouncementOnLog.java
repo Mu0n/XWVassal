@@ -37,6 +37,8 @@ public class AnnouncementOnLog extends AbstractConfigurable {
 
     private JFrame updateCheckFrame;
 
+    private static boolean checkComplete = false;
+
     private synchronized void AnnouncementOnLog() {
 
     }
@@ -242,44 +244,49 @@ public class AnnouncementOnLog extends AbstractConfigurable {
 
     public void addTo(Buildable parent) {
 
-        // first, popup a window telling the user that a check for new content will occur
-        updateCheckFrame = new JFrame();
-        JPanel panel = new JPanel();
-        JLabel spacer;
+        // only do this once.  for some reason, it's happening twice
 
-        panel.setMinimumSize(new Dimension(600,100));
+        if(!checkComplete) {
+            // first, popup a window telling the user that a check for new content will occur
+            updateCheckFrame = new JFrame();
+            JPanel panel = new JPanel();
+            JLabel spacer;
 
-        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-        // add panel content here
-        String msg = "About to verify new content. Download delay may occur. Please click OK";
-        /*
-        panel.add(link);
-        panel.add(link2);
-        panel.add(link4);
-        panel.add(link3);
-        panel.add(link6);
-        panel.add(link5);*/
+            panel.setMinimumSize(new Dimension(600, 100));
 
-        JOptionPane optionPane = new JOptionPane();
-        optionPane.setMessage(msg);
-        //optionPane.setMessageType(JOptionPane.INFORMATION_MESSAGE);
-        optionPane.add(panel);
+            panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+            // add panel content here
+            String msg = "About to verify new content. Download delay may occur. Please click OK";
+            /*
+            panel.add(link);
+            panel.add(link2);
+            panel.add(link4);
+            panel.add(link3);
+            panel.add(link6);
+            panel.add(link5);*/
 
-        JDialog dialog = optionPane.createDialog(updateCheckFrame, "UpdateCheck");
+            JOptionPane optionPane = new JOptionPane();
+            optionPane.setMessage(msg);
+            //optionPane.setMessageType(JOptionPane.INFORMATION_MESSAGE);
+            optionPane.add(panel);
 
-        dialog.setVisible(true);
-        updateCheckFrame.toFront();
-        updateCheckFrame.repaint();
+            JDialog dialog = optionPane.createDialog(updateCheckFrame, "UpdateCheck");
 
-        // then, after OK, download the xwing-data json, dispatcher json, & any OTA updates and save to the module
-        downloadContent();
-        //mic.Util.logToChat("Download occurred");
-        updateCheckFrame.setVisible(false);
+            dialog.setVisible(true);
+            updateCheckFrame.toFront();
+            updateCheckFrame.repaint();
 
-        // log the manifest of what was updated to the chat window
+            // then, after OK, download the xwing-data json, dispatcher json, & any OTA updates and save to the module
+            downloadContent();
+            //mic.Util.logToChat("Download occurred");
+            updateCheckFrame.setVisible(false);
+            checkComplete = true;
 
-        openAnnouncementWindow();
 
+            // log the manifest of what was updated to the chat window
+
+            openAnnouncementWindow();
+        }
 
 
     }

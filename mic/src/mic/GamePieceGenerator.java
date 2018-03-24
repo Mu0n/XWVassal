@@ -35,8 +35,11 @@ public class GamePieceGenerator
             newShip = mic.Util.newPiece(getPieceSlotByName(LARGE_STEM_SHIP_SLOT_NAME));
         }
 
+        // force this for now
+        boolean needsBombCapability = true;
+
         // execute the command to build the ship piece
-        StemShip.ShipGenerateCommand myShipGen = new StemShip.ShipGenerateCommand(ship.getShipData().getXws(), newShip, faction, pilotData.getXws());
+        StemShip.ShipGenerateCommand myShipGen = new StemShip.ShipGenerateCommand(ship.getShipData().getXws(), newShip, faction, pilotData.getXws(),needsBombCapability);
 
         myShipGen.execute();
 

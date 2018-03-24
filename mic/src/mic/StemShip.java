@@ -3,11 +3,7 @@ package mic;
 import VASSAL.build.module.documentation.HelpFile;
 import VASSAL.command.Command;
 import VASSAL.command.CommandEncoder;
-import VASSAL.counters.Decorator;
-import VASSAL.counters.EditablePiece;
-import VASSAL.counters.GamePiece;
-import VASSAL.counters.KeyCommand;
-import VASSAL.counters.Embellishment;
+import VASSAL.counters.*;
 import com.google.common.collect.ImmutableMap;
 import mic.ota.XWOTAUtils;
 import org.slf4j.Logger;
@@ -141,7 +137,9 @@ public class StemShip extends Decorator implements EditablePiece {
         String size = "";
        // List<String> actionList;
         String xwsPilot = "";
-        ShipGenerateCommand(String shipXws,   GamePiece piece, String faction, String xwsPilot ) {
+        boolean needsBombCapability;
+
+        ShipGenerateCommand(String shipXws,   GamePiece piece, String faction, String xwsPilot, boolean needsBombCapability) {
 
             // fetch the maneuver array of arrays according to the xws name passed on from autospawn or other means
             xwsShipName = shipXws;
@@ -152,16 +150,73 @@ public class StemShip extends Decorator implements EditablePiece {
             this.piece = piece;
             this.xwsPilot = xwsPilot;
             this.size = shipData.getSize();
+            this.needsBombCapability = needsBombCapability;
            // this.actionList = shipData.getActions();
         }
 
-        // construct the arcs Layers trait (Embellishment class)
+
         protected void executeCommand()
         {
             // find the appropriate baseImage
             piece = buildShipBaseLayer(piece,faction,xwsShipName,xwsPilot, size);
 
+            if(!this.needsBombCapability) {
+                piece = removeBombCapability(piece);
+            }
 
+        }
+
+        private GamePiece removeBombCapability(GamePiece piece)
+        {
+            PlaceMarker normalBombPlaceMarker = (PlaceMarker)Util.getPlaceMarkerTrait(piece,"Place Marker - Place Bomb Spawner");
+            PlaceMarker frontalBombPlaceMarker = (PlaceMarker)Util.getPlaceMarkerTrait(piece,"Place Marker - Place Frontal Bomb Spawner");
+
+            normalBombPlaceMarker.mySetType("");
+            frontalBombPlaceMarker.mySetType("");
+
+            return piece;
+        }
+
+        private GamePiece addBombCapability(GamePiece piece, String size)
+        {
+            String normalSmallBombSpanwerType = "placemark;Place Bomb Spawner;66,130;VASSAL.build.module.PieceWindow/VASSAL.build.widget.TabWidget/VASSAL.build.widget.TabWidget:Chits/VASSAL.build.widget.ListWidget:Bombs/VASSAL.build.widget.PieceSlot:Bomb Spawner;null;0;-338;true;;Place Bomb Spawner;12376;0;false";
+            String normalLargeBombSpawnerType = "placemark;Place Bomb Spawner;66,130;VASSAL.build.module.PieceWindow/VASSAL.build.widget.TabWidget/VASSAL.build.widget.TabWidget:Chits/VASSAL.build.widget.ListWidget:Bombs/VASSAL.build.widget.PieceSlot:Bomb Spawner;null;0;-396;true;;Place Bomb Spawner;12407;0;false";
+            String frontalSmallBombSpawnerType = "placemark;Place Frontal Bomb Spawner;66,195;VASSAL.build.module.PieceWindow/VASSAL.build.widget.TabWidget/VASSAL.build.widget.TabWidget:Chits/VASSAL.build.widget.ListWidget:Bombs/VASSAL.build.widget.PieceSlot:Bomb Spawner;null;0;339;true;63743,0,rotate180;Place Frontal Bomb Spawner;12378;0;false";
+            String frontalLargeBombSpawnerType = "placemark;Place Frontal Bomb Spawner;66,195;VASSAL.build.module.PieceWindow/VASSAL.build.widget.TabWidget/VASSAL.build.widget.TabWidget:Chits/VASSAL.build.widget.ListWidget:Bombs/VASSAL.build.widget.PieceSlot:Bomb Spawner;null;0;394;true;63743,0,rotate180;Place Frontal Bomb Spawner;12408;0;false";
+
+            // create the appropriate markers
+            PlaceMarker normalBombSpawnMarker = new PlaceMarker();
+            PlaceMarker frontalBombSpawnMarker = new PlaceMarker();
+
+            // inject the type into the
+            if(size.equals("small"))
+            {
+                normalBombSpawnMarker.mySetType(normalSmallBombSpanwerType);
+                frontalBombSpawnMarker.mySetType(frontalSmallBombSpawnerType);
+
+            }else if(size.equals("large"))
+            {
+                normalBombSpawnMarker.mySetType(normalLargeBombSpawnerType);
+                frontalBombSpawnMarker.mySetType(frontalLargeBombSpawnerType);
+            }
+
+            normalBombSpawnMarker.setGpId("");
+            frontalBombSpawnMarker.setGpId("");
+
+      //      if(!size.equals("large")) {
+                // now inject the markers into the piece
+                normalBombSpawnMarker.setInner(piece);
+                frontalBombSpawnMarker.setInner(normalBombSpawnMarker);
+
+
+       //     }else{
+       //         PlaceMarker marker1 = (PlaceMarker)Util.getPlaceMarkerTrait(piece,"Place Marker - Place Bomb Spawner");
+        //        Util.logToChat("Place Bomb Spawner: "+marker1.myGetType());
+        //        PlaceMarker marker2 = (PlaceMarker)Util.getPlaceMarkerTrait(piece,"Place Marker - Place Frontal Bomb Spawner");
+        //        Util.logToChat("Place Frontal Bomb Spawner: "+marker2.myGetType());
+        //    }
+
+            return piece;
         }
 
         private GamePiece buildSideActions(GamePiece piece, String size)
