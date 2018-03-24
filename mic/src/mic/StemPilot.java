@@ -5,6 +5,7 @@ import VASSAL.command.Command;
 import VASSAL.command.CommandEncoder;
 import VASSAL.counters.*;
 import com.google.common.collect.ImmutableMap;
+import mic.ota.XWOTAUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -159,7 +160,7 @@ public class StemPilot extends Decorator implements EditablePiece {
             // check to see that the pilot card image exists in the module.
             // if it doesn't then use a WIP image
             boolean useWipImage = false;
-            if(!XWImageUtils.imageExistsInModule(pilotCardImage))
+            if(!XWOTAUtils.imageExistsInModule(pilotCardImage))
             {
                 pilotCardImage = wipImages.get(faction);
                 useWipImage = true;

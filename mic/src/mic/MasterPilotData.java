@@ -24,8 +24,8 @@ public class MasterPilotData extends ArrayList<MasterPilotData.PilotData> {
             .put("scumandvillainy","scum")
             .build();
 
-    private static String REMOTE_URL = "https://raw.githubusercontent.com/guidokessels/xwing-data/master/data/pilots.js";
-    private static String DISPATCHER_URL = "https://raw.githubusercontent.com/Mu0n/XWVassalOTA/master/json/dispatcher_pilots.json";
+    public static String REMOTE_URL = "https://raw.githubusercontent.com/guidokessels/xwing-data/master/data/pilots.js";
+    public static String DISPATCHER_URL = "https://raw.githubusercontent.com/Mu0n/XWVassalOTA/master/json/dispatcher_pilots.json";
 
     private static Map<String, PilotData> loadedData = null;
 
@@ -37,9 +37,13 @@ public class MasterPilotData extends ArrayList<MasterPilotData.PilotData> {
         String xwsShip = Canonicalizer.getCanonicalShipName(ship);
 
         //MrMurphM - need to add in faction or pilots like Boba Fett will not work properly
-        String xwsFaction = Canonicalizer.getCanonicalFactionName(faction);
+        //String xwsFaction = Canonicalizer.getCanonicalFactionName(faction);
     //    String convFaction = factionConversion.get(xwsFaction);
      //   String pilotKey = convFaction+"/"+xwsShip+"/"+pilot;
+        if(factionConversion.get(faction) != null)
+        {
+            faction = factionConversion.get(faction);
+        }
         String pilotKey = faction+"/"+xwsShip+"/"+pilot;
 
         //return loadedData.get(ship + "/" + pilot);

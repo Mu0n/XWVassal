@@ -1,7 +1,6 @@
 package mic.ota;
 
 import mic.Util;
-import mic.XWImageUtils;
 
 import java.util.ArrayList;
 
@@ -24,7 +23,7 @@ public class OTAImageDownloaderThread implements Runnable {
             Util.logToChat("OTAIDT: Downloading "+pilotImage);
             text = "Downloading "+pilotImage;
             OTAImageDownloader.updateProgress(percent,text);
-            XWImageUtils.downloadAndSaveImageFromOTA("pilots",pilotImage);
+            XWOTAUtils.downloadAndSaveImageFromOTA("pilots",pilotImage);
             Util.logToChat("OTAIDT: Download Complete: "+pilotImage);
             done++;
 

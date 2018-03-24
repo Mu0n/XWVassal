@@ -4,6 +4,7 @@ import VASSAL.build.module.documentation.HelpFile;
 import VASSAL.command.Command;
 import VASSAL.command.CommandEncoder;
 import VASSAL.counters.*;
+import mic.ota.XWOTAUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -141,12 +142,12 @@ public class StemUpgrade  extends Decorator implements EditablePiece {
             // check to see that the upgrade card image exists in the module.
             // if it doesn't then use a WIP image
             boolean useWipImage = false;
-            if (!XWImageUtils.imageExistsInModule(frontImage)) {
+            if (!XWOTAUtils.imageExistsInModule(frontImage)) {
                 frontImage = "Stem_Upgrade_"+upgradeType+".png";
                 useWipImage = true;
 
                 // if the slot specific wip image doesn't exist, use the generic upgrade wip image
-                if (!XWImageUtils.imageExistsInModule(frontImage)) {
+                if (!XWOTAUtils.imageExistsInModule(frontImage)) {
                     frontImage = wipGenericFrontImage;
                 }
             }
@@ -155,7 +156,7 @@ public class StemUpgrade  extends Decorator implements EditablePiece {
             String backImage = "Upgrade_"+upgradeType+"_back.jpg";
 
             // if the slot specific back image doesn't exist, use the generic upgrade wip back image
-            if (!XWImageUtils.imageExistsInModule(backImage)) {
+            if (!XWOTAUtils.imageExistsInModule(backImage)) {
 
                 backImage = wipGenericBackImage;
             }

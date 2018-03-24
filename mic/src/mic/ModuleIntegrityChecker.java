@@ -65,7 +65,7 @@ public class ModuleIntegrityChecker {
         {
             upgrade = (OTAMasterUpgrades.OTAUpgrade)i.next();
 
-            upgrade.setStatus(XWImageUtils.imageExistsInModule(upgrade.getImage()));
+            upgrade.setStatus(XWOTAUtils.imageExistsInModule(upgrade.getImage()));
 
             upgradeList.add(upgrade);
 
@@ -89,8 +89,8 @@ public class ModuleIntegrityChecker {
         {
             condition = (OTAMasterConditions.OTACondition)i.next();
 
-            condition.setStatus(XWImageUtils.imageExistsInModule(condition.getImage()));
-            condition.setTokenStatus(XWImageUtils.imageExistsInModule(condition.getTokenImage()));
+            condition.setStatus(XWOTAUtils.imageExistsInModule(condition.getImage()));
+            condition.setTokenStatus(XWOTAUtils.imageExistsInModule(condition.getTokenImage()));
 
             conditionList.add(condition);
 
@@ -113,7 +113,7 @@ public ArrayList<OTAMasterPilots.OTAPilot> checkPilots()
     {
         OTAMasterPilots.OTAPilot pilot = (OTAMasterPilots.OTAPilot)i.next();
 
-        pilot.setStatus(XWImageUtils.imageExistsInModule(pilot.getImage()));
+        pilot.setStatus(XWOTAUtils.imageExistsInModule(pilot.getImage()));
 
         pilotList.add(pilot);
 
@@ -135,8 +135,8 @@ public ArrayList<OTAMasterPilots.OTAPilot> checkPilots()
         while(i.hasNext())
         {
             OTAMasterShips.OTAShip ship = (OTAMasterShips.OTAShip)i.next();
-            ship.setStatus( XWImageUtils.imageExistsInModule(ship.getImage()));
-            boolean exists = XWImageUtils.imageExistsInModule(ship.getImage());
+            ship.setStatus( XWOTAUtils.imageExistsInModule(ship.getImage()));
+            boolean exists = XWOTAUtils.imageExistsInModule(ship.getImage());
 
             shipList.add(ship);
         }
@@ -169,7 +169,7 @@ public ArrayList<OTAMasterPilots.OTAPilot> checkPilots()
 
                 String factionName = i2.next();
 
-                String shipBaseImageName = XWImageUtils.buildShipBaseImageName(factionName,ship.getXws(),ship.getIdentifier());
+                String shipBaseImageName = XWOTAUtils.buildShipBaseImageName(factionName,ship.getXws(),ship.getIdentifier());
 
 
                 OTAShipBase shipBase = new OTAShipBase();
@@ -179,7 +179,7 @@ public ArrayList<OTAMasterPilots.OTAPilot> checkPilots()
                 shipBase.setshipImageName(ship.getImage());
                 shipBase.setShipName(msd.getShipData(ship.getXws()).getName());
                 shipBase.setShipXws(ship.getXws());
-                shipBase.setStatus(XWImageUtils.imageExistsInModule(shipBaseImageName));
+                shipBase.setStatus(XWOTAUtils.imageExistsInModule(shipBaseImageName));
 
                 shipList.add(shipBase);
 
@@ -207,7 +207,7 @@ public ArrayList<OTAMasterPilots.OTAPilot> checkPilots()
 
             action = i.next();
 
-            action.setStatus(XWImageUtils.imageExistsInModule(action.getImage()));
+            action.setStatus(XWOTAUtils.imageExistsInModule(action.getImage()));
 
             actionList.add(action);
 

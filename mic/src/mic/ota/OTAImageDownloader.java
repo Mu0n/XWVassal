@@ -10,7 +10,6 @@ import VASSAL.counters.KeyCommand;
 import mic.ProgressBar;
 import mic.StemPilot;
 import mic.Util;
-import mic.XWImageUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -145,7 +144,7 @@ public class OTAImageDownloader extends Decorator implements EditablePiece {
                 for(String pilotImage : pilotImages)
                 {
                     // check each one
-                    if(!XWImageUtils.imageExistsInModule(pilotImage))
+                    if(!XWOTAUtils.imageExistsInModule(pilotImage))
                     {
                         // this pilot image is not stored locally.  add it to the list to download
                         pilotImageDownloadList.add(pilotImage);
@@ -165,7 +164,7 @@ public class OTAImageDownloader extends Decorator implements EditablePiece {
                    // text = "Downloading "+pilotImage;
                    // OTAImageDownloader.updateProgress(percent,text);
 
-                    XWImageUtils.downloadAndSaveImageFromOTA("pilots",pilotImage);
+                    XWOTAUtils.downloadAndSaveImageFromOTA("pilots",pilotImage);
                   //  Util.logToChat("OTAIDT: Download Complete: "+pilotImage);
                   //  done++;
 

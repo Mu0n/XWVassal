@@ -14,8 +14,8 @@ import java.util.Map;
  */
 public class MasterUpgradeData extends ArrayList<MasterUpgradeData.UpgradeData> {
 
-    private static String REMOTE_URL = "https://raw.githubusercontent.com/guidokessels/xwing-data/master/data/upgrades.js";
-    private static String DISPATCHER_URL = "https://raw.githubusercontent.com/Mu0n/XWVassalOTA/master/json/dispatcher_upgrades.json";
+    public static String REMOTE_URL = "https://raw.githubusercontent.com/guidokessels/xwing-data/master/data/upgrades.js";
+    public static String DISPATCHER_URL = "https://raw.githubusercontent.com/Mu0n/XWVassalOTA/master/json/dispatcher_upgrades.json";
     private static Map<String, UpgradeData> loadedData = null;
 
 

@@ -4,6 +4,7 @@ import VASSAL.build.module.documentation.HelpFile;
 import VASSAL.command.Command;
 import VASSAL.command.CommandEncoder;
 import VASSAL.counters.*;
+import mic.ota.XWOTAUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -98,7 +99,7 @@ public class StemConditionToken extends Decorator implements EditablePiece {
             // check to see that the condition token image exists in the module.
             // if it doesn't then use a WIP image
 
-            if (!XWImageUtils.imageExistsInModule(image))
+            if (!XWOTAUtils.imageExistsInModule(image))
             {
                 image = wipGenericTokenImage;
             }

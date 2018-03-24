@@ -9,6 +9,7 @@ import VASSAL.counters.GamePiece;
 import VASSAL.counters.KeyCommand;
 import VASSAL.counters.Embellishment;
 import com.google.common.collect.ImmutableMap;
+import mic.ota.XWOTAUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -321,7 +322,7 @@ public class StemShip extends Decorator implements EditablePiece {
             StringBuffer sb = new StringBuffer();
             sb.append(SHIP_BASE_IMAGE_PREFIX);
             sb.append("_");
-            sb.append(XWImageUtils.simplifyFactionName(faction));
+            sb.append(XWOTAUtils.simplifyFactionName(faction));
             sb.append("_");
             sb.append(xwsShipName);
 
@@ -357,7 +358,7 @@ public class StemShip extends Decorator implements EditablePiece {
             }
 
             // check to make sure the image(s) exist
-            if(!XWImageUtils.imageExistsInModule(shipArt[0]))
+            if(!XWOTAUtils.imageExistsInModule(shipArt[0]))
             {
                 // image doesn't exist, so use a WIP image.
 
@@ -365,7 +366,7 @@ public class StemShip extends Decorator implements EditablePiece {
                 // build the name
                 sb = new StringBuffer();
                 sb.append(SHIP_BASE_IMAGE_PREFIX).append("_");
-                sb.append(XWImageUtils.simplifyFactionName(faction));
+                sb.append(XWOTAUtils.simplifyFactionName(faction));
                 sb.append("_wip_");
                 sb.append(size);
                 sb.append(".png");

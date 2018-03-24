@@ -4,22 +4,18 @@ import VASSAL.build.AbstractConfigurable;
 import VASSAL.build.Buildable;
 import VASSAL.build.GameModule;
 import VASSAL.build.module.documentation.HelpFile;
+import mic.ota.*;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseListener;
 import java.io.BufferedReader;
-
-import java.net.URL;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
+import java.net.URL;
 import java.net.URLConnection;
-import java.util.Random;
+import java.util.ArrayList;
 
-import static javax.imageio.ImageIO.setUseCache;
 import static mic.Util.logToChat;
 
 /**
@@ -34,12 +30,168 @@ public class AnnouncementOnLog extends AbstractConfigurable {
     private static String vassalDownloadURL = "http://www.vassalengine.org/wiki/Module:Star_Wars:_X-Wing_Miniatures_Game";
     private static String githubDownloadURL = "https://github.com/Mu0n/XWVassal/releases";
     private static String guideURL = "http://xwvassal.info/guide";
+
+    private JFrame updateCheckFrame;
+
+
     private synchronized void AnnouncementOnLog() {
+
+    }
+
+    private void downloadContent()
+    {
+        // grab xwing-data: pilots, ships, upgrades, conditions
+        // dispatcher: pilots, ships, upgrades, conditions
+        // and save to the module
+        ArrayList<String> jsonFilesToDownloadFromURL = new ArrayList<String>();
+        jsonFilesToDownloadFromURL.add(MasterShipData.REMOTE_URL);
+        jsonFilesToDownloadFromURL.add(MasterShipData.DISPATCHER_URL);
+        jsonFilesToDownloadFromURL.add(MasterPilotData.REMOTE_URL);
+        jsonFilesToDownloadFromURL.add(MasterPilotData.DISPATCHER_URL);
+        jsonFilesToDownloadFromURL.add(MasterUpgradeData.REMOTE_URL);
+        jsonFilesToDownloadFromURL.add(MasterUpgradeData.DISPATCHER_URL);
+        jsonFilesToDownloadFromURL.add(MasterConditionData.REMOTE_URL);
+        jsonFilesToDownloadFromURL.add(MasterConditionData.DISPATCHER_URL);
+        XWOTAUtils.downloadJSONFilesFromGitHub(jsonFilesToDownloadFromURL);
+        mic.Util.logToChat("Core XWing data updated");
+
+        // check OTA for updates
+        ArrayList<OTAImage> imagesToDownload = new ArrayList<OTAImage>();
+
+        OTAImage imageToDownload = null;
+        ModuleIntegrityChecker modIntCheck = new ModuleIntegrityChecker();
+
+        // =============================================================
+        // Pilots
+        // =============================================================
+        ArrayList<OTAMasterPilots.OTAPilot> pilots =  modIntCheck.checkPilots();
+        for(OTAMasterPilots.OTAPilot pilot : pilots)
+        {
+            if(!pilot.getStatus())
+            {
+                imageToDownload = new OTAImage();
+                imageToDownload.setImageName(pilot.getImage());
+                imageToDownload.setImageType("pilots");
+                imageToDownload.setObjectName(MasterPilotData.getPilotData(pilot.getShipXws(), pilot.getPilotXws(), pilot.getFaction()).getName());
+                imagesToDownload.add(imageToDownload);
+                mic.Util.logToChat(imageToDownload.getImageType()+" "+imageToDownload.getObjectName());
+            }
+        }
+        pilots = null;
+
+        // =============================================================
+        // Ships
+        // =============================================================
+        ArrayList<OTAMasterShips.OTAShip> ships =  modIntCheck.checkShips();
+        for(OTAMasterShips.OTAShip ship : ships)
+        {
+            if(!ship.getStatus())
+            {
+                imageToDownload = new OTAImage();
+                imageToDownload.setImageName(ship.getImage());
+                imageToDownload.setImageType("ships");
+                imageToDownload.setObjectName(MasterShipData.getShipData(ship.getXws()).getName());
+                imagesToDownload.add(imageToDownload);
+                mic.Util.logToChat(imageToDownload.getImageType()+" "+imageToDownload.getObjectName());
+            }
+        }
+        ships = null;
+
+        // =============================================================
+        // Upgrades
+        // =============================================================
+        ArrayList<OTAMasterUpgrades.OTAUpgrade> upgrades =  modIntCheck.checkUpgrades();
+        for(OTAMasterUpgrades.OTAUpgrade upgrade : upgrades)
+        {
+            if(!upgrade.getStatus())
+            {
+                imageToDownload = new OTAImage();
+                imageToDownload.setImageName(upgrade.getImage());
+                imageToDownload.setImageType("upgrades");
+                imageToDownload.setObjectName(MasterUpgradeData.getUpgradeData(upgrade.getXws()).getName());
+                imagesToDownload.add(imageToDownload);
+                mic.Util.logToChat(imageToDownload.getImageType()+" "+imageToDownload.getObjectName());
+            }
+        }
+        upgrades = null;
+
+        // =============================================================
+        // Conditions
+        // =============================================================
+        ArrayList<OTAMasterConditions.OTACondition> conditions =  modIntCheck.checkConditions();
+        for(OTAMasterConditions.OTACondition condition : conditions)
+        {
+            if(!condition.getStatus())
+            {
+                imageToDownload = new OTAImage();
+                imageToDownload.setImageName(condition.getImage());
+                imageToDownload.setImageType("conditions");
+                imageToDownload.setObjectName(MasterConditionData.getConditionData(condition.getXws()).getName());
+                imagesToDownload.add(imageToDownload);
+                mic.Util.logToChat(imageToDownload.getImageType()+" "+imageToDownload.getObjectName());
+            }
+        }
+        conditions = null;
+
+        // download missing images, generate any missing shipBases and save to module
+        XWOTAUtils.downloadAndSaveImagesFromOTA(imagesToDownload);
+
+        // =============================================================
+        // TODO Ship Bases
+        // =============================================================
+
+
+
+
 
     }
 
     public void addTo(Buildable parent) {
 
+        // first, popup a window telling the user that a check for new content will occur
+        updateCheckFrame = new JFrame();
+        JPanel panel = new JPanel();
+        JLabel spacer;
+
+        panel.setMinimumSize(new Dimension(600,100));
+
+        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+        // add panel content here
+        String msg = "About to verify new content. Download delay may occur. Please click OK";
+        /*
+        panel.add(link);
+        panel.add(link2);
+        panel.add(link4);
+        panel.add(link3);
+        panel.add(link6);
+        panel.add(link5);*/
+
+        JOptionPane optionPane = new JOptionPane();
+        optionPane.setMessage(msg);
+        //optionPane.setMessageType(JOptionPane.INFORMATION_MESSAGE);
+        optionPane.add(panel);
+
+        JDialog dialog = optionPane.createDialog(updateCheckFrame, "UpdateCheck");
+
+        dialog.setVisible(true);
+        updateCheckFrame.toFront();
+        updateCheckFrame.repaint();
+
+        // then, after OK, download the xwing-data json, dispatcher json, & any OTA updates and save to the module
+        downloadContent();
+        //mic.Util.logToChat("Download occurred");
+        updateCheckFrame.setVisible(false);
+
+        // log the manifest of what was updated to the chat window
+
+        openAnnouncementWindow();
+
+
+
+    }
+
+    private void openAnnouncementWindow()
+    {
         checkForUpdate();
 
         try {
@@ -61,7 +213,6 @@ public class AnnouncementOnLog extends AbstractConfigurable {
         } catch (IOException e) {
             System.out.println("I/O Error: " + e.getMessage());
         }
-
     }
 
     private void checkForUpdate() {
