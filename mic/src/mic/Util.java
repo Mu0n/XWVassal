@@ -334,6 +334,19 @@ public class Util {
         return null;
     }
 
+    public static GamePiece getPlaceMarkerTrait(GamePiece p, String name)
+    {
+        Class<?> type = PlaceMarker.class;
+        while (p instanceof Decorator) {
+
+            if (type.isInstance(p) && ((PlaceMarker) p).getDescription().equals(name)) {
+                return p;
+            }
+            p = ((Decorator) p).getInner();
+        }
+        return null;
+    }
+
 
 
 

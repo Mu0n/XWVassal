@@ -15,44 +15,9 @@ public class StemCondition extends Decorator implements EditablePiece {
 
     private static final String wipGenericFrontImage = "Cond-WIP.png";
     private static final String genericBackImage = "Condition_back.png";
+
     private static final String wipGenericTokenImage = "Cond-WIP_Token.png";
-/*
-    private static Map<String, String> upgradeBackImages = ImmutableMap.<String, String>builder()
-            .put("Tech","Upgrade_Tech_back.jpg")
-            .put("SalvagedAstromech","Upgrade_SalvagedAstromech_back.jpg")
-            .put("Illicit","Upgrade_Illicit_back.jpg")
-            .put("Hardpoint","Upgrade_Hardpoint_back.jpg")
-            .put("Team","Upgrade_Team_back.jpg")
-            .put("","Upgrade_Cargo_back.jpg")
-            .put("","Upgrade_Torpedo_back.jpg")
-            .put("","Upgrade_Turret_back.jpg")
-            .put("","Upgrade_System_back.jpg")
-            .put("","Upgrade_Title_back.jpg")
-            .put("","Upgrade_Modification_back.jpg")
-            .put("","Upgrade_Astromech_back.jpg")
-            .put("","Upgrade_Missile_back.jpg")
-            .put("","Upgrade_Elite_back.jpg")
-            .put("","Upgrade_Cannon_back.jpg")
-            .put("","Upgrade_Crew_back.jpg")
-            .put("","Upgrade_Bomb_back.jpg")
-            .build();*/
-/*
-    private static Map<String, String> wipFrontImages = ImmutableMap.<String, String>builder()
-            .put("","Stem_Upgrade_Missile.png")
-            .put("","Stem_Upgrade_Astromech.png")
-            .put("","Stem_Upgrade_Bomb.png")
-            .put("","Stem_Upgrade_Cannon.png")
-            .put("","Stem_Upgrade_Crew.png")
-            .put("","Stem_Upgrade_Elite.png")
-            .put("","Stem_Upgrade_Illicit.png")
-            .put("","Stem_Upgrade_Modification.png")
-            .put("","Stem_Upgrade_Salvaged_Astromech.png")
-            .put("","Stem_Upgrade_System.png")
-            .put("","Stem_Upgrade_Tech.png")
-            .put("","Stem_Upgrade_Title.png")
-            .put("","Stem_Upgrade_Torpedo.png")
-            .put("","Stem_Upgrade_Turret.png")
-            .build();*/
+    private static final String placeMarkerTraitName = "Place Marker - Place Condition Token";
 
     public StemCondition(){
         this(null);
@@ -119,20 +84,22 @@ public class StemCondition extends Decorator implements EditablePiece {
     public static class ConditionGenerateCommand extends Command {
 
         GamePiece piece;
-
         static String conditionXWS = "";
-
         String conditionName = "";
+        GamePiece conditionTokenPiece;
 
-
-        ConditionGenerateCommand(String conditionXWS, GamePiece piece, String conditionName) {
+        ConditionGenerateCommand(String conditionXWS, GamePiece piece, String conditionName, GamePiece conditionTokenPiece) {
             this.piece = piece;
             this.conditionXWS = conditionXWS;
             this.conditionName = conditionName;
+            this.conditionTokenPiece = conditionTokenPiece;
         }
 
         // construct the Condition Card piece
         protected void executeCommand() {
+
+
+
 
             // get the upgrade front image
             String frontImage = "Condition_" + conditionXWS + ".jpg";
@@ -163,8 +130,74 @@ public class StemCondition extends Decorator implements EditablePiece {
                 piece.setProperty("Upgrade Name", "");
             }
 
+
+            // now inject the correct token
+            if(!useWipImage)
+            {
+                piece = injectConditionToken(piece,conditionTokenPiece);
+            }
+
         }
 
+        private GamePiece injectConditionToken(GamePiece piece, GamePiece token)
+        {
+
+            PlaceMarker placeMarker = (PlaceMarker)Util.getPlaceMarkerTrait(piece, placeMarkerTraitName);
+   //         Util.logToChat("Token piece ID inside StemCondition.injectConditionToken: "+conditionTokenPiece.getId());
+  //          Util.logToChat(placeMarker.myGetType());
+ //           placeMarker.setGpId(conditionTokenPiece.getId());
+ //           placeMarker.updateGpId();
+
+            //placemark;Spawn Token;84,130;VASSAL.build.module.PieceWindow:Stem Upgrades/VASSAL.build.widget.PieceSlot:Stem Condition Token WIP;null;0;0;false;;Place Condition Token;12349;0;false
+         //   GamePiece token = placeMarker.createMarker();
+            // get the upgrade front image
+            String image = "ConditionToken_" + conditionXWS + ".png";
+            // check to see that the condition token image exists in the module.
+            // if it doesn't then use a WIP image
+
+            if (!XWImageUtils.imageExistsInModule(image))
+            {
+                image = wipGenericTokenImage;
+            }
+
+            // now build the piece
+            token = buildTokenImageLayer(token, image);
+
+
+            String tokenId = token.getId();
+            //placemark;Spawn Token;84,130;VASSAL.build.module.PieceWindow:Stem Upgrades/VASSAL.build.widget.PieceSlot:Stem Condition Token WIP;null;0;0;false;;Place Condition Token;12349;0;false
+            StringBuilder sb = new StringBuilder();
+            sb.append("placemark;Spawn Token;84,130;VASSAL.build.module.PieceWindow:Stem Upgrades/VASSAL.build.widget.PieceSlot:Stem Condition Token WIP;null;0;0;false;;Place Condition Token;");
+            sb.append(tokenId);
+            sb.append(";0;false");
+            Util.logToChat(placeMarker.getGpId());
+
+            placeMarker.mySetType(sb.toString());
+            Util.logToChat(placeMarker.myGetType());
+            Util.logToChat(placeMarker.getGpId());
+       //     Util.logToChat(placeMarker.getId());
+            return piece;
+        }
+
+        private GamePiece buildTokenImageLayer(GamePiece tempToken, String image) {
+
+
+            String layerName = "Layer - Condition Token";
+
+
+            StringBuilder sb = new StringBuilder();
+
+            sb.append("emb2;Activate;2;;;2;;;2;;;;1;false;0;0;");
+            sb.append(image);
+            sb.append(";;false;Condition Token;;;false;;1;1;true;65,130;;");
+
+            Embellishment emb = (Embellishment) Util.getEmbellishment(tempToken, layerName);
+            emb.mySetType(sb.toString());
+       //     Util.logToChat("Place Marker type: "+emb.myGetType());
+
+            return tempToken;
+
+        }
 
         private GamePiece buildImageLayer(GamePiece piece, String frontImage, String backImage, String conditionName) {
 

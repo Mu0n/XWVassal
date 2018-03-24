@@ -90,9 +90,9 @@ public class VassalXWSPieceLoader {
             // ==================================================
             // Get the stem slots
             // ==================================================
-            List<PieceSlot> stempPieceSlots = GameModule.getGameModule().getAllDescendantComponentsOf(PieceSlot.class);
+            List<PieceSlot> stemPieceSlots = GameModule.getGameModule().getAllDescendantComponentsOf(PieceSlot.class);
 
-            for (PieceSlot pieceSlot : stempPieceSlots) {
+            for (PieceSlot pieceSlot : stemPieceSlots) {
                 String slotName = pieceSlot.getConfigureName();
                 if (slotName.startsWith("Stem Pilot") && stemPilotSlot == null) {
                     stemPilotSlot = pieceSlot;
