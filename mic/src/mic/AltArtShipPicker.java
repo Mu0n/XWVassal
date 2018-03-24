@@ -2,6 +2,7 @@ package mic;
 
 import VASSAL.build.widget.PieceSlot;
 import com.google.common.collect.ImmutableMap;
+import mic.ota.XWOTAUtils;
 
 import java.util.Map;
 
@@ -120,7 +121,7 @@ public class AltArtShipPicker {
         // now check for faction/ship defaults
         if(!found)
         {
-            String factionShip = XWImageUtils.simplifyFactionName(faction)+"_"+xwsShip;
+            String factionShip = XWOTAUtils.simplifyFactionName(faction)+"_"+xwsShip;
             String defaultArt = defaultShipArts.get(factionShip);
             if(defaultArt != null)
             {

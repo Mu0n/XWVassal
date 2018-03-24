@@ -1,10 +1,11 @@
-package mic;
+package mic.ota;
 
 import VASSAL.build.GameModule;
 import VASSAL.tools.ArchiveWriter;
 import VASSAL.tools.DataArchive;
 import VASSAL.tools.image.ImageUtils;
 import VASSAL.tools.io.FileArchive;
+import mic.Util;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -15,7 +16,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-public class XWImageUtils {
+public class XWOTAUtils {
     private static String[] actionOrder = {
             "cloak",
             "rotatearc",
@@ -387,6 +388,85 @@ public class XWImageUtils {
         return shipBaseImageSB.toString();
     }
 
+    public static void downloadJSONFilesFromGitHub(ArrayList<String> jsonFiles)
+    {
+        GameModule gameModule = GameModule.getGameModule();
+        DataArchive dataArchive = gameModule.getDataArchive();
+        FileArchive fileArchive = dataArchive.getArchive();
+        ArchiveWriter writer = new ArchiveWriter(fileArchive);
+        String fileName = null;
+        try {
+            byte[] fileContents = null;
+            for (String jsonFile : jsonFiles)
+            {
+                fileName = jsonFile.substring(jsonFile.lastIndexOf("/")+1,jsonFile.length());
+                fileContents = null;
+                fileContents = downlodFileFromOTA(jsonFile);
+                addFileToModule(fileName, fileContents, writer);
+
+            }
+            writer.save();
+        }catch(IOException e)
+        {
+            //TODO handle this
+        }
+    }
+    public static void downloadAndSaveImagesFromOTA( ArrayList<OTAImage> imagesToDownload)
+    {
+
+        GameModule gameModule = GameModule.getGameModule();
+        DataArchive dataArchive = gameModule.getDataArchive();
+        FileArchive fileArchive = dataArchive.getArchive();
+        ArchiveWriter writer = new ArchiveWriter(fileArchive);
+
+        Iterator<OTAImage> i = imagesToDownload.iterator();
+        OTAImage image = null;
+        while(i.hasNext())
+        {
+
+            boolean imageFound = false;
+            byte[] imageBytes = null;
+            image = i.next();
+
+            try {
+
+                imageBytes = downloadFileFromOTA(image.getImageType(), image.getImageName());
+
+                if(imageBytes != null)
+                {
+                    imageFound = true;
+                }
+            }catch(IOException e)
+            {
+                // OTA doesn't have the image
+                imageFound = false;
+
+            }
+
+
+            if(imageFound)
+            {
+                try {
+                    // add the image to the module
+                    addImageToModule(image.getImageName(), imageBytes, writer);
+
+                } catch (IOException e) {
+                    Util.logToChat("IOException ocurred adding an image " + e.getMessage());
+                }
+            }
+
+        }
+
+        try {
+            writer.save();
+        }catch(IOException e)
+        {
+            Util.logToChat("IOException ocurred saving images " + e.getMessage());
+        }
+
+    }
+
+
     public static void downloadAndSaveImagesFromOTA(String imageType, ArrayList<String> imageNames)
     {
 
@@ -477,6 +557,27 @@ public class XWImageUtils {
 
     }
 
+    private static byte[] downlodFileFromOTA(String urlString) throws IOException
+    {
+        URL remoteURL = null;
+        remoteURL = new URL(urlString);
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        InputStream is = null;
+        is = remoteURL.openStream();
+        byte[] byteChunk = new byte[4096];
+        int n;
+
+        while ((n = is.read(byteChunk)) > 0) {
+            baos.write(byteChunk, 0, n);
+        }
+        if (is != null) {
+            is.close();
+        }
+        byte[] bytes = baos.toByteArray();
+        baos.close();
+        return bytes;
+    }
+
 
     private static byte[] downloadFileFromOTA(String fileType, String fileName) throws IOException
     {
@@ -504,6 +605,15 @@ public class XWImageUtils {
         return bytes;
     }
 
+    private static void addFileToModule(String fileName,byte[] fileBytes, ArchiveWriter writer) throws IOException
+    {
+    //    GameModule gameModule = GameModule.getGameModule();
+    //    DataArchive dataArchive = gameModule.getDataArchive();
+    //    FileArchive fileArchive = dataArchive.getArchive();
+     //   ArchiveWriter writer = new ArchiveWriter(fileArchive);
+        writer.addFile(fileName,fileBytes);
+     //   writer.save();
+    }
 
     private static void addImageToModule(String imageName,byte[] imageBytes) throws IOException
     {

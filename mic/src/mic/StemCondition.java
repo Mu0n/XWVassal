@@ -4,6 +4,7 @@ import VASSAL.build.module.documentation.HelpFile;
 import VASSAL.command.Command;
 import VASSAL.command.CommandEncoder;
 import VASSAL.counters.*;
+import mic.ota.XWOTAUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -105,7 +106,7 @@ public class StemCondition extends Decorator implements EditablePiece {
             // check to see that the condition card image exists in the module.
             // if it doesn't then use a WIP image
             boolean useWipImage = false;
-            if (!XWImageUtils.imageExistsInModule(frontImage))
+            if (!XWOTAUtils.imageExistsInModule(frontImage))
             {
                 frontImage = wipGenericFrontImage;
                 useWipImage = true;

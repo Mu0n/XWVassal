@@ -49,7 +49,7 @@ public class ContentsChecker  extends AbstractConfigurable {
 
         // download the pilots
         Iterator i = missingPilots.iterator();
-        XWImageUtils.downloadAndSaveImagesFromOTA("pilots",missingPilots);
+        XWOTAUtils.downloadAndSaveImagesFromOTA("pilots",missingPilots);
 
 
         // refresh the list
@@ -75,7 +75,7 @@ public class ContentsChecker  extends AbstractConfigurable {
 
         // download the upgrades
         Iterator<String> i = missingUpgrades.iterator();
-        XWImageUtils.downloadAndSaveImagesFromOTA("upgrades",missingUpgrades);
+        XWOTAUtils.downloadAndSaveImagesFromOTA("upgrades",missingUpgrades);
 
 
         // refresh the list
@@ -101,7 +101,7 @@ public class ContentsChecker  extends AbstractConfigurable {
 
         // download the conditions
         Iterator<String> i = missingConditions.iterator();
-        XWImageUtils.downloadAndSaveImagesFromOTA("conditions",missingConditions);
+        XWOTAUtils.downloadAndSaveImagesFromOTA("conditions",missingConditions);
 
 
         // refresh the list
@@ -131,7 +131,7 @@ public class ContentsChecker  extends AbstractConfigurable {
     private synchronized void downloadMissingActions() {
 
         // download the actions
-        XWImageUtils.downloadAndSaveImagesFromOTA("actions",missingActions );
+        XWOTAUtils.downloadAndSaveImagesFromOTA("actions",missingActions );
 
 
         // refresh the list
@@ -156,7 +156,7 @@ public class ContentsChecker  extends AbstractConfigurable {
     private synchronized void downloadMissingShips() {
 
         // download the ships
-        XWImageUtils.downloadAndSaveImagesFromOTA("ships",missingShips);
+        XWOTAUtils.downloadAndSaveImagesFromOTA("ships",missingShips);
 
         // refresh the list
         ArrayList<OTAMasterShips.OTAShip> shipResults = modIntChecker.checkShips();
@@ -201,7 +201,7 @@ public class ContentsChecker  extends AbstractConfigurable {
             //TODO implement huge ships this
             if(!shipData.getSize().equals("huge")) {
 
-                XWImageUtils.buildBaseShipImage(shipBase.getFaction(), shipBase.getShipXws(), arcs, actions, shipData.getSize(),shipBase.getIdentifier(),shipBase.getshipImageName(), writer);
+                XWOTAUtils.buildBaseShipImage(shipBase.getFaction(), shipBase.getShipXws(), arcs, actions, shipData.getSize(),shipBase.getIdentifier(),shipBase.getshipImageName(), writer);
             }
 
         }

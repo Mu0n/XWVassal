@@ -7,11 +7,11 @@ import java.util.ArrayList;
 import java.util.Map;
 
 public class MasterConditionData extends ArrayList<MasterConditionData.ConditionData> {
-    private static String REMOTE_URL = "https://raw.githubusercontent.com/guidokessels/xwing-data/master/data/conditions.js";
-    private static String DISPATCHER_URL = "https://raw.githubusercontent.com/Mu0n/XWVassalOTA/master/json/dispatcher_conditions.json";
+    public static String REMOTE_URL = "https://raw.githubusercontent.com/guidokessels/xwing-data/master/data/conditions.js";
+    public static String DISPATCHER_URL = "https://raw.githubusercontent.com/Mu0n/XWVassalOTA/master/json/dispatcher_conditions.json";
 
     private static Map<String, MasterConditionData.ConditionData> loadedDataByName = null;
-
+    private static Map<String, MasterConditionData.ConditionData> loadedData = null;
     public static MasterConditionData.ConditionData getConditionDataByName(String conditionName) {
         if (loadedDataByName == null) {
             loadData();
@@ -19,6 +19,15 @@ public class MasterConditionData extends ArrayList<MasterConditionData.Condition
 
 
         return loadedDataByName.get(conditionName);
+    }
+
+    public static MasterConditionData.ConditionData getConditionData(String conditionXws) {
+        if (loadedData == null) {
+            loadData();
+        }
+
+
+        return loadedData.get(conditionXws);
     }
 
     protected static void loadData()
@@ -40,9 +49,11 @@ public class MasterConditionData extends ArrayList<MasterConditionData.Condition
 
                     if(loadedDataByName.get(condition.getName()) == null)
                     {
-
-
                         loadedDataByName.put(condition.getName(), condition);
+                    }
+                    if(loadedData.get(condition.getXws()) == null)
+                    {
+                        loadedData.put(condition.getXws(), condition);
                     }
 
                 }
@@ -61,10 +72,12 @@ public class MasterConditionData extends ArrayList<MasterConditionData.Condition
         }
 
         loadedDataByName = Maps.newHashMap();
+        loadedData = Maps.newHashMap();
         for(MasterConditionData.ConditionData condition : data)
         {
 
             loadedDataByName.put(condition.getName(),condition);
+            loadedData.put(condition.getXws(),condition);
             //loadedData.put(xwsShip + "/" + pilot.getXws(), pilot);
         }
     }
