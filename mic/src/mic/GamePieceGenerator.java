@@ -35,11 +35,12 @@ public class GamePieceGenerator
             newShip = mic.Util.newPiece(getPieceSlotByName(LARGE_STEM_SHIP_SLOT_NAME));
         }
 
-        // force this for now
-        boolean needsBombCapability = true;
+        // determine if the ship needs bomb drop
+//        boolean needsBombCapability = determineIfShipNeedsBombCapability(ship);
 
         // execute the command to build the ship piece
-        StemShip.ShipGenerateCommand myShipGen = new StemShip.ShipGenerateCommand(ship.getShipData().getXws(), newShip, faction, pilotData.getXws(),needsBombCapability);
+       // StemShip.ShipGenerateCommand myShipGen = new StemShip.ShipGenerateCommand(ship.getShipData().getXws(), newShip, faction, pilotData.getXws(),needsBombCapability);
+        StemShip.ShipGenerateCommand myShipGen = new StemShip.ShipGenerateCommand(ship.getShipData().getXws(), newShip, faction, pilotData.getXws());
 
         myShipGen.execute();
 
@@ -55,7 +56,51 @@ public class GamePieceGenerator
 
         return newShip;
     }
+/*
+    private static boolean determineIfShipNeedsBombCapability(VassalXWSPilotPieces ship)
+    {
+        boolean needsBomb = false;
+        // if the pilot has a bomb slot
+        MasterPilotData.PilotData pilotData = ship.getPilotData();
+        List<String> slots = pilotData.getSlots();
+        Iterator<String> slotIterator = slots.iterator();
+        String slotName = null;
+        while(slotIterator.hasNext() && !needsBomb)
+        {
+            slotName = slotIterator.next();
+            if(slotName.equalsIgnoreCase("Bomb"))
+            {
+                needsBomb = true;
+            }
+        }
 
+        // if an upgrade has a grant of bomb slot
+        if(!needsBomb)
+        {
+            List<VassalXWSPilotPieces.Upgrade> upgrades = ship.getUpgrades();
+            Iterator<VassalXWSPilotPieces.Upgrade> upgradeIterator = upgrades.iterator();
+            VassalXWSPilotPieces.Upgrade upgrade = null;
+            Iterator<MasterUpgradeData.UpgradeGrants> grantIterator = null;
+            while(upgradeIterator.hasNext() && !needsBomb)
+            {
+                upgrade = upgradeIterator.next();
+                ArrayList<MasterUpgradeData.UpgradeGrants> upgradeGrants = upgrade.getUpgradeData().getGrants();
+                grantIterator = upgradeGrants.iterator();
+                MasterUpgradeData.UpgradeGrants grant = null;
+                while(grantIterator.hasNext() && !needsBomb)
+                {
+                    grant = grantIterator.next();
+                    if(grant.getType().equalsIgnoreCase("slot") && grant.getName().equalsIgnoreCase("Bomb"))
+                    {
+                        needsBomb = true;
+                    }
+                }
+            }
+        }
+
+        return needsBomb;
+    }
+*/
     private static PieceSlot getPieceSlotByName(String name)
     {
 

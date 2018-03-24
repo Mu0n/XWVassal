@@ -137,9 +137,10 @@ public class StemShip extends Decorator implements EditablePiece {
         String size = "";
        // List<String> actionList;
         String xwsPilot = "";
-        boolean needsBombCapability;
+     //   boolean needsBombCapability;
 
-        ShipGenerateCommand(String shipXws,   GamePiece piece, String faction, String xwsPilot, boolean needsBombCapability) {
+        //ShipGenerateCommand(String shipXws,   GamePiece piece, String faction, String xwsPilot, boolean needsBombCapability) {
+        ShipGenerateCommand(String shipXws,   GamePiece piece, String faction, String xwsPilot) {
 
             // fetch the maneuver array of arrays according to the xws name passed on from autospawn or other means
             xwsShipName = shipXws;
@@ -150,7 +151,7 @@ public class StemShip extends Decorator implements EditablePiece {
             this.piece = piece;
             this.xwsPilot = xwsPilot;
             this.size = shipData.getSize();
-            this.needsBombCapability = needsBombCapability;
+         //   this.needsBombCapability = needsBombCapability;
            // this.actionList = shipData.getActions();
         }
 
@@ -160,23 +161,33 @@ public class StemShip extends Decorator implements EditablePiece {
             // find the appropriate baseImage
             piece = buildShipBaseLayer(piece,faction,xwsShipName,xwsPilot, size);
 
-            if(!this.needsBombCapability) {
-                piece = removeBombCapability(piece);
-            }
+        //    if(!this.needsBombCapability) {
+        //        piece = removeBombCapability(piece);
+         //   }
 
         }
-
+/*
         private GamePiece removeBombCapability(GamePiece piece)
         {
             PlaceMarker normalBombPlaceMarker = (PlaceMarker)Util.getPlaceMarkerTrait(piece,"Place Marker - Place Bomb Spawner");
             PlaceMarker frontalBombPlaceMarker = (PlaceMarker)Util.getPlaceMarkerTrait(piece,"Place Marker - Place Frontal Bomb Spawner");
 
-            normalBombPlaceMarker.mySetType("");
-            frontalBombPlaceMarker.mySetType("");
+            if(normalBombPlaceMarker != null && normalBombPlaceMarker.myGetType() != null) {
+                normalBombPlaceMarker.mySetType("");
+                Util.logToChat("ship has the normal place marker");
+            }else{
+                Util.logToChat("ship doesn't have the normal place marker");
+            }
+            if(frontalBombPlaceMarker != null && frontalBombPlaceMarker.myGetType() != null) {
+                frontalBombPlaceMarker.mySetType("");
+                Util.logToChat("ship has the frontal place marker");
+            }else{
+                Util.logToChat("ship doesn't have the frontal place marker");
+            }
 
             return piece;
-        }
-
+        }*/
+/*
         private GamePiece addBombCapability(GamePiece piece, String size)
         {
             String normalSmallBombSpanwerType = "placemark;Place Bomb Spawner;66,130;VASSAL.build.module.PieceWindow/VASSAL.build.widget.TabWidget/VASSAL.build.widget.TabWidget:Chits/VASSAL.build.widget.ListWidget:Bombs/VASSAL.build.widget.PieceSlot:Bomb Spawner;null;0;-338;true;;Place Bomb Spawner;12376;0;false";
@@ -217,7 +228,7 @@ public class StemShip extends Decorator implements EditablePiece {
         //    }
 
             return piece;
-        }
+        }*/
 
         private GamePiece buildSideActions(GamePiece piece, String size)
         {
