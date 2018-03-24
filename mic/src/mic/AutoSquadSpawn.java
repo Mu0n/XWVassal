@@ -278,6 +278,15 @@ public class AutoSquadSpawn extends AbstractConfigurable {
                                 (int) startPosition.getY() + totalPilotHeight),
                         playerMap);
                 totalUpgradeWidth += conditionPiece.boundingBox().getWidth();
+
+
+                // spawn the condition token
+                GamePiece conditionTokenPiece = GamePieceGenerator.generateConditionToken(condition);
+                spawnPiece(conditionTokenPiece, new Point(
+                                (int) startPosition.getX() + pilotWidth + totalUpgradeWidth + fudgePilotUpgradeFrontier,
+                                (int) startPosition.getY() + totalPilotHeight),
+                        playerMap);
+                totalUpgradeWidth += conditionTokenPiece.boundingBox().getWidth();
             } //loop to next condition
 
             // ======================================================

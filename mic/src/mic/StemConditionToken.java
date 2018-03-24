@@ -10,18 +10,17 @@ import org.slf4j.LoggerFactory;
 import javax.swing.*;
 import java.awt.*;
 
-public class StemCondition extends Decorator implements EditablePiece {
-    public static final String ID = "stemCondition";
+public class StemConditionToken extends Decorator implements EditablePiece {
+    public static final String ID = "stemConditionToken";
 
-    private static final String wipGenericFrontImage = "Cond-WIP.png";
-    private static final String genericBackImage = "Condition_back.png";
+    private static final String wipGenericTokenImage = "Cond-WIP_Token.png";
 
 
-    public StemCondition(){
+    public StemConditionToken(){
         this(null);
     }
 
-    public StemCondition(GamePiece piece){
+    public StemConditionToken(GamePiece piece){
         setInner(piece);
     }
 
@@ -51,7 +50,7 @@ public class StemCondition extends Decorator implements EditablePiece {
     }
 
     public String getDescription() {
-        return "Custom StemCondition (mic.StemCondition)";
+        return "Custom StemConditionToken (mic.StemConditionToken)";
     }
 
     public void mySetType(String s) {
@@ -79,74 +78,50 @@ public class StemCondition extends Decorator implements EditablePiece {
     }
 
     //this is the command that takes a ship xws name, fetches the maneuver info and constructs the dial layer by layer
-    public static class ConditionGenerateCommand extends Command {
+    public static class TokenGenerateCommand extends Command {
 
         GamePiece piece;
         static String conditionXWS = "";
-        String conditionName = "";
 
 
-        ConditionGenerateCommand(String conditionXWS, GamePiece piece, String conditionName) {
+        TokenGenerateCommand(String conditionXWS, GamePiece piece) {
             this.piece = piece;
             this.conditionXWS = conditionXWS;
-            this.conditionName = conditionName;
 
         }
 
         // construct the Condition Card piece
         protected void executeCommand() {
 
-
-
-
             // get the upgrade front image
-            String frontImage = "Condition_" + conditionXWS + ".jpg";
-
-            // check to see that the condition card image exists in the module.
+            String image = "ConditionToken_" + conditionXWS + ".png";
+            // check to see that the condition token image exists in the module.
             // if it doesn't then use a WIP image
-            boolean useWipImage = false;
-            if (!XWImageUtils.imageExistsInModule(frontImage))
+
+            if (!XWImageUtils.imageExistsInModule(image))
             {
-                frontImage = wipGenericFrontImage;
-                useWipImage = true;
-
+                image = wipGenericTokenImage;
             }
-
-            // get the back image
-            String backImage = genericBackImage;
-
 
             // now build the piece
-            piece = buildImageLayer(piece, frontImage, backImage, conditionName);
-
-            // if we used a WIP image, we need to add the upgradeName
-
-            if (useWipImage) {
-                piece.setProperty("Upgrade Name", conditionName);
-
-            } else {
-                piece.setProperty("Upgrade Name", "");
-            }
-
+            piece = buildImageLayer(piece, image);
 
 
         }
 
 
-        private GamePiece buildImageLayer(GamePiece piece, String frontImage, String backImage, String conditionName) {
+
+        private GamePiece buildImageLayer(GamePiece piece, String image) {
 
 
-            String layerName = "Layer - Condition Image";
+            String layerName = "Layer - Condition Token";
+
 
             StringBuilder sb = new StringBuilder();
 
-            sb.append("emb2;Activate;2;;Flip;2;;;2;;;;1;false;0;0;");
-            sb.append(frontImage);//Front image
-            sb.append(",");
-            sb.append(backImage);//Back image
-            sb.append(";Destroyed,");
-            sb.append(conditionName);//upgrade name
-            sb.append(";true;UpgradeImage;;;false;;1;1;true;65,130;70,130;");//LEAVE
+            sb.append("emb2;Activate;2;;;2;;;2;;;;1;false;0;0;");
+            sb.append(image);
+            sb.append(";;false;Condition Token;;;false;;1;1;true;65,130;;");
 
             Embellishment emb = (Embellishment) Util.getEmbellishment(piece, layerName);
             emb.mySetType(sb.toString());
@@ -161,38 +136,38 @@ public class StemCondition extends Decorator implements EditablePiece {
 
         //the following class is used to send the info to the other player whenever a upgrade generation command is issued, so it can be done locally on all machines playing/watching the game
 
-        public static class ConditionGeneratorEncoder implements CommandEncoder {
+        public static class TokenGeneratorEncoder implements CommandEncoder {
             private static final Logger logger = LoggerFactory.getLogger(StemPilot.class);
-            private static final String commandPrefix = "ConditionGeneratorEncoder=";
+            private static final String commandPrefix = "ConditionTokenGeneratorEncoder=";
 
-            public static StemCondition.ConditionGenerateCommand.ConditionGeneratorEncoder INSTANCE = new StemCondition.ConditionGenerateCommand.ConditionGeneratorEncoder();
+            public static StemConditionToken.TokenGenerateCommand.TokenGeneratorEncoder INSTANCE = new StemConditionToken.TokenGenerateCommand.TokenGeneratorEncoder();
 
             public Command decode(String command) {
                 if (command == null || !command.contains(commandPrefix)) {
                     return null;
                 }
-                logger.info("Decoding ConditionGenerateCommand");
+                logger.info("Decoding TokenGenerateCommand");
 
                 command = command.substring(commandPrefix.length());
                 try {
                     conditionXWS = command.toString();
                 } catch (Exception e) {
-                    logger.error("Error decoding ConditionGenerateCommand", e);
+                    logger.error("Error decoding TokenGenerateCommand", e);
                     return null;
                 }
                 return null;
             }
 
             public String encode(Command c) {
-                if (!(c instanceof StemCondition.ConditionGenerateCommand)) {
+                if (!(c instanceof StemConditionToken.TokenGenerateCommand)) {
                     return null;
                 }
-                logger.info("Encoding UpgradeGenerateCommand");
-                StemCondition.ConditionGenerateCommand dialGenCommand = (StemCondition.ConditionGenerateCommand) c;
+                logger.info("Encoding TokenGenerateCommand");
+                StemConditionToken.TokenGenerateCommand dialGenCommand = (StemConditionToken.TokenGenerateCommand) c;
                 try {
                     return commandPrefix + conditionXWS;
                 } catch (Exception e) {
-                    logger.error("Error encoding ConditionGenerateCommand", e);
+                    logger.error("Error encoding TokenGenerateCommand", e);
                     return null;
                 }
             }

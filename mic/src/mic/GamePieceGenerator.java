@@ -139,6 +139,15 @@ public class GamePieceGenerator
 
         GamePiece newCondition = mic.Util.newPiece(condition.getPieceSlot());
 
+        // build the condition card
+        StemCondition.ConditionGenerateCommand myConditionGen = new StemCondition.ConditionGenerateCommand(condition.getConditionData().getXws(), newCondition, condition.getConditionData().getName());
+        myConditionGen.execute();
+
+        return newCondition;
+    }
+
+    public static GamePiece generateConditionToken(VassalXWSPilotPieces.Condition condition)
+    {
         // get the pieceslot for the StemConditionToken
         List<PieceSlot> pieceSlots = GameModule.getGameModule().getAllDescendantComponentsOf(PieceSlot.class);
         PieceSlot stemConditionTokenPieceSlot = null;
@@ -153,33 +162,16 @@ public class GamePieceGenerator
 
         }
 
-
         // get a copy of the stem token game piece
         GamePiece conditionTokenPiece = mic.Util.newPiece(stemConditionTokenPieceSlot);
 
-  //      if(conditionTokenPiece != null)
- //       {
-  //          Util.logToChat("Token piece ID: "+conditionTokenPiece.getId());
-   //     }else{
-   //         Util.logToChat("conditionTokenPiece is null");
-  //      }
 
-
-        // build the token
-        // generate a new ID
-        int randomInt = (int) Math.ceil(Math.random() * 10000);
-        conditionTokenPiece.setId("XWVassalConditionToken"+String.valueOf(randomInt));
-   //     Util.logToChat("Token piece ID inside StemConditionToken: "+conditionTokenPiece.getId());
-     //   StemConditionToken.TokenGenerateCommand myTokenGen = new StemConditionToken.TokenGenerateCommand(condition.getConditionData().getXws(), conditionTokenPiece);
-
- //       myTokenGen.execute();
-
+        
         // build the condition card
-        StemCondition.ConditionGenerateCommand myConditionGen = new StemCondition.ConditionGenerateCommand(condition.getConditionData().getXws(), newCondition, condition.getConditionData().getName(), conditionTokenPiece);
+        StemConditionToken.TokenGenerateCommand myTokenGen = new StemConditionToken.TokenGenerateCommand(condition.getConditionData().getXws(), conditionTokenPiece);
+        myTokenGen.execute();
 
-        myConditionGen.execute();
-
-        return newCondition;
+        return conditionTokenPiece;
     }
 
     public static GamePiece generatePilot(VassalXWSPilotPieces ship) {
