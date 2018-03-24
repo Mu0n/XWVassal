@@ -177,6 +177,9 @@ public class MasterPilotData extends ArrayList<MasterPilotData.PilotData> {
         @JsonProperty("conditions")
         private List<String> conditions = Lists.newArrayList();
 
+        @JsonProperty("slots")
+        private List<String> slots = Lists.newArrayList();
+
         @JsonProperty("ship_override")
         private ShipOverrides shipOverrides;
 
@@ -228,6 +231,9 @@ public class MasterPilotData extends ArrayList<MasterPilotData.PilotData> {
 
         public List<String> getConditions() {
             return conditions;
+        }
+        public List<String> getSlots() {
+            return slots;
         }
     }
 
