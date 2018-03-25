@@ -1,11 +1,13 @@
 package mic.ota;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import mic.Util;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 public class OTAMasterDialHides  extends ArrayList<OTAMasterDialHides.OTADialHide> {
@@ -58,6 +60,9 @@ public class OTAMasterDialHides  extends ArrayList<OTAMasterDialHides.OTADialHid
         @JsonProperty("image")
         private String image;
 
+        @JsonProperty("faction")
+        private List<String> factions = Lists.newArrayList();
+
         private boolean status;
 
         public String getXws() {
@@ -79,6 +84,9 @@ public class OTAMasterDialHides  extends ArrayList<OTAMasterDialHides.OTADialHid
         public void setStatus(boolean status)
         {
             this.status = status;
+        }
+        public List<String> getFactions() {
+            return this.factions;
         }
     }
 
