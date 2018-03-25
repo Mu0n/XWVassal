@@ -29,6 +29,8 @@ public class ContentsChecker  extends AbstractConfigurable {
     private ArrayList<String> missingActions;
     private ArrayList<String> missingUpgrades;
     private ArrayList<String> missingConditions;
+    private ArrayList<String> missingDialHides;
+    private ArrayList<OTADialMask> missingDialMasks;
     private ArrayList<OTAShipBase> missingShipBases;
     private JTable pilotTable;
     private JTable shipTable;
@@ -36,12 +38,16 @@ public class ContentsChecker  extends AbstractConfigurable {
     private JTable shipBaseTable;
     private JTable upgradeTable;
     private JTable conditionTable;
+    private JTable dialHideTable;
+    private JTable dialMaskTable;
     private final String[] pilotColumnNames = {"Faction","Ship","Pilot","Image","Status"};
     private final String[] shipColumnNames = {"XWS","Identifier","Image","Status"};
     private final String[] actionColumnNames = {"Name","Image","Status"};
     private final String[] shipBaseColumnNames = {"Name","XWS","Identifier","Faction","BaseImage","shipImage","Status"};
     private final String[] upgradeColumnNames = {"XWS","Slot","Image","Status"};
     private final String[] conditionColumnNames = {"XWS","Image","Status","Token Image","Status"};
+    private final String[] dialHideColumnNames = {"Ship XWS","Ship Name", "Image", "Status"};
+    private final String[] dialMaskColumnNames = {"Ship XWS","Ship Name", "Faction","Image","Status"};
 
     private ModuleIntegrityChecker modIntChecker = null;
 
@@ -153,6 +159,31 @@ public class ContentsChecker  extends AbstractConfigurable {
         refreshActionTable();
     }
 
+    private synchronized void downloadMissingDialHides() {
+
+        // download the dial hide images
+        XWOTAUtils.downloadAndSaveImagesFromOTA("dial",missingDialHides );
+
+
+        // refresh the list
+        ArrayList<OTAMasterDialHides.OTADialHide> dialHideResults = modIntChecker.checkDialHides();
+        missingDialHides = new ArrayList<String>();
+
+        Iterator<OTAMasterDialHides.OTADialHide> i = dialHideResults.iterator();
+        OTAMasterDialHides.OTADialHide dialHide = null;
+        while(i.hasNext())
+        {
+            dialHide = i.next();
+            if(!dialHide.getStatus())
+            {
+                missingDialHides.add(dialHide.getImage());
+            }
+        }
+
+        // refresh the table
+        refreshDialHideTable();
+    }
+
     private synchronized void downloadMissingShips() {
 
         // download the ships
@@ -238,6 +269,59 @@ public class ContentsChecker  extends AbstractConfigurable {
 
     }
 
+
+
+    private synchronized void createMissingDialMasks()
+    {
+
+        Iterator<OTADialMask> iter = missingDialMasks.iterator();
+
+        GameModule gameModule = GameModule.getGameModule();
+        DataArchive dataArchive = gameModule.getDataArchive();
+        FileArchive fileArchive = dataArchive.getArchive();
+        ArchiveWriter writer = new ArchiveWriter(fileArchive);
+        OTADialMask dialMask = null;
+        while(iter.hasNext())
+        {
+            dialMask = iter.next();
+
+            XWOTAUtils.buildDialMaskImages(dialMask.getFaction(),dialMask.getShipXws(),dialMask.getDialHideImageName(),dialMask.getDialMaskImageName(),writer);
+
+        }
+        try {
+            writer.save();
+        }catch(IOException e)
+        {
+            mic.Util.logToChat("Exception occurred saving module");
+        }
+
+        // refresh the list
+        ArrayList<OTADialMask> dialMaskResults = modIntChecker.checkDialMasks();
+        missingDialMasks = new ArrayList<OTADialMask>();
+        Iterator<OTADialMask> i = dialMaskResults.iterator();
+        dialMask = null;
+        while(i.hasNext())
+        {
+
+            dialMask = i.next();
+            if(!dialMask.getStatus())
+            {
+
+                missingDialMasks.add(dialMask);
+
+            }
+        }
+
+
+        // refresh the table
+        refreshDialMaskTable();
+
+
+        dialMaskTable = buildDialMaskTable(dialMaskResults);
+
+    }
+
+
     private void refreshShipBaseTable()
     {
         ArrayList<OTAShipBase> shipBaseResults = modIntChecker.checkShipBases();
@@ -270,6 +354,38 @@ public class ContentsChecker  extends AbstractConfigurable {
         shipBaseTable.getColumnModel().getColumn(4).setPreferredWidth(75);
         shipBaseTable.getColumnModel().getColumn(5).setPreferredWidth(75);
         shipBaseTable.getColumnModel().getColumn(6).setPreferredWidth(75);
+        model.fireTableDataChanged();
+    }
+
+
+    private void refreshDialMaskTable()
+    {
+        ArrayList<OTADialMask> dialMaskResults = modIntChecker.checkDialMasks();
+
+        String[][] tableResults = new String[dialMaskResults.size()][5];
+        OTADialMask dialMask = null;
+        for(int i=0;i<dialMaskResults.size();i++)
+        {
+            String[] dialMaskLine = new String[5];
+            dialMask = dialMaskResults.get(i);
+
+            dialMaskLine[0] = dialMask.getShipXws();
+            dialMaskLine[1] = MasterShipData.getShipData(dialMask.getShipXws()).getName();
+            dialMaskLine[2] = dialMask.getFaction();
+            dialMaskLine[3] = dialMask.getDialMaskImageName();
+            dialMaskLine[4] = dialMask.getStatus() ? "Exists":"Not Found";
+
+            tableResults[i] = dialMaskLine;
+        }
+
+        DefaultTableModel model = (DefaultTableModel) dialMaskTable.getModel();
+        model.setNumRows(tableResults.length);
+        model.setDataVector(tableResults,dialMaskColumnNames);
+        dialMaskTable.getColumnModel().getColumn(0).setPreferredWidth(50);
+        dialMaskTable.getColumnModel().getColumn(1).setPreferredWidth(75);
+        dialMaskTable.getColumnModel().getColumn(2).setPreferredWidth(50);
+        dialMaskTable.getColumnModel().getColumn(3).setPreferredWidth(325);
+        dialMaskTable.getColumnModel().getColumn(4).setPreferredWidth(75);
         model.fireTableDataChanged();
     }
 
@@ -400,6 +516,38 @@ public class ContentsChecker  extends AbstractConfigurable {
         model.fireTableDataChanged();
     }
 
+
+    private void refreshDialHideTable()
+    {
+        ArrayList<OTAMasterDialHides.OTADialHide> dialHideResults = modIntChecker.checkDialHides();
+        String[][] tableResults = new String[dialHideResults.size()][4];
+
+        OTAMasterDialHides.OTADialHide dialHide = null;
+        for(int i=0;i<dialHideResults.size();i++)
+        {
+            String[] dialHideLine = new String[4];
+            dialHide = dialHideResults.get(i);
+            dialHideLine[0] = dialHide.getXws();
+            dialHideLine[1] = MasterShipData.getShipData(dialHide.getXws()).getName();
+            dialHideLine[2] = dialHide.getImage();
+            dialHideLine[3] = dialHide.getStatus() ? "Exists":"Not Found";
+
+
+            tableResults[i] = dialHideLine;
+        }
+
+
+        DefaultTableModel model = (DefaultTableModel) dialHideTable.getModel();
+
+        model.setNumRows(tableResults.length);
+        model.setDataVector(tableResults,dialHideColumnNames);
+        dialHideTable.getColumnModel().getColumn(0).setPreferredWidth(50);
+        dialHideTable.getColumnModel().getColumn(1).setPreferredWidth(75);
+        dialHideTable.getColumnModel().getColumn(2).setPreferredWidth(325);
+        dialHideTable.getColumnModel().getColumn(3).setPreferredWidth(75);
+        model.fireTableDataChanged();
+    }
+
     private void refreshShipTable()
     {
         ArrayList<OTAMasterShips.OTAShip> shipResults = modIntChecker.checkShips();
@@ -441,6 +589,8 @@ public class ContentsChecker  extends AbstractConfigurable {
         ArrayList<OTAShipBase> shipBaseResults = modIntChecker.checkShipBases();
         ArrayList<OTAMasterUpgrades.OTAUpgrade> upgradeResults = modIntChecker.checkUpgrades();
         ArrayList<OTAMasterConditions.OTACondition> conditionResults = modIntChecker.checkConditions();
+        ArrayList<OTAMasterDialHides.OTADialHide> dialHideResults = modIntChecker.checkDialHides();
+        ArrayList<OTADialMask> dialMaskResults = modIntChecker.checkDialMasks();
 
         // store the missing pilots
         missingPilots = new ArrayList<String>();
@@ -511,6 +661,32 @@ public class ContentsChecker  extends AbstractConfigurable {
             }
         }
 
+        // store the missing dial hides
+        missingDialHides = new ArrayList<String>();
+        Iterator<OTAMasterDialHides.OTADialHide> dialHideIterator = dialHideResults.iterator();
+        OTAMasterDialHides.OTADialHide dialHide = null;
+        while(dialHideIterator.hasNext())
+        {
+            dialHide = dialHideIterator.next();
+            if(!dialHide.getStatus())
+            {
+                missingDialHides.add(dialHide.getImage());
+            }
+        }
+
+        // store the missing dial masks
+        missingDialMasks = new ArrayList<OTADialMask>();
+        Iterator<OTADialMask> dialMaskIterator = dialMaskResults.iterator();
+        while(dialMaskIterator.hasNext())
+        {
+            OTADialMask dialMask = dialMaskIterator.next();
+            if(!dialMask.getStatus())
+            {
+                missingDialMasks.add(dialMask);
+
+            }
+        }
+
         // store the missing ship bases
         missingShipBases = new ArrayList<OTAShipBase>();
         Iterator<OTAShipBase> shipBaseIterator = shipBaseResults.iterator();
@@ -544,6 +720,8 @@ public class ContentsChecker  extends AbstractConfigurable {
         shipBaseTable = buildShipBaseTable(shipBaseResults);
         upgradeTable = buildUpgradeTable(upgradeResults);
         conditionTable = buildConditionTable(conditionResults);
+        dialHideTable = buildDialHideTable(dialHideResults);
+        dialMaskTable = buildDialMaskTable(dialMaskResults);
 
         JScrollPane pilotPane = new JScrollPane(pilotTable);
         JScrollPane shipPane = new JScrollPane(shipTable);
@@ -551,6 +729,8 @@ public class ContentsChecker  extends AbstractConfigurable {
         JScrollPane shipBasePane = new JScrollPane(shipBaseTable);
         JScrollPane upgradePane = new JScrollPane(upgradeTable);
         JScrollPane conditionPane = new JScrollPane(conditionTable);
+        JScrollPane dialHidePane = new JScrollPane(dialHideTable);
+        JScrollPane dialMaskPane = new JScrollPane(dialMaskTable);
 
         // pilots
         panel.add(pilotPane, BorderLayout.CENTER);
@@ -606,6 +786,30 @@ public class ContentsChecker  extends AbstractConfigurable {
             }
         });
         panel.add(downloadConditionButton);
+
+
+        // dial hides
+        panel.add(dialHidePane, BorderLayout.CENTER);
+        JButton downloadDialHideButton = new JButton("Download Dial Hide Images");
+        downloadDialHideButton.setAlignmentY(0.0F);
+        downloadDialHideButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                downloadMissingDialHides();
+            }
+        });
+        panel.add(downloadDialHideButton);
+
+        // dial masks
+        panel.add(dialMaskPane, BorderLayout.CENTER);
+        JButton downloadMaskButton = new JButton("Create Dial Mask Images");
+        downloadMaskButton.setAlignmentY(0.0F);
+        downloadMaskButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                createMissingDialMasks();
+            }
+        });
+        panel.add(downloadMaskButton);
+
 
         // ship bases
         panel.add(shipBasePane, BorderLayout.CENTER);
@@ -689,6 +893,73 @@ public class ContentsChecker  extends AbstractConfigurable {
 
         conditionTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
         return conditionTable;
+    }
+
+    private JTable buildDialHideTable(ArrayList<OTAMasterDialHides.OTADialHide> dialHideResults)
+    {
+        String[][] tableResults = new String[dialHideResults.size()][4];
+
+        OTAMasterDialHides.OTADialHide dialHide = null;
+        for(int i=0;i<dialHideResults.size();i++)
+        {
+            String[] dialHideLine = new String[4];
+            dialHide = dialHideResults.get(i);
+            dialHideLine[0] = dialHide.getXws();
+            dialHideLine[0] = MasterShipData.getShipData(dialHide.getXws()).getName();
+            dialHideLine[1] = dialHide.getImage();
+            dialHideLine[2] = dialHide.getStatus() ? "Exists":"Not Found";
+
+            tableResults[i] = dialHideLine;
+        }
+
+        dialHideTable = new JTable(tableResults,dialHideColumnNames);
+        DefaultTableModel model = new DefaultTableModel(dialHideResults.size(), dialHideColumnNames.length);
+        model.setNumRows(dialHideResults.size());
+        model.setDataVector(tableResults,dialHideColumnNames);
+
+        dialHideTable.setModel(model);
+        dialHideTable.getColumnModel().getColumn(0).setPreferredWidth(50);
+        dialHideTable.getColumnModel().getColumn(1).setPreferredWidth(75);
+        dialHideTable.getColumnModel().getColumn(2).setPreferredWidth(325);
+        dialHideTable.getColumnModel().getColumn(3).setPreferredWidth(75);
+
+
+        dialHideTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+        return dialHideTable;
+    }
+
+    private JTable buildDialMaskTable(ArrayList<OTADialMask> dialMaskResults)
+    {
+        String[][] tableResults = new String[dialMaskResults.size()][5];
+
+        OTADialMask dialMask = null;
+        for(int i=0;i<dialMaskResults.size();i++)
+        {
+            String[] dialMaskLine = new String[5];
+            dialMask = dialMaskResults.get(i);
+            dialMaskLine[0] = dialMask.getShipXws();
+            dialMaskLine[1] = MasterShipData.getShipData(dialMask.getShipXws()).getName();
+            dialMaskLine[2] = dialMask.getFaction();
+            dialMaskLine[3] = dialMask.getDialMaskImageName();
+            dialMaskLine[4] = dialMask.getStatus() ? "Exists":"Not Found";
+            tableResults[i] = dialMaskLine;
+        }
+
+        dialMaskTable = new JTable(tableResults,dialMaskColumnNames);
+        DefaultTableModel model = new DefaultTableModel(dialMaskResults.size(), dialMaskColumnNames.length);
+        model.setNumRows(dialMaskResults.size());
+        model.setDataVector(tableResults,dialMaskColumnNames);
+
+        dialMaskTable.setModel(model);
+        dialMaskTable.getColumnModel().getColumn(0).setPreferredWidth(50);
+        dialMaskTable.getColumnModel().getColumn(1).setPreferredWidth(75);
+        dialMaskTable.getColumnModel().getColumn(2).setPreferredWidth(50);
+        dialMaskTable.getColumnModel().getColumn(3).setPreferredWidth(325);
+        dialMaskTable.getColumnModel().getColumn(4).setPreferredWidth(75);
+
+
+        dialMaskTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+        return dialMaskTable;
     }
 
     private JTable buildUpgradeTable(ArrayList<OTAMasterUpgrades.OTAUpgrade> upgradeResults)

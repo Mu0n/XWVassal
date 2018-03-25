@@ -156,14 +156,45 @@ public class AnnouncementOnLog extends AbstractConfigurable {
             conditions = null;
 
             // =============================================================
+            // Dial Hides
+            // =============================================================
+            ArrayList<OTAMasterDialHides.OTADialHide> dialHides = modIntCheck.checkDialHides();
+            for (OTAMasterDialHides.OTADialHide dialHide : dialHides) {
+                if (!dialHide.getStatus()) {
+                    imageToDownload = new OTAImage();
+                    imageToDownload.setImageName(dialHide.getImage());
+                    imageToDownload.setImageType("dial");
+                    imageToDownload.setImageDisplayType("Dial Hide Ship Image");
+                    imageToDownload.setObjectName(MasterShipData.getShipData(dialHide.getXws()).getName());
+                    imagesToDownload.add(imageToDownload);
+                    //mic.Util.logToChat("Downloaded "+imageToDownload.getImageType()+" "+imageToDownload.getObjectName());
+                }
+            }
+            dialHides = null;
+
+            // =============================================================
+            // Check Dial Masks
+            // =============================================================
+            ArrayList<OTADialMask> dialMasksToGenerate = new ArrayList<OTADialMask>();
+            ArrayList<OTADialMask> dialMaskResults = modIntCheck.checkDialMasks();
+            Iterator<OTADialMask> dialMaskIterator = dialMaskResults.iterator();
+            OTADialMask missingDialMask = null;
+            while (dialMaskIterator.hasNext()) {
+                missingDialMask = dialMaskIterator.next();
+                if (!missingDialMask.getStatus()) {
+                    dialMasksToGenerate.add(missingDialMask);
+                }
+            }
+
+            // =============================================================
             // Check Ship Bases
             // =============================================================
             ArrayList<OTAShipBase> shipBasesToGenerate = new ArrayList<OTAShipBase>();
             ArrayList<OTAShipBase> shipBaseResults = modIntCheck.checkShipBases();
-            Iterator<OTAShipBase> i = shipBaseResults.iterator();
+            Iterator<OTAShipBase> shipBaseIterator = shipBaseResults.iterator();
             OTAShipBase missingShipBase = null;
-            while (i.hasNext()) {
-                missingShipBase = i.next();
+            while (shipBaseIterator.hasNext()) {
+                missingShipBase = shipBaseIterator.next();
                 if (!missingShipBase.getStatus()) {
                     shipBasesToGenerate.add(missingShipBase);
                 }
@@ -178,16 +209,49 @@ public class AnnouncementOnLog extends AbstractConfigurable {
             XWOTAUtils.downloadAndSaveImagesFromOTA(imagesToDownload);
 
             // =============================================================
-            // Generate the missing ship bases
+            // Generate the missing Dial Masks
             // =============================================================
-            OTAShipBase shipBase = null;
+            OTADialMask dialMask = null;
             GameModule gameModule = GameModule.getGameModule();
             DataArchive dataArchive = gameModule.getDataArchive();
             FileArchive fileArchive = dataArchive.getArchive();
             ArchiveWriter writer = new ArchiveWriter(fileArchive);
-            i = shipBasesToGenerate.iterator();
-            while (i.hasNext()) {
-                shipBase = i.next();
+            dialMaskIterator = dialMasksToGenerate.iterator();
+            while (dialMaskIterator.hasNext()) {
+                dialMask = dialMaskIterator.next();
+                if (!dialMask.getStatus()) {
+                    imageToDownload = new OTAImage();
+                    imageToDownload.setImageName("");
+                    imageToDownload.setImageType("dial");
+                    imageToDownload.setImageDisplayType("Dial Hide Ship Image");
+                    MasterShipData.ShipData shipData = MasterShipData.getShipData(dialMask.getShipXws());
+                    imageToDownload.setObjectName(shipData.getName());
+
+                    XWOTAUtils.buildDialMaskImages(dialMask.getFaction(), dialMask.getShipXws(), dialMask.getDialHideImageName(), dialMask.getDialMaskImageName(), writer);
+
+                }
+            }
+    //        try {
+     //           writer.save();
+     //       } catch (IOException e) {
+     //           mic.Util.logToChat("Exception occurred saving module");
+     //       }
+            dialMaskResults = null;
+
+            dialMasksToGenerate = null;
+
+
+            // =============================================================
+            // Generate the missing ship bases
+            // =============================================================
+            OTAShipBase shipBase = null;
+   //         GameModule gameModule = GameModule.getGameModule();
+     //       DataArchive dataArchive = gameModule.getDataArchive();
+     //       FileArchive fileArchive = dataArchive.getArchive();
+    //        ArchiveWriter writer = new ArchiveWriter(fileArchive);
+            shipBaseIterator = shipBasesToGenerate.iterator();
+            while (shipBaseIterator.hasNext()) {
+                shipBase = shipBaseIterator.next();
                 if (!shipBase.getStatus()) {
                     imageToDownload = new OTAImage();
                     imageToDownload.setImageName("");
@@ -208,6 +272,8 @@ public class AnnouncementOnLog extends AbstractConfigurable {
 
                 }
             }
+
+            // now save the module
             try {
                 writer.save();
             } catch (IOException e) {
@@ -229,7 +295,7 @@ public class AnnouncementOnLog extends AbstractConfigurable {
                 while (imageIterator.hasNext()) {
                     image = imageIterator.next();
                     action = "Downloaded";
-                    if (image.getImageType().equals("Ship Base")) {
+                    if (image.getImageType().equals("Ship Base") || image.getImageType().equals("dial")) {
                         action = "Generated";
                     }
                     mic.Util.logToChat(action + " " + image.getImageDisplayType() + " " + image.getObjectName());

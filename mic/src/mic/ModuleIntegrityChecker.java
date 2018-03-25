@@ -99,6 +99,32 @@ public class ModuleIntegrityChecker {
         return conditionList;
     }
 
+    public ArrayList<OTAMasterDialHides.OTADialHide> checkDialHides()
+    {
+
+        OTAMasterDialHides omdh = new OTAMasterDialHides();
+        Collection<OTAMasterDialHides.OTADialHide> dialHides = omdh.getAllDialHides();
+
+
+        ArrayList<OTAMasterDialHides.OTADialHide> dialHideList = new ArrayList<OTAMasterDialHides.OTADialHide>();
+        Iterator<OTAMasterDialHides.OTADialHide> i = dialHides.iterator();
+
+        OTAMasterDialHides.OTADialHide dialHide = null;
+        while(i.hasNext())
+        {
+            dialHide = i.next();
+
+            dialHide.setStatus(XWOTAUtils.imageExistsInModule(dialHide.getImage()));
+
+            dialHideList.add(dialHide);
+
+        }
+
+        return dialHideList;
+    }
+
+
+
 public ArrayList<OTAMasterPilots.OTAPilot> checkPilots()
 {
     // get list of pilots from OTAMasterPilots
@@ -189,6 +215,53 @@ public ArrayList<OTAMasterPilots.OTAPilot> checkPilots()
         }
 
         return shipList;
+
+    }
+
+    public ArrayList<OTADialMask> checkDialMasks()
+    {
+        OTAMasterDialHides omdh = new OTAMasterDialHides();
+        Collection<OTAMasterDialHides.OTADialHide> dialHides = omdh.getAllDialHides();
+
+        MasterShipData msd = new MasterShipData();
+        msd.loadData();
+
+        ArrayList<OTADialMask> dialMaskList = new ArrayList<OTADialMask>();
+        Iterator<OTAMasterDialHides.OTADialHide> dialHideIterator = dialHides.iterator();
+
+        while(dialHideIterator.hasNext())
+        {
+            OTAMasterDialHides.OTADialHide dialHide = dialHideIterator.next();
+
+            // check to see which factions to generate this dial mask
+            List<String> factions = dialHide.getFactions();
+
+            Iterator<String> factionIterator = factions.iterator();
+            while(factionIterator.hasNext())
+            {
+
+                String factionName = factionIterator.next();
+
+                String dialMaskImageName = XWOTAUtils.buildDialMaskImageName(factionName,dialHide.getXws());
+
+
+                OTADialMask dialMask = new OTADialMask();
+                dialMask.setFaction(factionName);
+                dialMask.setDialHideImageName(dialHide.getImage());
+                dialMask.setDialMaskImageName(dialMaskImageName);
+                dialMask.setShipName(MasterShipData.getShipData(dialHide.getXws()).getName());
+                dialMask.setShipXws(dialHide.getXws());
+                dialMask.setStatus(XWOTAUtils.imageExistsInModule(dialMaskImageName));
+
+
+                dialMaskList.add(dialMask);
+
+            }
+
+
+        }
+
+        return dialMaskList;
 
     }
 

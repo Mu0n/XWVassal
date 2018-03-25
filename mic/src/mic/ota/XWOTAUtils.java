@@ -125,6 +125,50 @@ public class XWOTAUtils {
 
     }
 
+
+    public static void buildDialMaskImages(String faction, String shipXWS, String dialHideImageName , String dialMaskImageName, ArchiveWriter writer)
+    {
+        GameModule gameModule = GameModule.getGameModule();
+        DataArchive dataArchive = gameModule.getDataArchive();
+        final String rebelDialImage = "DialBack_rebelalliance.png";
+        final String imperialDialImage = "DialBack_galacticempire.png";
+        final String scumDialImage = "DialBack_scumandvillainy.png";
+
+        // get the correct image for the faction background
+        String dialBackImage = null;
+        if(faction.equals("rebelalliance"))
+        {
+            dialBackImage = rebelDialImage;
+        }else if(faction.equals("galacticempire"))
+        {
+            dialBackImage = imperialDialImage;
+        }else{
+            dialBackImage = scumDialImage;
+        }
+
+        try {
+
+            InputStream is = dataArchive.getInputStream("images/"+dialBackImage);
+            BufferedImage image = ImageUtils.getImage(dialBackImage,is);
+
+            // apply the ship hide image
+            InputStream is2 = dataArchive.getInputStream("images/"+dialHideImageName);
+            BufferedImage dialHideImage = ImageUtils.getImage(dialHideImageName, is2);
+            Graphics g = image.getGraphics();
+            g.drawImage(dialHideImage, 0, 0, null);
+
+            // save it
+            saveDialMaskImageToModule(dialMaskImageName, image, writer);
+
+
+        }catch(IOException e)
+        {
+            Util.logToChat("Exception occurred generating dial mask image for "+faction+"/"+shipXWS);
+        }
+
+
+    }
+
     private static String determineAltShipBaseNameFromImage(String faction, String shipImageName){
         String coreName = shipImageName.replace("Ship_","").replace(".png","");
         return "Ship_Base_"+simplifyFactionName(faction)+"_"+coreName+".png";
@@ -158,6 +202,40 @@ public class XWOTAUtils {
             byte[] bytes = baos.toByteArray();
             baos.close();
             addImageToModule(targetBaseImageName, bytes, writer);
+
+            tempFile.delete();
+        }catch(IOException e)
+        {
+
+        }
+    }
+
+    private static void saveDialMaskImageToModule(String dialMaskImageName, BufferedImage dialMaskImage, ArchiveWriter writer)
+    {
+
+        File tempFile = null;
+        try {
+            tempFile = File.createTempFile("XWVassalMaskImage", "");
+
+            ImageIO.write(dialMaskImage, "PNG", tempFile);
+        }catch(IOException e)
+        {
+
+        }
+        try {
+            FileInputStream fis = new FileInputStream(tempFile);
+            byte[] byteChunk = new byte[4096];
+            int n;
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            while ((n = fis.read(byteChunk)) > 0) {
+                baos.write(byteChunk, 0, n);
+            }
+            if (fis != null) {
+                fis.close();
+            }
+            byte[] bytes = baos.toByteArray();
+            baos.close();
+            addImageToModule(dialMaskImageName, bytes, writer);
 
             tempFile.delete();
         }catch(IOException e)
@@ -382,6 +460,29 @@ public class XWOTAUtils {
 
         shipBaseImageSB.append("_");
         shipBaseImageSB.append(identifier);
+
+        shipBaseImageSB.append(".png");
+
+        return shipBaseImageSB.toString();
+    }
+
+
+    public static String buildDialMaskImageName(String faction, String shipXWS)
+    {
+
+        //DialMask_<faction lowercase no spaces>_<shipXWS>.png
+
+        StringBuilder shipBaseImageSB = new StringBuilder();
+
+        shipBaseImageSB.append("DialMask_");
+
+        // find the faction
+        shipBaseImageSB.append(faction);
+
+
+        shipBaseImageSB.append("_");
+        shipBaseImageSB.append(shipXWS);
+
 
         shipBaseImageSB.append(".png");
 
