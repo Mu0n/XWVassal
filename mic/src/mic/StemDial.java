@@ -5,6 +5,7 @@ import VASSAL.command.Command;
 import VASSAL.command.CommandEncoder;
 import VASSAL.counters.*;
 import com.google.common.collect.ImmutableMap;
+import mic.ota.XWOTAUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -160,7 +161,7 @@ public class StemDial extends Decorator implements EditablePiece {
             .put("5KW", "Move_5_U_W.png")
             .put("5KR", "Move_5_U_R.png")
             .build();
-
+/*
     // Dial Hide images (ship image that shows active player that the dial is hidden
     // xwsship / image
     private static Map<String, String> dialHideImages = ImmutableMap.<String, String>builder()
@@ -223,7 +224,8 @@ public class StemDial extends Decorator implements EditablePiece {
             .put("bsf17bomber","Dial_Hide_Rebel_BSF-17.png")
             .put("unreleased","Dial_Hide_WIP.png")
             .build();
-
+*/
+/*
     // Dial Back images - images that the opposing player sees when the dial is hidden
     // xwsship/faction / image
     private static Map<String, String> dialBackImages = ImmutableMap.<String, String>builder()
@@ -291,13 +293,14 @@ public class StemDial extends Decorator implements EditablePiece {
             .put("sheathipedeclassshuttle/Rebel Alliance","Dial_Back_Rebel_Sheathipede.png")
             .put("tiesilencer/First Order","Dial_Back_Empire_TIE_Silencer.png")
             .put("bsf17bomber/Resistance","Dial_Back_Rebel_BSF-17.png")
+
             .put("unreleased/Resistance","Dial_Back_Rebel_WIP.png")
             .put("unreleased/Rebel Alliance","Dial_Back_Rebel_WIP.png")
             .put("unreleased/First Order","Dial_Back_Empire_WIP.png")
             .put("unreleased/Galactic Empire","Dial_Back_Empire_WIP.png")
             .put("unreleased/Scum and Villainy","Dial_Back_Scum_WIP.png")
             .build();
-
+*/
     public StemDial(){
         this(null);
     }
@@ -327,25 +330,6 @@ public class StemDial extends Decorator implements EditablePiece {
     public Command myKeyEvent(KeyStroke keyStroke) {
         return null;
     }
-
-//    @Override
-//    public Command keyEvent(KeyStroke stroke) {
-//        //check to see if 'x' was pressed
-//        if(KeyStroke.getKeyStroke(KeyEvent.VK_I, KeyEvent.CTRL_DOWN_MASK, true).equals(stroke)) {
-//            logToChatWithTime("temporary trigger for Dial generation -will be eventually ported to autospawn\nPossibly to a right click menu as well with a dynamically fetched list of all ships??");
-//            GamePiece piece = getInner();
-
-//            // this is hardcoded - need to fix
-//            DialGenerateCommand myDialGen = new DialGenerateCommand("attackshuttle", piece, "Rebel Alliance");
-//            Command stringOCommands = piece.keyEvent(stroke);
-//            stringOCommands.append(myDialGen);
-
-//            myDialGen.execute();
-//            return stringOCommands;
-//        }
-
-//        return piece.keyEvent(stroke);
-//    }
 
     public String getDescription() {
         return "Custom StemDial (mic.StemDial)";
@@ -462,31 +446,73 @@ public class StemDial extends Decorator implements EditablePiece {
 
         }
 
+
+
+
         private void buildDialMask(GamePiece piece, String xwsShipName, String faction)
         {
-            // get the back image
-            String dialBackImage = dialBackImages.get(xwsShipName+"/"+faction);
+            final String wipResistanceMask = "Dial_Back_Rebel_WIP.png";
+            final String wipRebelMask = "Dial_Back_Rebel_WIP.png";
+            final String wipFirstOrderMask = "Dial_Back_Empire_WIP.pngg";
+            final String wipEmpireMask = "Dial_Back_Empire_WIP.png";
+            final String wipScumMask = "Dial_Back_Scum_WIP.png";
 
-            // if we don't have the image (unreleased ship), use a WIP image
-            if(dialBackImage == null)
+
+            // first get the core faction name from the subfaction (i.e. Resistance => RebelAlliance
+            String coreFactionName = null;
+            if(faction.equalsIgnoreCase("Rebel Alliance") || faction.equalsIgnoreCase("Resistance"))
             {
-                dialBackImage = dialBackImages.get("unreleased/"+faction);
+                coreFactionName = "rebelalliance";
+            }else if(faction.equalsIgnoreCase("Galactic Empire") || faction.equalsIgnoreCase("First Order"))
+            {
+                coreFactionName = "galacticempire";
+            }else if(faction.equalsIgnoreCase("Scum and Villainy"))
+            {
+                coreFactionName = "scumandvillainy";
             }
-            // get the dial hide image
-            String dialHideImage = dialHideImages.get(xwsShipName);
+
+            // get the back image
+           // String dialBackImage = dialBackImages.get(xwsShipName+"/"+faction);
+            String dialMaskImageName = "DialMask_"+coreFactionName+"_"+xwsShipName+".png";
 
             // if we don't have the image (unreleased ship), use a WIP image
-            if(dialHideImage == null)
+            if(!XWOTAUtils.imageExistsInModule(dialMaskImageName))
             {
-                dialHideImage = dialHideImages.get("unreleased");
+                if(faction.equalsIgnoreCase("Resistance"))
+                {
+                    dialMaskImageName = wipResistanceMask;
+                }else if(faction.equalsIgnoreCase("Rebel Alliance"))
+                {
+                    dialMaskImageName = wipRebelMask;
+                }else if(faction.equalsIgnoreCase("First Order"))
+                {
+                    dialMaskImageName = wipFirstOrderMask;
+                }else if(faction.equalsIgnoreCase("Galactic Empire"))
+                {
+                    dialMaskImageName = wipEmpireMask;
+                }else if(faction.equalsIgnoreCase("Scum and Villainy"))
+                {
+                    dialMaskImageName = wipScumMask;
+                }
+            }
+
+
+            // get the dial hide image
+           // String dialHideImage = dialHideImages.get(xwsShipName);
+            String dialHideImageName = "DialHide_"+xwsShipName+".png";
+
+            // if we don't have the image (unreleased ship), use a WIP image
+            if(!XWOTAUtils.imageExistsInModule(dialHideImageName))
+            {
+                dialHideImageName = "Dial_Hide_WIP.png";
             }
 
             // build the string
             StringBuilder sb = new StringBuilder();
             sb.append("obs;82,130;");
-            sb.append(dialBackImage);
+            sb.append(dialMaskImageName);
             sb.append(";Reveal;G");
-            sb.append(dialHideImage);
+            sb.append(dialHideImageName);
             sb.append(";;player:;Peek");
 
             Obscurable myObs = (Obscurable)Decorator.getDecorator(piece,Obscurable.class);
