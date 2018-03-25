@@ -14,6 +14,11 @@ public class OTAMasterUpgrades  extends ArrayList<OTAMasterUpgrades.OTAUpgrade> 
 
     private static Map<String, OTAMasterUpgrades.OTAUpgrade> loadedData = null;
 
+    public static void flushData()
+    {
+        loadedData = null;
+    }
+
     public Collection<OTAMasterUpgrades.OTAUpgrade> getAllUpgrades()
     {
         if(loadedData == null)

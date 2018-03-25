@@ -13,7 +13,10 @@ public class OTAMasterPilots extends ArrayList<OTAMasterPilots.OTAPilot> {
     private static String REMOTE_URL = "https://raw.githubusercontent.com/Mu0n/XWVassalOTA/master/json/pilot_images.json";
 
     private static Map<String, OTAMasterPilots.OTAPilot> loadedData = null;
-
+    public static void flushData()
+    {
+        loadedData = null;
+    }
     public Collection<OTAPilot> getAllPilots()
     {
         if(loadedData == null)
