@@ -99,6 +99,32 @@ public class ModuleIntegrityChecker {
         return conditionList;
     }
 
+    public ArrayList<OTAMasterDialHides.OTADialHide> checkDialHides()
+    {
+
+        OTAMasterDialHides omdh = new OTAMasterDialHides();
+        Collection<OTAMasterDialHides.OTADialHide> dialHides = omdh.getAllDialHides();
+
+
+        ArrayList<OTAMasterDialHides.OTADialHide> dialHideList = new ArrayList<OTAMasterDialHides.OTADialHide>();
+        Iterator<OTAMasterDialHides.OTADialHide> i = dialHides.iterator();
+
+        OTAMasterDialHides.OTADialHide dialHide = null;
+        while(i.hasNext())
+        {
+            dialHide = i.next();
+
+            dialHide.setStatus(XWOTAUtils.imageExistsInModule(dialHide.getImage()));
+
+            dialHideList.add(dialHide);
+
+        }
+
+        return dialHideList;
+    }
+
+
+
 public ArrayList<OTAMasterPilots.OTAPilot> checkPilots()
 {
     // get list of pilots from OTAMasterPilots

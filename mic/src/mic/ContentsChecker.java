@@ -29,6 +29,7 @@ public class ContentsChecker  extends AbstractConfigurable {
     private ArrayList<String> missingActions;
     private ArrayList<String> missingUpgrades;
     private ArrayList<String> missingConditions;
+    private ArrayList<String> missingDialHides;
     private ArrayList<OTAShipBase> missingShipBases;
     private JTable pilotTable;
     private JTable shipTable;
@@ -36,12 +37,14 @@ public class ContentsChecker  extends AbstractConfigurable {
     private JTable shipBaseTable;
     private JTable upgradeTable;
     private JTable conditionTable;
+    private JTable dialHideTable;
     private final String[] pilotColumnNames = {"Faction","Ship","Pilot","Image","Status"};
     private final String[] shipColumnNames = {"XWS","Identifier","Image","Status"};
     private final String[] actionColumnNames = {"Name","Image","Status"};
     private final String[] shipBaseColumnNames = {"Name","XWS","Identifier","Faction","BaseImage","shipImage","Status"};
     private final String[] upgradeColumnNames = {"XWS","Slot","Image","Status"};
     private final String[] conditionColumnNames = {"XWS","Image","Status","Token Image","Status"};
+    private final String[] dialHideColumnNames = {"Ship Name", "Image", "Status"};
 
     private ModuleIntegrityChecker modIntChecker = null;
 
@@ -151,6 +154,31 @@ public class ContentsChecker  extends AbstractConfigurable {
 
         // refresh the table
         refreshActionTable();
+    }
+
+    private synchronized void downloadMissingDialHides() {
+
+        // download the dial hide images
+        XWOTAUtils.downloadAndSaveImagesFromOTA("dial",missingDialHides );
+
+
+        // refresh the list
+        ArrayList<OTAMasterDialHides.OTADialHide> dialHideResults = modIntChecker.checkDialHides();
+        missingDialHides = new ArrayList<String>();
+
+        Iterator<OTAMasterDialHides.OTADialHide> i = dialHideResults.iterator();
+        OTAMasterDialHides.OTADialHide dialHide = null;
+        while(i.hasNext())
+        {
+            dialHide = i.next();
+            if(!dialHide.getStatus())
+            {
+                missingActions.add(dialHide.getImage());
+            }
+        }
+
+        // refresh the table
+        refreshDialHideTable();
     }
 
     private synchronized void downloadMissingShips() {
@@ -400,6 +428,36 @@ public class ContentsChecker  extends AbstractConfigurable {
         model.fireTableDataChanged();
     }
 
+
+    private void refreshDialHideTable()
+    {
+        ArrayList<OTAMasterDialHides.OTADialHide> dialHideResults = modIntChecker.checkDialHides();
+        String[][] tableResults = new String[dialHideResults.size()][3];
+
+        OTAMasterDialHides.OTADialHide dialHide = null;
+        for(int i=0;i<dialHideResults.size();i++)
+        {
+            String[] dialHideLine = new String[3];
+            dialHide = dialHideResults.get(i);
+            dialHideLine[0] = dialHide.getXws();
+            dialHideLine[1] = dialHide.getImage();
+            dialHideLine[2] = dialHide.getStatus() ? "Exists":"Not Found";
+
+
+            tableResults[i] = dialHideLine;
+        }
+
+
+        DefaultTableModel model = (DefaultTableModel) dialHideTable.getModel();
+
+        model.setNumRows(tableResults.length);
+        model.setDataVector(tableResults,dialHideColumnNames);
+        dialHideTable.getColumnModel().getColumn(0).setPreferredWidth(50);;
+        dialHideTable.getColumnModel().getColumn(1).setPreferredWidth(325);
+        dialHideTable.getColumnModel().getColumn(2).setPreferredWidth(75);
+        model.fireTableDataChanged();
+    }
+
     private void refreshShipTable()
     {
         ArrayList<OTAMasterShips.OTAShip> shipResults = modIntChecker.checkShips();
@@ -441,6 +499,7 @@ public class ContentsChecker  extends AbstractConfigurable {
         ArrayList<OTAShipBase> shipBaseResults = modIntChecker.checkShipBases();
         ArrayList<OTAMasterUpgrades.OTAUpgrade> upgradeResults = modIntChecker.checkUpgrades();
         ArrayList<OTAMasterConditions.OTACondition> conditionResults = modIntChecker.checkConditions();
+        ArrayList<OTAMasterDialHides.OTADialHide> dialHideResults = modIntChecker.checkDialHides();
 
         // store the missing pilots
         missingPilots = new ArrayList<String>();
@@ -511,6 +570,19 @@ public class ContentsChecker  extends AbstractConfigurable {
             }
         }
 
+        // store the missing dial hides
+        missingDialHides = new ArrayList<String>();
+        Iterator<OTAMasterDialHides.OTADialHide> dialHideIterator = dialHideResults.iterator();
+        OTAMasterDialHides.OTADialHide dialHide = null;
+        while(dialHideIterator.hasNext())
+        {
+            dialHide = dialHideIterator.next();
+            if(!dialHide.getStatus())
+            {
+                missingDialHides.add(dialHide.getImage());
+            }
+        }
+
         // store the missing ship bases
         missingShipBases = new ArrayList<OTAShipBase>();
         Iterator<OTAShipBase> shipBaseIterator = shipBaseResults.iterator();
@@ -544,6 +616,7 @@ public class ContentsChecker  extends AbstractConfigurable {
         shipBaseTable = buildShipBaseTable(shipBaseResults);
         upgradeTable = buildUpgradeTable(upgradeResults);
         conditionTable = buildConditionTable(conditionResults);
+        dialHideTable = buildDialHideTable(dialHideResults);
 
         JScrollPane pilotPane = new JScrollPane(pilotTable);
         JScrollPane shipPane = new JScrollPane(shipTable);
@@ -551,6 +624,7 @@ public class ContentsChecker  extends AbstractConfigurable {
         JScrollPane shipBasePane = new JScrollPane(shipBaseTable);
         JScrollPane upgradePane = new JScrollPane(upgradeTable);
         JScrollPane conditionPane = new JScrollPane(conditionTable);
+        JScrollPane dialHidePane = new JScrollPane(dialHideTable);
 
         // pilots
         panel.add(pilotPane, BorderLayout.CENTER);
@@ -606,6 +680,19 @@ public class ContentsChecker  extends AbstractConfigurable {
             }
         });
         panel.add(downloadConditionButton);
+
+
+        // actions
+        panel.add(dialHidePane, BorderLayout.CENTER);
+        JButton downloadDialHideButten = new JButton("Download Dial Hide Images");
+        downloadDialHideButten.setAlignmentY(0.0F);
+        downloadDialHideButten.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                downloadMissingDialHides();
+            }
+        });
+        panel.add(downloadDialHideButten);
+
 
         // ship bases
         panel.add(shipBasePane, BorderLayout.CENTER);
@@ -690,6 +777,39 @@ public class ContentsChecker  extends AbstractConfigurable {
         conditionTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
         return conditionTable;
     }
+
+    private JTable buildDialHideTable(ArrayList<OTAMasterDialHides.OTADialHide> dialHideResults)
+    {
+        String[][] tableResults = new String[dialHideResults.size()][3];
+
+        OTAMasterDialHides.OTADialHide dialHide = null;
+        for(int i=0;i<dialHideResults.size();i++)
+        {
+            String[] dialHideLine = new String[3];
+            dialHide = dialHideResults.get(i);
+            dialHideLine[0] = dialHide.getXws();
+            dialHideLine[1] = dialHide.getImage();
+            dialHideLine[2] = dialHide.getStatus() ? "Exists":"Not Found";
+
+            tableResults[i] = dialHideLine;
+        }
+
+        dialHideTable = new JTable(tableResults,dialHideColumnNames);
+        DefaultTableModel model = new DefaultTableModel(dialHideResults.size(), dialHideColumnNames.length);
+        model.setNumRows(dialHideResults.size());
+        model.setDataVector(tableResults,dialHideColumnNames);
+
+        dialHideTable.setModel(model);
+        dialHideTable.getColumnModel().getColumn(0).setPreferredWidth(100);;
+        dialHideTable.getColumnModel().getColumn(1).setPreferredWidth(325);
+        dialHideTable.getColumnModel().getColumn(2).setPreferredWidth(75);
+
+
+        dialHideTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+        return dialHideTable;
+    }
+
+
 
     private JTable buildUpgradeTable(ArrayList<OTAMasterUpgrades.OTAUpgrade> upgradeResults)
     {
