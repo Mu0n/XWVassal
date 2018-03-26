@@ -649,7 +649,7 @@ public class ContentsChecker extends AbstractConfigurable {
     }
 
     public void addTo(Buildable parent) {
-        JButton b = new JButton("Content Checker 2");
+        JButton b = new JButton("Content Checker");
         b.setAlignmentY(0.0F);
         b.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
