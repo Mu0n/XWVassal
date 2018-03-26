@@ -14,7 +14,10 @@ public class OTAMasterDialHides  extends ArrayList<OTAMasterDialHides.OTADialHid
     private static String REMOTE_URL = "https://raw.githubusercontent.com/Mu0n/XWVassalOTA/master/json/dial_images.json";
 
     private static Map<String, OTAMasterDialHides.OTADialHide> loadedData = null;
-
+    public static void flushData()
+    {
+        loadedData = null;
+    }
     public Collection<OTAMasterDialHides.OTADialHide> getAllDialHides()
     {
         if(loadedData == null)

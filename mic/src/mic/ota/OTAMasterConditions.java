@@ -15,6 +15,10 @@ public class OTAMasterConditions extends ArrayList<OTAMasterConditions.OTACondit
 
     private static Map<String, OTAMasterConditions.OTACondition> loadedData = null;
 
+    public static void flushData()
+    {
+        loadedData = null;
+    }
     public Collection<OTAMasterConditions.OTACondition> getAllConditions()
     {
         if(loadedData == null)

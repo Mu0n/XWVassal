@@ -15,7 +15,10 @@ public class OTAMasterShips extends ArrayList<OTAMasterShips.OTAShip> {
     private static String REMOTE_URL = "https://raw.githubusercontent.com/Mu0n/XWVassalOTA/master/json/ship_images.json";
 
     private static Map<String, OTAMasterShips.OTAShip> loadedData = null;
-
+    public static void flushData()
+    {
+        loadedData = null;
+    }
     public Collection<OTAShip> getAllShips()
     {
         if(loadedData == null)

@@ -54,6 +54,7 @@ public class ModuleIntegrityChecker {
     {
         // get list of upgrades from OTAMasterUpgrades
         OTAMasterUpgrades omu = new OTAMasterUpgrades();
+        omu.flushData();
         Collection<OTAMasterUpgrades.OTAUpgrade> upgrades = omu.getAllUpgrades();
 
 
@@ -78,6 +79,7 @@ public class ModuleIntegrityChecker {
     {
         // get list of conditions from OTAMasterUpgrades
         OTAMasterConditions omc = new OTAMasterConditions();
+        omc.flushData();
         Collection<OTAMasterConditions.OTACondition> conditions = omc.getAllConditions();
 
 
@@ -103,6 +105,7 @@ public class ModuleIntegrityChecker {
     {
 
         OTAMasterDialHides omdh = new OTAMasterDialHides();
+        omdh.flushData();
         Collection<OTAMasterDialHides.OTADialHide> dialHides = omdh.getAllDialHides();
 
 
@@ -129,6 +132,7 @@ public ArrayList<OTAMasterPilots.OTAPilot> checkPilots()
 {
     // get list of pilots from OTAMasterPilots
     OTAMasterPilots omp = new OTAMasterPilots();
+    omp.flushData();
     Collection<OTAMasterPilots.OTAPilot> pilots = omp.getAllPilots();
 
 
@@ -152,6 +156,7 @@ public ArrayList<OTAMasterPilots.OTAPilot> checkPilots()
     {
         // get list of ships from OTAMasterShips
         OTAMasterShips oms = new OTAMasterShips();
+        oms.flushData();
         Collection<OTAMasterShips.OTAShip> ships = oms.getAllShips();
 
 
@@ -174,6 +179,7 @@ public ArrayList<OTAMasterPilots.OTAPilot> checkPilots()
     public ArrayList<OTAShipBase> checkShipBases()
     {
         OTAMasterShips oms = new OTAMasterShips();
+        oms.flushData();
         Collection<OTAMasterShips.OTAShip> ships = oms.getAllShips();
 
           MasterShipData msd = new MasterShipData();
@@ -221,6 +227,7 @@ public ArrayList<OTAMasterPilots.OTAPilot> checkPilots()
     public ArrayList<OTADialMask> checkDialMasks()
     {
         OTAMasterDialHides omdh = new OTAMasterDialHides();
+        omdh.flushData();
         Collection<OTAMasterDialHides.OTADialHide> dialHides = omdh.getAllDialHides();
 
         MasterShipData msd = new MasterShipData();
@@ -270,6 +277,7 @@ public ArrayList<OTAMasterPilots.OTAPilot> checkPilots()
 
         // get list of Actions from OTAMasterActions
         OTAMasterActions oma = new OTAMasterActions();
+        oma.flushData();
         Collection<OTAMasterActions.OTAAction> actions = oma.getAllActions();
 
         ArrayList<OTAMasterActions.OTAAction> actionList = new ArrayList<OTAMasterActions.OTAAction>();

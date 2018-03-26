@@ -14,6 +14,11 @@ public class OTAMasterActions extends ArrayList<OTAMasterActions.OTAAction> {
 
     private static Map<String,OTAMasterActions.OTAAction> loadedData = null;
 
+    public static void flushData()
+    {
+        loadedData = null;
+    }
+
     public Collection<OTAAction> getAllActions()
     {
         if(loadedData == null)
