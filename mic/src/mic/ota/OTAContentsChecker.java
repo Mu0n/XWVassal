@@ -177,7 +177,7 @@ public class OTAContentsChecker extends AbstractConfigurable {
         optionPane.setMessage(msg);
         optionPane.add(panel);
         JDialog dialog = optionPane.createDialog(frame, "Contents Checker");
-        dialog.setSize(1000,1000);
+        dialog.setSize(500,250);
 
         // new window here
         finalTable = buildFinalTable(pilotResults,shipResults,actionResults,shipBaseResults,upgradeResults,conditionResults,dialHideResults,dialMaskResults);
@@ -197,7 +197,6 @@ public class OTAContentsChecker extends AbstractConfigurable {
             String okMsg = "All content is up to date";
             optionPane.setMessage(okMsg);
             optionPane.add(panel);
-            dialog.setSize(250,250);
         }
 
             dialog.setVisible(true);
@@ -650,7 +649,7 @@ public class OTAContentsChecker extends AbstractConfigurable {
     }
 
     public void addTo(Buildable parent) {
-        JButton b = new JButton("Content Checker");
+        JButton b = new JButton("Content Checker 2");
         b.setAlignmentY(0.0F);
         b.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
@@ -662,7 +661,7 @@ public class OTAContentsChecker extends AbstractConfigurable {
     }
 
     public String getDescription() {
-        return "Contents Checker (mic.ContentsChecker)";
+        return "Contents Checker (mic.ota.OTAContentsChecker)";
     }
 
     @Override

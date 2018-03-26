@@ -21,7 +21,7 @@ import java.util.Iterator;
 /**
  * Created by Mic on 12/03/2018.
  */
-public class ContentsChecker  extends AbstractConfigurable {
+public class ContentsChecker extends AbstractConfigurable {
     private JButton OKButton = new JButton();
 
     private ArrayList<String> missingPilots;
@@ -32,551 +32,13 @@ public class ContentsChecker  extends AbstractConfigurable {
     private ArrayList<String> missingDialHides;
     private ArrayList<OTADialMask> missingDialMasks;
     private ArrayList<OTAShipBase> missingShipBases;
-    private JTable pilotTable;
-    private JTable shipTable;
-    private JTable actionTable;
-    private JTable shipBaseTable;
-    private JTable upgradeTable;
-    private JTable conditionTable;
-    private JTable dialHideTable;
-    private JTable dialMaskTable;
-    private final String[] pilotColumnNames = {"Faction","Ship","Pilot","Image","Status"};
-    private final String[] shipColumnNames = {"XWS","Identifier","Image","Status"};
-    private final String[] actionColumnNames = {"Name","Image","Status"};
-    private final String[] shipBaseColumnNames = {"Name","XWS","Identifier","Faction","BaseImage","shipImage","Status"};
-    private final String[] upgradeColumnNames = {"XWS","Slot","Image","Status"};
-    private final String[] conditionColumnNames = {"XWS","Image","Status","Token Image","Status"};
-    private final String[] dialHideColumnNames = {"Ship XWS","Ship Name", "Image", "Status"};
-    private final String[] dialMaskColumnNames = {"Ship XWS","Ship Name", "Faction","Image","Status"};
+
+    private final String[] finalColumnNames = {"Type","Name", "Faction"};
+
+
+    private JTable finalTable;
 
     private ModuleIntegrityChecker modIntChecker = null;
-
-    private synchronized void downloadMissingPilots() {
-
-        // download the pilots
-        Iterator i = missingPilots.iterator();
-        XWOTAUtils.downloadAndSaveImagesFromOTA("pilots",missingPilots);
-
-
-        // refresh the list
-        ArrayList<OTAMasterPilots.OTAPilot> pilotResults = modIntChecker.checkPilots();
-        missingPilots = new ArrayList<String>();
-        Iterator<OTAMasterPilots.OTAPilot> pilotIterator = pilotResults.iterator();
-        OTAMasterPilots.OTAPilot pilot = null;
-        while(pilotIterator.hasNext())
-        {
-            pilot = pilotIterator.next();
-
-            if(!pilot.getStatus())
-            {
-                missingPilots.add(pilot.getImage());
-            }
-        }
-
-        // refresh the table
-        refreshPilotTable();
-    }
-
-    private synchronized void downloadMissingUpgrades() {
-
-        // download the upgrades
-        Iterator<String> i = missingUpgrades.iterator();
-        XWOTAUtils.downloadAndSaveImagesFromOTA("upgrades",missingUpgrades);
-
-
-        // refresh the list
-        ArrayList<OTAMasterUpgrades.OTAUpgrade> upgradeResults = modIntChecker.checkUpgrades();
-        missingUpgrades = new ArrayList<String>();
-        Iterator<OTAMasterUpgrades.OTAUpgrade> upgradeIterator = upgradeResults.iterator();
-        OTAMasterUpgrades.OTAUpgrade upgrade = null;
-        while(upgradeIterator.hasNext())
-        {
-            upgrade = upgradeIterator.next();
-
-            if(!upgrade.getStatus())
-            {
-                missingUpgrades.add(upgrade.getImage());
-            }
-        }
-
-        // refresh the table
-        refreshUpgradeTable();
-    }
-
-    private synchronized void downloadMissingConditions() {
-
-        // download the conditions
-        Iterator<String> i = missingConditions.iterator();
-        XWOTAUtils.downloadAndSaveImagesFromOTA("conditions",missingConditions);
-
-
-        // refresh the list
-        ArrayList<OTAMasterConditions.OTACondition> conditionResults = modIntChecker.checkConditions();
-        missingConditions = new ArrayList<String>();
-        Iterator<OTAMasterConditions.OTACondition> conditionIterator = conditionResults.iterator();
-        OTAMasterConditions.OTACondition condition = null;
-        while(conditionIterator.hasNext())
-        {
-
-            condition = conditionIterator.next();
-
-            if(!condition.getStatus())
-            {
-                missingConditions.add(condition.getImage());
-            }
-            if(!condition.getTokenStatus())
-            {
-                missingConditions.add(condition.getTokenImage());
-            }
-        }
-
-        // refresh the table
-        refreshConditionTable();
-    }
-
-    private synchronized void downloadMissingActions() {
-
-        // download the actions
-        XWOTAUtils.downloadAndSaveImagesFromOTA("actions",missingActions );
-
-
-        // refresh the list
-        ArrayList<OTAMasterActions.OTAAction> actionResults = modIntChecker.checkActions();
-        missingActions = new ArrayList<String>();
-
-        Iterator<OTAMasterActions.OTAAction> i = actionResults.iterator();
-        OTAMasterActions.OTAAction action = null;
-        while(i.hasNext())
-        {
-            action = i.next();
-            if(!action.getStatus())
-            {
-                missingActions.add(action.getImage());
-            }
-        }
-
-        // refresh the table
-        refreshActionTable();
-    }
-
-    private synchronized void downloadMissingDialHides() {
-
-        // download the dial hide images
-        XWOTAUtils.downloadAndSaveImagesFromOTA("dial",missingDialHides );
-
-
-        // refresh the list
-        ArrayList<OTAMasterDialHides.OTADialHide> dialHideResults = modIntChecker.checkDialHides();
-        missingDialHides = new ArrayList<String>();
-
-        Iterator<OTAMasterDialHides.OTADialHide> i = dialHideResults.iterator();
-        OTAMasterDialHides.OTADialHide dialHide = null;
-        while(i.hasNext())
-        {
-            dialHide = i.next();
-            if(!dialHide.getStatus())
-            {
-                missingDialHides.add(dialHide.getImage());
-            }
-        }
-
-        // refresh the table
-        refreshDialHideTable();
-    }
-
-    private synchronized void downloadMissingShips() {
-
-        // download the ships
-        XWOTAUtils.downloadAndSaveImagesFromOTA("ships",missingShips);
-
-        // refresh the list
-        ArrayList<OTAMasterShips.OTAShip> shipResults = modIntChecker.checkShips();
-        missingShips = new ArrayList<String>();
-
-        Iterator<OTAMasterShips.OTAShip> i = shipResults.iterator();
-        OTAMasterShips.OTAShip ship = null;
-        while(i.hasNext())
-        {
-            ship = i.next();
-
-            if(!ship.getStatus())
-            {
-                missingShips.add(ship.getImage());
-            }
-        }
-
-        // refresh the table
-        refreshShipTable();
-    }
-
-
-    private synchronized void createMissingShipBases()
-    {
-
-        Iterator<OTAShipBase> iter = missingShipBases.iterator();
-
-        GameModule gameModule = GameModule.getGameModule();
-        DataArchive dataArchive = gameModule.getDataArchive();
-        FileArchive fileArchive = dataArchive.getArchive();
-        ArchiveWriter writer = new ArchiveWriter(fileArchive);
-        OTAShipBase shipBase = null;
-        while(iter.hasNext())
-        {
-            shipBase = iter.next();
-
-            MasterShipData.ShipData shipData = MasterShipData.getShipData(shipBase.getShipXws());
-            java.util.List<String> arcs = shipData.getFiringArcs();
-
-            java.util.List<String> actions = shipData.getActions();
-
-            //TODO implement huge ships this
-            if(!shipData.getSize().equals("huge")) {
-
-                XWOTAUtils.buildBaseShipImage(shipBase.getFaction(), shipBase.getShipXws(), arcs, actions, shipData.getSize(),shipBase.getIdentifier(),shipBase.getshipImageName(), writer);
-            }
-
-        }
-        try {
-            writer.save();
-        }catch(IOException e)
-        {
-            mic.Util.logToChat("Exception occurred saving module");
-        }
-
-        // refresh the list
-        ArrayList<OTAShipBase> shipBaseResults = modIntChecker.checkShipBases();
-        missingShipBases = new ArrayList<OTAShipBase>();
-        Iterator<OTAShipBase> i = shipBaseResults.iterator();
-        shipBase = null;
-        while(i.hasNext())
-        {
-
-            shipBase = i.next();
-            if(!shipBase.getStatus())
-            {
-
-                missingShipBases.add(shipBase);
-
-            }
-        }
-
-
-        // refresh the table
-        refreshShipBaseTable();
-
-
-        shipBaseTable = buildShipBaseTable(shipBaseResults);
-
-    }
-
-
-
-    private synchronized void createMissingDialMasks()
-    {
-
-        Iterator<OTADialMask> iter = missingDialMasks.iterator();
-
-        GameModule gameModule = GameModule.getGameModule();
-        DataArchive dataArchive = gameModule.getDataArchive();
-        FileArchive fileArchive = dataArchive.getArchive();
-        ArchiveWriter writer = new ArchiveWriter(fileArchive);
-        OTADialMask dialMask = null;
-        while(iter.hasNext())
-        {
-            dialMask = iter.next();
-
-            XWOTAUtils.buildDialMaskImages(dialMask.getFaction(),dialMask.getShipXws(),dialMask.getDialHideImageName(),dialMask.getDialMaskImageName(),writer);
-
-        }
-        try {
-            writer.save();
-        }catch(IOException e)
-        {
-            mic.Util.logToChat("Exception occurred saving module");
-        }
-
-        // refresh the list
-        ArrayList<OTADialMask> dialMaskResults = modIntChecker.checkDialMasks();
-        missingDialMasks = new ArrayList<OTADialMask>();
-        Iterator<OTADialMask> i = dialMaskResults.iterator();
-        dialMask = null;
-        while(i.hasNext())
-        {
-
-            dialMask = i.next();
-            if(!dialMask.getStatus())
-            {
-
-                missingDialMasks.add(dialMask);
-
-            }
-        }
-
-
-        // refresh the table
-        refreshDialMaskTable();
-
-
-        dialMaskTable = buildDialMaskTable(dialMaskResults);
-
-    }
-
-
-    private void refreshShipBaseTable()
-    {
-        ArrayList<OTAShipBase> shipBaseResults = modIntChecker.checkShipBases();
-
-        String[][] tableResults = new String[shipBaseResults.size()][7];
-        OTAShipBase shipBase = null;
-        for(int i=0;i<shipBaseResults.size();i++)
-        {
-            String[] shipBaseLine = new String[7];
-            shipBase = shipBaseResults.get(i);
-
-            shipBaseLine[0] = shipBase.getShipName();
-            shipBaseLine[1] = shipBase.getShipXws();
-            shipBaseLine[2] = shipBase.getIdentifier();
-            shipBaseLine[3] = shipBase.getFaction();
-            shipBaseLine[4] = shipBase.getShipBaseImageName();
-            shipBaseLine[5] = shipBase.getshipImageName();
-            shipBaseLine[6] = shipBase.getStatus() ? "Exists":"Not Found";
-
-            tableResults[i] = shipBaseLine;
-        }
-
-        DefaultTableModel model = (DefaultTableModel) shipBaseTable.getModel();
-        model.setNumRows(tableResults.length);
-        model.setDataVector(tableResults,shipBaseColumnNames);
-        shipBaseTable.getColumnModel().getColumn(0).setPreferredWidth(125);;
-        shipBaseTable.getColumnModel().getColumn(1).setPreferredWidth(150);
-        shipBaseTable.getColumnModel().getColumn(2).setPreferredWidth(150);
-        shipBaseTable.getColumnModel().getColumn(3).setPreferredWidth(325);
-        shipBaseTable.getColumnModel().getColumn(4).setPreferredWidth(75);
-        shipBaseTable.getColumnModel().getColumn(5).setPreferredWidth(75);
-        shipBaseTable.getColumnModel().getColumn(6).setPreferredWidth(75);
-        model.fireTableDataChanged();
-    }
-
-
-    private void refreshDialMaskTable()
-    {
-        ArrayList<OTADialMask> dialMaskResults = modIntChecker.checkDialMasks();
-
-        String[][] tableResults = new String[dialMaskResults.size()][5];
-        OTADialMask dialMask = null;
-        for(int i=0;i<dialMaskResults.size();i++)
-        {
-            String[] dialMaskLine = new String[5];
-            dialMask = dialMaskResults.get(i);
-
-            dialMaskLine[0] = dialMask.getShipXws();
-            dialMaskLine[1] = MasterShipData.getShipData(dialMask.getShipXws()).getName();
-            dialMaskLine[2] = dialMask.getFaction();
-            dialMaskLine[3] = dialMask.getDialMaskImageName();
-            dialMaskLine[4] = dialMask.getStatus() ? "Exists":"Not Found";
-
-            tableResults[i] = dialMaskLine;
-        }
-
-        DefaultTableModel model = (DefaultTableModel) dialMaskTable.getModel();
-        model.setNumRows(tableResults.length);
-        model.setDataVector(tableResults,dialMaskColumnNames);
-        dialMaskTable.getColumnModel().getColumn(0).setPreferredWidth(50);
-        dialMaskTable.getColumnModel().getColumn(1).setPreferredWidth(75);
-        dialMaskTable.getColumnModel().getColumn(2).setPreferredWidth(50);
-        dialMaskTable.getColumnModel().getColumn(3).setPreferredWidth(325);
-        dialMaskTable.getColumnModel().getColumn(4).setPreferredWidth(75);
-        model.fireTableDataChanged();
-    }
-
-    private void refreshPilotTable()
-    {
-        ArrayList<OTAMasterPilots.OTAPilot> pilotResults = modIntChecker.checkPilots();
-        String[][] tableResults = new String[pilotResults.size()][5];
-
-        OTAMasterPilots.OTAPilot pilot = null;
-        for(int i=0;i<pilotResults.size();i++)
-        {
-            String[] pilotLine = new String[5];
-            pilot = pilotResults.get(i);
-            pilotLine[0] = pilot.getFaction();
-            pilotLine[1] = pilot.getShipXws();
-            pilotLine[2] = pilot.getPilotXws();
-            pilotLine[3] = pilot.getImage();
-            pilotLine[4] = pilot.getStatus() ? "Exists":"Not Found";
-
-            tableResults[i] = pilotLine;
-        }
-
-
-        DefaultTableModel model = (DefaultTableModel) pilotTable.getModel();
-
-        model.setNumRows(pilotResults.size());
-        model.setDataVector(tableResults,pilotColumnNames);
-        pilotTable.getColumnModel().getColumn(0).setPreferredWidth(125);;
-        pilotTable.getColumnModel().getColumn(1).setPreferredWidth(150);
-        pilotTable.getColumnModel().getColumn(2).setPreferredWidth(150);
-        pilotTable.getColumnModel().getColumn(3).setPreferredWidth(325);
-        pilotTable.getColumnModel().getColumn(4).setPreferredWidth(75);
-        model.fireTableDataChanged();
-    }
-
-    private void refreshUpgradeTable()
-    {
-        ArrayList<OTAMasterUpgrades.OTAUpgrade> upgradeResults = modIntChecker.checkUpgrades();
-        String[][] tableResults = new String[upgradeResults.size()][4];
-
-        OTAMasterUpgrades.OTAUpgrade upgrade = null;
-        for(int i=0;i<upgradeResults.size();i++)
-        {
-            String[] upgradeLine = new String[4];
-            upgrade = upgradeResults.get(i);
-
-            upgradeLine[0] = upgrade.getXws();
-            upgradeLine[1] = upgrade.getSlot();
-            upgradeLine[2] = upgrade.getImage();
-            upgradeLine[3] = upgrade.getStatus() ? "Exists":"Not Found";
-
-            tableResults[i] = upgradeLine;
-
-        }
-
-
-        DefaultTableModel model = (DefaultTableModel) upgradeTable.getModel();
-
-        model.setNumRows(upgradeResults.size());
-        model.setDataVector(tableResults,upgradeColumnNames);
-        upgradeTable.getColumnModel().getColumn(0).setPreferredWidth(100);;
-        upgradeTable.getColumnModel().getColumn(1).setPreferredWidth(100);
-        upgradeTable.getColumnModel().getColumn(2).setPreferredWidth(325);
-        upgradeTable.getColumnModel().getColumn(3).setPreferredWidth(75);
-        model.fireTableDataChanged();
-
-
-    }
-
-    private void refreshConditionTable()
-    {
-        ArrayList<OTAMasterConditions.OTACondition> conditionResults = modIntChecker.checkConditions();
-        String[][] tableResults = new String[conditionResults.size()][5];
-
-        OTAMasterConditions.OTACondition condition = null;
-        for(int i=0;i<conditionResults.size();i++)
-        {
-            String[] conditionLine = new String[5];
-            condition = conditionResults.get(i);
-            conditionLine[0] = condition.getXws();
-            conditionLine[1] = condition.getImage();
-            conditionLine[2] = condition.getStatus() ? "Exists":"Not Found";
-            conditionLine[3] = condition.getTokenImage();
-            conditionLine[4] = condition.getTokenStatus() ? "Exists":"Not Found";
-            tableResults[i] = conditionLine;
-        }
-
-        DefaultTableModel model = (DefaultTableModel) conditionTable.getModel();
-
-        model.setNumRows(conditionResults.size());
-        model.setDataVector(tableResults,conditionColumnNames);
-        conditionTable.getColumnModel().getColumn(0).setPreferredWidth(100);;
-        conditionTable.getColumnModel().getColumn(1).setPreferredWidth(325);
-        conditionTable.getColumnModel().getColumn(2).setPreferredWidth(75);
-        conditionTable.getColumnModel().getColumn(3).setPreferredWidth(325);
-        conditionTable.getColumnModel().getColumn(4).setPreferredWidth(75);
-        model.fireTableDataChanged();
-
-    }
-
-
-    private void refreshActionTable()
-    {
-        ArrayList<OTAMasterActions.OTAAction> actionResults = modIntChecker.checkActions();
-        String[][] tableResults = new String[actionResults.size()][3];
-
-        OTAMasterActions.OTAAction action = null;
-        for(int i=0;i<actionResults.size();i++)
-        {
-            String[] actionLine = new String[3];
-            action = actionResults.get(i);
-            actionLine[0] = action.getName();
-            actionLine[1] = action.getImage();
-            actionLine[2] = action.getStatus() ? "Exists":"Not Found";
-
-
-            tableResults[i] = actionLine;
-        }
-
-
-        DefaultTableModel model = (DefaultTableModel) actionTable.getModel();
-
-        model.setNumRows(tableResults.length);
-        model.setDataVector(tableResults,actionColumnNames);
-        actionTable.getColumnModel().getColumn(0).setPreferredWidth(50);;
-        actionTable.getColumnModel().getColumn(1).setPreferredWidth(325);
-        actionTable.getColumnModel().getColumn(2).setPreferredWidth(75);
-        model.fireTableDataChanged();
-    }
-
-
-    private void refreshDialHideTable()
-    {
-        ArrayList<OTAMasterDialHides.OTADialHide> dialHideResults = modIntChecker.checkDialHides();
-        String[][] tableResults = new String[dialHideResults.size()][4];
-
-        OTAMasterDialHides.OTADialHide dialHide = null;
-        for(int i=0;i<dialHideResults.size();i++)
-        {
-            String[] dialHideLine = new String[4];
-            dialHide = dialHideResults.get(i);
-            dialHideLine[0] = dialHide.getXws();
-            dialHideLine[1] = MasterShipData.getShipData(dialHide.getXws()).getName();
-            dialHideLine[2] = dialHide.getImage();
-            dialHideLine[3] = dialHide.getStatus() ? "Exists":"Not Found";
-
-
-            tableResults[i] = dialHideLine;
-        }
-
-
-        DefaultTableModel model = (DefaultTableModel) dialHideTable.getModel();
-
-        model.setNumRows(tableResults.length);
-        model.setDataVector(tableResults,dialHideColumnNames);
-        dialHideTable.getColumnModel().getColumn(0).setPreferredWidth(50);
-        dialHideTable.getColumnModel().getColumn(1).setPreferredWidth(75);
-        dialHideTable.getColumnModel().getColumn(2).setPreferredWidth(325);
-        dialHideTable.getColumnModel().getColumn(3).setPreferredWidth(75);
-        model.fireTableDataChanged();
-    }
-
-    private void refreshShipTable()
-    {
-        ArrayList<OTAMasterShips.OTAShip> shipResults = modIntChecker.checkShips();
-
-        String[][] tableResults = new String[shipResults.size()][4];
-        OTAMasterShips.OTAShip ship = null;
-          for(int i=0;i<shipResults.size();i++)
-        {
-            String[] shipLine = new String[7];
-            ship = shipResults.get(i);
-            shipLine[0] = ship.getXws();
-            shipLine[1] = ship.getIdentifier();
-            shipLine[2] = ship.getImage();
-            shipLine[3] = ship.getStatus() ? "Exists":"Not Found";
-
-            tableResults[i] = shipLine;
-        }
-
-        DefaultTableModel model = (DefaultTableModel) shipTable.getModel();
-
-        model.setNumRows(tableResults.length);
-        model.setDataVector(tableResults,shipColumnNames);
-        shipTable.getColumnModel().getColumn(0).setPreferredWidth(150);
-        shipTable.getColumnModel().getColumn(1).setPreferredWidth(150);
-        shipTable.getColumnModel().getColumn(2).setPreferredWidth(325);
-        shipTable.getColumnModel().getColumn(3).setPreferredWidth(75);
-        model.fireTableDataChanged();
-    }
-
 
 
     private synchronized void ContentsCheckerWindow()
@@ -715,406 +177,479 @@ public class ContentsChecker  extends AbstractConfigurable {
         optionPane.setMessage(msg);
         optionPane.add(panel);
         JDialog dialog = optionPane.createDialog(frame, "Contents Checker");
-        dialog.setSize(1000,1000);
+        dialog.setSize(500,250);
 
+        // new window here
+        finalTable = buildFinalTable(pilotResults,shipResults,actionResults,shipBaseResults,upgradeResults,conditionResults,dialHideResults,dialMaskResults);
 
-
-        pilotTable = buildPilotTable(pilotResults);
-        shipTable = buildShipTable(shipResults);
-        actionTable = buildActionTable(actionResults);
-        shipBaseTable = buildShipBaseTable(shipBaseResults);
-        upgradeTable = buildUpgradeTable(upgradeResults);
-        conditionTable = buildConditionTable(conditionResults);
-        dialHideTable = buildDialHideTable(dialHideResults);
-        dialMaskTable = buildDialMaskTable(dialMaskResults);
-
-        JScrollPane pilotPane = new JScrollPane(pilotTable);
-        JScrollPane shipPane = new JScrollPane(shipTable);
-        JScrollPane actionPane = new JScrollPane(actionTable);
-        JScrollPane shipBasePane = new JScrollPane(shipBaseTable);
-        JScrollPane upgradePane = new JScrollPane(upgradeTable);
-        JScrollPane conditionPane = new JScrollPane(conditionTable);
-        JScrollPane dialHidePane = new JScrollPane(dialHideTable);
-        JScrollPane dialMaskPane = new JScrollPane(dialMaskTable);
-
-        // pilots
-        panel.add(pilotPane, BorderLayout.CENTER);
-        JButton downloadPilotButton = new JButton("Download Pilots");
-        downloadPilotButton.setAlignmentY(0.0F);
-        downloadPilotButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
-                downloadMissingPilots();
-            }
-        });
-        panel.add(downloadPilotButton);
-
-        // ships
-        panel.add(shipPane, BorderLayout.CENTER);
-        JButton downloadShipButton = new JButton("Download Ships");
-        downloadShipButton.setAlignmentY(0.0F);
-        downloadShipButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
-                downloadMissingShips();
-            }
-        });
-        panel.add(downloadShipButton);
-
-        // actions
-        panel.add(actionPane, BorderLayout.CENTER);
-        JButton downloadActionButton = new JButton("Download Actions");
-        downloadActionButton.setAlignmentY(0.0F);
-        downloadActionButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
-                downloadMissingActions();
-            }
-        });
-        panel.add(downloadActionButton);
-
-        // upgrades
-        panel.add(upgradePane, BorderLayout.CENTER);
-        JButton downloadUpgradeButton = new JButton("Download Upgrades");
-        downloadUpgradeButton.setAlignmentY(0.0F);
-        downloadUpgradeButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
-                downloadMissingUpgrades();
-            }
-        });
-        panel.add(downloadUpgradeButton);
-
-        // conditions
-        panel.add(conditionPane, BorderLayout.CENTER);
-        JButton downloadConditionButton = new JButton("Download Conditions");
-        downloadConditionButton.setAlignmentY(0.0F);
-        downloadConditionButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
-                downloadMissingConditions();
-            }
-        });
-        panel.add(downloadConditionButton);
-
-
-        // dial hides
-        panel.add(dialHidePane, BorderLayout.CENTER);
-        JButton downloadDialHideButton = new JButton("Download Dial Hide Images");
-        downloadDialHideButton.setAlignmentY(0.0F);
-        downloadDialHideButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
-                downloadMissingDialHides();
-            }
-        });
-        panel.add(downloadDialHideButton);
-
-        // dial masks
-        panel.add(dialMaskPane, BorderLayout.CENTER);
-        JButton downloadMaskButton = new JButton("Create Dial Mask Images");
-        downloadMaskButton.setAlignmentY(0.0F);
-        downloadMaskButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
-                createMissingDialMasks();
-            }
-        });
-        panel.add(downloadMaskButton);
-
-
-        // ship bases
-        panel.add(shipBasePane, BorderLayout.CENTER);
-        JButton createShipBasesButton = new JButton("Create Ship Bases");
-        createShipBasesButton.setAlignmentY(0.0F);
-        createShipBasesButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
-                createMissingShipBases();
-            }
-        });
-        panel.add(createShipBasesButton);
-
-            dialog.setVisible(true);
-            frame.toFront();
-            frame.repaint();
-    }
-
-    private JTable buildPilotTable(ArrayList<OTAMasterPilots.OTAPilot> pilotResults)
-    {
-        String[][] tableResults = new String[pilotResults.size()][5];
-
-        OTAMasterPilots.OTAPilot pilot = null;
-        for(int i=0;i<pilotResults.size();i++)
-        {
-            String[] pilotLine = new String[5];
-            pilot = pilotResults.get(i);
-            pilotLine[0] = pilot.getFaction();
-            pilotLine[1] = pilot.getShipXws();
-            pilotLine[2] = pilot.getPilotXws();
-            pilotLine[3] = pilot.getImage();
-            pilotLine[4] = pilot.getStatus() ? "Exists":"Not Found";
-
-            tableResults[i] = pilotLine;
+        if(finalTable.getModel().getRowCount() > 0) {
+            JScrollPane finalPane = new JScrollPane(finalTable);
+            panel.add(finalPane, BorderLayout.CENTER);
+            JButton downloadAllButton = new JButton("Download");
+            downloadAllButton.setAlignmentY(0.0F);
+            downloadAllButton.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent evt) {
+                    downloadAll();
+                }
+            });
+            panel.add(downloadAllButton);
+        }else{
+            String okMsg = "All content is up to date";
+            optionPane.setMessage(okMsg);
+            optionPane.add(panel);
         }
 
-        pilotTable = new JTable(tableResults,pilotColumnNames);
-        DefaultTableModel model = new DefaultTableModel(pilotResults.size(), pilotColumnNames.length);
-        model.setNumRows(pilotResults.size());
-        model.setDataVector(tableResults,pilotColumnNames);
+        dialog.setVisible(true);
+        frame.toFront();
+        frame.repaint();
 
-        pilotTable.setModel(model);
-        pilotTable.getColumnModel().getColumn(0).setPreferredWidth(125);;
-        pilotTable.getColumnModel().getColumn(1).setPreferredWidth(150);
-        pilotTable.getColumnModel().getColumn(2).setPreferredWidth(150);
-        pilotTable.getColumnModel().getColumn(3).setPreferredWidth(325);
-        pilotTable.getColumnModel().getColumn(4).setPreferredWidth(75);
-
-        pilotTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-        return pilotTable;
     }
 
-    private JTable buildConditionTable(ArrayList<OTAMasterConditions.OTACondition> conditionResults)
-    {
-        String[][] tableResults = new String[conditionResults.size()][5];
 
-        OTAMasterConditions.OTACondition condition = null;
-        for(int i=0;i<conditionResults.size();i++)
-        {
-            String[] conditionLine = new String[5];
-            condition = conditionResults.get(i);
-            conditionLine[0] = condition.getXws();
-            conditionLine[1] = condition.getImage();
-            conditionLine[2] = condition.getStatus() ? "Exists":"Not Found";
-            conditionLine[3] = condition.getTokenImage();
-            conditionLine[4] = condition.getTokenStatus() ? "Exists":"Not Found";
+    private synchronized void downloadAll() {
 
-            tableResults[i] = conditionLine;
+        boolean needToSaveModule = false;
+
+        // download pilots
+        if(missingPilots.size() > 0) {
+            XWOTAUtils.downloadAndSaveImagesFromOTA("pilots", missingPilots);
+            needToSaveModule = true;
         }
 
-        conditionTable = new JTable(tableResults,conditionColumnNames);
-        DefaultTableModel model = new DefaultTableModel(conditionResults.size(), conditionColumnNames.length);
-        model.setNumRows(conditionResults.size());
-        model.setDataVector(tableResults,conditionColumnNames);
-
-        conditionTable.setModel(model);
-        conditionTable.getColumnModel().getColumn(0).setPreferredWidth(100);;
-        conditionTable.getColumnModel().getColumn(1).setPreferredWidth(325);
-        conditionTable.getColumnModel().getColumn(2).setPreferredWidth(75);
-        conditionTable.getColumnModel().getColumn(3).setPreferredWidth(325);
-        conditionTable.getColumnModel().getColumn(4).setPreferredWidth(75);
-
-        conditionTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-        return conditionTable;
-    }
-
-    private JTable buildDialHideTable(ArrayList<OTAMasterDialHides.OTADialHide> dialHideResults)
-    {
-        String[][] tableResults = new String[dialHideResults.size()][4];
-
-        OTAMasterDialHides.OTADialHide dialHide = null;
-        for(int i=0;i<dialHideResults.size();i++)
-        {
-            String[] dialHideLine = new String[4];
-            dialHide = dialHideResults.get(i);
-            dialHideLine[0] = dialHide.getXws();
-            dialHideLine[0] = MasterShipData.getShipData(dialHide.getXws()).getName();
-            dialHideLine[1] = dialHide.getImage();
-            dialHideLine[2] = dialHide.getStatus() ? "Exists":"Not Found";
-
-            tableResults[i] = dialHideLine;
+        // download Upgrades
+        if(missingUpgrades.size() > 0) {
+            XWOTAUtils.downloadAndSaveImagesFromOTA("upgrades", missingUpgrades);
+            needToSaveModule = true;
         }
 
-        dialHideTable = new JTable(tableResults,dialHideColumnNames);
-        DefaultTableModel model = new DefaultTableModel(dialHideResults.size(), dialHideColumnNames.length);
-        model.setNumRows(dialHideResults.size());
-        model.setDataVector(tableResults,dialHideColumnNames);
+        // download Conditions
+        if(missingConditions.size() > 0) {
+            XWOTAUtils.downloadAndSaveImagesFromOTA("conditions", missingConditions);
+            needToSaveModule = true;
+        }
 
-        dialHideTable.setModel(model);
-        dialHideTable.getColumnModel().getColumn(0).setPreferredWidth(50);
-        dialHideTable.getColumnModel().getColumn(1).setPreferredWidth(75);
-        dialHideTable.getColumnModel().getColumn(2).setPreferredWidth(325);
-        dialHideTable.getColumnModel().getColumn(3).setPreferredWidth(75);
+        // download actions
+        if(missingActions.size() > 0) {
+            XWOTAUtils.downloadAndSaveImagesFromOTA("actions", missingActions);
+            needToSaveModule = true;
+        }
+
+        // download dial hides
+        if(missingDialHides.size() > 0) {
+            XWOTAUtils.downloadAndSaveImagesFromOTA("dial", missingDialHides);
+            needToSaveModule = true;
+        }
+
+        GameModule gameModule = GameModule.getGameModule();
+        DataArchive dataArchive = gameModule.getDataArchive();
+        FileArchive fileArchive = dataArchive.getArchive();
+        ArchiveWriter writer = new ArchiveWriter(fileArchive);
 
 
-        dialHideTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-        return dialHideTable;
-    }
-
-    private JTable buildDialMaskTable(ArrayList<OTADialMask> dialMaskResults)
-    {
-        String[][] tableResults = new String[dialMaskResults.size()][5];
-
+        // generate dial masks
+        Iterator<OTADialMask> dialMaskIterator = missingDialMasks.iterator();
         OTADialMask dialMask = null;
-        for(int i=0;i<dialMaskResults.size();i++)
+        while(dialMaskIterator.hasNext())
         {
-            String[] dialMaskLine = new String[5];
-            dialMask = dialMaskResults.get(i);
-            dialMaskLine[0] = dialMask.getShipXws();
-            dialMaskLine[1] = MasterShipData.getShipData(dialMask.getShipXws()).getName();
-            dialMaskLine[2] = dialMask.getFaction();
-            dialMaskLine[3] = dialMask.getDialMaskImageName();
-            dialMaskLine[4] = dialMask.getStatus() ? "Exists":"Not Found";
-            tableResults[i] = dialMaskLine;
+            dialMask = dialMaskIterator.next();
+
+            XWOTAUtils.buildDialMaskImages(dialMask.getFaction(),dialMask.getShipXws(),dialMask.getDialHideImageName(),dialMask.getDialMaskImageName(),writer);
+            needToSaveModule = true;
         }
 
-        dialMaskTable = new JTable(tableResults,dialMaskColumnNames);
-        DefaultTableModel model = new DefaultTableModel(dialMaskResults.size(), dialMaskColumnNames.length);
-        model.setNumRows(dialMaskResults.size());
-        model.setDataVector(tableResults,dialMaskColumnNames);
-
-        dialMaskTable.setModel(model);
-        dialMaskTable.getColumnModel().getColumn(0).setPreferredWidth(50);
-        dialMaskTable.getColumnModel().getColumn(1).setPreferredWidth(75);
-        dialMaskTable.getColumnModel().getColumn(2).setPreferredWidth(50);
-        dialMaskTable.getColumnModel().getColumn(3).setPreferredWidth(325);
-        dialMaskTable.getColumnModel().getColumn(4).setPreferredWidth(75);
-
-
-        dialMaskTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-        return dialMaskTable;
-    }
-
-    private JTable buildUpgradeTable(ArrayList<OTAMasterUpgrades.OTAUpgrade> upgradeResults)
-    {
-        String[][] tableResults = new String[upgradeResults.size()][4];
-
-        OTAMasterUpgrades.OTAUpgrade upgrade = null;
-        for(int i=0;i<upgradeResults.size();i++)
+        // generate ship bases
+        Iterator<OTAShipBase> shipBaseIterator = missingShipBases.iterator();
+        OTAShipBase shipBase = null;
+        while(shipBaseIterator.hasNext())
         {
-            String[] upgradeLine = new String[4];
-            upgrade = upgradeResults.get(i);
-            upgradeLine[0] = upgrade.getXws();
-            upgradeLine[1] = upgrade.getSlot();
-            upgradeLine[2] = upgrade.getImage();
-            upgradeLine[3] = upgrade.getStatus() ? "Exists":"Not Found";
+            shipBase = shipBaseIterator.next();
 
-            tableResults[i] = upgradeLine;
+            MasterShipData.ShipData shipData = MasterShipData.getShipData(shipBase.getShipXws());
+            java.util.List<String> arcs = shipData.getFiringArcs();
+
+            java.util.List<String> actions = shipData.getActions();
+
+            //TODO implement huge ships this
+            if(!shipData.getSize().equals("huge")) {
+
+                XWOTAUtils.buildBaseShipImage(shipBase.getFaction(), shipBase.getShipXws(), arcs, actions, shipData.getSize(),shipBase.getIdentifier(),shipBase.getshipImageName(), writer);
+                needToSaveModule = true;
+            }
+
         }
 
-        upgradeTable = new JTable(tableResults,upgradeColumnNames);
-        DefaultTableModel model = new DefaultTableModel(upgradeResults.size(), upgradeColumnNames.length);
-        model.setNumRows(upgradeResults.size());
-        model.setDataVector(tableResults,upgradeColumnNames);
+        if(needToSaveModule) {
+            try {
+                writer.save();
+            } catch (IOException e) {
+                mic.Util.logToChat("Exception occurred saving module");
+            }
 
-        upgradeTable.setModel(model);
-        upgradeTable.getColumnModel().getColumn(0).setPreferredWidth(100);;
-        upgradeTable.getColumnModel().getColumn(1).setPreferredWidth(100);
-        upgradeTable.getColumnModel().getColumn(2).setPreferredWidth(325);
-        upgradeTable.getColumnModel().getColumn(3).setPreferredWidth(75);
+            // refresh the table
+            refreshFinalTable();
+        }
 
-        upgradeTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-        return upgradeTable;
+
     }
 
-    private JTable buildShipBaseTable(ArrayList<OTAShipBase> shipBaseResults)
+
+    private void refreshFinalTable()
     {
 
-        String[][] tableResults = new String[shipBaseResults.size()][7];
+        modIntChecker = new ModuleIntegrityChecker();
 
+
+        ArrayList<OTAMasterPilots.OTAPilot> pilotResults = modIntChecker.checkPilots();
+        ArrayList<OTAMasterShips.OTAShip> shipResults = modIntChecker.checkShips();
+        ArrayList<OTAMasterActions.OTAAction> actionResults = modIntChecker.checkActions();
+        ArrayList<OTAShipBase> shipBaseResults = modIntChecker.checkShipBases();
+        ArrayList<OTAMasterUpgrades.OTAUpgrade> upgradeResults = modIntChecker.checkUpgrades();
+        ArrayList<OTAMasterConditions.OTACondition> conditionResults = modIntChecker.checkConditions();
+        ArrayList<OTAMasterDialHides.OTADialHide> dialHideResults = modIntChecker.checkDialHides();
+        ArrayList<OTADialMask> dialMaskResults = modIntChecker.checkDialMasks();
+
+        ArrayList<String[]> tableResults = new ArrayList<String[]>();
+
+        // fill in the ships
+        OTAMasterShips.OTAShip ship = null;
+        missingShips = new ArrayList<String>();
+        for(int i=0;i<shipResults.size();i++)
+        {
+
+            ship = shipResults.get(i);
+            if(!ship.getStatus())
+            {
+                String[] shipLine = new String[3];
+                shipLine[0] = "Ship Image";
+                shipLine[1] = MasterShipData.getShipData(ship.getXws()).getName();
+                tableResults.add(shipLine);
+                missingShips.add(ship.getImage());
+            }
+        }
+
+        // fill in the ship bases
+        missingShipBases = new ArrayList<OTAShipBase>();
         OTAShipBase shipBase = null;
         for(int i=0;i<shipBaseResults.size();i++)
         {
-            String[] shipBaseLine = new String[7];
+
             shipBase = shipBaseResults.get(i);
 
-            shipBaseLine[0] = shipBase.getShipName();
-            shipBaseLine[1] = shipBase.getShipXws();
-            shipBaseLine[2] = shipBase.getIdentifier();
-            shipBaseLine[3] = shipBase.getFaction();
-            shipBaseLine[4] = shipBase.getShipBaseImageName();
-            shipBaseLine[5] = shipBase.getshipImageName();
-            shipBaseLine[6] = shipBase.getStatus() ? "Exists":"Not Found";
+            if(!shipBase.getStatus()) {
+                String[] shipBaseLine = new String[3];
+                shipBaseLine[0] = "Ship Base Image";
+                shipBaseLine[1] = MasterShipData.getShipData(shipBase.getShipXws()).getName();
+                tableResults.add(shipBaseLine);
+                missingShipBases.add(shipBase);
+            }
 
-            tableResults[i] = shipBaseLine;
         }
 
-        shipBaseTable = new JTable(tableResults,shipBaseColumnNames);
-        DefaultTableModel model = new DefaultTableModel(tableResults.length, shipBaseColumnNames.length);
-        model.setNumRows(tableResults.length);
-        model.setDataVector(tableResults,shipBaseColumnNames);
-
-        shipBaseTable.setModel(model);
-        shipBaseTable.getColumnModel().getColumn(0).setPreferredWidth(125);;
-        shipBaseTable.getColumnModel().getColumn(1).setPreferredWidth(150);
-        shipBaseTable.getColumnModel().getColumn(2).setPreferredWidth(150);
-        shipBaseTable.getColumnModel().getColumn(3).setPreferredWidth(325);
-        shipBaseTable.getColumnModel().getColumn(4).setPreferredWidth(75);
-        shipBaseTable.getColumnModel().getColumn(5).setPreferredWidth(75);
-        shipBaseTable.getColumnModel().getColumn(6).setPreferredWidth(75);
-
-        shipBaseTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-        model.fireTableDataChanged();
-        return shipBaseTable;
-    }
-
-    private JTable buildShipTable(ArrayList<OTAMasterShips.OTAShip> shipResults)
-    {
-        String[][] tableResults = new String[shipResults.size()][4];
-
-        OTAMasterShips.OTAShip ship = null;
-
-        for(int i=0;i<shipResults.size();i++)
+        // fill in the dial hides
+        missingDialHides = new ArrayList<String>();
+        OTAMasterDialHides.OTADialHide dialHide = null;
+        for(int i=0;i<dialHideResults.size();i++)
         {
-            String[] shipLine = new String[5];
-            ship = shipResults.get(i);
-            shipLine[0] = ship.getXws();
-            shipLine[1] = ship.getIdentifier();
-            shipLine[2] = ship.getImage();
-            shipLine[3] = ship.getStatus() ? "Exists":"Not Found";
 
-
-            tableResults[i] = shipLine;
+            dialHide = dialHideResults.get(i);
+            if(!dialHide.getStatus()) {
+                String[] dialHideLine = new String[3];
+                dialHideLine[0] = "Dial Hide Image";
+                dialHideLine[1] = MasterShipData.getShipData(dialHide.getXws()).getName();
+                tableResults.add(dialHideLine);
+                missingDialHides.add(dialHide.getImage());
+            }
         }
 
+        // fill in the dial masks
+        missingDialMasks = new ArrayList<OTADialMask>();
+        OTADialMask dialMask = null;
+        for(int i=0;i<dialMaskResults.size();i++)
+        {
 
+            dialMask = dialMaskResults.get(i);
+            if(!dialMask.getStatus()) {
+                String[] dialMaskLine = new String[3];
+                dialMaskLine[0] = "Dial Hide Image";
+                dialMaskLine[1] = MasterShipData.getShipData(dialMask.getShipXws()).getName();
+                dialMaskLine[2] = dialMask.getFaction();
+                tableResults.add(dialMaskLine);
+                missingDialMasks.add(dialMask);
+            }
+        }
 
+        // fill in the pilots
+        missingPilots = new ArrayList<String>();
+        OTAMasterPilots.OTAPilot pilot = null;
+        for(int i=0;i<pilotResults.size();i++)
+        {
 
-        shipTable = new JTable(tableResults,shipColumnNames);
-        DefaultTableModel model = new DefaultTableModel(tableResults.length, shipColumnNames.length);
-        model.setNumRows(tableResults.length);
-        model.setDataVector(tableResults,shipColumnNames);
+            pilot = pilotResults.get(i);
+            if(!pilot.getStatus()) {
+                String[] pilotLine = new String[3];
+                pilotLine[0] = "Pilot";
+                pilotLine[1] = MasterPilotData.getPilotData(pilot.getShipXws(), pilot.getPilotXws(), pilot.getFaction()).getName();
+                pilotLine[2] = pilot.getFaction();
+                tableResults.add(pilotLine);
+                missingPilots.add(pilot.getImage());
+            }
+        }
 
-        shipTable.setModel(model);
-        shipTable.getColumnModel().getColumn(0).setPreferredWidth(150);
-        shipTable.getColumnModel().getColumn(1).setPreferredWidth(150);
-        shipTable.getColumnModel().getColumn(2).setPreferredWidth(325);
-        shipTable.getColumnModel().getColumn(3).setPreferredWidth(75);
+        // fill in the upgrades
+        missingUpgrades = new ArrayList<String>();
+        OTAMasterUpgrades.OTAUpgrade upgrade = null;
+        for(int i=0;i<upgradeResults.size();i++)
+        {
 
-        shipTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-        return shipTable;
-    }
+            upgrade = upgradeResults.get(i);
+            if(!upgrade.getStatus()) {
+                String[] upgradeLine = new String[3];
+                upgradeLine[0] = "Upgrade";
+                upgradeLine[1] = MasterUpgradeData.getUpgradeData(upgrade.getXws()).getName();
+                tableResults.add(upgradeLine);
+                missingUpgrades.add(upgrade.getImage());
+            }
+        }
 
-    private JTable buildActionTable(ArrayList<OTAMasterActions.OTAAction> actionResults)
-    {
-        String[][] tableResults = new String[actionResults.size()][3];
+        // fill in the conditions/tokens
+        missingConditions = new ArrayList<String>();
+        OTAMasterConditions.OTACondition condition = null;
+        for(int i=0;i<conditionResults.size();i++)
+        {
 
+            condition = conditionResults.get(i);
+
+            if(!condition.getStatus()) {
+                String[] conditionLine = new String[3];
+                conditionLine[0] = "Condition";
+                conditionLine[1] = MasterConditionData.getConditionData(condition.getXws()).getName();
+                tableResults.add(conditionLine);
+                missingConditions.add(condition.getImage());
+            }
+
+            if(!condition.getTokenStatus())
+            {
+                String[] conditionLine = new String[3];
+                conditionLine[0] = "Condition Token";
+                conditionLine[1] = MasterConditionData.getConditionData(condition.getXws()).getName();
+                tableResults.add(conditionLine);
+                missingConditions.add(condition.getTokenImage());
+            }
+        }
+
+        // fill in the actions
+        missingActions = new ArrayList<String>();
         OTAMasterActions.OTAAction action = null;
-
         for(int i=0;i<actionResults.size();i++)
         {
-
-            String[] actionLine = new String[3];
             action = actionResults.get(i);
-            actionLine[0] = action.getName();
-            actionLine[1] = action.getImage();
-            actionLine[2] = action.getStatus() ? "Exists":"Not Found";
-
-
-
-            tableResults[i] = actionLine;
+            if(!action.getStatus()) {
+                String[] actionLine = new String[3];
+                actionLine[0] = "Ship Action Image";
+                actionLine[1] = action.getName();
+                tableResults.add(actionLine);
+                missingActions.add(action.getImage());
+            }
         }
 
+        // convert the ArrayList<String[]> to a String[][]
+        String[][] convertedTableResults = new String[tableResults.size()][3];
+        String[] tableRow = null;
+        for(int i=0; i<tableResults.size();i++)
+        {
+            tableRow = tableResults.get(i);
+            convertedTableResults[i] = tableRow;
+        }
+
+        DefaultTableModel model = (DefaultTableModel) finalTable.getModel();
+        model.setNumRows(tableResults.size());
+        model.setDataVector(convertedTableResults,finalColumnNames);
+        finalTable.getColumnModel().getColumn(0).setPreferredWidth(75);;
+        finalTable.getColumnModel().getColumn(1).setPreferredWidth(150);
+        finalTable.getColumnModel().getColumn(2).setPreferredWidth(150);
+        model.fireTableDataChanged();
+
+    }
 
 
-        actionTable = new JTable(tableResults,actionColumnNames);
-        DefaultTableModel model = new DefaultTableModel(tableResults.length, actionColumnNames.length);
-        model.setNumRows(tableResults.length);
-        model.setDataVector(tableResults,actionColumnNames);
 
-        actionTable.setModel(model);
-        actionTable.getColumnModel().getColumn(0).setPreferredWidth(50);;
-        actionTable.getColumnModel().getColumn(1).setPreferredWidth(325);
-        actionTable.getColumnModel().getColumn(2).setPreferredWidth(75);
 
-        actionTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-        return actionTable;
+    private JTable buildFinalTable(ArrayList<OTAMasterPilots.OTAPilot> pilotResults,ArrayList<OTAMasterShips.OTAShip> shipResults,ArrayList<OTAMasterActions.OTAAction> actionResults,
+                                   ArrayList<OTAShipBase> shipBaseResults,ArrayList<OTAMasterUpgrades.OTAUpgrade> upgradeResults, ArrayList<OTAMasterConditions.OTACondition> conditionResults,
+                                   ArrayList<OTAMasterDialHides.OTADialHide> dialHideResults,ArrayList<OTADialMask> dialMaskResults)
+    {
+
+        ArrayList<String[]> tableResults = new ArrayList<String[]>();
+        // fill in the ships
+        OTAMasterShips.OTAShip ship = null;
+        missingShips = new ArrayList<String>();
+        for(int i=0;i<shipResults.size();i++)
+        {
+
+            ship = shipResults.get(i);
+            if(!ship.getStatus())
+            {
+                String[] shipLine = new String[3];
+                shipLine[0] = "Ship Image";
+                shipLine[1] = MasterShipData.getShipData(ship.getXws()).getName();
+                tableResults.add(shipLine);
+                missingShips.add(ship.getImage());
+            }
+        }
+
+        // fill in the ship bases
+        missingShipBases = new ArrayList<OTAShipBase>();
+        OTAShipBase shipBase = null;
+        for(int i=0;i<shipBaseResults.size();i++)
+        {
+
+            shipBase = shipBaseResults.get(i);
+
+            if(!shipBase.getStatus()) {
+                String[] shipBaseLine = new String[3];
+                shipBaseLine[0] = "Ship Base Image";
+                shipBaseLine[1] = MasterShipData.getShipData(shipBase.getShipXws()).getName();
+                tableResults.add(shipBaseLine);
+                missingShipBases.add(shipBase);
+            }
+
+        }
+
+        // fill in the dial hides
+        missingDialHides = new ArrayList<String>();
+        OTAMasterDialHides.OTADialHide dialHide = null;
+        for(int i=0;i<dialHideResults.size();i++)
+        {
+
+            dialHide = dialHideResults.get(i);
+            if(!dialHide.getStatus()) {
+                String[] dialHideLine = new String[3];
+                dialHideLine[0] = "Dial Hide Image";
+                dialHideLine[1] = MasterShipData.getShipData(dialHide.getXws()).getName();
+                tableResults.add(dialHideLine);
+                missingDialHides.add(dialHide.getImage());
+            }
+        }
+
+        // fill in the dial masks
+        missingDialMasks = new ArrayList<OTADialMask>();
+        OTADialMask dialMask = null;
+        for(int i=0;i<dialMaskResults.size();i++)
+        {
+
+            dialMask = dialMaskResults.get(i);
+            if(!dialMask.getStatus()) {
+                String[] dialMaskLine = new String[3];
+                dialMaskLine[0] = "Dial Hide Image";
+                dialMaskLine[1] = MasterShipData.getShipData(dialMask.getShipXws()).getName();
+                dialMaskLine[2] = dialMask.getFaction();
+                tableResults.add(dialMaskLine);
+                missingDialMasks.add(dialMask);
+            }
+        }
+
+        // fill in the pilots
+        missingPilots = new ArrayList<String>();
+        OTAMasterPilots.OTAPilot pilot = null;
+        for(int i=0;i<pilotResults.size();i++)
+        {
+
+            pilot = pilotResults.get(i);
+            if(!pilot.getStatus()) {
+                String[] pilotLine = new String[3];
+                pilotLine[0] = "Pilot";
+                pilotLine[1] = MasterPilotData.getPilotData(pilot.getShipXws(), pilot.getPilotXws(), pilot.getFaction()).getName();
+                pilotLine[2] = pilot.getFaction();
+                tableResults.add(pilotLine);
+                missingPilots.add(pilot.getImage());
+            }
+        }
+
+        // fill in the upgrades
+        missingUpgrades = new ArrayList<String>();
+        OTAMasterUpgrades.OTAUpgrade upgrade = null;
+        for(int i=0;i<upgradeResults.size();i++)
+        {
+
+            upgrade = upgradeResults.get(i);
+            if(!upgrade.getStatus()) {
+                String[] upgradeLine = new String[3];
+                upgradeLine[0] = "Upgrade";
+                upgradeLine[1] = MasterUpgradeData.getUpgradeData(upgrade.getXws()).getName();
+                tableResults.add(upgradeLine);
+                missingUpgrades.add(upgrade.getImage());
+            }
+        }
+
+        // fill in the conditions/tokens
+        missingConditions = new ArrayList<String>();
+        OTAMasterConditions.OTACondition condition = null;
+        for(int i=0;i<conditionResults.size();i++)
+        {
+
+            condition = conditionResults.get(i);
+
+            if(!condition.getStatus()) {
+                String[] conditionLine = new String[3];
+                conditionLine[0] = "Condition";
+                conditionLine[1] = MasterConditionData.getConditionData(condition.getXws()).getName();
+                tableResults.add(conditionLine);
+                missingConditions.add(condition.getImage());
+            }
+
+            if(!condition.getTokenStatus())
+            {
+                String[] conditionLine = new String[3];
+                conditionLine[0] = "Condition Token";
+                conditionLine[1] = MasterConditionData.getConditionData(condition.getXws()).getName();
+                tableResults.add(conditionLine);
+                missingConditions.add(condition.getTokenImage());
+            }
+        }
+
+        // fill in the actions
+        missingActions = new ArrayList<String>();
+        OTAMasterActions.OTAAction action = null;
+        for(int i=0;i<actionResults.size();i++)
+        {
+            action = actionResults.get(i);
+            if(!action.getStatus()) {
+                String[] actionLine = new String[3];
+                actionLine[0] = "Ship Action Image";
+                actionLine[1] = action.getName();
+                tableResults.add(actionLine);
+                missingActions.add(action.getImage());
+            }
+        }
+
+        // convert the ArrayList<String[]> to a String[][]
+        String[][] convertedTableResults = new String[tableResults.size()][3];
+        String[] tableRow = null;
+        for(int i=0; i<tableResults.size();i++)
+        {
+            tableRow = tableResults.get(i);
+            convertedTableResults[i] = tableRow;
+        }
+
+        finalTable = new JTable(convertedTableResults,finalColumnNames);
+        DefaultTableModel model = new DefaultTableModel(tableResults.size(), finalColumnNames.length);
+        model.setNumRows(tableResults.size());
+        model.setDataVector(convertedTableResults,finalColumnNames);
+
+        finalTable.setModel(model);
+        finalTable.getColumnModel().getColumn(0).setPreferredWidth(75);;
+        finalTable.getColumnModel().getColumn(1).setPreferredWidth(150);
+        finalTable.getColumnModel().getColumn(2).setPreferredWidth(150);
+
+
+        finalTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+        return finalTable;
+
+
     }
 
     public void addTo(Buildable parent) {
-        JButton b = new JButton("Content Checker");
+        JButton b = new JButton("Content Checker 2");
         b.setAlignmentY(0.0F);
         b.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
