@@ -14,21 +14,5 @@
       "Elite"
     ],
     "id": 666
-  },
-  {
-    "text": "test small scum aux rear",
-    "name": "scumpilot1",
-    "xws": "scumpilot1",
-    "ship": "scumship1",
-    "unique": true,
-    "skill": 10,
-    "points": 55,
-    "faction": "Rebel Alliance",
-    "slots": [
-      "Elite",
-      "Astromech",
-      "Elite"
-    ],
-    "id": 666
   }
 ]

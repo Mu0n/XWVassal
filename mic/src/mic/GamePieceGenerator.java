@@ -4,6 +4,7 @@ import VASSAL.build.GameModule;
 import VASSAL.build.widget.PieceSlot;
 import VASSAL.counters.GamePiece;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -43,11 +44,11 @@ public class GamePieceGenerator
         }
 
         // determine if the ship needs bomb drop
-//        boolean needsBombCapability = determineIfShipNeedsBombCapability(ship);
+       boolean needsBombCapability = determineIfShipNeedsBombCapability(ship);
 
         // execute the command to build the ship piece
-       // StemShip.ShipGenerateCommand myShipGen = new StemShip.ShipGenerateCommand(ship.getShipData().getXws(), newShip, faction, pilotData.getXws(),needsBombCapability);
-        StemShip.ShipGenerateCommand myShipGen = new StemShip.ShipGenerateCommand(ship.getShipData().getXws(), newShip, faction, pilotData.getXws());
+        StemShip.ShipGenerateCommand myShipGen = new StemShip.ShipGenerateCommand(ship.getShipData().getXws(), newShip, faction, pilotData.getXws(),needsBombCapability);
+       // StemShip.ShipGenerateCommand myShipGen = new StemShip.ShipGenerateCommand(ship.getShipData().getXws(), newShip, faction, pilotData.getXws());
 
         myShipGen.execute();
 
@@ -81,7 +82,7 @@ public class GamePieceGenerator
 
         return foundMobileArc;
     }
-/*
+
     private static boolean determineIfShipNeedsBombCapability(VassalXWSPilotPieces ship)
     {
         boolean needsBomb = false;
@@ -125,7 +126,7 @@ public class GamePieceGenerator
 
         return needsBomb;
     }
-*/
+
     private static PieceSlot getPieceSlotByName(String name)
     {
 
