@@ -1,88 +1,25 @@
 [
   {
-    "name": "Test Ship",
-    "xws": "testship",
+    "name": "Mary Sue",
+    "xws": "marysue",
     "faction": [
-      "Rebel Alliance"
+      "Galactic Empire"
     ],
     "actions": [
+      "Evade",
       "Focus",
-      "Target Lock"
-    ],
-    "size": "large",
-    "attack": 2,
-    "agility": 1,
-    "hull": 9,
-    "shields": 3,
-    "firing_arcs": [
-      "Front",
-      "Turret"
-    ],
-    "id": 55,
-    "maneuvers": [
-      [
-        0,
-        0,
-        3
-      ],
-      [
-        3,
-        2,
-        2,
-        2,
-        3
-      ],
-      [
-        1,
-        1,
-        2,
-        1,
-        1
-      ],
-      [
-        0,
-        1,
-        1,
-        1
-      ]
-    ],
-    "dial": [
-      "0OR",
-      "1TR",
-      "1BG",
-      "1FG",
-      "1NG",
-      "1YR",
-      "2TW",
-      "2BW",
-      "2FG",
-      "2NW",
-      "2YW",
-      "3BW",
-      "3FW",
-      "3NW"
-    ] 
-  },
-  {
-    "name": "Test Ship2",
-    "xws": "testship2",
-    "faction": [
-      "Rebel Alliance"
-    ],
-    "actions": [
-      "Focus",
-      "Target Lock"
+      "Boost"
     ],
     "size": "small",
-    "attack": 2,
-    "agility": 1,
-    "hull": 9,
-    "shields": 3,
+    "attack": 6,
+    "agility": 4,
+    "hull": 6,
+    "shields": 6,
     "firing_arcs": [
       "Front",
-      "Turret"
+      "Auxiliary 180"
     ],
-    "id": 55,
+    "id": 666,
     "maneuvers": [
       [
         0,
@@ -128,25 +65,26 @@
     ]
   },
   {
-    "name": "My Test Ship3",
-    "xws": "testship3",
+    "name": "scumship1",
+    "xws": "scumship1",
     "faction": [
-      "Scum and Villainy"
+      "Galactic Empire"
     ],
     "actions": [
+      "Evade",
       "Focus",
-      "Target Lock"
+      "Boost"
     ],
     "size": "small",
-    "attack": 2,
-    "agility": 1,
-    "hull": 9,
-    "shields": 3,
+    "attack": 6,
+    "agility": 4,
+    "hull": 6,
+    "shields": 6,
     "firing_arcs": [
       "Front",
-      "Turret"
+      "Bullseye"
     ],
-    "id": 55,
+    "id": 666,
     "maneuvers": [
       [
         0,
@@ -175,7 +113,7 @@
       ]
     ],
     "dial": [
-
+      "0OR",
       "1TR",
       "1BG",
       "1FG",

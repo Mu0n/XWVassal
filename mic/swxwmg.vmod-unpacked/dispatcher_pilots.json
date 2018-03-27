@@ -1,69 +1,34 @@
 [
   {
-    "name": "Test Pilot",
-    "id": 0,
+    "text": "When your opponent cries, drink their tears",
+    "name": "Mary",
+    "xws": "mary",
+    "ship": "Mary Sue",
     "unique": true,
-    "ship": "testship",
-    "skill": 6,
-    "points": 100,
+    "skill": 10,
+    "points": 55,
+    "faction": "Galactic Empire",
     "slots": [
-      "System",
-      "Torpedo",
-      "Crew",
-      "Crew"
+      "Elite",
+      "Astromech",
+      "Elite"
     ],
-    "text": "Unknown",
-    "image": "pilots/Rebel Alliance/X-wing/wedge-antilles.png",
-    "faction": "Rebel Alliance",
-    "xws": "testpilot"
+    "id": 666
   },
   {
-    "name": "Test Pilot2",
-    "id": 0,
+    "text": "test small scum aux rear",
+    "name": "scumpilot1",
+    "xws": "scumpilot1",
+    "ship": "scumship1",
     "unique": true,
-    "ship": "testship2",
-    "skill": 6,
-    "points": 100,
-    "slots": [
-      "System",
-      "Torpedo",
-      "Crew",
-      "Crew"
-    ],
-    "text": "Unknown",
-    "image": "pilots/Rebel Alliance/X-wing/wedge-antilles.png",
+    "skill": 10,
+    "points": 55,
     "faction": "Rebel Alliance",
-    "xws": "testpilot2"
-  }
-,
-  {
-    "name": "My Test Pilot 3",
-    "id": 0,
-    "unique": true,
-    "ship": "testship3",
-    "skill": 6,
-    "points": 100,
     "slots": [
-      "Missile",
-      "Crew",
-      "Salvaged Astromech",
-      "Turret",
       "Elite",
-      "Title",
-      "Cannon",
-      "Bomb",
-      "Illicit",
-      "System",
-      "Tech",
-      "Astromech"
-
+      "Astromech",
+      "Elite"
     ],
-    "text": "Unknown",
-    "image": "pilots/Rebel Alliance/X-wing/wedge-antilles.png",
-    "faction": "Scum and Villainy",
-    "xws": "testpilot3",
-    "conditions": [
-      "Test Condition"
-    ]
+    "id": 666
   }
 ]

@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -48,6 +49,42 @@ public class StemShip extends Decorator implements EditablePiece {
             .put("large5","95;28")
             .build();
 
+    private static Map<String, String> firingArcTypes = ImmutableMap.<String, String>builder()
+            // Front
+            .put("small/rebelalliance/Front","emb2;;2;;Show Firing Arc;2;;;2;;;;;true;0;-479;,AltArc_Rebel.svg;,;true;Show Firing Arc;;;false;;1;1;true;;70,130;")
+
+            .put("small/galacticempire/Front","emb2;;2;;Show Firing Arc;2;;;2;;;;;true;0;-479;,AltArc_Imperial.svg;,;true;Show Firing Arc;;;false;;1;1;true;;70,130;")
+            .put("small/scumandvillainy/Front","emb2;;2;;Show Firing Arc;2;;;2;;;;;true;0;-479;,AltArc_Scum.svg;,;true;Show Firing Arc;;;false;;1;1;true;;70,130;")
+            .put("large/rebelalliance/Front","emb2;;2;;Show Firing Arc;2;;;2;;;;;true;0;-536;,Big_Firing-Arc_Rebel.svg;,;true;Show Big Firing Arc;;;false;;1;1;true;;70,130;")
+            .put("large/galacticempire/Front","emb2;;2;;Show Firing Arc;2;;;2;;;;;true;0;-536;,Big_Firing-Arc_Imperial.svg;,;true;Show Big Firing Arc;;;false;;1;1;true;;70,130;")
+            .put("large/scumandvillainy/Front","emb2;;2;;Show Firing Arc;2;;;2;;;;;true;0;-536;,Big_Firing-Arc_Scum.svg;,;true;Show Big Firing Arc;;;false;;1;1;true;;70,130;")
+
+            // Aux 180
+            .put("small/rebelalliance/Auxiliary 180","emb2;;2;;Show Auxiliary Arc;2;;;2;;;;;true;0;-423;,auzituck_arc.svg;,;true;Show Auxiliary Firing Arc;;;false;;1;1;true;;78,130;")
+            .put("small/galacticempire/Auxiliary 180","emb2;;2;;Show Auxiliary Arc;2;;;2;;;;;true;0;-423;,small_imperial_aux180_arc.svg;,;true;Show Auxiliary Firing Arc;;;false;;1;1;true;;78,130;")
+            .put("small/scumandvillainy/Auxiliary 180","emb2;;2;;Show Auxiliary Arc;2;;;2;;;;;true;0;-423;,small_scum_aux180_arc.svg;,;true;Show Auxiliary Firing Arc;;;false;;1;1;true;;78,130;")
+            .put("large/rebelalliance/Auxiliary 180","emb2;;2;;Show Aux Arc;2;;;2;;;;;true;0;-480;,large_rebel_aux180_arc.svg;,;true;Show Big Aux Arc;;;false;;1;1;true;;78,130;")
+            .put("large/galacticempire/Auxiliary 180","emb2;;2;;Show Aux Arc;2;;;2;;;;;true;0;-480;,large_imperial_aux180_arc.svg;,;true;Show Big Aux Arc;;;false;;1;1;true;;78,130;")
+            .put("large/scumandvillainy/Auxiliary 180","emb2;;2;;Show Aux Arc;2;;;2;;;;;true;0;-480;,hound's_tooth_arc.svg;,;true;Show Big Aux Arc;;;false;;1;1;true;;78,130;")
+
+            // Aux Rear
+            .put("small/rebelalliance/Auxiliary Rear","emb2;;2;;Show Auxiliary Arc;2;;;2;;;;;true;0;481;,AltArc_Rebel_Aux.svg;,;true;Show Auxiliary Firing Arc;;;false;;1;1;true;;86,130;")
+            .put("small/galacticempire/Auxiliary Rear","emb2;;2;;Show Auxiliary Arc;2;;;2;;;;;true;0;481;,AltArc_Imperial_Aux.svg;,;true;Show Auxiliary Firing Arc;;;false;;1;1;true;;86,130;")
+            .put("small/scumandvillainy/Auxiliary Rear","emb2;;2;;Show Auxiliary Arc;2;;;2;;;;;true;0;481;,AltArc_Scum_Aux.svg;,;true;Show Auxiliary Firing Arc;;;false;;1;1;true;;86,130;")
+            .put("large/rebelalliance/Auxiliary Rear","emb2;;2;;Show Auxiliary Arc;2;;;2;;;;;true;0;537;,Big_Firing-Arc_Rebel_Aux.svg;,;true;Show Big Auxiliary Firing Arc;;;false;;1;1;true;;86,130;")
+            .put("large/galacticempire/Auxiliary Rear","emb2;;2;;Show Auxiliary Arc;2;;;2;;;;;true;0;537;,Big_Firing-Arc_Imperial_Aux.svg;,;true;Show Big Auxiliary Firing Arc;;;false;;1;1;true;;86,130;")
+            .put("large/scumandvillainy/Auxiliary Rear","emb2;;2;;Show Auxiliary Arc;2;;;2;;;;;true;0;537;,Big_Firing-Arc_Scum_Aux.svg;,;true;Show Big Auxiliary Firing Arc;;;false;;1;1;true;;86,130;")
+
+            // Bullseye
+            .put("small/rebelalliance/Bullseye","emb2;;2;;Show Bullseye Arc;2;;;2;;;;;true;0;-479;,Bullseye_Arc_Rebel.svg;,;true;Show Bullseye Arc;;;false;;1;1;true;;88,130;")
+            .put("small/galacticempire/Bullseye","emb2;;2;;Show Bullseye Arc;2;;;2;;;;;true;0;-479;,Bullseye_Arc_Imperial.svg;,;true;Show Bullseye Arc;;;false;;1;1;true;;88,130;")
+            .put("small/scumandvillainy/Bullseye","emb2;;2;;Show Bullseye Arc;2;;;2;;;;;true;0;-479;,Bullseye_Arc_Scum.svg;,;true;Show Bullseye Arc;;;false;;1;1;true;;88,130;")
+            .put("large/rebelalliance/Bullseye","")
+            .put("large/galacticempire/Bullseye","")
+            .put("large/scumandvillainy/Bullseye","")
+
+            .build();
+
     public StemShip(){
         this(null);
     }
@@ -78,24 +115,6 @@ public class StemShip extends Decorator implements EditablePiece {
         return null;
     }
 
-//    @Override
-//    public Command keyEvent(KeyStroke stroke) {
-//        //check to see if 'x' was pressed
-//        if(KeyStroke.getKeyStroke(KeyEvent.VK_I, KeyEvent.CTRL_DOWN_MASK, true).equals(stroke)) {
-//            logToChatWithTime("temporary trigger for Dial generation -will be eventually ported to autospawn\nPossibly to a right click menu as well with a dynamically fetched list of all ships??");
-//            GamePiece piece = getInner();
-
-//            // this is hardcoded - need to fix
-//            DialGenerateCommand myDialGen = new DialGenerateCommand("attackshuttle", piece, "Rebel Alliance");
-//            Command stringOCommands = piece.keyEvent(stroke);
-//            stringOCommands.append(myDialGen);
-
-//            myDialGen.execute();
-//            return stringOCommands;
-//        }
-
-//        return piece.keyEvent(stroke);
-//    }
 
     public String getDescription() {
         return "Custom StemShip (mic.StemShip)";
@@ -138,6 +157,7 @@ public class StemShip extends Decorator implements EditablePiece {
        // List<String> actionList;
         String xwsPilot = "";
      //   boolean needsBombCapability;
+     //   boolean shipContainsMobileArc;
 
         //ShipGenerateCommand(String shipXws,   GamePiece piece, String faction, String xwsPilot, boolean needsBombCapability) {
         ShipGenerateCommand(String shipXws,   GamePiece piece, String faction, String xwsPilot) {
@@ -151,6 +171,7 @@ public class StemShip extends Decorator implements EditablePiece {
             this.piece = piece;
             this.xwsPilot = xwsPilot;
             this.size = shipData.getSize();
+        //    this.shipContainsMobileArc = shipContainsMobileArc;
          //   this.needsBombCapability = needsBombCapability;
            // this.actionList = shipData.getActions();
         }
@@ -161,10 +182,95 @@ public class StemShip extends Decorator implements EditablePiece {
             // find the appropriate baseImage
             piece = buildShipBaseLayer(piece,faction,xwsShipName,xwsPilot, size);
 
+            // Add the Target Lock capability
+            piece = addTargetLock(piece,faction,size);
+
+            // add the firing arcs needed
+            piece = addFiringArcs(piece,faction,size,xwsShipName);
+
         //    if(!this.needsBombCapability) {
         //        piece = removeBombCapability(piece);
          //   }
 
+        }
+
+        private GamePiece addFiringArcs(GamePiece newGamePiece, String faction, String newSize, String xws )
+        {
+            String newFaction = XWOTAUtils.simplifyFactionName(faction);
+
+            // first get the list of arcs needed
+            List<String> firingArcs = MasterShipData.getShipData(xwsShipName).getFiringArcs();
+            String arc = null;
+            Iterator<String> i = firingArcs.iterator();
+            Embellishment emb = null;
+            String arcKey = null;
+            String newType = null;
+            while(i.hasNext())
+            {
+                arc = i.next();
+                if(!arc.equals("Mobile") && !arc.equals("Turret")) {
+                    if (arc.equals("Front")) {
+                        emb = (Embellishment) Util.getEmbellishment(newGamePiece, "Layer - Show Front Firing Arc");
+
+                    } else {
+                        emb = (Embellishment) Util.getEmbellishment(newGamePiece, "Layer - Show Auxiliary Firing Arc");
+                    }
+
+                    arcKey = newSize + "/" + newFaction + "/" + arc;
+                    newType = firingArcTypes.get(arcKey);
+                    if(newType != null && !newType.isEmpty())
+                    {
+                        emb.mySetType(newType);
+                    }
+
+                }
+            }
+
+            return newGamePiece;
+        }
+
+        private GamePiece addTargetLock(GamePiece newGamePiece, String faction, String newSize)
+        {
+
+            final String targetLockLayerName = "Layer - Show Target Lock";
+            final String rebelSmallImage = "TargetLock_Rebel.svg";
+            final String rebelLargeImage = "TargetLock_Rebel_Large.svg";
+            final String imperialSmallImage = "TargetLock_Imperial.svg";
+            final String imperialLargeImage = "TargetLock_Imperial_Large.svg";
+            final String scumSmallImage = "TargetLock_Scum.svg";
+            final String scumLargeImage = "TargetLock_Scum_Large.svg";
+
+            String newFaction = XWOTAUtils.simplifyFactionName(faction);
+
+            Embellishment myEmb = (Embellishment)Util.getEmbellishment(newGamePiece,targetLockLayerName);
+
+            StringBuilder sb = new StringBuilder();
+            sb.append("emb2;;2;;Show Target Lock;2;;;2;;;;;true;0;0;,");
+            if(newSize.equals("small") && newFaction.equals("rebelalliance"))
+            {
+                sb.append(rebelSmallImage);
+            }else if(newSize.equals("small") && newFaction.equals("galacticempire") )
+            {
+                sb.append(imperialSmallImage);
+            }else if(newSize.equals("small") && newFaction.equals("scumandvillainy") )
+            {
+                sb.append(scumSmallImage);
+            }else if(newSize.equals("large") && newFaction.equals("rebelalliance"))
+            {
+                sb.append(rebelLargeImage);
+            }else if(newSize.equals("large") && newFaction.equals("galacticempire") )
+            {
+                sb.append(imperialLargeImage);
+            }else if(newSize.equals("large") && newFaction.equals("scumandvillainy") )
+            {
+                sb.append(scumLargeImage);
+            }
+
+            sb.append(";,;true;Show Target Lock;;;false;;1;1;true;;76,130;");
+
+            myEmb.mySetType(sb.toString());
+
+            return newGamePiece;
         }
 /*
         private GamePiece removeBombCapability(GamePiece piece)
@@ -316,6 +422,7 @@ public class StemShip extends Decorator implements EditablePiece {
 
         private GamePiece buildShipBaseLayer(GamePiece piece, String faction, String xwsShipName, String xwsPilot, String size)
         {
+
             // first find the base image name
             String shipBaseImage[] = findShipBaseImage(faction,xwsShipName, xwsPilot, size);
 
@@ -342,6 +449,7 @@ public class StemShip extends Decorator implements EditablePiece {
                 Embellishment myEmb = (Embellishment)Util.getEmbellishment(piece,BASE_SHIP_LAYER_NAME);
                 myEmb.mySetType(sb.toString());
 
+
             }else{
                 // this is dual based
                 StringBuffer sb = new StringBuffer();
@@ -366,7 +474,6 @@ public class StemShip extends Decorator implements EditablePiece {
                 // now get the Layer
                 Embellishment myEmb = (Embellishment)Util.getEmbellishment(piece,BASE_SHIP_LAYER_NAME);
                 myEmb.mySetType(sb.toString());
-
 
 
                 //emb2;Activate;2;;Ghost;2;;;2;;;;1;false;0;0;Ship-U-Wing_Atk.png,Ship_Big_SeeThrough.png,
