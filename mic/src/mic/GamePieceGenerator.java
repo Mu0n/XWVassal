@@ -14,6 +14,7 @@ public class GamePieceGenerator
 {
     private static final String SMALL_STEM_SHIP_SLOT_NAME = "ship -- Nu Stem Small Ship";
     private static final String LARGE_STEM_SHIP_SLOT_NAME = "ship -- Nu Stem Large Ship";
+    private static final String LARGE_STEM_SHIP_MOBILE_ARC_SLOT_NAME = "ship -- Nu Stem Large Ship MobileArc";
     private static final String SHIP_BASE_SIZE_SMALL = "small";
     private static final String SHIP_BASE_SIZE_LARGE = "large";
 
@@ -27,12 +28,18 @@ public class GamePieceGenerator
 
         // generate the piece from the stem ships
         GamePiece newShip = null;
+        boolean shipContainsMobileArc = containsMobileArc(shipData);
         if(shipData.getSize().contentEquals(SHIP_BASE_SIZE_SMALL))
         {
             newShip = mic.Util.newPiece(getPieceSlotByName(SMALL_STEM_SHIP_SLOT_NAME));
         }else if(shipData.getSize().contentEquals(SHIP_BASE_SIZE_LARGE))
         {
-            newShip = mic.Util.newPiece(getPieceSlotByName(LARGE_STEM_SHIP_SLOT_NAME));
+            if(shipContainsMobileArc)
+            {
+                newShip = mic.Util.newPiece(getPieceSlotByName(LARGE_STEM_SHIP_MOBILE_ARC_SLOT_NAME));
+            }else {
+                newShip = mic.Util.newPiece(getPieceSlotByName(LARGE_STEM_SHIP_SLOT_NAME));
+            }
         }
 
         // determine if the ship needs bomb drop
@@ -40,7 +47,7 @@ public class GamePieceGenerator
 
         // execute the command to build the ship piece
        // StemShip.ShipGenerateCommand myShipGen = new StemShip.ShipGenerateCommand(ship.getShipData().getXws(), newShip, faction, pilotData.getXws(),needsBombCapability);
-        StemShip.ShipGenerateCommand myShipGen = new StemShip.ShipGenerateCommand(ship.getShipData().getXws(), newShip, faction, pilotData.getXws());
+        StemShip.ShipGenerateCommand myShipGen = new StemShip.ShipGenerateCommand(ship.getShipData().getXws(), newShip, faction, pilotData.getXws(),shipContainsMobileArc);
 
         myShipGen.execute();
 
@@ -55,6 +62,24 @@ public class GamePieceGenerator
         newShip.setProperty("Shield Rating", Integer.toString(ship.getShipData().getShields()));
 
         return newShip;
+    }
+
+    private static boolean containsMobileArc(MasterShipData.ShipData shipData)
+    {
+        boolean foundMobileArc = false;
+        List<String>arcs = shipData.getFiringArcs();
+        Iterator<String> i = arcs.iterator();
+        String arc = null;
+        while(i.hasNext() && !foundMobileArc)
+        {
+            arc = i.next();
+            if(arc.equals("Mobile"))
+            {
+                foundMobileArc = true;
+            }
+        }
+
+        return foundMobileArc;
     }
 /*
     private static boolean determineIfShipNeedsBombCapability(VassalXWSPilotPieces ship)

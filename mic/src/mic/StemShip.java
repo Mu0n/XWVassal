@@ -61,17 +61,17 @@ public class StemShip extends Decorator implements EditablePiece {
 
             // Aux 180
             .put("small/rebelalliance/Auxiliary 180","emb2;;2;;Show Auxiliary Arc;2;;;2;;;;;true;0;-423;,auzituck_arc.svg;,;true;Show Auxiliary Firing Arc;;;false;;1;1;true;;78,130;")
-            .put("small/galacticempire/Auxiliary 180","")
-            .put("small/scumandvillainy/Auxiliary 180","")
-            .put("large/rebelalliance/Auxiliary 180","")
-            .put("large/galacticempire/Auxiliary 180","")
+            .put("small/galacticempire/Auxiliary 180","emb2;;2;;Show Auxiliary Arc;2;;;2;;;;;true;0;-423;,small_imperial_aux180_arc.svg;,;true;Show Auxiliary Firing Arc;;;false;;1;1;true;;78,130;")
+            .put("small/scumandvillainy/Auxiliary 180","emb2;;2;;Show Auxiliary Arc;2;;;2;;;;;true;0;-423;,small_scum_aux180_arc.svg;,;true;Show Auxiliary Firing Arc;;;false;;1;1;true;;78,130;")
+            .put("large/rebelalliance/Auxiliary 180","emb2;;2;;Show Aux Arc;2;;;2;;;;;true;0;-480;,large_rebel_aux180_arc.svg;,;true;Show Big Aux Arc;;;false;;1;1;true;;78,130;")
+            .put("large/galacticempire/Auxiliary 180","emb2;;2;;Show Aux Arc;2;;;2;;;;;true;0;-480;,large_imperial_aux180_arc.svg;,;true;Show Big Aux Arc;;;false;;1;1;true;;78,130;")
             .put("large/scumandvillainy/Auxiliary 180","emb2;;2;;Show Aux Arc;2;;;2;;;;;true;0;-480;,hound's_tooth_arc.svg;,;true;Show Big Aux Arc;;;false;;1;1;true;;78,130;")
 
             // Aux Rear
             .put("small/rebelalliance/Auxiliary Rear","emb2;;2;;Show Auxiliary Arc;2;;;2;;;;;true;0;481;,AltArc_Rebel_Aux.svg;,;true;Show Auxiliary Firing Arc;;;false;;1;1;true;;86,130;")
             .put("small/galacticempire/Auxiliary Rear","emb2;;2;;Show Auxiliary Arc;2;;;2;;;;;true;0;481;,AltArc_Imperial_Aux.svg;,;true;Show Auxiliary Firing Arc;;;false;;1;1;true;;86,130;")
-            .put("small/scumandvillainy/Auxiliary Rear","")
-            .put("large/rebelalliance/Auxiliary Rear","")
+            .put("small/scumandvillainy/Auxiliary Rear","emb2;;2;;Show Auxiliary Arc;2;;;2;;;;;true;0;481;,AltArc_Scum_Aux.svg;,;true;Show Auxiliary Firing Arc;;;false;;1;1;true;;86,130;")
+            .put("large/rebelalliance/Auxiliary Rear","emb2;;2;;Show Auxiliary Arc;2;;;2;;;;;true;0;537;,Big_Firing-Arc_Rebel_Aux.svg;,;true;Show Big Auxiliary Firing Arc;;;false;;1;1;true;;86,130;")
             .put("large/galacticempire/Auxiliary Rear","emb2;;2;;Show Auxiliary Arc;2;;;2;;;;;true;0;537;,Big_Firing-Arc_Imperial_Aux.svg;,;true;Show Big Auxiliary Firing Arc;;;false;;1;1;true;;86,130;")
             .put("large/scumandvillainy/Auxiliary Rear","emb2;;2;;Show Auxiliary Arc;2;;;2;;;;;true;0;537;,Big_Firing-Arc_Scum_Aux.svg;,;true;Show Big Auxiliary Firing Arc;;;false;;1;1;true;;86,130;")
 
@@ -115,24 +115,6 @@ public class StemShip extends Decorator implements EditablePiece {
         return null;
     }
 
-//    @Override
-//    public Command keyEvent(KeyStroke stroke) {
-//        //check to see if 'x' was pressed
-//        if(KeyStroke.getKeyStroke(KeyEvent.VK_I, KeyEvent.CTRL_DOWN_MASK, true).equals(stroke)) {
-//            logToChatWithTime("temporary trigger for Dial generation -will be eventually ported to autospawn\nPossibly to a right click menu as well with a dynamically fetched list of all ships??");
-//            GamePiece piece = getInner();
-
-//            // this is hardcoded - need to fix
-//            DialGenerateCommand myDialGen = new DialGenerateCommand("attackshuttle", piece, "Rebel Alliance");
-//            Command stringOCommands = piece.keyEvent(stroke);
-//            stringOCommands.append(myDialGen);
-
-//            myDialGen.execute();
-//            return stringOCommands;
-//        }
-
-//        return piece.keyEvent(stroke);
-//    }
 
     public String getDescription() {
         return "Custom StemShip (mic.StemShip)";
@@ -175,9 +157,10 @@ public class StemShip extends Decorator implements EditablePiece {
        // List<String> actionList;
         String xwsPilot = "";
      //   boolean needsBombCapability;
+        boolean shipContainsMobileArc;
 
         //ShipGenerateCommand(String shipXws,   GamePiece piece, String faction, String xwsPilot, boolean needsBombCapability) {
-        ShipGenerateCommand(String shipXws,   GamePiece piece, String faction, String xwsPilot) {
+        ShipGenerateCommand(String shipXws,   GamePiece piece, String faction, String xwsPilot, boolean shipContainsMobileArc) {
 
             // fetch the maneuver array of arrays according to the xws name passed on from autospawn or other means
             xwsShipName = shipXws;
@@ -188,6 +171,7 @@ public class StemShip extends Decorator implements EditablePiece {
             this.piece = piece;
             this.xwsPilot = xwsPilot;
             this.size = shipData.getSize();
+            this.shipContainsMobileArc = shipContainsMobileArc;
          //   this.needsBombCapability = needsBombCapability;
            // this.actionList = shipData.getActions();
         }
@@ -202,7 +186,7 @@ public class StemShip extends Decorator implements EditablePiece {
             piece = addTargetLock(piece,faction,size);
 
             // add the firing arcs needed
-            piece = addFiringArcs(piece,faction,size,xwsShipName);
+            piece = addFiringArcs(piece,faction,size,xwsShipName, shipContainsMobileArc);
 
         //    if(!this.needsBombCapability) {
         //        piece = removeBombCapability(piece);
@@ -210,7 +194,7 @@ public class StemShip extends Decorator implements EditablePiece {
 
         }
 
-        private GamePiece addFiringArcs(GamePiece newGamePiece, String faction, String newSize, String xws )
+        private GamePiece addFiringArcs(GamePiece newGamePiece, String faction, String newSize, String xws, boolean shipContainsMobileArc )
         {
             String newFaction = XWOTAUtils.simplifyFactionName(faction);
 
@@ -234,14 +218,34 @@ public class StemShip extends Decorator implements EditablePiece {
 
                     arcKey = newSize + "/" + newFaction + "/" + arc;
                     newType = firingArcTypes.get(arcKey);
-                    Util.logToChat(arcKey);
                     if(newType != null && !newType.isEmpty())
                     {
-                        Util.logToChat(newType);
                         emb.mySetType(newType);
                     }
 
                 }
+            }
+
+            if(shipContainsMobileArc)
+            {
+                //TODO add in the mobile arc stuff
+                // Only need to change the color of the front arc
+                // "Show Big Firing Arc" - Purple Front Arc
+                // "Show Big Firing Arc legacy" - Scum Front Arc (Not needed)
+                // "Show Big Auxiliary Firing Arc"  - Purple Aux Rear Arc
+                // "Show Big Auxiliary Firing Arc Legacy" - Scum Rear Aux Arc (not needed?)
+                // "Show Left Mobile Arc" - Left Purple Arc
+                // "Show Right Mobile Arc" - Right Purple Arc
+
+                // Submenu Show Firing Arcs
+                //  Show Firing Arc
+                // Show Auxiliary Firing Arc
+                // Show Mobile Turret Arc
+                // Show front arc firing options
+                // Show back arc firing options
+                // show target lock
+                // show target lock firing options
+
             }
 
             return newGamePiece;
