@@ -223,10 +223,10 @@ public class AnnouncementOnLog extends AbstractConfigurable {
                     imageToDownload = new OTAImage();
                     imageToDownload.setImageName("");
                     imageToDownload.setImageType("dial");
-                    imageToDownload.setImageDisplayType("Dial Hide Ship Image");
+                    imageToDownload.setImageDisplayType("Dial Mask");
                     MasterShipData.ShipData shipData = MasterShipData.getShipData(dialMask.getShipXws());
                     imageToDownload.setObjectName(shipData.getName());
-
+                    imagesToDownload.add(imageToDownload);
                     XWOTAUtils.buildDialMaskImages(dialMask.getFaction(), dialMask.getShipXws(), dialMask.getDialHideImageName(), dialMask.getDialMaskImageName(), writer);
 
                 }
@@ -259,6 +259,7 @@ public class AnnouncementOnLog extends AbstractConfigurable {
                     imageToDownload.setImageDisplayType("Ship Base");
                     MasterShipData.ShipData shipData = MasterShipData.getShipData(shipBase.getShipXws());
                     imageToDownload.setObjectName(shipData.getName());
+                    imagesToDownload.add(imageToDownload);
                     java.util.List<String> arcs = shipData.getFiringArcs();
 
                     java.util.List<String> actions = shipData.getActions();
@@ -294,11 +295,18 @@ public class AnnouncementOnLog extends AbstractConfigurable {
                 String action = null;
                 while (imageIterator.hasNext()) {
                     image = imageIterator.next();
-                    action = "Downloaded";
-                    if (image.getImageType().equals("ShipBase") || image.getImageType().equals("dial")) {
-                        action = "Generated";
+                    action = "Downloaded Image for";
+
+                    if(image.getImageDisplayType().equals("Ship Base"))
+                    {
+                        mic.Util.logToChat("Generated Ship Base image for Ship: "+image.getObjectName());
+                    }else if(image.getImageDisplayType().equals("Dial Mask"))
+                    {
+                        mic.Util.logToChat("Generated Dial Mask image for Ship: "+image.getObjectName());
+                    }else{
+                        mic.Util.logToChat("Downloaded image for "+image.getImageDisplayType()+ ": " + image.getObjectName());
                     }
-                    mic.Util.logToChat(action + " " + image.getImageDisplayType() + " " + image.getObjectName());
+
                 }
             }
 
