@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -46,6 +47,42 @@ public class StemShip extends Decorator implements EditablePiece {
             .put("large3","95;-6")
             .put("large4","95;11")
             .put("large5","95;28")
+            .build();
+
+    private static Map<String, String> firingArcTypes = ImmutableMap.<String, String>builder()
+            // Front
+            .put("small/rebelalliance/Front","emb2;;2;;Show Firing Arc;2;;;2;;;;;true;0;-479;,AltArc_Rebel.svg;,;true;Show Firing Arc;;;false;;1;1;true;;70,130;")
+
+            .put("small/galacticempire/Front","emb2;;2;;Show Firing Arc;2;;;2;;;;;true;0;-479;,AltArc_Imperial.svg;,;true;Show Firing Arc;;;false;;1;1;true;;70,130;")
+            .put("small/scumandvillainy/Front","emb2;;2;;Show Firing Arc;2;;;2;;;;;true;0;-479;,AltArc_Scum.svg;,;true;Show Firing Arc;;;false;;1;1;true;;70,130;")
+            .put("large/rebelalliance/Front","emb2;;2;;Show Firing Arc;2;;;2;;;;;true;0;-536;,Big_Firing-Arc_Rebel.svg;,;true;Show Big Firing Arc;;;false;;1;1;true;;70,130;")
+            .put("large/galacticempire/Front","emb2;;2;;Show Firing Arc;2;;;2;;;;;true;0;-536;,Big_Firing-Arc_Imperial.svg;,;true;Show Big Firing Arc;;;false;;1;1;true;;70,130;")
+            .put("large/scumandvillainy/Front","emb2;;2;;Show Firing Arc;2;;;2;;;;;true;0;-536;,Big_Firing-Arc_Scum.svg;,;true;Show Big Firing Arc;;;false;;1;1;true;;70,130;")
+
+            // Aux 180
+            .put("small/rebelalliance/Auxiliary 180","emb2;;2;;Show Auxiliary Arc;2;;;2;;;;;true;0;-423;,auzituck_arc.svg;,;true;Show Auxiliary Firing Arc;;;false;;1;1;true;;78,130;")
+            .put("small/galacticempire/Auxiliary 180","")
+            .put("small/scumandvillainy/Auxiliary 180","")
+            .put("large/rebelalliance/Auxiliary 180","")
+            .put("large/galacticempire/Auxiliary 180","")
+            .put("large/scumandvillainy/Auxiliary 180","emb2;;2;;Show Aux Arc;2;;;2;;;;;true;0;-480;,hound's_tooth_arc.svg;,;true;Show Big Aux Arc;;;false;;1;1;true;;78,130;")
+
+            // Aux Rear
+            .put("small/rebelalliance/Auxiliary Rear","emb2;;2;;Show Auxiliary Arc;2;;;2;;;;;true;0;481;,AltArc_Rebel_Aux.svg;,;true;Show Auxiliary Firing Arc;;;false;;1;1;true;;86,130;")
+            .put("small/galacticempire/Auxiliary Rear","emb2;;2;;Show Auxiliary Arc;2;;;2;;;;;true;0;481;,AltArc_Imperial_Aux.svg;,;true;Show Auxiliary Firing Arc;;;false;;1;1;true;;86,130;")
+            .put("small/scumandvillainy/Auxiliary Rear","")
+            .put("large/rebelalliance/Auxiliary Rear","")
+            .put("large/galacticempire/Auxiliary Rear","emb2;;2;;Show Auxiliary Arc;2;;;2;;;;;true;0;537;,Big_Firing-Arc_Imperial_Aux.svg;,;true;Show Big Auxiliary Firing Arc;;;false;;1;1;true;;86,130;")
+            .put("large/scumandvillainy/Auxiliary Rear","emb2;;2;;Show Auxiliary Arc;2;;;2;;;;;true;0;537;,Big_Firing-Arc_Scum_Aux.svg;,;true;Show Big Auxiliary Firing Arc;;;false;;1;1;true;;86,130;")
+
+            // Bullseye
+            .put("small/rebelalliance/Bullseye","")
+            .put("small/galacticempire/Bullseye","")
+            .put("small/scumandvillainy/Bullseye","emb2;;2;;Show Bullseye Arc;2;;;2;;;;;true;0;-479;,Bullseye_Arc_Scum.svg;,;true;Show Bullseye Arc;;;false;;1;1;true;;88,130;")
+            .put("large/rebelalliance/Bullseye","")
+            .put("large/galacticempire/Bullseye","")
+            .put("large/scumandvillainy/Bullseye","")
+
             .build();
 
     public StemShip(){
@@ -163,10 +200,51 @@ public class StemShip extends Decorator implements EditablePiece {
 
             // Add the Target Lock capability
             piece = addTargetLock(piece,faction,size);
+
+            // add the firing arcs needed
+            piece = addFiringArcs(piece,faction,size,xwsShipName);
+
         //    if(!this.needsBombCapability) {
         //        piece = removeBombCapability(piece);
          //   }
 
+        }
+
+        private GamePiece addFiringArcs(GamePiece newGamePiece, String faction, String newSize, String xws )
+        {
+            String newFaction = XWOTAUtils.simplifyFactionName(faction);
+
+            // first get the list of arcs needed
+            List<String> firingArcs = MasterShipData.getShipData(xwsShipName).getFiringArcs();
+            String arc = null;
+            Iterator<String> i = firingArcs.iterator();
+            Embellishment emb = null;
+            String arcKey = null;
+            String newType = null;
+            while(i.hasNext())
+            {
+                arc = i.next();
+                if(!arc.equals("Mobile") && !arc.equals("Turret")) {
+                    if (arc.equals("Front")) {
+                        emb = (Embellishment) Util.getEmbellishment(newGamePiece, "Layer - Show Front Firing Arc");
+
+                    } else {
+                        emb = (Embellishment) Util.getEmbellishment(newGamePiece, "Layer - Show Auxiliary Firing Arc");
+                    }
+
+                    arcKey = newSize + "/" + newFaction + "/" + arc;
+                    newType = firingArcTypes.get(arcKey);
+                    Util.logToChat(arcKey);
+                    if(newType != null && !newType.isEmpty())
+                    {
+                        Util.logToChat(newType);
+                        emb.mySetType(newType);
+                    }
+
+                }
+            }
+
+            return newGamePiece;
         }
 
         private GamePiece addTargetLock(GamePiece newGamePiece, String faction, String newSize)
