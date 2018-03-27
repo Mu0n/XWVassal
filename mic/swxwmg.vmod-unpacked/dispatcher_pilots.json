@@ -14,7 +14,7 @@
     ],
     "text": "Unknown",
     "image": "pilots/Rebel Alliance/X-wing/wedge-antilles.png",
-    "faction": "Rebel Alliance",
+    "faction": "Galactic Empire",
     "xws": "testpilot"
   },
   {
@@ -61,10 +61,7 @@
     "text": "Unknown",
     "image": "pilots/Rebel Alliance/X-wing/wedge-antilles.png",
     "faction": "Scum and Villainy",
-    "xws": "testpilot3",
-    "conditions": [
-      "Test Condition"
-    ]
+    "xws": "testpilot3"
   },
   {
     "text": "When your opponent cries, drink their tears",

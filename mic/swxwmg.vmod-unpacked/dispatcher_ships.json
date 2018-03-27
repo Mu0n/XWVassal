@@ -1,9 +1,9 @@
 [
   {
-    "name": "Test Ship",
+    "name": "testship",
     "xws": "testship",
     "faction": [
-      "Rebel Alliance"
+      "Galactic Empire"
     ],
     "actions": [
       "Focus",
@@ -16,7 +16,7 @@
     "shields": 3,
     "firing_arcs": [
       "Front",
-      "Mobile"
+      "Auxiliary 180"
     ],
     "id": 55,
     "maneuvers": [
@@ -202,13 +202,14 @@
       "Focus",
       "Boost"
     ],
-    "size": "small",
+    "size": "large",
     "attack": 6,
     "agility": 4,
     "hull": 6,
     "shields": 6,
     "firing_arcs": [
-      "Front"
+      "Front",
+      "Auxiliary 180"
     ],
     "id": 666,
     "maneuvers": [
