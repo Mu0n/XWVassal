@@ -161,10 +161,56 @@ public class StemShip extends Decorator implements EditablePiece {
             // find the appropriate baseImage
             piece = buildShipBaseLayer(piece,faction,xwsShipName,xwsPilot, size);
 
+            // Add the Target Lock capability
+            piece = addTargetLock(piece,faction,size);
         //    if(!this.needsBombCapability) {
         //        piece = removeBombCapability(piece);
          //   }
 
+        }
+
+        private GamePiece addTargetLock(GamePiece newGamePiece, String faction, String newSize)
+        {
+
+            final String targetLockLayerName = "Layer - Show Target Lock";
+            final String rebelSmallImage = "TargetLock_Rebel.svg";
+            final String rebelLargeImage = "TargetLock_Rebel_Large.svg";
+            final String imperialSmallImage = "TargetLock_Imperial.svg";
+            final String imperialLargeImage = "TargetLock_Imperial_Large.svg";
+            final String scumSmallImage = "TargetLock_Scum.svg";
+            final String scumLargeImage = "TargetLock_Scum_Large.svg";
+
+            String newFaction = XWOTAUtils.simplifyFactionName(faction);
+
+            Embellishment myEmb = (Embellishment)Util.getEmbellishment(newGamePiece,targetLockLayerName);
+
+            StringBuilder sb = new StringBuilder();
+            sb.append("emb2;;2;;Show Target Lock;2;;;2;;;;;true;0;0;,");
+            if(newSize.equals("small") && newFaction.equals("rebelalliance"))
+            {
+                sb.append(rebelSmallImage);
+            }else if(newSize.equals("small") && newFaction.equals("galacticempire") )
+            {
+                sb.append(imperialSmallImage);
+            }else if(newSize.equals("small") && newFaction.equals("scumandvillainy") )
+            {
+                sb.append(scumSmallImage);
+            }else if(newSize.equals("large") && newFaction.equals("rebelalliance"))
+            {
+                sb.append(rebelLargeImage);
+            }else if(newSize.equals("large") && newFaction.equals("galacticempire") )
+            {
+                sb.append(imperialLargeImage);
+            }else if(newSize.equals("large") && newFaction.equals("scumandvillainy") )
+            {
+                sb.append(scumLargeImage);
+            }
+
+            sb.append(";,;true;Show Target Lock;;;false;;1;1;true;;76,130;");
+
+            myEmb.mySetType(sb.toString());
+
+            return newGamePiece;
         }
 /*
         private GamePiece removeBombCapability(GamePiece piece)
@@ -316,6 +362,7 @@ public class StemShip extends Decorator implements EditablePiece {
 
         private GamePiece buildShipBaseLayer(GamePiece piece, String faction, String xwsShipName, String xwsPilot, String size)
         {
+
             // first find the base image name
             String shipBaseImage[] = findShipBaseImage(faction,xwsShipName, xwsPilot, size);
 
@@ -342,6 +389,7 @@ public class StemShip extends Decorator implements EditablePiece {
                 Embellishment myEmb = (Embellishment)Util.getEmbellishment(piece,BASE_SHIP_LAYER_NAME);
                 myEmb.mySetType(sb.toString());
 
+
             }else{
                 // this is dual based
                 StringBuffer sb = new StringBuffer();
@@ -366,7 +414,6 @@ public class StemShip extends Decorator implements EditablePiece {
                 // now get the Layer
                 Embellishment myEmb = (Embellishment)Util.getEmbellishment(piece,BASE_SHIP_LAYER_NAME);
                 myEmb.mySetType(sb.toString());
-
 
 
                 //emb2;Activate;2;;Ghost;2;;;2;;;;1;false;0;0;Ship-U-Wing_Atk.png,Ship_Big_SeeThrough.png,

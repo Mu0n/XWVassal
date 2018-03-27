@@ -255,8 +255,8 @@ public class AnnouncementOnLog extends AbstractConfigurable {
                 if (!shipBase.getStatus()) {
                     imageToDownload = new OTAImage();
                     imageToDownload.setImageName("");
-                    imageToDownload.setImageType("Ship Base");
-                    imageToDownload.setImageDisplayType("ShipBase");
+                    imageToDownload.setImageType("ShipBase");
+                    imageToDownload.setImageDisplayType("Ship Base");
                     MasterShipData.ShipData shipData = MasterShipData.getShipData(shipBase.getShipXws());
                     imageToDownload.setObjectName(shipData.getName());
                     java.util.List<String> arcs = shipData.getFiringArcs();
@@ -295,7 +295,7 @@ public class AnnouncementOnLog extends AbstractConfigurable {
                 while (imageIterator.hasNext()) {
                     image = imageIterator.next();
                     action = "Downloaded";
-                    if (image.getImageType().equals("Ship Base") || image.getImageType().equals("dial")) {
+                    if (image.getImageType().equals("ShipBase") || image.getImageType().equals("dial")) {
                         action = "Generated";
                     }
                     mic.Util.logToChat(action + " " + image.getImageDisplayType() + " " + image.getObjectName());

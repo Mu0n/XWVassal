@@ -65,5 +65,21 @@
     "conditions": [
       "Test Condition"
     ]
+  },
+  {
+    "text": "When your opponent cries, drink their tears",
+    "name": "Mary",
+    "xws": "mary",
+    "ship": "Mary Sue",
+    "unique": true,
+    "skill": 10,
+    "points": 55,
+    "faction": "Galactic Empire",
+    "slots": [
+      "Elite",
+      "Astromech",
+      "Elite"
+    ],
+    "id": 666
   }
 ]
