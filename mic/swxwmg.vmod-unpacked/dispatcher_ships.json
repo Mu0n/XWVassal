@@ -16,7 +16,7 @@
     "shields": 3,
     "firing_arcs": [
       "Front",
-      "Turret"
+      "Mobile"
     ],
     "id": 55,
     "maneuvers": [

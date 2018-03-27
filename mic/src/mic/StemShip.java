@@ -157,10 +157,10 @@ public class StemShip extends Decorator implements EditablePiece {
        // List<String> actionList;
         String xwsPilot = "";
      //   boolean needsBombCapability;
-        boolean shipContainsMobileArc;
+     //   boolean shipContainsMobileArc;
 
         //ShipGenerateCommand(String shipXws,   GamePiece piece, String faction, String xwsPilot, boolean needsBombCapability) {
-        ShipGenerateCommand(String shipXws,   GamePiece piece, String faction, String xwsPilot, boolean shipContainsMobileArc) {
+        ShipGenerateCommand(String shipXws,   GamePiece piece, String faction, String xwsPilot) {
 
             // fetch the maneuver array of arrays according to the xws name passed on from autospawn or other means
             xwsShipName = shipXws;
@@ -171,7 +171,7 @@ public class StemShip extends Decorator implements EditablePiece {
             this.piece = piece;
             this.xwsPilot = xwsPilot;
             this.size = shipData.getSize();
-            this.shipContainsMobileArc = shipContainsMobileArc;
+        //    this.shipContainsMobileArc = shipContainsMobileArc;
          //   this.needsBombCapability = needsBombCapability;
            // this.actionList = shipData.getActions();
         }
@@ -186,7 +186,7 @@ public class StemShip extends Decorator implements EditablePiece {
             piece = addTargetLock(piece,faction,size);
 
             // add the firing arcs needed
-            piece = addFiringArcs(piece,faction,size,xwsShipName, shipContainsMobileArc);
+            piece = addFiringArcs(piece,faction,size,xwsShipName);
 
         //    if(!this.needsBombCapability) {
         //        piece = removeBombCapability(piece);
@@ -194,7 +194,7 @@ public class StemShip extends Decorator implements EditablePiece {
 
         }
 
-        private GamePiece addFiringArcs(GamePiece newGamePiece, String faction, String newSize, String xws, boolean shipContainsMobileArc )
+        private GamePiece addFiringArcs(GamePiece newGamePiece, String faction, String newSize, String xws )
         {
             String newFaction = XWOTAUtils.simplifyFactionName(faction);
 
@@ -224,28 +224,6 @@ public class StemShip extends Decorator implements EditablePiece {
                     }
 
                 }
-            }
-
-            if(shipContainsMobileArc)
-            {
-                //TODO add in the mobile arc stuff
-                // Only need to change the color of the front arc
-                // "Show Big Firing Arc" - Purple Front Arc
-                // "Show Big Firing Arc legacy" - Scum Front Arc (Not needed)
-                // "Show Big Auxiliary Firing Arc"  - Purple Aux Rear Arc
-                // "Show Big Auxiliary Firing Arc Legacy" - Scum Rear Aux Arc (not needed?)
-                // "Show Left Mobile Arc" - Left Purple Arc
-                // "Show Right Mobile Arc" - Right Purple Arc
-
-                // Submenu Show Firing Arcs
-                //  Show Firing Arc
-                // Show Auxiliary Firing Arc
-                // Show Mobile Turret Arc
-                // Show front arc firing options
-                // Show back arc firing options
-                // show target lock
-                // show target lock firing options
-
             }
 
             return newGamePiece;

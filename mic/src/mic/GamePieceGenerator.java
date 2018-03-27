@@ -28,13 +28,13 @@ public class GamePieceGenerator
 
         // generate the piece from the stem ships
         GamePiece newShip = null;
-        boolean shipContainsMobileArc = containsMobileArc(shipData);
+      //  boolean shipContainsMobileArc = containsMobileArc(shipData);
         if(shipData.getSize().contentEquals(SHIP_BASE_SIZE_SMALL))
         {
             newShip = mic.Util.newPiece(getPieceSlotByName(SMALL_STEM_SHIP_SLOT_NAME));
         }else if(shipData.getSize().contentEquals(SHIP_BASE_SIZE_LARGE))
         {
-            if(shipContainsMobileArc)
+            if(containsMobileArc(shipData))
             {
                 newShip = mic.Util.newPiece(getPieceSlotByName(LARGE_STEM_SHIP_MOBILE_ARC_SLOT_NAME));
             }else {
@@ -47,7 +47,7 @@ public class GamePieceGenerator
 
         // execute the command to build the ship piece
        // StemShip.ShipGenerateCommand myShipGen = new StemShip.ShipGenerateCommand(ship.getShipData().getXws(), newShip, faction, pilotData.getXws(),needsBombCapability);
-        StemShip.ShipGenerateCommand myShipGen = new StemShip.ShipGenerateCommand(ship.getShipData().getXws(), newShip, faction, pilotData.getXws(),shipContainsMobileArc);
+        StemShip.ShipGenerateCommand myShipGen = new StemShip.ShipGenerateCommand(ship.getShipData().getXws(), newShip, faction, pilotData.getXws());
 
         myShipGen.execute();
 
