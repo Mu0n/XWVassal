@@ -76,8 +76,8 @@ public class StemShip extends Decorator implements EditablePiece {
             .put("large/scumandvillainy/Auxiliary Rear","emb2;;2;;Show Auxiliary Arc;2;;;2;;;;;true;0;537;,Big_Firing-Arc_Scum_Aux.svg;,;true;Show Big Auxiliary Firing Arc;;;false;;1;1;true;;86,130;")
 
             // Bullseye
-            .put("small/rebelalliance/Bullseye","")
-            .put("small/galacticempire/Bullseye","")
+            .put("small/rebelalliance/Bullseye","emb2;;2;;Show Bullseye Arc;2;;;2;;;;;true;0;-479;,Bullseye_Arc_Rebel.svg;,;true;Show Bullseye Arc;;;false;;1;1;true;;88,130;")
+            .put("small/galacticempire/Bullseye","emb2;;2;;Show Bullseye Arc;2;;;2;;;;;true;0;-479;,Bullseye_Arc_Imperial.svg;,;true;Show Bullseye Arc;;;false;;1;1;true;;88,130;")
             .put("small/scumandvillainy/Bullseye","emb2;;2;;Show Bullseye Arc;2;;;2;;;;;true;0;-479;,Bullseye_Arc_Scum.svg;,;true;Show Bullseye Arc;;;false;;1;1;true;;88,130;")
             .put("large/rebelalliance/Bullseye","")
             .put("large/galacticempire/Bullseye","")
