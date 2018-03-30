@@ -14,6 +14,8 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -27,8 +29,10 @@ public class OTAContentsChecker extends AbstractConfigurable {
     private JTable finalTable;
     private JProgressBar progressBar;
     private JButton downloadButton;
-    private JOptionPane optionPane;
+ //   private JOptionPane optionPane;
     private JFrame frame;
+    private JLabel jlabel;
+    private boolean downloadAll = false;
     public void addTo(Buildable parent)
     {
 
@@ -51,25 +55,119 @@ public class OTAContentsChecker extends AbstractConfigurable {
     private synchronized void ContentsCheckerWindow()
     {
 
-
         results = checkAllResults();
+        finalTable = buildFinalTable(results);
 
-
-       // String msg = modIntChecker.getTestString();;
+        // create the frame
         frame = new JFrame();
-
         frame.setResizable(true);
+
+        // create the panel
         JPanel panel = new JPanel();
-        JLabel spacer;
+        panel.setLayout(new GridBagLayout());
+        GridBagConstraints c = new GridBagConstraints();
 
-        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+        // create the label
+        jlabel = new JLabel();
 
-         optionPane = new JOptionPane();
-         optionPane.setMessage("Click the download button to download the following images");
+
+        // add the results table
+        JScrollPane finalPane = new JScrollPane(finalTable);
+
+
+        // download button
+        downloadButton = new JButton("Download");
+        downloadButton.setAlignmentY(0.0F);
+        downloadButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                downloadAll();
+            }
+        });
+
+        // cancel button
+        JButton cancelButton = new JButton("Cancel");
+        cancelButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                frame.dispose();
+            }
+        });
+        downloadButton.setAlignmentY(0.0F);
+
+        // ALL checkbox
+        JCheckBox allButton = new JCheckBox("Download all content");
+        allButton.setSelected(false);
+        allButton.addItemListener(new ItemListener() {
+            public void itemStateChanged(ItemEvent evt) {
+                //TODO
+                if (evt.getStateChange() == ItemEvent.DESELECTED)
+                {
+                    downloadAll = false;
+                    refreshFinalTable();
+                }else if(evt.getStateChange() == ItemEvent.SELECTED)
+                {
+                    downloadAll = true;
+                    refreshFinalTable();
+                }
+
+            }
+        });
+
+        // add the components
+        c.gridx = 0;
+        c.gridy = 0;
+        c.gridwidth = 3;
+        panel.add(jlabel,c);
+
+        c.gridx = 0;
+        c.gridy = 1;
+        c.gridwidth = 3;
+        panel.add(finalPane,c);
+
+        c.gridx = 0;
+        c.gridy = 2;
+        c.gridwidth = 1;
+        panel.add(downloadButton,c);
+
+        c.gridx = 1;
+        c.gridy = 2;
+        c.gridwidth = 1;
+        panel.add(allButton,c);
+
+        c.gridx = 2;
+        c.gridy = 2;
+        c.gridwidth = 1;
+        panel.add(cancelButton,c);
+
+        panel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+        frame.add(panel, BorderLayout.PAGE_START);
+
+        if(finalTable.getModel().getRowCount() == 0)
+        {
+            jlabel.setText("All content is up to date");
+            downloadButton.setEnabled(false);
+        }else{
+            jlabel.setText("Click the download button to download the following images");
+            downloadButton.setEnabled(true);
+        }
+
+        panel.setOpaque(true); // content panes must be opaque
+        frame.setContentPane(panel);
+        frame.pack();
+        frame.setVisible(true);
+        frame.toFront();
+        /*
+     //    optionPane = new JOptionPane();
+   //      optionPane.setMessage("Click the download button to download the following images");
        // optionPane.setMessage(msg);
-        optionPane.add(panel);
-        JDialog dialog = optionPane.createDialog(frame, "Contents Checker");
-        dialog.setSize(500,250);
+   //     optionPane.add(panel);
+   //     frame.add(panel);
+        frame.setContentPane(panel);
+   //     JDialog dialog = optionPane.createDialog(frame, "Contents Checker");
+    //    dialog.setSize(500,250);
+
+        jlabel = new JLabel();
+     //   jlabel.setFont(new Font("Verdana",1,20));
+        panel.add(jlabel);
 
         // new window here
         finalTable = buildFinalTable(results);
@@ -85,21 +183,30 @@ public class OTAContentsChecker extends AbstractConfigurable {
         });
         panel.add(downloadButton);
 
+        JButton cancelButton = new JButton("Cancel");
+        cancelButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                frame.dispose();
+            }
+        });
+        panel.add(cancelButton);
 
         if(finalTable.getModel().getRowCount() == 0)
         {
             //String okMsg = "All content is up to date";
          //   optionPane.setMessage("All content is up to date");
-            optionPane.setMessage("All content is up to date");
-
+           // optionPane.setMessage("All content is up to date");
+            jlabel.setText("All content is up to date");
             downloadButton.setEnabled(false);
+        }else{
+            jlabel.setText("Click the download button to download the following images");
         }
        // optionPane.add(panel);
 
-
-        dialog.setVisible(true);
+        panel.setVisible(true);
+  //      dialog.setVisible(true);
         frame.toFront();
-        frame.repaint();
+        frame.repaint();*/
 
         /*
         javax.swing.SwingUtilities.invokeLater(new Runnable() {
@@ -226,9 +333,10 @@ public class OTAContentsChecker extends AbstractConfigurable {
 
         if(finalTable.getModel().getRowCount() == 0)
         {
-            optionPane.setMessage("All content is up to date");
+            jlabel.setText("All content is up to date");
+         //   optionPane.setMessage("All content is up to date");
             downloadButton.setEnabled(false);
-            optionPane.repaint();
+        //    optionPane.repaint();
             frame.repaint();
         }
 
@@ -306,7 +414,15 @@ public class OTAContentsChecker extends AbstractConfigurable {
             upgrade = results.getMissingUpgrades().get(i);
             tableRow = new String[3];
             tableRow[0] = "Upgrade";
-            tableRow[1] = MasterUpgradeData.getUpgradeData(upgrade.getXws()).getName();
+
+            mic.Util.logToChat(upgrade.getXws());
+            if(upgrade.getXws().equals("back")) {
+                tableRow[1] = upgrade.getSlot()+" back";
+            }else if(upgrade.getXws().equals("Upgrade")){
+                tableRow[1] = upgrade.getSlot()+" Upgrade";
+            }else{
+                tableRow[1] = MasterUpgradeData.getUpgradeData(upgrade.getXws()).getName();
+            }
             tableRow[2] = "";
             tableResults.add(tableRow);
         }
@@ -499,6 +615,7 @@ public class OTAContentsChecker extends AbstractConfigurable {
         results.setDialHideResults(modIntChecker.checkDialHides());
         results.setDialMaskResults(modIntChecker.checkDialMasks());
 
+
         // determine which images are missing
         results.setMissingPilots(findMissingPilots(results.getPilotResults()));
         results.setMissingUpgrades(findMissingUpgrades(results.getUpgradeResults()));
@@ -508,6 +625,7 @@ public class OTAContentsChecker extends AbstractConfigurable {
         results.setMissingDialHides(findMissingDialHides(results.getDialHideResults()));
         results.setMissingDialMasks(findMissingDialMasks(results.getDialMaskResults()));
         results.setMissingShipBases(findMissingShipBases(results.getShipBaseResults()));
+
 
         return results;
     }
@@ -520,7 +638,7 @@ public class OTAContentsChecker extends AbstractConfigurable {
         while(pilotIterator.hasNext())
         {
             pilot = pilotIterator.next();
-            if(!pilot.getStatus())
+            if(!pilot.getStatus() || downloadAll)
             {
                 missing.add(pilot);
             }
@@ -536,7 +654,7 @@ public class OTAContentsChecker extends AbstractConfigurable {
         while(upgradeIterator.hasNext())
         {
             upgrade = upgradeIterator.next();
-            if(!upgrade.getStatus())
+            if(!upgrade.getStatus() || downloadAll)
             {
                 missing.add(upgrade);
             }
@@ -552,7 +670,7 @@ public class OTAContentsChecker extends AbstractConfigurable {
         while(conditionIterator.hasNext())
         {
             condition = conditionIterator.next();
-            if(!condition.getStatus() || !condition.getTokenStatus())
+            if(!condition.getStatus() || !condition.getTokenStatus() || downloadAll)
             {
                 missing.add(condition);
             }
@@ -569,7 +687,7 @@ public class OTAContentsChecker extends AbstractConfigurable {
         while(shipIterator.hasNext())
         {
             ship = shipIterator.next();
-            if(!ship.getStatus())
+            if(!ship.getStatus() || downloadAll)
             {
                 missing.add(ship);
             }
@@ -585,7 +703,7 @@ public class OTAContentsChecker extends AbstractConfigurable {
         while(actionIterator.hasNext())
         {
             action = actionIterator.next();
-            if(!action.getStatus())
+            if(!action.getStatus() || downloadAll)
             {
                 missing.add(action);
             }
@@ -601,7 +719,7 @@ public class OTAContentsChecker extends AbstractConfigurable {
         while(dialHideIterator.hasNext())
         {
             dialHide = dialHideIterator.next();
-            if(!dialHide.getStatus())
+            if(!dialHide.getStatus() || downloadAll)
             {
                 missing.add(dialHide);
             }
@@ -616,7 +734,7 @@ public class OTAContentsChecker extends AbstractConfigurable {
         while(dialMaskIterator.hasNext())
         {
             OTADialMask dialMask = dialMaskIterator.next();
-            if(!dialMask.getStatus())
+            if(!dialMask.getStatus() || downloadAll)
             {
                 missing.add(dialMask);
 
@@ -632,7 +750,7 @@ public class OTAContentsChecker extends AbstractConfigurable {
         while(shipBaseIterator.hasNext())
         {
             OTAShipBase shipBase = shipBaseIterator.next();
-            if(!shipBase.getStatus())
+            if(!shipBase.getStatus() || downloadAll)
             {
                 missing.add(shipBase);
 

@@ -28,6 +28,8 @@ import static mic.Util.logToChat;
  */
 public class AnnouncementOnLog extends AbstractConfigurable {
 
+    private static final boolean DEBUG_DO_DOWNLOAD = false;
+
     private static String defaultURL =        "https://raw.githubusercontent.com/Mu0n/XWVassal/master/VassalNews";
     private static String currentVersionURL = "https://raw.githubusercontent.com/Mu0n/XWVassal/master/currentVersion";
     private static String blogURL = "https://raw.githubusercontent.com/Mu0n/XWVassal/master/currentBlog";
@@ -348,8 +350,11 @@ public class AnnouncementOnLog extends AbstractConfigurable {
             updateCheckFrame.toFront();
             updateCheckFrame.repaint();
 
-            // then, after OK, download the xwing-data json, dispatcher json, & any OTA updates and save to the module
-            downloadContent();
+            if(DEBUG_DO_DOWNLOAD) {
+                // then, after OK, download the xwing-data json, dispatcher json, & any OTA updates and save to the module
+                downloadContent();
+            }
+
             //mic.Util.logToChat("Download occurred");
             updateCheckFrame.setVisible(false);
             checkComplete = true;
