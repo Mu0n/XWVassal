@@ -415,14 +415,14 @@ public class OTAContentsChecker extends AbstractConfigurable {
             tableRow = new String[3];
             tableRow[0] = "Upgrade";
 
-            mic.Util.logToChat(upgrade.getXws());
-            if(upgrade.getXws().equals("back")) {
-                tableRow[1] = upgrade.getSlot()+" back";
-            }else if(upgrade.getXws().equals("Upgrade")){
-                tableRow[1] = upgrade.getSlot()+" Upgrade";
-            }else{
+            if(MasterUpgradeData.getUpgradeData(upgrade.getXws()) != null)
+            {
                 tableRow[1] = MasterUpgradeData.getUpgradeData(upgrade.getXws()).getName();
+            }else{
+                tableRow[1] = upgrade.getSlot()+" " +upgrade.getXws();
             }
+
+
             tableRow[2] = "";
             tableResults.add(tableRow);
         }
