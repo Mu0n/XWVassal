@@ -18,225 +18,141 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-/**
- * Created by Mic on 12/03/2018.
- */
 public class OTAContentsChecker extends AbstractConfigurable {
+
     private JButton OKButton = new JButton();
-
-    private ArrayList<String> missingPilots;
-    private ArrayList<String> missingShips;
-    private ArrayList<String> missingActions;
-    private ArrayList<String> missingUpgrades;
-    private ArrayList<String> missingConditions;
-    private ArrayList<String> missingDialHides;
-    private ArrayList<OTADialMask> missingDialMasks;
-    private ArrayList<OTAShipBase> missingShipBases;
-
-    private final String[] finalColumnNames = {"Type","Name", "Faction"};
-
-
-    private JTable finalTable;
-
     private ModuleIntegrityChecker modIntChecker = null;
+    private OTAContentsCheckerResults results = null;
+    private final String[] finalColumnNames = {"Type","Name", "Faction"};
+    private JTable finalTable;
+    private JProgressBar progressBar;
+    private JButton downloadButton;
+    private JOptionPane optionPane;
+    private JFrame frame;
+    public void addTo(Buildable parent)
+    {
+
+        JButton b = new JButton("Content Checker");
+        b.setAlignmentY(0.0F);
+        b.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                ContentsCheckerWindow();
+            }
+        });
+        OKButton = b;
+        GameModule.getGameModule().getToolBar().add(b);
+    }
 
 
+
+    /*
+     * Build the contents checker window
+     */
     private synchronized void ContentsCheckerWindow()
     {
 
-        modIntChecker = new ModuleIntegrityChecker();
+
+        results = checkAllResults();
 
 
-        ArrayList<OTAMasterPilots.OTAPilot> pilotResults = modIntChecker.checkPilots();
-        ArrayList<OTAMasterShips.OTAShip> shipResults = modIntChecker.checkShips();
-        ArrayList<OTAMasterActions.OTAAction> actionResults = modIntChecker.checkActions();
-        ArrayList<OTAShipBase> shipBaseResults = modIntChecker.checkShipBases();
-        ArrayList<OTAMasterUpgrades.OTAUpgrade> upgradeResults = modIntChecker.checkUpgrades();
-        ArrayList<OTAMasterConditions.OTACondition> conditionResults = modIntChecker.checkConditions();
-        ArrayList<OTAMasterDialHides.OTADialHide> dialHideResults = modIntChecker.checkDialHides();
-        ArrayList<OTADialMask> dialMaskResults = modIntChecker.checkDialMasks();
+       // String msg = modIntChecker.getTestString();;
+        frame = new JFrame();
 
-        // store the missing pilots
-        missingPilots = new ArrayList<String>();
-        Iterator<OTAMasterPilots.OTAPilot> pilotIterator = pilotResults.iterator();
-        OTAMasterPilots.OTAPilot pilot = null;
-        while(pilotIterator.hasNext())
-        {
-            pilot = pilotIterator.next();
-            if(!pilot.getStatus())
-            {
-                missingPilots.add(pilot.getImage());
-            }
-        }
-
-        // store the missing upgrades
-        missingUpgrades = new ArrayList<String>();
-        Iterator<OTAMasterUpgrades.OTAUpgrade> upgradeIterator = upgradeResults.iterator();
-        OTAMasterUpgrades.OTAUpgrade upgrade = null;
-        while(upgradeIterator.hasNext())
-        {
-            upgrade = upgradeIterator.next();
-            if(!upgrade.getStatus())
-            {
-                missingUpgrades.add(upgrade.getImage());
-            }
-        }
-
-        // store the missing conditions
-        missingConditions = new ArrayList<String>();
-        Iterator<OTAMasterConditions.OTACondition> conditionIterator = conditionResults.iterator();
-        OTAMasterConditions.OTACondition condition = null;
-        while(conditionIterator.hasNext())
-        {
-            condition = conditionIterator.next();
-            if(!condition.getStatus())
-            {
-                missingConditions.add(condition.getImage());
-            }
-            if(!condition.getTokenStatus())
-            {
-                missingConditions.add(condition.getTokenImage());
-            }
-        }
-
-        // store the missing ships
-        missingShips = new ArrayList<String>();
-        Iterator<OTAMasterShips.OTAShip> shipIterator = shipResults.iterator();
-        OTAMasterShips.OTAShip ship = null;
-        while(shipIterator.hasNext())
-        {
-            ship = shipIterator.next();
-            if(!ship.getStatus())
-            {
-                missingShips.add(ship.getImage());
-            }
-        }
-
-        // store the missing actions
-        missingActions = new ArrayList<String>();
-        Iterator<OTAMasterActions.OTAAction> actionIterator = actionResults.iterator();
-        OTAMasterActions.OTAAction action = null;
-        while(actionIterator.hasNext())
-        {
-            action = actionIterator.next();
-            if(!action.getStatus())
-            {
-                missingActions.add(action.getImage());
-            }
-        }
-
-        // store the missing dial hides
-        missingDialHides = new ArrayList<String>();
-        Iterator<OTAMasterDialHides.OTADialHide> dialHideIterator = dialHideResults.iterator();
-        OTAMasterDialHides.OTADialHide dialHide = null;
-        while(dialHideIterator.hasNext())
-        {
-            dialHide = dialHideIterator.next();
-            if(!dialHide.getStatus())
-            {
-                missingDialHides.add(dialHide.getImage());
-            }
-        }
-
-        // store the missing dial masks
-        missingDialMasks = new ArrayList<OTADialMask>();
-        Iterator<OTADialMask> dialMaskIterator = dialMaskResults.iterator();
-        while(dialMaskIterator.hasNext())
-        {
-            OTADialMask dialMask = dialMaskIterator.next();
-            if(!dialMask.getStatus())
-            {
-                missingDialMasks.add(dialMask);
-
-            }
-        }
-
-        // store the missing ship bases
-        missingShipBases = new ArrayList<OTAShipBase>();
-        Iterator<OTAShipBase> shipBaseIterator = shipBaseResults.iterator();
-        while(shipBaseIterator.hasNext())
-        {
-            OTAShipBase shipBase = shipBaseIterator.next();
-            if(!shipBase.getStatus())
-            {
-                missingShipBases.add(shipBase);
-
-            }
-        }
-
-
-        String msg = modIntChecker.getTestString();;
-        JFrame frame = new JFrame();
         frame.setResizable(true);
         JPanel panel = new JPanel();
         JLabel spacer;
 
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
 
-        JOptionPane optionPane = new JOptionPane();
-        optionPane.setMessage(msg);
+         optionPane = new JOptionPane();
+         optionPane.setMessage("Click the download button to download the following images");
+       // optionPane.setMessage(msg);
         optionPane.add(panel);
         JDialog dialog = optionPane.createDialog(frame, "Contents Checker");
         dialog.setSize(500,250);
 
         // new window here
-        finalTable = buildFinalTable(pilotResults,shipResults,actionResults,shipBaseResults,upgradeResults,conditionResults,dialHideResults,dialMaskResults);
+        finalTable = buildFinalTable(results);
 
-        if(finalTable.getModel().getRowCount() > 0) {
-            JScrollPane finalPane = new JScrollPane(finalTable);
-            panel.add(finalPane, BorderLayout.CENTER);
-            JButton downloadAllButton = new JButton("Download");
-            downloadAllButton.setAlignmentY(0.0F);
-            downloadAllButton.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent evt) {
-                    downloadAll();
-                }
-            });
-            panel.add(downloadAllButton);
-        }else{
-            String okMsg = "All content is up to date";
-            optionPane.setMessage(okMsg);
-            optionPane.add(panel);
+        JScrollPane finalPane = new JScrollPane(finalTable);
+        panel.add(finalPane, BorderLayout.CENTER);
+        downloadButton = new JButton("Download");
+        downloadButton.setAlignmentY(0.0F);
+        downloadButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                downloadAll();
+            }
+        });
+        panel.add(downloadButton);
+
+
+        if(finalTable.getModel().getRowCount() == 0)
+        {
+            //String okMsg = "All content is up to date";
+         //   optionPane.setMessage("All content is up to date");
+            optionPane.setMessage("All content is up to date");
+
+            downloadButton.setEnabled(false);
         }
+       // optionPane.add(panel);
 
-            dialog.setVisible(true);
-            frame.toFront();
-            frame.repaint();
+
+        dialog.setVisible(true);
+        frame.toFront();
+        frame.repaint();
+
+        /*
+        javax.swing.SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                OTADownloadWindow.createAndShowGUI(results);
+             //   new OTADownloadWindow(results);
+
+            }
+        });*/
+
+ //       OTADownloadWindow.createAndShowGUI(results);
+    //    new OTADownloadWindow(results);
+       // showContentsCheckerWindow(results);
 
     }
 
-
-    private synchronized void downloadAll() {
-
+    private void downloadAll()
+    {
         boolean needToSaveModule = false;
 
         // download pilots
-        if(missingPilots.size() > 0) {
-            XWOTAUtils.downloadAndSaveImagesFromOTA("pilots", missingPilots);
+        if(results.getMissingPilots().size() > 0) {
+            XWOTAUtils.downloadAndSaveImagesFromOTA("pilots", results.getMissingPilotImages());
+            needToSaveModule = true;
+        }
+
+        // download ships
+        if(results.getMissingShips().size() > 0) {
+            XWOTAUtils.downloadAndSaveImagesFromOTA("ships", results.getMissingShipImages());
             needToSaveModule = true;
         }
 
         // download Upgrades
-        if(missingUpgrades.size() > 0) {
-            XWOTAUtils.downloadAndSaveImagesFromOTA("upgrades", missingUpgrades);
+        if(results.getMissingUpgrades().size() > 0) {
+            XWOTAUtils.downloadAndSaveImagesFromOTA("upgrades", results.getMissingUpgradeImages());
             needToSaveModule = true;
         }
 
         // download Conditions
-        if(missingConditions.size() > 0) {
-            XWOTAUtils.downloadAndSaveImagesFromOTA("conditions", missingConditions);
+        if(results.getMissingConditions().size() > 0) {
+            XWOTAUtils.downloadAndSaveImagesFromOTA("conditions", results.getMissingConditionImages());
             needToSaveModule = true;
         }
 
         // download actions
-        if(missingActions.size() > 0) {
-            XWOTAUtils.downloadAndSaveImagesFromOTA("actions", missingActions);
+        if(results.getMissingActions().size() > 0) {
+            XWOTAUtils.downloadAndSaveImagesFromOTA("actions", results.getMissingActionImages());
             needToSaveModule = true;
         }
 
         // download dial hides
-        if(missingDialHides.size() > 0) {
-            XWOTAUtils.downloadAndSaveImagesFromOTA("dial", missingDialHides);
+        if(results.getMissingDialHides().size() > 0) {
+            XWOTAUtils.downloadAndSaveImagesFromOTA("dial", results.getMissingDialHideImages());
             needToSaveModule = true;
         }
 
@@ -247,7 +163,7 @@ public class OTAContentsChecker extends AbstractConfigurable {
 
 
         // generate dial masks
-        Iterator<OTADialMask> dialMaskIterator = missingDialMasks.iterator();
+        Iterator<OTADialMask> dialMaskIterator = results.getMissingDialMasks().iterator();
         OTADialMask dialMask = null;
         while(dialMaskIterator.hasNext())
         {
@@ -258,7 +174,7 @@ public class OTAContentsChecker extends AbstractConfigurable {
         }
 
         // generate ship bases
-        Iterator<OTAShipBase> shipBaseIterator = missingShipBases.iterator();
+        Iterator<OTAShipBase> shipBaseIterator = results.getMissingShipBases().iterator();
         OTAShipBase shipBase = null;
         while(shipBaseIterator.hasNext())
         {
@@ -290,350 +206,252 @@ public class OTAContentsChecker extends AbstractConfigurable {
         }
 
 
-    }
 
+    }
 
     private void refreshFinalTable()
     {
+        results = checkAllResults();
+        String[][] convertedTableResults = buildTableResultsFromResults(results);
 
-        modIntChecker = new ModuleIntegrityChecker();
-
-
-        ArrayList<OTAMasterPilots.OTAPilot> pilotResults = modIntChecker.checkPilots();
-        ArrayList<OTAMasterShips.OTAShip> shipResults = modIntChecker.checkShips();
-        ArrayList<OTAMasterActions.OTAAction> actionResults = modIntChecker.checkActions();
-        ArrayList<OTAShipBase> shipBaseResults = modIntChecker.checkShipBases();
-        ArrayList<OTAMasterUpgrades.OTAUpgrade> upgradeResults = modIntChecker.checkUpgrades();
-        ArrayList<OTAMasterConditions.OTACondition> conditionResults = modIntChecker.checkConditions();
-        ArrayList<OTAMasterDialHides.OTADialHide> dialHideResults = modIntChecker.checkDialHides();
-        ArrayList<OTADialMask> dialMaskResults = modIntChecker.checkDialMasks();
-
-        ArrayList<String[]> tableResults = new ArrayList<String[]>();
-
-        // fill in the ships
-        OTAMasterShips.OTAShip ship = null;
-        missingShips = new ArrayList<String>();
-        for(int i=0;i<shipResults.size();i++)
-        {
-
-            ship = shipResults.get(i);
-            if(!ship.getStatus())
-            {
-                String[] shipLine = new String[3];
-                shipLine[0] = "Ship Image";
-                shipLine[1] = MasterShipData.getShipData(ship.getXws()).getName();
-                tableResults.add(shipLine);
-                missingShips.add(ship.getImage());
-            }
-        }
-
-        // fill in the ship bases
-        missingShipBases = new ArrayList<OTAShipBase>();
-        OTAShipBase shipBase = null;
-        for(int i=0;i<shipBaseResults.size();i++)
-        {
-
-            shipBase = shipBaseResults.get(i);
-
-            if(!shipBase.getStatus()) {
-                String[] shipBaseLine = new String[3];
-                shipBaseLine[0] = "Ship Base Image";
-                shipBaseLine[1] = MasterShipData.getShipData(shipBase.getShipXws()).getName();
-                tableResults.add(shipBaseLine);
-                missingShipBases.add(shipBase);
-            }
-
-        }
-
-        // fill in the dial hides
-        missingDialHides = new ArrayList<String>();
-        OTAMasterDialHides.OTADialHide dialHide = null;
-        for(int i=0;i<dialHideResults.size();i++)
-        {
-
-            dialHide = dialHideResults.get(i);
-            if(!dialHide.getStatus()) {
-                String[] dialHideLine = new String[3];
-                dialHideLine[0] = "Dial Hide Image";
-                dialHideLine[1] = MasterShipData.getShipData(dialHide.getXws()).getName();
-                tableResults.add(dialHideLine);
-                missingDialHides.add(dialHide.getImage());
-            }
-        }
-
-        // fill in the dial masks
-        missingDialMasks = new ArrayList<OTADialMask>();
-        OTADialMask dialMask = null;
-        for(int i=0;i<dialMaskResults.size();i++)
-        {
-
-            dialMask = dialMaskResults.get(i);
-            if(!dialMask.getStatus()) {
-                String[] dialMaskLine = new String[3];
-                dialMaskLine[0] = "Dial Hide Image";
-                dialMaskLine[1] = MasterShipData.getShipData(dialMask.getShipXws()).getName();
-                dialMaskLine[2] = dialMask.getFaction();
-                tableResults.add(dialMaskLine);
-                missingDialMasks.add(dialMask);
-            }
-        }
-
-        // fill in the pilots
-        missingPilots = new ArrayList<String>();
-        OTAMasterPilots.OTAPilot pilot = null;
-        for(int i=0;i<pilotResults.size();i++)
-        {
-
-            pilot = pilotResults.get(i);
-            if(!pilot.getStatus()) {
-                String[] pilotLine = new String[3];
-                pilotLine[0] = "Pilot";
-                pilotLine[1] = MasterPilotData.getPilotData(pilot.getShipXws(), pilot.getPilotXws(), pilot.getFaction()).getName();
-                pilotLine[2] = pilot.getFaction();
-                tableResults.add(pilotLine);
-                missingPilots.add(pilot.getImage());
-            }
-        }
-
-        // fill in the upgrades
-        missingUpgrades = new ArrayList<String>();
-        OTAMasterUpgrades.OTAUpgrade upgrade = null;
-        for(int i=0;i<upgradeResults.size();i++)
-        {
-
-            upgrade = upgradeResults.get(i);
-            if(!upgrade.getStatus()) {
-                String[] upgradeLine = new String[3];
-                upgradeLine[0] = "Upgrade";
-                upgradeLine[1] = MasterUpgradeData.getUpgradeData(upgrade.getXws()).getName();
-                tableResults.add(upgradeLine);
-                missingUpgrades.add(upgrade.getImage());
-            }
-        }
-
-        // fill in the conditions/tokens
-        missingConditions = new ArrayList<String>();
-        OTAMasterConditions.OTACondition condition = null;
-        for(int i=0;i<conditionResults.size();i++)
-        {
-
-            condition = conditionResults.get(i);
-
-            if(!condition.getStatus()) {
-                String[] conditionLine = new String[3];
-                conditionLine[0] = "Condition";
-                conditionLine[1] = MasterConditionData.getConditionData(condition.getXws()).getName();
-                tableResults.add(conditionLine);
-                missingConditions.add(condition.getImage());
-            }
-
-            if(!condition.getTokenStatus())
-            {
-                String[] conditionLine = new String[3];
-                conditionLine[0] = "Condition Token";
-                conditionLine[1] = MasterConditionData.getConditionData(condition.getXws()).getName();
-                tableResults.add(conditionLine);
-                missingConditions.add(condition.getTokenImage());
-            }
-        }
-
-        // fill in the actions
-        missingActions = new ArrayList<String>();
-        OTAMasterActions.OTAAction action = null;
-        for(int i=0;i<actionResults.size();i++)
-        {
-            action = actionResults.get(i);
-            if(!action.getStatus()) {
-                String[] actionLine = new String[3];
-                actionLine[0] = "Ship Action Image";
-                actionLine[1] = action.getName();
-                tableResults.add(actionLine);
-                missingActions.add(action.getImage());
-            }
-        }
-
-        // convert the ArrayList<String[]> to a String[][]
-        String[][] convertedTableResults = new String[tableResults.size()][3];
-        String[] tableRow = null;
-        for(int i=0; i<tableResults.size();i++)
-        {
-            tableRow = tableResults.get(i);
-            convertedTableResults[i] = tableRow;
-        }
 
         DefaultTableModel model = (DefaultTableModel) finalTable.getModel();
-        model.setNumRows(tableResults.size());
+        model.setNumRows(convertedTableResults.length);
         model.setDataVector(convertedTableResults,finalColumnNames);
         finalTable.getColumnModel().getColumn(0).setPreferredWidth(75);;
         finalTable.getColumnModel().getColumn(1).setPreferredWidth(150);
         finalTable.getColumnModel().getColumn(2).setPreferredWidth(150);
         model.fireTableDataChanged();
 
+
+        if(finalTable.getModel().getRowCount() == 0)
+        {
+            optionPane.setMessage("All content is up to date");
+            downloadButton.setEnabled(false);
+            optionPane.repaint();
+            frame.repaint();
+        }
+
     }
 
-
-
-
-    private JTable buildFinalTable(ArrayList<OTAMasterPilots.OTAPilot> pilotResults,ArrayList<OTAMasterShips.OTAShip> shipResults,ArrayList<OTAMasterActions.OTAAction> actionResults,
-                                   ArrayList<OTAShipBase> shipBaseResults,ArrayList<OTAMasterUpgrades.OTAUpgrade> upgradeResults, ArrayList<OTAMasterConditions.OTACondition> conditionResults,
-                                   ArrayList<OTAMasterDialHides.OTADialHide> dialHideResults,ArrayList<OTADialMask> dialMaskResults)
+    private String[][] buildTableResultsFromResults(OTAContentsCheckerResults results)
     {
-
         ArrayList<String[]> tableResults = new ArrayList<String[]>();
-        // fill in the ships
-        OTAMasterShips.OTAShip ship = null;
-        missingShips = new ArrayList<String>();
-        for(int i=0;i<shipResults.size();i++)
-        {
-
-            ship = shipResults.get(i);
-            if(!ship.getStatus())
-            {
-                String[] shipLine = new String[3];
-                shipLine[0] = "Ship Image";
-                shipLine[1] = MasterShipData.getShipData(ship.getXws()).getName();
-                tableResults.add(shipLine);
-                missingShips.add(ship.getImage());
-            }
-        }
-
-        // fill in the ship bases
-        missingShipBases = new ArrayList<OTAShipBase>();
-        OTAShipBase shipBase = null;
-        for(int i=0;i<shipBaseResults.size();i++)
-        {
-
-            shipBase = shipBaseResults.get(i);
-
-            if(!shipBase.getStatus()) {
-                String[] shipBaseLine = new String[3];
-                shipBaseLine[0] = "Ship Base Image";
-                shipBaseLine[1] = MasterShipData.getShipData(shipBase.getShipXws()).getName();
-                tableResults.add(shipBaseLine);
-                missingShipBases.add(shipBase);
-            }
-
-        }
-
-        // fill in the dial hides
-        missingDialHides = new ArrayList<String>();
-        OTAMasterDialHides.OTADialHide dialHide = null;
-        for(int i=0;i<dialHideResults.size();i++)
-        {
-
-            dialHide = dialHideResults.get(i);
-            if(!dialHide.getStatus()) {
-                String[] dialHideLine = new String[3];
-                dialHideLine[0] = "Dial Hide Image";
-                dialHideLine[1] = MasterShipData.getShipData(dialHide.getXws()).getName();
-                tableResults.add(dialHideLine);
-                missingDialHides.add(dialHide.getImage());
-            }
-        }
-
-        // fill in the dial masks
-        missingDialMasks = new ArrayList<OTADialMask>();
-        OTADialMask dialMask = null;
-        for(int i=0;i<dialMaskResults.size();i++)
-        {
-
-            dialMask = dialMaskResults.get(i);
-            if(!dialMask.getStatus()) {
-                String[] dialMaskLine = new String[3];
-                dialMaskLine[0] = "Dial Hide Image";
-                dialMaskLine[1] = MasterShipData.getShipData(dialMask.getShipXws()).getName();
-                dialMaskLine[2] = dialMask.getFaction();
-                tableResults.add(dialMaskLine);
-                missingDialMasks.add(dialMask);
-            }
-        }
-
-        // fill in the pilots
-        missingPilots = new ArrayList<String>();
-        OTAMasterPilots.OTAPilot pilot = null;
-        for(int i=0;i<pilotResults.size();i++)
-        {
-
-            pilot = pilotResults.get(i);
-            if(!pilot.getStatus()) {
-                String[] pilotLine = new String[3];
-                pilotLine[0] = "Pilot";
-                pilotLine[1] = MasterPilotData.getPilotData(pilot.getShipXws(), pilot.getPilotXws(), pilot.getFaction()).getName();
-                pilotLine[2] = pilot.getFaction();
-                tableResults.add(pilotLine);
-                missingPilots.add(pilot.getImage());
-            }
-        }
-
-        // fill in the upgrades
-        missingUpgrades = new ArrayList<String>();
-        OTAMasterUpgrades.OTAUpgrade upgrade = null;
-        for(int i=0;i<upgradeResults.size();i++)
-        {
-
-            upgrade = upgradeResults.get(i);
-            if(!upgrade.getStatus()) {
-                String[] upgradeLine = new String[3];
-                upgradeLine[0] = "Upgrade";
-                upgradeLine[1] = MasterUpgradeData.getUpgradeData(upgrade.getXws()).getName();
-                tableResults.add(upgradeLine);
-                missingUpgrades.add(upgrade.getImage());
-            }
-        }
-
-        // fill in the conditions/tokens
-        missingConditions = new ArrayList<String>();
-        OTAMasterConditions.OTACondition condition = null;
-        for(int i=0;i<conditionResults.size();i++)
-        {
-
-            condition = conditionResults.get(i);
-
-            if(!condition.getStatus()) {
-                String[] conditionLine = new String[3];
-                conditionLine[0] = "Condition";
-                conditionLine[1] = MasterConditionData.getConditionData(condition.getXws()).getName();
-                tableResults.add(conditionLine);
-                missingConditions.add(condition.getImage());
-            }
-
-            if(!condition.getTokenStatus())
-            {
-                String[] conditionLine = new String[3];
-                conditionLine[0] = "Condition Token";
-                conditionLine[1] = MasterConditionData.getConditionData(condition.getXws()).getName();
-                tableResults.add(conditionLine);
-                missingConditions.add(condition.getTokenImage());
-            }
-        }
-
-        // fill in the actions
-        missingActions = new ArrayList<String>();
-        OTAMasterActions.OTAAction action = null;
-        for(int i=0;i<actionResults.size();i++)
-        {
-            action = actionResults.get(i);
-            if(!action.getStatus()) {
-                String[] actionLine = new String[3];
-                actionLine[0] = "Ship Action Image";
-                actionLine[1] = action.getName();
-                tableResults.add(actionLine);
-                missingActions.add(action.getImage());
-            }
-        }
-
-        // convert the ArrayList<String[]> to a String[][]
-        String[][] convertedTableResults = new String[tableResults.size()][3];
         String[] tableRow = null;
-        for(int i=0; i<tableResults.size();i++)
+
+        //ships
+        OTAMasterShips.OTAShip ship = null;
+        for(int i = 0; i<results.getMissingShips().size(); i++)
         {
-            tableRow = tableResults.get(i);
-            convertedTableResults[i] = tableRow;
+            ship = results.getMissingShips().get(i);
+            tableRow = new String[3];
+            tableRow[0] = "Ship";
+            tableRow[1] = MasterShipData.getShipData(ship.getXws()).getName();
+            tableRow[2] = "";
+            tableResults.add(tableRow);
         }
 
+        // bases
+        OTAShipBase shipBase = null;
+        for(int i = 0; i<results.getMissingShipBases().size();i++)
+        {
+            shipBase = results.getMissingShipBases().get(i);
+            tableRow = new String[3];
+            tableRow[0] = "Ship Base";
+            tableRow[1] = MasterShipData.getShipData(shipBase.getShipXws()).getName();
+            tableRow[2] = shipBase.getFaction();
+            tableResults.add(tableRow);
+        }
+
+        // dial hides
+        OTAMasterDialHides.OTADialHide dialHide = null;
+        for(int i=0;i<results.getMissingDialHides().size();i++)
+        {
+            dialHide = results.getMissingDialHides().get(i);
+            tableRow = new String[3];
+            tableRow[0] = "Dial Hide";
+            tableRow[1] = MasterShipData.getShipData(dialHide.getXws()).getName();
+            tableRow[2] = "";
+            tableResults.add(tableRow);
+        }
+
+        // dial masks
+        OTADialMask dialMask = null;
+        for(int i=0;i<results.getMissingDialMasks().size();i++)
+        {
+            dialMask = results.getMissingDialMasks().get(i);
+            tableRow = new String[3];
+            tableRow[0] = "Dial Mask";
+            tableRow[1] = MasterShipData.getShipData(dialMask.getShipXws()).getName();
+            tableRow[2] = dialMask.getFaction();
+            tableResults.add(tableRow);
+        }
+
+        // pilots
+        OTAMasterPilots.OTAPilot pilot = null;
+        for(int i=0;i<results.getMissingPilots().size();i++)
+        {
+            pilot = results.getMissingPilots().get(i);
+            tableRow = new String[3];
+            tableRow[0] = "Pilot";
+            tableRow[1] = MasterPilotData.getPilotData(pilot.getShipXws(), pilot.getPilotXws(), pilot.getFaction()).getName();
+            tableRow[2] = pilot.getFaction();
+            tableResults.add(tableRow);
+        }
+
+        // upgrades
+        OTAMasterUpgrades.OTAUpgrade upgrade = null;
+        for(int i=0;i<results.getMissingUpgrades().size();i++)
+        {
+            upgrade = results.getMissingUpgrades().get(i);
+            tableRow = new String[3];
+            tableRow[0] = "Upgrade";
+            tableRow[1] = MasterUpgradeData.getUpgradeData(upgrade.getXws()).getName();
+            tableRow[2] = "";
+            tableResults.add(tableRow);
+        }
+
+        // Conditions/Tokens
+        OTAMasterConditions.OTACondition condition = null;
+        for(int i=0;i<results.getMissingConditions().size();i++)
+        {
+            condition = results.getMissingConditions().get(i);
+            tableRow = new String[3];
+            tableRow[0] = "Condition";
+            tableRow[1] = MasterConditionData.getConditionData(condition.getXws()).getName();
+            tableRow[2] = "";
+            tableResults.add(tableRow);
+        }
+
+        // actions
+        OTAMasterActions.OTAAction action = null;
+        for(int i=0;i<results.getMissingActions().size();i++)
+        {
+            action = results.getMissingActions().get(i);
+            tableRow = new String[3];
+            tableRow[0] = "Action";
+            tableRow[1] = action.getName();
+            tableRow[2] = "";
+            tableResults.add(tableRow);
+        }
+
+        // convert the arrayList to an array
+        String[][] convertedTableResults = convertTableArrayListToArray(tableResults);
+        return convertedTableResults;
+    }
+
+    private JTable buildFinalTable(OTAContentsCheckerResults results)
+    {
+        //{"Type","Name", "Faction"};
+
+        String[][] convertedTableResults = buildTableResultsFromResults(results);
+                /*
+        ArrayList<String[]> tableResults = new ArrayList<String[]>();
+        String[] tableRow = null;
+
+        //ships
+        OTAMasterShips.OTAShip ship = null;
+        for(int i = 0; i<results.getMissingShips().size(); i++)
+        {
+            ship = results.getMissingShips().get(i);
+            tableRow = new String[3];
+            tableRow[0] = "Ship";
+            tableRow[1] = MasterShipData.getShipData(ship.getXws()).getName();
+            tableRow[2] = "";
+            tableResults.add(tableRow);
+        }
+
+        // bases
+        OTAShipBase shipBase = null;
+        for(int i = 0; i<results.getMissingShipBases().size();i++)
+        {
+            shipBase = results.getMissingShipBases().get(i);
+            tableRow = new String[3];
+            tableRow[0] = "Ship Base";
+            tableRow[1] = MasterShipData.getShipData(shipBase.getShipXws()).getName();
+            tableRow[2] = shipBase.getFaction();
+            tableResults.add(tableRow);
+        }
+
+        // dial hides
+        OTAMasterDialHides.OTADialHide dialHide = null;
+        for(int i=0;i<results.getMissingDialHides().size();i++)
+        {
+            dialHide = results.getMissingDialHides().get(i);
+            tableRow = new String[3];
+            tableRow[0] = "Dial Hide";
+            tableRow[1] = MasterShipData.getShipData(dialHide.getXws()).getName();
+            tableRow[2] = "";
+            tableResults.add(tableRow);
+        }
+
+        // dial masks
+        OTADialMask dialMask = null;
+        for(int i=0;i<results.getMissingDialMasks().size();i++)
+        {
+            dialMask = results.getMissingDialMasks().get(i);
+            tableRow = new String[3];
+            tableRow[0] = "Dial Mask";
+            tableRow[1] = MasterShipData.getShipData(dialMask.getShipXws()).getName();
+            tableRow[2] = dialMask.getFaction();
+            tableResults.add(tableRow);
+        }
+
+        // pilots
+        OTAMasterPilots.OTAPilot pilot = null;
+        for(int i=0;i<results.getMissingPilots().size();i++)
+        {
+            pilot = results.getMissingPilots().get(i);
+            tableRow = new String[3];
+            tableRow[0] = "Pilot";
+            tableRow[1] = MasterPilotData.getPilotData(pilot.getShipXws(), pilot.getPilotXws(), pilot.getFaction()).getName();
+            tableRow[2] = pilot.getFaction();
+            tableResults.add(tableRow);
+        }
+
+        // upgrades
+        OTAMasterUpgrades.OTAUpgrade upgrade = null;
+        for(int i=0;i<results.getMissingUpgrades().size();i++)
+        {
+            upgrade = results.getMissingUpgrades().get(i);
+            tableRow = new String[3];
+            tableRow[0] = "Upgrade";
+            tableRow[1] = MasterUpgradeData.getUpgradeData(upgrade.getXws()).getName();
+            tableRow[2] = "";
+            tableResults.add(tableRow);
+        }
+
+        // Conditions/Tokens
+        OTAMasterConditions.OTACondition condition = null;
+        for(int i=0;i<results.getMissingConditions().size();i++)
+        {
+            condition = results.getMissingConditions().get(i);
+            tableRow = new String[3];
+            tableRow[0] = "Condition";
+            tableRow[1] = MasterConditionData.getConditionData(condition.getXws()).getName();
+            tableRow[2] = "";
+            tableResults.add(tableRow);
+        }
+
+        // actions
+        OTAMasterActions.OTAAction action = null;
+        for(int i=0;i<results.getMissingActions().size();i++)
+        {
+            action = results.getMissingActions().get(i);
+            tableRow = new String[3];
+            tableRow[0] = "Action";
+            tableRow[1] = action.getName();
+            tableRow[2] = "";
+            tableResults.add(tableRow);
+        }
+
+        // convert the arrayList to an array
+        String[][] convertedTableResults = convertTableArrayListToArray(tableResults);
+*/
+        // build the swing table
         finalTable = new JTable(convertedTableResults,finalColumnNames);
-        DefaultTableModel model = new DefaultTableModel(tableResults.size(), finalColumnNames.length);
-        model.setNumRows(tableResults.size());
+        DefaultTableModel model = new DefaultTableModel(convertedTableResults.length, finalColumnNames.length);
+        model.setNumRows(convertedTableResults.length);
         model.setDataVector(convertedTableResults,finalColumnNames);
 
         finalTable.setModel(model);
@@ -648,16 +466,179 @@ public class OTAContentsChecker extends AbstractConfigurable {
 
     }
 
-    public void addTo(Buildable parent) {
-        JButton b = new JButton("Content Checker 2");
-        b.setAlignmentY(0.0F);
-        b.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
-                ContentsCheckerWindow();
+
+    private String[][] convertTableArrayListToArray(ArrayList<String[]> tableResults)
+    {
+        // convert the ArrayList<String[]> to a String[][]
+        String[][] convertedTableResults = new String[tableResults.size()][3];
+        String[] tableRow = null;
+        for(int i=0; i<tableResults.size();i++)
+        {
+            tableRow = tableResults.get(i);
+            convertedTableResults[i] = tableRow;
+        }
+        return convertedTableResults;
+    }
+
+
+
+
+
+    private OTAContentsCheckerResults checkAllResults()
+    {
+        results = new OTAContentsCheckerResults();
+
+        // perform all checks
+        modIntChecker = new ModuleIntegrityChecker();
+        results.setPilotResults(modIntChecker.checkPilots());
+        results.setShipResults(modIntChecker.checkShips());
+        results.setActionResults(modIntChecker.checkActions());
+        results.setShipBaseResults(modIntChecker.checkShipBases());
+        results.setUpgradeResults(modIntChecker.checkUpgrades());
+        results.setConditionResults(modIntChecker.checkConditions());
+        results.setDialHideResults(modIntChecker.checkDialHides());
+        results.setDialMaskResults(modIntChecker.checkDialMasks());
+
+        // determine which images are missing
+        results.setMissingPilots(findMissingPilots(results.getPilotResults()));
+        results.setMissingUpgrades(findMissingUpgrades(results.getUpgradeResults()));
+        results.setMissingConditions(findMissingConditions(results.getConditionResults()));
+        results.setMissingShips(findMissingShips(results.getShipResults()));
+        results.setMissingActions(findMissingActions(results.getActionResults()));
+        results.setMissingDialHides(findMissingDialHides(results.getDialHideResults()));
+        results.setMissingDialMasks(findMissingDialMasks(results.getDialMaskResults()));
+        results.setMissingShipBases(findMissingShipBases(results.getShipBaseResults()));
+
+        return results;
+    }
+
+    private ArrayList<OTAMasterPilots.OTAPilot> findMissingPilots(ArrayList<OTAMasterPilots.OTAPilot> pilotResults)
+    {
+        ArrayList<OTAMasterPilots.OTAPilot> missing = new ArrayList<OTAMasterPilots.OTAPilot>();
+        Iterator<OTAMasterPilots.OTAPilot> pilotIterator = pilotResults.iterator();
+        OTAMasterPilots.OTAPilot pilot = null;
+        while(pilotIterator.hasNext())
+        {
+            pilot = pilotIterator.next();
+            if(!pilot.getStatus())
+            {
+                missing.add(pilot);
             }
-        });
-        OKButton = b;
-        GameModule.getGameModule().getToolBar().add(b);
+        }
+        return missing;
+    }
+
+    private ArrayList<OTAMasterUpgrades.OTAUpgrade> findMissingUpgrades(ArrayList<OTAMasterUpgrades.OTAUpgrade> upgradeResults)
+    {
+        ArrayList<OTAMasterUpgrades.OTAUpgrade> missing = new ArrayList<OTAMasterUpgrades.OTAUpgrade>();
+        Iterator<OTAMasterUpgrades.OTAUpgrade> upgradeIterator = upgradeResults.iterator();
+        OTAMasterUpgrades.OTAUpgrade upgrade = null;
+        while(upgradeIterator.hasNext())
+        {
+            upgrade = upgradeIterator.next();
+            if(!upgrade.getStatus())
+            {
+                missing.add(upgrade);
+            }
+        }
+        return missing;
+    }
+
+    private ArrayList<OTAMasterConditions.OTACondition> findMissingConditions(ArrayList<OTAMasterConditions.OTACondition> conditionResults)
+    {
+        ArrayList<OTAMasterConditions.OTACondition> missing = new ArrayList<OTAMasterConditions.OTACondition>();
+        Iterator<OTAMasterConditions.OTACondition> conditionIterator = conditionResults.iterator();
+        OTAMasterConditions.OTACondition condition = null;
+        while(conditionIterator.hasNext())
+        {
+            condition = conditionIterator.next();
+            if(!condition.getStatus() || !condition.getTokenStatus())
+            {
+                missing.add(condition);
+            }
+
+        }
+        return missing;
+    }
+
+    private ArrayList<OTAMasterShips.OTAShip> findMissingShips(ArrayList<OTAMasterShips.OTAShip> shipResults)
+    {
+        ArrayList<OTAMasterShips.OTAShip> missing = new ArrayList<OTAMasterShips.OTAShip>();
+        Iterator<OTAMasterShips.OTAShip> shipIterator = shipResults.iterator();
+        OTAMasterShips.OTAShip ship = null;
+        while(shipIterator.hasNext())
+        {
+            ship = shipIterator.next();
+            if(!ship.getStatus())
+            {
+                missing.add(ship);
+            }
+        }
+        return missing;
+    }
+
+    private ArrayList<OTAMasterActions.OTAAction> findMissingActions(ArrayList<OTAMasterActions.OTAAction> actionResults)
+    {
+        ArrayList<OTAMasterActions.OTAAction> missing = new ArrayList<OTAMasterActions.OTAAction>();
+        Iterator<OTAMasterActions.OTAAction> actionIterator = actionResults.iterator();
+        OTAMasterActions.OTAAction action = null;
+        while(actionIterator.hasNext())
+        {
+            action = actionIterator.next();
+            if(!action.getStatus())
+            {
+                missing.add(action);
+            }
+        }
+        return missing;
+    }
+
+    private ArrayList<OTAMasterDialHides.OTADialHide> findMissingDialHides(ArrayList<OTAMasterDialHides.OTADialHide> dialHideResults)
+    {
+        ArrayList<OTAMasterDialHides.OTADialHide> missing = new ArrayList<OTAMasterDialHides.OTADialHide>();
+        Iterator<OTAMasterDialHides.OTADialHide> dialHideIterator = dialHideResults.iterator();
+        OTAMasterDialHides.OTADialHide dialHide = null;
+        while(dialHideIterator.hasNext())
+        {
+            dialHide = dialHideIterator.next();
+            if(!dialHide.getStatus())
+            {
+                missing.add(dialHide);
+            }
+        }
+        return missing;
+    }
+
+    private ArrayList<OTADialMask> findMissingDialMasks(ArrayList<OTADialMask> dialMaskResults)
+    {
+        ArrayList<OTADialMask> missing = new ArrayList<OTADialMask>();
+        Iterator<OTADialMask> dialMaskIterator = dialMaskResults.iterator();
+        while(dialMaskIterator.hasNext())
+        {
+            OTADialMask dialMask = dialMaskIterator.next();
+            if(!dialMask.getStatus())
+            {
+                missing.add(dialMask);
+
+            }
+        }
+        return missing;
+    }
+
+    private ArrayList<OTAShipBase> findMissingShipBases(ArrayList<OTAShipBase> shipBaseResults)
+    {
+        ArrayList<OTAShipBase> missing = new ArrayList<OTAShipBase>();
+        Iterator<OTAShipBase> shipBaseIterator = shipBaseResults.iterator();
+        while(shipBaseIterator.hasNext())
+        {
+            OTAShipBase shipBase = shipBaseIterator.next();
+            if(!shipBase.getStatus())
+            {
+                missing.add(shipBase);
+
+            }
+        }
+        return missing;
     }
 
     public String getDescription() {
@@ -665,36 +646,12 @@ public class OTAContentsChecker extends AbstractConfigurable {
     }
 
     @Override
-    public String[] getAttributeDescriptions() {
-        return new String[0];
-    }
-
-    @Override
-    public Class<?>[] getAttributeTypes() {
-        return new Class[0];
-    }
-
-    @Override
-    public String[] getAttributeNames() {
-        return new String[0];
-    }
-
-    @Override
-    public void setAttribute(String key, Object value) {
-
+    public HelpFile getHelpFile() {
+        return null;
     }
 
     @Override
     public String getAttributeValueString(String key) {
-        return null;
-    }
-
-
-    public void removeFrom(Buildable parent) {
-        GameModule.getGameModule().getToolBar().remove(OKButton);
-    }
-    @Override
-    public HelpFile getHelpFile() {
         return null;
     }
 
@@ -703,5 +660,28 @@ public class OTAContentsChecker extends AbstractConfigurable {
         return new Class[0];
     }
 
+    @Override
+    public Class<?>[] getAttributeTypes() {
+        return new Class[0];
+    }
 
+    @Override
+    public void removeFrom(Buildable parent) {
+        GameModule.getGameModule().getToolBar().remove(OKButton);
+    }
+
+    @Override
+    public void setAttribute(String key, Object value) {
+
+    }
+
+    @Override
+    public String[] getAttributeDescriptions() {
+        return new String[0];
+    }
+
+    @Override
+    public String[] getAttributeNames() {
+        return new String[0];
+    }
 }
