@@ -188,46 +188,56 @@ public class OTAContentsChecker extends AbstractConfigurable {
     {
         boolean needToSaveModule = false;
 
+        GameModule gameModule = GameModule.getGameModule();
+        DataArchive dataArchive = gameModule.getDataArchive();
+        FileArchive fileArchive = dataArchive.getArchive();
+        ArchiveWriter writer = new ArchiveWriter(fileArchive);
+
         // download pilots
         if(results.getMissingPilots().size() > 0) {
-            XWOTAUtils.downloadAndSaveImagesFromOTA("pilots", results.getMissingPilotImages());
+            XWOTAUtils.downloadImagesFromOTA("pilots", results.getMissingPilotImages(),writer);
             needToSaveModule = true;
         }
 
         // download ships
         if(results.getMissingShips().size() > 0) {
-            XWOTAUtils.downloadAndSaveImagesFromOTA("ships", results.getMissingShipImages());
+            XWOTAUtils.downloadImagesFromOTA("ships", results.getMissingShipImages(),writer);
             needToSaveModule = true;
         }
 
         // download Upgrades
         if(results.getMissingUpgrades().size() > 0) {
-            XWOTAUtils.downloadAndSaveImagesFromOTA("upgrades", results.getMissingUpgradeImages());
+            XWOTAUtils.downloadImagesFromOTA("upgrades", results.getMissingUpgradeImages(),writer);
             needToSaveModule = true;
         }
 
         // download Conditions
         if(results.getMissingConditions().size() > 0) {
-            XWOTAUtils.downloadAndSaveImagesFromOTA("conditions", results.getMissingConditionImages());
+            XWOTAUtils.downloadImagesFromOTA("conditions", results.getMissingConditionImages(),writer);
             needToSaveModule = true;
         }
 
         // download actions
         if(results.getMissingActions().size() > 0) {
-            XWOTAUtils.downloadAndSaveImagesFromOTA("actions", results.getMissingActionImages());
+            XWOTAUtils.downloadImagesFromOTA("actions", results.getMissingActionImages(),writer);
             needToSaveModule = true;
         }
 
         // download dial hides
         if(results.getMissingDialHides().size() > 0) {
-            XWOTAUtils.downloadAndSaveImagesFromOTA("dial", results.getMissingDialHideImages());
+            XWOTAUtils.downloadImagesFromOTA("dial", results.getMissingDialHideImages(),writer);
             needToSaveModule = true;
         }
 
-        GameModule gameModule = GameModule.getGameModule();
-        DataArchive dataArchive = gameModule.getDataArchive();
-        FileArchive fileArchive = dataArchive.getArchive();
-        ArchiveWriter writer = new ArchiveWriter(fileArchive);
+        if(needToSaveModule)
+        {
+            try {
+                writer.save();
+                needToSaveModule = false;
+            } catch (IOException e) {
+                mic.Util.logToChat("Exception occurred saving module");
+            }
+        }
 
 
         // generate dial masks

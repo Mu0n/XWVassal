@@ -564,6 +564,59 @@ public class XWOTAUtils {
 
     }
 
+    public static void downloadImagesFromOTA(String imageType, ArrayList<String> imageNames, ArchiveWriter writer)
+    {
+/*
+        GameModule gameModule = GameModule.getGameModule();
+        DataArchive dataArchive = gameModule.getDataArchive();
+        FileArchive fileArchive = dataArchive.getArchive();
+        ArchiveWriter writer = new ArchiveWriter(fileArchive);
+*/
+        Iterator<String> i = imageNames.iterator();
+        while(i.hasNext())
+        {
+
+            boolean imageFound = false;
+            byte[] imageBytes = null;
+            String imageName = i.next();
+
+            try {
+
+                imageBytes = downloadFileFromOTA(imageType, imageName);
+
+                if(imageBytes != null)
+                {
+                    imageFound = true;
+                }
+            }catch(IOException e)
+            {
+                // OTA doesn't have the image
+                imageFound = false;
+
+            }
+
+
+            if(imageFound)
+            {
+                try {
+                    // add the image to the module
+                    addImageToModule(imageName, imageBytes, writer);
+
+                } catch (IOException e) {
+                    Util.logToChat("IOException ocurred adding an image " + e.getMessage());
+                }
+            }
+
+        }
+/*
+        try {
+            writer.save();
+        }catch(IOException e)
+        {
+            Util.logToChat("IOException ocurred saving images " + e.getMessage());
+        }*/
+
+    }
 
     public static void downloadAndSaveImagesFromOTA(String imageType, ArrayList<String> imageNames)
     {
