@@ -74,13 +74,54 @@ public class OTAContentsChecker extends AbstractConfigurable {
         // add the results table
         JScrollPane finalPane = new JScrollPane(finalTable);
 
+        // ALL checkbox
+        final JCheckBox allButton = new JCheckBox("Download all content");
+        allButton.setSelected(false);
+        allButton.addItemListener(new ItemListener() {
+            public void itemStateChanged(ItemEvent evt) {
+                //TODO
+                if (evt.getStateChange() == ItemEvent.DESELECTED)
+                {
+                    downloadAll = false;
+                    refreshFinalTable();
+                }else if(evt.getStateChange() == ItemEvent.SELECTED)
+                {
+                    downloadAll = true;
+
+                    refreshFinalTable();
+
+                }
+
+            }
+        });
+
 
         // download button
         downloadButton = new JButton("Download");
         downloadButton.setAlignmentY(0.0F);
         downloadButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
-                downloadAll();
+                downloadButton.setEnabled(false);
+                if(downloadAll)
+                {
+
+                    int answer =  JOptionPane.showConfirmDialog(null,
+                            "This might take several minutes.  Do you want to continue?", "Do you want to proceed?", JOptionPane.YES_NO_OPTION);
+                    if(answer == JOptionPane.YES_OPTION)
+                    {
+
+                        downloadAll();
+                        allButton.setSelected(false);
+                    }else{
+                        downloadButton.setEnabled(true);
+                    }
+                }else{
+
+                    downloadAll();
+
+
+                }
+
             }
         });
 
@@ -93,24 +134,7 @@ public class OTAContentsChecker extends AbstractConfigurable {
         });
         downloadButton.setAlignmentY(0.0F);
 
-        // ALL checkbox
-        JCheckBox allButton = new JCheckBox("Download all content");
-        allButton.setSelected(false);
-        allButton.addItemListener(new ItemListener() {
-            public void itemStateChanged(ItemEvent evt) {
-                //TODO
-                if (evt.getStateChange() == ItemEvent.DESELECTED)
-                {
-                    downloadAll = false;
-                    refreshFinalTable();
-                }else if(evt.getStateChange() == ItemEvent.SELECTED)
-                {
-                    downloadAll = true;
-                    refreshFinalTable();
-                }
 
-            }
-        });
 
         // add the components
         c.gridx = 0;
@@ -141,12 +165,13 @@ public class OTAContentsChecker extends AbstractConfigurable {
         panel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
         frame.add(panel, BorderLayout.PAGE_START);
 
-        if(finalTable.getModel().getRowCount() == 0)
-        {
-            jlabel.setText("All content is up to date");
+        jlabel.setText("Click the download button to download the following images");
+       if(finalTable.getModel().getRowCount() == 0)
+       {
+           jlabel.setText("All content is up to date");
             downloadButton.setEnabled(false);
         }else{
-            jlabel.setText("Click the download button to download the following images");
+
             downloadButton.setEnabled(true);
         }
 
@@ -155,71 +180,7 @@ public class OTAContentsChecker extends AbstractConfigurable {
         frame.pack();
         frame.setVisible(true);
         frame.toFront();
-        /*
-     //    optionPane = new JOptionPane();
-   //      optionPane.setMessage("Click the download button to download the following images");
-       // optionPane.setMessage(msg);
-   //     optionPane.add(panel);
-   //     frame.add(panel);
-        frame.setContentPane(panel);
-   //     JDialog dialog = optionPane.createDialog(frame, "Contents Checker");
-    //    dialog.setSize(500,250);
 
-        jlabel = new JLabel();
-     //   jlabel.setFont(new Font("Verdana",1,20));
-        panel.add(jlabel);
-
-        // new window here
-        finalTable = buildFinalTable(results);
-
-        JScrollPane finalPane = new JScrollPane(finalTable);
-        panel.add(finalPane, BorderLayout.CENTER);
-        downloadButton = new JButton("Download");
-        downloadButton.setAlignmentY(0.0F);
-        downloadButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
-                downloadAll();
-            }
-        });
-        panel.add(downloadButton);
-
-        JButton cancelButton = new JButton("Cancel");
-        cancelButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
-                frame.dispose();
-            }
-        });
-        panel.add(cancelButton);
-
-        if(finalTable.getModel().getRowCount() == 0)
-        {
-            //String okMsg = "All content is up to date";
-         //   optionPane.setMessage("All content is up to date");
-           // optionPane.setMessage("All content is up to date");
-            jlabel.setText("All content is up to date");
-            downloadButton.setEnabled(false);
-        }else{
-            jlabel.setText("Click the download button to download the following images");
-        }
-       // optionPane.add(panel);
-
-        panel.setVisible(true);
-  //      dialog.setVisible(true);
-        frame.toFront();
-        frame.repaint();*/
-
-        /*
-        javax.swing.SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                OTADownloadWindow.createAndShowGUI(results);
-             //   new OTADownloadWindow(results);
-
-            }
-        });*/
-
- //       OTADownloadWindow.createAndShowGUI(results);
-    //    new OTADownloadWindow(results);
-       // showContentsCheckerWindow(results);
 
     }
 
@@ -333,13 +294,15 @@ public class OTAContentsChecker extends AbstractConfigurable {
 
         if(finalTable.getModel().getRowCount() == 0)
         {
-            jlabel.setText("All content is up to date");
-         //   optionPane.setMessage("All content is up to date");
+            jlabel.setText("Your content is up to date");
             downloadButton.setEnabled(false);
-        //    optionPane.repaint();
-            frame.repaint();
-        }
 
+
+        }else{
+            //jlabel.setText("Click the download button to download the following images");
+            downloadButton.setEnabled(true);
+        }
+       // frame.repaint();
     }
 
     private String[][] buildTableResultsFromResults(OTAContentsCheckerResults results)
