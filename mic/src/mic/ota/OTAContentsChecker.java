@@ -12,6 +12,8 @@ import mic.*;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
+import javax.swing.table.TableRowSorter;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -310,6 +312,17 @@ public class OTAContentsChecker extends AbstractConfigurable {
         finalTable.getColumnModel().getColumn(0).setPreferredWidth(75);;
         finalTable.getColumnModel().getColumn(1).setPreferredWidth(150);
         finalTable.getColumnModel().getColumn(2).setPreferredWidth(150);
+
+
+        TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(finalTable.getModel());
+        ArrayList<RowSorter.SortKey> sortKeys = new ArrayList<RowSorter.SortKey>(25);
+        sortKeys.add(new RowSorter.SortKey(0, SortOrder.ASCENDING));
+        sortKeys.add(new RowSorter.SortKey(1, SortOrder.ASCENDING));
+        sortKeys.add(new RowSorter.SortKey(2, SortOrder.ASCENDING));
+        sorter.setSortKeys(sortKeys);
+        finalTable.setRowSorter(sorter);
+
+
         model.fireTableDataChanged();
 
 
@@ -475,6 +488,15 @@ public class OTAContentsChecker extends AbstractConfigurable {
         finalTable.getColumnModel().getColumn(0).setPreferredWidth(75);;
         finalTable.getColumnModel().getColumn(1).setPreferredWidth(150);
         finalTable.getColumnModel().getColumn(2).setPreferredWidth(150);
+
+        TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(finalTable.getModel());
+        ArrayList<RowSorter.SortKey> sortKeys = new ArrayList<RowSorter.SortKey>(25);
+        sortKeys.add(new RowSorter.SortKey(0, SortOrder.ASCENDING));
+        sortKeys.add(new RowSorter.SortKey(1, SortOrder.ASCENDING));
+        sortKeys.add(new RowSorter.SortKey(2, SortOrder.ASCENDING));
+        sorter.setSortKeys(sortKeys);
+        finalTable.setRowSorter(sorter);
+
 
 
         finalTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
