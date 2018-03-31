@@ -45,7 +45,6 @@ public class OTAContentsChecker extends AbstractConfigurable {
     private boolean downloadAll = false;
 
 
-
     public void addTo(Buildable parent)
     {
 
@@ -115,6 +114,17 @@ public class OTAContentsChecker extends AbstractConfigurable {
         downloadButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
                 downloadButton.setEnabled(false);
+
+                int answer =  JOptionPane.showConfirmDialog(null, "This might take several minutes. During the download, Vassal will be unresponsive. \nDo you want to continue?", "Do you want to proceed?", JOptionPane.YES_NO_OPTION);
+
+                if(answer == JOptionPane.YES_OPTION)
+                {
+                    downloadAll();
+                    allButton.setSelected(false);
+                }else{
+                    downloadButton.setEnabled(true);
+                }
+                /*
                 if(downloadAll)
                 {
 
@@ -133,7 +143,7 @@ public class OTAContentsChecker extends AbstractConfigurable {
                     downloadAll();
 
 
-                }
+                }*/
 
             }
         });
@@ -197,8 +207,10 @@ public class OTAContentsChecker extends AbstractConfigurable {
 
     }
 
+
     private void downloadAll()
     {
+
         boolean needToSaveModule = false;
 
         GameModule gameModule = GameModule.getGameModule();
@@ -294,6 +306,7 @@ public class OTAContentsChecker extends AbstractConfigurable {
 
             // refresh the table
             refreshFinalTable();
+
         }
 
 
