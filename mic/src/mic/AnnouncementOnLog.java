@@ -28,7 +28,8 @@ import static mic.Util.logToChat;
  */
 public class AnnouncementOnLog extends AbstractConfigurable {
 
-    private static final boolean DEBUG_DO_DOWNLOAD = false;
+    // debug flag - setting this to false skips the onLoad download of OTA
+    private static final boolean DEBUG_DO_DOWNLOAD = true;
 
     private static String defaultURL =        "https://raw.githubusercontent.com/Mu0n/XWVassal/master/VassalNews";
     private static String currentVersionURL = "https://raw.githubusercontent.com/Mu0n/XWVassal/master/currentVersion";
