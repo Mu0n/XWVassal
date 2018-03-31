@@ -7,6 +7,7 @@ import VASSAL.build.module.documentation.HelpFile;
 import VASSAL.tools.ArchiveWriter;
 import VASSAL.tools.DataArchive;
 import VASSAL.tools.io.FileArchive;
+import com.google.common.collect.ImmutableMap;
 import mic.*;
 
 import javax.swing.*;
@@ -19,20 +20,30 @@ import java.awt.event.ItemListener;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.Map;
 
 public class OTAContentsChecker extends AbstractConfigurable {
+
+    private static Map<String,String> fullFactionNames = ImmutableMap.<String, String>builder()
+            .put("galacticempire","Galactic Empire")
+            .put("firstorder","First Order")
+            .put("rebelalliance","Rebel Alliance")
+            .put("resistance","Resistance")
+            .put("scumandvillainy","Scum and Villainy")
+            .build();
 
     private JButton OKButton = new JButton();
     private ModuleIntegrityChecker modIntChecker = null;
     private OTAContentsCheckerResults results = null;
-    private final String[] finalColumnNames = {"Type","Name", "Faction"};
+    private final String[] finalColumnNames = {"Type","Name", "Variant"};
     private JTable finalTable;
-    private JProgressBar progressBar;
     private JButton downloadButton;
- //   private JOptionPane optionPane;
     private JFrame frame;
     private JLabel jlabel;
     private boolean downloadAll = false;
+
+
+
     public void addTo(Buildable parent)
     {
 
@@ -328,7 +339,13 @@ public class OTAContentsChecker extends AbstractConfigurable {
             tableRow = new String[3];
             tableRow[0] = "Ship";
             tableRow[1] = MasterShipData.getShipData(ship.getXws()).getName();
-            tableRow[2] = "";
+
+            if(ship.getIdentifier().equalsIgnoreCase("Standard"))
+            {
+                tableRow[2] = "";
+            }else {
+                tableRow[2] = ship.getIdentifier();
+            }
             tableResults.add(tableRow);
         }
 
@@ -340,7 +357,12 @@ public class OTAContentsChecker extends AbstractConfigurable {
             tableRow = new String[3];
             tableRow[0] = "Ship Base";
             tableRow[1] = MasterShipData.getShipData(shipBase.getShipXws()).getName();
-            tableRow[2] = shipBase.getFaction();
+            if(ship.getIdentifier().equalsIgnoreCase("Standard")) {
+                tableRow[2] = fullFactionNames.get(shipBase.getFaction());
+            }else{
+                tableRow[2] = fullFactionNames.get(shipBase.getFaction()) + shipBase.getIdentifier();
+            }
+
             tableResults.add(tableRow);
         }
 
@@ -364,7 +386,7 @@ public class OTAContentsChecker extends AbstractConfigurable {
             tableRow = new String[3];
             tableRow[0] = "Dial Mask";
             tableRow[1] = MasterShipData.getShipData(dialMask.getShipXws()).getName();
-            tableRow[2] = dialMask.getFaction();
+            tableRow[2] = fullFactionNames.get(dialMask.getFaction());
             tableResults.add(tableRow);
         }
 
@@ -376,7 +398,7 @@ public class OTAContentsChecker extends AbstractConfigurable {
             tableRow = new String[3];
             tableRow[0] = "Pilot";
             tableRow[1] = MasterPilotData.getPilotData(pilot.getShipXws(), pilot.getPilotXws(), pilot.getFaction()).getName();
-            tableRow[2] = pilot.getFaction();
+            tableRow[2] = fullFactionNames.get(pilot.getFaction());
             tableResults.add(tableRow);
         }
 
@@ -408,7 +430,13 @@ public class OTAContentsChecker extends AbstractConfigurable {
             tableRow = new String[3];
             tableRow[0] = "Condition";
             tableRow[1] = MasterConditionData.getConditionData(condition.getXws()).getName();
-            tableRow[2] = "";
+            tableRow[2] = "Card";
+            tableResults.add(tableRow);
+
+            tableRow = new String[3];
+            tableRow[0] = "Condition";
+            tableRow[1] = MasterConditionData.getConditionData(condition.getXws()).getName();
+            tableRow[2] = "Token";
             tableResults.add(tableRow);
         }
 
@@ -429,114 +457,14 @@ public class OTAContentsChecker extends AbstractConfigurable {
         return convertedTableResults;
     }
 
+
+
     private JTable buildFinalTable(OTAContentsCheckerResults results)
     {
-        //{"Type","Name", "Faction"};
+        //{"Type","Name", "Variant"};
 
         String[][] convertedTableResults = buildTableResultsFromResults(results);
-                /*
-        ArrayList<String[]> tableResults = new ArrayList<String[]>();
-        String[] tableRow = null;
 
-        //ships
-        OTAMasterShips.OTAShip ship = null;
-        for(int i = 0; i<results.getMissingShips().size(); i++)
-        {
-            ship = results.getMissingShips().get(i);
-            tableRow = new String[3];
-            tableRow[0] = "Ship";
-            tableRow[1] = MasterShipData.getShipData(ship.getXws()).getName();
-            tableRow[2] = "";
-            tableResults.add(tableRow);
-        }
-
-        // bases
-        OTAShipBase shipBase = null;
-        for(int i = 0; i<results.getMissingShipBases().size();i++)
-        {
-            shipBase = results.getMissingShipBases().get(i);
-            tableRow = new String[3];
-            tableRow[0] = "Ship Base";
-            tableRow[1] = MasterShipData.getShipData(shipBase.getShipXws()).getName();
-            tableRow[2] = shipBase.getFaction();
-            tableResults.add(tableRow);
-        }
-
-        // dial hides
-        OTAMasterDialHides.OTADialHide dialHide = null;
-        for(int i=0;i<results.getMissingDialHides().size();i++)
-        {
-            dialHide = results.getMissingDialHides().get(i);
-            tableRow = new String[3];
-            tableRow[0] = "Dial Hide";
-            tableRow[1] = MasterShipData.getShipData(dialHide.getXws()).getName();
-            tableRow[2] = "";
-            tableResults.add(tableRow);
-        }
-
-        // dial masks
-        OTADialMask dialMask = null;
-        for(int i=0;i<results.getMissingDialMasks().size();i++)
-        {
-            dialMask = results.getMissingDialMasks().get(i);
-            tableRow = new String[3];
-            tableRow[0] = "Dial Mask";
-            tableRow[1] = MasterShipData.getShipData(dialMask.getShipXws()).getName();
-            tableRow[2] = dialMask.getFaction();
-            tableResults.add(tableRow);
-        }
-
-        // pilots
-        OTAMasterPilots.OTAPilot pilot = null;
-        for(int i=0;i<results.getMissingPilots().size();i++)
-        {
-            pilot = results.getMissingPilots().get(i);
-            tableRow = new String[3];
-            tableRow[0] = "Pilot";
-            tableRow[1] = MasterPilotData.getPilotData(pilot.getShipXws(), pilot.getPilotXws(), pilot.getFaction()).getName();
-            tableRow[2] = pilot.getFaction();
-            tableResults.add(tableRow);
-        }
-
-        // upgrades
-        OTAMasterUpgrades.OTAUpgrade upgrade = null;
-        for(int i=0;i<results.getMissingUpgrades().size();i++)
-        {
-            upgrade = results.getMissingUpgrades().get(i);
-            tableRow = new String[3];
-            tableRow[0] = "Upgrade";
-            tableRow[1] = MasterUpgradeData.getUpgradeData(upgrade.getXws()).getName();
-            tableRow[2] = "";
-            tableResults.add(tableRow);
-        }
-
-        // Conditions/Tokens
-        OTAMasterConditions.OTACondition condition = null;
-        for(int i=0;i<results.getMissingConditions().size();i++)
-        {
-            condition = results.getMissingConditions().get(i);
-            tableRow = new String[3];
-            tableRow[0] = "Condition";
-            tableRow[1] = MasterConditionData.getConditionData(condition.getXws()).getName();
-            tableRow[2] = "";
-            tableResults.add(tableRow);
-        }
-
-        // actions
-        OTAMasterActions.OTAAction action = null;
-        for(int i=0;i<results.getMissingActions().size();i++)
-        {
-            action = results.getMissingActions().get(i);
-            tableRow = new String[3];
-            tableRow[0] = "Action";
-            tableRow[1] = action.getName();
-            tableRow[2] = "";
-            tableResults.add(tableRow);
-        }
-
-        // convert the arrayList to an array
-        String[][] convertedTableResults = convertTableArrayListToArray(tableResults);
-*/
         // build the swing table
         finalTable = new JTable(convertedTableResults,finalColumnNames);
         DefaultTableModel model = new DefaultTableModel(convertedTableResults.length, finalColumnNames.length);
