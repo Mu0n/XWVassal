@@ -1,4 +1,4 @@
-package mic;
+package mic.ota;
 
 import VASSAL.build.AbstractConfigurable;
 import VASSAL.build.Buildable;
@@ -7,7 +7,7 @@ import VASSAL.build.module.documentation.HelpFile;
 import VASSAL.tools.ArchiveWriter;
 import VASSAL.tools.DataArchive;
 import VASSAL.tools.io.FileArchive;
-import mic.ota.*;
+import mic.*;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -21,7 +21,7 @@ import java.util.Iterator;
 /**
  * Created by Mic on 12/03/2018.
  */
-public class ContentsChecker extends AbstractConfigurable {
+public class OTAContentsCheckerOld extends AbstractConfigurable {
     private JButton OKButton = new JButton();
 
     private ArrayList<String> missingPilots;
@@ -199,9 +199,9 @@ public class ContentsChecker extends AbstractConfigurable {
             optionPane.add(panel);
         }
 
-        dialog.setVisible(true);
-        frame.toFront();
-        frame.repaint();
+            dialog.setVisible(true);
+            frame.toFront();
+            frame.repaint();
 
     }
 
@@ -649,7 +649,7 @@ public class ContentsChecker extends AbstractConfigurable {
     }
 
     public void addTo(Buildable parent) {
-        JButton b = new JButton("Content Checker");
+        JButton b = new JButton("Content Checker 2");
         b.setAlignmentY(0.0F);
         b.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
@@ -661,7 +661,7 @@ public class ContentsChecker extends AbstractConfigurable {
     }
 
     public String getDescription() {
-        return "Contents Checker (mic.ContentsChecker)";
+        return "Contents Checker (mic.ota.OTAContentsChecker)";
     }
 
     @Override

@@ -54,7 +54,7 @@ public class OTAMasterPilots extends ArrayList<OTAMasterPilots.OTAPilot> {
 
     }
 
-    public static class OTAPilot {
+    public static class OTAPilot  {
 
 
         @JsonProperty("shipxws")
