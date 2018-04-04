@@ -33,6 +33,7 @@ public class Util {
         try {
             return loadRemoteJson(new URL(url), type);
         } catch (MalformedURLException e) {
+
             return null;
         }
     }
@@ -320,10 +321,13 @@ public class Util {
         return obj;
     }
 
+
+
     public static GamePiece getEmbellishment(GamePiece p, String name) {
 
         Class<?> type = Embellishment.class;
         while (p instanceof Decorator) {
+
             if (type.isInstance(p) && ((Embellishment) p).getDescription().equals(name)) {
                 return p;
             }
@@ -331,4 +335,23 @@ public class Util {
         }
         return null;
     }
+
+    public static GamePiece getPlaceMarkerTrait(GamePiece p, String name)
+    {
+        Class<?> type = PlaceMarker.class;
+        while (p instanceof Decorator) {
+
+            if (type.isInstance(p) && ((PlaceMarker) p).getDescription().equals(name)) {
+                return p;
+            }
+            p = ((Decorator) p).getInner();
+        }
+        return null;
+    }
+
+
+
+
+
+
 }

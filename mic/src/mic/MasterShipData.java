@@ -4,21 +4,45 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by amatheny on 2/11/17.
  */
 public class MasterShipData extends ArrayList<MasterShipData.ShipData> {
 
-    private static String REMOTE_URL = "https://raw.githubusercontent.com/guidokessels/xwing-data/master/data/ships.js";
+    public static String REMOTE_URL = "https://raw.githubusercontent.com/guidokessels/xwing-data/master/data/ships.js";
+    public static String DISPATCHER_URL = "https://raw.githubusercontent.com/Mu0n/XWVassalOTA/master/json/dispatcher_ships.json";
+    public static Map<String, ShipData> loadedData = null;
 
-    //TODO change this URL
-    private static String DISPATCHER_URL = "https://raw.githubusercontent.com/mrmurphm/XWVassal/new-dial/mic/swxwmg.vmod-unpacked/dispatcher_ships.json";
+    public Object[] getAllShips()
+    {
+        if(loadedData == null)
+        {
+            loadData();
+        }
+        return loadedData.values().toArray();
+    }
 
-    private static Map<String, ShipData> loadedData = null;
+    public static ShipData getShipDataForShipName(String shipName)
+    {
+        if (loadedData == null) {
+            loadData();
+        }
+        Collection data = loadedData.values();
+        Iterator i = data.iterator();
+        boolean found = false;
+        ShipData sd = null;
+        while(i.hasNext() && !found)
+        {
+            sd = (ShipData)i.next();
+            if(sd.getName().equalsIgnoreCase(shipName))
+            {
+                found = true;
+            }
+        }
+        return sd;
+    }
 
     public static ShipData getShipData(String shipXwsId) {
         if (loadedData == null) {
@@ -36,12 +60,12 @@ public class MasterShipData extends ArrayList<MasterShipData.ShipData> {
         MasterShipData dispatcherData = loadFromDispatcher();
 
         // add in any ships from dispatcher that aren't in xwing-data
-        for(ShipData ship : dispatcherData)
-        {
-            if(loadedData.get(ship.getXws()) == null)
-            {
-                Util.logToChat("Adding ship "+ship.getXws()+" from dispatcher file");
-                loadedData.put(ship.getXws(),ship);
+        if(dispatcherData != null) {
+            for (ShipData ship : dispatcherData) {
+                if (loadedData.get(ship.getXws()) == null) {
+//                    Util.logToChat("Adding ship " + ship.getXws() + " from dispatcher file");
+                    loadedData.put(ship.getXws(), ship);
+                }
             }
         }
     }
@@ -51,7 +75,7 @@ public class MasterShipData extends ArrayList<MasterShipData.ShipData> {
         // load from xwing-data
         MasterShipData data = Util.loadRemoteJson(REMOTE_URL, MasterShipData.class);
         if (data == null) {
-            Util.logToChat("Unable to load xwing-data for ships from the web, falling back to local copy");
+           // Util.logToChat("Unable to load xwing-data for ships from the web, falling back to local copy");
             data = Util.loadClasspathJson("ships.json", MasterShipData.class);
         }
 
@@ -66,8 +90,12 @@ public class MasterShipData extends ArrayList<MasterShipData.ShipData> {
         // load from dispatch
         MasterShipData data = Util.loadRemoteJson(DISPATCHER_URL, MasterShipData.class);
         if (data == null) {
-            Util.logToChat("Unable to load dispatcher for ships from the web, falling back to local copy");
+           // Util.logToChat("Unable to load dispatcher for ships from the web, falling back to local copy");
             data = Util.loadClasspathJson("dispatcher_ships.json", MasterShipData.class);
+            if(data == null)
+            {
+                Util.logToChat("Unable to load dispatcher for ships from the local copy.  Error in JSON format?");
+            }
         }
 
         return data;
@@ -100,11 +128,17 @@ public class MasterShipData extends ArrayList<MasterShipData.ShipData> {
         @JsonProperty("actions")
         private List<String> actions = Lists.newArrayList();
 
+        @JsonProperty("faction")
+        private List<String> factions = Lists.newArrayList();
+
         @JsonProperty("dial")
         private List<String> dialManeuvers = Lists.newArrayList();
 
         @JsonProperty("maneuvers")
         private List<List<Integer>> maneuvers = Lists.newArrayList();
+
+        @JsonProperty("firing_arcs")
+        private List<String> firingArcs = Lists.newArrayList();
 
         @JsonProperty("size")
         private String size;
@@ -136,8 +170,21 @@ public class MasterShipData extends ArrayList<MasterShipData.ShipData> {
             return xws;
         }
 
+        public String getSize()
+        {
+            return size;
+        }
+
         public List<String> getActions() {
             return this.actions;
+        }
+
+        public List<String> getFactions() {
+            return this.factions;
+        }
+
+        public List<String> getFiringArcs() {
+            return this.firingArcs;
         }
 
         public List<String> getDialManeuvers()
