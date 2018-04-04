@@ -9,10 +9,13 @@ import VASSAL.tools.DataArchive;
 import VASSAL.tools.io.FileArchive;
 import mic.ota.*;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -234,11 +237,11 @@ public class AnnouncementOnLog extends AbstractConfigurable {
 
                 }
             }
-    //        try {
-     //           writer.save();
-     //       } catch (IOException e) {
-     //           mic.Util.logToChat("Exception occurred saving module");
-     //       }
+            //        try {
+            //           writer.save();
+            //       } catch (IOException e) {
+            //           mic.Util.logToChat("Exception occurred saving module");
+            //       }
             dialMaskResults = null;
 
             dialMasksToGenerate = null;
@@ -248,10 +251,10 @@ public class AnnouncementOnLog extends AbstractConfigurable {
             // Generate the missing ship bases
             // =============================================================
             OTAShipBase shipBase = null;
-   //         GameModule gameModule = GameModule.getGameModule();
-     //       DataArchive dataArchive = gameModule.getDataArchive();
-     //       FileArchive fileArchive = dataArchive.getArchive();
-    //        ArchiveWriter writer = new ArchiveWriter(fileArchive);
+            //         GameModule gameModule = GameModule.getGameModule();
+            //       DataArchive dataArchive = gameModule.getDataArchive();
+            //       FileArchive fileArchive = dataArchive.getArchive();
+            //        ArchiveWriter writer = new ArchiveWriter(fileArchive);
             shipBaseIterator = shipBasesToGenerate.iterator();
             while (shipBaseIterator.hasNext()) {
                 shipBase = shipBaseIterator.next();
@@ -318,55 +321,7 @@ public class AnnouncementOnLog extends AbstractConfigurable {
     }
 
     public void addTo(Buildable parent) {
-
-        // only do this once.  for some reason, it's happening twice
-
-        if(!checkComplete) {
-            // first, popup a window telling the user that a check for new content will occur
-            updateCheckFrame = new JFrame();
-            JPanel panel = new JPanel();
-            JLabel spacer;
-
-            panel.setMinimumSize(new Dimension(600, 100));
-
-            panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-            // add panel content here
-            String msg = "About to verify new content. Download delay may occur. Please click OK";
-            /*
-            panel.add(link);
-            panel.add(link2);
-            panel.add(link4);
-            panel.add(link3);
-            panel.add(link6);
-            panel.add(link5);*/
-
-            JOptionPane optionPane = new JOptionPane();
-            optionPane.setMessage(msg);
-            //optionPane.setMessageType(JOptionPane.INFORMATION_MESSAGE);
-            optionPane.add(panel);
-
-            JDialog dialog = optionPane.createDialog(updateCheckFrame, "UpdateCheck");
-
-            dialog.setVisible(true);
-            updateCheckFrame.toFront();
-            updateCheckFrame.repaint();
-
-            if(DEBUG_DO_DOWNLOAD) {
-                // then, after OK, download the xwing-data json, dispatcher json, & any OTA updates and save to the module
-                downloadContent();
-            }
-
-            //mic.Util.logToChat("Download occurred");
-            updateCheckFrame.setVisible(false);
-            checkComplete = true;
-
-
-            // log the manifest of what was updated to the chat window
-
-            openAnnouncementWindow();
-        }
-
-
+        openAnnouncementWindow();
     }
 
     private void openAnnouncementWindow()
@@ -409,66 +364,155 @@ public class AnnouncementOnLog extends AbstractConfigurable {
             line = in.readLine();
             in.close();
 
-                String[] onlineParts = line.split("\\.");
-                String[] userParts = userVersion.split("\\.");
-                int length = Math.max(userParts.length, onlineParts.length);
-                for(int i = 0; i < length; i++) {
-                    int userPart = i < userParts.length ?
-                            Integer.parseInt(userParts[i]) : 0;
-                    int onlinePart = i < onlineParts.length ?
-                            Integer.parseInt(onlineParts[i]) : 0;
-                    //logToChat("user " + Integer.toString(userPart) + " online " + Integer.toString(onlinePart));
-                    if(onlinePart > userPart) {
-                        isGreater = true;
-                        break;
-                    } else if(userPart > onlinePart) break;
-                }
+            String[] onlineParts = line.split("\\.");
+            String[] userParts = userVersion.split("\\.");
+            int length = Math.max(userParts.length, onlineParts.length);
+            for(int i = 0; i < length; i++) {
+                int userPart = i < userParts.length ?
+                        Integer.parseInt(userParts[i]) : 0;
+                int onlinePart = i < onlineParts.length ?
+                        Integer.parseInt(onlineParts[i]) : 0;
+                //logToChat("user " + Integer.toString(userPart) + " online " + Integer.toString(onlinePart));
+                if(onlinePart > userPart) {
+                    isGreater = true;
+                    break;
+                } else if(userPart > onlinePart) break;
+            }
 
 
-                URL urlPatchNotes = new URL(blogURL);
-                URLConnection con2 = urlPatchNotes.openConnection();
-                con2.setUseCaches(false);
-                BufferedReader in2 = new BufferedReader(new InputStreamReader(urlPatchNotes.openStream()));
-                String urlPatchString = in2.readLine();
-                in2.close();
+            URL urlPatchNotes = new URL(blogURL);
+            URLConnection con2 = urlPatchNotes.openConnection();
+            con2.setUseCaches(false);
+            BufferedReader in2 = new BufferedReader(new InputStreamReader(urlPatchNotes.openStream()));
+            String urlPatchString = in2.readLine();
+            in2.close();
 
 
-                if(isGreater == true) msg += "A new version is available! ";
-                else msg += "You have the latest version. ";
+            if(isGreater == true) msg += "A new version is available!";
+            else msg += "You have the latest version.";
+/*
+                msg += "You currently have version " + userVersion + " of the X-Wing Vassal module.<br>"
+                    + "The latest version available for download is " + line + "<br><br>"
+                        + "The Module is about to check for additional content and download it.<br>"
+            + "Vassal may become unresponsive between a few seconds to a few minutes.<br>"
+            + "Do you want to proceed?<br>"
+                        + "You can choose to skip for now and perform this step by clicking on Contents Checker later.<br></html>";
+*/
+            JLabel versionLabel = new JLabel(msg);
+            JLabel versionLabel2 = new JLabel("You currently have version " + userVersion + " of the X-Wing Vassal module.");
+            JLabel versionLabel3 = new JLabel("The latest version available for download is " + line);
+            JLabel checkLabel = new JLabel("The Module is about to check for additional content and download it.");
+            JLabel checkLabel2 = new JLabel("Do you want to proceed?");
+            JLabel checkLabel3 = new JLabel("You can choose to skip for now and perform this step by clicking on Contents Checker later.");
+            SwingLink mainDownloadLink = new SwingLink("X-Wing Vassal download page", vassalDownloadURL);
+            SwingLink altDownloadLink = new SwingLink("Alt download page on github", githubDownloadURL);
+            SwingLink whatsNewLink = new SwingLink("What's new in v" + line, urlPatchString);
+            SwingLink guideLink = new SwingLink("New? Need help? Go to the web guide", guideURL);
+            SwingLink supportLink = new SwingLink("Support the X-Wing Vassal module", "http://xwvassal.info/supportmodule.html");
+            SwingLink homeLink = new SwingLink("Home for the Vassal League", "http://xwvassal.info");
 
-                msg += "You currently have version " + userVersion + " of the X-Wing Vassal module.\n"
-                    + "The latest version available for download is " + line + "\n";
+            JPanel panel = new JPanel();
 
-                SwingLink link = new SwingLink("X-Wing Vassal download page", vassalDownloadURL);
-                SwingLink link2 = new SwingLink("Alt download page on github", githubDownloadURL);
-            SwingLink link4 = new SwingLink("What's new in v" + line, urlPatchString);
-                SwingLink link3 = new SwingLink("New? Need help? Go to the web guide", guideURL);
-            SwingLink link6 = new SwingLink("Support the X-Wing Vassal module", "http://xwvassal.info/supportmodule.html");
-            SwingLink link5 = new SwingLink("Home for the Vassal League", "http://xwvassal.info");
-                JFrame frame = new JFrame();
-                JPanel panel = new JPanel();
-                JLabel spacer;
-
-                panel.setMinimumSize(new Dimension(600,100));
+            panel.setMinimumSize(new Dimension(1000,1600));
 
             panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-            panel.add(link);
-            panel.add(link2);
-            panel.add(link4);
-            panel.add(link3);
-            panel.add(link6);
-            panel.add(link5);
 
-                JOptionPane optionPane = new JOptionPane();
+            JPanel labelPanel = new JPanel();
+            labelPanel.setLayout(new BoxLayout(labelPanel, BoxLayout.Y_AXIS));
+            labelPanel.setAlignmentX(Component.RIGHT_ALIGNMENT);
+            labelPanel.add(versionLabel);
+            labelPanel.add(versionLabel2);
+            labelPanel.add(versionLabel3);
+            labelPanel.add(checkLabel);
+            labelPanel.add(checkLabel2);
+            labelPanel.add(checkLabel3);
+
+            panel.add(labelPanel);
+
+            DataArchive dataArchive = GameModule.getGameModule().getDataArchive();
+            JPanel linkPanel = new JPanel();
+            linkPanel.setLayout(new BoxLayout(linkPanel, BoxLayout.X_AXIS));
+
+            JPanel homeLinkArea = new JPanel();
+            homeLinkArea.setLayout(new BoxLayout(homeLinkArea, BoxLayout.Y_AXIS));
+            homeLinkArea.setMinimumSize(new Dimension(275,400));
+            homeLinkArea.setAlignmentY(Component.TOP_ALIGNMENT);
+            JLabel homeIcon = new JLabel();
+
+            BufferedImage img = null;
+            InputStream is = dataArchive.getInputStream("images/Token_Energy_full.png");
+            img = ImageIO.read(is);
+            is.close();
+            homeIcon.setIcon(new ImageIcon(img));
+
+            homeLinkArea.add(homeIcon);
+            homeLinkArea.add(homeLink);
+            homeLinkArea.add(supportLink);
+
+            JPanel downloadLinkArea = new JPanel();
+            downloadLinkArea.setLayout(new BoxLayout(downloadLinkArea, BoxLayout.Y_AXIS));
+            downloadLinkArea.setMinimumSize(new Dimension(275,400));
+            downloadLinkArea.setAlignmentY(Component.TOP_ALIGNMENT);
+            JLabel downloadIcon = new JLabel();
+
+            BufferedImage img2 = null;
+            InputStream is2 = dataArchive.getInputStream("images/Token_Reinforce.png");
+            img2 = ImageIO.read(is2);
+            is2.close();
+            downloadIcon.setIcon(new ImageIcon(img2));
+
+            downloadLinkArea.add(downloadIcon);
+            downloadLinkArea.add(mainDownloadLink);
+            downloadLinkArea.add(altDownloadLink);
+
+            JPanel guideLinkArea = new JPanel();
+            guideLinkArea.setLayout(new BoxLayout(guideLinkArea, BoxLayout.Y_AXIS));
+            guideLinkArea.setMinimumSize(new Dimension(275,400));
+            guideLinkArea.setAlignmentY(Component.TOP_ALIGNMENT);
+            JLabel guideIcon = new JLabel();
+
+            BufferedImage img3 = null;
+            InputStream is3 = dataArchive.getInputStream("images/Token_Focus.png");
+            img3 = ImageIO.read(is3);
+            is3.close();
+            guideIcon.setIcon(new ImageIcon(img3));
+
+            guideLinkArea.add(guideIcon);
+            guideLinkArea.add(guideLink);
+            guideLinkArea.add(whatsNewLink);
+
+
+
+            linkPanel.add(homeLinkArea);
+            linkPanel.add(Box.createHorizontalStrut(30));
+            linkPanel.add(downloadLinkArea);
+            linkPanel.add(Box.createHorizontalStrut(30));
+            linkPanel.add(guideLinkArea);
+            linkPanel.add(Box.createHorizontalStrut(30));
+
+            panel.add(linkPanel);
+
+            int answer = JOptionPane.showOptionDialog(null, panel, "Welcome to the X-Wing vassal module",
+                    JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE, null,
+                    new String[] { "Check for new Content", "Skip" }, "Check for new Content");
+
+            if(answer==0) {
+                downloadContent();
+            }
+            /*
+            JOptionPane optionPane = new JOptionPane();
                 optionPane.setMessage(msg);
+                optionPane.setOptionType(JOptionPane.YES_NO_OPTION);
                 //optionPane.setMessageType(JOptionPane.INFORMATION_MESSAGE);
                 optionPane.add(panel);
                 JDialog dialog = optionPane.createDialog(frame, "Welcome to the X-Wing vassal module");
+                dialog.setPreferredSize(new Dimension(1200,800));
 
-                dialog.setVisible(true);
+
+            frame.setVisible(true);
                 frame.toFront();
                 frame.repaint();
-
+*/
 
         } catch (MalformedURLException e) {
             System.out.println("Malformed URL: " + e.getMessage());
