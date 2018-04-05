@@ -34,9 +34,9 @@ public class AnnouncementOnLog extends AbstractConfigurable {
     // debug flag - setting this to false skips the onLoad download of OTA
     private static final boolean DEBUG_DO_DOWNLOAD = true;
 
-    private static String defaultURL =        "https://raw.githubusercontent.com/Mu0n/XWVassal/master/VassalNews";
-    private static String currentVersionURL = "https://raw.githubusercontent.com/Mu0n/XWVassal/master/currentVersion";
-    private static String blogURL = "https://raw.githubusercontent.com/Mu0n/XWVassal/master/currentBlog";
+    private static String defaultURL =        "https://raw.githubusercontent.com/Mu0n/XWVassal-website/master/VassalNews";
+    private static String currentVersionURL = "https://raw.githubusercontent.com/Mu0n/XWVassal-website/master/currentVersion";
+    private static String blogURL = "https://raw.githubusercontent.com/Mu0n/XWVassal-website/master/currentBlog";
     private static String vassalDownloadURL = "http://www.vassalengine.org/wiki/Module:Star_Wars:_X-Wing_Miniatures_Game";
     private static String githubDownloadURL = "https://github.com/Mu0n/XWVassal/releases";
     private static String guideURL = "http://xwvassal.info/guide";

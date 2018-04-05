@@ -206,7 +206,7 @@ public class OTAContentsChecker extends AbstractConfigurable {
         c.gridy = 3;
         c.gridwidth = 2;
         panel.add(aComboBox);
-        
+
         panel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
         frame.add(panel, BorderLayout.PAGE_START);
 
