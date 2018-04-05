@@ -23,6 +23,9 @@ import VASSAL.counters.GamePiece;
  * Created by mjuneau on 2017-03-09.
  * epic trays are initially at y=-1000, can be toggled to y=75
  * epic tray counters are initially at y=-210, can be toggled to y=210
+ *
+ * Added functionality on 2018-04-05
+ * Adds a combo box that will point to the source of autospawn to use
  */
 
 
@@ -30,6 +33,8 @@ import VASSAL.counters.GamePiece;
 public class EpicDeckTrayToggle extends AbstractConfigurable {
 
     private List<JButton> toggleButtons = Lists.newArrayList();
+    private List<JComboBox> autoSpawnSourceComboBoxes = Lists.newArrayList();
+
 
     private synchronized void epicMaskToggle(int playerId) {
         mic.Util.XWPlayerInfo playerInfo = getCurrentPlayer();
@@ -76,6 +81,7 @@ public class EpicDeckTrayToggle extends AbstractConfigurable {
         for (int i = 1; i <= 8; i++) {
             final int playerId = i;
 
+            //Epic trays toggle buttons
             JButton b = new JButton("Activate Epic");
             b.setAlignmentY(0.0F);
             b.addActionListener(new ActionListener() {
@@ -85,8 +91,23 @@ public class EpicDeckTrayToggle extends AbstractConfigurable {
             });
             toggleButtons.add(b);
 
+
+            //Combo box for selecting the source of the xwing-data to use
+            //if it can't access the list of sources on the web, make it base game by default
+            String[] listOfXwingDataSources = {
+                    "Base Game",
+                    "X-Wing Supremacy"
+            };
+
+            JComboBox aComboBox = new JComboBox(listOfXwingDataSources);
+            //make it editable further down the line once it's properly tested
+            //aComboBox.setEditable(true);
+            autoSpawnSourceComboBoxes.add(aComboBox);
+
+            //Adding those elements to the player window toolbars
             Map playerMap = getPlayerMap(i);
             playerMap.getToolBar().add(b);
+            playerMap.getToolBar().add(aComboBox);
         }
     }
 
