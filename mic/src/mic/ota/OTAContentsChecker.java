@@ -44,6 +44,8 @@ public class OTAContentsChecker extends AbstractConfigurable {
     private JLabel jlabel;
     private boolean downloadAll = false;
 
+    static final String modeListURL = "https://raw.githubusercontent.com/Mu0n/XWVassal-website/master/modeList.json";
+
 
     public void addTo(Buildable parent)
     {
@@ -119,6 +121,7 @@ public class OTAContentsChecker extends AbstractConfigurable {
 
                 if(answer == JOptionPane.YES_OPTION)
                 {
+
                     downloadAll();
                     allButton.setSelected(false);
                 }else{
@@ -157,6 +160,15 @@ public class OTAContentsChecker extends AbstractConfigurable {
         });
         downloadButton.setAlignmentY(0.0F);
 
+        // game mode list
+        JLabel sourceExplanationLabel = new JLabel("Select the game mode here:");
+
+        //if it can't access the list of sources on the web, make it base game by default
+        String[] listOfXwingDataSources = {
+                "Base Game"
+        };
+        //TO DO fetch that list from the web just like in AutoSquadSpawn's dialog window
+        JComboBox aComboBox = new JComboBox(listOfXwingDataSources);
 
 
         // add the components
@@ -185,6 +197,16 @@ public class OTAContentsChecker extends AbstractConfigurable {
         c.gridwidth = 1;
         panel.add(cancelButton,c);
 
+        c.gridx = 0;
+        c.gridy = 3;
+        c.gridwidth = 1;
+        panel.add(sourceExplanationLabel);
+
+        c.gridx = 1;
+        c.gridy = 3;
+        c.gridwidth = 2;
+        panel.add(aComboBox);
+        
         panel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
         frame.add(panel, BorderLayout.PAGE_START);
 

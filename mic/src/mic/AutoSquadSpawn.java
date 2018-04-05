@@ -15,7 +15,10 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -26,6 +29,12 @@ import static mic.Util.*;
  * Created by Mic on 12/02/2017.
  */
 public class AutoSquadSpawn extends AbstractConfigurable {
+
+    static final String yasbURL = "http://geordanr.github.io/xwing/";
+    static final String voidURL = "http://xwing-builder.co.uk/build";
+    static final String fabsURL = "http://x-wing.fabpsb.net/gindex.php";
+
+    static final String modeListURL = "https://raw.githubusercontent.com/Mu0n/XWVassal-website/master/modeList.json";
 
     private boolean listHasHoundsTooth = false;
     private int houndsToothPilotSkill = 0;
@@ -55,7 +64,86 @@ public class AutoSquadSpawn extends AbstractConfigurable {
             return;
         }
 
-        String userInput = JOptionPane.showInputDialog("Please paste (CTRL-V can be used to paste text copied with CTRL-C from a browser) a voidstate url or ID, YASB url, FABS url, or raw XWS JSON.\nIf the list uses new elements, a download delay may occur");
+        //Panel which will include a Combo box for selecting the source of the xwing-data to use
+        JPanel rootPanel = new JPanel();
+        rootPanel.setLayout(new BoxLayout(rootPanel, BoxLayout.Y_AXIS));
+        JPanel sourcePanel = new JPanel();
+        sourcePanel.setLayout(new BoxLayout(sourcePanel, BoxLayout.X_AXIS));
+
+        JLabel sourceExplanationLabel = new JLabel("Select the game mode here:");
+
+        //if it can't access the list of sources on the web, make it base game by default
+        String[] listOfXwingDataSources = {
+                "Base Game"
+        };
+
+        /*
+        try{
+            //TO DO load a list of game mode from a github repo that will be shared with top modders
+            //this github will have an easy to edit json that carries these elements
+            //game mode name (will be displayed in this combo box and in contents checker
+            //master URL (mimicks what we do for the base game in the OTA repo
+
+            URL url = new URL(modeListURL);
+            URLConnection con = url.openConnection();
+            con.setUseCaches(false);
+
+            BufferedReader in = new BufferedReader(new InputStreamReader(url.openStream()));
+            String line = in.readLine();
+            while ((line = in.readLine()) != null) {
+                logToChat("* " + line);
+            }
+
+            in.close();
+        }
+        catch(Exception e2)
+        {
+            logToChat(e2.toString());
+            return;
+        }
+*/
+
+        JComboBox aComboBox = new JComboBox(listOfXwingDataSources);
+        sourcePanel.add(sourceExplanationLabel);
+        sourcePanel.add(aComboBox);
+
+        //make it editable further down the line once it's properly tested
+        //aComboBox.setEditable(true);
+        JPanel explanationPanel = new JPanel();
+        explanationPanel.setLayout(new BoxLayout(explanationPanel, BoxLayout.Y_AXIS));
+        explanationPanel.setAlignmentX(Component.RIGHT_ALIGNMENT);
+        JLabel autoSpawnExplanationLabel = new JLabel("Please paste (CTRL-V can be used to paste text copied with CTRL-C from a browser) ");
+        JLabel autoSpawnExplanationLabel2 = new JLabel("a voidstate url or ID, YASB url, FABS url, or raw XWS JSON.");
+        JLabel autoSpawnExplanationLabel3 = new JLabel("If the list uses new elements, a download delay may occur");
+        SwingLink yasbLink = new SwingLink("Yet Another Squad Builder", yasbURL);
+        SwingLink voidstateLink = new SwingLink("Voidstate Squadron Builder", voidURL);
+        SwingLink fabsLink = new SwingLink("Fab's Squadron Builder", fabsURL);
+
+        explanationPanel.add(autoSpawnExplanationLabel);
+        explanationPanel.add(autoSpawnExplanationLabel2);
+        explanationPanel.add(autoSpawnExplanationLabel3);
+        explanationPanel.add(yasbLink);
+        explanationPanel.add(voidstateLink);
+        explanationPanel.add(fabsLink);
+
+
+        rootPanel.add(sourcePanel);
+        rootPanel.add(explanationPanel);
+        JFrame frame = new JFrame();
+        frame.setPreferredSize(new Dimension(800,500));
+        frame.add(rootPanel);
+
+        String userInput = "";
+        userInput = JOptionPane.showInputDialog(frame, rootPanel, "Squad AutoSpawn for player " + Integer.toString(playerInfo.getSide()), JOptionPane.PLAIN_MESSAGE);
+
+        if(userInput==null){
+            logToChat("Error - could not find anything in the input field of the autospawn dialog.");
+            return;
+        }
+        if(userInput.isEmpty()) {
+            logToChat("Error - could not find anything in the input field of the autospawn dialog.");
+            return;
+        }
         XWSList xwsList = loadListFromUserInput(userInput);
 
         // validate the list

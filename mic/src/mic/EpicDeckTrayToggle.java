@@ -33,8 +33,6 @@ import VASSAL.counters.GamePiece;
 public class EpicDeckTrayToggle extends AbstractConfigurable {
 
     private List<JButton> toggleButtons = Lists.newArrayList();
-    private List<JComboBox> autoSpawnSourceComboBoxes = Lists.newArrayList();
-
 
     private synchronized void epicMaskToggle(int playerId) {
         mic.Util.XWPlayerInfo playerInfo = getCurrentPlayer();
@@ -91,23 +89,9 @@ public class EpicDeckTrayToggle extends AbstractConfigurable {
             });
             toggleButtons.add(b);
 
-
-            //Combo box for selecting the source of the xwing-data to use
-            //if it can't access the list of sources on the web, make it base game by default
-            String[] listOfXwingDataSources = {
-                    "Base Game",
-                    "X-Wing Supremacy"
-            };
-
-            JComboBox aComboBox = new JComboBox(listOfXwingDataSources);
-            //make it editable further down the line once it's properly tested
-            //aComboBox.setEditable(true);
-            autoSpawnSourceComboBoxes.add(aComboBox);
-
             //Adding those elements to the player window toolbars
             Map playerMap = getPlayerMap(i);
             playerMap.getToolBar().add(b);
-            playerMap.getToolBar().add(aComboBox);
         }
     }
 
