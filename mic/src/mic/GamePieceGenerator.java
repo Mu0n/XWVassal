@@ -53,6 +53,10 @@ public class GamePieceGenerator
         myShipGen.execute();
 
         // add the stats to the piece
+        newShip = setShipProperties(newShip,ship.getUpgrades(), shipData, pilotData, ship);
+
+        /*
+        // add the stats to the piece
         newShip.setProperty("Craft ID #", getDisplayPilotName(ship.getPilotData(),shipData,ship.getShipNumber())); //is actually the pilot name
         newShip.setProperty("Pilot Skill", Integer.toString(ship.getPilotData().getSkill()));
 
@@ -61,9 +65,87 @@ public class GamePieceGenerator
         newShip.setProperty("Defense Rating", Integer.toString(ship.getShipData().getAgility()));
         newShip.setProperty("Hull Rating", Integer.toString(ship.getShipData().getHull()));
         newShip.setProperty("Shield Rating", Integer.toString(ship.getShipData().getShields()));
-
+*/
         return newShip;
     }
+
+    public static GamePiece setShipProperties(GamePiece piece, List<VassalXWSPilotPieces.Upgrade> upgrades,MasterShipData.ShipData shipData,MasterPilotData.PilotData pilotData,VassalXWSPilotPieces ship ) {
+        //GamePiece piece = Util.newPiece(this.ship);
+
+        int skillModifier = 0;
+        int attackModifier = 0;
+        int agilityModifier = 0;
+        int energyModifier = 0;
+        int shieldsModifier = 0;
+        int hullModifier = 0;
+
+        for (VassalXWSPilotPieces.Upgrade upgrade : upgrades) {
+
+            MasterUpgradeData.UpgradeGrants doubleSideCardStats = DoubleSideCardPriorityPicker.getDoubleSideCardStats(upgrade.getXwsName());
+            ArrayList<MasterUpgradeData.UpgradeGrants> grants = new ArrayList<MasterUpgradeData.UpgradeGrants>();
+            if (doubleSideCardStats != null) {
+                grants.add(doubleSideCardStats);
+            } else {
+                grants.addAll(upgrade.getUpgradeData().getGrants());
+            }
+
+            for (MasterUpgradeData.UpgradeGrants modifier : grants) {
+                if (modifier.isStatsModifier()) {
+                    String name = modifier.getName();
+                    int value = modifier.getValue();
+
+                    if (name.equals("attack")) attackModifier += value;
+                    else if (name.equals("agility")) agilityModifier += value;
+                    else if (name.equals("hull")) hullModifier += value;
+                    else if (name.equals("shields")) shieldsModifier += value;
+                    else if (name.equals("skill")) skillModifier += value;
+                    else if (name.equals("energy")) energyModifier += value;
+                }
+            }
+        }
+
+        if (shipData != null)
+        {
+            int agility = shipData.getAgility();
+            int hull = shipData.getHull();
+            int shields = shipData.getShields();
+            int attack = shipData.getAttack();
+
+            if (pilotData != null && pilotData.getShipOverrides() != null)
+            {
+                MasterPilotData.ShipOverrides shipOverrides = pilotData.getShipOverrides();
+                agility = shipOverrides.getAgility();
+                hull = shipOverrides.getHull();
+                shields = shipOverrides.getShields();
+                attack = shipOverrides.getAttack();
+            }
+
+            piece.setProperty("Defense Rating", agility + agilityModifier);
+            piece.setProperty("Hull Rating", hull + hullModifier);
+            piece.setProperty("Attack Rating", attack + attackModifier);
+            piece.setProperty("Shield Rating", shields + shieldsModifier);
+
+            if (shipData.getEnergy() > 0) {
+                int energy = shipData.getEnergy();
+                piece.setProperty("Energy Rating", energy + energyModifier);
+            }
+        }
+
+        if (pilotData != null) {
+            int ps = pilotData.getSkill() + skillModifier;
+            piece.setProperty("Pilot Skill", ps);
+        }
+
+        if (pilotData != null) {
+            piece.setProperty("Pilot Name", getDisplayShipName(pilotData,shipData));
+        }
+        piece.setProperty("Craft ID #", getDisplayPilotName(pilotData, shipData, ship.getShipNumber() ));
+
+
+        return piece;
+    }
+
+
 
     private static boolean containsMobileArc(MasterShipData.ShipData shipData)
     {
