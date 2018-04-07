@@ -220,7 +220,7 @@ public class VassalXWSPilotPieces {
 
         return piece;
     }
-
+/*
     public GamePiece cloneShip() {
         GamePiece piece = Util.newPiece(this.ship);
 
@@ -299,7 +299,7 @@ public class VassalXWSPilotPieces {
         }
         return piece;
     }
-
+*/
     private GamePiece configureStemShip(String slotName, String faction, MasterShipData.ShipData shipData, GamePiece piece)
     {
         StringBuilder prototypePrefixSB = new StringBuilder();
