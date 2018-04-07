@@ -15,10 +15,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
 import java.net.URL;
-import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -258,11 +255,10 @@ public class AutoSquadSpawn extends AbstractConfigurable {
 
             //Check to see if this pilot has extra munitions or Ordnance Silos
             for (VassalXWSPilotPieces.Upgrade tempUpgrade : ship.getUpgrades()) {
-                GamePiece tempPiece = tempUpgrade.cloneGamePiece();
-
-                if(tempPiece.getName().equalsIgnoreCase("Extra Munitions")) {
+               // GamePiece tempPiece = tempUpgrade.cloneGamePiece();
+                if(tempUpgrade.getXwsName().equalsIgnoreCase("extramunitions")) {
                     pilotHasExtraMunitions = true;
-                }else if(tempPiece.getName().equalsIgnoreCase("Ordnance Silos")) {
+                }else if(tempUpgrade.getXwsName().equalsIgnoreCase("ordnancesilos")) {
                     pilotHasOrdnanceSilos = true;
                 }
             }
@@ -296,35 +292,31 @@ public class AutoSquadSpawn extends AbstractConfigurable {
                 // if pilot has extra munitions, we will collect the positions of each card that can take it so we can add the tokens later
                 if(pilotHasExtraMunitions)
                 {
-                    // check to see if the upgrade card has the "acceptsOrdnanceToken" property set to true
-                    if (upgradePiece.getProperty("acceptsOrdnanceToken") != null &&
-                            (((String)upgradePiece.getProperty("acceptsOrdnanceToken")).equalsIgnoreCase("true")))
+                    String slotName = upgrade.getUpgradeData().getSlot();
+                    if(slotName.equals("Bomb") || slotName.equals("Missile") || slotName.equals("Torpedo"))
                     {
-                        // add the coordinates to the list of ordnance token locations
                         ordnanceLocations.add(new Point((int) startPosition.getX() + pilotWidth + totalUpgradeWidth + fudgePilotUpgradeFrontier,
                                 (int) startPosition.getY() + totalPilotHeight + ordnanceYOffset));
                     }
+
                 }
 
                 // if pilot has Ordnance Silos, we will collect the positions of each card that can take it so we can add the tokens later
-                if(pilotHasOrdnanceSilos)
-                {
-                    // check to see if the upgrade card has the "acceptsOrdnanceToken" properties set to true
-                    if (upgradePiece.getProperty("isABomb") != null &&
-                            (((String)upgradePiece.getProperty("isABomb")).equalsIgnoreCase("true")) &&
-                            upgradePiece.getProperty("acceptsOrdnanceToken") != null &&
-                            (((String)upgradePiece.getProperty("acceptsOrdnanceToken")).equalsIgnoreCase("true")))
-                    {
+                if(pilotHasOrdnanceSilos) {
+
+                    String slotName = upgrade.getUpgradeData().getSlot();
+                    if (slotName.equals("Bomb") && !upgrade.getXwsName().equals("ordnancesilos")) {
                         // add three ordnance token locations
                         ordnanceLocations.add(new Point((int) startPosition.getX() + pilotWidth + totalUpgradeWidth + fudgePilotUpgradeFrontier,
-                            (int) startPosition.getY() + totalPilotHeight + ordnanceYOffset));
+                                (int) startPosition.getY() + totalPilotHeight + ordnanceYOffset));
 
                         ordnanceLocations.add(new Point((int) startPosition.getX() + pilotWidth + totalUpgradeWidth + fudgePilotUpgradeFrontier + 5,
-                                (int) startPosition.getY() + totalPilotHeight + ordnanceYOffset +10));
+                                (int) startPosition.getY() + totalPilotHeight + ordnanceYOffset + 10));
 
                         ordnanceLocations.add(new Point((int) startPosition.getX() + pilotWidth + totalUpgradeWidth + fudgePilotUpgradeFrontier + 10,
-                                (int) startPosition.getY() + totalPilotHeight + ordnanceYOffset +20));
+                                (int) startPosition.getY() + totalPilotHeight + ordnanceYOffset + 20));
                     }
+
                 }
 
                 // if squad has Jabba the Hutt, we will collect the positions of each card that can take illicit tokens
