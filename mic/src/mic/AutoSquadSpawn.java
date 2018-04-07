@@ -190,12 +190,13 @@ public class AutoSquadSpawn extends AbstractConfigurable {
         // check to see if any pilot in the squad has Jabba the Hutt Crew equipped
         for (VassalXWSPilotPieces ship : pieces.getShips()) {
             for (VassalXWSPilotPieces.Upgrade tempUpgrade : ship.getUpgrades()) {
-                GamePiece tempPiece = tempUpgrade.cloneGamePiece();
 
-                if(tempPiece.getName().equalsIgnoreCase("Jabba the Hutt")) {
+                if(tempUpgrade.getXwsName().equals("jabbathehutt"))
+                {
                     squadHasJabba = true;
                     break;
                 }
+
             }
         }
 
@@ -323,14 +324,14 @@ public class AutoSquadSpawn extends AbstractConfigurable {
                 // so we can add the tokens later
                 if(squadHasJabba)
                 {
-                    // check to see if the upgrade card has the "acceptsIllicitToken" property set to true
-                    if (upgradePiece.getProperty("acceptsIllicitToken") != null &&
-                            (((String)upgradePiece.getProperty("acceptsIllicitToken")).equalsIgnoreCase("true")))
+                    String slotName = upgrade.getUpgradeData().getSlot();
+                    if(slotName.equals("Illicit"))
                     {
                         // add the coordinates to the list of ordnance token locations
                         illicitLocations.add(new Point((int) startPosition.getX() + pilotWidth + totalUpgradeWidth + fudgePilotUpgradeFrontier,
                                 (int) startPosition.getY() + totalPilotHeight + illicitYOffset));
                     }
+
                 }
 
                 spawnPiece(upgradePiece, new Point(
