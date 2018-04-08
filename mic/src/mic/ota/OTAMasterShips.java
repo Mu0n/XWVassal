@@ -12,7 +12,7 @@ import java.util.Map;
 
 public class OTAMasterShips extends ArrayList<OTAMasterShips.OTAShip> {
 
-    private static String REMOTE_URL = "https://raw.githubusercontent.com/Mu0n/XWVassalOTA/master/json/ship_images.json";
+   // private static String REMOTE_URL = "https://raw.githubusercontent.com/Mu0n/XWVassalOTA/master/json/ship_images.json";
 
     private static Map<String, OTAMasterShips.OTAShip> loadedData = null;
     public static void flushData()
@@ -41,7 +41,7 @@ public class OTAMasterShips extends ArrayList<OTAMasterShips.OTAShip> {
     private static void loadData() {
 
         // load from
-        OTAMasterShips data = Util.loadRemoteJson(REMOTE_URL, OTAMasterShips.class);
+        OTAMasterShips data = Util.loadRemoteJson(OTAContentsChecker.OTA_SHIPS_JSON_URL, OTAMasterShips.class);
         loadedData = Maps.newHashMap();
         if (data == null) {
             Util.logToChat("Unable to load OTA pilots from the web");

@@ -10,7 +10,7 @@ import java.util.Map;
 
 public class OTAMasterActions extends ArrayList<OTAMasterActions.OTAAction> {
 
-    private static String REMOTE_URL = "https://raw.githubusercontent.com/Mu0n/XWVassalOTA/master/json/action_images.json";
+//    private static String REMOTE_URL = "https://raw.githubusercontent.com/Mu0n/XWVassalOTA/master/json/action_images.json";
 
     private static Map<String,OTAMasterActions.OTAAction> loadedData = null;
 
@@ -40,7 +40,7 @@ public class OTAMasterActions extends ArrayList<OTAMasterActions.OTAAction> {
     private static void loadData() {
 
         // load from
-        OTAMasterActions data = Util.loadRemoteJson(REMOTE_URL, OTAMasterActions.class);
+        OTAMasterActions data = Util.loadRemoteJson(OTAContentsChecker.OTA_ACTIONS_JSON_URL, OTAMasterActions.class);
         loadedData = Maps.newHashMap();
         if (data == null) {
             Util.logToChat("Unable to load OTA Actions from the web");

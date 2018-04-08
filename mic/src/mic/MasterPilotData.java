@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import mic.ota.OTAContentsChecker;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,7 +26,7 @@ public class MasterPilotData extends ArrayList<MasterPilotData.PilotData> {
             .build();
 
     public static String REMOTE_URL = "https://raw.githubusercontent.com/guidokessels/xwing-data/master/data/pilots.js";
-    public static String DISPATCHER_URL = "https://raw.githubusercontent.com/Mu0n/XWVassalOTA/master/json/dispatcher_pilots.json";
+ //   public static String DISPATCHER_URL = "https://raw.githubusercontent.com/Mu0n/XWVassalOTA/master/json/dispatcher_pilots.json";
 
     private static Map<String, PilotData> loadedData = null;
 
@@ -138,7 +139,7 @@ public class MasterPilotData extends ArrayList<MasterPilotData.PilotData> {
     private static MasterPilotData loadFromDispatcher()
     {
         // load from dispatch
-        MasterPilotData data = Util.loadRemoteJson(DISPATCHER_URL, MasterPilotData.class);
+        MasterPilotData data = Util.loadRemoteJson(OTAContentsChecker.OTA_DISPATCHER_PILOTS_JSON_URL, MasterPilotData.class);
         if (data == null) {
            // Util.logToChat("Unable to load dispatcher for ships from the web, falling back to local copy");
             data = Util.loadClasspathJson("dispatcher_pilots.json", MasterPilotData.class);

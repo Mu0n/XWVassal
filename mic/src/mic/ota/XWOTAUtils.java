@@ -11,6 +11,7 @@ import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -566,12 +567,6 @@ public class XWOTAUtils {
 
     public static void downloadImagesFromOTA(String imageType, ArrayList<String> imageNames, ArchiveWriter writer)
     {
-/*
-        GameModule gameModule = GameModule.getGameModule();
-        DataArchive dataArchive = gameModule.getDataArchive();
-        FileArchive fileArchive = dataArchive.getArchive();
-        ArchiveWriter writer = new ArchiveWriter(fileArchive);
-*/
         Iterator<String> i = imageNames.iterator();
         while(i.hasNext())
         {
@@ -608,13 +603,6 @@ public class XWOTAUtils {
             }
 
         }
-/*
-        try {
-            writer.save();
-        }catch(IOException e)
-        {
-            Util.logToChat("IOException ocurred saving images " + e.getMessage());
-        }*/
 
     }
 
@@ -734,7 +722,8 @@ public class XWOTAUtils {
     {
         // Util.logToChat("Downloading image: "+fileName);
         URL OTAImageURL = null;
-        String url = "https://raw.githubusercontent.com/Mu0n/XWVassalOTA/master/" + fileType + "/" + fileName;
+        //String url = "https://raw.githubusercontent.com/Mu0n/XWVassalOTA/master/" + fileType + "/" + fileName;
+        String url = OTAContentsChecker.OTA_RAW_BRANCH_URL + fileType + "/" + fileName;
         OTAImageURL = new URL(url);
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         InputStream is = null;
@@ -754,6 +743,28 @@ public class XWOTAUtils {
         byte[] bytes = baos.toByteArray();
         baos.close();
         return bytes;
+    }
+
+    public static boolean imageExistsInOTA(String fileType, String fileName)
+    {
+
+        String url = OTAContentsChecker.OTA_RAW_BRANCH_URL + fileType + "/" + fileName;
+
+        HttpURLConnection httpUrlConn;
+        try {
+            httpUrlConn = (HttpURLConnection) new URL(url).openConnection();
+
+            httpUrlConn.setRequestMethod("HEAD");
+
+            // Set timeouts in milliseconds
+            httpUrlConn.setConnectTimeout(30000);
+            httpUrlConn.setReadTimeout(30000);
+
+            return (httpUrlConn.getResponseCode() == HttpURLConnection.HTTP_OK);
+        } catch (Exception e) {
+            System.out.println("Error: " + e.getMessage());
+            return false;
+        }
     }
 
     private static void addFileToModule(String fileName,byte[] fileBytes, ArchiveWriter writer) throws IOException

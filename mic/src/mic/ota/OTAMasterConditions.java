@@ -11,7 +11,7 @@ import java.util.Map;
 public class OTAMasterConditions extends ArrayList<OTAMasterConditions.OTACondition>
 {
 
-    private static String REMOTE_URL = "https://raw.githubusercontent.com/Mu0n/XWVassalOTA/master/json/condition_images.json";
+ //   private static String REMOTE_URL = "https://raw.githubusercontent.com/Mu0n/XWVassalOTA/master/json/condition_images.json";
 
     private static Map<String, OTAMasterConditions.OTACondition> loadedData = null;
 
@@ -33,7 +33,7 @@ public class OTAMasterConditions extends ArrayList<OTAMasterConditions.OTACondit
     private static void loadData() {
 
         // load from
-        OTAMasterConditions data = Util.loadRemoteJson(REMOTE_URL, OTAMasterConditions.class);
+        OTAMasterConditions data = Util.loadRemoteJson(OTAContentsChecker.OTA_CONDITIONS_JSON_URL, OTAMasterConditions.class);
         loadedData = Maps.newHashMap();
         if (data == null) {
             Util.logToChat("Unable to load OTA conditions from the web");

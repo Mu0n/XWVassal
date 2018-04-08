@@ -65,10 +65,13 @@ public class ModuleIntegrityChecker {
         while(i.hasNext())
         {
             upgrade = (OTAMasterUpgrades.OTAUpgrade)i.next();
-
-            upgrade.setStatus(XWOTAUtils.imageExistsInModule(upgrade.getImage()));
-
-            upgradeList.add(upgrade);
+            //if(MasterUpgradeData.getUpgradeData(upgrade.getXws()) != null && XWOTAUtils.imageExistsInOTA("upgrade",upgrade.getImage())) {
+            if(MasterUpgradeData.getUpgradeData(upgrade.getXws()) != null) {
+                upgrade.setStatus(XWOTAUtils.imageExistsInModule(upgrade.getImage()));
+                if(upgrade.getStatus() || (!upgrade.getStatus() && XWOTAUtils.imageExistsInOTA("upgrade",upgrade.getImage()))) {
+                    upgradeList.add(upgrade);
+                }
+            }
 
         }
 
@@ -91,10 +94,13 @@ public class ModuleIntegrityChecker {
         {
             condition = (OTAMasterConditions.OTACondition)i.next();
 
-            condition.setStatus(XWOTAUtils.imageExistsInModule(condition.getImage()));
-            condition.setTokenStatus(XWOTAUtils.imageExistsInModule(condition.getTokenImage()));
-
-            conditionList.add(condition);
+            if(MasterConditionData.getConditionData(condition.getXws()) != null ) {
+                condition.setStatus(XWOTAUtils.imageExistsInModule(condition.getImage()));
+                condition.setTokenStatus(XWOTAUtils.imageExistsInModule(condition.getTokenImage()));
+                if(((condition.getStatus() && condition.getTokenStatus()) || (!condition.getStatus() || !condition.getTokenStatus()) && (XWOTAUtils.imageExistsInOTA("condition",condition.getImage())&& XWOTAUtils.imageExistsInOTA("condition",condition.getTokenImage())))) {
+                    conditionList.add(condition);
+                }
+            }
 
         }
 
@@ -117,10 +123,18 @@ public class ModuleIntegrityChecker {
         {
             dialHide = i.next();
 
-            dialHide.setStatus(XWOTAUtils.imageExistsInModule(dialHide.getImage()));
+            // check to be sure this ship exists in xwing-data or dispatcher and the image exists in OTA
+            // if it doesn't, just skip this entry from OTA
+            if(MasterShipData.getShipData(dialHide.getXws()) != null)
+            {
 
-            dialHideList.add(dialHide);
+                dialHide.setStatus(XWOTAUtils.imageExistsInModule(dialHide.getImage()));
+                if(dialHide.getStatus() || (!dialHide.getStatus() && XWOTAUtils.imageExistsInOTA("dial",dialHide.getImage())))
+                {
+                    dialHideList.add(dialHide);
+                }
 
+            }
         }
 
         return dialHideList;
@@ -143,9 +157,12 @@ public ArrayList<OTAMasterPilots.OTAPilot> checkPilots()
     {
         OTAMasterPilots.OTAPilot pilot = (OTAMasterPilots.OTAPilot)i.next();
 
-        pilot.setStatus(XWOTAUtils.imageExistsInModule(pilot.getImage()));
-
-        pilotList.add(pilot);
+        if(MasterPilotData.getPilotData(pilot.getShipXws(),pilot.getPilotXws(),pilot.getFaction()) != null) {
+            pilot.setStatus(XWOTAUtils.imageExistsInModule(pilot.getImage()));
+            if(pilot.getStatus() || (!pilot.getStatus()  && XWOTAUtils.imageExistsInOTA("pilot",pilot.getImage()))) {
+                pilotList.add(pilot);
+            }
+        }
 
     }
 
@@ -166,10 +183,15 @@ public ArrayList<OTAMasterPilots.OTAPilot> checkPilots()
         while(i.hasNext())
         {
             OTAMasterShips.OTAShip ship = (OTAMasterShips.OTAShip)i.next();
-            ship.setStatus( XWOTAUtils.imageExistsInModule(ship.getImage()));
-            boolean exists = XWOTAUtils.imageExistsInModule(ship.getImage());
+            if(MasterShipData.getShipData(ship.getXws()) != null)
+            {
+                ship.setStatus(XWOTAUtils.imageExistsInModule(ship.getImage()));
+                boolean exists = XWOTAUtils.imageExistsInModule(ship.getImage());
 
-            shipList.add(ship);
+                if(exists || (!exists && XWOTAUtils.imageExistsInOTA("ship",ship.getImage()))) {
+                    shipList.add(ship);
+                }
+            }
         }
 
         return shipList;
@@ -192,29 +214,33 @@ public ArrayList<OTAMasterPilots.OTAPilot> checkPilots()
         {
             OTAMasterShips.OTAShip ship = (OTAMasterShips.OTAShip)i1.next();
 
-            // check to see which factions to generate this ship base for
-            List<String> factions = ship.getFactions();
-
-            Iterator<String> i2 = factions.iterator();
-            while(i2.hasNext())
+            if(MasterShipData.getShipData(ship.getXws()) != null)
             {
+                // check to see which factions to generate this ship base for
+                List<String> factions = ship.getFactions();
 
-                String factionName = i2.next();
+                Iterator<String> i2 = factions.iterator();
+                while (i2.hasNext()) {
 
-                String shipBaseImageName = XWOTAUtils.buildShipBaseImageName(factionName,ship.getXws(),ship.getIdentifier());
+                    String factionName = i2.next();
+
+                    String shipBaseImageName = XWOTAUtils.buildShipBaseImageName(factionName, ship.getXws(), ship.getIdentifier());
 
 
-                OTAShipBase shipBase = new OTAShipBase();
-                shipBase.setFaction(factionName);
-                shipBase.setIdentifier(ship.getIdentifier());
-                shipBase.setShipBaseImageName(shipBaseImageName);
-                shipBase.setshipImageName(ship.getImage());
-                shipBase.setShipName(msd.getShipData(ship.getXws()).getName());
-                shipBase.setShipXws(ship.getXws());
-                shipBase.setStatus(XWOTAUtils.imageExistsInModule(shipBaseImageName));
+                    OTAShipBase shipBase = new OTAShipBase();
+                    shipBase.setFaction(factionName);
+                    shipBase.setIdentifier(ship.getIdentifier());
+                    shipBase.setShipBaseImageName(shipBaseImageName);
+                    shipBase.setshipImageName(ship.getImage());
+                    shipBase.setShipName(msd.getShipData(ship.getXws()).getName());
+                    shipBase.setShipXws(ship.getXws());
+                    shipBase.setStatus(XWOTAUtils.imageExistsInModule(shipBaseImageName));
 
-                shipList.add(shipBase);
+                    if(shipBase.getStatus() || (!shipBase.getStatus() && XWOTAUtils.imageExistsInOTA("ship",ship.getImage()))) {
+                        shipList.add(shipBase);
+                    }
 
+                }
             }
 
 
@@ -240,29 +266,35 @@ public ArrayList<OTAMasterPilots.OTAPilot> checkPilots()
         {
             OTAMasterDialHides.OTADialHide dialHide = dialHideIterator.next();
 
-            // check to see which factions to generate this dial mask
-            List<String> factions = dialHide.getFactions();
-
-            Iterator<String> factionIterator = factions.iterator();
-            while(factionIterator.hasNext())
+            // check to be sure this ship exists in xwing-data or dispatcher
+            // if it doesn't, just skip this entry from OTA
+            if(MasterShipData.getShipData(dialHide.getXws()) != null)
             {
+                // check to see which factions to generate this dial mask
+                List<String> factions = dialHide.getFactions();
 
-                String factionName = factionIterator.next();
+                Iterator<String> factionIterator = factions.iterator();
+                while (factionIterator.hasNext()) {
 
-                String dialMaskImageName = XWOTAUtils.buildDialMaskImageName(factionName,dialHide.getXws());
+                    String factionName = factionIterator.next();
 
-
-                OTADialMask dialMask = new OTADialMask();
-                dialMask.setFaction(factionName);
-                dialMask.setDialHideImageName(dialHide.getImage());
-                dialMask.setDialMaskImageName(dialMaskImageName);
-                dialMask.setShipName(MasterShipData.getShipData(dialHide.getXws()).getName());
-                dialMask.setShipXws(dialHide.getXws());
-                dialMask.setStatus(XWOTAUtils.imageExistsInModule(dialMaskImageName));
+                    String dialMaskImageName = XWOTAUtils.buildDialMaskImageName(factionName, dialHide.getXws());
 
 
-                dialMaskList.add(dialMask);
+                    OTADialMask dialMask = new OTADialMask();
+                    dialMask.setFaction(factionName);
+                    dialMask.setDialHideImageName(dialHide.getImage());
+                    dialMask.setDialMaskImageName(dialMaskImageName);
+                    dialMask.setShipName(MasterShipData.getShipData(dialHide.getXws()).getName());
+                    dialMask.setShipXws(dialHide.getXws());
+                    dialMask.setStatus(XWOTAUtils.imageExistsInModule(dialMaskImageName));
 
+                    if(dialMask.getStatus() || (!dialMask.getStatus() &&  XWOTAUtils.imageExistsInOTA("dial",dialHide.getImage()))) {
+                        dialMaskList.add(dialMask);
+                    }
+
+
+                }
             }
 
 
@@ -275,6 +307,7 @@ public ArrayList<OTAMasterPilots.OTAPilot> checkPilots()
     public ArrayList<OTAMasterActions.OTAAction> checkActions()
     {
 
+        boolean addToList = false;
         // get list of Actions from OTAMasterActions
         OTAMasterActions oma = new OTAMasterActions();
         oma.flushData();
@@ -287,10 +320,12 @@ public ArrayList<OTAMasterPilots.OTAPilot> checkPilots()
         {
 
             action = i.next();
-
             action.setStatus(XWOTAUtils.imageExistsInModule(action.getImage()));
 
-            actionList.add(action);
+            if(action.getStatus() || (!action.getStatus() && XWOTAUtils.imageExistsInOTA("actions",action.getImage()))){
+                actionList.add(action);
+            }
+
 
         }
 
