@@ -26,6 +26,25 @@ import java.util.Map;
 
 public class OTAContentsChecker extends AbstractConfigurable {
 
+    // change this variable to a branch name to test, or master for deployment
+    private static final String OTA_RAW_GITHUB_BRANCH = "master";
+
+    private static final String OTA_RAW_GITHUB_ROOT = "https://raw.githubusercontent.com/Mu0n/XWVassalOTA/";
+    public static final String OTA_RAW_BRANCH_URL = OTA_RAW_GITHUB_ROOT + OTA_RAW_GITHUB_BRANCH + "/";
+    private static final String OTA_RAW_GITHUB_JSON_URL = OTA_RAW_BRANCH_URL + "json/";
+
+    public static final String OTA_UPGRADES_JSON_URL = OTA_RAW_GITHUB_JSON_URL + "upgrade_images.json";
+    public static final String OTA_SHIPS_JSON_URL = OTA_RAW_GITHUB_JSON_URL + "ship_images.json";
+    public static final String OTA_PILOTS_JSON_URL = OTA_RAW_GITHUB_JSON_URL + "pilot_images.json";
+    public static final String OTA_DIALHIDES_JSON_URL =  OTA_RAW_GITHUB_JSON_URL + "dial_images.json";
+    public static final String OTA_CONDITIONS_JSON_URL =  OTA_RAW_GITHUB_JSON_URL + "condition_images.json";
+    public static final String OTA_ACTIONS_JSON_URL =  OTA_RAW_GITHUB_JSON_URL + "action_images.json";
+
+    public static final String OTA_DISPATCHER_UPGRADES_JSON_URL = OTA_RAW_GITHUB_JSON_URL + "dispatcher_upgrades.json";
+    public static final String OTA_DISPATCHER_PILOTS_JSON_URL = OTA_RAW_GITHUB_JSON_URL + "dispatcher_pilots.json";
+    public static final String OTA_DISPATCHER_SHIPS_JSON_URL = OTA_RAW_GITHUB_JSON_URL + "dispatcher_ships.json";
+    public static final String OTA_DISPATCHER_CONDITIONS_JSON_URL = OTA_RAW_GITHUB_JSON_URL + "dispatcher_conditions.json";
+
     private static Map<String,String> fullFactionNames = ImmutableMap.<String, String>builder()
             .put("galacticempire","Galactic Empire")
             .put("firstorder","First Order")
@@ -127,27 +146,6 @@ public class OTAContentsChecker extends AbstractConfigurable {
                 }else{
                     downloadButton.setEnabled(true);
                 }
-                /*
-                if(downloadAll)
-                {
-
-                    int answer =  JOptionPane.showConfirmDialog(null,
-                            "This might take several minutes.  Do you want to continue?", "Do you want to proceed?", JOptionPane.YES_NO_OPTION);
-                    if(answer == JOptionPane.YES_OPTION)
-                    {
-
-                        downloadAll();
-                        allButton.setSelected(false);
-                    }else{
-                        downloadButton.setEnabled(true);
-                    }
-                }else{
-
-                    downloadAll();
-
-
-                }*/
-
             }
         });
 

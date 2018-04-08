@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import mic.ota.OTAContentsChecker;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,7 +16,10 @@ import java.util.Map;
 public class MasterUpgradeData extends ArrayList<MasterUpgradeData.UpgradeData> {
 
     public static String REMOTE_URL = "https://raw.githubusercontent.com/guidokessels/xwing-data/master/data/upgrades.js";
-    public static String DISPATCHER_URL = "https://raw.githubusercontent.com/Mu0n/XWVassalOTA/master/json/dispatcher_upgrades.json";
+    //public static String DISPATCHER_URL = "https://raw.githubusercontent.com/Mu0n/XWVassalOTA/master/json/dispatcher_upgrades.json";
+
+
+
     private static Map<String, UpgradeData> loadedData = null;
 
 
@@ -71,7 +75,7 @@ public class MasterUpgradeData extends ArrayList<MasterUpgradeData.UpgradeData> 
     private static MasterUpgradeData loadFromDispatcher()
     {
         // load from dispatch
-        MasterUpgradeData data = Util.loadRemoteJson(DISPATCHER_URL, MasterUpgradeData.class);
+        MasterUpgradeData data = Util.loadRemoteJson(OTAContentsChecker.OTA_DISPATCHER_UPGRADES_JSON_URL, MasterUpgradeData.class);
         if (data == null) {
            // Util.logToChat("Unable to load dispatcher for upgrades from the web, falling back to local copy");
             data = Util.loadClasspathJson("dispatcher_upgrades.json", MasterUpgradeData.class);

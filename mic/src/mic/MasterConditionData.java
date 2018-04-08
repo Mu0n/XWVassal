@@ -2,13 +2,14 @@ package mic;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.collect.Maps;
+import mic.ota.OTAContentsChecker;
 
 import java.util.ArrayList;
 import java.util.Map;
 
 public class MasterConditionData extends ArrayList<MasterConditionData.ConditionData> {
     public static String REMOTE_URL = "https://raw.githubusercontent.com/guidokessels/xwing-data/master/data/conditions.js";
-    public static String DISPATCHER_URL = "https://raw.githubusercontent.com/Mu0n/XWVassalOTA/master/json/dispatcher_conditions.json";
+  //  public static String DISPATCHER_URL = "https://raw.githubusercontent.com/Mu0n/XWVassalOTA/master/json/dispatcher_conditions.json";
 
     private static Map<String, MasterConditionData.ConditionData> loadedDataByName = null;
     private static Map<String, MasterConditionData.ConditionData> loadedData = null;
@@ -85,7 +86,7 @@ public class MasterConditionData extends ArrayList<MasterConditionData.Condition
     private static MasterConditionData loadFromDispatcher()
     {
         // load from dispatch
-        MasterConditionData data = Util.loadRemoteJson(DISPATCHER_URL, MasterConditionData.class);
+        MasterConditionData data = Util.loadRemoteJson(OTAContentsChecker.OTA_DISPATCHER_CONDITIONS_JSON_URL, MasterConditionData.class);
         if (data == null) {
           //  Util.logToChat("Unable to load dispatcher for conditions from the web, falling back to local copy");
             data = Util.loadClasspathJson("dispatcher_conditions.json", MasterConditionData.class);

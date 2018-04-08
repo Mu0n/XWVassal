@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 public class OTAMasterDialHides  extends ArrayList<OTAMasterDialHides.OTADialHide> {
-    private static String REMOTE_URL = "https://raw.githubusercontent.com/Mu0n/XWVassalOTA/master/json/dial_images.json";
+  //  private static String REMOTE_URL = "https://raw.githubusercontent.com/Mu0n/XWVassalOTA/master/json/dial_images.json";
 
     private static Map<String, OTAMasterDialHides.OTADialHide> loadedData = null;
     public static void flushData()
@@ -40,7 +40,7 @@ public class OTAMasterDialHides  extends ArrayList<OTAMasterDialHides.OTADialHid
     private static void loadData() {
 
         // load from
-        OTAMasterDialHides data = Util.loadRemoteJson(REMOTE_URL, OTAMasterDialHides.class);
+        OTAMasterDialHides data = Util.loadRemoteJson(OTAContentsChecker.OTA_DIALHIDES_JSON_URL, OTAMasterDialHides.class);
         loadedData = Maps.newHashMap();
         if (data == null) {
             Util.logToChat("Unable to load OTA dial from the web");
