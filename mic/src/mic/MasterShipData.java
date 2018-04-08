@@ -3,6 +3,7 @@ package mic;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import mic.ota.OTAContentsChecker;
 
 import java.util.*;
 
@@ -12,7 +13,7 @@ import java.util.*;
 public class MasterShipData extends ArrayList<MasterShipData.ShipData> {
 
     public static String REMOTE_URL = "https://raw.githubusercontent.com/guidokessels/xwing-data/master/data/ships.js";
-    public static String DISPATCHER_URL = "https://raw.githubusercontent.com/Mu0n/XWVassalOTA/master/json/dispatcher_ships.json";
+  //  public static String DISPATCHER_URL = "https://raw.githubusercontent.com/Mu0n/XWVassalOTA/master/json/dispatcher_ships.json";
     public static Map<String, ShipData> loadedData = null;
 
     public Object[] getAllShips()
@@ -88,7 +89,7 @@ public class MasterShipData extends ArrayList<MasterShipData.ShipData> {
     private static MasterShipData loadFromDispatcher()
     {
         // load from dispatch
-        MasterShipData data = Util.loadRemoteJson(DISPATCHER_URL, MasterShipData.class);
+        MasterShipData data = Util.loadRemoteJson(OTAContentsChecker.OTA_DISPATCHER_SHIPS_JSON_URL, MasterShipData.class);
         if (data == null) {
            // Util.logToChat("Unable to load dispatcher for ships from the web, falling back to local copy");
             data = Util.loadClasspathJson("dispatcher_ships.json", MasterShipData.class);

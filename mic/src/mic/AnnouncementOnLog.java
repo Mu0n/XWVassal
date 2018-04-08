@@ -58,13 +58,17 @@ public class AnnouncementOnLog extends AbstractConfigurable {
         // and save to the module
         ArrayList<String> jsonFilesToDownloadFromURL = new ArrayList<String>();
         jsonFilesToDownloadFromURL.add(MasterShipData.REMOTE_URL);
-        jsonFilesToDownloadFromURL.add(MasterShipData.DISPATCHER_URL);
+        //jsonFilesToDownloadFromURL.add(MasterShipData.DISPATCHER_URL);
+        jsonFilesToDownloadFromURL.add(OTAContentsChecker.OTA_DISPATCHER_SHIPS_JSON_URL);
         jsonFilesToDownloadFromURL.add(MasterPilotData.REMOTE_URL);
-        jsonFilesToDownloadFromURL.add(MasterPilotData.DISPATCHER_URL);
+        //jsonFilesToDownloadFromURL.add(MasterPilotData.DISPATCHER_URL);
+        jsonFilesToDownloadFromURL.add(OTAContentsChecker.OTA_PILOTS_JSON_URL);
         jsonFilesToDownloadFromURL.add(MasterUpgradeData.REMOTE_URL);
-        jsonFilesToDownloadFromURL.add(MasterUpgradeData.DISPATCHER_URL);
+        //jsonFilesToDownloadFromURL.add(MasterUpgradeData.DISPATCHER_URL);
+        jsonFilesToDownloadFromURL.add(OTAContentsChecker.OTA_DISPATCHER_UPGRADES_JSON_URL);
         jsonFilesToDownloadFromURL.add(MasterConditionData.REMOTE_URL);
-        jsonFilesToDownloadFromURL.add(MasterConditionData.DISPATCHER_URL);
+        //jsonFilesToDownloadFromURL.add(MasterConditionData.DISPATCHER_URL);
+        jsonFilesToDownloadFromURL.add(OTAContentsChecker.OTA_DISPATCHER_CONDITIONS_JSON_URL);
         try {
             XWOTAUtils.downloadJSONFilesFromGitHub(jsonFilesToDownloadFromURL);
             mic.Util.logToChat("Core XWing data updated");
