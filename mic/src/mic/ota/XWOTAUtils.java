@@ -734,7 +734,8 @@ public class XWOTAUtils {
     {
         // Util.logToChat("Downloading image: "+fileName);
         URL OTAImageURL = null;
-        String url = "https://raw.githubusercontent.com/Mu0n/XWVassalOTA/master/" + fileType + "/" + fileName;
+        //String url = "https://raw.githubusercontent.com/Mu0n/XWVassalOTA/master/" + fileType + "/" + fileName;
+        String url = OTAContentsChecker.OTA_RAW_BRANCH_URL + fileType + "/" + fileName;
         OTAImageURL = new URL(url);
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         InputStream is = null;
