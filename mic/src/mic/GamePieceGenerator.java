@@ -283,7 +283,8 @@ public class GamePieceGenerator
     {
 
         GamePiece newUpgrade = mic.Util.newPiece(upgrade.getPieceSlot());
-        StemUpgrade.UpgradeGenerateCommand myUpgradeGen = new StemUpgrade.UpgradeGenerateCommand(upgrade.getUpgradeData().getXws(), newUpgrade, upgrade.getUpgradeData().getName(), upgrade.getUpgradeData().getSlot());
+        boolean isDualSided = (upgrade.getUpgradeData().getDualCard() != null);
+        StemUpgrade.UpgradeGenerateCommand myUpgradeGen = new StemUpgrade.UpgradeGenerateCommand(upgrade.getUpgradeData().getXws(), newUpgrade, upgrade.getUpgradeData().getName(), upgrade.getUpgradeData().getSlot(),isDualSided);
 
         myUpgradeGen.execute();
 
