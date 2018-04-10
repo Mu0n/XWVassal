@@ -49,25 +49,18 @@ public class AnnouncementOnLog extends AbstractConfigurable {
 
     }
 
-    private void downloadContent()
+    private boolean downloadXwingDataAndDispatcherJSONFiles()
     {
         boolean errorOccurredOnXWingData = false;
 
-        // grab xwing-data: pilots, ships, upgrades, conditions
-        // dispatcher: pilots, ships, upgrades, conditions
-        // and save to the module
         ArrayList<String> jsonFilesToDownloadFromURL = new ArrayList<String>();
         jsonFilesToDownloadFromURL.add(MasterShipData.REMOTE_URL);
-        //jsonFilesToDownloadFromURL.add(MasterShipData.DISPATCHER_URL);
         jsonFilesToDownloadFromURL.add(OTAContentsChecker.OTA_DISPATCHER_SHIPS_JSON_URL);
         jsonFilesToDownloadFromURL.add(MasterPilotData.REMOTE_URL);
-        //jsonFilesToDownloadFromURL.add(MasterPilotData.DISPATCHER_URL);
         jsonFilesToDownloadFromURL.add(OTAContentsChecker.OTA_PILOTS_JSON_URL);
         jsonFilesToDownloadFromURL.add(MasterUpgradeData.REMOTE_URL);
-        //jsonFilesToDownloadFromURL.add(MasterUpgradeData.DISPATCHER_URL);
         jsonFilesToDownloadFromURL.add(OTAContentsChecker.OTA_DISPATCHER_UPGRADES_JSON_URL);
         jsonFilesToDownloadFromURL.add(MasterConditionData.REMOTE_URL);
-        //jsonFilesToDownloadFromURL.add(MasterConditionData.DISPATCHER_URL);
         jsonFilesToDownloadFromURL.add(OTAContentsChecker.OTA_DISPATCHER_CONDITIONS_JSON_URL);
         try {
             XWOTAUtils.downloadJSONFilesFromGitHub(jsonFilesToDownloadFromURL);
@@ -76,6 +69,17 @@ public class AnnouncementOnLog extends AbstractConfigurable {
         {
             errorOccurredOnXWingData = true;
         }
+
+        return errorOccurredOnXWingData;
+    }
+
+    private void downloadContent()
+    {
+
+        // grab xwing-data: pilots, ships, upgrades, conditions
+        // dispatcher: pilots, ships, upgrades, conditions
+        // and save to the module
+        boolean errorOccurredOnXWingData = downloadXwingDataAndDispatcherJSONFiles();
 
         if(errorOccurredOnXWingData)
         {
@@ -502,6 +506,8 @@ public class AnnouncementOnLog extends AbstractConfigurable {
 
             if(answer==0) {
                 downloadContent();
+            }else{
+                downloadXwingDataAndDispatcherJSONFiles();
             }
             /*
             JOptionPane optionPane = new JOptionPane();

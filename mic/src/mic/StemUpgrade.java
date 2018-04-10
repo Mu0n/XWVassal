@@ -118,19 +118,20 @@ public class StemUpgrade  extends Decorator implements EditablePiece {
     //this is the command that takes a ship xws name, fetches the maneuver info and constructs the dial layer by layer
     public static class UpgradeGenerateCommand extends Command {
 
-        GamePiece piece;
+        private GamePiece piece;
 
-        static String upgradeXWS = "";
+        private static String upgradeXWS = "";
 
-        String upgradeName = "";
-        String upgradeType = "";
+        private String upgradeName = "";
+        private String upgradeType = "";
+        private boolean isDualSided = false;
 
-        UpgradeGenerateCommand(String upgradeXWS, GamePiece piece, String upgradeName, String upgradeType) {
+        UpgradeGenerateCommand(String upgradeXWS, GamePiece piece, String upgradeName, String upgradeType, boolean isDualSided) {
             this.piece = piece;
             this.upgradeXWS = upgradeXWS;
             this.upgradeName = upgradeName;
             this.upgradeType = upgradeType.replaceAll(" ", "");
-
+            this.isDualSided = isDualSided;
         }
 
         // construct the Upgrade Card piece
@@ -152,8 +153,15 @@ public class StemUpgrade  extends Decorator implements EditablePiece {
                 }
             }
 
-            // get the slot specific back image
-            String backImage = "Upgrade_"+upgradeType+"_back.jpg";
+            String backImage = null;
+            // Check to see if the card is dual sided
+            if(isDualSided)
+            {
+                backImage = "Upgrade_" + upgradeType + "_" + upgradeXWS + "_back.jpg";
+            }else {
+                // get the slot specific back image
+                backImage = "Upgrade_" + upgradeType + "_back.jpg";
+            }
 
             // if the slot specific back image doesn't exist, use the generic upgrade wip back image
             if (!XWOTAUtils.imageExistsInModule(backImage)) {

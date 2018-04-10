@@ -108,6 +108,9 @@ public class MasterUpgradeData extends ArrayList<MasterUpgradeData.UpgradeData> 
         @JsonProperty("slot")
         private String slot;
 
+        @JsonProperty("dualCard")
+        private Integer dualCard;
+
         public List<String> getConditions() {
             return conditions;
         }
@@ -130,6 +133,11 @@ public class MasterUpgradeData extends ArrayList<MasterUpgradeData.UpgradeData> 
 
         public int getPoints() {
             return points;
+        }
+
+        public Integer getDualCard()
+        {
+            return dualCard;
         }
     }
 
