@@ -19,7 +19,7 @@ package mic;
  * Uses CTRL-Q and is used to report in the chatlog, the xwing-data fetched "text" field.
  */
 public class ReportCardText extends Decorator implements EditablePiece {
-    public static final String ID = "emptytest";
+    public static final String ID = "reportCardText";
 
     public ReportCardText(){
         this(null);
