@@ -41,6 +41,8 @@ public class XWCounterFactory extends BasicCommandEncoder {
             piece = new CritSpawner(inner);
         }else if (type.startsWith(StemDial.ID)) {
             piece = new StemDial(inner);
+        }else if (type.startsWith(ReportCardText.ID)) {
+            piece = new ReportCardText(inner);
         }else {
             piece = super.createDecorator(type, inner);
         }
