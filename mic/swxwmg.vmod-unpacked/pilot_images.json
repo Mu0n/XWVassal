@@ -1,0 +1,1672 @@
+[
+  {
+    "shipxws": "xwing",
+    "pilotxws": "wedgeantilles",
+    "faction": "rebelalliance",
+    "image": "Pilot_rebelalliance_xwing_wedgeantilles.jpg"
+  },
+  {
+    "shipxws": "xwing",
+    "pilotxws": "garvendreis",
+    "faction": "rebelalliance",
+    "image": "Pilot_rebelalliance_xwing_garvendreis.jpg"
+  },
+  {
+    "shipxws": "xwing",
+    "pilotxws": "redsquadronpilot",
+    "faction": "rebelalliance",
+    "image": "Pilot_rebelalliance_xwing_redsquadronpilot.jpg"
+  },
+  {
+    "shipxws": "xwing",
+    "pilotxws": "rookiepilot",
+    "faction": "rebelalliance",
+    "image": "Pilot_rebelalliance_xwing_rookiepilot.jpg"
+  },
+  {
+    "shipxws": "xwing",
+    "pilotxws": "biggsdarklighter",
+    "faction": "rebelalliance",
+    "image": "Pilot_rebelalliance_xwing_biggsdarklighter.jpg"
+  },
+  {
+    "pilotxws": "lukeskywalker",
+    "shipxws": "xwing",
+    "faction": "rebelalliance",
+    "image": "Pilot_rebelalliance_xwing_lukeskywalker.jpg"
+  },
+  {
+    "faction": "rebelalliance",
+    "pilotxws": "graysquadronpilot",
+    "shipxws": "ywing",
+    "image": "Pilot_rebelalliance_ywing_graysquadronpilot.jpg"
+  },
+  {
+    "faction": "rebelalliance",
+    "pilotxws": "dutchvander",
+    "shipxws": "ywing",
+    "image": "Pilot_rebelalliance_ywing_dutchvander.jpg"
+  },
+  {
+    "shipxws": "ywing",
+    "image": "Pilot_rebelalliance_ywing_hortonsalm.jpg",
+    "faction": "rebelalliance",
+    "pilotxws": "hortonsalm"
+  },
+  {
+    "shipxws": "ywing",
+    "image": "Pilot_rebelalliance_ywing_goldsquadronpilot.jpg",
+    "faction": "rebelalliance",
+    "pilotxws": "goldsquadronpilot"
+  },
+  {
+    "shipxws": "tiefighter",
+    "image": "Pilot_galacticempire_tiefighter_academypilot.jpg",
+    "faction": "galacticempire",
+    "pilotxws": "academypilot"
+  },
+  {
+    "shipxws": "tiefighter",
+    "image": "Pilot_galacticempire_tiefighter_obsidiansquadronpilot.jpg",
+    "faction": "galacticempire",
+    "pilotxws": "obsidiansquadronpilot"
+  },
+  {
+    "shipxws": "tiefighter",
+    "image": "Pilot_galacticempire_tiefighter_blacksquadronpilot.jpg",
+    "faction": "galacticempire",
+    "pilotxws": "blacksquadronpilot"
+  },
+  {
+    "shipxws": "tiefighter",
+    "image": "Pilot_galacticempire_tiefighter_wingedgundark.jpg",
+    "faction": "galacticempire",
+    "pilotxws": "wingedgundark"
+  },
+  {
+    "shipxws": "tiefighter",
+    "image": "Pilot_galacticempire_tiefighter_nightbeast.jpg",
+    "faction": "galacticempire",
+    "pilotxws": "nightbeast"
+  },
+  {
+    "shipxws": "tiefighter",
+    "image": "Pilot_galacticempire_tiefighter_backstabber.jpg",
+    "faction": "galacticempire",
+    "pilotxws": "backstabber"
+  },
+  {
+    "shipxws": "tiefighter",
+    "image": "Pilot_galacticempire_tiefighter_darkcurse.jpg",
+    "faction": "galacticempire",
+    "pilotxws": "darkcurse"
+  },
+  {
+    "shipxws": "tiefighter",
+    "image": "Pilot_galacticempire_tiefighter_maulermithel.jpg",
+    "faction": "galacticempire",
+    "pilotxws": "maulermithel"
+  },
+  {
+    "shipxws": "tiefighter",
+    "image": "Pilot_galacticempire_tiefighter_howlrunner.jpg",
+    "faction": "galacticempire",
+    "pilotxws": "howlrunner"
+  },
+  {
+    "shipxws": "tieadvanced",
+    "image": "Pilot_galacticempire_tieadvanced_maarekstele.jpg",
+    "faction": "galacticempire",
+    "pilotxws": "maarekstele"
+  },
+  {
+    "shipxws": "tieadvanced",
+    "image": "Pilot_galacticempire_tieadvanced_tempestsquadronpilot.jpg",
+    "faction": "galacticempire",
+    "pilotxws": "tempestsquadronpilot"
+  },
+  {
+    "shipxws": "tieadvanced",
+    "image": "Pilot_galacticempire_tieadvanced_stormsquadronpilot.jpg",
+    "faction": "galacticempire",
+    "pilotxws": "stormsquadronpilot"
+  },
+  {
+    "shipxws": "tieadvanced",
+    "image": "Pilot_galacticempire_tieadvanced_darthvader.jpg",
+    "faction": "galacticempire",
+    "pilotxws": "darthvader"
+  },
+  {
+    "shipxws": "tieinterceptor",
+    "image": "Pilot_galacticempire_tieinterceptor_alphasquadronpilot.jpg",
+    "faction": "galacticempire",
+    "pilotxws": "alphasquadronpilot"
+  },
+  {
+    "shipxws": "tieinterceptor",
+    "image": "Pilot_galacticempire_tieinterceptor_avengersquadronpilot.jpg",
+    "faction": "galacticempire",
+    "pilotxws": "avengersquadronpilot"
+  },
+  {
+    "shipxws": "tieinterceptor",
+    "image": "Pilot_galacticempire_tieinterceptor_sabersquadronpilot.jpg",
+    "faction": "galacticempire",
+    "pilotxws": "sabersquadronpilot"
+  },
+  {
+    "shipxws": "tieinterceptor",
+    "image": "Pilot_galacticempire_tieinterceptor_felswrath.jpg",
+    "faction": "galacticempire",
+    "pilotxws": "felswrath"
+  },
+  {
+    "shipxws": "tieinterceptor",
+    "image": "Pilot_galacticempire_tieinterceptor_turrphennir.jpg",
+    "faction": "galacticempire",
+    "pilotxws": "turrphennir"
+  },
+  {
+    "shipxws": "tieinterceptor",
+    "image": "Pilot_galacticempire_tieinterceptor_soontirfel.jpg",
+    "faction": "galacticempire",
+    "pilotxws": "soontirfel"
+  },
+  {
+    "shipxws": "awing",
+    "image": "Pilot_rebelalliance_awing_tychocelchu.jpg",
+    "faction": "rebelalliance",
+    "pilotxws": "tychocelchu"
+  },
+  {
+    "shipxws": "awing",
+    "image": "Pilot_rebelalliance_awing_arvelcrynyd.jpg",
+    "faction": "rebelalliance",
+    "pilotxws": "arvelcrynyd"
+  },
+  {
+    "shipxws": "awing",
+    "image": "Pilot_rebelalliance_awing_greensquadronpilot.jpg",
+    "faction": "rebelalliance",
+    "pilotxws": "greensquadronpilot"
+  },
+  {
+    "shipxws": "awing",
+    "image": "Pilot_rebelalliance_awing_prototypepilot.jpg",
+    "faction": "rebelalliance",
+    "pilotxws": "prototypepilot"
+  },
+  {
+    "shipxws": "yt1300",
+    "image": "Pilot_rebelalliance_yt1300_outerrimsmuggler.jpg",
+    "faction": "rebelalliance",
+    "pilotxws": "outerrimsmuggler"
+  },
+  {
+    "shipxws": "yt1300",
+    "image": "Pilot_rebelalliance_yt1300_chewbacca.jpg",
+    "faction": "rebelalliance",
+    "pilotxws": "chewbacca"
+  },
+  {
+    "shipxws": "yt1300",
+    "image": "Pilot_rebelalliance_yt1300_landocalrissian.jpg",
+    "faction": "rebelalliance",
+    "pilotxws": "landocalrissian"
+  },
+  {
+    "shipxws": "yt1300",
+    "image": "Pilot_rebelalliance_yt1300_hansolo.jpg",
+    "faction": "rebelalliance",
+    "pilotxws": "hansolo"
+  },
+  {
+    "shipxws": "firespray31",
+    "image": "Pilot_galacticempire_firespray31_kathscarlet.jpg",
+    "faction": "galacticempire",
+    "pilotxws": "kathscarlet"
+  },
+  {
+    "shipxws": "firespray31",
+    "image": "Pilot_galacticempire_firespray31_bobafett.jpg",
+    "faction": "galacticempire",
+    "pilotxws": "bobafett"
+  },
+  {
+    "shipxws": "firespray31",
+    "image": "Pilot_galacticempire_firespray31_krassistrelix.jpg",
+    "faction": "galacticempire",
+    "pilotxws": "krassistrelix"
+  },
+  {
+    "shipxws": "firespray31",
+    "image": "Pilot_galacticempire_firespray31_bountyhunter.jpg",
+    "faction": "galacticempire",
+    "pilotxws": "bountyhunter"
+  },
+  {
+    "shipxws": "bwing",
+    "image": "Pilot_rebelalliance_bwing_tennumb.jpg",
+    "faction": "rebelalliance",
+    "pilotxws": "tennumb"
+  },
+  {
+    "shipxws": "bwing",
+    "image": "Pilot_rebelalliance_bwing_ibtisam.jpg",
+    "faction": "rebelalliance",
+    "pilotxws": "ibtisam"
+  },
+  {
+    "shipxws": "bwing",
+    "image": "Pilot_rebelalliance_bwing_daggersquadronpilot.jpg",
+    "faction": "rebelalliance",
+    "pilotxws": "daggersquadronpilot"
+  },
+  {
+    "shipxws": "bwing",
+    "image": "Pilot_rebelalliance_bwing_bluesquadronpilot.jpg",
+    "faction": "rebelalliance",
+    "pilotxws": "bluesquadronpilot"
+  },
+  {
+    "shipxws": "hwk290",
+    "image": "Pilot_rebelalliance_hwk290_rebeloperative.jpg",
+    "faction": "rebelalliance",
+    "pilotxws": "rebeloperative"
+  },
+  {
+    "shipxws": "hwk290",
+    "image": "Pilot_rebelalliance_hwk290_roarkgarnet.jpg",
+    "faction": "rebelalliance",
+    "pilotxws": "roarkgarnet"
+  },
+  {
+    "shipxws": "hwk290",
+    "image": "Pilot_rebelalliance_hwk290_kylekatarn.jpg",
+    "faction": "rebelalliance",
+    "pilotxws": "kylekatarn"
+  },
+  {
+    "shipxws": "hwk290",
+    "image": "Pilot_rebelalliance_hwk290_janors.jpg",
+    "faction": "rebelalliance",
+    "pilotxws": "janors"
+  },
+  {
+    "shipxws": "tiebomber",
+    "image": "Pilot_galacticempire_tiebomber_scimitarsquadronpilot.jpg",
+    "faction": "galacticempire",
+    "pilotxws": "scimitarsquadronpilot"
+  },
+  {
+    "shipxws": "tiebomber",
+    "image": "Pilot_galacticempire_tiebomber_gammasquadronpilot.jpg",
+    "faction": "galacticempire",
+    "pilotxws": "gammasquadronpilot"
+  },
+  {
+    "shipxws": "tiebomber",
+    "image": "Pilot_galacticempire_tiebomber_captainjonus.jpg",
+    "faction": "galacticempire",
+    "pilotxws": "captainjonus"
+  },
+  {
+    "shipxws": "tiebomber",
+    "image": "Pilot_galacticempire_tiebomber_majorrhymer.jpg",
+    "faction": "galacticempire",
+    "pilotxws": "majorrhymer"
+  },
+  {
+    "shipxws": "lambdaclassshuttle",
+    "image": "Pilot_galacticempire_lambdaclassshuttle_captainkagi.jpg",
+    "faction": "galacticempire",
+    "pilotxws": "captainkagi"
+  },
+  {
+    "shipxws": "lambdaclassshuttle",
+    "image": "Pilot_galacticempire_lambdaclassshuttle_coloneljendon.jpg",
+    "faction": "galacticempire",
+    "pilotxws": "coloneljendon"
+  },
+  {
+    "shipxws": "lambdaclassshuttle",
+    "image": "Pilot_galacticempire_lambdaclassshuttle_captainyorr.jpg",
+    "faction": "galacticempire",
+    "pilotxws": "captainyorr"
+  },
+  {
+    "shipxws": "lambdaclassshuttle",
+    "image": "Pilot_galacticempire_lambdaclassshuttle_omicrongrouppilot.jpg",
+    "faction": "galacticempire",
+    "pilotxws": "omicrongrouppilot"
+  },
+  {
+    "shipxws": "tieinterceptor",
+    "image": "Pilot_galacticempire_tieinterceptor_lieutenantlorrir.jpg",
+    "faction": "galacticempire",
+    "pilotxws": "lieutenantlorrir"
+  },
+  {
+    "shipxws": "tieinterceptor",
+    "image": "Pilot_galacticempire_tieinterceptor_royalguardpilot.jpg",
+    "faction": "galacticempire",
+    "pilotxws": "royalguardpilot"
+  },
+  {
+    "shipxws": "tieinterceptor",
+    "image": "Pilot_galacticempire_tieinterceptor_tetrancowall.jpg",
+    "faction": "galacticempire",
+    "pilotxws": "tetrancowall"
+  },
+  {
+    "shipxws": "tieinterceptor",
+    "image": "Pilot_galacticempire_tieinterceptor_kirkanos.jpg",
+    "faction": "galacticempire",
+    "pilotxws": "kirkanos"
+  },
+  {
+    "shipxws": "tieinterceptor",
+    "image": "Pilot_galacticempire_tieinterceptor_carnorjax.jpg",
+    "faction": "galacticempire",
+    "pilotxws": "carnorjax"
+  },
+  {
+    "shipxws": "z95headhunter",
+    "image": "Pilot_rebelalliance_z95headhunter_banditsquadronpilot.jpg",
+    "faction": "rebelalliance",
+    "pilotxws": "banditsquadronpilot"
+  },
+  {
+    "shipxws": "z95headhunter",
+    "image": "Pilot_rebelalliance_z95headhunter_talasquadronpilot.jpg",
+    "faction": "rebelalliance",
+    "pilotxws": "talasquadronpilot"
+  },
+  {
+    "shipxws": "z95headhunter",
+    "image": "Pilot_rebelalliance_z95headhunter_lieutenantblount.jpg",
+    "faction": "rebelalliance",
+    "pilotxws": "lieutenantblount"
+  },
+  {
+    "shipxws": "z95headhunter",
+    "image": "Pilot_rebelalliance_z95headhunter_airencracken.jpg",
+    "faction": "rebelalliance",
+    "pilotxws": "airencracken"
+  },
+  {
+    "shipxws": "tiedefender",
+    "image": "Pilot_galacticempire_tiedefender_deltasquadronpilot.jpg",
+    "faction": "galacticempire",
+    "pilotxws": "deltasquadronpilot"
+  },
+  {
+    "shipxws": "tiedefender",
+    "image": "Pilot_galacticempire_tiedefender_onyxsquadronpilot.jpg",
+    "faction": "galacticempire",
+    "pilotxws": "onyxsquadronpilot"
+  },
+  {
+    "shipxws": "tiedefender",
+    "image": "Pilot_galacticempire_tiedefender_colonelvessery.jpg",
+    "faction": "galacticempire",
+    "pilotxws": "colonelvessery"
+  },
+  {
+    "shipxws": "tiedefender",
+    "image": "Pilot_galacticempire_tiedefender_rexlerbrath.jpg",
+    "faction": "galacticempire",
+    "pilotxws": "rexlerbrath"
+  },
+  {
+    "shipxws": "ewing",
+    "image": "Pilot_rebelalliance_ewing_knavesquadronpilot.jpg",
+    "faction": "rebelalliance",
+    "pilotxws": "knavesquadronpilot"
+  },
+  {
+    "shipxws": "ewing",
+    "image": "Pilot_rebelalliance_ewing_blackmoonsquadronpilot.jpg",
+    "faction": "rebelalliance",
+    "pilotxws": "blackmoonsquadronpilot"
+  },
+  {
+    "shipxws": "ewing",
+    "image": "Pilot_rebelalliance_ewing_etahnabaht.jpg",
+    "faction": "rebelalliance",
+    "pilotxws": "etahnabaht"
+  },
+  {
+    "shipxws": "ewing",
+    "image": "Pilot_rebelalliance_ewing_corranhorn.jpg",
+    "faction": "rebelalliance",
+    "pilotxws": "corranhorn"
+  },
+  {
+    "shipxws": "tiephantom",
+    "image": "Pilot_galacticempire_tiephantom_sigmasquadronpilot.jpg",
+    "faction": "galacticempire",
+    "pilotxws": "sigmasquadronpilot"
+  },
+  {
+    "shipxws": "tiephantom",
+    "image": "Pilot_galacticempire_tiephantom_shadowsquadronpilot.jpg",
+    "faction": "galacticempire",
+    "pilotxws": "shadowsquadronpilot"
+  },
+  {
+    "shipxws": "tiephantom",
+    "image": "Pilot_galacticempire_tiephantom_echo.jpg",
+    "faction": "galacticempire",
+    "pilotxws": "echo"
+  },
+  {
+    "shipxws": "tiephantom",
+    "image": "Pilot_galacticempire_tiephantom_whisper.jpg",
+    "faction": "galacticempire",
+    "pilotxws": "whisper"
+  },
+  {
+    "shipxws": "xwing",
+    "image": "Pilot_rebelalliance_xwing_wesjanson.jpg",
+    "faction": "rebelalliance",
+    "pilotxws": "wesjanson"
+  },
+  {
+    "shipxws": "xwing",
+    "image": "Pilot_rebelalliance_xwing_jekporkins.jpg",
+    "faction": "rebelalliance",
+    "pilotxws": "jekporkins"
+  },
+  {
+    "shipxws": "xwing",
+    "image": "Pilot_rebelalliance_xwing_hobbieklivian.jpg",
+    "faction": "rebelalliance",
+    "pilotxws": "hobbieklivian"
+  },
+  {
+    "shipxws": "xwing",
+    "image": "Pilot_rebelalliance_xwing_tarnmison.jpg",
+    "faction": "rebelalliance",
+    "pilotxws": "tarnmison"
+  },
+  {
+    "shipxws": "awing",
+    "image": "Pilot_rebelalliance_awing_jakefarrell.jpg",
+    "faction": "rebelalliance",
+    "pilotxws": "jakefarrell"
+  },
+  {
+    "shipxws": "awing",
+    "image": "Pilot_rebelalliance_awing_gemmersojan.jpg",
+    "faction": "rebelalliance",
+    "pilotxws": "gemmersojan"
+  },
+  {
+    "shipxws": "bwing",
+    "image": "Pilot_rebelalliance_bwing_keyanfarlander.jpg",
+    "faction": "rebelalliance",
+    "pilotxws": "keyanfarlander"
+  },
+  {
+    "shipxws": "bwing",
+    "image": "Pilot_rebelalliance_bwing_neradantels.jpg",
+    "faction": "rebelalliance",
+    "pilotxws": "neradantels"
+  },
+  {
+    "shipxws": "yt2400",
+    "image": "Pilot_rebelalliance_yt2400_dashrendar.jpg",
+    "faction": "rebelalliance",
+    "pilotxws": "dashrendar"
+  },
+  {
+    "shipxws": "vt49decimator",
+    "image": "Pilot_galacticempire_vt49decimator_rearadmiralchiraneau.jpg",
+    "faction": "galacticempire",
+    "pilotxws": "rearadmiralchiraneau"
+  },
+  {
+    "shipxws": "vt49decimator",
+    "image": "Pilot_galacticempire_vt49decimator_captainoicunn.jpg",
+    "faction": "galacticempire",
+    "pilotxws": "captainoicunn"
+  },
+  {
+    "shipxws": "yt2400",
+    "image": "Pilot_rebelalliance_yt2400_leebo.jpg",
+    "faction": "rebelalliance",
+    "pilotxws": "leebo"
+  },
+  {
+    "shipxws": "yt2400",
+    "image": "Pilot_rebelalliance_yt2400_eadenvrill.jpg",
+    "faction": "rebelalliance",
+    "pilotxws": "eadenvrill"
+  },
+  {
+    "shipxws": "vt49decimator",
+    "image": "Pilot_galacticempire_vt49decimator_commanderkenkirk.jpg",
+    "faction": "galacticempire",
+    "pilotxws": "commanderkenkirk"
+  },
+  {
+    "shipxws": "vt49decimator",
+    "faction": "galacticempire",
+    "image": "Pilot_galacticempire_vt49decimator_patrolleader.jpg",
+    "pilotxws": "patrolleader"
+  },
+  {
+    "shipxws": "yt2400",
+    "faction": "rebelalliance",
+    "image": "Pilot_rebelalliance_yt2400_wildspacefringer.jpg",
+    "pilotxws": "wildspacefringer"
+  },
+  {
+    "shipxws": "firespray31",
+    "image": "Pilot_scumandvillainy_firespray31_bobafett.jpg",
+    "faction": "scumandvillainy",
+    "pilotxws": "bobafett"
+  },
+  {
+    "shipxws": "starviper",
+    "image": "Pilot_scumandvillainy_starviper_princexizor.jpg",
+    "faction": "scumandvillainy",
+    "pilotxws": "princexizor"
+  },
+  {
+    "shipxws": "firespray31",
+    "image": "Pilot_scumandvillainy_firespray31_kathscarlet.jpg",
+    "faction": "scumandvillainy",
+    "pilotxws": "kathscarlet"
+  },
+  {
+    "shipxws": "firespray31",
+    "faction": "scumandvillainy",
+    "image": "Pilot_scumandvillainy_firespray31_emonazzameen.jpg",
+    "pilotxws": "emonazzameen"
+  },
+  {
+    "shipxws": "z95headhunter",
+    "faction": "scumandvillainy",
+    "image": "Pilot_scumandvillainy_z95headhunter_ndrusuhlak.jpg",
+    "pilotxws": "ndrusuhlak"
+  },
+  {
+    "shipxws": "m3ainterceptor",
+    "faction": "scumandvillainy",
+    "image": "Pilot_scumandvillainy_m3ainterceptor_serissu.jpg",
+    "pilotxws": "serissu"
+  },
+  {
+    "shipxws": "aggressor",
+    "faction": "scumandvillainy",
+    "image": "Pilot_scumandvillainy_aggressor_ig88a.jpg",
+    "pilotxws": "ig88a"
+  },
+  {
+    "shipxws": "aggressor",
+    "faction": "scumandvillainy",
+    "image": "Pilot_scumandvillainy_aggressor_ig88b.jpg",
+    "pilotxws": "ig88b"
+  },
+  {
+    "shipxws": "aggressor",
+    "faction": "scumandvillainy",
+    "image": "Pilot_scumandvillainy_aggressor_ig88c.jpg",
+    "pilotxws": "ig88c"
+  },
+  {
+    "shipxws": "aggressor",
+    "faction": "scumandvillainy",
+    "image": "Pilot_scumandvillainy_aggressor_ig88d.jpg",
+    "pilotxws": "ig88d"
+  },
+  {
+    "shipxws": "z95headhunter",
+    "faction": "scumandvillainy",
+    "image": "Pilot_scumandvillainy_z95headhunter_binayrepirate.jpg",
+    "pilotxws": "binayrepirate"
+  },
+  {
+    "shipxws": "z95headhunter",
+    "faction": "scumandvillainy",
+    "image": "Pilot_scumandvillainy_z95headhunter_blacksunsoldier.jpg",
+    "pilotxws": "blacksunsoldier"
+  },
+  {
+    "shipxws": "ywing",
+    "faction": "scumandvillainy",
+    "image": "Pilot_scumandvillainy_ywing_drearenthal.jpg",
+    "pilotxws": "drearenthal"
+  },
+  {
+    "shipxws": "z95headhunter",
+    "faction": "scumandvillainy",
+    "image": "Pilot_scumandvillainy_z95headhunter_kaatoleeachos.jpg",
+    "pilotxws": "kaatoleeachos"
+  },
+  {
+    "shipxws": "ywing",
+    "faction": "scumandvillainy",
+    "image": "Pilot_scumandvillainy_ywing_kavil.jpg",
+    "pilotxws": "kavil"
+  },
+  {
+    "shipxws": "ywing",
+    "faction": "scumandvillainy",
+    "image": "Pilot_scumandvillainy_ywing_syndicatethug.jpg",
+    "pilotxws": "syndicatethug"
+  },
+  {
+    "shipxws": "firespray31",
+    "faction": "scumandvillainy",
+    "image": "Pilot_scumandvillainy_firespray31_mandalorianmercenary.jpg",
+    "pilotxws": "mandalorianmercenary"
+  },
+  {
+    "shipxws": "hwk290",
+    "image": "Pilot_scumandvillainy_hwk290_dacebonearm.jpg",
+    "faction": "scumandvillainy",
+    "pilotxws": "dacebonearm"
+  },
+  {
+    "shipxws": "hwk290",
+    "image": "Pilot_scumandvillainy_hwk290_palobgodalhi.jpg",
+    "faction": "scumandvillainy",
+    "pilotxws": "palobgodalhi"
+  },
+  {
+    "shipxws": "hwk290",
+    "image": "Pilot_scumandvillainy_hwk290_torkilmux.jpg",
+    "faction": "scumandvillainy",
+    "pilotxws": "torkilmux"
+  },
+  {
+    "shipxws": "starviper",
+    "image": "Pilot_scumandvillainy_starviper_guri.jpg",
+    "faction": "scumandvillainy",
+    "pilotxws": "guri"
+  },
+  {
+    "shipxws": "starviper",
+    "image": "Pilot_scumandvillainy_starviper_blacksunvigo.jpg",
+    "faction": "scumandvillainy",
+    "pilotxws": "blacksunvigo"
+  },
+  {
+    "shipxws": "starviper",
+    "image": "Pilot_scumandvillainy_starviper_blacksunenforcer.jpg",
+    "faction": "scumandvillainy",
+    "pilotxws": "blacksunenforcer"
+  },
+  {
+    "shipxws": "tieadvanced",
+    "image": "Pilot_galacticempire_tieadvanced_commanderalozen.jpg",
+    "faction": "galacticempire",
+    "pilotxws": "commanderalozen"
+  },
+  {
+    "shipxws": "m3ainterceptor",
+    "faction": "scumandvillainy",
+    "image": "Pilot_scumandvillainy_m3ainterceptor_laetinashera.jpg",
+    "pilotxws": "laetinashera"
+  },
+  {
+    "shipxws": "m3ainterceptor",
+    "faction": "scumandvillainy",
+    "image": "Pilot_scumandvillainy_m3ainterceptor_cartelspacer.jpg",
+    "pilotxws": "cartelspacer"
+  },
+  {
+    "shipxws": "m3ainterceptor",
+    "faction": "scumandvillainy",
+    "image": "Pilot_scumandvillainy_m3ainterceptor_tansariipointveteran.jpg",
+    "pilotxws": "tansariipointveteran"
+  },
+  {
+    "shipxws": "ywing",
+    "faction": "scumandvillainy",
+    "image": "Pilot_scumandvillainy_ywing_hiredgun.jpg",
+    "pilotxws": "hiredgun"
+  },
+  {
+    "shipxws": "hwk290",
+    "faction": "scumandvillainy",
+    "image": "Pilot_scumandvillainy_hwk290_spicerunner.jpg",
+    "pilotxws": "spicerunner"
+  },
+  {
+    "shipxws": "tieadvanced",
+    "image": "Pilot_galacticempire_tieadvanced_lieutenantcolzet.jpg",
+    "faction": "galacticempire",
+    "pilotxws": "lieutenantcolzet"
+  },
+  {
+    "shipxws": "tieadvanced",
+    "image": "Pilot_galacticempire_tieadvanced_zertikstrom.jpg",
+    "faction": "galacticempire",
+    "pilotxws": "zertikstrom"
+  },
+  {
+    "shipxws": "tieadvanced",
+    "image": "Pilot_galacticempire_tieadvanced_junoeclipse.jpg",
+    "faction": "galacticempire",
+    "pilotxws": "junoeclipse"
+  },
+  {
+    "shipxws": "yv666",
+    "image": "Pilot_scumandvillainy_yv666_trandoshanslaver.jpg",
+    "faction": "scumandvillainy",
+    "pilotxws": "trandoshanslaver"
+  },
+  {
+    "shipxws": "yv666",
+    "image": "Pilot_scumandvillainy_yv666_lattsrazzi.jpg",
+    "faction": "scumandvillainy",
+    "pilotxws": "lattsrazzi"
+  },
+  {
+    "shipxws": "yv666",
+    "image": "Pilot_scumandvillainy_yv666_bossk.jpg",
+    "faction": "scumandvillainy",
+    "pilotxws": "bossk"
+  },
+  {
+    "shipxws": "z95headhunter",
+    "image": "Pilot_scumandvillainy_z95headhunter_nashtahpuppilot.jpg",
+    "faction": "scumandvillainy",
+    "pilotxws": "nashtahpuppilot"
+  },
+  {
+    "shipxws": "kihraxzfighter",
+    "image": "Pilot_scumandvillainy_kihraxzfighter_cartelmarauder.jpg",
+    "faction": "scumandvillainy",
+    "pilotxws": "cartelmarauder"
+  },
+  {
+    "shipxws": "kihraxzfighter",
+    "image": "Pilot_scumandvillainy_kihraxzfighter_blacksunace.jpg",
+    "faction": "scumandvillainy",
+    "pilotxws": "blacksunace"
+  },
+  {
+    "shipxws": "kihraxzfighter",
+    "image": "Pilot_scumandvillainy_kihraxzfighter_grazthehunter.jpg",
+    "faction": "scumandvillainy",
+    "pilotxws": "grazthehunter"
+  },
+  {
+    "shipxws": "kihraxzfighter",
+    "image": "Pilot_scumandvillainy_kihraxzfighter_talonbanecobra.jpg",
+    "faction": "scumandvillainy",
+    "pilotxws": "talonbanecobra"
+  },
+  {
+    "shipxws": "kwing",
+    "image": "Pilot_rebelalliance_kwing_wardensquadronpilot.jpg",
+    "faction": "rebelalliance",
+    "pilotxws": "wardensquadronpilot"
+  },
+  {
+    "shipxws": "kwing",
+    "image": "Pilot_rebelalliance_kwing_esegetuketu.jpg",
+    "faction": "rebelalliance",
+    "pilotxws": "esegetuketu"
+  },
+  {
+    "shipxws": "kwing",
+    "image": "Pilot_rebelalliance_kwing_mirandadoni.jpg",
+    "faction": "rebelalliance",
+    "pilotxws": "mirandadoni"
+  },
+  {
+    "shipxws": "tiepunisher",
+    "image": "Pilot_galacticempire_tiepunisher_redline.jpg",
+    "faction": "galacticempire",
+    "pilotxws": "redline"
+  },
+  {
+    "shipxws": "tiepunisher",
+    "image": "Pilot_galacticempire_tiepunisher_deathrain.jpg",
+    "faction": "galacticempire",
+    "pilotxws": "deathrain"
+  },
+  {
+    "shipxws": "tiepunisher",
+    "image": "Pilot_galacticempire_tiepunisher_cutlasssquadronpilot.jpg",
+    "faction": "galacticempire",
+    "pilotxws": "cutlasssquadronpilot"
+  },
+  {
+    "shipxws": "tiepunisher",
+    "image": "Pilot_galacticempire_tiepunisher_blackeightsqpilot.jpg",
+    "faction": "galacticempire",
+    "pilotxws": "blackeightsqpilot"
+  },
+  {
+    "shipxws": "yv666",
+    "image": "Pilot_scumandvillainy_yv666_moraloeval.jpg",
+    "faction": "scumandvillainy",
+    "pilotxws": "moraloeval"
+  },
+  {
+    "shipxws": "kwing",
+    "image": "Pilot_rebelalliance_kwing_guardiansquadronpilot.jpg",
+    "faction": "rebelalliance",
+    "pilotxws": "guardiansquadronpilot"
+  },
+  {
+    "shipxws": "tiefofighter",
+    "image": "Pilot_firstorder_tiefofighter_epsilonleader.jpg",
+    "faction": "firstorder",
+    "pilotxws": "epsilonleader"
+  },
+  {
+    "shipxws": "tiefofighter",
+    "image": "Pilot_firstorder_tiefofighter_epsilonsquadronpilot.jpg",
+    "faction": "firstorder",
+    "pilotxws": "epsilonsquadronpilot"
+  },
+  {
+    "shipxws": "tiefofighter",
+    "image": "Pilot_firstorder_tiefofighter_omegaace.jpg",
+    "faction": "firstorder",
+    "pilotxws": "omegaace"
+  },
+  {
+    "shipxws": "tiefofighter",
+    "image": "Pilot_firstorder_tiefofighter_omegaleader.jpg",
+    "faction": "firstorder",
+    "pilotxws": "omegaleader"
+  },
+  {
+    "shipxws": "tiefofighter",
+    "image": "Pilot_firstorder_tiefofighter_zetaace.jpg",
+    "faction": "firstorder",
+    "pilotxws": "zetaace"
+  },
+  {
+    "shipxws": "tiefofighter",
+    "image": "Pilot_firstorder_tiefofighter_zetasquadronpilot.jpg",
+    "faction": "firstorder",
+    "pilotxws": "zetasquadronpilot"
+  },
+  {
+    "shipxws": "tiefofighter",
+    "faction": "firstorder",
+    "image": "Pilot_firstorder_tiefofighter_omegasquadronpilot.jpg",
+    "pilotxws": "omegasquadronpilot"
+  },
+  {
+    "shipxws": "t70xwing",
+    "image": "Pilot_resistance_t70xwing_bluesquadronnovice.jpg",
+    "faction": "resistance",
+    "pilotxws": "bluesquadronnovice"
+  },
+  {
+    "shipxws": "t70xwing",
+    "image": "Pilot_resistance_t70xwing_poedameron.jpg",
+    "faction": "resistance",
+    "pilotxws": "poedameron"
+  },
+  {
+    "shipxws": "t70xwing",
+    "image": "Pilot_resistance_t70xwing_redace.jpg",
+    "faction": "resistance",
+    "pilotxws": "redace"
+  },
+  {
+    "shipxws": "t70xwing",
+    "image": "Pilot_resistance_t70xwing_redsquadronveteran.jpg",
+    "faction": "resistance",
+    "pilotxws": "redsquadronveteran"
+  },
+  {
+    "shipxws": "t70xwing",
+    "faction": "resistance",
+    "image": "Pilot_resistance_t70xwing_blueace.jpg",
+    "pilotxws": "blueace"
+  },
+  {
+    "shipxws": "vcx100",
+    "faction": "rebelalliance",
+    "image": "Pilot_rebelalliance_vcx100_herasyndulla.jpg",
+    "pilotxws": "herasyndulla"
+  },
+  {
+    "image": "Pilot_scumandvillainy_jumpmaster5000_dengar.jpg",
+    "faction": "scumandvillainy",
+    "shipxws": "jumpmaster5000",
+    "pilotxws": "dengar"
+  },
+  {
+    "text": "When attacking you may roll 1 additional attack die. If you do, the defender rolls 1 additional defense die.",
+    "shipxws": "g1astarfighter",
+    "faction": "scumandvillainy",
+    "pilotxws": "zuckuss",
+    "image": "Pilot_scumandvillainy_g1astarfighter_zuckuss.jpg"
+  },
+  {
+    "image": "Pilot_galacticempire_tieadvprototype_theinquisitor.jpg",
+    "shipxws": "tieadvprototype",
+    "faction": "galacticempire",
+    "pilotxws": "theinquisitor"
+  },
+  {
+    "image": "Pilot_galacticempire_tiefighter_scourge.jpg",
+    "shipxws": "tiefighter",
+    "faction": "galacticempire",
+    "pilotxws": "scourge"
+  },
+  {
+    "image": "Pilot_galacticempire_tiefighter_wampa.jpg",
+    "shipxws": "tiefighter",
+    "faction": "galacticempire",
+    "pilotxws": "wampa"
+  },
+  {
+    "image": "Pilot_galacticempire_tiefighter_youngster.jpg",
+    "shipxws": "tiefighter",
+    "faction": "galacticempire",
+    "pilotxws": "youngster"
+  },
+  {
+    "image": "Pilot_galacticempire_tiefighter_chaser.jpg",
+    "shipxws": "tiefighter",
+    "faction": "galacticempire",
+    "pilotxws": "chaser"
+  },
+  {
+    "image": "Pilot_rebelalliance_attackshuttle_ezrabridger.jpg",
+    "shipxws": "attackshuttle",
+    "faction": "rebelalliance",
+    "pilotxws": "ezrabridger"
+  },
+  {
+    "image": "Pilot_firstorder_tiefofighter_epsilonace.jpg",
+    "shipxws": "tiefofighter",
+    "faction": "firstorder",
+    "pilotxws": "epsilonace"
+  },
+  {
+    "image": "Pilot_firstorder_tiefofighter_zetaleader.jpg",
+    "shipxws": "tiefofighter",
+    "faction": "firstorder",
+    "pilotxws": "zetaleader"
+  },
+  {
+    "image": "Pilot_rebelalliance_vcx100_chopper.jpg",
+    "shipxws": "vcx100",
+    "faction": "rebelalliance",
+    "pilotxws": "chopper"
+  },
+  {
+    "image": "Pilot_rebelalliance_vcx100_kananjarrus.jpg",
+    "shipxws": "vcx100",
+    "faction": "rebelalliance",
+    "pilotxws": "kananjarrus"
+  },
+  {
+    "image": "Pilot_rebelalliance_attackshuttle_herasyndulla.jpg",
+    "shipxws": "attackshuttle",
+    "faction": "rebelalliance",
+    "pilotxws": "herasyndulla"
+  },
+  {
+    "image": "Pilot_rebelalliance_attackshuttle_sabinewren.jpg",
+    "shipxws": "attackshuttle",
+    "faction": "rebelalliance",
+    "pilotxws": "sabinewren"
+  },
+  {
+    "image": "Pilot_rebelalliance_attackshuttle_zeborrelios.jpg",
+    "shipxws": "attackshuttle",
+    "faction": "rebelalliance",
+    "pilotxws": "zeborrelios"
+  },
+  {
+    "shipxws": "tiebomber",
+    "faction": "galacticempire",
+    "pilotxws": "tomaxbren",
+    "image": "Pilot_galacticempire_tiebomber_tomaxbren.jpg"
+  },
+  {
+    "shipxws": "tiebomber",
+    "faction": "galacticempire",
+    "image": "Pilot_galacticempire_tiebomber_gammasquadronveteran.jpg",
+    "pilotxws": "gammasquadronveteran"
+  },
+  {
+    "image": "Pilot_resistance_t70xwing_elloasty.jpg",
+    "shipxws": "t70xwing",
+    "faction": "resistance",
+    "pilotxws": "elloasty"
+  },
+  {
+    "image": "Pilot_galacticempire_tieadvprototype_valenrudor.jpg",
+    "shipxws": "tieadvprototype",
+    "faction": "galacticempire",
+    "pilotxws": "valenrudor"
+  },
+  {
+    "image": "Pilot_galacticempire_tieadvprototype_sienartestpilot.jpg",
+    "shipxws": "tieadvprototype",
+    "faction": "galacticempire",
+    "pilotxws": "sienartestpilot"
+  },
+  {
+    "image": "Pilot_scumandvillainy_g1astarfighter_4lom.jpg",
+    "pilotxws": "4lom",
+    "shipxws": "g1astarfighter",
+    "faction": "scumandvillainy"
+  },
+  {
+    "image": "Pilot_scumandvillainy_jumpmaster5000_contractedscout.jpg",
+    "pilotxws": "contractedscout",
+    "shipxws": "jumpmaster5000",
+    "faction": "scumandvillainy"
+  },
+  {
+    "image": "Pilot_scumandvillainy_jumpmaster5000_manaroo.jpg",
+    "pilotxws": "manaroo",
+    "shipxws": "jumpmaster5000",
+    "faction": "scumandvillainy"
+  },
+  {
+    "image": "Pilot_scumandvillainy_jumpmaster5000_teltrevura.jpg",
+    "pilotxws": "teltrevura",
+    "shipxws": "jumpmaster5000",
+    "faction": "scumandvillainy"
+  },
+  {
+    "image": "Pilot_rebelalliance_vcx100_lothalrebel.jpg",
+    "pilotxws": "lothalrebel",
+    "shipxws": "vcx100",
+    "faction": "rebelalliance"
+  },
+  {
+    "pilotxws": "baronoftheempire",
+    "shipxws": "tieadvprototype",
+    "faction": "galacticempire",
+    "image": "Pilot_galacticempire_tieadvprototype_baronoftheempire.jpg"
+  },
+  {
+    "pilotxws": "gandfindsman",
+    "shipxws": "g1astarfighter",
+    "faction": "scumandvillainy",
+    "image": "Pilot_scumandvillainy_g1astarfighter_gandfindsman.jpg"
+  },
+  {
+    "pilotxws": "ruthlessfreelancer",
+    "shipxws": "g1astarfighter",
+    "faction": "scumandvillainy",
+    "image": "Pilot_scumandvillainy_g1astarfighter_ruthlessfreelancer.jpg"
+  },
+  {
+    "image": "Pilot_galacticempire_tiebomber_deathfire.jpg",
+    "pilotxws": "deathfire",
+    "shipxws": "tiebomber",
+    "faction": "galacticempire"
+  },
+  {
+    "pilotxws":"glaivesquadronpilot",
+    "shipxws":"tiedefender",
+    "faction":"galacticempire",
+    "image":"Pilot_galacticempire_tiedefender_glaivesquadronpilot.jpg"
+  },
+ {
+    "image": "Pilot_galacticempire_tiedefender_maarekstele.jpg",
+    "pilotxws": "maarekstele",
+    "shipxws": "tiedefender",
+    "faction": "galacticempire"
+  },
+  {
+    "image": "Pilot_galacticempire_tiedefender_countessryad.jpg",
+    "pilotxws": "countessryad",
+    "shipxws": "tiedefender",
+    "faction": "galacticempire"
+  },
+  {
+    "image": "Pilot_resistance_t70xwing_poedameron-swx57.jpg",
+    "pilotxws": "poedameron-swx57",
+    "shipxws": "t70xwing",
+    "faction": "resistance"
+  },
+  {
+    "image": "Pilot_resistance_yt1300_rey.jpg",
+    "pilotxws": "rey",
+    "shipxws": "yt1300",
+    "faction": "resistance"
+  },
+  {
+    "image": "Pilot_rebelalliance_arc170_sharabey.jpg",
+    "pilotxws": "sharabey",
+    "shipxws": "arc170",
+    "faction": "rebelalliance"
+  },
+  {
+    "image": "Pilot_scumandvillainy_protectoratestarfighter_fennrau.jpg",
+    "pilotxws": "fennrau",
+    "shipxws": "protectoratestarfighter",
+    "faction": "scumandvillainy"
+  },
+  {
+    "pilotxws": "sabinewren",
+    "image": "Pilot_scumandvillainy_lancerclasspursuitcraft_sabinewren.jpg",
+    "shipxws": "lancerclasspursuitcraft",
+    "faction": "scumandvillainy"
+  },
+  {
+    "pilotxws": "quickdraw",
+    "shipxws": "tiesffighter",
+    "faction": "firstorder",
+    "image": "Pilot_firstorder_tiesffighter_quickdraw.jpg"
+  },
+  {
+    "pilotxws": "ketsuonyo",
+    "shipxws": "lancerclasspursuitcraft",
+    "faction": "scumandvillainy",
+    "image": "Pilot_scumandvillainy_lancerclasspursuitcraft_ketsuonyo.jpg"
+  },
+  {
+    "image": "Pilot_rebelalliance_arc170_braylenstramm.jpg",
+    "pilotxws": "braylenstramm",
+    "shipxws": "arc170",
+    "faction": "rebelalliance"
+  },
+  {
+    "image": "Pilot_rebelalliance_arc170_thanekyrell.jpg",
+
+    "pilotxws": "thanekyrell",
+    "shipxws": "arc170",
+    "faction": "rebelalliance"
+  },
+  {
+    "image": "Pilot_rebelalliance_arc170_norrawexley.jpg",
+    "pilotxws": "norrawexley",
+    "shipxws": "arc170",
+    "faction": "rebelalliance"
+  },
+  {
+    "image": "Pilot_firstorder_tiesffighter_zetaspecialist.jpg",
+    "pilotxws": "zetaspecialist",
+    "shipxws": "tiesffighter",
+    "faction": "firstorder"
+  },
+  {
+    "image": "Pilot_firstorder_tiesffighter_backdraft.jpg",
+    "pilotxws": "backdraft",
+    "shipxws": "tiesffighter",
+    "faction": "firstorder"
+  },
+  {
+    "image": "Pilot_scumandvillainy_protectoratestarfighter_kadsolus.jpg",
+    "pilotxws": "kadsolus",
+    "shipxws": "protectoratestarfighter",
+    "faction": "scumandvillainy"
+  },
+  {
+    "image": "Pilot_scumandvillainy_protectoratestarfighter_concorddawnace.jpg",
+    "pilotxws": "concorddawnace",
+    "shipxws": "protectoratestarfighter",
+    "faction": "scumandvillainy"
+  },
+  {
+    "image": "Pilot_scumandvillainy_protectoratestarfighter_concorddawnveteran.jpg",
+    "pilotxws": "concorddawnveteran",
+    "shipxws": "protectoratestarfighter",
+    "faction": "scumandvillainy"
+  },
+  {
+    "image": "Pilot_scumandvillainy_protectoratestarfighter_oldteroch.jpg",
+    "pilotxws": "oldteroch",
+    "shipxws": "protectoratestarfighter",
+    "faction": "scumandvillainy"
+  },
+  {
+    "image": "Pilot_scumandvillainy_protectoratestarfighter_zealousrecruit.jpg",
+    "pilotxws": "zealousrecruit",
+    "shipxws": "protectoratestarfighter",
+    "faction": "scumandvillainy"
+  },
+  {
+    "image": "Pilot_scumandvillainy_lancerclasspursuitcraft_asajjventress.jpg",
+    "pilotxws": "asajjventress",
+    "shipxws": "lancerclasspursuitcraft",
+    "faction": "scumandvillainy"
+  },
+  {
+    "pilotxws": "omegaspecialist",
+    "shipxws": "tiesffighter",
+    "faction": "firstorder",
+    "image": "Pilot_firstorder_tiesffighter_omegaspecialist.jpg"
+  },
+  {
+    "pilotxws": "shadowporthunter",
+    "shipxws": "lancerclasspursuitcraft",
+    "faction": "scumandvillainy",
+    "image": "Pilot_scumandvillainy_lancerclasspursuitcraft_shadowporthunter.jpg"
+  },
+  {
+    "image": "Pilot_rebelalliance_tiefighter_sabinewren.jpg",
+    "pilotxws": "sabinewren",
+    "shipxws": "tiefighter",
+    "faction": "rebelalliance"
+  },
+  {
+    "pilotxws": "kyloren",
+    "shipxws": "upsilonclassshuttle",
+    "faction": "firstorder",
+    "image": "Pilot_firstorder_upsilonclassshuttle_kyloren.jpg"
+  },
+  {
+    "pilotxws": "unkarplutt",
+    "shipxws": "quadjumper",
+    "faction": "scumandvillainy",
+    "image": "Pilot_scumandvillainy_quadjumper_unkarplutt.jpg"
+  },
+  {
+    "pilotxws": "cassianandor",
+    "shipxws": "uwing",
+    "faction": "rebelalliance",
+    "image": "Pilot_rebelalliance_uwing_cassianandor.jpg"
+  },
+  {
+    "image": "Pilot_galacticempire_tiestriker_duchess.jpg",
+    "pilotxws": "duchess",
+    "shipxws": "tiestriker",
+    "faction": "galacticempire"
+  },
+  {
+    "image": "Pilot_resistance_yt1300_hansolo-swx57.jpg",
+    "pilotxws": "hansolo-swx57",
+    "shipxws": "yt1300",
+    "faction": "resistance"
+  },
+  {
+    "image": "Pilot_resistance_yt1300_chewbacca-swx57.jpg",
+    "pilotxws": "chewbacca-swx57",
+    "shipxws": "yt1300",
+    "faction": "resistance"
+  },
+  {
+    "image": "Pilot_resistance_t70xwing_jesspava.jpg",
+    "pilotxws": "jesspava",
+    "shipxws": "t70xwing",
+    "faction": "resistance"
+  },
+  {
+    "image": "Pilot_resistance_t70xwing_niennunb.jpg",
+    "pilotxws": "niennunb",
+    "shipxws": "t70xwing",
+    "faction": "resistance"
+  },
+  {
+    "image": "Pilot_resistance_t70xwing_snapwexley.jpg",
+    "pilotxws": "snapwexley",
+    "shipxws": "t70xwing",
+    "faction": "resistance"
+  },
+  {
+    "pilotxws": "resistancesympathizer",
+    "shipxws": "yt1300",
+    "faction": "resistance",
+    "image": "Pilot_resistance_yt1300_resistancesympathizer.jpg"
+  },
+  {
+    "image": "Pilot_rebelalliance_tiefighter_ahsokatano.jpg",
+    "pilotxws": "ahsokatano",
+    "shipxws": "tiefighter",
+    "faction": "rebelalliance"
+  },
+  {
+    "image": "Pilot_rebelalliance_tiefighter_captainrex.jpg",
+    "pilotxws": "captainrex",
+    "shipxws": "tiefighter",
+    "faction": "rebelalliance"
+  },
+  {
+    "image": "Pilot_rebelalliance_uwing_bluesquadronpathfinder.jpg",
+    "pilotxws": "bluesquadronpathfinder",
+    "shipxws": "uwing",
+    "faction": "rebelalliance"
+  },
+  {
+    "image": "Pilot_firstorder_upsilonclassshuttle_majorstridan.jpg",
+    "pilotxws": "majorstridan",
+    "shipxws": "upsilonclassshuttle",
+    "faction": "firstorder"
+  },
+  {
+    "image": "Pilot_firstorder_upsilonclassshuttle_lieutenantdormitz.jpg",
+    "pilotxws": "lieutenantdormitz",
+    "shipxws": "upsilonclassshuttle",
+    "faction": "firstorder"
+  },
+  {
+    "image": "Pilot_firstorder_upsilonclassshuttle_starkillerbasepilot.jpg",
+    "pilotxws": "starkillerbasepilot",
+    "shipxws": "upsilonclassshuttle",
+    "faction": "firstorder"
+  },
+  {
+    "image": "Pilot_rebelalliance_uwing_bodhirook.jpg",
+    "pilotxws": "bodhirook",
+    "shipxws": "uwing",
+    "faction": "rebelalliance"
+  },
+  {
+    "image": "Pilot_rebelalliance_uwing_hefftobber.jpg",
+    "pilotxws": "hefftobber",
+    "shipxws": "uwing",
+    "faction": "rebelalliance"
+  },
+  {
+    "image": "Pilot_scumandvillainy_quadjumper_constablezuvio.jpg",
+    "pilotxws": "constablezuvio",
+    "shipxws": "quadjumper",
+    "faction": "scumandvillainy"
+  },
+  {
+    "image": "Pilot_scumandvillainy_quadjumper_jakkugunrunner.jpg",
+    "pilotxws": "jakkugunrunner",
+    "shipxws": "quadjumper",
+    "faction": "scumandvillainy"
+  },
+  {
+    "image": "Pilot_galacticempire_tiestriker_countdown.jpg",
+    "pilotxws": "countdown",
+    "shipxws": "tiestriker",
+    "faction": "galacticempire"
+  },
+  {
+    "image": "Pilot_galacticempire_tiestriker_puresabacc.jpg",
+    "pilotxws": "puresabacc",
+    "shipxws": "tiestriker",
+    "faction": "galacticempire"
+  },
+  {
+    "image": "Pilot_galacticempire_tiestriker_imperialtrainee.jpg",
+    "pilotxws": "imperialtrainee",
+    "shipxws": "tiestriker",
+    "faction": "galacticempire"
+  },
+  {
+    "pilotxws": "blacksquadronscout",
+    "shipxws": "tiestriker",
+    "faction": "galacticempire",
+    "image": "Pilot_galacticempire_tiestriker_blacksquadronscout.jpg"
+  },
+  {
+    "pilotxws": "scarifdefender",
+    "shipxws": "tiestriker",
+    "faction": "galacticempire",
+    "image": "Pilot_galacticempire_tiestriker_scarifdefender.jpg"
+  },
+  {
+    "pilotxws": "zeborrelios",
+    "shipxws": "tiefighter",
+    "faction": "rebelalliance",
+    "image": "Pilot_rebelalliance_tiefighter_zeborrelios.jpg"
+  },
+  {
+    "pilotxws": "sarcoplank",
+    "shipxws": "quadjumper",
+    "faction": "scumandvillainy",
+    "image": "Pilot_scumandvillainy_quadjumper_sarcoplank.jpg"
+  },
+  {
+    "image": "Pilot_scumandvillainy_m3ainterceptor_genesisred.jpg",
+    "pilotxws": "genesisred",
+    "shipxws": "m3ainterceptor",
+    "faction": "scumandvillainy"
+  },
+  {
+    "image": "Pilot_scumandvillainy_m3ainterceptor_inaldra.jpg",
+    "pilotxws": "inaldra",
+    "shipxws": "m3ainterceptor",
+    "faction": "scumandvillainy"
+  },
+  {
+    "image": "Pilot_scumandvillainy_m3ainterceptor_quinnjast.jpg",
+    "pilotxws": "quinnjast",
+    "shipxws": "m3ainterceptor",
+    "faction": "scumandvillainy"
+  },
+  {
+    "image": "Pilot_scumandvillainy_m3ainterceptor_sunnybounder.jpg",
+    "pilotxws": "sunnybounder",
+    "shipxws": "m3ainterceptor",
+    "faction": "scumandvillainy"
+  },
+  {
+    "pilotxws": "karthakkpirate",
+    "shipxws": "scurrgh6bomber",
+    "faction": "scumandvillainy",
+    "image": "Pilot_scumandvillainy_scurrgh6bomber_karthakkpirate.jpg"
+  },
+  {
+    "pilotxws": "sienarspecialist",
+    "shipxws": "tieaggressor",
+    "faction": "galacticempire",
+    "image": "Pilot_galacticempire_tieaggressor_sienarspecialist.jpg"
+  },
+  {
+    "image": "Pilot_rebelalliance_auzituckgunship_kashyyykdefender.jpg",
+    "pilotxws": "kashyyykdefender",
+    "shipxws": "auzituckgunship",
+    "faction": "rebelalliance"
+  },
+  {
+    "image": "Pilot_galacticempire_tieaggressor_onyxsquadronescort.jpg",
+    "pilotxws": "onyxsquadronescort",
+    "shipxws": "tieaggressor",
+    "faction": "galacticempire"
+  },
+  {
+    "image": "Pilot_galacticempire_tieaggressor_lieutenantkestal.jpg",
+    "pilotxws": "lieutenantkestal",
+    "shipxws": "tieaggressor",
+    "faction": "galacticempire"
+  },
+  {
+    "image": "Pilot_galacticempire_tieaggressor_doubleedge.jpg",
+    "pilotxws": "doubleedge",
+    "shipxws": "tieaggressor",
+    "faction": "galacticempire"
+  },
+  {
+    "image": "Pilot_scumandvillainy_kihraxzfighter_viktorhel.jpg",
+    "pilotxws": "viktorhel",
+    "shipxws": "kihraxzfighter",
+    "faction": "scumandvillainy"
+  },
+  {
+    "image": "Pilot_rebelalliance_auzituckgunship_lowhhrick.jpg",
+    "pilotxws": "lowhhrick",
+    "shipxws": "auzituckgunship",
+    "faction": "rebelalliance"
+  },
+  {
+    "image": "Pilot_rebelalliance_auzituckgunship_wullffwarro.jpg",
+    "pilotxws": "wullffwarro",
+    "shipxws": "auzituckgunship",
+    "faction": "rebelalliance"
+  },
+  {
+    "image": "Pilot_scumandvillainy_scurrgh6bomber_captainnym.jpg",
+    "pilotxws": "captainnym",
+    "shipxws": "scurrgh6bomber",
+    "faction": "scumandvillainy"
+  },
+  {
+    "image": "Pilot_rebelalliance_scurrgh6bomber_captainnym.jpg",
+    "pilotxws": "captainnym",
+    "shipxws": "scurrgh6bomber",
+    "faction": "rebelalliance"
+  },
+  {
+    "image": "Pilot_scumandvillainy_scurrgh6bomber_solsixxa.jpg",
+    "pilotxws": "solsixxa",
+    "shipxws": "scurrgh6bomber",
+    "faction": "scumandvillainy"
+  },
+  {
+    "image": "Pilot_rebelalliance_auzituckgunship_wookieeliberator.jpg",
+    "pilotxws": "wookieeliberator",
+    "shipxws": "auzituckgunship",
+    "faction": "rebelalliance"
+  },
+  {
+    "image": "Pilot_scumandvillainy_scurrgh6bomber_lokrevenant.jpg",
+    "pilotxws": "lokrevenant",
+    "shipxws": "scurrgh6bomber",
+    "faction": "scumandvillainy"
+  },
+  {
+    "image": "Pilot_scumandvillainy_starviper_blacksunassassin.jpg",
+    "pilotxws": "blacksunassassin",
+    "shipxws": "starviper",
+    "faction": "scumandvillainy"
+  },
+  {
+    "image": "Pilot_scumandvillainy_starviper_dalanoberos.jpg",
+    "pilotxws": "dalanoberos",
+    "shipxws": "starviper",
+    "faction": "scumandvillainy"
+  },
+  {
+    "image": "Pilot_scumandvillainy_starviper_thweek.jpg",
+    "pilotxws": "thweek",
+    "shipxws": "starviper",
+    "faction": "scumandvillainy"
+  },
+  {
+    "image": "Pilot_scumandvillainy_kihraxzfighter_captainjostero.jpg",
+    "pilotxws": "captainjostero",
+    "shipxws": "kihraxzfighter",
+    "faction": "scumandvillainy"
+  },
+  {
+    "pilotxws": "majorvynder",
+    "shipxws": "alphaclassstarwing",
+    "faction": "galacticempire",
+    "image": "Pilot_galacticempire_alphaclassstarwing_majorvynder.jpg"
+  },
+  {
+    "pilotxws": "toranikulda",
+    "shipxws": "m12lkimogilafighter",
+    "faction": "scumandvillainy",
+    "image": "Pilot_scumandvillainy_m12lkimogilafighter_toranikulda.jpg"
+  },
+  {
+    "pilotxws": "fennrau",
+    "shipxws": "sheathipedeclassshuttle",
+    "faction": "rebelalliance",
+    "image": "Pilot_rebelalliance_sheathipedeclassshuttle_fennrau.jpg"
+  },
+  {
+    "image": "Pilot_firstorder_tiesilencer_kyloren.jpg",
+    "pilotxws": "kyloren",
+    "shipxws": "tiesilencer",
+    "faction": "firstorder"
+  },
+  {
+    "pilotxws": "crimsonleader",
+    "shipxws": "bsf17bomber",
+    "faction": "resistance",
+    "image": "Pilot_resistance_bsf17bomber_crimsonleader.jpg"
+  },
+  {
+    "image": "Pilot_galacticempire_alphaclassstarwing_nusquadronpilot.jpg",
+    "pilotxws": "nusquadronpilot",
+    "shipxws": "alphaclassstarwing",
+    "faction": "galacticempire"
+  },
+  {
+    "image": "Pilot_galacticempire_alphaclassstarwing_rhosquadronveteran.jpg",
+    "pilotxws": "rhosquadronveteran",
+    "shipxws": "alphaclassstarwing",
+    "faction": "galacticempire"
+  },
+  {
+    "image": "Pilot_galacticempire_alphaclassstarwing_lieutenantkarsabi.jpg",
+    "pilotxws": "lieutenantkarsabi",
+    "shipxws": "alphaclassstarwing",
+    "faction": "galacticempire"
+  },
+  {
+    "image": "Pilot_scumandvillainy_m12lkimogilafighter_cartelbrute.jpg",
+    "pilotxws": "cartelbrute",
+    "shipxws": "m12lkimogilafighter",
+    "faction": "scumandvillainy"
+  },
+  {
+    "image": "Pilot_scumandvillainy_m12lkimogilafighter_dalanoberos.jpg",
+    "pilotxws": "dalanoberos",
+    "shipxws": "m12lkimogilafighter",
+    "faction": "scumandvillainy"
+  },
+  {
+    "image": "Pilot_rebelalliance_sheathipedeclassshuttle_ezrabridger.jpg",
+    "pilotxws": "ezrabridger",
+    "shipxws": "sheathipedeclassshuttle",
+    "faction": "rebelalliance"
+  },
+  {
+    "image": "Pilot_rebelalliance_sheathipedeclassshuttle_zeborrelios.jpg",
+    "pilotxws": "zeborrelios",
+    "shipxws": "sheathipedeclassshuttle",
+    "faction": "rebelalliance"
+  },
+  {
+    "image": "Pilot_rebelalliance_sheathipedeclassshuttle_ap5.jpg",
+    "pilotxws": "ap5",
+    "shipxws": "sheathipedeclassshuttle",
+    "faction": "rebelalliance"
+  },
+  {
+    "pilotxws": "crimsonsquadronpilot",
+    "shipxws": "bsf17bomber",
+    "faction": "resistance",
+    "image": "Pilot_resistance_bsf17bomber_crimsonsquadronpilot.jpg"
+  },
+  {
+    "pilotxws": "crimsonspecialist",
+    "shipxws": "bsf17bomber",
+    "faction": "resistance",
+    "image": "Pilot_resistance_bsf17bomber_crimsonspecialist.jpg"
+  },
+  {
+    "pilotxws": "cobaltleader",
+    "shipxws": "bsf17bomber",
+    "faction": "resistance",
+    "image": "Pilot_resistance_bsf17bomber_cobaltleader.jpg"
+  },
+  {
+    "image": "Pilot_firstorder_tiesilencer_testpilotblackout.jpg",
+    "pilotxws": "testpilotblackout",
+    "shipxws": "tiesilencer",
+    "faction": "firstorder"
+  },
+  {
+    "pilotxws": "cartelexecutioner",
+    "shipxws": "m12lkimogilafighter",
+    "faction": "scumandvillainy",
+    "image": "Pilot_scumandvillainy_m12lkimogilafighter_cartelexecutioner.jpg"
+  },
+  {
+    "pilotxws": "sienarjaemusanalyst",
+    "shipxws": "tiesilencer",
+    "faction": "firstorder",
+    "image": "Pilot_firstorder_tiesilencer_sienarjaemusanalyst.jpg"
+  },
+  {
+    "pilotxws": "firstordertestpilot",
+    "shipxws": "tiesilencer",
+    "faction": "firstorder",
+    "image": "Pilot_firstorder_tiesilencer_firstordertestpilot.jpg"
+  }
+]
