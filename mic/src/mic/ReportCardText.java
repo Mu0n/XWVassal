@@ -32,7 +32,7 @@ public class ReportCardText extends Decorator implements EditablePiece {
     @Override
     public Command keyEvent(KeyStroke stroke) {
         if (KeyStroke.getKeyStroke(KeyEvent.VK_Q, KeyEvent.CTRL_DOWN_MASK,false).equals(stroke)) {
-logToChat("it works");
+            logToChat("*-- " + this.getProperty("xwstag").toString() + ": " + this.getProperty("xwstext"));
         }
 
         return piece.keyEvent(stroke);
