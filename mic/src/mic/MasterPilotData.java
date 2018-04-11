@@ -184,6 +184,9 @@ public class MasterPilotData extends ArrayList<MasterPilotData.PilotData> {
         @JsonProperty("ship_override")
         private ShipOverrides shipOverrides;
 
+        @JsonProperty("text")
+        private String text;
+
         public ShipOverrides getShipOverrides() {
             return shipOverrides;
         }
@@ -228,6 +231,9 @@ public class MasterPilotData extends ArrayList<MasterPilotData.PilotData> {
 
         public String getName() {
             return name;
+        }
+        public String getText() {
+            return text;
         }
 
         public List<String> getConditions() {

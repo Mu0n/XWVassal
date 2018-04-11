@@ -12,6 +12,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import static mic.Util.logToChat;
+
 /**
  * Created by amatheny on 2/8/17.
  */
@@ -383,11 +385,11 @@ public class VassalXWSPilotPieces {
 
     private GamePiece addPrototypeToPiece(GamePiece piece, String prototypeName)
     {
-        Util.logToChat("Adding prototype "+prototypeName+ " to piece");
+        logToChat("Adding prototype "+prototypeName+ " to piece");
         PrototypeDefinition protoDef = PrototypesContainer.getPrototype(prototypeName);
         if(protoDef == null)
         {
-            Util.logToChat("protoDef is null");
+            logToChat("protoDef is null");
         }
         protoDef.setPiece(piece);
         return piece;

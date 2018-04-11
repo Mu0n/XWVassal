@@ -8,6 +8,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import static mic.Util.logToChat;
+
 /*
  * This class dynamically generates GamePieces during AutoSquadSpawn
  */
@@ -346,6 +348,10 @@ public class GamePieceGenerator
         MasterPilotData.PilotData pilotData = ship.getPilotData();
         //    newPilot.setProperty("Ship Type",shipData.getName());
         //    newPilot.setProperty("Pilot Name",pilotData.getName());
+
+        newPilot.setProperty("xwstag", pilotData.getName());
+        if(pilotData.getText()!=null) if(!pilotData.getText().isEmpty()) newPilot.setProperty("xwstext", pilotData.getText());
+
 
         StemPilot.PilotGenerateCommand myShipGen = new StemPilot.PilotGenerateCommand(pilotData.getXws(), newPilot, pilotData.getFaction(), shipData.getXws(), pilotData.getName(), shipData.getName());
 
