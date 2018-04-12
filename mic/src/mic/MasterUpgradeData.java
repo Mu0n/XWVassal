@@ -90,6 +90,9 @@ public class MasterUpgradeData extends ArrayList<MasterUpgradeData.UpgradeData> 
 
     public static class UpgradeData {
 
+        @JsonProperty("id")
+        private Integer id;
+
         @JsonProperty("name")
         private String name;
 
@@ -123,6 +126,8 @@ public class MasterUpgradeData extends ArrayList<MasterUpgradeData.UpgradeData> 
             return grants;
         }
 
+        public Integer getId() { return id; }
+
         public String getXws() {
             return xws;
         }
@@ -133,6 +138,17 @@ public class MasterUpgradeData extends ArrayList<MasterUpgradeData.UpgradeData> 
 
         public String getText() {
             return text;
+        }
+
+        public String getText2ndSide() {
+            String side2Text = "";
+
+                // BIG puzzle, gotta use this side2 id number to go fetch the text (card ability) of that other side
+                // example: if you try to do it from Adaptability +1 which is id=233, the other side will be id=232.
+                // HOWEVER, that adaptabilit-1 isn't in loadedData because that map only takes the xws name as a key
+                // and it has already fulfilled that spot with adaptability+1, leaving adapt-1 out of the loaded map entirely.
+                // gotta parse the JSON again to find the other side.
+            return side2Text;
         }
 
         public String getSlot() {

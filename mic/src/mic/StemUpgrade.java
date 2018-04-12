@@ -126,14 +126,16 @@ public class StemUpgrade  extends Decorator implements EditablePiece {
         private String upgradeType = "";
         private boolean isDualSided = false;
         private String upgradeText = "";
+        private String upgradeText2ndSide = "";
 
         UpgradeGenerateCommand(GamePiece piece, VassalXWSPilotPieces.Upgrade upgrade, boolean isDualSided) {
             this.piece = piece;
             this.upgradeXWS = upgrade.getUpgradeData().getXws();
             this.upgradeName = upgrade.getUpgradeData().getName();
-            this.upgradeType = upgradeType.replaceAll(" ", "");
+            this.upgradeType = upgrade.getUpgradeData().getSlot().replaceAll(" ", "");
             this.isDualSided = isDualSided;
             this.upgradeText = upgrade.getUpgradeData().getText();
+            this.upgradeText2ndSide = upgrade.getUpgradeData().getText2ndSide();
         }
 
         // construct the Upgrade Card piece
@@ -185,7 +187,12 @@ public class StemUpgrade  extends Decorator implements EditablePiece {
             }
 
             piece.setProperty("xwstag", upgradeName);
-            if(upgradeText !=null) if(!upgradeText.isEmpty()) piece.setProperty("xwstext", upgradeText);
+            if(upgradeText !=null) if(!upgradeText.isEmpty()) {
+                if(isDualSided) {
+                    piece.setProperty("xwstext", upgradeText + " / " + upgradeText2ndSide);
+                }
+                piece.setProperty("xwstext", upgradeText);
+            }
 
 
         }

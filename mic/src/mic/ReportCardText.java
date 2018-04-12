@@ -72,7 +72,7 @@ public class ReportCardText extends Decorator implements EditablePiece {
     }
 
     public void draw(Graphics graphics, int i, int i1, Component component, double v) {
-
+        this.piece.draw(graphics, i, i1, component, v);
     }
 
     public Rectangle boundingBox() {
