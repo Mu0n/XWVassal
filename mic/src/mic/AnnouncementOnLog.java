@@ -500,15 +500,24 @@ public class AnnouncementOnLog extends AbstractConfigurable {
 
             panel.add(linkPanel);
 
-            int answer = JOptionPane.showOptionDialog(null, panel, "Welcome to the X-Wing vassal module",
+            JFrame frame = new JFrame();
+            frame.setAlwaysOnTop(true);
+
+            int answer = JOptionPane.showOptionDialog(frame, panel, "Welcome to the X-Wing vassal module",
                     JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE, null,
                     new String[] { "Check for new Content", "Skip" }, "Check for new Content");
+
+            frame.requestFocus();
+
+            frame.setAlwaysOnTop(false);
+            frame.dispose();
 
             if(answer==0) {
                 downloadContent();
             }else{
                 downloadXwingDataAndDispatcherJSONFiles();
             }
+
             /*
             JOptionPane optionPane = new JOptionPane();
                 optionPane.setMessage(msg);
