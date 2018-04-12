@@ -170,9 +170,6 @@ public class StemPilot extends Decorator implements EditablePiece {
                 useWipImage = true;
             }
 
-            piece.setProperty("xwstag", pilotName);
-            if(xwsText !=null) if(!xwsText.isEmpty()) piece.setProperty("xwstext", xwsText);
-
             piece = buildImageLayer(piece, pilotCardImage, pilotName, faction);
 
             // if we used a WIP image, we need to add the ship and pilot Name to the card
@@ -182,6 +179,10 @@ public class StemPilot extends Decorator implements EditablePiece {
                 piece.setProperty("Ship Type",shipName);
                 piece.setProperty("Pilot Name",pilotName);
             }
+
+
+            piece.setProperty("xwstag", pilotName);
+            if(xwsText !=null) if(!xwsText.isEmpty()) piece.setProperty("xwstext", xwsText);
         }
 
         private GamePiece buildImageLayer(GamePiece piece, String pilotCardImage, String pilotName, String faction)
