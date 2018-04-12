@@ -349,11 +349,7 @@ public class GamePieceGenerator
         //    newPilot.setProperty("Ship Type",shipData.getName());
         //    newPilot.setProperty("Pilot Name",pilotData.getName());
 
-        newPilot.setProperty("xwstag", pilotData.getName());
-        if(pilotData.getText()!=null) if(!pilotData.getText().isEmpty()) newPilot.setProperty("xwstext", pilotData.getText());
-
-
-        StemPilot.PilotGenerateCommand myShipGen = new StemPilot.PilotGenerateCommand(pilotData.getXws(), newPilot, pilotData.getFaction(), shipData.getXws(), pilotData.getName(), shipData.getName());
+        StemPilot.PilotGenerateCommand myShipGen = new StemPilot.PilotGenerateCommand(newPilot, pilotData, shipData);
 
         myShipGen.execute();
 

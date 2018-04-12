@@ -126,17 +126,21 @@ public class StemPilot extends Decorator implements EditablePiece {
         static String pilotXWSencoding = "";
         //static String stemPieceName = "";
         static String shipName = "";
-        PilotGenerateCommand(String pilotXWS, GamePiece piece, String thisFaction, String xwsShipName, String inPilotName, String inShipName )
+        static String xwsText = "";
+
+        PilotGenerateCommand(GamePiece piece, MasterPilotData.PilotData pilotData, MasterShipData.ShipData shipData)
         {
             //xwsPilotName = pilotXWS;
 
-            shipXWS = xwsShipName;
-            faction = thisFaction;
-            pilotName = inPilotName;
-            shipName = inShipName;
+            shipXWS = shipData.getXws();
+            faction = pilotData.getFaction();
+            pilotName = pilotData.getName();
+            shipName = shipData.getName();
+            xwsText = pilotData.getText();
+
             String factionXWS = Canonicalizer.getCanonicalFactionName(faction);
 
-            pilotXWSencoding = factionXWS+"_"+shipXWS+"_"+pilotXWS;
+            pilotXWSencoding = factionXWS+"_"+shipXWS+"_"+pilotData.getXws();
 
             this.piece = piece;
 /*
@@ -165,6 +169,9 @@ public class StemPilot extends Decorator implements EditablePiece {
                 pilotCardImage = wipImages.get(faction);
                 useWipImage = true;
             }
+
+            piece.setProperty("xwstag", pilotName);
+            if(xwsText !=null) if(!xwsText.isEmpty()) piece.setProperty("xwstext", xwsText);
 
             piece = buildImageLayer(piece, pilotCardImage, pilotName, faction);
 
