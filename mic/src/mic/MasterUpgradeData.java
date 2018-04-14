@@ -65,7 +65,14 @@ public class MasterUpgradeData extends ArrayList<MasterUpgradeData.UpgradeData> 
         loadedData = Maps.newHashMap();
 
         for(UpgradeData upgrade : data) {
-            loadedData.put(upgrade.getXws(), upgrade);
+            if(loadedData.get(upgrade.getXws()) == null)
+            {
+                loadedData.put(upgrade.getXws(), upgrade);
+            }else{
+                MasterUpgradeData.UpgradeData oldUpgrade = loadedData.get(upgrade.getXws());
+                oldUpgrade.setText2("// " + upgrade.getName() + ": " + upgrade.getText());
+                loadedData.put(upgrade.getXws(), oldUpgrade);
+            }
 
 
 
@@ -140,17 +147,6 @@ public class MasterUpgradeData extends ArrayList<MasterUpgradeData.UpgradeData> 
             return text;
         }
 
-        public String getText2ndSide() {
-            String side2Text = "";
-
-                // BIG puzzle, gotta use this side2 id number to go fetch the text (card ability) of that other side
-                // example: if you try to do it from Adaptability +1 which is id=233, the other side will be id=232.
-                // HOWEVER, that adaptabilit-1 isn't in loadedData because that map only takes the xws name as a key
-                // and it has already fulfilled that spot with adaptability+1, leaving adapt-1 out of the loaded map entirely.
-                // gotta parse the JSON again to find the other side.
-            return side2Text;
-        }
-
         public String getSlot() {
             return slot;
         }
@@ -162,6 +158,10 @@ public class MasterUpgradeData extends ArrayList<MasterUpgradeData.UpgradeData> 
         public Integer getDualCard()
         {
             return dualCard;
+        }
+
+        public void setText2(String text) {
+            this.text += text;
         }
     }
 
