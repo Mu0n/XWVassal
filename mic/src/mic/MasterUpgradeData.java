@@ -58,7 +58,7 @@ public class MasterUpgradeData extends ArrayList<MasterUpgradeData.UpgradeData> 
     {
         MasterUpgradeData data = Util.loadRemoteJson(REMOTE_URL, MasterUpgradeData.class);
         if (data == null) {
-          //  Util.logToChat("Unable to load xwing-data for upgrades from the web, falling back to local copy");
+            //  Util.logToChat("Unable to load xwing-data for upgrades from the web, falling back to local copy");
             data = Util.loadClasspathJson("upgrades.json", MasterUpgradeData.class);
         }
 
@@ -84,7 +84,7 @@ public class MasterUpgradeData extends ArrayList<MasterUpgradeData.UpgradeData> 
         // load from dispatch
         MasterUpgradeData data = Util.loadRemoteJson(OTAContentsChecker.OTA_DISPATCHER_UPGRADES_JSON_URL, MasterUpgradeData.class);
         if (data == null) {
-           // Util.logToChat("Unable to load dispatcher for upgrades from the web, falling back to local copy");
+            // Util.logToChat("Unable to load dispatcher for upgrades from the web, falling back to local copy");
             data = Util.loadClasspathJson("dispatcher_upgrades.json", MasterUpgradeData.class);
             if(data == null)
             {
