@@ -74,6 +74,8 @@ public class AutoSquadSpawn extends AbstractConfigurable {
                 "Base Game"
         };
 
+        listOfXwingDataSources = fetchMasterRoutingList();
+
         /*
         try{
             //TO DO load a list of game mode from a github repo that will be shared with top modders
@@ -431,6 +433,19 @@ public class AutoSquadSpawn extends AbstractConfigurable {
         String listName = xwsList.getName();
         logToChat("%s point list%s loaded from %s", pieces.getSquadPoints(),
                 listName != null ? " '" + listName + "'" : "", xwsList.getXwsSource());
+    }
+
+    private String[] fetchMasterRoutingList() {
+        String[] listOStrings = {"", ""};
+
+        try{
+
+        }
+        catch(Exception e){
+            logToChat("Couldn't load the master alt mode list (no connection to net?");
+        }
+
+        return listOStrings;
     }
 
     private void validateList(XWSList list) throws XWSpawnException
