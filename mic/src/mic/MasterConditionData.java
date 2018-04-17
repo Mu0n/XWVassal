@@ -42,25 +42,50 @@ public class MasterConditionData extends ArrayList<MasterConditionData.Condition
             // load data from dispatcher file
             MasterConditionData dispatcherData = loadFromDispatcher();
 
-            // add in any pilots from dispatcher that aren't in xwing-data
+            // dispatcher overrides xwing-data
             if (dispatcherData != null)
             {
-                for (MasterConditionData.ConditionData condition : dispatcherData)
+                for (MasterConditionData.ConditionData dispatcherCondition : dispatcherData)
                 {
 
-                    if(loadedDataByName.get(condition.getName()) == null)
+                    MasterConditionData.ConditionData xwingDataCondition = loadedData.get(dispatcherCondition.getXws());
+
+                    // If there is no dispatcher version of this condition, store the xwing-data version
+                    if(dispatcherCondition == null)
                     {
-                        loadedDataByName.put(condition.getName(), condition);
-                    }
-                    if(loadedData.get(condition.getXws()) == null)
+                        loadedData.put(xwingDataCondition.getXws(), xwingDataCondition);
+
+                        // if there is no xwing-data version of this condition, store the dispatcher version
+                    }else if(xwingDataCondition == null)
                     {
-                        loadedData.put(condition.getXws(), condition);
+                        loadedData.put(dispatcherCondition.getXws(), dispatcherCondition);
+                        // There are both xwing-data and dispatcher versions, so merge them, with dispatcher taking precedence
+                    }else{
+                        // do the merge.  Dispatcher overrides
+                        MasterConditionData.ConditionData mergedCondition = mergeConditions(xwingDataCondition,dispatcherCondition);
+                        loadedData.put(mergedCondition.getXws(), mergedCondition);
                     }
+
 
                 }
             }
         }
 
+    }
+
+    private static String mergeProperties(String baseString, String overrideString)
+    {
+        return overrideString == null ? baseString : overrideString;
+    }
+
+    private static MasterConditionData.ConditionData mergeConditions(MasterConditionData.ConditionData baseCondition, MasterConditionData.ConditionData overrideCondition) {
+
+        MasterConditionData.ConditionData mergedCondition = new MasterConditionData.ConditionData();
+        mergedCondition.setXws(baseCondition.getXws());
+
+        mergedCondition.setName(mergeProperties(baseCondition.getName(),overrideCondition.getName()));
+
+        return mergedCondition;
     }
 
     private static void loadFromXwingData()
@@ -111,8 +136,18 @@ public class MasterConditionData extends ArrayList<MasterConditionData.Condition
             return xws;
         }
 
+        private void setXws(String xws)
+        {
+            this.xws = xws;
+        }
+
         public String getName() {
             return name;
+        }
+
+        private void setName(String name)
+        {
+            this.name = name;
         }
 
     }

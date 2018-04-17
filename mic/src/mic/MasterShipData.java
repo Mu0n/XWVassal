@@ -60,15 +60,73 @@ public class MasterShipData extends ArrayList<MasterShipData.ShipData> {
         // load data from dispatcher file
         MasterShipData dispatcherData = loadFromDispatcher();
 
-        // add in any ships from dispatcher that aren't in xwing-data
-        if(dispatcherData != null) {
-            for (ShipData ship : dispatcherData) {
-                if (loadedData.get(ship.getXws()) == null) {
-//                    Util.logToChat("Adding ship " + ship.getXws() + " from dispatcher file");
-                    loadedData.put(ship.getXws(), ship);
+        // dispatcher overrides xwing-data
+        if(dispatcherData != null)
+        {
+            for (ShipData dispatcherShip : dispatcherData)
+            {
+                ShipData xwingDataShip = loadedData.get(dispatcherShip.getXws());
+                // If there is no dispatcher version of this ship, store the xwing-data version
+                if(dispatcherShip == null)
+                {
+                    loadedData.put(xwingDataShip.getXws(), xwingDataShip);
+
+                // if there is no xwing-data version of this ship, store the dispatcher version
+                }else if(xwingDataShip == null)
+                {
+                    loadedData.put(dispatcherShip.getXws(), dispatcherShip);
+                // There are both xwing-data and dispatcher versions, so merge them, with dispatcher taking precedence
+                }else{
+                    // do the merge.  Dispatcher overrides
+                    ShipData mergedShip = mergeShips(xwingDataShip,dispatcherShip);
+                    loadedData.put(mergedShip.getXws(), mergedShip);
                 }
             }
         }
+    }
+
+    private static String mergeProperties(String baseString, String overrideString)
+    {
+        return overrideString == null ? baseString : overrideString;
+    }
+
+    private static Integer mergeProperties(Integer baseInt, Integer overrideInt)
+    {
+        return overrideInt == null ? baseInt : overrideInt;
+    }
+
+    private static List mergeProperties(List baseList, List overrideList)
+    {
+        return overrideList.size() == 0 ? baseList : overrideList;
+    }
+
+    private static Boolean mergeProperties(Boolean baseBool, Boolean overrideBool)
+    {
+        return overrideBool == null ? baseBool : overrideBool;
+    }
+
+    private static ShipData mergeShips(ShipData baseShip, ShipData overrideShip)
+    {
+        ShipData mergedShip = new ShipData();
+        mergedShip.setXws(baseShip.getXws());
+
+        mergedShip.setName(mergeProperties(baseShip.getName(),overrideShip.getName()));
+        mergedShip.setAttack(mergeProperties(baseShip.getAttack(),overrideShip.getAttack()));
+        mergedShip.setAgility(mergeProperties(baseShip.getAgility(),overrideShip.getAgility()));
+        mergedShip.setHull(mergeProperties(baseShip.getHull(),overrideShip.getHull()));
+        mergedShip.setShields(mergeProperties(baseShip.getShields(),overrideShip.getShields()));
+        mergedShip.setEnergy(mergeProperties(baseShip.getEnergy(),overrideShip.getEnergy()));
+        mergedShip.setActions(mergeProperties(baseShip.getActions(),overrideShip.getActions()));
+        mergedShip.setFactions(mergeProperties(baseShip.getFactions(),overrideShip.getFactions()));
+        mergedShip.setDialManeuvers(mergeProperties(baseShip.getDialManeuvers(),overrideShip.getDialManeuvers()));
+        mergedShip.setManeuvers(mergeProperties(baseShip.getManeuvers(),overrideShip.getManeuvers()));
+        mergedShip.setFiringArcs(mergeProperties(baseShip.getFiringArcs(),overrideShip.getFiringArcs()));
+        mergedShip.setSize(mergeProperties(baseShip.getSize(),overrideShip.getSize()));
+        mergedShip.setDualBase(mergeProperties(baseShip.hasDualBase(),overrideShip.hasDualBase()));
+        mergedShip.setDualBaseToggleMenuText(mergeProperties(baseShip.getDualBaseToggleMenuText(),overrideShip.getDualBaseToggleMenuText()));
+        mergedShip.setDualBaseReportText(mergeProperties(baseShip.getDualBaseReportText(),overrideShip.getDualBaseReportText()));
+
+        return mergedShip;
     }
 
     private static void loadFromXwingData()
@@ -109,19 +167,19 @@ public class MasterShipData extends ArrayList<MasterShipData.ShipData> {
         private String name;
 
         @JsonProperty("attack")
-        private int attack = 0;
+        private Integer attack;
 
         @JsonProperty("agility")
-        private int agility = 0;
+        private Integer agility;
 
         @JsonProperty("hull")
-        private int hull = 0;
+        private Integer hull;
 
         @JsonProperty("shields")
-        private int shields = 0;
+        private Integer shields;
 
         @JsonProperty("energy")
-        private int energy = 0;
+        private Integer energy;
 
         @JsonProperty("xws")
         private String xws;
@@ -144,31 +202,75 @@ public class MasterShipData extends ArrayList<MasterShipData.ShipData> {
         @JsonProperty("size")
         private String size;
 
+        @JsonProperty("has_dual_base")
+        private Boolean hasDualBase;
+
+        @JsonProperty("dual_base_toggle_menu_text")
+        private String dualBaseToggleMenuText;
+
+        @JsonProperty("dual_base_report_text")
+        private String dualBaseReportText;
+
         public String getName() {
             return name;
         }
-        public int getAttack() {
+
+        private void setName(String name) {
+            this.name = name;
+        }
+
+        public Integer getAttack() {
             return attack;
         }
 
-        public int getAgility() {
+        private void setAttack(Integer attack)
+        {
+            this.attack = attack;
+        }
+
+        public Integer getAgility() {
             return agility;
         }
 
-        public int getHull() {
+        private void setAgility(Integer agility)
+        {
+            this.agility = agility;
+        }
+
+        public Integer getHull() {
             return hull;
         }
 
-        public int getShields() {
+        private void setHull(Integer hull)
+        {
+            this.hull = hull;
+        }
+
+        public Integer getShields() {
             return shields;
         }
 
-        public int getEnergy() {
+        private void setShields(Integer shields)
+        {
+            this.shields = shields;
+        }
+
+        public Integer getEnergy() {
             return energy;
+        }
+
+        private void setEnergy(Integer energy)
+        {
+            this.energy = energy;
         }
 
         public String getXws() {
             return xws;
+        }
+
+        private void setXws(String xws)
+        {
+            this.xws = xws;
         }
 
         public String getSize()
@@ -176,16 +278,36 @@ public class MasterShipData extends ArrayList<MasterShipData.ShipData> {
             return size;
         }
 
+        private void setSize(String size)
+        {
+            this.size = size;
+        }
+
         public List<String> getActions() {
             return this.actions;
+        }
+
+        private void setActions(List<String> actions)
+        {
+            this.actions = actions;
         }
 
         public List<String> getFactions() {
             return this.factions;
         }
 
+        private void setFactions(List<String> factions)
+        {
+            this.factions = factions;
+        }
+
         public List<String> getFiringArcs() {
             return this.firingArcs;
+        }
+
+        private void setFiringArcs(List<String> firingArcs)
+        {
+            this.firingArcs = firingArcs;
         }
 
         public List<String> getDialManeuvers()
@@ -199,6 +321,11 @@ public class MasterShipData extends ArrayList<MasterShipData.ShipData> {
         }
         public List<List<Integer>> getManeuvers() { return maneuvers; }
 
+        private void setManeuvers(List<List<Integer>> maneuvers)
+        {
+            this.maneuvers = maneuvers;
+        }
+
         public boolean hasSmallBase() {
             return "small".equals(this.size);
         }
@@ -209,6 +336,36 @@ public class MasterShipData extends ArrayList<MasterShipData.ShipData> {
 
         public boolean hasHugeBase() {
             return "huge".equals(this.size);
+        }
+
+        public Boolean hasDualBase()
+        {
+            return this.hasDualBase;
+        }
+
+        private void setDualBase(Boolean hasDualBase)
+        {
+            this.hasDualBase = hasDualBase;
+        }
+
+        public String getDualBaseToggleMenuText()
+        {
+            return this.dualBaseToggleMenuText;
+        }
+
+        private void setDualBaseToggleMenuText(String dualBaseToggleMenuText)
+        {
+            this.dualBaseToggleMenuText = dualBaseToggleMenuText;
+        }
+
+        public String getDualBaseReportText()
+        {
+            return this.dualBaseReportText;
+        }
+
+        private void setDualBaseReportText(String dualBaseReportText)
+        {
+            this.dualBaseReportText = dualBaseReportText;
         }
     }
 }

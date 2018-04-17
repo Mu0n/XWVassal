@@ -66,36 +66,83 @@ public class MasterPilotData extends ArrayList<MasterPilotData.PilotData> {
             // load data from dispatcher file
             MasterPilotData dispatcherData = loadFromDispatcher();
 
-            // add in any pilots from dispatcher that aren't in xwing-data
+            // dispatcher overrides xwing-data
             if (dispatcherData != null)
             {
-                for (PilotData pilot : dispatcherData)
+                for (PilotData dispatcherPilot : dispatcherData)
                 {
-                    String xwsShip = Canonicalizer.getCanonicalShipName(pilot.getShip());
+                    String xwsShip = Canonicalizer.getCanonicalShipName(dispatcherPilot.getShip());
 
                     //MrMurphM - need to add in faction or pilots like Boba Fett will not work properly
-                    String xwsFaction = Canonicalizer.getCanonicalFactionName(pilot.getFaction());
+                    String xwsFaction = Canonicalizer.getCanonicalFactionName(dispatcherPilot.getFaction());
                     String convFaction = factionConversion.get(xwsFaction);
 
 
-                    String pilotKey = convFaction+"/"+xwsShip+"/"+pilot.getXws();
+                    String pilotKey = convFaction+"/"+xwsShip+"/"+dispatcherPilot.getXws();
 
-                    if(loadedData.get(pilotKey) == null)
+
+                    PilotData xwingDataPilot = loadedData.get(pilotKey);
+
+
+                    // If there is no dispatcher version of this pilot, store the xwing-data version
+                    if(dispatcherPilot == null)
                     {
+                        loadedData.put(pilotKey, xwingDataPilot);
 
-
-                        loadedData.put(pilotKey, pilot);
+                    // if there is no xwing-data version of this pilot, store the dispatcher version
+                    }else if(xwingDataPilot == null)
+                    {
+                        loadedData.put(pilotKey, dispatcherPilot);
+                    // There are both xwing-data and dispatcher versions, so merge them, with dispatcher taking precedence
+                    }else{
+                        // do the merge.  Dispatcher overrides
+                        PilotData mergedSPilot = mergePilots(xwingDataPilot,dispatcherPilot);
+                        loadedData.put(pilotKey, mergedSPilot);
                     }
 
-                  //  if (loadedData.get(xwsShip + "/" + pilot.getXws()) == null) {
-                  //      loadedData.put(xwsShip + "/" + pilot.getXws(), pilot);
-                  //  }
                 }
             }
         }
 
     }
+    private static String mergeProperties(String baseString, String overrideString)
+    {
+        return overrideString == null ? baseString : overrideString;
+    }
 
+    private static Boolean mergeProperties(Boolean baseBool, Boolean overrideBool)
+    {
+        return overrideBool == null ? baseBool : overrideBool;
+    }
+
+    private static List mergeProperties(List baseList, List overrideList)
+    {
+        return overrideList.size() == 0 ? baseList : overrideList;
+    }
+
+    private static ShipOverrides mergeProperties(ShipOverrides baseOverrides, ShipOverrides overrideOverrides)
+    {
+        return overrideOverrides == null ? baseOverrides : overrideOverrides;
+    }
+
+    private static PilotData mergePilots(PilotData basePilot, PilotData overridePilot)
+    {
+        PilotData mergedPilot = new PilotData();
+        mergedPilot.setXws(basePilot.getXws());
+        mergedPilot.setFaction(basePilot.getFaction());
+        mergedPilot.setShip(basePilot.getShip());
+
+        mergedPilot.setSkill(mergeProperties(basePilot.getSkillStr(),overridePilot.getSkillStr()));
+        mergedPilot.setName(mergeProperties(basePilot.getName(),overridePilot.getName()));
+        mergedPilot.setPoints(mergeProperties(basePilot.getPointsStr(),overridePilot.getPointsStr()));
+        mergedPilot.setUnique(mergeProperties(basePilot.isUnique(),overridePilot.isUnique()));
+        mergedPilot.setConditions(mergeProperties(basePilot.getConditions(),overridePilot.getConditions()));
+        mergedPilot.setSlots(mergeProperties(basePilot.getSlots(),overridePilot.getSlots()));
+        mergedPilot.setShipOverrides(mergeProperties(basePilot.getShipOverrides(),overridePilot.getShipOverrides()));
+        mergedPilot.setText(mergeProperties(basePilot.getText(),overridePilot.getText()));
+
+        return mergedPilot;
+    }
 
     public Object[] getAllPilots()
     {
@@ -155,7 +202,7 @@ public class MasterPilotData extends ArrayList<MasterPilotData.PilotData> {
     public static class PilotData {
 
         @JsonProperty("skill")
-        private String skill = "0";
+        private String skill;
 
         @JsonProperty("ship")
         private String ship;
@@ -164,7 +211,7 @@ public class MasterPilotData extends ArrayList<MasterPilotData.PilotData> {
         private String name;
 
         @JsonProperty("points")
-        private String points = "0";
+        private String points;
 
         @JsonProperty("faction")
         private String faction;
@@ -173,7 +220,7 @@ public class MasterPilotData extends ArrayList<MasterPilotData.PilotData> {
         private String xws;
 
         @JsonProperty("unique")
-        private boolean unique;
+        private Boolean unique;
 
         @JsonProperty("conditions")
         private List<String> conditions = Lists.newArrayList();
@@ -191,13 +238,28 @@ public class MasterPilotData extends ArrayList<MasterPilotData.PilotData> {
             return shipOverrides;
         }
 
-        public boolean isUnique() {
+        private void setShipOverrides(ShipOverrides shipOverrides)
+        {
+            this.shipOverrides = shipOverrides;
+        }
+
+        public Boolean isUnique() {
             return unique;
+        }
+
+        private void setUnique(Boolean unique)
+        {
+            this.unique = unique;
+        }
+
+        private String getSkillStr()
+        {
+            return skill;
         }
 
         public int getSkill() {
             try {
-                return Integer.parseInt(skill);
+                return Integer.parseInt(skill == null ? "0" : skill);
             } catch (Exception e) {
                 return 0;
             }
@@ -208,39 +270,90 @@ public class MasterPilotData extends ArrayList<MasterPilotData.PilotData> {
         {
             this.skill = skill.toString();
         }
-        
+
+        @JsonIgnore
+        private void setSkill(String skill)
+        {
+            this.skill = skill;
+        }
+
+        private String getPointsStr()
+        {
+            return points;
+        }
+
         public int getPoints() {
             try {
-                return Integer.parseInt(points);
+                return Integer.parseInt(points == null ? "0" : points);
             } catch (Exception e) {
                 return 0;
             }
+        }
+
+        private void setPoints(String points)
+        {
+            this.points = points;
         }
 
         public String getFaction(){
             return faction;
         }
 
+        private void setFaction(String faction)
+        {
+            this.faction = faction;
+        }
+
         public String getXws() {
             return xws;
+        }
+
+        private void setXws(String xws)
+        {
+            this.xws = xws;
         }
 
         public String getShip() {
             return ship;
         }
 
+        private void setShip(String ship)
+        {
+            this.ship = ship;
+        }
+
         public String getName() {
             return name;
+        }
+        private void setName(String name)
+        {
+            this.name = name;
         }
         public String getText() {
             return text;
         }
 
+        private void setText(String text)
+        {
+            this.text = text;
+        }
+
         public List<String> getConditions() {
             return conditions;
         }
+
+        private void setConditions(List<String> conditions)
+        {
+            this.conditions = conditions;
+        }
+
         public List<String> getSlots() {
             return slots;
+        }
+
+        private void setSlots(List<String> slots)
+        {
+            this.slots = slots;
         }
     }
 
