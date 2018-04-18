@@ -124,11 +124,10 @@ public class MasterShipData extends ArrayList<MasterShipData.ShipData> {
         mergedShip.setSize(mergeProperties(baseShip.getSize(),overrideShip.getSize()));
         mergedShip.setDualBase(mergeProperties(baseShip.hasDualBase(),overrideShip.hasDualBase()));
         mergedShip.setDualBaseToggleMenuText(mergeProperties(baseShip.getDualBaseToggleMenuText(),overrideShip.getDualBaseToggleMenuText()));
-        mergedShip.setDualBaseReportText(mergeProperties(baseShip.getDualBaseReportText(),overrideShip.getDualBaseReportText()));
         mergedShip.setBaseImage1(mergeProperties(baseShip.getBaseImage1Identifier(),overrideShip.getBaseImage1Identifier()));
         mergedShip.setBaseImage2(mergeProperties(baseShip.getBaseImage2Identifier(),overrideShip.getBaseImage2Identifier()));
-
-
+        mergedShip.setBaseReport1Identifier(mergeProperties(baseShip.getBaseReport1Identifier(),overrideShip.getBaseReport1Identifier()));
+        mergedShip.setBaseReport2Identifier(mergeProperties(baseShip.getBaseReport2Identifier(),overrideShip.getBaseReport2Identifier()));
         return mergedShip;
     }
 
@@ -211,14 +210,18 @@ public class MasterShipData extends ArrayList<MasterShipData.ShipData> {
         @JsonProperty("dual_base_toggle_menu_text")
         private String dualBaseToggleMenuText;
 
-        @JsonProperty("dual_base_report_text")
-        private String dualBaseReportText;
 
         @JsonProperty("dual_base_image_1_identifier")
         private String baseImage1Identifier;
 
         @JsonProperty("dual_base_image_2_identifier")
         private String baseImage2Identifier;
+
+        @JsonProperty("dual_base_report_1_identifier")
+        private String baseReport1Identifier;
+
+        @JsonProperty("dual_base_report_2_identifier")
+        private String baseReport2Identifier;
 
         public String getBaseImage1Identifier()
         {
@@ -387,14 +390,25 @@ public class MasterShipData extends ArrayList<MasterShipData.ShipData> {
             this.dualBaseToggleMenuText = dualBaseToggleMenuText;
         }
 
-        public String getDualBaseReportText()
+        public String getBaseReport1Identifier()
         {
-            return this.dualBaseReportText;
+            return baseReport1Identifier;
         }
 
-        private void setDualBaseReportText(String dualBaseReportText)
+        public void setBaseReport1Identifier(String baseReport1Identifier)
         {
-            this.dualBaseReportText = dualBaseReportText;
+            this.baseReport1Identifier = baseReport1Identifier;
         }
+
+        public String getBaseReport2Identifier()
+        {
+            return baseReport2Identifier;
+        }
+
+        public void setBaseReport2Identifier(String baseReport2Identifier)
+        {
+            this.baseReport2Identifier = baseReport2Identifier;
+        }
+
     }
 }
