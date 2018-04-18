@@ -27,7 +27,8 @@ import java.util.Map;
 public class OTAContentsChecker extends AbstractConfigurable {
 
     // change this variable to a branch name to test, or master for deployment
-    private static final String OTA_RAW_GITHUB_BRANCH = "master";
+   // private static final String OTA_RAW_GITHUB_BRANCH = "master";
+    private static final String OTA_RAW_GITHUB_BRANCH = "dual-based-ships";
 
     private static final String OTA_RAW_GITHUB_ROOT = "https://raw.githubusercontent.com/Mu0n/XWVassalOTA/";
     public static final String OTA_RAW_BRANCH_URL = OTA_RAW_GITHUB_ROOT + OTA_RAW_GITHUB_BRANCH + "/";

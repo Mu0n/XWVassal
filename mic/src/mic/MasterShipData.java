@@ -125,6 +125,9 @@ public class MasterShipData extends ArrayList<MasterShipData.ShipData> {
         mergedShip.setDualBase(mergeProperties(baseShip.hasDualBase(),overrideShip.hasDualBase()));
         mergedShip.setDualBaseToggleMenuText(mergeProperties(baseShip.getDualBaseToggleMenuText(),overrideShip.getDualBaseToggleMenuText()));
         mergedShip.setDualBaseReportText(mergeProperties(baseShip.getDualBaseReportText(),overrideShip.getDualBaseReportText()));
+        mergedShip.setBaseImage1(mergeProperties(baseShip.getBaseImage1Identifier(),overrideShip.getBaseImage1Identifier()));
+        mergedShip.setBaseImage2(mergeProperties(baseShip.getBaseImage2Identifier(),overrideShip.getBaseImage2Identifier()));
+
 
         return mergedShip;
     }
@@ -210,6 +213,32 @@ public class MasterShipData extends ArrayList<MasterShipData.ShipData> {
 
         @JsonProperty("dual_base_report_text")
         private String dualBaseReportText;
+
+        @JsonProperty("dual_base_image_1_identifier")
+        private String baseImage1Identifier;
+
+        @JsonProperty("dual_base_image_2_identifier")
+        private String baseImage2Identifier;
+
+        public String getBaseImage1Identifier()
+        {
+            return baseImage1Identifier;
+        }
+
+        public String getBaseImage2Identifier()
+        {
+            return baseImage2Identifier;
+        }
+
+        public void setBaseImage1(String baseImage1Identifier)
+        {
+            this.baseImage1Identifier = baseImage1Identifier;
+        }
+
+        public void setBaseImage2(String baseImage2Identifier)
+        {
+            this.baseImage2Identifier = baseImage2Identifier;
+        }
 
         public String getName() {
             return name;

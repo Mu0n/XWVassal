@@ -135,7 +135,7 @@ public class MasterPilotData extends ArrayList<MasterPilotData.PilotData> {
         mergedPilot.setSkill(mergeProperties(basePilot.getSkillStr(),overridePilot.getSkillStr()));
         mergedPilot.setName(mergeProperties(basePilot.getName(),overridePilot.getName()));
         mergedPilot.setPoints(mergeProperties(basePilot.getPointsStr(),overridePilot.getPointsStr()));
-        mergedPilot.setUnique(mergeProperties(basePilot.isUnique(),overridePilot.isUnique()));
+        mergedPilot.setUnique(mergeProperties(basePilot.isUniqueBool(),overridePilot.isUniqueBool()));
         mergedPilot.setConditions(mergeProperties(basePilot.getConditions(),overridePilot.getConditions()));
         mergedPilot.setSlots(mergeProperties(basePilot.getSlots(),overridePilot.getSlots()));
         mergedPilot.setShipOverrides(mergeProperties(basePilot.getShipOverrides(),overridePilot.getShipOverrides()));
@@ -243,7 +243,13 @@ public class MasterPilotData extends ArrayList<MasterPilotData.PilotData> {
             this.shipOverrides = shipOverrides;
         }
 
-        public Boolean isUnique() {
+        public boolean isUnique() {
+            return unique == null ? false : unique.booleanValue();
+        //    return unique;
+        }
+
+        public boolean isUniqueBool()
+        {
             return unique;
         }
 

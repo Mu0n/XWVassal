@@ -8,8 +8,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import static mic.Util.logToChat;
-
 /*
  * This class dynamically generates GamePieces during AutoSquadSpawn
  */
@@ -49,8 +47,7 @@ public class GamePieceGenerator
        boolean needsBombCapability = determineIfShipNeedsBombCapability(ship);
 
         // execute the command to build the ship piece
-        StemShip.ShipGenerateCommand myShipGen = new StemShip.ShipGenerateCommand(ship.getShipData().getXws(), newShip, faction, pilotData.getXws(),needsBombCapability);
-       // StemShip.ShipGenerateCommand myShipGen = new StemShip.ShipGenerateCommand(ship.getShipData().getXws(), newShip, faction, pilotData.getXws());
+        StemShip.ShipGenerateCommand myShipGen = new StemShip.ShipGenerateCommand(ship.getShipData().getXws(), newShip, faction, pilotData.getXws(),needsBombCapability, shipData.hasDualBase(), shipData.getDualBaseToggleMenuText(),shipData.getDualBaseReportText());
 
         myShipGen.execute();
 
@@ -127,7 +124,7 @@ public class GamePieceGenerator
             piece.setProperty("Attack Rating", attack + attackModifier);
             piece.setProperty("Shield Rating", shields + shieldsModifier);
 
-            if (shipData.getEnergy() > 0) {
+            if (shipData.getEnergy() != null && shipData.getEnergy() > 0) {
                 int energy = shipData.getEnergy();
                 piece.setProperty("Energy Rating", energy + energyModifier);
             }
@@ -359,6 +356,7 @@ public class GamePieceGenerator
     private static String getDisplayPilotName(MasterPilotData.PilotData pilotData, MasterShipData.ShipData shipData, Integer shipNumber )
     {
         String pilotName = "";
+
         if (pilotData != null) {
             pilotName = Acronymizer.acronymizer(
                     pilotData.getName(),
@@ -374,6 +372,7 @@ public class GamePieceGenerator
 
     private static String getDisplayShipName(MasterPilotData.PilotData pilotData, MasterShipData.ShipData shipData) {
         String shipName = "";
+
         if (pilotData != null) {
             shipName = Acronymizer.acronymizer(
                     pilotData.getShip(),
