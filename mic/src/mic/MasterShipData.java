@@ -287,7 +287,13 @@ public class MasterShipData extends ArrayList<MasterShipData.ShipData> {
             this.shields = shields;
         }
 
-        public Integer getEnergy() {
+        public int getEnergy() {
+            return energy == null ? 0 : energy.intValue();
+
+        }
+
+        public Integer getEntergyInt()
+        {
             return energy;
         }
 

@@ -124,7 +124,7 @@ public class GamePieceGenerator
             piece.setProperty("Attack Rating", attack + attackModifier);
             piece.setProperty("Shield Rating", shields + shieldsModifier);
 
-            if (shipData.getEnergy() != null && shipData.getEnergy() > 0) {
+            if (shipData.getEnergy() > 0) {
                 int energy = shipData.getEnergy();
                 piece.setProperty("Energy Rating", energy + energyModifier);
             }
