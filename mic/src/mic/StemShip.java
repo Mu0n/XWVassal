@@ -20,6 +20,7 @@ public class StemShip extends Decorator implements EditablePiece {
     public static final String ID = "stemship";
 
     private static final String BASE_SHIP_LAYER_NAME = "Layer - Base Ship";
+    private static final String TOGGLE_BASE_TRIGGER_ACTION_NAME = "Trigger Action   - Toggle Ship Base";
     private static final String SHIP_BASE_IMAGE_PREFIX = "Ship_Base";
 
     private static Map<String, String> cardboardActionImages = ImmutableMap.<String, String>builder()
@@ -508,7 +509,7 @@ public class StemShip extends Decorator implements EditablePiece {
                 sb.append("macro;Toggle Ship Base;");
                 sb.append(dualBaseMenuText);
                 sb.append(";85,520;{ULevel==1 || ULevel==3};;63743\\,0\\,dopivot;false;;;counted;;;;false;;1;1");
-                TriggerAction trig = (TriggerAction)Util.getTriggerAction(piece,"Trigger Action   - Toggle Ship Base");
+                TriggerAction trig = (TriggerAction)Util.getTriggerAction(piece,TOGGLE_BASE_TRIGGER_ACTION_NAME);
                 trig.mySetType(sb.toString());
 
                 /*
