@@ -41,12 +41,27 @@ public class MasterUpgradeData extends ArrayList<MasterUpgradeData.UpgradeData> 
             // load data from dispatcher file
             MasterUpgradeData dispatcherData = loadFromDispatcher();
 
-            // add in any upgrades from dispatcher that aren't in xwing-data
-            if (dispatcherData != null) {
-                for (UpgradeData upgrade : dispatcherData) {
-                    if (loadedData.get(upgrade.getXws()) == null) {
-//                        Util.logToChat("Adding upgrade " + upgrade.getXws() + " from dispatcher file");
-                        loadedData.put(upgrade.getXws(), upgrade);
+            // dispatcher overrides xwing-data
+            if (dispatcherData != null)
+            {
+                for (UpgradeData dispatcherUpgrade : dispatcherData)
+                {
+                    UpgradeData xwingDataUpgrade = loadedData.get(dispatcherUpgrade.getXws());
+
+                    // If there is no dispatcher version of this upgrade, store the xwing-data version
+                    if(dispatcherUpgrade == null)
+                    {
+                        loadedData.put(xwingDataUpgrade.getXws(), xwingDataUpgrade);
+
+                        // if there is no xwing-data version of this upgrade, store the dispatcher version
+                    }else if(xwingDataUpgrade == null)
+                    {
+                        loadedData.put(dispatcherUpgrade.getXws(), dispatcherUpgrade);
+                        // There are both xwing-data and dispatcher versions, so merge them, with dispatcher taking precedence
+                    }else{
+                        // do the merge.  Dispatcher overrides
+                        UpgradeData mergedUpgrade = mergeUpgrades(xwingDataUpgrade,dispatcherUpgrade);
+                        loadedData.put(mergedUpgrade.getXws(), mergedUpgrade);
                     }
                 }
             }
@@ -54,11 +69,48 @@ public class MasterUpgradeData extends ArrayList<MasterUpgradeData.UpgradeData> 
 
     }
 
+    private static String mergeProperties(String baseString, String overrideString)
+    {
+        return overrideString == null ? baseString : overrideString;
+    }
+
+    private static Integer mergeProperties(Integer baseInt, Integer overrideInt)
+    {
+        return overrideInt == null ? baseInt : overrideInt;
+    }
+
+    private static ArrayList mergeProperties(ArrayList baseList, ArrayList overrideList)
+    {
+        return overrideList.size() == 0 ? baseList : overrideList;
+    }
+
+    private static List mergeProperties(List baseList, List overrideList)
+    {
+        return overrideList.size() == 0 ? baseList : overrideList;
+    }
+
+    private static UpgradeData mergeUpgrades(UpgradeData baseUpgrade, UpgradeData overrideUpgrade)
+    {
+        UpgradeData mergedUpgrade = new UpgradeData();
+        mergedUpgrade.setXws(baseUpgrade.getXws());
+        mergedUpgrade.setId(baseUpgrade.getId());
+
+        mergedUpgrade.setName(mergeProperties(baseUpgrade.getName(),overrideUpgrade.getName()));
+        mergedUpgrade.setPoints(mergeProperties(baseUpgrade.getPointsInteger(),overrideUpgrade.getPointsInteger()));
+        mergedUpgrade.setGrants(mergeProperties(baseUpgrade.getGrants(),overrideUpgrade.getGrants()));
+        mergedUpgrade.setConditions(mergeProperties(baseUpgrade.getConditions(),overrideUpgrade.getConditions()));
+        mergedUpgrade.setSlot(mergeProperties(baseUpgrade.getSlot(),overrideUpgrade.getSlot()));
+        mergedUpgrade.setDualCard(mergeProperties(baseUpgrade.getDualCard(),overrideUpgrade.getDualCard()));
+        mergedUpgrade.setText(mergeProperties(baseUpgrade.getText(),overrideUpgrade.getText()));
+
+        return mergedUpgrade;
+    }
+
     private static void loadFromXwingData()
     {
         MasterUpgradeData data = Util.loadRemoteJson(REMOTE_URL, MasterUpgradeData.class);
         if (data == null) {
-          //  Util.logToChat("Unable to load xwing-data for upgrades from the web, falling back to local copy");
+            //  Util.logToChat("Unable to load xwing-data for upgrades from the web, falling back to local copy");
             data = Util.loadClasspathJson("upgrades.json", MasterUpgradeData.class);
         }
 
@@ -84,7 +136,7 @@ public class MasterUpgradeData extends ArrayList<MasterUpgradeData.UpgradeData> 
         // load from dispatch
         MasterUpgradeData data = Util.loadRemoteJson(OTAContentsChecker.OTA_DISPATCHER_UPGRADES_JSON_URL, MasterUpgradeData.class);
         if (data == null) {
-           // Util.logToChat("Unable to load dispatcher for upgrades from the web, falling back to local copy");
+            // Util.logToChat("Unable to load dispatcher for upgrades from the web, falling back to local copy");
             data = Util.loadClasspathJson("dispatcher_upgrades.json", MasterUpgradeData.class);
             if(data == null)
             {
@@ -104,7 +156,7 @@ public class MasterUpgradeData extends ArrayList<MasterUpgradeData.UpgradeData> 
         private String name;
 
         @JsonProperty("points")
-        private Integer points = 0;
+        private Integer points;
 
         @JsonProperty("xws")
         private String xws;
@@ -129,35 +181,85 @@ public class MasterUpgradeData extends ArrayList<MasterUpgradeData.UpgradeData> 
             return conditions;
         }
 
+        private void setConditions(List<String> conditions)
+        {
+            this.conditions = conditions;
+        }
+
+
         public ArrayList<UpgradeGrants> getGrants() {
             return grants;
         }
 
+        private void setGrants(ArrayList<UpgradeGrants> grants)
+        {
+            this.grants = grants;
+        }
+
         public Integer getId() { return id; }
+
+        private void setId(Integer id)
+        {
+            this.id = id;
+        }
 
         public String getXws() {
             return xws;
         }
 
+        private void setXws(String xws)
+        {
+            this.xws = xws;
+        }
         public String getName() {
             return name;
+        }
+        private void setName(String name)
+        {
+            this.name = name;
         }
 
         public String getText() {
             return text;
         }
 
+        private void setText(String text)
+        {
+            this.text = text;
+        }
+
         public String getSlot() {
             return slot;
         }
 
+        private void setSlot(String slot)
+        {
+            this.slot = slot;
+        }
+
         public int getPoints() {
+
+            return points == null ? 0 : points;
+        }
+
+        public Integer getPointsInteger()
+        {
             return points;
+        }
+
+        private void setPoints(Integer points)
+        {
+            this.points = points;
         }
 
         public Integer getDualCard()
         {
             return dualCard;
+        }
+
+        private void setDualCard(Integer dualCard)
+        {
+            this.dualCard = dualCard;
         }
 
         public void setText2(String text) {

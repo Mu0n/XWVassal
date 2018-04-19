@@ -20,6 +20,7 @@ public class StemShip extends Decorator implements EditablePiece {
     public static final String ID = "stemship";
 
     private static final String BASE_SHIP_LAYER_NAME = "Layer - Base Ship";
+    private static final String TOGGLE_BASE_TRIGGER_ACTION_NAME = "Trigger Action   - Toggle Ship Base";
     private static final String SHIP_BASE_IMAGE_PREFIX = "Ship_Base";
 
     private static Map<String, String> cardboardActionImages = ImmutableMap.<String, String>builder()
@@ -154,33 +155,38 @@ public class StemShip extends Decorator implements EditablePiece {
         String shipName;
         String faction = "";
         String size = "";
-       // List<String> actionList;
         String xwsPilot = "";
         boolean needsBombCapability;
-     //   boolean shipContainsMobileArc;
+        boolean dualBase;
+        String dualBaseToggleMenuText;
+        String base1ReportIdentifier;
+        String base2ReportIdentifier;
 
-        ShipGenerateCommand(String shipXws,   GamePiece piece, String faction, String xwsPilot, boolean needsBombCapability) {
+        ShipGenerateCommand(String shipXws,   GamePiece piece, String faction, String xwsPilot, boolean needsBombCapability, Boolean hasDualBase, String dualBaseToggleMenuText, String base1ReportIdentifier, String base2ReportIdentifier) {
         //ShipGenerateCommand(String shipXws,   GamePiece piece, String faction, String xwsPilot) {
 
             // fetch the maneuver array of arrays according to the xws name passed on from autospawn or other means
             xwsShipName = shipXws;
             this.faction = faction;
             MasterShipData.ShipData shipData = MasterShipData.getShipData(xwsShipName);
-            //arcList = shipData.getFiringArcs();
             shipName = shipData.getName();
             this.piece = piece;
             this.xwsPilot = xwsPilot;
             this.size = shipData.getSize();
-        //    this.shipContainsMobileArc = shipContainsMobileArc;
             this.needsBombCapability = needsBombCapability;
-           // this.actionList = shipData.getActions();
+
+            this.dualBase = hasDualBase == null ? false : hasDualBase.booleanValue();
+            this.dualBaseToggleMenuText = dualBaseToggleMenuText;
+            this.base1ReportIdentifier = base1ReportIdentifier;
+            this.base2ReportIdentifier = base2ReportIdentifier;
+
         }
 
 
         protected void executeCommand()
         {
             // find the appropriate baseImage
-            piece = buildShipBaseLayer(piece,faction,xwsShipName,xwsPilot, size);
+            piece = buildShipBaseLayer(piece,faction,xwsShipName,xwsPilot, size, dualBase, dualBaseToggleMenuText, base1ReportIdentifier,base2ReportIdentifier);
 
             // Add the Target Lock capability
             piece = addTargetLock(piece,faction,size);
@@ -188,12 +194,14 @@ public class StemShip extends Decorator implements EditablePiece {
             // add the firing arcs needed
             piece = addFiringArcs(piece,faction,size,xwsShipName);
 
+
+
             if(this.needsBombCapability) {
                 piece = addBombCapability(piece,size);
-        //        piece = removeBombCapability(piece);
             }
 
         }
+
 
         private GamePiece addFiringArcs(GamePiece newGamePiece, String faction, String newSize, String xws )
         {
@@ -407,23 +415,25 @@ public class StemShip extends Decorator implements EditablePiece {
 
         }*/
 
-        private GamePiece buildShipBaseLayer(GamePiece piece, String faction, String xwsShipName, String xwsPilot, String size)
+        private GamePiece buildShipBaseLayer(GamePiece piece, String faction, String xwsShipName, String xwsPilot, String size, boolean dualBase, String dualBaseMenuText, String base1ReportIdentifier, String base2ReportIdentifier)
         {
 
-            // first find the base image name
-            String shipBaseImage[] = findShipBaseImage(faction,xwsShipName, xwsPilot, size);
 
-            boolean dualArt = false;
-            if(shipBaseImage[1] != null && !shipBaseImage[1].equals(""))
-            {
-                dualArt = true;
-            }
+
+        //    boolean dualArt = false;
+         //   if(shipBaseImage[1] != null && !shipBaseImage[1].equals(""))
+        //    {
+        //        dualArt = true;
+         //   }
 
             //  overwrite the layer with a new state
-            if(!dualArt) {
+            if(!dualBase) {
+                // first find the base image name
+                String shipBaseImage = findShipBaseImage(faction,xwsShipName, xwsPilot, size);
+               // mic.Util.logToChat(xwsShipName + " is NOT dual based");
                 StringBuffer sb = new StringBuffer();
                 sb.append("emb2;Activate;2;;Ghost;2;;;2;;;;1;false;0;0;");
-                sb.append(shipBaseImage[0]);
+                sb.append(shipBaseImage);
                 if(size.equals("small")) {
                     sb.append(",Ship_Small_SeeThrough.png");
 
@@ -431,13 +441,78 @@ public class StemShip extends Decorator implements EditablePiece {
                     sb.append(",Ship_Big_SeeThrough.png");
 
                 }
-                sb.append(";,;true;Base Ship;;;false;;1;1;true;65,130;71,130;");
+                sb.append(";base1,ghost1;false;Base Ship;;;true;ULevel;1;1;true;65,130;;");
                 // now get the Layer
                 Embellishment myEmb = (Embellishment)Util.getEmbellishment(piece,BASE_SHIP_LAYER_NAME);
+             //   mic.Util.logToChat(myEmb.myGetType());
                 myEmb.mySetType(sb.toString());
 
 
             }else{
+           //     mic.Util.logToChat(xwsShipName + " is dual based");
+
+
+                // this is a dual based ship
+
+                MasterShipData.ShipData shipData = MasterShipData.getShipData(xwsShipName);
+
+                // get the 2 base images
+                String baseImage1Identifier = shipData.getBaseImage1Identifier();
+                String baseImage2Identifier = shipData.getBaseImage2Identifier();
+
+                StringBuffer sb = new StringBuffer();
+                sb.append(SHIP_BASE_IMAGE_PREFIX);
+                sb.append("_");
+                sb.append(XWOTAUtils.simplifyFactionName(faction));
+                sb.append("_");
+                sb.append(xwsShipName);
+                sb.append("_");
+
+                String baseImage1 = sb.toString() + baseImage1Identifier+".png";
+                String baseImage2 = sb.toString() + baseImage2Identifier+".png";
+
+
+                // build image name from identifier
+
+                sb = new StringBuffer();
+                //emb2;Activate;2;;;2;;;2;;;;1;false;0;0;Ship_generic_large.png,Ship_Big_SeeThrough.png,Ship_generic_large.png,Ship_Big_SeeThrough.png;base1,ghost1,base2,ghost2;false;Base Ship;;;true;ULevel;1;1;true;65,130;;
+                sb.append("emb2;Activate;2;;;2;;;2;;;;1;false;0;0;");
+                sb.append(baseImage1);
+                if(size.equals("small")) {
+                    sb.append(",Ship_Small_SeeThrough.png,");
+
+                }else if(size.equals("large")) {
+                    sb.append(",Ship_Big_SeeThrough.png,");
+                }
+                sb.append(baseImage2);
+                if(size.equals("small")) {
+                    sb.append(",Ship_Small_SeeThrough.png");
+
+                }else if(size.equals("large")) {
+                    sb.append(",Ship_Big_SeeThrough.png");
+                }
+              //  sb.append(";base1,ghost1,base2,ghost2;false;Base Ship;;;true;ULevel;1;1;true;65,130;;");
+
+                sb.append(";");
+                sb.append(base1ReportIdentifier);
+                sb.append(",ghost1,");
+                sb.append(base2ReportIdentifier);
+                sb.append(",ghost2;false;Base Ship;;;true;ULevel;1;1;true;65,130;;");
+                Embellishment myEmb = (Embellishment)Util.getEmbellishment(piece,BASE_SHIP_LAYER_NAME);
+
+                myEmb.mySetType(sb.toString());
+
+
+                // now set the trigger action
+
+                sb = new StringBuffer();
+                sb.append("macro;Toggle Ship Base;");
+                sb.append(dualBaseMenuText);
+                sb.append(";85,520;{ULevel==1 || ULevel==3};;63743\\,0\\,dopivot;false;;;counted;;;;false;;1;1");
+                TriggerAction trig = (TriggerAction)Util.getTriggerAction(piece,TOGGLE_BASE_TRIGGER_ACTION_NAME);
+                trig.mySetType(sb.toString());
+
+                /*
                 // this is dual based
                 StringBuffer sb = new StringBuffer();
                 sb.append("emb2;Activate;2;;Ghost;2;;;2;;;;1;false;0;0;");
@@ -470,14 +545,14 @@ public class StemShip extends Decorator implements EditablePiece {
 
                 //Embellishment myEmb = (Embellishment)Util.getEmbellishment(piece,BASE_SHIP_LAYER_NAME);
                // Util.logToChat(myEmb.myGetType());
-
+*/
             }
 
             return piece;
 
         }
 
-        private String[] findShipBaseImage(String faction, String xwsShipName, String xwsPilot, String size)
+        private String findShipBaseImage(String faction, String xwsShipName, String xwsPilot, String size)
         {
             StringBuffer sb = new StringBuffer();
             sb.append(SHIP_BASE_IMAGE_PREFIX);
@@ -489,36 +564,39 @@ public class StemShip extends Decorator implements EditablePiece {
             boolean dualArt = false;
             String dualBase = null;
             // now check for alt art
-            String[] shipImage = AltArtShipPicker.getNewAltArtShip(xwsPilot, xwsShipName, faction);
+            String shipImage = AltArtShipPicker.getNewAltArtShip(xwsPilot, xwsShipName, faction);
 
-            // if there's a blank sting in shipImage[0], then it's a standard art
+            // if there's a blank string in shipImage[0], then it's a standard art
             // if there's a string in shipImage[1], then it's a dual base ship
             // otherwise, use the shipImage[0]
-            if(shipImage[0].equals(""))
+            if(shipImage == null || shipImage.equals(""))
             {
                 // standard art
                 sb.append("_standard");
-            }else if(shipImage[1] != null && !shipImage[1].equals(""))
-            {
-                // this is a dual art card.
-                dualArt = true;
-                sb.append("_").append(shipImage[0]);
-                dualBase = sb.toString();
+           // }else if(shipImage[1] != null && !shipImage[1].equals(""))
+          //  {
+         //       // this is a dual art card.
+          //      dualArt = true;
+          //      sb.append("_").append(shipImage[0]);
+          //      dualBase = sb.toString();
             }else{
-                sb.append("_").append(shipImage[0]);
+                sb.append("_").append(shipImage);
             }
             sb.append(".png");
 
-            String[] shipArt = new String[2];
-            shipArt[0] = sb.toString();
-            if(dualArt)
-            {
 
-                shipArt[1] = dualBase+shipImage[1]+".png";
-            }
+
+            String shipArt = new String();
+            shipArt = sb.toString();
+        //    mic.Util.logToChat(shipArt);
+        //    if(dualArt)
+         //   {
+
+          //      shipArt[1] = dualBase+shipImage[1]+".png";
+         //   }
 
             // check to make sure the image(s) exist
-            if(!XWOTAUtils.imageExistsInModule(shipArt[0]))
+            if(!XWOTAUtils.imageExistsInModule(shipArt))
             {
                 // image doesn't exist, so use a WIP image.
 
@@ -531,8 +609,8 @@ public class StemShip extends Decorator implements EditablePiece {
                 sb.append(size);
                 sb.append(".png");
 
-                shipArt[0] = sb.toString();
-                shipArt[1] = "";
+                shipArt = sb.toString();
+              //  shipArt[1] = "";
 
             }
 

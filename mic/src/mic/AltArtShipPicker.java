@@ -58,8 +58,8 @@ public class AltArtShipPicker {
             .put("scumandvillainy_z95headhunter","blacksun")
             .put("rebelalliance_z95headhunter","rebel").build();
 
-    private static Map<String,String[]> dualBaseShips = ImmutableMap.<String, String[]>builder()
-            .put("uwing",UWING_ART).build();
+   // private static Map<String,String[]> dualBaseShips = ImmutableMap.<String, String[]>builder()
+   //         .put("uwing",UWING_ART).build();
 
 
 
@@ -104,17 +104,17 @@ public class AltArtShipPicker {
             .build();
 
 
-    public static String[] getNewAltArtShip(String xwsPilot, String xwsShip, String faction)
+    public static String getNewAltArtShip(String xwsPilot, String xwsShip, String faction)
     {
 
-        String[] altArt = new String[2];
+        String altArt = new String();
         boolean found = false;
 
         // first check for normal alt
         String normalAltArt = newPilotAltArts.get(xwsPilot);
         if(normalAltArt != null)
         {
-            altArt[0] = normalAltArt;
+            altArt = normalAltArt;
             found = true;
         }
 
@@ -126,12 +126,13 @@ public class AltArtShipPicker {
             if(defaultArt != null)
             {
 
-                altArt[0] = defaultArt;
+                altArt = defaultArt;
                 found = true;
             }
         }
 
         // finally check for dual based ships (like the U-Wing)
+        /*
         if(!found)
         {
 
@@ -143,12 +144,13 @@ public class AltArtShipPicker {
                 found = true;
             }
         }
+        */
 
         // if we still haven't found anything, then there is no alt art
         if(!found)
         {
 
-            altArt[0] = "";
+            altArt = "";
         }
 
         return altArt;

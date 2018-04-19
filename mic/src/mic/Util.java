@@ -320,8 +320,32 @@ public class Util {
         in.close();
         return obj;
     }
+/*
+    public static void logTriggerActionNames(GamePiece p)
+    {
+        Class<?> type = TriggerAction.class;
+        while (p instanceof Decorator) {
 
+            if (type.isInstance(p) ) {
+                mic.Util.logToChat(((TriggerAction) p).getDescription());
+            }
+            p = ((Decorator) p).getInner();
+        }
 
+    }*/
+
+    public static GamePiece getTriggerAction(GamePiece p, String name)
+    {
+        Class<?> type = TriggerAction.class;
+        while (p instanceof Decorator) {
+
+            if (type.isInstance(p) && ((TriggerAction) p).getDescription().equals(name)) {
+                return p;
+            }
+            p = ((Decorator) p).getInner();
+        }
+        return null;
+    }
 
     public static GamePiece getEmbellishment(GamePiece p, String name) {
 
