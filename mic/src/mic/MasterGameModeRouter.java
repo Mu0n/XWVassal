@@ -1,12 +1,11 @@
 package mic;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import mic.ota.OTAContentsChecker;
 
-import java.util.List;
+import java.util.ArrayList;
 import java.util.Map;
 
 /**
@@ -14,62 +13,104 @@ import java.util.Map;
  * This contains the structure to load the master game mode router, essential to know where to look for xwing-data rules, custom images dispatched by the dispatcher, etc.
  *
  */
-@JsonIgnoreProperties(ignoreUnknown = true)
-public class MasterGameModeRouter {
-    @JsonProperty("name")
-    private String name;
 
-    @JsonProperty("description")
-    private String description;
+public class MasterGameModeRouter extends ArrayList<MasterGameModeRouter.GameMode> {
 
-    @JsonProperty("basedataurl")
-    private String basedataurl;
+    private static Map<String, GameMode> loadedData = null;
 
-    @JsonProperty("dispatchers")
-    private String dispatchers;
-
-    @JsonProperty("wantFullControl")
-    private Boolean wantFullControl;
-
-    public String getName() {
-        return name;
-    }
-    public void setName(String name)
+    protected static void loadData()
     {
-        this.name = name;
+        MasterGameModeRouter data = Util.loadRemoteJson(OTAContentsChecker.modeListURL, MasterGameModeRouter.class);
+
+        if (data == null) {
+            // Util.logToChat("Unable to load the game mode list from the web, falling back to local copy");
+            data = Util.loadClasspathJson("modeList.json", MasterGameModeRouter.class);
+        }
+
+        loadedData = Maps.newHashMap();
+
+        for(GameMode gameMode : data)
+        {
+            loadedData.put(gameMode.getName(),gameMode);
+        }
     }
 
-    public String getDescription() {
-        return description;
-    }
-    public void setDescription(String description)
+    public Object[] getGameModes()
     {
-        this.description = description;
+        if(loadedData == null)
+        {
+            loadData();
+        }
+        return loadedData.values().toArray();
     }
 
-    public String getBaseDataURL() {
-        return basedataurl;
-    }
-    public void setBaseDataURL(String basedataurl)
+    public GameMode getGameMode(String name)
     {
-        this.basedataurl = basedataurl;
-    }
+        if(loadedData == null)
+        {
+            loadData();
+        }
 
-    public String getDispatchersURL() {
-        return dispatchers;
-    }
-    public void setDispatchersURL(String dispatchers)
-    {
-        this.dispatchers = dispatchers;
-    }
-
-    public Boolean getWantFullControl() {
-        return wantFullControl;
-    }
-    public void setWantFullControl(Boolean wantFullControl)
-    {
-        this.wantFullControl = wantFullControl;
+        return loadedData.get(name);
     }
 
 
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    public class GameMode {
+        @JsonProperty("name")
+        private String name;
+
+        @JsonProperty("description")
+        private String description;
+
+        @JsonProperty("basedataurl")
+        private String basedataurl;
+
+        @JsonProperty("dispatchers")
+        private String dispatchers;
+
+        @JsonProperty("wantFullControl")
+        private Boolean wantFullControl;
+
+        public String getName() {
+            return name;
+        }
+        public void setName(String name)
+        {
+            this.name = name;
+        }
+
+        public String getDescription() {
+            return description;
+        }
+        public void setDescription(String description)
+        {
+            this.description = description;
+        }
+
+        public String getBaseDataURL() {
+            return basedataurl;
+        }
+        public void setBaseDataURL(String basedataurl)
+        {
+            this.basedataurl = basedataurl;
+        }
+
+        public String getDispatchersURL() {
+            return dispatchers;
+        }
+        public void setDispatchersURL(String dispatchers)
+        {
+            this.dispatchers = dispatchers;
+        }
+
+        public Boolean getWantFullControl() {
+            return wantFullControl;
+        }
+        public void setWantFullControl(Boolean wantFullControl)
+        {
+            this.wantFullControl = wantFullControl;
+        }
+
+    }
 }
