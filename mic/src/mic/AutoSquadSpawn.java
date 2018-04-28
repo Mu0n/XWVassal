@@ -166,7 +166,7 @@ public class AutoSquadSpawn extends AbstractConfigurable {
                 logToChat("attempting to reload stuff that's not the base game");
                 loadData(mgmr.getGameMode(aComboBox.getSelectedItem().toString()).getBaseDataURL(),
                         mgmr.getGameMode(aComboBox.getSelectedItem().toString()).getDispatchersURL());
-            }
+            }else loadData();
             validateList(xwsList);
         }catch(XWSpawnException e)
         {
