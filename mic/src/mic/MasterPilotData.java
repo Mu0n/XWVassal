@@ -183,6 +183,36 @@ public class MasterPilotData extends ArrayList<MasterPilotData.PilotData> {
         }
     }
 
+    private static void loadFromXwingData(String altXwingDataURL)
+    {
+        // load from xwing-data
+        MasterPilotData data = Util.loadRemoteJson(altXwingDataURL, MasterPilotData.class);
+        if (data == null) {
+            // Util.logToChat("Unable to load xwing-data for pilots from the web, falling back to local copy");
+            data = Util.loadClasspathJson("pilots.json", MasterPilotData.class);
+        }
+
+        loadedData = Maps.newHashMap();
+        for(PilotData pilot : data) {
+            String xwsShip = Canonicalizer.getCanonicalShipName(pilot.getShip());
+
+            //MrMurphM - need to add in faction or pilots like Boba Fett will not work properly
+            String xwsFaction = Canonicalizer.getCanonicalFactionName(pilot.getFaction());
+
+
+
+            String convFaction = factionConversion.get(xwsFaction);
+
+
+            String pilotKey = convFaction+"/"+xwsShip+"/"+pilot.getXws();
+
+
+
+            loadedData.put(pilotKey,pilot);
+            //loadedData.put(xwsShip + "/" + pilot.getXws(), pilot);
+        }
+    }
+
     private static MasterPilotData loadFromDispatcher()
     {
         // load from dispatch

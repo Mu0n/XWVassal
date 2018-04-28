@@ -145,6 +145,20 @@ public class MasterShipData extends ArrayList<MasterShipData.ShipData> {
             loadedData.put(ship.getXws(), ship);
         }
     }
+    private static void loadFromXwingData(String altXwingDataURL)
+    {
+        // load from xwing-data
+        MasterShipData data = Util.loadRemoteJson(altXwingDataURL, MasterShipData.class);
+        if (data == null) {
+            // Util.logToChat("Unable to load xwing-data for ships from the web, falling back to local copy");
+            data = Util.loadClasspathJson("ships.json", MasterShipData.class);
+        }
+
+        loadedData = Maps.newHashMap();
+        for(ShipData ship : data) {
+            loadedData.put(ship.getXws(), ship);
+        }
+    }
 
     private static MasterShipData loadFromDispatcher()
     {

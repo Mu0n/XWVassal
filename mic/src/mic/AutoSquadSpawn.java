@@ -15,6 +15,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -38,6 +40,8 @@ public class AutoSquadSpawn extends AbstractConfigurable {
 
     private VassalXWSPieceLoader slotLoader = new VassalXWSPieceLoader();
     private List<JButton> spawnButtons = Lists.newArrayList();
+    MasterGameModeRouter mgmr = new MasterGameModeRouter();
+    String altXwingDataString = "";
 
     private void spawnPiece(GamePiece piece, Point position, Map playerMap) {
         Command placeCommand = playerMap.placeOrMerge(piece, position);
@@ -66,45 +70,43 @@ public class AutoSquadSpawn extends AbstractConfigurable {
         rootPanel.setLayout(new BoxLayout(rootPanel, BoxLayout.Y_AXIS));
         JPanel sourcePanel = new JPanel();
         sourcePanel.setLayout(new BoxLayout(sourcePanel, BoxLayout.X_AXIS));
+        sourcePanel.setAlignmentX(JPanel.RIGHT_ALIGNMENT);
+        JPanel sourceInfoPanel = new JPanel();
+        sourceInfoPanel.setLayout(new BoxLayout(sourceInfoPanel, BoxLayout.Y_AXIS));
+        sourceInfoPanel.setAlignmentX(JPanel.RIGHT_ALIGNMENT);
+        final JComboBox aComboBox = new JComboBox();
+
+        mgmr.loadData();
+        if(mgmr!=null)
+        {
+            for(MasterGameModeRouter.GameMode o : mgmr.getGameModes()){
+                aComboBox.addItem(o.getName());
+            }
+        }
+        else
+        //if it can't access the list of sources on the web, make it base game by default
+        {
+            aComboBox.addItem("Base Game");
+        }
+
+        final JLabel sourceTextDescription = new JLabel(mgmr.getGameMode(aComboBox.getSelectedItem().toString()).getDescription());
+        sourceTextDescription.setAlignmentX(JLabel.RIGHT_ALIGNMENT);
+        sourceInfoPanel.add(sourceTextDescription);
 
         JLabel sourceExplanationLabel = new JLabel("Select the game mode here:");
 
-        //if it can't access the list of sources on the web, make it base game by default
-        String[] listOfXwingDataSources = {
-                "Base Game"
-        };
 
-        listOfXwingDataSources = fetchMasterRoutingList();
-
-        /*
-        try{
-            //TO DO load a list of game mode from a github repo that will be shared with top modders
-            //this github will have an easy to edit json that carries these elements
-            //game mode name (will be displayed in this combo box and in contents checker
-            //master URL (mimicks what we do for the base game in the OTA repo
-
-            URL url = new URL(modeListURL);
-            URLConnection con = url.openConnection();
-            con.setUseCaches(false);
-
-            BufferedReader in = new BufferedReader(new InputStreamReader(url.openStream()));
-            String line = in.readLine();
-            while ((line = in.readLine()) != null) {
-                logToChat("* " + line);
+        aComboBox.addItemListener(new ItemListener() {
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+                sourceTextDescription.setText(mgmr.getGameMode(aComboBox.getSelectedItem().toString()).getDescription());
             }
+        });
 
-            in.close();
-        }
-        catch(Exception e2)
-        {
-            logToChat(e2.toString());
-            return;
-        }
-*/
-
-        JComboBox aComboBox = new JComboBox(listOfXwingDataSources);
         sourcePanel.add(sourceExplanationLabel);
         sourcePanel.add(aComboBox);
+
+
 
         //make it editable further down the line once it's properly tested
         //aComboBox.setEditable(true);
@@ -127,10 +129,15 @@ public class AutoSquadSpawn extends AbstractConfigurable {
 
 
         rootPanel.add(sourcePanel);
+        rootPanel.add(sourceInfoPanel);
+        rootPanel.add(Box.createRigidArea(new Dimension(0,8)));
+        rootPanel.add(new JSeparator());
+        rootPanel.add(Box.createRigidArea(new Dimension(0,8)));
         rootPanel.add(explanationPanel);
         JFrame frame = new JFrame();
         frame.setPreferredSize(new Dimension(800,500));
         frame.add(rootPanel);
+
 
         String userInput = "";
         userInput = JOptionPane.showInputDialog(frame, rootPanel, "Squad AutoSpawn for player " + Integer.toString(playerInfo.getSide()), JOptionPane.PLAIN_MESSAGE);
@@ -148,6 +155,9 @@ public class AutoSquadSpawn extends AbstractConfigurable {
         // validate the list
 
         try {
+            if(!"Base Game".equals(aComboBox.getSelectedItem().toString()){
+                validateList(xwsList);
+            }
             validateList(xwsList);
         }catch(XWSpawnException e)
         {
