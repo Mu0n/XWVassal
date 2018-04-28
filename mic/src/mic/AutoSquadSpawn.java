@@ -89,7 +89,10 @@ public class AutoSquadSpawn extends AbstractConfigurable {
             aComboBox.addItem("Base Game");
         }
 
-        final JLabel sourceTextDescription = new JLabel(mgmr.getGameMode(aComboBox.getSelectedItem().toString()).getDescription());
+        final JLabel sourceTextDescription = new JLabel("<html><body width=600><b>Description for <i>"
+                + aComboBox.getSelectedItem().toString() + "</i></b>: "
+                + mgmr.getGameMode(aComboBox.getSelectedItem().toString()).getDescription()
+                + "</body></html>");
         sourceTextDescription.setAlignmentX(JLabel.RIGHT_ALIGNMENT);
         sourceInfoPanel.add(sourceTextDescription);
 
@@ -99,7 +102,10 @@ public class AutoSquadSpawn extends AbstractConfigurable {
         aComboBox.addItemListener(new ItemListener() {
             @Override
             public void itemStateChanged(ItemEvent e) {
-                sourceTextDescription.setText(mgmr.getGameMode(aComboBox.getSelectedItem().toString()).getDescription());
+                sourceTextDescription.setText("<html><body width=600><b>Description for <i>"
+                        + aComboBox.getSelectedItem().toString() + "</i></b>: "
+                        + mgmr.getGameMode(aComboBox.getSelectedItem().toString()).getDescription()
+                        + "</body></html>");
             }
         });
 
@@ -155,8 +161,11 @@ public class AutoSquadSpawn extends AbstractConfigurable {
         // validate the list
 
         try {
-            if(!"Base Game".equals(aComboBox.getSelectedItem().toString()){
-                validateList(xwsList);
+            if(!"Base Game".equals(aComboBox.getSelectedItem().toString()))
+            {
+                logToChat("attempting to reload stuff that's not the base game");
+                loadData(mgmr.getGameMode(aComboBox.getSelectedItem().toString()).getBaseDataURL(),
+                        mgmr.getGameMode(aComboBox.getSelectedItem().toString()).getDispatchersURL());
             }
             validateList(xwsList);
         }catch(XWSpawnException e)
@@ -797,6 +806,13 @@ public class AutoSquadSpawn extends AbstractConfigurable {
         MasterUpgradeData.loadData();
         MasterShipData.loadData();
     }
+
+    private void loadData(String altXwingDataString, String altDispatcherString) {
+        MasterPilotData.loadData(altXwingDataString, altDispatcherString);
+        MasterUpgradeData.loadData();
+        MasterShipData.loadData();
+    }
+
 
     private XWSList loadListFromUrl(String userInput) {
         try {
