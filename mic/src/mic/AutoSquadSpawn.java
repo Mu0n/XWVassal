@@ -163,7 +163,7 @@ public class AutoSquadSpawn extends AbstractConfigurable {
         try {
             if(!"Base Game".equals(aComboBox.getSelectedItem().toString()))
             {
-                logToChat("attempting to reload stuff that's not the base game");
+                logToChat("Attempting to load a squad in a mode that's not the base game");
                 loadData(mgmr.getGameMode(aComboBox.getSelectedItem().toString()).getBaseDataURL(),
                         mgmr.getGameMode(aComboBox.getSelectedItem().toString()).getDispatchersURL());
             }else loadData();
@@ -450,21 +450,8 @@ public class AutoSquadSpawn extends AbstractConfigurable {
         }
 
         String listName = xwsList.getName();
-        logToChat("%s point list%s loaded from %s", pieces.getSquadPoints(),
+        logToChat("The '" + aComboBox.getSelectedItem().toString() + "' game mode was used to spawn a %s point list%s loaded from %s", pieces.getSquadPoints(),
                 listName != null ? " '" + listName + "'" : "", xwsList.getXwsSource());
-    }
-
-    private String[] fetchMasterRoutingList() {
-        String[] listOStrings = {"", ""};
-
-        try{
-
-        }
-        catch(Exception e){
-            logToChat("Couldn't load the master alt mode list (no connection to net?");
-        }
-
-        return listOStrings;
     }
 
     private void validateList(XWSList list) throws XWSpawnException
