@@ -66,7 +66,6 @@ public class OTAContentsChecker extends AbstractConfigurable {
 
     public static final String modeListURL = "https://raw.githubusercontent.com/Mu0n/XWVassal-website/master/modeList.json";
 
-
     public void addTo(Buildable parent)
     {
 

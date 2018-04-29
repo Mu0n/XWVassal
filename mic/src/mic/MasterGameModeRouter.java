@@ -6,6 +6,7 @@ import com.google.common.collect.Maps;
 import mic.ota.OTAContentsChecker;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Map;
 
 /**
@@ -35,13 +36,14 @@ public class MasterGameModeRouter extends ArrayList<MasterGameModeRouter.GameMod
         }
     }
 
-    public Object[] getGameModes()
+    public GameMode[] getGameModes()
     {
         if(loadedData == null)
         {
             loadData();
         }
-        return loadedData.values().toArray();
+        GameMode[] gMA = Arrays.copyOf(loadedData.values().toArray(), loadedData.values().toArray().length, GameMode[].class);
+        return gMA;
     }
 
     public GameMode getGameMode(String name)
@@ -56,7 +58,7 @@ public class MasterGameModeRouter extends ArrayList<MasterGameModeRouter.GameMod
 
 
     @JsonIgnoreProperties(ignoreUnknown = true)
-    public class GameMode {
+    public static class GameMode {
         @JsonProperty("name")
         private String name;
 

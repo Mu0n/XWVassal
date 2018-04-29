@@ -58,13 +58,11 @@ public class MasterPilotData extends ArrayList<MasterPilotData.PilotData> {
     protected static void loadData()
     {
 
-        if(loadedData == null) {
-
             // load data from xwing-data
             loadFromXwingData();
 
             // load data from dispatcher file
-            MasterPilotData dispatcherData = loadFromDispatcher();
+            MasterPilotData dispatcherData = loadFromDispatcher(REMOTE_URL);
 
             // dispatcher overrides xwing-data
             if (dispatcherData != null)
@@ -102,9 +100,57 @@ public class MasterPilotData extends ArrayList<MasterPilotData.PilotData> {
 
                 }
             }
-        }
+
 
     }
+
+    protected static void loadData(String altXwingDataString, String altDispatcherDataString)
+    {            // load data from xwing-data
+            loadFromXwingData(altXwingDataString);
+
+            // load data from dispatcher file
+            MasterPilotData dispatcherData = loadFromDispatcher(altDispatcherDataString);
+
+            // dispatcher overrides xwing-data
+            if (dispatcherData != null)
+            {
+                for (PilotData dispatcherPilot : dispatcherData)
+                {
+                    String xwsShip = Canonicalizer.getCanonicalShipName(dispatcherPilot.getShip());
+
+                    //MrMurphM - need to add in faction or pilots like Boba Fett will not work properly
+                    String xwsFaction = Canonicalizer.getCanonicalFactionName(dispatcherPilot.getFaction());
+                    String convFaction = factionConversion.get(xwsFaction);
+
+
+                    String pilotKey = convFaction+"/"+xwsShip+"/"+dispatcherPilot.getXws();
+
+
+                    PilotData xwingDataPilot = loadedData.get(pilotKey);
+
+
+                    // If there is no dispatcher version of this pilot, store the xwing-data version
+                    if(dispatcherPilot == null)
+                    {
+                        loadedData.put(pilotKey, xwingDataPilot);
+
+                        // if there is no xwing-data version of this pilot, store the dispatcher version
+                    }else if(xwingDataPilot == null)
+                    {
+                        loadedData.put(pilotKey, dispatcherPilot);
+                        // There are both xwing-data and dispatcher versions, so merge them, with dispatcher taking precedence
+                    }else{
+                        // do the merge.  Dispatcher overrides
+                        PilotData mergedSPilot = mergePilots(xwingDataPilot,dispatcherPilot);
+                        loadedData.put(pilotKey, mergedSPilot);
+                    }
+
+                }
+            }
+
+
+    }
+
     private static String mergeProperties(String baseString, String overrideString)
     {
         return overrideString == null ? baseString : overrideString;
@@ -183,6 +229,36 @@ public class MasterPilotData extends ArrayList<MasterPilotData.PilotData> {
         }
     }
 
+    private static void loadFromXwingData(String altXwingDataURL)
+    {
+        // load from xwing-data
+        MasterPilotData data = Util.loadRemoteJson(altXwingDataURL + "pilots.json", MasterPilotData.class);
+        if (data == null) {
+            Util.logToChat("Unable to load xwing-data for pilots from the web, falling back to local copy");
+            data = Util.loadClasspathJson("pilots.json", MasterPilotData.class);
+        }
+
+        loadedData = Maps.newHashMap();
+        for(PilotData pilot : data) {
+            String xwsShip = Canonicalizer.getCanonicalShipName(pilot.getShip());
+
+            //MrMurphM - need to add in faction or pilots like Boba Fett will not work properly
+            String xwsFaction = Canonicalizer.getCanonicalFactionName(pilot.getFaction());
+
+
+
+            String convFaction = factionConversion.get(xwsFaction);
+
+
+            String pilotKey = convFaction+"/"+xwsShip+"/"+pilot.getXws();
+
+
+
+            loadedData.put(pilotKey,pilot);
+            //loadedData.put(xwsShip + "/" + pilot.getXws(), pilot);
+        }
+    }
+
     private static MasterPilotData loadFromDispatcher()
     {
         // load from dispatch
@@ -196,6 +272,23 @@ public class MasterPilotData extends ArrayList<MasterPilotData.PilotData> {
             }
         }
 
+        return data;
+    }
+
+    private static MasterPilotData loadFromDispatcher(String altDispatcherURL)
+    {
+        // load from dispatch
+        MasterPilotData data = Util.loadRemoteJson(altDispatcherURL + "dispatcher_pilots.json", MasterPilotData.class);
+
+
+        if (data == null) {
+            // Util.logToChat("Unable to load dispatcher for ships from the web, falling back to local copy");
+            data = Util.loadClasspathJson("dispatcher_pilots.json", MasterPilotData.class);
+            if(data == null)
+            {
+                Util.logToChat("Unable to load dispatcher for pilots from the local copy.  Error in JSON format?");
+            }
+        }
         return data;
     }
 
