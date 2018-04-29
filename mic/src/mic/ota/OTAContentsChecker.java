@@ -64,8 +64,7 @@ public class OTAContentsChecker extends AbstractConfigurable {
     private JLabel jlabel;
     private boolean downloadAll = false;
 
-    static final String modeListURL = "https://raw.githubusercontent.com/Mu0n/XWVassal-website/master/modeList.json";
-
+    public static final String modeListURL = "https://raw.githubusercontent.com/Mu0n/XWVassal-website/master/modeList.json";
 
     public void addTo(Buildable parent)
     {

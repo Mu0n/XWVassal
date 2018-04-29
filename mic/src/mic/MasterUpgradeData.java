@@ -10,6 +10,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import static mic.Util.logToChat;
+
 /**
  * Created by guido on 11/02/17.
  */
@@ -31,6 +33,43 @@ public class MasterUpgradeData extends ArrayList<MasterUpgradeData.UpgradeData> 
     }
 
 
+
+    protected static void loadData(String altXwingDataString, String altDispatcherString) {
+
+        if(loadedData == null) {
+            // load data from xwing-data
+            loadFromXwingData(altXwingDataString);
+
+            // load data from dispatcher file
+            MasterUpgradeData dispatcherData = loadFromDispatcher(altDispatcherString);
+
+            // dispatcher overrides xwing-data
+            if (dispatcherData != null)
+            {
+                for (UpgradeData dispatcherUpgrade : dispatcherData)
+                {
+                    UpgradeData xwingDataUpgrade = loadedData.get(dispatcherUpgrade.getXws());
+
+                    // If there is no dispatcher version of this upgrade, store the xwing-data version
+                    if(dispatcherUpgrade == null)
+                    {
+                        loadedData.put(xwingDataUpgrade.getXws(), xwingDataUpgrade);
+
+                        // if there is no xwing-data version of this upgrade, store the dispatcher version
+                    }else if(xwingDataUpgrade == null)
+                    {
+                        loadedData.put(dispatcherUpgrade.getXws(), dispatcherUpgrade);
+                        // There are both xwing-data and dispatcher versions, so merge them, with dispatcher taking precedence
+                    }else{
+                        // do the merge.  Dispatcher overrides
+                        UpgradeData mergedUpgrade = mergeUpgrades(xwingDataUpgrade,dispatcherUpgrade);
+                        loadedData.put(mergedUpgrade.getXws(), mergedUpgrade);
+                    }
+                }
+            }
+        }
+
+    }
 
     protected static void loadData() {
 
@@ -125,9 +164,27 @@ public class MasterUpgradeData extends ArrayList<MasterUpgradeData.UpgradeData> 
                 oldUpgrade.setText2("// " + upgrade.getName() + ": " + upgrade.getText());
                 loadedData.put(upgrade.getXws(), oldUpgrade);
             }
+        }
+    }
+    private static void loadFromXwingData(String altXwingDataString)
+    {
+        MasterUpgradeData data = Util.loadRemoteJson(altXwingDataString + "upgrades.json", MasterUpgradeData.class);
+        if (data == null) {
+            //  Util.logToChat("Unable to load xwing-data for upgrades from the web, falling back to local copy");
+            data = Util.loadClasspathJson("upgrades.json", MasterUpgradeData.class);
+        }
 
+        loadedData = Maps.newHashMap();
 
-
+        for(UpgradeData upgrade : data) {
+            if(loadedData.get(upgrade.getXws()) == null)
+            {
+                loadedData.put(upgrade.getXws(), upgrade);
+            }else{
+                MasterUpgradeData.UpgradeData oldUpgrade = loadedData.get(upgrade.getXws());
+                oldUpgrade.setText2("// " + upgrade.getName() + ": " + upgrade.getText());
+                loadedData.put(upgrade.getXws(), oldUpgrade);
+            }
         }
     }
 
@@ -140,7 +197,24 @@ public class MasterUpgradeData extends ArrayList<MasterUpgradeData.UpgradeData> 
             data = Util.loadClasspathJson("dispatcher_upgrades.json", MasterUpgradeData.class);
             if(data == null)
             {
-                Util.logToChat("Unable to load dispatcher for upgrades from the local copy.  Error in JSON format?");
+                logToChat("Unable to load dispatcher for upgrades from the local copy.  Error in JSON format?");
+            }
+        }
+
+        return data;
+    }
+
+    private static MasterUpgradeData loadFromDispatcher(String altDispatcherString)
+    {
+        // load from dispatch
+        MasterUpgradeData data = Util.loadRemoteJson(altDispatcherString + "dispatcher_upgrades.json", MasterUpgradeData.class);
+        logToChat(altDispatcherString+"dispatcher_upgrades.json");
+        if (data == null) {
+            // Util.logToChat("Unable to load dispatcher for upgrades from the web, falling back to local copy");
+            data = Util.loadClasspathJson("dispatcher_upgrades.json", MasterUpgradeData.class);
+            if(data == null)
+            {
+                logToChat("Unable to load dispatcher for upgrades from the local copy.  Error in JSON format?");
             }
         }
 
