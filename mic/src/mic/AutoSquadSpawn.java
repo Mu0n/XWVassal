@@ -796,8 +796,8 @@ public class AutoSquadSpawn extends AbstractConfigurable {
 
     private void loadData(String altXwingDataString, String altDispatcherString) {
         MasterPilotData.loadData(altXwingDataString, altDispatcherString);
-        MasterUpgradeData.loadData();
-        MasterShipData.loadData();
+        MasterUpgradeData.loadData(altXwingDataString, altDispatcherString);
+        MasterShipData.loadData(altXwingDataString, altDispatcherString);
     }
 
 

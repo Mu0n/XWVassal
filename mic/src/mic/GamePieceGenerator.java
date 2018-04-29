@@ -8,6 +8,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import static mic.Util.logToChat;
+
 /*
  * This class dynamically generates GamePieces during AutoSquadSpawn
  */
@@ -82,11 +84,21 @@ public class GamePieceGenerator
 
             MasterUpgradeData.UpgradeGrants doubleSideCardStats = DoubleSideCardPriorityPicker.getDoubleSideCardStats(upgrade.getXwsName());
             ArrayList<MasterUpgradeData.UpgradeGrants> grants = new ArrayList<MasterUpgradeData.UpgradeGrants>();
-            if (doubleSideCardStats != null) {
-                grants.add(doubleSideCardStats);
-            } else {
-                grants.addAll(upgrade.getUpgradeData().getGrants());
+            if(grants!=null)
+            {
+                if (doubleSideCardStats != null) {
+                    grants.add(doubleSideCardStats);
+                } else {
+                    ArrayList<MasterUpgradeData.UpgradeGrants> newGrants = new ArrayList<MasterUpgradeData.UpgradeGrants>();
+                    try{
+                        newGrants = upgrade.getUpgradeData().getGrants();
+                    }catch(Exception e){
+
+                    }
+                    if(newGrants !=null) grants.addAll(newGrants);
+                }
             }
+
 
             for (MasterUpgradeData.UpgradeGrants modifier : grants) {
                 if (modifier.isStatsModifier()) {
@@ -191,7 +203,13 @@ public class GamePieceGenerator
             while(upgradeIterator.hasNext() && !needsBomb)
             {
                 upgrade = upgradeIterator.next();
-                ArrayList<MasterUpgradeData.UpgradeGrants> upgradeGrants = upgrade.getUpgradeData().getGrants();
+                ArrayList<MasterUpgradeData.UpgradeGrants> upgradeGrants;
+                try {
+                    upgradeGrants = upgrade.getUpgradeData().getGrants();
+                }catch(Exception e){
+                    logToChat("found the grants null exception.");
+                    return false;
+                }
                 grantIterator = upgradeGrants.iterator();
                 MasterUpgradeData.UpgradeGrants grant = null;
                 while(grantIterator.hasNext() && !needsBomb)
