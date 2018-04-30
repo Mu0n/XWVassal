@@ -104,9 +104,9 @@ public class MasterPilotData extends ArrayList<MasterPilotData.PilotData> {
 
     }
 
-    protected static void loadData(String altXwingDataString, String altDispatcherDataString)
+    protected static void loadData(Boolean wantFullControl, String altDispatcherDataString)
     {            // load data from xwing-data
-            loadFromXwingData(altXwingDataString);
+        if(wantFullControl == false) loadFromXwingData();
 
             // load data from dispatcher file
             MasterPilotData dispatcherData = loadFromDispatcher(altDispatcherDataString);

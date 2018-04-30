@@ -85,10 +85,10 @@ public class MasterShipData extends ArrayList<MasterShipData.ShipData> {
         }
     }
 
-    protected static void loadData(String altXwingDataString, String altDispatcherString) {
+    protected static void loadData(Boolean wantFullControl, String altDispatcherString) {
 
         // load data from xwing-data
-        loadFromXwingData(altXwingDataString);
+        if(wantFullControl==false) loadFromXwingData();
 
         // load data from dispatcher file
         MasterShipData dispatcherData = loadFromDispatcher(altDispatcherString);

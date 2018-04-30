@@ -220,7 +220,7 @@ public class AnnouncementOnLog extends AbstractConfigurable {
             // =============================================================
             // Download the missing images
             // =============================================================
-            XWOTAUtils.downloadAndSaveImagesFromOTA(imagesToDownload);
+            XWOTAUtils.downloadAndSaveImagesFromOTA(imagesToDownload, OTAContentsChecker.OTA_RAW_BRANCH_URL);
 
             // =============================================================
             // Generate the missing Dial Masks
@@ -431,10 +431,14 @@ public class AnnouncementOnLog extends AbstractConfigurable {
             labelPanel.add(versionLabel);
             labelPanel.add(versionLabel2);
             labelPanel.add(versionLabel3);
+
+            labelPanel.add(Box.createRigidArea(new Dimension(0,8)));
+            labelPanel.add(new JSeparator());
+            labelPanel.add(Box.createRigidArea(new Dimension(0,8)));
+
             labelPanel.add(checkLabel);
             labelPanel.add(checkLabel2);
             labelPanel.add(checkLabel3);
-
             panel.add(labelPanel);
 
             DataArchive dataArchive = GameModule.getGameModule().getDataArchive();

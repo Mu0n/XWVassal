@@ -25,6 +25,8 @@ import java.util.Iterator;
 import java.util.Map;
 
 public class OTAContentsChecker extends AbstractConfigurable {
+    MasterGameModeRouter mgmr = new MasterGameModeRouter();
+
 
     // change this variable to a branch name to test, or master for deployment
     private static final String OTA_RAW_GITHUB_BRANCH = "master";
@@ -46,6 +48,9 @@ public class OTAContentsChecker extends AbstractConfigurable {
     public static final String OTA_DISPATCHER_SHIPS_JSON_URL = OTA_RAW_GITHUB_JSON_URL + "dispatcher_ships.json";
     public static final String OTA_DISPATCHER_CONDITIONS_JSON_URL = OTA_RAW_GITHUB_JSON_URL + "dispatcher_conditions.json";
 
+    String aComboBoxChoice = "Base Game";
+    String chosenURL = OTA_RAW_BRANCH_URL;
+
     private static Map<String,String> fullFactionNames = ImmutableMap.<String, String>builder()
             .put("galacticempire","Galactic Empire")
             .put("firstorder","First Order")
@@ -65,6 +70,8 @@ public class OTAContentsChecker extends AbstractConfigurable {
     private boolean downloadAll = false;
 
     public static final String modeListURL = "https://raw.githubusercontent.com/Mu0n/XWVassal-website/master/modeList.json";
+
+
 
     public void addTo(Buildable parent)
     {
@@ -140,8 +147,11 @@ public class OTAContentsChecker extends AbstractConfigurable {
 
                 if(answer == JOptionPane.YES_OPTION)
                 {
-
-                    downloadAll();
+                    if("Base Game".equals(aComboBoxChoice)) downloadAll(OTA_RAW_BRANCH_URL);
+                    else {
+                        chosenURL = mgmr.getGameMode(aComboBoxChoice).getBaseDataURL();
+                        downloadAll(chosenURL);
+                    }
                     allButton.setSelected(false);
                 }else{
                     downloadButton.setEnabled(true);
@@ -158,52 +168,79 @@ public class OTAContentsChecker extends AbstractConfigurable {
         });
         downloadButton.setAlignmentY(0.0F);
 
-        // game mode list
+        final JComboBox aComboBox = new JComboBox();
+        mgmr.loadData();
+        if(mgmr!=null)
+        {
+            for(MasterGameModeRouter.GameMode o : mgmr.getGameModes()){
+                aComboBox.addItem(o.getName());
+            }
+        }
+        else
+        //if it can't access the list of sources on the web, make it base game by default
+        {
+            aComboBox.addItem("Base Game");
+        }
+        final JLabel sourceTextDescription = new JLabel("<html><body width=600><b>Description for <i>"
+                + aComboBox.getSelectedItem().toString() + "</i></b>: "
+                + mgmr.getGameMode(aComboBox.getSelectedItem().toString()).getDescription()
+                + "</body></html>");
+        //sourceTextDescription.setAlignmentX(JLabel.RIGHT_ALIGNMENT);
+
         JLabel sourceExplanationLabel = new JLabel("Select the game mode here:");
 
-        //if it can't access the list of sources on the web, make it base game by default
-        String[] listOfXwingDataSources = {
-                "Base Game"
-        };
-        //TO DO fetch that list from the web just like in AutoSquadSpawn's dialog window
-        JComboBox aComboBox = new JComboBox(listOfXwingDataSources);
 
+        aComboBox.addItemListener(new ItemListener() {
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+                sourceTextDescription.setText("<html><body width=600><b>Description for <i>"
+                        + aComboBox.getSelectedItem().toString() + "</i></b>: "
+                        + mgmr.getGameMode(aComboBox.getSelectedItem().toString()).getDescription()
+                        + "</body></html>");
+            }
+        });
 
         // add the components
         c.gridx = 0;
-        c.gridy = 0;
+        c.gridy = 2;
         c.gridwidth = 3;
         panel.add(jlabel,c);
 
         c.gridx = 0;
-        c.gridy = 1;
+        c.gridy = 3;
         c.gridwidth = 3;
         panel.add(finalPane,c);
 
         c.gridx = 0;
-        c.gridy = 2;
+        c.gridy = 4;
         c.gridwidth = 1;
         panel.add(downloadButton,c);
 
         c.gridx = 1;
-        c.gridy = 2;
+        c.gridy = 4;
         c.gridwidth = 1;
         panel.add(allButton,c);
 
         c.gridx = 2;
-        c.gridy = 2;
+        c.gridy = 4;
         c.gridwidth = 1;
         panel.add(cancelButton,c);
 
         c.gridx = 0;
-        c.gridy = 3;
+        c.gridy = 0;
         c.gridwidth = 1;
         panel.add(sourceExplanationLabel);
 
         c.gridx = 1;
-        c.gridy = 3;
-        c.gridwidth = 2;
+        c.gridy = 0;
+        c.gridwidth = 1;
         panel.add(aComboBox);
+
+        c.gridx = 0;
+        c.gridy = 1;
+        c.gridwidth = 2;
+        c.ipady = 40;
+        panel.add(sourceTextDescription);
 
         panel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
         frame.add(panel, BorderLayout.PAGE_START);
@@ -228,7 +265,7 @@ public class OTAContentsChecker extends AbstractConfigurable {
     }
 
 
-    private void downloadAll()
+    private void downloadAll(String branchURL)
     {
 
         boolean needToSaveModule = false;
@@ -240,37 +277,37 @@ public class OTAContentsChecker extends AbstractConfigurable {
 
         // download pilots
         if(results.getMissingPilots().size() > 0) {
-            XWOTAUtils.downloadImagesFromOTA("pilots", results.getMissingPilotImages(),writer);
+            XWOTAUtils.downloadImagesFromOTA("pilots", results.getMissingPilotImages(),writer, branchURL);
             needToSaveModule = true;
         }
 
         // download ships
         if(results.getMissingShips().size() > 0) {
-            XWOTAUtils.downloadImagesFromOTA("ships", results.getMissingShipImages(),writer);
+            XWOTAUtils.downloadImagesFromOTA("ships", results.getMissingShipImages(),writer, branchURL);
             needToSaveModule = true;
         }
 
         // download Upgrades
         if(results.getMissingUpgrades().size() > 0) {
-            XWOTAUtils.downloadImagesFromOTA("upgrades", results.getMissingUpgradeImages(),writer);
+            XWOTAUtils.downloadImagesFromOTA("upgrades", results.getMissingUpgradeImages(),writer, branchURL);
             needToSaveModule = true;
         }
 
         // download Conditions
         if(results.getMissingConditions().size() > 0) {
-            XWOTAUtils.downloadImagesFromOTA("conditions", results.getMissingConditionImages(),writer);
+            XWOTAUtils.downloadImagesFromOTA("conditions", results.getMissingConditionImages(),writer,branchURL);
             needToSaveModule = true;
         }
 
         // download actions
         if(results.getMissingActions().size() > 0) {
-            XWOTAUtils.downloadImagesFromOTA("actions", results.getMissingActionImages(),writer);
+            XWOTAUtils.downloadImagesFromOTA("actions", results.getMissingActionImages(),writer, branchURL);
             needToSaveModule = true;
         }
 
         // download dial hides
         if(results.getMissingDialHides().size() > 0) {
-            XWOTAUtils.downloadImagesFromOTA("dial", results.getMissingDialHideImages(),writer);
+            XWOTAUtils.downloadImagesFromOTA("dial", results.getMissingDialHideImages(),writer, branchURL);
             needToSaveModule = true;
         }
 

@@ -33,12 +33,9 @@ public class MasterUpgradeData extends ArrayList<MasterUpgradeData.UpgradeData> 
 
 
 
-    protected static void loadData(String altXwingDataString, String altDispatcherString) {
-
-        loadedData = null;
-        if(loadedData == null) {
+    protected static void loadData(Boolean wantFullControl, String altDispatcherString) {
             // load data from xwing-data
-            loadFromXwingData(altXwingDataString);
+            if(wantFullControl==false) loadFromXwingData();
 
             // load data from dispatcher file
             MasterUpgradeData dispatcherData = loadFromDispatcher(altDispatcherString);
@@ -67,9 +64,6 @@ public class MasterUpgradeData extends ArrayList<MasterUpgradeData.UpgradeData> 
                     }
                 }
             }
-        }
-
-
     }
 
     protected static void loadData() {

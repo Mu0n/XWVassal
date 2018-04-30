@@ -19,7 +19,7 @@ public class MasterGameModeRouter extends ArrayList<MasterGameModeRouter.GameMod
 
     private static Map<String, GameMode> loadedData = null;
 
-    protected static void loadData()
+    public static void loadData()
     {
         MasterGameModeRouter data = Util.loadRemoteJson(OTAContentsChecker.modeListURL, MasterGameModeRouter.class);
 

@@ -164,7 +164,7 @@ public class AutoSquadSpawn extends AbstractConfigurable {
             if(!"Base Game".equals(aComboBox.getSelectedItem().toString()))
             {
                 logToChat("Attempting to load a squad in a mode that's not the base game");
-                loadData(mgmr.getGameMode(aComboBox.getSelectedItem().toString()).getBaseDataURL(),
+                loadData("true".equals(mgmr.getGameMode(aComboBox.getSelectedItem().toString()).getWantFullControl())?true:false,
                         mgmr.getGameMode(aComboBox.getSelectedItem().toString()).getDispatchersURL());
             }else loadData();
             validateList(xwsList);
@@ -794,13 +794,14 @@ public class AutoSquadSpawn extends AbstractConfigurable {
         MasterShipData.loadData();
     }
 
-    private void loadData(String altXwingDataString, String altDispatcherString) {
+    private void loadData(Boolean wantFullControl, String altDispatcherString) {
+        this.slotLoader.loadPieces();
         mic.Util.logToChat("inside AutoSquadSpawn.loadData()");
-        MasterPilotData.loadData(altXwingDataString, altDispatcherString);
+        MasterPilotData.loadData(wantFullControl, altDispatcherString);
         mic.Util.logToChat("PilotDataLoaded");
-        MasterUpgradeData.loadData(altXwingDataString, altDispatcherString);
+        MasterUpgradeData.loadData(wantFullControl, altDispatcherString);
         mic.Util.logToChat("UpgradeDataLoaded");
-        MasterShipData.loadData(altXwingDataString, altDispatcherString);
+        MasterShipData.loadData(wantFullControl, altDispatcherString);
     }
 
 
