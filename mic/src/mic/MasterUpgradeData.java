@@ -1,9 +1,8 @@
 package mic;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
 import mic.ota.OTAContentsChecker;
 
 import java.util.ArrayList;
@@ -36,6 +35,7 @@ public class MasterUpgradeData extends ArrayList<MasterUpgradeData.UpgradeData> 
 
     protected static void loadData(String altXwingDataString, String altDispatcherString) {
 
+        loadedData = null;
         if(loadedData == null) {
             // load data from xwing-data
             loadFromXwingData(altXwingDataString);
@@ -68,6 +68,7 @@ public class MasterUpgradeData extends ArrayList<MasterUpgradeData.UpgradeData> 
                 }
             }
         }
+
 
     }
 
@@ -168,7 +169,19 @@ public class MasterUpgradeData extends ArrayList<MasterUpgradeData.UpgradeData> 
     }
     private static void loadFromXwingData(String altXwingDataString)
     {
+        //DELETEME
+        Util.logToChat("XWINGDATA loading from "+altXwingDataString+ "upgrades.json");
+
+
         MasterUpgradeData data = Util.loadRemoteJson(altXwingDataString + "upgrades.json", MasterUpgradeData.class);
+
+        //DELETEME
+        for(UpgradeData data2 : data)
+        {
+            Util.logToChat(data2.getXws());
+        }
+
+
         if (data == null) {
             //  Util.logToChat("Unable to load xwing-data for upgrades from the web, falling back to local copy");
             data = Util.loadClasspathJson("upgrades.json", MasterUpgradeData.class);
@@ -206,9 +219,18 @@ public class MasterUpgradeData extends ArrayList<MasterUpgradeData.UpgradeData> 
 
     private static MasterUpgradeData loadFromDispatcher(String altDispatcherString)
     {
+        // DELETEME
+        Util.logToChat("DISPATCHER loading from "+altDispatcherString+ "dispatcher_upgrades.json");
+
         // load from dispatch
         MasterUpgradeData data = Util.loadRemoteJson(altDispatcherString + "dispatcher_upgrades.json", MasterUpgradeData.class);
-        logToChat(altDispatcherString+"dispatcher_upgrades.json");
+
+        //DELETEME
+        if(data != null) {
+            for (UpgradeData data2 : data) {
+                Util.logToChat(data2.getXws());
+            }
+        }
         if (data == null) {
             // Util.logToChat("Unable to load dispatcher for upgrades from the web, falling back to local copy");
             data = Util.loadClasspathJson("dispatcher_upgrades.json", MasterUpgradeData.class);

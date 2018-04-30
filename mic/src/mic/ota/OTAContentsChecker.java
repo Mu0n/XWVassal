@@ -28,7 +28,7 @@ public class OTAContentsChecker extends AbstractConfigurable {
 
     // change this variable to a branch name to test, or master for deployment
     private static final String OTA_RAW_GITHUB_BRANCH = "master";
-   // private static final String OTA_RAW_GITHUB_BRANCH = "dual-based-ships";
+    // private static final String OTA_RAW_GITHUB_BRANCH = "dual-based-ships";
 
     private static final String OTA_RAW_GITHUB_ROOT = "https://raw.githubusercontent.com/Mu0n/XWVassalOTA/";
     public static final String OTA_RAW_BRANCH_URL = OTA_RAW_GITHUB_ROOT + OTA_RAW_GITHUB_BRANCH + "/";
@@ -209,9 +209,9 @@ public class OTAContentsChecker extends AbstractConfigurable {
         frame.add(panel, BorderLayout.PAGE_START);
 
         jlabel.setText("Click the download button to download the following images");
-       if(finalTable.getModel().getRowCount() == 0)
-       {
-           jlabel.setText("All content is up to date");
+        if(finalTable.getModel().getRowCount() == 0)
+        {
+            jlabel.setText("All content is up to date");
             downloadButton.setEnabled(false);
         }else{
 
@@ -369,7 +369,7 @@ public class OTAContentsChecker extends AbstractConfigurable {
             //jlabel.setText("Click the download button to download the following images");
             downloadButton.setEnabled(true);
         }
-       // frame.repaint();
+        // frame.repaint();
     }
 
     private String[][] buildTableResultsFromResults(OTAContentsCheckerResults results)

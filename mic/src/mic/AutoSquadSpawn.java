@@ -795,8 +795,11 @@ public class AutoSquadSpawn extends AbstractConfigurable {
     }
 
     private void loadData(String altXwingDataString, String altDispatcherString) {
+        mic.Util.logToChat("inside AutoSquadSpawn.loadData()");
         MasterPilotData.loadData(altXwingDataString, altDispatcherString);
+        mic.Util.logToChat("PilotDataLoaded");
         MasterUpgradeData.loadData(altXwingDataString, altDispatcherString);
+        mic.Util.logToChat("UpgradeDataLoaded");
         MasterShipData.loadData(altXwingDataString, altDispatcherString);
     }
 
@@ -824,6 +827,9 @@ public class AutoSquadSpawn extends AbstractConfigurable {
         try {
             XWSList list = getMapper().readValue(userInput, XWSList.class);
             list.setXwsSource("JSON");
+
+
+
             return list;
         } catch (Exception e) {
             logToChat("Unable to load raw JSON list '%s': %s", userInput, e.toString());

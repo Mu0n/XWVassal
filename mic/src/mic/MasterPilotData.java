@@ -341,7 +341,7 @@ public class MasterPilotData extends ArrayList<MasterPilotData.PilotData> {
         //    return unique;
         }
 
-        public boolean isUniqueBool()
+        public Boolean isUniqueBool()
         {
             return unique;
         }
