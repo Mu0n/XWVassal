@@ -78,7 +78,7 @@ public class StemDial extends Decorator implements EditablePiece {
             .put("1YR", "Move_1_H-R_R.png")
             .put("1LG","Move_1_TR_R_G.png")
             .put("1LW","Move_1_TR_R_W.png")
-            .put("1LR","Move_1_TR_R_R.png")
+            .put("1LR","Move_1_SL_L_R.png")
             .put("1KG","Move_1_U_G.png")
             .put("1KW","Move_1_U_W.png")
             .put("1KR","Move_1_U_R.png")
