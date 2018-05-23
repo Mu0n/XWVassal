@@ -4,6 +4,8 @@ import VASSAL.build.AbstractConfigurable;
 import VASSAL.build.Buildable;
 import VASSAL.build.GameModule;
 import VASSAL.build.module.documentation.HelpFile;
+import VASSAL.build.module.properties.MutablePropertiesContainer;
+import VASSAL.build.module.properties.MutableProperty;
 import VASSAL.tools.ArchiveWriter;
 import VASSAL.tools.DataArchive;
 import VASSAL.tools.io.FileArchive;
@@ -517,7 +519,12 @@ public class AnnouncementOnLog extends AbstractConfigurable {
             frame.dispose();
 
             if(answer==0) {
-                downloadContent();
+                //downloadContent();
+                MutableProperty prop = null;
+                ArrayList<MutablePropertiesContainer> propertyContainers =
+                        new ArrayList<MutablePropertiesContainer>();
+                prop = MutableProperty.Util.findMutableProperty("blinky", propertyContainers);
+                prop.setPropertyValue("true");
             }else{
                 downloadXwingDataAndDispatcherJSONFiles();
             }

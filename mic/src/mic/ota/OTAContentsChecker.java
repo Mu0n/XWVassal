@@ -4,6 +4,8 @@ import VASSAL.build.AbstractConfigurable;
 import VASSAL.build.Buildable;
 import VASSAL.build.GameModule;
 import VASSAL.build.module.documentation.HelpFile;
+import VASSAL.build.module.properties.MutablePropertiesContainer;
+import VASSAL.build.module.properties.MutableProperty;
 import VASSAL.tools.ArchiveWriter;
 import VASSAL.tools.DataArchive;
 import VASSAL.tools.io.FileArchive;
@@ -134,6 +136,11 @@ public class OTAContentsChecker extends AbstractConfigurable {
         GameModule.getGameModule().getToolBar().add(b);
         try{
             if(GameModule.getGameModule().getProperty("blinky").toString().equals("true")) activateBlinky();
+            MutableProperty prop = null;
+            ArrayList<MutablePropertiesContainer> propertyContainers =
+                    new ArrayList<MutablePropertiesContainer>();
+            prop = MutableProperty.Util.findMutableProperty("blinky", propertyContainers);
+            prop.setPropertyValue("false");
         }catch(Exception e){}
     }
 
