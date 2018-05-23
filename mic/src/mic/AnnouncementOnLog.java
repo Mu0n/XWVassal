@@ -519,12 +519,7 @@ public class AnnouncementOnLog extends AbstractConfigurable {
             frame.dispose();
 
             if(answer==0) {
-                //downloadContent();
-                MutableProperty prop = null;
-                ArrayList<MutablePropertiesContainer> propertyContainers =
-                        new ArrayList<MutablePropertiesContainer>();
-                prop = MutableProperty.Util.findMutableProperty("blinky", propertyContainers);
-                prop.setPropertyValue("true");
+                downloadContent();
             }else{
                 downloadXwingDataAndDispatcherJSONFiles();
             }

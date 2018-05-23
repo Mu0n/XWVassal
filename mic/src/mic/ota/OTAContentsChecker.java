@@ -26,6 +26,8 @@ import java.util.*;
 import java.util.Timer;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static mic.Util.logToChat;
+
 public class OTAContentsChecker extends AbstractConfigurable {
     MasterGameModeRouter mgmr = new MasterGameModeRouter();
     static final int NBFLASHES = 60000;
@@ -133,15 +135,10 @@ public class OTAContentsChecker extends AbstractConfigurable {
             }
         });
         contentCheckerButton = b;
+        results = checkAllResults();
+        logToChat("results Total Work: " + Integer.toString(results.getTotalWork()));
+        if(results.getTotalWork()>0) activateBlinky();
         GameModule.getGameModule().getToolBar().add(b);
-        try{
-            if(GameModule.getGameModule().getProperty("blinky").toString().equals("true")) activateBlinky();
-            MutableProperty prop = null;
-            ArrayList<MutablePropertiesContainer> propertyContainers =
-                    new ArrayList<MutablePropertiesContainer>();
-            prop = MutableProperty.Util.findMutableProperty("blinky", propertyContainers);
-            prop.setPropertyValue("false");
-        }catch(Exception e){}
     }
 
 
@@ -151,7 +148,6 @@ public class OTAContentsChecker extends AbstractConfigurable {
      */
     private synchronized void ContentsCheckerWindow()
     {
-
         results = checkAllResults();
         finalTable = buildFinalTable(results);
 
@@ -375,7 +371,7 @@ public class OTAContentsChecker extends AbstractConfigurable {
                 writer.save();
                 needToSaveModule = false;
             } catch (IOException e) {
-                mic.Util.logToChat("Exception occurred saving module");
+                logToChat("Exception occurred saving module");
             }
         }
 
@@ -416,7 +412,7 @@ public class OTAContentsChecker extends AbstractConfigurable {
             try {
                 writer.save();
             } catch (IOException e) {
-                mic.Util.logToChat("Exception occurred saving module");
+                logToChat("Exception occurred saving module");
             }
 
             // refresh the table
