@@ -132,7 +132,9 @@ public class OTAContentsChecker extends AbstractConfigurable {
         });
         contentCheckerButton = b;
         GameModule.getGameModule().getToolBar().add(b);
-        if(GameModule.getGameModule().getProperty("blinky").toString().equals("true")) activateBlinky();
+        try{
+            if(GameModule.getGameModule().getProperty("blinky").toString().equals("true")) activateBlinky();
+        }catch(Exception e){}
     }
 
 
