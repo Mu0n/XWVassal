@@ -72,27 +72,15 @@ public class OTAContentsChecker extends AbstractConfigurable {
 
     private boolean tictoc = false;
     Color backupColor = Color.WHITE;
+    Boolean killItIfYouHaveTo = false; //kills the blinking Contents Checker button, after an update
     public static final String modeListURL = "https://raw.githubusercontent.com/Mu0n/XWVassal-website/master/modeList.json";
 
 
-
-    public void addTo(Buildable parent)
+    public void activateBlinky()
     {
+        contentCheckerButton.setForeground(Color.WHITE);
+        contentCheckerButton.setBackground(Color.RED);
 
-        JButton b = new JButton("Content Checker (new)");
-        b.setAlignmentY(0.0F);
-        backupColor = b.getBackground();
-        b.setForeground(Color.WHITE);
-        b.setBackground(Color.RED);
-        b.setOpaque(true);
-        b.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
-                ContentsCheckerWindow();
-            }
-        });
-        contentCheckerButton = b;
-        GameModule.getGameModule().getToolBar().add(b);
-        if(true){
             final java.util.Timer timer = new Timer();
             final VASSAL.build.module.Map map = VASSAL.build.module.Map.getMapById("Map0");
             this.tictoc = false;
@@ -101,6 +89,12 @@ public class OTAContentsChecker extends AbstractConfigurable {
                 @Override
                 public void run() {
                     try{
+                        if(killItIfYouHaveTo){
+                            timer.cancel();
+                            contentCheckerButton.setBackground(backupColor);
+                            contentCheckerButton.setForeground(Color.BLACK);
+                            return;
+                        }
                         if(count.getAndIncrement() >= NBFLASHES * 2) {
                             timer.cancel();
                             contentCheckerButton.setBackground(backupColor);
@@ -121,7 +115,24 @@ public class OTAContentsChecker extends AbstractConfigurable {
                     }
                 }
             }, 0,DELAYBETWEENFLASHES);
-        }
+    }
+
+    public void addTo(Buildable parent)
+    {
+
+        JButton b = new JButton("Content Checker (new)");
+        b.setAlignmentY(0.0F);
+        backupColor = b.getBackground();
+
+        b.setOpaque(true);
+        b.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                ContentsCheckerWindow();
+            }
+        });
+        contentCheckerButton = b;
+        GameModule.getGameModule().getToolBar().add(b);
+        if(GameModule.getGameModule().getProperty("blinky").toString().equals("true")) activateBlinky();
     }
 
 
@@ -190,6 +201,7 @@ public class OTAContentsChecker extends AbstractConfigurable {
                         downloadAll(chosenURL);
                     }
                     allButton.setSelected(false);
+                    killItIfYouHaveTo = true; //gets rid of the blinky
                 }else{
                     downloadButton.setEnabled(true);
                 }
