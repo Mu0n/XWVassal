@@ -20,13 +20,14 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.*;
+import java.util.Timer;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class OTAContentsChecker extends AbstractConfigurable {
     MasterGameModeRouter mgmr = new MasterGameModeRouter();
-
+    static final int NBFLASHES = 60000;
+    static final int DELAYBETWEENFLASHES = 700;
 
     // change this variable to a branch name to test, or master for deployment
     private static final String OTA_RAW_GITHUB_BRANCH = "master";
@@ -59,7 +60,7 @@ public class OTAContentsChecker extends AbstractConfigurable {
             .put("scumandvillainy","Scum and Villainy")
             .build();
 
-    private JButton OKButton = new JButton();
+    private JButton contentCheckerButton = new JButton();
     private ModuleIntegrityChecker modIntChecker = null;
     private OTAContentsCheckerResults results = null;
     private final String[] finalColumnNames = {"Type","Name", "Variant"};
@@ -69,6 +70,8 @@ public class OTAContentsChecker extends AbstractConfigurable {
     private JLabel jlabel;
     private boolean downloadAll = false;
 
+    private boolean tictoc = false;
+    Color backupColor = Color.WHITE;
     public static final String modeListURL = "https://raw.githubusercontent.com/Mu0n/XWVassal-website/master/modeList.json";
 
 
@@ -76,15 +79,49 @@ public class OTAContentsChecker extends AbstractConfigurable {
     public void addTo(Buildable parent)
     {
 
-        JButton b = new JButton("Content Checker");
+        JButton b = new JButton("Content Checker (new)");
         b.setAlignmentY(0.0F);
+        backupColor = b.getBackground();
+        b.setForeground(Color.WHITE);
+        b.setBackground(Color.RED);
+        b.setOpaque(true);
         b.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
                 ContentsCheckerWindow();
             }
         });
-        OKButton = b;
+        contentCheckerButton = b;
         GameModule.getGameModule().getToolBar().add(b);
+        if(true){
+            final java.util.Timer timer = new Timer();
+            final VASSAL.build.module.Map map = VASSAL.build.module.Map.getMapById("Map0");
+            this.tictoc = false;
+            final AtomicInteger count = new AtomicInteger(0);
+            timer.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    try{
+                        if(count.getAndIncrement() >= NBFLASHES * 2) {
+                            timer.cancel();
+                            contentCheckerButton.setBackground(backupColor);
+                            contentCheckerButton.setForeground(Color.BLACK);
+                            return;
+                        }
+                        if(tictoc==true) {
+                            contentCheckerButton.setBackground(Color.RED);
+                            contentCheckerButton.setForeground(Color.WHITE);
+                            tictoc=false;
+                        }
+                        else{
+                            tictoc=true;
+                            contentCheckerButton.setBackground(backupColor);
+                            contentCheckerButton.setForeground(Color.BLACK);
+                        }
+                    } catch (Exception e) {
+                    }
+                }
+            }, 0,DELAYBETWEENFLASHES);
+        }
     }
 
 
@@ -778,7 +815,7 @@ public class OTAContentsChecker extends AbstractConfigurable {
 
     @Override
     public void removeFrom(Buildable parent) {
-        GameModule.getGameModule().getToolBar().remove(OKButton);
+        GameModule.getGameModule().getToolBar().remove(contentCheckerButton);
     }
 
     @Override
