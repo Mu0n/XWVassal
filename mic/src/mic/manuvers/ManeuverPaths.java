@@ -32,13 +32,13 @@ public enum ManeuverPaths {
     LT2(CurvedPaths.LT2, "Left Turn 2", 2, 0.0f, "522", 90.0f, -74.0f, 159.0f, -74.0f, 215.5f, "3657", -244.0f, -8.0f, -244.0f, 48.0f),
     LT3(CurvedPaths.LT3, "Left Turn 3", 3, 0.0f, "523", 90.0f, -113.0f, 198.0f, -113.0f, 254.5f, "3658", -282.0f, 30.0f, -282.0f, 86.0f),
 
-    TrollL1(CurvedPaths.LT1, "Tallon Roll Left 1", 1, 90.0f, "521", 180.0f, -120.0f, -35.0f, -176.5f, -35.0f, "521", 218.0f, -373.0f, 160.5f, -377.0f),
+      TrollL1(CurvedPaths.LT1, "Tallon Roll Left 1", 1, 90.0f, "521", 180.0f, -120.0f, -35.0f, -176.5f, -35.0f, "521", 218.0f, -373.0f, -177.5f, -35.0f),
     RT1(CurvedPaths.RT1, "Right Turn 1", 1, 0.0f, "521",               180.0f, 35.0f, 120.0f, 35.0f, 176.5f, "3656", 203.0f, -48.0f, 203.0f, 8.0f),
 
-    TrollL2(CurvedPaths.LT2, "Tallon Roll Left 2", 2, 90.0f, "522", 180.0f, -159.0f, -75.0f, -215.5f, -75.0f, "522", 10.0f, -243.0f, -216.0f, -74.0f),
+      TrollL2(CurvedPaths.LT2, "Tallon Roll Left 2", 2, 90.0f, "522", 180.0f, -159.0f, -75.0f, -215.5f, -75.0f, "522", 10.0f, -243.0f, -216.0f, -74.0f),
     RT2(CurvedPaths.RT2, "Right Turn 2", 2, 0.0f, "522",               180.0f, 74.0f, 159.0f, 74.0f, 215.5f, "3657", 244.0f, -8.0f, 244.0f, 48.0f),
 
-    TrollL3(CurvedPaths.LT3, "Tallon Roll Left 3", 3, 90.0f, "523", 180.0f, -198.0f, -113.0f, -254.5f, -113.0f, "523", -198.0f, -113.0f, -254.5f, -113.0f),
+      TrollL3(CurvedPaths.LT3, "Tallon Roll Left 3", 3, 90.0f, "523", 180.0f, -198.0f, -113.0f, -254.5f, -113.0f, "523", -198.0f, -113.0f, -254.5f, -113.0f),
     RT3(CurvedPaths.RT3, "Right Turn 3", 3, 0.0f, "523",               180.0f, 113.0f, 198.0f, 113.0f, 254.5f, "3658", 282.0f, 30.0f, 282.0f, 86.0f),
 
     Str1(StraightPaths.Str1, "Forward 1", 1, 0.0f, "524", 0.0f, 0.0f, 113.0f, 0.0f, 169.5f, "528", 0.0f, 339.0f, 0.0f, 395.5f),
