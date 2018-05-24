@@ -97,12 +97,14 @@ public class OTAContentsChecker extends AbstractConfigurable {
                             timer.cancel();
                             contentCheckerButton.setBackground(backupColor);
                             contentCheckerButton.setForeground(Color.BLACK);
+                            contentCheckerButton.setName("Content Checker");
                             return;
                         }
                         if(count.getAndIncrement() >= NBFLASHES * 2) {
                             timer.cancel();
                             contentCheckerButton.setBackground(backupColor);
                             contentCheckerButton.setForeground(Color.BLACK);
+                            contentCheckerButton.setName("Content Checker");
                             return;
                         }
                         if(tictoc==true) {
@@ -124,7 +126,7 @@ public class OTAContentsChecker extends AbstractConfigurable {
     public void addTo(Buildable parent)
     {
 
-        JButton b = new JButton("Content Checker (new)");
+        JButton b = new JButton("Content Checker");
         b.setAlignmentY(0.0F);
         backupColor = b.getBackground();
 
@@ -134,11 +136,15 @@ public class OTAContentsChecker extends AbstractConfigurable {
                 ContentsCheckerWindow();
             }
         });
-        contentCheckerButton = b;
         results = checkAllResults();
         logToChat("results Total Work: " + Integer.toString(results.getTotalWork()));
-        if(results.getTotalWork()>0) activateBlinky();
-        GameModule.getGameModule().getToolBar().add(b);
+        if(results.getTotalWork()>0) {
+            activateBlinky();
+            b.setName("Content Checker (new stuff!)");
+        }
+
+        contentCheckerButton = b;
+        GameModule.getGameModule().getToolBar().add(contentCheckerButton);
     }
 
 
