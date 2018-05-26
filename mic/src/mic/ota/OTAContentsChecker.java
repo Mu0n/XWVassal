@@ -124,7 +124,7 @@ public class OTAContentsChecker extends AbstractConfigurable {
     public void addTo(Buildable parent)
     {
 
-        JButton b = new JButton("Content Checker (new)");
+        JButton b = new JButton("Content Checker");
         b.setAlignmentY(0.0F);
         backupColor = b.getBackground();
 
@@ -135,12 +135,205 @@ public class OTAContentsChecker extends AbstractConfigurable {
             }
         });
         contentCheckerButton = b;
-        results = checkAllResults();
-        logToChat("results Total Work: " + Integer.toString(results.getTotalWork()));
-        if(results.getTotalWork()>0) activateBlinky();
+        int n = countMissingContent();
+        logToChat("missing content count: " + Integer.toString(n));
+        if(n>0) activateBlinky();
+        contentCheckerButton.setName("Content Checker ("+Integer.toString(n)+")new");
         GameModule.getGameModule().getToolBar().add(b);
     }
 
+    private boolean downloadXwingDataAndDispatcherJSONFiles()
+    {
+        boolean errorOccurredOnXWingData = false;
+
+        ArrayList<String> jsonFilesToDownloadFromURL = new ArrayList<String>();
+        jsonFilesToDownloadFromURL.add(MasterShipData.REMOTE_URL);
+        jsonFilesToDownloadFromURL.add(OTAContentsChecker.OTA_DISPATCHER_SHIPS_JSON_URL);
+        jsonFilesToDownloadFromURL.add(MasterPilotData.REMOTE_URL);
+        jsonFilesToDownloadFromURL.add(OTAContentsChecker.OTA_PILOTS_JSON_URL);
+        jsonFilesToDownloadFromURL.add(MasterUpgradeData.REMOTE_URL);
+        jsonFilesToDownloadFromURL.add(OTAContentsChecker.OTA_DISPATCHER_UPGRADES_JSON_URL);
+        jsonFilesToDownloadFromURL.add(MasterConditionData.REMOTE_URL);
+        jsonFilesToDownloadFromURL.add(OTAContentsChecker.OTA_DISPATCHER_CONDITIONS_JSON_URL);
+        try {
+            XWOTAUtils.downloadJSONFilesFromGitHub(jsonFilesToDownloadFromURL);
+            mic.Util.logToChat("Core XWing data updated");
+        }catch(IOException e)
+        {
+            errorOccurredOnXWingData = true;
+        }
+
+        return errorOccurredOnXWingData;
+    }
+
+    private int countMissingContent()
+    {
+        int missingCount = 0;
+
+        // grab xwing-data: pilots, ships, upgrades, conditions
+        // dispatcher: pilots, ships, upgrades, conditions
+        // and save to the module
+        boolean errorOccurredOnXWingData = downloadXwingDataAndDispatcherJSONFiles();
+
+        if(errorOccurredOnXWingData)
+        {
+            mic.Util.logToChat("Unable to reach XWing-Data server. No update performed");
+        }else {
+
+            // check OTA for updates
+            ArrayList<OTAImage> imagesToDownload = new ArrayList<OTAImage>();
+
+            OTAImage imageToDownload = null;
+            ModuleIntegrityChecker modIntCheck = new ModuleIntegrityChecker();
+
+            // =============================================================
+            // Pilots
+            // =============================================================
+            ArrayList<OTAMasterPilots.OTAPilot> pilots = modIntCheck.checkPilots();
+            for (OTAMasterPilots.OTAPilot pilot : pilots) {
+                if (!pilot.getStatus()) {
+                    missingCount++;
+                }
+            }
+            pilots = null;
+
+            // =============================================================
+            // Ships
+            // =============================================================
+            ArrayList<OTAMasterShips.OTAShip> ships = modIntCheck.checkShips();
+            for (OTAMasterShips.OTAShip ship : ships) {
+                if (!ship.getStatus()) {
+                    missingCount++;
+                }
+            }
+            ships = null;
+
+            // =============================================================
+            // Upgrades
+            // =============================================================
+            ArrayList<OTAMasterUpgrades.OTAUpgrade> upgrades = modIntCheck.checkUpgrades();
+            for (OTAMasterUpgrades.OTAUpgrade upgrade : upgrades) {
+                if (!upgrade.getStatus()) {
+                    missingCount++;
+                }
+            }
+            upgrades = null;
+
+            // =============================================================
+            // Conditions
+            // =============================================================
+            ArrayList<OTAMasterConditions.OTACondition> conditions = modIntCheck.checkConditions();
+            for (OTAMasterConditions.OTACondition condition : conditions) {
+                if (!condition.getStatus()) {
+                    missingCount++;
+                }
+
+                if (!condition.getTokenStatus()) {
+                    missingCount++;
+                }
+            }
+            conditions = null;
+
+            // =============================================================
+            // Dial Hides
+            // =============================================================
+            ArrayList<OTAMasterDialHides.OTADialHide> dialHides = modIntCheck.checkDialHides();
+            for (OTAMasterDialHides.OTADialHide dialHide : dialHides) {
+                if (!dialHide.getStatus()) {
+                    missingCount++;
+                }
+            }
+            dialHides = null;
+
+            // =============================================================
+            // Check Dial Masks
+            // =============================================================
+            ArrayList<OTADialMask> dialMasksToGenerate = new ArrayList<OTADialMask>();
+            ArrayList<OTADialMask> dialMaskResults = modIntCheck.checkDialMasks();
+            Iterator<OTADialMask> dialMaskIterator = dialMaskResults.iterator();
+            OTADialMask missingDialMask = null;
+            while (dialMaskIterator.hasNext()) {
+                missingDialMask = dialMaskIterator.next();
+                if (!missingDialMask.getStatus()) {
+                    missingCount++;
+                }
+            }
+
+            // =============================================================
+            // Check Ship Bases
+            // =============================================================
+            ArrayList<OTAShipBase> shipBasesToGenerate = new ArrayList<OTAShipBase>();
+            ArrayList<OTAShipBase> shipBaseResults = modIntCheck.checkShipBases();
+            Iterator<OTAShipBase> shipBaseIterator = shipBaseResults.iterator();
+            OTAShipBase missingShipBase = null;
+            while (shipBaseIterator.hasNext()) {
+                missingShipBase = shipBaseIterator.next();
+                if (!missingShipBase.getStatus()) {
+                    missingCount++;
+                }
+            }
+
+            // TODO great time for a progress bar here
+
+
+            // =============================================================
+            // Download the missing images
+            // =============================================================
+            XWOTAUtils.downloadAndSaveImagesFromOTA(imagesToDownload, OTAContentsChecker.OTA_RAW_BRANCH_URL);
+
+            // =============================================================
+            // Generate the missing Dial Masks
+            // =============================================================
+            OTADialMask dialMask = null;
+            GameModule gameModule = GameModule.getGameModule();
+            DataArchive dataArchive = gameModule.getDataArchive();
+            FileArchive fileArchive = dataArchive.getArchive();
+            ArchiveWriter writer = new ArchiveWriter(fileArchive);
+            dialMaskIterator = dialMasksToGenerate.iterator();
+            while (dialMaskIterator.hasNext()) {
+                dialMask = dialMaskIterator.next();
+                if (!dialMask.getStatus()) {
+                    missingCount++;
+                }
+            }
+            //        try {
+            //           writer.save();
+            //       } catch (IOException e) {
+            //           mic.Util.logToChat("Exception occurred saving module");
+            //       }
+            dialMaskResults = null;
+
+            dialMasksToGenerate = null;
+
+
+            // =============================================================
+            // Generate the missing ship bases
+            // =============================================================
+            OTAShipBase shipBase = null;
+            //         GameModule gameModule = GameModule.getGameModule();
+            //       DataArchive dataArchive = gameModule.getDataArchive();
+            //       FileArchive fileArchive = dataArchive.getArchive();
+            //        ArchiveWriter writer = new ArchiveWriter(fileArchive);
+            shipBaseIterator = shipBasesToGenerate.iterator();
+            while (shipBaseIterator.hasNext()) {
+                shipBase = shipBaseIterator.next();
+                if (!shipBase.getStatus()) {
+                    missingCount++;
+                }
+            }
+
+            // now save the module
+            try {
+                writer.save();
+            } catch (IOException e) {
+                mic.Util.logToChat("Exception occurred saving module");
+            }
+            shipBaseResults = null;
+
+            shipBasesToGenerate = null;
+        }
+        return missingCount;
+    }
 
 
     /*
