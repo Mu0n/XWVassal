@@ -79,6 +79,7 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
             .put("ALT CTRL 5", ManeuverPaths.K5)
             .put("CTRL 6", ManeuverPaths.RevLbk1)
             .put("SHIFT 6", ManeuverPaths.RevStr1)
+            .put("SHIFT 7", ManeuverPaths.RevStr2)
             .put("ALT 6", ManeuverPaths.RevRbk1)
             .put("CTRL Q", ManeuverPaths.SloopL1)
             .put("CTRL W", ManeuverPaths.SloopL2)
@@ -88,8 +89,10 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
             .put("ALT E", ManeuverPaths.SloopR3)
             .put("CTRL SHIFT E", ManeuverPaths.SloopL3Turn)
             .put("ALT SHIFT E", ManeuverPaths.SloopR3Turn)
+            .put("CTRL H", ManeuverPaths.TrollL1)
             .put("CTRL Y", ManeuverPaths.TrollL2)
             .put("CTRL T", ManeuverPaths.TrollL3)
+            .put("ALT H", ManeuverPaths.TrollR1)
             .put("ALT Y", ManeuverPaths.TrollR2)
             .put("ALT T", ManeuverPaths.TrollR3)
             .build();
@@ -224,7 +227,8 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
             innerCommand.append(buildTranslateCommand(part, path.getAdditionalAngleForShip()));
 
             //check for Tallon rolls and spawn the template
-            if(lastManeuver == ManeuverPaths.TrollL2 || lastManeuver == ManeuverPaths.TrollL3 || lastManeuver == ManeuverPaths.TrollR2 || lastManeuver == ManeuverPaths.TrollR3) {
+            if(lastManeuver == ManeuverPaths.TrollL1  || lastManeuver == ManeuverPaths.TrollL2 || lastManeuver == ManeuverPaths.TrollL3
+            || lastManeuver == ManeuverPaths.TrollR1  || lastManeuver == ManeuverPaths.TrollR2 || lastManeuver == ManeuverPaths.TrollR3) {
                 Command placeTrollTemplate = spawnRotatedPiece(lastManeuver);
                 innerCommand.append(placeTrollTemplate);
             }
