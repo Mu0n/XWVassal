@@ -196,6 +196,7 @@ public class OTAContentsChecker extends AbstractConfigurable {
                 }
             }
             pilots = null;
+            logToChat("after pilots, missingCount = " + Integer.toString(missingCount));
 
             // =============================================================
             // Ships
