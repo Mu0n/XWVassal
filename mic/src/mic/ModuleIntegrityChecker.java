@@ -68,7 +68,7 @@ public class ModuleIntegrityChecker {
             //if(MasterUpgradeData.getUpgradeData(upgrade.getXws()) != null && XWOTAUtils.imageExistsInOTA("upgrade",upgrade.getImage())) {
             if(MasterUpgradeData.getUpgradeData(upgrade.getXws()) != null) {
                 upgrade.setStatus(XWOTAUtils.imageExistsInModule(upgrade.getImage()));
-                if(upgrade.getStatus() || (!upgrade.getStatus() && XWOTAUtils.imageExistsInOTA("upgrade",upgrade.getImage(),OTAContentsChecker.OTA_RAW_BRANCH_URL))) {
+                if(upgrade.getStatus() || (!upgrade.getStatus() && XWOTAUtils.imageExistsInOTA("upgrades",upgrade.getImage(),OTAContentsChecker.OTA_RAW_BRANCH_URL))) {
                     upgradeList.add(upgrade);
                 }
             }
@@ -97,7 +97,7 @@ public class ModuleIntegrityChecker {
             if(MasterConditionData.getConditionData(condition.getXws()) != null ) {
                 condition.setStatus(XWOTAUtils.imageExistsInModule(condition.getImage()));
                 condition.setTokenStatus(XWOTAUtils.imageExistsInModule(condition.getTokenImage()));
-                if(((condition.getStatus() && condition.getTokenStatus()) || (!condition.getStatus() || !condition.getTokenStatus()) && (XWOTAUtils.imageExistsInOTA("condition",condition.getImage(),OTAContentsChecker.OTA_RAW_BRANCH_URL)&& XWOTAUtils.imageExistsInOTA("condition",condition.getTokenImage(), OTAContentsChecker.OTA_RAW_BRANCH_URL)))) {
+                if(((condition.getStatus() && condition.getTokenStatus()) || (!condition.getStatus() || !condition.getTokenStatus()) && (XWOTAUtils.imageExistsInOTA("conditions",condition.getImage(),OTAContentsChecker.OTA_RAW_BRANCH_URL)&& XWOTAUtils.imageExistsInOTA("condition",condition.getTokenImage(), OTAContentsChecker.OTA_RAW_BRANCH_URL)))) {
                     conditionList.add(condition);
                 }
             }
@@ -159,7 +159,7 @@ public ArrayList<OTAMasterPilots.OTAPilot> checkPilots()
 
         if(MasterPilotData.getPilotData(pilot.getShipXws(),pilot.getPilotXws(),pilot.getFaction()) != null) {
             pilot.setStatus(XWOTAUtils.imageExistsInModule(pilot.getImage()));
-            if(pilot.getStatus() || (!pilot.getStatus()  && XWOTAUtils.imageExistsInOTA("pilot",pilot.getImage(), OTAContentsChecker.OTA_RAW_BRANCH_URL))) {
+            if(pilot.getStatus() || (!pilot.getStatus()  && XWOTAUtils.imageExistsInOTA("pilots",pilot.getImage(), OTAContentsChecker.OTA_RAW_BRANCH_URL))) {
                 pilotList.add(pilot);
             }
         }
@@ -188,7 +188,7 @@ public ArrayList<OTAMasterPilots.OTAPilot> checkPilots()
                 ship.setStatus(XWOTAUtils.imageExistsInModule(ship.getImage()));
                 boolean exists = XWOTAUtils.imageExistsInModule(ship.getImage());
 
-                if(exists || (!exists && XWOTAUtils.imageExistsInOTA("ship",ship.getImage(), OTAContentsChecker.OTA_RAW_BRANCH_URL))) {
+                if(exists || (!exists && XWOTAUtils.imageExistsInOTA("ships",ship.getImage(), OTAContentsChecker.OTA_RAW_BRANCH_URL))) {
                     shipList.add(ship);
                 }
             }
@@ -236,7 +236,7 @@ public ArrayList<OTAMasterPilots.OTAPilot> checkPilots()
                     shipBase.setShipXws(ship.getXws());
                     shipBase.setStatus(XWOTAUtils.imageExistsInModule(shipBaseImageName));
 
-                    if(shipBase.getStatus() || (!shipBase.getStatus() && XWOTAUtils.imageExistsInOTA("ship",ship.getImage(), OTAContentsChecker.OTA_RAW_BRANCH_URL))) {
+                    if(shipBase.getStatus() || (!shipBase.getStatus() && XWOTAUtils.imageExistsInOTA("ships",ship.getImage(), OTAContentsChecker.OTA_RAW_BRANCH_URL))) {
                         shipList.add(shipBase);
                     }
 

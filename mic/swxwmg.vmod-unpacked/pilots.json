@@ -4880,5 +4880,20 @@
     ],
     "id": 292,
     "faction": "Galactic Empire"
+  },
+  {
+    "name": "Cavern Angels Zealot",
+    "id": 293,
+    "ship": "X-wing",
+    "skill": 1,
+    "points": 22,
+    "slots": [
+      "Torpedo",
+      "Astromech",
+      "Elite"
+    ],
+    "faction": "Rebel Alliance",
+    "xws": "cavernangelszealot",
+    "image": "pilots/Rebel Alliance/X-wing/cavern-angel-zealot.png"
   }
 ]
