@@ -136,7 +136,7 @@ public class OTAContentsChecker extends AbstractConfigurable {
         });
         contentCheckerButton = b;
         int n = countMissingContent();
-        logToChat("missing content count: " + Integer.toString(n));
+        //logToChat("missing content count: " + Integer.toString(n));
         if(n>0) activateBlinky();
         contentCheckerButton.setName("Content Checker ("+Integer.toString(n)+")new");
         GameModule.getGameModule().getToolBar().add(b);
@@ -196,7 +196,7 @@ public class OTAContentsChecker extends AbstractConfigurable {
                 }
             }
             pilots = null;
-            logToChat("after pilots, missingCount = " + Integer.toString(missingCount));
+            //logToChat("after pilots, missingCount = " + Integer.toString(missingCount));
 
             // =============================================================
             // Ships
