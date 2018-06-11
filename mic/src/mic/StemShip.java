@@ -508,7 +508,12 @@ public class StemShip extends Decorator implements EditablePiece {
                 sb = new StringBuffer();
                 sb.append("macro;Toggle Ship Base;");
                 sb.append(dualBaseMenuText);
-                sb.append(";85,520;{ULevel==1 || ULevel==3};;63743\\,0\\,dopivot;false;;;counted;;;;false;;1;1");
+
+                //total hack to make x-wing sfoils work with pivotatk instead of pivot like is used in U-Wings
+                String pivotTypeString = "dopivot";
+                if("opened".equals(baseImage1Identifier)) pivotTypeString ="dopivotatk";
+
+                sb.append(";85,520;{ULevel==1 || ULevel==3};;63743\\,0\\,"+pivotTypeString+";false;;;counted;;;;false;;1;1");
                 TriggerAction trig = (TriggerAction)Util.getTriggerAction(piece,TOGGLE_BASE_TRIGGER_ACTION_NAME);
                 trig.mySetType(sb.toString());
 
