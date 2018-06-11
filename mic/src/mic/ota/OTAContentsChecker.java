@@ -351,8 +351,14 @@ public class OTAContentsChecker extends AbstractConfigurable {
 
         // create the panel
         JPanel panel = new JPanel();
-        panel.setLayout(new GridBagLayout());
-        GridBagConstraints c = new GridBagConstraints();
+
+        //previous layout
+        //panel.setLayout(new GridBagLayout());
+
+        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+
+        //previous layout
+        //GridBagConstraints c = new GridBagConstraints();
 
         // create the label
         jlabel = new JLabel();
@@ -429,25 +435,44 @@ public class OTAContentsChecker extends AbstractConfigurable {
         {
             aComboBox.addItem("Base Game");
         }
-        final JLabel sourceTextDescription = new JLabel("<html><body width=600><b>Description for <i>"
+        final JLabel sourceTextDescription = new JLabel("<html><body width=400><b>Description for <i>"
                 + aComboBox.getSelectedItem().toString() + "</i></b>: "
                 + mgmr.getGameMode(aComboBox.getSelectedItem().toString()).getDescription()
                 + "</body></html>");
         //sourceTextDescription.setAlignmentX(JLabel.RIGHT_ALIGNMENT);
 
-        JLabel sourceExplanationLabel = new JLabel("Select the game mode here:");
+        JLabel sourceExplanationLabel = new JLabel("<html><body>The Content Checker allows you to download card images, ship dials, ship bases as new content<br>" +
+                "is previewed or released in the game. Please download this new content to ensure maximum compatibility with other players.<br><br>Select the game mode here (only the base game can acquire new content for now):</body></html>");
 
 
         aComboBox.addItemListener(new ItemListener() {
             @Override
             public void itemStateChanged(ItemEvent e) {
-                sourceTextDescription.setText("<html><body width=600><b>Description for <i>"
+                sourceTextDescription.setText("<html><body width=400><b>Description for <i>"
                         + aComboBox.getSelectedItem().toString() + "</i></b>: "
                         + mgmr.getGameMode(aComboBox.getSelectedItem().toString()).getDescription()
                         + "</body></html>");
             }
         });
 
+        sourceExplanationLabel.setAlignmentX(Component.RIGHT_ALIGNMENT);
+        aComboBox.setAlignmentX(Component.RIGHT_ALIGNMENT);
+        sourceTextDescription.setAlignmentX(Component.RIGHT_ALIGNMENT);
+        jlabel.setAlignmentX(Component.RIGHT_ALIGNMENT);
+        JPanel buttonSubPanel = new JPanel();
+        buttonSubPanel.setAlignmentX(Component.RIGHT_ALIGNMENT);
+        buttonSubPanel.add(downloadButton);
+        buttonSubPanel.add(allButton);
+        buttonSubPanel.add(cancelButton);
+
+        panel.add(sourceExplanationLabel);
+        panel.add(aComboBox);
+        panel.add(sourceTextDescription);
+        panel.add(jlabel);
+        panel.add(buttonSubPanel);
+        panel.add(finalPane);
+
+        /* old layout
         // add the components
         c.gridx = 0;
         c.gridy = 2;
@@ -489,11 +514,12 @@ public class OTAContentsChecker extends AbstractConfigurable {
         c.gridwidth = 2;
         c.ipady = 40;
         panel.add(sourceTextDescription);
+        */
 
         panel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
         frame.add(panel, BorderLayout.PAGE_START);
 
-        jlabel.setText("Click the download button to download the following images");
+        jlabel.setText("<html><body><br>Click the download button to download the following images</body></html>");
         if(finalTable.getModel().getRowCount() == 0)
         {
             jlabel.setText("All content is up to date");
@@ -503,6 +529,8 @@ public class OTAContentsChecker extends AbstractConfigurable {
             downloadButton.setEnabled(true);
         }
 
+        frame.setPreferredSize(new Dimension(550,700));
+        frame.setTitle("Content Checker");
         panel.setOpaque(true); // content panes must be opaque
         frame.setContentPane(panel);
         frame.pack();
