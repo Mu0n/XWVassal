@@ -510,7 +510,7 @@ public class XWOTAUtils {
         writer.save();
 
     }
-    public static void downloadAndSaveImagesFromOTA( ArrayList<OTAImage> imagesToDownload)
+    public static void downloadAndSaveImagesFromOTA( ArrayList<OTAImage> imagesToDownload, String branchURL)
     {
 
         GameModule gameModule = GameModule.getGameModule();
@@ -529,7 +529,7 @@ public class XWOTAUtils {
 
             try {
 
-                imageBytes = downloadFileFromOTA(image.getImageType(), image.getImageName());
+                imageBytes = downloadFileFromOTA(image.getImageType(), image.getImageName(), branchURL);
 
                 if(imageBytes != null)
                 {
@@ -565,7 +565,7 @@ public class XWOTAUtils {
 
     }
 
-    public static void downloadImagesFromOTA(String imageType, ArrayList<String> imageNames, ArchiveWriter writer)
+    public static void downloadImagesFromOTA(String imageType, ArrayList<String> imageNames, ArchiveWriter writer, String branchURL)
     {
         Iterator<String> i = imageNames.iterator();
         while(i.hasNext())
@@ -577,7 +577,7 @@ public class XWOTAUtils {
 
             try {
 
-                imageBytes = downloadFileFromOTA(imageType, imageName);
+                imageBytes = downloadFileFromOTA(imageType, imageName, branchURL);
 
                 if(imageBytes != null)
                 {
@@ -606,7 +606,7 @@ public class XWOTAUtils {
 
     }
 
-    public static void downloadAndSaveImagesFromOTA(String imageType, ArrayList<String> imageNames)
+    public static void downloadAndSaveImagesFromOTA(String imageType, ArrayList<String> imageNames, String branchURL)
     {
 
         GameModule gameModule = GameModule.getGameModule();
@@ -624,7 +624,7 @@ public class XWOTAUtils {
 
             try {
 
-                imageBytes = downloadFileFromOTA(imageType, imageName);
+                imageBytes = downloadFileFromOTA(imageType, imageName, branchURL);
 
                 if(imageBytes != null)
                 {
@@ -661,7 +661,7 @@ public class XWOTAUtils {
     }
 
 
-    public static void downloadAndSaveImageFromOTA(String imageType, String imageName)
+    public static void downloadAndSaveImageFromOTA(String imageType, String imageName, String branchURL)
     {
         boolean imageFound = false;
         byte[] imageBytes = null;
@@ -670,7 +670,7 @@ public class XWOTAUtils {
 
         try {
 
-            imageBytes = downloadFileFromOTA(imageType, imageName);
+            imageBytes = downloadFileFromOTA(imageType, imageName, branchURL);
 
             if(imageBytes != null)
             {
@@ -718,12 +718,12 @@ public class XWOTAUtils {
     }
 
 
-    private static byte[] downloadFileFromOTA(String fileType, String fileName) throws IOException
+    private static byte[] downloadFileFromOTA(String fileType, String fileName, String branchURL) throws IOException
     {
         // Util.logToChat("Downloading image: "+fileName);
         URL OTAImageURL = null;
         //String url = "https://raw.githubusercontent.com/Mu0n/XWVassalOTA/master/" + fileType + "/" + fileName;
-        String url = OTAContentsChecker.OTA_RAW_BRANCH_URL + fileType + "/" + fileName;
+        String url = branchURL + fileType + "/" + fileName;
         OTAImageURL = new URL(url);
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         InputStream is = null;
@@ -745,10 +745,10 @@ public class XWOTAUtils {
         return bytes;
     }
 
-    public static boolean imageExistsInOTA(String fileType, String fileName)
+    public static boolean imageExistsInOTA(String fileType, String fileName, String branchURL)
     {
 
-        String url = OTAContentsChecker.OTA_RAW_BRANCH_URL + fileType + "/" + fileName;
+        String url = branchURL + fileType + "/" + fileName;
 
         HttpURLConnection httpUrlConn;
         try {

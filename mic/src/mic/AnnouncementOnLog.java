@@ -4,6 +4,8 @@ import VASSAL.build.AbstractConfigurable;
 import VASSAL.build.Buildable;
 import VASSAL.build.GameModule;
 import VASSAL.build.module.documentation.HelpFile;
+import VASSAL.build.module.properties.MutablePropertiesContainer;
+import VASSAL.build.module.properties.MutableProperty;
 import VASSAL.tools.ArchiveWriter;
 import VASSAL.tools.DataArchive;
 import VASSAL.tools.io.FileArchive;
@@ -220,7 +222,7 @@ public class AnnouncementOnLog extends AbstractConfigurable {
             // =============================================================
             // Download the missing images
             // =============================================================
-            XWOTAUtils.downloadAndSaveImagesFromOTA(imagesToDownload);
+            XWOTAUtils.downloadAndSaveImagesFromOTA(imagesToDownload, OTAContentsChecker.OTA_RAW_BRANCH_URL);
 
             // =============================================================
             // Generate the missing Dial Masks
@@ -409,9 +411,9 @@ public class AnnouncementOnLog extends AbstractConfigurable {
             JLabel versionLabel = new JLabel(msg);
             JLabel versionLabel2 = new JLabel("You currently have version " + userVersion + " of the X-Wing Vassal module.");
             JLabel versionLabel3 = new JLabel("The latest version available for download is " + line);
-            JLabel checkLabel = new JLabel("The Module is about to check for additional content and download it.");
-            JLabel checkLabel2 = new JLabel("Do you want to proceed?");
-            JLabel checkLabel3 = new JLabel("You can choose to skip for now and perform this step by clicking on Contents Checker later.");
+            JLabel checkLabel = new JLabel("The module is about to check for additional content.");
+            JLabel checkLabel2 = new JLabel("The Content Checker button will flash red if it finds any.");
+            JLabel checkLabel3 = new JLabel("Click on it to download the missing components.");
             SwingLink mainDownloadLink = new SwingLink("X-Wing Vassal download page", vassalDownloadURL);
             SwingLink altDownloadLink = new SwingLink("Alt download page on github", githubDownloadURL);
             SwingLink whatsNewLink = new SwingLink("What's new in v" + line, urlPatchString);
@@ -428,13 +430,18 @@ public class AnnouncementOnLog extends AbstractConfigurable {
             JPanel labelPanel = new JPanel();
             labelPanel.setLayout(new BoxLayout(labelPanel, BoxLayout.Y_AXIS));
             labelPanel.setAlignmentX(Component.RIGHT_ALIGNMENT);
+            labelPanel.setMinimumSize(new Dimension(700,400));
             labelPanel.add(versionLabel);
             labelPanel.add(versionLabel2);
             labelPanel.add(versionLabel3);
+
+            labelPanel.add(Box.createRigidArea(new Dimension(0,8)));
+            labelPanel.add(new JSeparator());
+            labelPanel.add(Box.createRigidArea(new Dimension(0,8)));
+
             labelPanel.add(checkLabel);
             labelPanel.add(checkLabel2);
             labelPanel.add(checkLabel3);
-
             panel.add(labelPanel);
 
             DataArchive dataArchive = GameModule.getGameModule().getDataArchive();
@@ -505,7 +512,7 @@ public class AnnouncementOnLog extends AbstractConfigurable {
 
             int answer = JOptionPane.showOptionDialog(frame, panel, "Welcome to the X-Wing vassal module",
                     JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE, null,
-                    new String[] { "Check for new Content", "Skip" }, "Check for new Content");
+                    new String[] { "OK" }, "OK");
 
             frame.requestFocus();
 
@@ -513,7 +520,7 @@ public class AnnouncementOnLog extends AbstractConfigurable {
             frame.dispose();
 
             if(answer==0) {
-                downloadContent();
+                downloadXwingDataAndDispatcherJSONFiles();
             }else{
                 downloadXwingDataAndDispatcherJSONFiles();
             }

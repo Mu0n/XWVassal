@@ -15,6 +15,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -38,6 +40,8 @@ public class AutoSquadSpawn extends AbstractConfigurable {
 
     private VassalXWSPieceLoader slotLoader = new VassalXWSPieceLoader();
     private List<JButton> spawnButtons = Lists.newArrayList();
+    MasterGameModeRouter mgmr = new MasterGameModeRouter();
+    String altXwingDataString = "";
 
     private void spawnPiece(GamePiece piece, Point position, Map playerMap) {
         Command placeCommand = playerMap.placeOrMerge(piece, position);
@@ -66,45 +70,49 @@ public class AutoSquadSpawn extends AbstractConfigurable {
         rootPanel.setLayout(new BoxLayout(rootPanel, BoxLayout.Y_AXIS));
         JPanel sourcePanel = new JPanel();
         sourcePanel.setLayout(new BoxLayout(sourcePanel, BoxLayout.X_AXIS));
+        sourcePanel.setAlignmentX(JPanel.RIGHT_ALIGNMENT);
+        JPanel sourceInfoPanel = new JPanel();
+        sourceInfoPanel.setLayout(new BoxLayout(sourceInfoPanel, BoxLayout.Y_AXIS));
+        sourceInfoPanel.setAlignmentX(JPanel.RIGHT_ALIGNMENT);
+        final JComboBox aComboBox = new JComboBox();
 
-        JLabel sourceExplanationLabel = new JLabel("Select the game mode here:");
-
-        //if it can't access the list of sources on the web, make it base game by default
-        String[] listOfXwingDataSources = {
-                "Base Game"
-        };
-
-        listOfXwingDataSources = fetchMasterRoutingList();
-
-        /*
-        try{
-            //TO DO load a list of game mode from a github repo that will be shared with top modders
-            //this github will have an easy to edit json that carries these elements
-            //game mode name (will be displayed in this combo box and in contents checker
-            //master URL (mimicks what we do for the base game in the OTA repo
-
-            URL url = new URL(modeListURL);
-            URLConnection con = url.openConnection();
-            con.setUseCaches(false);
-
-            BufferedReader in = new BufferedReader(new InputStreamReader(url.openStream()));
-            String line = in.readLine();
-            while ((line = in.readLine()) != null) {
-                logToChat("* " + line);
-            }
-
-            in.close();
-        }
-        catch(Exception e2)
+        mgmr.loadData();
+        if(mgmr!=null)
         {
-            logToChat(e2.toString());
-            return;
+            for(MasterGameModeRouter.GameMode o : mgmr.getGameModes()){
+                aComboBox.addItem(o.getName());
+            }
         }
-*/
+        else
+        //if it can't access the list of sources on the web, make it base game by default
+        {
+            aComboBox.addItem("Base Game");
+        }
 
-        JComboBox aComboBox = new JComboBox(listOfXwingDataSources);
+        final JLabel sourceTextDescription = new JLabel("<html><body width=600><b>Description for <i>"
+                + aComboBox.getSelectedItem().toString() + "</i></b>: "
+                + mgmr.getGameMode(aComboBox.getSelectedItem().toString()).getDescription()
+                + "</body></html>");
+        sourceTextDescription.setAlignmentX(JLabel.RIGHT_ALIGNMENT);
+        sourceInfoPanel.add(sourceTextDescription);
+
+        JLabel sourceExplanationLabel = new JLabel("Select the game mode here (preliminary version for modes other than the base game):");
+
+
+        aComboBox.addItemListener(new ItemListener() {
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+                sourceTextDescription.setText("<html><body width=600><b>Description for <i>"
+                        + aComboBox.getSelectedItem().toString() + "</i></b>: "
+                        + mgmr.getGameMode(aComboBox.getSelectedItem().toString()).getDescription()
+                        + "</body></html>");
+            }
+        });
+
         sourcePanel.add(sourceExplanationLabel);
         sourcePanel.add(aComboBox);
+
+
 
         //make it editable further down the line once it's properly tested
         //aComboBox.setEditable(true);
@@ -127,10 +135,15 @@ public class AutoSquadSpawn extends AbstractConfigurable {
 
 
         rootPanel.add(sourcePanel);
+        rootPanel.add(sourceInfoPanel);
+        rootPanel.add(Box.createRigidArea(new Dimension(0,8)));
+        rootPanel.add(new JSeparator());
+        rootPanel.add(Box.createRigidArea(new Dimension(0,8)));
         rootPanel.add(explanationPanel);
         JFrame frame = new JFrame();
         frame.setPreferredSize(new Dimension(800,500));
         frame.add(rootPanel);
+
 
         String userInput = "";
         userInput = JOptionPane.showInputDialog(frame, rootPanel, "Squad AutoSpawn for player " + Integer.toString(playerInfo.getSide()), JOptionPane.PLAIN_MESSAGE);
@@ -148,6 +161,12 @@ public class AutoSquadSpawn extends AbstractConfigurable {
         // validate the list
 
         try {
+            if(!"Base Game".equals(aComboBox.getSelectedItem().toString()))
+            {
+                logToChat("Attempting to load a squad in a mode that's not the base game");
+                loadData("true".equals(mgmr.getGameMode(aComboBox.getSelectedItem().toString()).getWantFullControl())?true:false,
+                        mgmr.getGameMode(aComboBox.getSelectedItem().toString()).getDispatchersURL());
+            }else loadData();
             validateList(xwsList);
         }catch(XWSpawnException e)
         {
@@ -431,21 +450,8 @@ public class AutoSquadSpawn extends AbstractConfigurable {
         }
 
         String listName = xwsList.getName();
-        logToChat("%s point list%s loaded from %s", pieces.getSquadPoints(),
+        logToChat("The '" + aComboBox.getSelectedItem().toString() + "' game mode was used to spawn a %s point list%s loaded from %s", pieces.getSquadPoints(),
                 listName != null ? " '" + listName + "'" : "", xwsList.getXwsSource());
-    }
-
-    private String[] fetchMasterRoutingList() {
-        String[] listOStrings = {"", ""};
-
-        try{
-
-        }
-        catch(Exception e){
-            logToChat("Couldn't load the master alt mode list (no connection to net?");
-        }
-
-        return listOStrings;
     }
 
     private void validateList(XWSList list) throws XWSpawnException
@@ -788,6 +794,17 @@ public class AutoSquadSpawn extends AbstractConfigurable {
         MasterShipData.loadData();
     }
 
+    private void loadData(Boolean wantFullControl, String altDispatcherString) {
+        this.slotLoader.loadPieces();
+        mic.Util.logToChat("inside AutoSquadSpawn.loadData()");
+        MasterPilotData.loadData(wantFullControl, altDispatcherString);
+        mic.Util.logToChat("PilotDataLoaded");
+        MasterUpgradeData.loadData(wantFullControl, altDispatcherString);
+        mic.Util.logToChat("UpgradeDataLoaded");
+        MasterShipData.loadData(wantFullControl, altDispatcherString);
+    }
+
+
     private XWSList loadListFromUrl(String userInput) {
         try {
             URL translatedURL = XWSUrlHelper.translate(userInput);
@@ -811,6 +828,9 @@ public class AutoSquadSpawn extends AbstractConfigurable {
         try {
             XWSList list = getMapper().readValue(userInput, XWSList.class);
             list.setXwsSource("JSON");
+
+
+
             return list;
         } catch (Exception e) {
             logToChat("Unable to load raw JSON list '%s': %s", userInput, e.toString());

@@ -13,7 +13,8 @@ public enum StraightPaths implements ManeuverPath {
     Str3(120 * 2.825),
     Str4(160 * 2.825),
     Str5(200 * 2.825),
-    Rev1(40 * 2.825, true);
+    Rev1(40 * 2.825, true),
+    Rev2(80 * 2.825, true);
 
     private boolean reverse;
     private double length;

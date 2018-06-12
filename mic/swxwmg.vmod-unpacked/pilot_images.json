@@ -1668,5 +1668,53 @@
     "shipxws": "tiesilencer",
     "faction": "firstorder",
     "image": "Pilot_firstorder_tiesilencer_firstordertestpilot.jpg"
+  },
+  {
+    "shipxws": "xwing",
+    "pilotxws": "leevantenza",
+    "faction": "rebelalliance",
+    "image": "Pilot_rebelalliance_xwing_leevantenza.jpg"
+  },
+  {
+    "shipxws": "xwing",
+    "pilotxws": "kullbeesperado",
+    "faction": "rebelalliance",
+    "image": "Pilot_rebelalliance_xwing_kullbeesperado.jpg"
+  },
+  {
+    "shipxws": "uwing",
+    "pilotxws": "sawgerrera",
+    "faction": "rebelalliance",
+    "image": "Pilot_rebelalliance_uwing_sawgerrera.jpg"
+  },
+  {
+    "shipxws": "uwing",
+    "pilotxws": "benthictwotubes",
+    "faction": "rebelalliance",
+    "image": "Pilot_rebelalliance_uwing_benthictwotubes.jpg"
+  },
+  {
+    "shipxws": "tiereaper",
+    "pilotxws": "scarifbasepilot",
+    "faction": "galacticempire",
+    "image": "Pilot_galacticempire_tiereaper_scarifbasepilot.jpg"
+  },
+  {
+    "shipxws": "tiereaper",
+    "pilotxws": "vizier",
+    "faction": "galacticempire",
+    "image": "Pilot_galacticempire_tiereaper_vizier.jpg"
+  },
+  {
+    "shipxws": "tiereaper",
+    "pilotxws": "captainferoph",
+    "faction": "galacticempire",
+    "image": "Pilot_galacticempire_tiereaper_captainferoph.jpg"
+  },
+  {
+    "shipxws": "tiereaper",
+    "pilotxws": "majorvermeil",
+    "faction": "galacticempire",
+    "image": "Pilot_galacticempire_tiereaper_majorvermeil.jpg"
   }
 ]

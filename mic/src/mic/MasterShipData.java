@@ -85,6 +85,39 @@ public class MasterShipData extends ArrayList<MasterShipData.ShipData> {
         }
     }
 
+    protected static void loadData(Boolean wantFullControl, String altDispatcherString) {
+
+        // load data from xwing-data
+        if(wantFullControl==false) loadFromXwingData();
+
+        // load data from dispatcher file
+        MasterShipData dispatcherData = loadFromDispatcher(altDispatcherString);
+
+        // dispatcher overrides xwing-data
+        if(dispatcherData != null)
+        {
+            for (ShipData dispatcherShip : dispatcherData)
+            {
+                ShipData xwingDataShip = loadedData.get(dispatcherShip.getXws());
+                // If there is no dispatcher version of this ship, store the xwing-data version
+                if(dispatcherShip == null)
+                {
+                    loadedData.put(xwingDataShip.getXws(), xwingDataShip);
+
+                    // if there is no xwing-data version of this ship, store the dispatcher version
+                }else if(xwingDataShip == null)
+                {
+                    loadedData.put(dispatcherShip.getXws(), dispatcherShip);
+                    // There are both xwing-data and dispatcher versions, so merge them, with dispatcher taking precedence
+                }else{
+                    // do the merge.  Dispatcher overrides
+                    ShipData mergedShip = mergeShips(xwingDataShip,dispatcherShip);
+                    loadedData.put(mergedShip.getXws(), mergedShip);
+                }
+            }
+        }
+    }
+
     private static String mergeProperties(String baseString, String overrideString)
     {
         return overrideString == null ? baseString : overrideString;
@@ -145,6 +178,20 @@ public class MasterShipData extends ArrayList<MasterShipData.ShipData> {
             loadedData.put(ship.getXws(), ship);
         }
     }
+    private static void loadFromXwingData(String altXwingDataURL)
+    {
+        // load from xwing-data
+        MasterShipData data = Util.loadRemoteJson(altXwingDataURL + "ships.json", MasterShipData.class);
+        if (data == null) {
+            // Util.logToChat("Unable to load xwing-data for ships from the web, falling back to local copy");
+            data = Util.loadClasspathJson("ships.json", MasterShipData.class);
+        }
+
+        loadedData = Maps.newHashMap();
+        for(ShipData ship : data) {
+            loadedData.put(ship.getXws(), ship);
+        }
+    }
 
     private static MasterShipData loadFromDispatcher()
     {
@@ -162,7 +209,21 @@ public class MasterShipData extends ArrayList<MasterShipData.ShipData> {
         return data;
     }
 
+    private static MasterShipData loadFromDispatcher(String altDispatcherString)
+    {
+        // load from dispatch
+        MasterShipData data = Util.loadRemoteJson(altDispatcherString + "dispatcher_ships.json", MasterShipData.class);
+        if (data == null) {
+            // Util.logToChat("Unable to load dispatcher for ships from the web, falling back to local copy");
+            data = Util.loadClasspathJson("dispatcher_ships.json", MasterShipData.class);
+            if(data == null)
+            {
+                Util.logToChat("Unable to load dispatcher for ships from the local copy.  Error in JSON format?");
+            }
+        }
 
+        return data;
+    }
     public static class ShipData {
 
         @JsonProperty("name")

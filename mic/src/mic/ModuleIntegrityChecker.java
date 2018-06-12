@@ -68,7 +68,7 @@ public class ModuleIntegrityChecker {
             //if(MasterUpgradeData.getUpgradeData(upgrade.getXws()) != null && XWOTAUtils.imageExistsInOTA("upgrade",upgrade.getImage())) {
             if(MasterUpgradeData.getUpgradeData(upgrade.getXws()) != null) {
                 upgrade.setStatus(XWOTAUtils.imageExistsInModule(upgrade.getImage()));
-                if(upgrade.getStatus() || (!upgrade.getStatus() && XWOTAUtils.imageExistsInOTA("upgrade",upgrade.getImage()))) {
+                if(upgrade.getStatus() || (!upgrade.getStatus() && XWOTAUtils.imageExistsInOTA("upgrades",upgrade.getImage(),OTAContentsChecker.OTA_RAW_BRANCH_URL))) {
                     upgradeList.add(upgrade);
                 }
             }
@@ -97,7 +97,7 @@ public class ModuleIntegrityChecker {
             if(MasterConditionData.getConditionData(condition.getXws()) != null ) {
                 condition.setStatus(XWOTAUtils.imageExistsInModule(condition.getImage()));
                 condition.setTokenStatus(XWOTAUtils.imageExistsInModule(condition.getTokenImage()));
-                if(((condition.getStatus() && condition.getTokenStatus()) || (!condition.getStatus() || !condition.getTokenStatus()) && (XWOTAUtils.imageExistsInOTA("condition",condition.getImage())&& XWOTAUtils.imageExistsInOTA("condition",condition.getTokenImage())))) {
+                if(((condition.getStatus() && condition.getTokenStatus()) || (!condition.getStatus() || !condition.getTokenStatus()) && (XWOTAUtils.imageExistsInOTA("conditions",condition.getImage(),OTAContentsChecker.OTA_RAW_BRANCH_URL)&& XWOTAUtils.imageExistsInOTA("condition",condition.getTokenImage(), OTAContentsChecker.OTA_RAW_BRANCH_URL)))) {
                     conditionList.add(condition);
                 }
             }
@@ -129,7 +129,7 @@ public class ModuleIntegrityChecker {
             {
 
                 dialHide.setStatus(XWOTAUtils.imageExistsInModule(dialHide.getImage()));
-                if(dialHide.getStatus() || (!dialHide.getStatus() && XWOTAUtils.imageExistsInOTA("dial",dialHide.getImage())))
+                if(dialHide.getStatus() || (!dialHide.getStatus() && XWOTAUtils.imageExistsInOTA("dial",dialHide.getImage(), OTAContentsChecker.OTA_RAW_BRANCH_URL)))
                 {
                     dialHideList.add(dialHide);
                 }
@@ -159,7 +159,7 @@ public ArrayList<OTAMasterPilots.OTAPilot> checkPilots()
 
         if(MasterPilotData.getPilotData(pilot.getShipXws(),pilot.getPilotXws(),pilot.getFaction()) != null) {
             pilot.setStatus(XWOTAUtils.imageExistsInModule(pilot.getImage()));
-            if(pilot.getStatus() || (!pilot.getStatus()  && XWOTAUtils.imageExistsInOTA("pilot",pilot.getImage()))) {
+            if(pilot.getStatus() || (!pilot.getStatus()  && XWOTAUtils.imageExistsInOTA("pilots",pilot.getImage(), OTAContentsChecker.OTA_RAW_BRANCH_URL))) {
                 pilotList.add(pilot);
             }
         }
@@ -188,7 +188,7 @@ public ArrayList<OTAMasterPilots.OTAPilot> checkPilots()
                 ship.setStatus(XWOTAUtils.imageExistsInModule(ship.getImage()));
                 boolean exists = XWOTAUtils.imageExistsInModule(ship.getImage());
 
-                if(exists || (!exists && XWOTAUtils.imageExistsInOTA("ship",ship.getImage()))) {
+                if(exists || (!exists && XWOTAUtils.imageExistsInOTA("ships",ship.getImage(), OTAContentsChecker.OTA_RAW_BRANCH_URL))) {
                     shipList.add(ship);
                 }
             }
@@ -236,7 +236,7 @@ public ArrayList<OTAMasterPilots.OTAPilot> checkPilots()
                     shipBase.setShipXws(ship.getXws());
                     shipBase.setStatus(XWOTAUtils.imageExistsInModule(shipBaseImageName));
 
-                    if(shipBase.getStatus() || (!shipBase.getStatus() && XWOTAUtils.imageExistsInOTA("ship",ship.getImage()))) {
+                    if(shipBase.getStatus() || (!shipBase.getStatus() && XWOTAUtils.imageExistsInOTA("ships",ship.getImage(), OTAContentsChecker.OTA_RAW_BRANCH_URL))) {
                         shipList.add(shipBase);
                     }
 
@@ -289,7 +289,7 @@ public ArrayList<OTAMasterPilots.OTAPilot> checkPilots()
                     dialMask.setShipXws(dialHide.getXws());
                     dialMask.setStatus(XWOTAUtils.imageExistsInModule(dialMaskImageName));
 
-                    if(dialMask.getStatus() || (!dialMask.getStatus() &&  XWOTAUtils.imageExistsInOTA("dial",dialHide.getImage()))) {
+                    if(dialMask.getStatus() || (!dialMask.getStatus() &&  XWOTAUtils.imageExistsInOTA("dial",dialHide.getImage(), OTAContentsChecker.OTA_RAW_BRANCH_URL))) {
                         dialMaskList.add(dialMask);
                     }
 
@@ -322,7 +322,7 @@ public ArrayList<OTAMasterPilots.OTAPilot> checkPilots()
             action = i.next();
             action.setStatus(XWOTAUtils.imageExistsInModule(action.getImage()));
 
-            if(action.getStatus() || (!action.getStatus() && XWOTAUtils.imageExistsInOTA("actions",action.getImage()))){
+            if(action.getStatus() || (!action.getStatus() && XWOTAUtils.imageExistsInOTA("actions",action.getImage(), OTAContentsChecker.OTA_RAW_BRANCH_URL))){
                 actionList.add(action);
             }
 
