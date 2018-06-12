@@ -716,7 +716,7 @@ public class OTAContentsChecker extends AbstractConfigurable {
             tableRow = new String[3];
             tableRow[0] = "Ship Base";
             tableRow[1] = MasterShipData.getShipData(shipBase.getShipXws()).getName();
-            if(ship.getIdentifier().equalsIgnoreCase("Standard")) {
+            if(shipBase.getIdentifier().equalsIgnoreCase("Standard")) {
                 tableRow[2] = fullFactionNames.get(shipBase.getFaction());
             }else{
                 tableRow[2] = fullFactionNames.get(shipBase.getFaction()) + shipBase.getIdentifier();
