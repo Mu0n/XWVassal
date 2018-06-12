@@ -96,7 +96,7 @@ public class AutoSquadSpawn extends AbstractConfigurable {
         sourceTextDescription.setAlignmentX(JLabel.RIGHT_ALIGNMENT);
         sourceInfoPanel.add(sourceTextDescription);
 
-        JLabel sourceExplanationLabel = new JLabel("Select the game mode here:");
+        JLabel sourceExplanationLabel = new JLabel("Select the game mode here (preliminary version for modes other than the base game):");
 
 
         aComboBox.addItemListener(new ItemListener() {
