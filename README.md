@@ -33,9 +33,9 @@ The arc lines didn't quite go to the cardboard chit corner
 The arc lines definitely go to the cardboard chit corner
 * Small ship cardboard chit width: 98.670 px
 * Small ship corner of plastic to corner of cardboard: 7.165 px
-* Medium ship cardboard chit width: ?? px
+* Medium ship cardboard chit width: 150.918 px
 * Medium ship corner of plastic to corner of cardboard: ?? px
-* Large ship cardboard chit width: v px
+* Large ship cardboard chit width: ?? px
 * Large ship corner of plastic to corner of cardboard: ?? px
 
 Approximative bullseye arc corner to bullseye line
