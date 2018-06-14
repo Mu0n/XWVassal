@@ -14,19 +14,38 @@
 * Range 4 = 1130.0 px
 * Range 5 = 1412.5 px
 
+**1st edition**
 * Small ship forward arc: 80.90 degrees
 * Large ship forward arc: 84.05 degrees
 * Large ship stardboard/port mobile turret arc: 95.95 degrees
 
 (to help locate the coordinates of the forward arc's intersection to the forward edge)
+The arc lines didn't quite go to the cardboard chit corner
 * Small ship corner to intersection of forward arc to front edge: 8.3296 px
 * Large ship corner to intersection of forward arc to front edge: 11.1650 px
+
+**2nd edition**
+* Small ship forward arc: 82.2537 degrees
+* Medium ship forward arc: ?? degrees
+* Large ship forward arc: ?? degrees
+* Large ship stardboard/port mobile turret arc: ?? degrees
+
+The arc lines definitely go to the cardboard chit corner
+* Small ship cardboard chit width: 98.670 px
+* Small ship corner of plastic to corner of cardboard: 7.165 px
+* Medium ship cardboard chit width: ?? px
+* Medium ship corner of plastic to corner of cardboard: ?? px
+* Large ship cardboard chit width: v px
+* Large ship corner of plastic to corner of cardboard: ?? px
 
 Approximative bullseye arc corner to bullseye line
 * small ship: 34.24 px
 
 ## Updating the module
+*The current way via the autoupdater is using this repository:*
+https://github.com/Mu0n/XWVassalOTA
 
+*The following is via using the vassal editor*
 ### Adding pilot and upgrade cards
 1. Vassal editor
 2. gradlew unpackVmod
@@ -40,6 +59,7 @@ Approximative bullseye arc corner to bullseye line
 4. gradlew downloadXwingData
 5. push
 
+*The following is via using intellij*
 ### Adding code
 1. Your IDE of choice
 2. gradlew downloadXwingData
