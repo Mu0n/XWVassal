@@ -22,9 +22,9 @@ public enum ManeuverPaths {
     LBk2(CurvedPaths.LBk2, "Left Bank 2", 2, 0.0f, "519", 45.0f, -43.6f, 183.0f, 0.0f, 0.0f, -43.6f, 239.5f, "3654", -163.0f, 133.0f, 0.0f, 0.0f, -163.0f, 189.0f),
     LBk3(CurvedPaths.LBk3, "Left Bank 3", 3, 0.0f, "520", 45.0f, -64.0f, 232.5f, 0.0f, 0.0f, -64.0f, 289.0f, "3655", -184.0f, 184.0f, 0.0f, 0.0f, -184.0f, 240.0f),
 
-    RBk1(CurvedPaths.RBk1, "Right Bank 1", 1, 0.0f, "517", 180.0f, 29.0f, 147.0f, 0.0f, 0.0f, 29.0f, 203.5f, "3653", 149.0f, 98.0f, 0.0f, 0.0f, 149.0f, 154.0f),
-    RBk2(CurvedPaths.RBk2, "Right Bank 2", 2, 0.0f, "519", 180.0f, 51.6f, 197.0f, 0.0f, 0.0f, 51.6f, 253.5f, "3654", 169.0f, 147.0f, 0.0f, 0.0f, 169.0f, 203.0f),
-    RBk3(CurvedPaths.RBk3, "Right Bank 3", 3, 0.0f, "520", 180.0f, 72.0f, 246.5f, 0.0f, 0.0f, 72.0f, 303.0f, "3655", 191.0f, 198.0f, 0.0f, 0.0f, 191.0f, 254.0f),
+    RBk1(CurvedPaths.RBk1, "Right Bank 1", 1, 0.0f, "517", 180.0f, 29.0f, 147.0f, 17.0f, 193.0f, 29.0f, 203.5f, "3653", 149.0f, 98.0f, 149.0f, 125.0f, 149.0f, 154.0f),
+    RBk2(CurvedPaths.RBk2, "Right Bank 2", 2, 0.0f, "519", 180.0f, 51.6f, 197.0f, -3.0f, 244.0f, 51.6f, 253.5f, "3654", 169.0f, 147.0f, -3.0f, 244.0f, 169.0f, 203.0f),
+    RBk3(CurvedPaths.RBk3, "Right Bank 3", 3, 0.0f, "520", 180.0f, 72.0f, 246.5f, -24.0f, 294.0f, 72.0f, 303.0f, "3655", 191.0f, 198.0f, -24.0f, 294.0f, 191.0f, 254.0f),
 
     LT1(CurvedPaths.LT1, "Left Turn 1", 1, 0.0f, "521", 90.0f, -35.0f, 120.0f, 0.0f, 0.0f, -35.0f, 176.5f, "3656", -203.0f, -48.0f, 0.0f, 0.0f, -203.0f, 8.0f),
     LT2(CurvedPaths.LT2, "Left Turn 2", 2, 0.0f, "522", 90.0f, -74.0f, 159.0f, 0.0f, 0.0f, -74.0f, 215.5f, "3657", -244.0f, -8.0f, 0.0f, 0.0f, -244.0f, 48.0f),
@@ -125,6 +125,8 @@ public enum ManeuverPaths {
     public double getTemplateAngle() { return this.templateAngle; }
     public double getOffsetX() { return this.offsetX; }
     public double getOffsetY() { return this.offsetY; }
+    public double getOffsetXMedium() { return this.offsetXMedium; }
+    public double getOffsetYMedium() { return this.offsetYMedium; }
     public double getOffsetXLarge() { return this.offsetXLarge; }
     public double getOffsetYLarge() { return this.offsetYLarge; }
     public String getAide_gpID() { return this.aide_gpID; }
@@ -156,7 +158,7 @@ public enum ManeuverPaths {
             break;
             case 2: //medium
                 selectedOffsetX = offsetXMedium;
-            selectedOffsetY = offsetYMedium;
+                selectedOffsetY = offsetYMedium;
             break;
             case 3:
                 selectedOffsetX = offsetXLarge;
