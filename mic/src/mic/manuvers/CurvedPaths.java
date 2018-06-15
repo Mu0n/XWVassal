@@ -79,9 +79,21 @@ public enum CurvedPaths implements ManeuverPath {
      * scaling function for the input parameters to the position calculation methods - improves approximation by
      * reducing the errors introduced by bases getting "shorter" through Pythagoras; version for the front edge of the base
      */
-    private double frontPercentage(double percentage, boolean isLargeBase) {
+    private double frontPercentage(double percentage, int whichSizeShip) {
         // small bases need less adjustment because their error is smaller (they're smaller relative to the template)
-        double adjustedApproximationMultiplier = isLargeBase ? this.approximationMultiplier : Math.sqrt(this.approximationMultiplier);
+        double adjustedApproximationMultiplier = 0.0;
+        switch(whichSizeShip)
+        {
+            case 1:
+                adjustedApproximationMultiplier = Math.sqrt(this.approximationMultiplier);
+                break;
+            case 2:
+                adjustedApproximationMultiplier = Math.sqrt(this.approximationMultiplier);
+                break;
+            case 3:
+                adjustedApproximationMultiplier = this.approximationMultiplier;
+                break;
+        }
         // front goes faster in the first half, slower in the second
         if (percentage < 0.5) {
             return (2 - adjustedApproximationMultiplier) * percentage;
@@ -94,9 +106,21 @@ public enum CurvedPaths implements ManeuverPath {
      * scaling function for the input parameters to the position calculation methods - improves approximation by
      * reducing the errors introduced by bases getting "shorter" through Pythagoras; version for the back edge of the base
      */
-    private double backPercentage(double percentage, boolean isLargeBase) {
+    private double backPercentage(double percentage, int whichSizeShip) {
         // small bases need less adjustment because their error is smaller (they're smaller relative to the template)
-        double adjustedApproximationMultiplier = isLargeBase ? this.approximationMultiplier : Math.sqrt(this.approximationMultiplier);
+        double adjustedApproximationMultiplier = 0.0;
+        switch(whichSizeShip)
+        {
+            case 1:
+                adjustedApproximationMultiplier = Math.sqrt(this.approximationMultiplier);
+                break;
+            case 2:
+                adjustedApproximationMultiplier = Math.sqrt(this.approximationMultiplier);
+                break;
+            case 3:
+                adjustedApproximationMultiplier = this.approximationMultiplier;
+                break;
+        }
         // front goes slower in the first half, faster in the second
         if (percentage < 0.5) {
             return adjustedApproximationMultiplier * percentage;
@@ -115,12 +139,12 @@ public enum CurvedPaths implements ManeuverPath {
      * @param percentage  at what percentage (from 0 to 1) of the entire path should the position be calculated?
      * @param baseLength  length of the base to calculate
      * @param arcLength   pre-computed length of the arc that the template's center forms
-     * @param isLargeBase small and large bases need different computation
+     * @param whichSizeShip small and large bases need different computation
      * @return a PathPart with x, y and angle (degrees)
      */
-    private PathPart getBankPart(double percentage, double baseLength, double arcLength, boolean isLargeBase) {
-        double currentFrontDistance = frontPercentage(percentage, isLargeBase) * (baseLength + arcLength);
-        double currentBackDistance = backPercentage(percentage, isLargeBase) * (baseLength + arcLength);
+    private PathPart getBankPart(double percentage, double baseLength, double arcLength, int whichSizeShip) {
+        double currentFrontDistance = frontPercentage(percentage, whichSizeShip) * (baseLength + arcLength);
+        double currentBackDistance = backPercentage(percentage, whichSizeShip) * (baseLength + arcLength);
         Vector frontPosition = getBankFrontPosition(currentFrontDistance, baseLength, arcLength);
         Vector backPosition = getBankBackPosition(currentBackDistance, baseLength, arcLength);
         double angle = 270 + (this.reverse ? 180 : 0) - (calcAngle(backPosition, frontPosition) / (Math.PI * 2) * 360.0);
@@ -182,12 +206,12 @@ public enum CurvedPaths implements ManeuverPath {
      * @param percentage  at what percentage (from 0 to 1) of the entire path should the position be calculated?
      * @param baseLength  length of the base to calculate
      * @param arcLength   pre-computed length of the arc that the template's center forms
-     * @param isLargeBase small and large bases need different computation
+     * @param whichSizeShip small and large bases need different computation
      * @return a PathPart with x, y and angle (degrees)
      */
-    private PathPart getTurnPart(double percentage, double baseLength, double arcLength, boolean isLargeBase) {
-        double currentFrontDistance = frontPercentage(percentage, isLargeBase) * (baseLength + arcLength);
-        double currentBackDistance = backPercentage(percentage, isLargeBase) * (baseLength + arcLength);
+    private PathPart getTurnPart(double percentage, double baseLength, double arcLength, int whichSizeShip) {
+        double currentFrontDistance = frontPercentage(percentage, whichSizeShip) * (baseLength + arcLength);
+        double currentBackDistance = backPercentage(percentage, whichSizeShip) * (baseLength + arcLength);
         Vector frontPosition = getTurnFrontPosition(currentFrontDistance, baseLength, arcLength);
         Vector backPosition = getTurnBackPosition(currentBackDistance, baseLength, arcLength);
         // the position we want to return is in the center between front and back
@@ -244,18 +268,30 @@ public enum CurvedPaths implements ManeuverPath {
     /**
      * The method that this entire class is about
      */
-    public List<PathPart> getPathParts(int numSegments, double baseOffset, boolean isLargeBase) {
+    public List<PathPart> getPathParts(int numSegments, double baseOffset, int whichSizeShip) {
         // init
         List<PathPart> parts = Lists.newArrayList();
-        double baseLength = isLargeBase ? 2.0 * 113.0 : 113.0;
+        double baseLength = 0.0;
+        switch(whichSizeShip)
+        {
+            case 1: //small
+                baseLength = 113.0;
+                break;
+            case 2: //med
+                baseLength = 169.0;
+                break;
+            case 3: //large
+                baseLength = 226.0;
+                break;
+        }
         double arcLength = getPathLength();
         // calculate
         for (int i = 1; i <= numSegments; i++) {
             double percentage = (double) i / (double) numSegments;
             if (this.bank) {
-                parts.add(getBankPart(percentage, baseLength, arcLength, isLargeBase));
+                parts.add(getBankPart(percentage, baseLength, arcLength, whichSizeShip));
             } else {
-                parts.add(getTurnPart(percentage, baseLength, arcLength, isLargeBase));
+                parts.add(getTurnPart(percentage, baseLength, arcLength, whichSizeShip));
             }
         }
         // done

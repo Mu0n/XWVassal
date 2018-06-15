@@ -21,7 +21,8 @@ enum chassisInfo{
     small("small", 113.0, 113.0, 9.0, 8.3296, 40.45, 44.52),
     large("large", 226.0, 226.0, 10.0, 11.1650, 42.025, 0.0),
     hugeLittle("GR-75 size", 226.0, 551.0, 10.0, 11.1650, 40.45, 0.0),
-    hugeBig("CR90 size", 226.0, 635.0, 10.0, 11.1650, 40.45, 0.0);
+    hugeBig("CR90 size", 226.0, 635.0, 10.0, 11.1650, 40.45, 0.0),
+    medium("medium", 169.0, 169.0, 9.5, 10.0, 41.5, 44.52);
 
     private final String chassisName;
     private final double width;
@@ -131,6 +132,9 @@ public class BumpableWithShape {
         chassisInfo result = chassisInfo.unknown;
         if(Double.compare(rawWidth,chassisInfo.small.getWidth())==0) {
             result= chassisInfo.small;
+        }
+        else if(Double.compare(rawWidth,chassisInfo.medium.getWidth())==0){
+            result= chassisInfo.medium;
         }
         else if(Double.compare(rawWidth,chassisInfo.large.getWidth())==0
                 && Double.compare(rawHeight,chassisInfo.large.getHeight()+chassis.large.getNubFudge())==0) {

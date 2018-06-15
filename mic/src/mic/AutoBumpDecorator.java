@@ -3,32 +3,21 @@ package mic;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.geom.AffineTransform;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.util.*;
 import java.util.List;
 import java.util.Map;
-import java.util.Timer;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.swing.*;
 
 import VASSAL.build.GameModule;
 import VASSAL.build.module.map.boardPicker.Board;
 import VASSAL.build.widget.PieceSlot;
-import VASSAL.command.CommandEncoder;
 import VASSAL.counters.*;
-import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.apache.commons.codec.binary.Base64;
 
 import VASSAL.build.module.documentation.HelpFile;
-import VASSAL.build.module.map.Drawable;
 import VASSAL.command.ChangeTracker;
 import VASSAL.command.Command;
 import VASSAL.command.MoveTracker;
@@ -144,8 +133,19 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
         Point shipPt = new Point((int) shipx, (int) shipy); // these are the center coordinates of the ship, namely, shipPt.x and shipPt.y
 
          //Info Gathering: offset vector (integers) that's used in local coordinates, right after a rotation found in lastManeuver.getTemplateAngle(), so that it's positioned behind nubs properly
-        double x = isLargeShip(this) ? theManeuv.getAide_xLarge() : theManeuv.getAide_x();
-        double y = isLargeShip(this) ? theManeuv.getAide_yLarge() : theManeuv.getAide_y();
+        double x=0.0, y=0.0;
+        if(whichSizeShip(this)==3){
+            x = theManeuv.getAide_xLarge();
+            y = theManeuv.getAide_yLarge();
+        }
+        else if(whichSizeShip(this)==2){
+            x = theManeuv.getAide_xMedium();
+            y = theManeuv.getAide_yMedium();
+        }
+        else{
+            x = theManeuv.getAide_x();
+            y = theManeuv.getAide_y();
+        }
         int posx =  (int)x;
         int posy =  (int)y;
         Point tOff = new Point(posx, posy); // these are the offsets in local space for the templates, if the ship's center is at 0,0 and pointing up
@@ -214,7 +214,7 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
                     this.getCurrentState().x,
                     this.getCurrentState().y,
                     this.getCurrentState().angle,
-                    isLargeShip(this)
+                    whichSizeShip(this)
             );
 
             //this is the final ship position post-move
@@ -236,7 +236,7 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
             FreeRotator rotator = (FreeRotator) (Decorator.getDecorator(Decorator.getOutermost(this), FreeRotator.class));
             Shape lastMoveShapeUsed = path.getTransformedTemplateShape(this.getPosition().getX(),
                     this.getPosition().getY(),
-                    isLargeShip(this),
+                    whichSizeShip(this),
                     rotator);
 
             //don't check for collisions in windows other than the main map
@@ -369,7 +369,7 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
                 this.prevPosition.x,
                 this.prevPosition.y,
                 this.prevPosition.angle,
-                isLargeShip(this)
+                whichSizeShip(this)
         );
 
 
@@ -614,8 +614,11 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
     }
 
 
-    private boolean isLargeShip(Decorator ship) {
-        return BumpableWithShape.getRawShape(ship).getBounds().getWidth() > 114;
+    //1 = small, 2 = medium, 3 = large
+    private int whichSizeShip(Decorator ship) {
+        if(BumpableWithShape.getRawShape(ship).getBounds().getWidth() > 224) return 3;
+        if(BumpableWithShape.getRawShape(ship).getBounds().getWidth() > 167) return 2;
+        return 1;
     }
 
     /*
