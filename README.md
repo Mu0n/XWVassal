@@ -3,11 +3,13 @@
 
 ## Distance and geometry specs:
 
+Plastic Bases
 * Small base ship: 113 px² 
 * Large base ship: 226 px²
 * GR-75 / Gozanti / C-ROC Huge ship:  226 px by 551 px
 * CR90 / Raider / ? Huge ship: 226 px by 635 px
 
+Ranges
 * Range 1 =  282.5 px
 * Range 2 =  565.0 px
 * Range 3 = 847.5 px
@@ -16,6 +18,7 @@
 
 **1st edition**
 
+Arc Angles:
 * Small ship forward arc: 80.90 degrees
 * Large ship forward arc: 84.05 degrees
 * Large ship stardboard/port mobile turret arc: 95.95 degrees
@@ -29,23 +32,23 @@ The arc lines didn't quite go to the cardboard chit corner
 
 *basic assumption: plastic bases are perfect squares. Small=113x113, Medium=169x169 and Large=226x226*
 
-
+Cardboard Base:
 * All Chit Height = Plastic Base Height
 * Small Chit Width = ??% of Plastic Width / ?? mm / ?? px
 * Medium Chit Width = 88.16 % of Plastic Width / 52.90 mm / 149 px
 * Large Chit Width = ??% of Plastic Width / ?? mm / ?? px
 
-
+Bullseye Arc Width:
 * Small Bullseye Arc = 24.65% of Plastic Width / 14.79 mm / 41.78 px
 * Medium Bullseye Arc = 24.65% of Plastic Width / 14.79 mm / 41.78 px
 * Large Bullseye Arc = 24.65% of Plastic Width / 14.79 mm / 41.78 px
 
-
+Bullseye Arc Position:
 * Small Chit Corner to Bullseye Arc Start: ??% of Plastic Width / ?? mm / ?? px
 * Medium Chit Corner to Bullseye Arc Start: ??% of Plastic Width / 18.64 mm / 52.64 px
 * Large Chit Corner to Bullseye Arc Start: ??% of Plastic Width / ?? mm / ?? px
 
-
+Arc Angle:
 * Small ship forward arc: ?? degrees
 * Medium ship forward arc: 82.80 degrees
 * Large ship forward arc: ?? degrees
