@@ -25,8 +25,23 @@ The arc lines didn't quite go to the cardboard chit corner
 * Large ship corner to intersection of forward arc to front edge: 11.1650 px
 
 **2nd edition**
-* Small ship forward arc: 82.2537 degrees
-* Medium ship forward arc: ?? degrees
+*basic assumption: plastic bases are perfect squares. Small=113x113, Medium=169x169 and Large=226x226*
+
+* All Chit Height = Plastic Base Height
+* Small Chit Width = ??% of Plastic Width / ?? mm / ?? px
+* Medium Chit Width = 88.16 % of Plastic Width / 52.90 mm / 149 px
+* Large Chit Width = ??% of Plastic Width / ?? mm / ?? px
+
+* Small Bullseye Arc = 24.65% of Plastic Width / 14.79 mm / 41.78 px
+* Medium Bullseye Arc = 24.65% of Plastic Width / 14.79 mm / 41.78 px
+* Large Bullseye Arc = 24.65% of Plastic Width / 14.79 mm / 41.78 px
+
+* Small Chit Corner to Bullseye Arc Start: ??% of Plastic Width / ?? mm / ?? px
+* Medium Chit Corner to Bullseye Arc Start: ??% of Plastic Width / 18.64 mm / 52.64 px
+* Large Chit Corner to Bullseye Arc Start: ??% of Plastic Width / ?? mm / ?? px
+
+* Small ship forward arc: ?? degrees
+* Medium ship forward arc: 82.80 degrees
 * Large ship forward arc: ?? degrees
 * Large ship stardboard/port mobile turret arc: ?? degrees
 
@@ -37,9 +52,6 @@ The arc lines definitely go to the cardboard chit corner
 * Medium ship corner of plastic to corner of cardboard: ?? px
 * Large ship cardboard chit width: ?? px
 * Large ship corner of plastic to corner of cardboard: ?? px
-
-Approximative bullseye arc corner to bullseye line
-* small ship: 34.24 px
 
 ## Updating the module
 *The current way via the autoupdater is using this repository:*
