@@ -856,6 +856,10 @@ Boolean isThisTheOne = false;
         if("2".equals(whichSideString)) return 2;
         if("3".equals(whichSideString)) return 3;
         if("4".equals(whichSideString)) return 4;
+
+        //2.0 additions for pulsar-type double turrets
+        if("13".equals(whichSideString)) return 13;
+        if("24".equals(whichSideString)) return 24;
         return 1;
     }
 
@@ -2423,14 +2427,14 @@ Boolean isThisTheOne = false;
             }
             return fusion;
         }
-        if(chosenOption == mobileSideArcOption) { //Lancer-Class
+        if(chosenOption == mobileSideArcOption) { //Lancer-Class and now many more in 2.0
             //preferably, if the mobile side is 1, this should not lead to a situation where you get a front band through normal ways and then a second one through here. filter out this situation before it happens
             int mobileSide = getMobileEdge();
 
             ArrayList<Shape> listShape = new ArrayList<Shape>();
-            if(mobileSide == 2) listShape.add(new Rectangle2D.Double(chassisWidth/2.0, -chassisHeight/2.0, RANGE3, chassisHeight)); //right
-            if(mobileSide == 3) listShape.add(new Rectangle2D.Double(-wantedWidth/2.0, chassisHeight/2.0, wantedWidth, RANGE3)); //back
-            if(mobileSide == 4) listShape.add(new Rectangle2D.Double(-chassisWidth/2.0 - RANGE3, -chassisHeight/2.0, RANGE3, chassisHeight)); //left
+            if(mobileSide == 2 || mobileSide == 24) listShape.add(new Rectangle2D.Double(chassisWidth/2.0, -chassisHeight/2.0, RANGE3, chassisHeight)); //right or rightleft
+            if(mobileSide == 3 || mobileSide == 13) listShape.add(new Rectangle2D.Double(-wantedWidth/2.0, chassisHeight/2.0, wantedWidth, RANGE3)); //back or frontback
+            if(mobileSide == 4 || mobileSide == 24) listShape.add(new Rectangle2D.Double(-chassisWidth/2.0 - RANGE3, -chassisHeight/2.0, RANGE3, chassisHeight)); //left or rightleft
 
             ArrayList<Shape> keptTransformedlistShape = new ArrayList<Shape>();
             for(Shape s : listShape){
