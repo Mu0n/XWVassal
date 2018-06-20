@@ -2432,9 +2432,9 @@ Boolean isThisTheOne = false;
             int mobileSide = getMobileEdge();
 
             ArrayList<Shape> listShape = new ArrayList<Shape>();
-            if(mobileSide == 2 || mobileSide == 24) listShape.add(new Rectangle2D.Double(chassisWidth/2.0, -chassisHeight/2.0, RANGE3, chassisHeight)); //right or rightleft
-            if(mobileSide == 3 || mobileSide == 13) listShape.add(new Rectangle2D.Double(-wantedWidth/2.0, chassisHeight/2.0, wantedWidth, RANGE3)); //back or frontback
-            if(mobileSide == 4 || mobileSide == 24) listShape.add(new Rectangle2D.Double(-chassisWidth/2.0 - RANGE3, -chassisHeight/2.0, RANGE3, chassisHeight)); //left or rightleft
+            if(mobileSide == 2 || mobileSide == 6) listShape.add(new Rectangle2D.Double(chassisWidth/2.0, -chassisHeight/2.0, RANGE3, chassisHeight)); //right or rightleft
+            if(mobileSide == 3 || mobileSide == 5) listShape.add(new Rectangle2D.Double(-wantedWidth/2.0, chassisHeight/2.0, wantedWidth, RANGE3)); //back or frontback
+            if(mobileSide == 4 || mobileSide == 6) listShape.add(new Rectangle2D.Double(-chassisWidth/2.0 - RANGE3, -chassisHeight/2.0, RANGE3, chassisHeight)); //left or rightleft
 
             ArrayList<Shape> keptTransformedlistShape = new ArrayList<Shape>();
             for(Shape s : listShape){
