@@ -30,29 +30,33 @@ The arc lines didn't quite go to the cardboard chit corner
 
 **2nd edition**
 
-*basic assumption: plastic bases are perfect squares. Small=113x113, Medium=169x169 and Large=226x226*
+*basic assumption: plastic bases are perfect squares.*
+
+Total Sizes:
+* Small  = 113 px / 40.00 mm 
+* Medium = 171 px / 60.50 mm
+* Large  = 226 px / 80.00 mm
 
 Cardboard Base:
 * All Chit Height = Plastic Base Height
-* Small Chit Width = ??% of Plastic Width / ?? mm / ?? px
-* Medium Chit Width = 88.16 % of Plastic Width / 52.90 mm / 149 px
-* Large Chit Width = ??% of Plastic Width / ?? mm / ?? px
+* Small Chit Width = 85.77% of Plastic Width / 34.31 mm / 94.52 px
+* Medium Chit Width = 88.16 % of Plastic Width / 53.35 mm / 150.75 px
+* Large Chit Width = 89.29% of Plastic Width / 71.43 mm / 201.79 px
 
 Bullseye Arc Width:
-* Small Bullseye Arc = 24.65% of Plastic Width / 14.79 mm / 41.78 px
+* Small Bullseye Arc = 36.97% of Plastic Width / 14.79 mm / 41.78 px
 * Medium Bullseye Arc = 24.65% of Plastic Width / 14.79 mm / 41.78 px
-* Large Bullseye Arc = 24.65% of Plastic Width / 14.79 mm / 41.78 px
+* Large Bullseye Arc = 18.49% of Plastic Width / 14.79 mm / 41.78 px
 
 Bullseye Arc Position:
-* Small Chit Corner to Bullseye Arc Start: ??% of Plastic Width / ?? mm / ?? px
-* Medium Chit Corner to Bullseye Arc Start: ??% of Plastic Width / 18.64 mm / 52.64 px
-* Large Chit Corner to Bullseye Arc Start: ??% of Plastic Width / ?? mm / ?? px
+* Small Plastic Base Corner to Bullseye Arc Start: ??% of Plastic Width / ?? mm / 35.61 px
+* Medium Plastic Base Corner to Bullseye Arc Start: ??% of Plastic Width / 18.64 mm / 64.61 px
+* Large Plastic Base Corner to Bullseye Arc Start: ??% of Plastic Width / ?? mm / 92.11 px
 
 Arc Angle:
-* Small ship forward arc: ?? degrees
+* Small ship forward arc: 81.24 degrees
 * Medium ship forward arc: 82.80 degrees
-* Large ship forward arc: ?? degrees
-* Large ship stardboard/port mobile turret arc: ?? degrees
+* Large ship forward arc: 83.52 degrees
 
 
 The arc lines definitely go to the cardboard chit corner
