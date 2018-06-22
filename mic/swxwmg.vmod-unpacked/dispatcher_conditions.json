@@ -35,5 +35,9 @@
   {
     "name": "Scrambled",
     "xws": "scrambled"
+  },
+  {
+    "name": "Optimized Prototype",
+    "xws": "optimizedprototype"
   }
 ]

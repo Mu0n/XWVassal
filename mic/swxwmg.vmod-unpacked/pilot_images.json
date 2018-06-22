@@ -1716,5 +1716,29 @@
     "pilotxws": "majorvermeil",
     "faction": "galacticempire",
     "image": "Pilot_galacticempire_tiereaper_majorvermeil.jpg"
+  },
+  {
+    "shipxws": "uwing",
+    "pilotxws": "partisanrenegade",
+    "faction": "rebelalliance",
+    "image": "Pilot_rebelalliance_uwing_partisanrenegade.jpg"
+  },
+  {
+    "shipxws": "uwing",
+    "pilotxws": "magvayarro",
+    "faction": "rebelalliance",
+    "image": "Pilot_rebelalliance_uwing_magvayarro.jpg"
+  },
+  {
+    "shipxws": "xwing",
+    "pilotxws": "edriotwotubes",
+    "faction": "rebelalliance",
+    "image": "Pilot_rebelalliance_xwing_edriotwotubes.jpg"
+  },
+  {
+    "shipxws": "xwing",
+    "pilotxws": "cavernangelszealot",
+    "faction": "rebelalliance",
+    "image": "Pilot_rebelalliance_xwing_cavernangelszealot.jpg"
   }
 ]
