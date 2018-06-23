@@ -78,10 +78,10 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
             .put("ALT E", ManeuverPaths.SloopR3)
             .put("CTRL SHIFT E", ManeuverPaths.SloopL3Turn)
             .put("ALT SHIFT E", ManeuverPaths.SloopR3Turn)
-            .put("CTRL H", ManeuverPaths.TrollL1)
+            .put("CTRL I", ManeuverPaths.TrollL1)
             .put("CTRL Y", ManeuverPaths.TrollL2)
             .put("CTRL T", ManeuverPaths.TrollL3)
-            .put("ALT H", ManeuverPaths.TrollR1)
+            .put("ALT I", ManeuverPaths.TrollR1)
             .put("ALT Y", ManeuverPaths.TrollR2)
             .put("ALT T", ManeuverPaths.TrollR3)
             .build();
