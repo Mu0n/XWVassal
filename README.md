@@ -39,7 +39,7 @@ Total Sizes:
 
 Cardboard Base:
 * All Chit Height = Plastic Base Height
-* Small Chit Width = 85.77% of Plastic Width / 34.31 mm / 94.52 px
+* Small Chit Width = 85.77% of Plastic Width / 34.31 mm / 96.92 px
 * Medium Chit Width = 88.16 % of Plastic Width / 53.35 mm / 150.75 px
 * Large Chit Width = 89.29% of Plastic Width / 71.43 mm / 201.79 px
 
@@ -57,15 +57,6 @@ Arc Angle:
 * Small ship forward arc: 81.24 degrees
 * Medium ship forward arc: 82.80 degrees
 * Large ship forward arc: 83.52 degrees
-
-
-The arc lines definitely go to the cardboard chit corner
-* Small ship cardboard chit width: 98.670 px
-* Small ship corner of plastic to corner of cardboard: 7.165 px
-* Medium ship cardboard chit width: 150.918 px
-* Medium ship corner of plastic to corner of cardboard: ?? px
-* Large ship cardboard chit width: ?? px
-* Large ship corner of plastic to corner of cardboard: ?? px
 
 ## Updating the module
 *The current way via the autoupdater is using this repository:*
