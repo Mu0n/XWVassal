@@ -14,6 +14,10 @@ import java.util.Map;
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class XWSList {
+
+    @JsonProperty("ffgedition")
+    private String ffgedition;
+
     @JsonProperty("name")
     private String name;
 
@@ -41,10 +45,12 @@ public class XWSList {
     @JsonIgnore
     private String xwsSource;
 
+    public String getFfgEdition() {return ffgedition; }
+    public void setFfgedition(String ffgedition) { this.ffgedition = ffgedition; }
+
     public String getName() {
         return name;
     }
-
     public void setName(String name)
     {
         this.name = name;
@@ -86,7 +92,6 @@ public class XWSList {
     public List<String> getObstacles() {
         return obstacles;
     }
-
     public void setObstacles(List<String> obstacles)
     {
         this.obstacles = obstacles;

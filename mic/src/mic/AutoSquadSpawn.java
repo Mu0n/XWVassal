@@ -829,7 +829,7 @@ public class AutoSquadSpawn extends AbstractConfigurable {
             XWSList list = getMapper().readValue(userInput, XWSList.class);
             list.setXwsSource("JSON");
 
-
+            if("second".equals(list.getFfgEdition())) logToChat("line 832 AutoSquadSpawn : confirmed 2e list");
 
             return list;
         } catch (Exception e) {

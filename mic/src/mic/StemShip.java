@@ -243,11 +243,20 @@ public class StemShip extends Decorator implements EditablePiece {
 
             final String targetLockLayerName = "Layer - Show Target Lock";
             final String rebelSmallImage = "TargetLock_Rebel.svg";
+            final String rebelMediumImage = "TargetLock_Rebel_Medium.svg";
             final String rebelLargeImage = "TargetLock_Rebel_Large.svg";
             final String imperialSmallImage = "TargetLock_Imperial.svg";
+            final String imperialMediumImage = "TargetLock_Imperial_Medium.svg";
             final String imperialLargeImage = "TargetLock_Imperial_Large.svg";
             final String scumSmallImage = "TargetLock_Scum.svg";
+            final String scumMediumImage = "TargetLock_Scum_Medium.svg";
             final String scumLargeImage = "TargetLock_Scum_Large.svg";
+            final String resistanceSmallImage = "TargetLock_Resistance.svg";
+            final String resistanceMediumImage = "TargetLock_Resistance_Medium.svg";
+            final String resistanceLargeImage = "TargetLock_Resistance_Large.svg";
+            final String firstorderSmallImage = "TargetLock_FirstOrder.svg";
+            final String firstorderMediumImage = "TargetLock_FirstOrder_Medium.svg";
+            final String firstorderLargeImage = "TargetLock_FirstOrder_Large.svg";
 
             String newFaction = XWOTAUtils.simplifyFactionName(faction);
 
@@ -264,6 +273,27 @@ public class StemShip extends Decorator implements EditablePiece {
             }else if(newSize.equals("small") && newFaction.equals("scumandvillainy") )
             {
                 sb.append(scumSmallImage);
+            }else if(newSize.equals("small") && newFaction.equals("resistance") )
+            {
+                sb.append(resistanceSmallImage);
+            }else if(newSize.equals("small") && newFaction.equals("firstorder") )
+            {
+                sb.append(firstorderSmallImage);
+            }else if(newSize.equals("medium") && newFaction.equals("rebelalliance"))
+            {
+                sb.append(rebelMediumImage);
+            }else if(newSize.equals("medium") && newFaction.equals("galacticempire") )
+            {
+                sb.append(imperialMediumImage);
+            }else if(newSize.equals("medium") && newFaction.equals("scumandvillainy") )
+            {
+                sb.append(scumMediumImage);
+            }else if(newSize.equals("medium") && newFaction.equals("resistance") )
+            {
+                sb.append(resistanceMediumImage);
+            }else if(newSize.equals("medium") && newFaction.equals("firstorder") )
+            {
+                sb.append(firstorderMediumImage);
             }else if(newSize.equals("large") && newFaction.equals("rebelalliance"))
             {
                 sb.append(rebelLargeImage);
@@ -273,6 +303,12 @@ public class StemShip extends Decorator implements EditablePiece {
             }else if(newSize.equals("large") && newFaction.equals("scumandvillainy") )
             {
                 sb.append(scumLargeImage);
+            }else if(newSize.equals("large") && newFaction.equals("resistance") )
+            {
+                sb.append(resistanceLargeImage);
+            }else if(newSize.equals("large") && newFaction.equals("firstorder") )
+            {
+                sb.append(firstorderLargeImage);
             }
 
             sb.append(";,;true;Show Target Lock;;;false;;1;1;true;;76,130;");
@@ -436,6 +472,9 @@ public class StemShip extends Decorator implements EditablePiece {
                 sb.append(shipBaseImage);
                 if(size.equals("small")) {
                     sb.append(",Ship_Small_SeeThrough.png");
+
+                }else if(size.equals("medium")) {
+                    sb.append(",Ship-Medium_SeeThrough");
 
                 }else if(size.equals("large")) {
                     sb.append(",Ship_Big_SeeThrough.png");
