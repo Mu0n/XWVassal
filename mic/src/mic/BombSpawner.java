@@ -81,12 +81,12 @@ enum BombManeuver {
     RT2("Right Turn 2", "9", "522", 180.0f, -90.0f, 176.25f, 62.75f),
     LT3("Left Turn 3", "10", "523", 90.0f, 90.0f, -254.5f, 141.5f),
     RT3("Right Turn 3", "11", "523", 180.0f, -90.0f, 254.5f, 141.5f),
-    LB1("Left Bank 1", "12", "517", 45.0f, 45.0f, -98.0f, -16.0f),
-    RB1("Right Bank 1", "13", "517", 180.0f, -45.0f, 98.0f, -16.0f),
-    LB2("Left Bank 2", "14", "519", 45.0f, 45.0f, -98.0f, -16.0f),
-    RB2("Right Bank 2", "15", "519", 180.0f, -45.0f, 98.0f, -16.0f),
-    LB3("Left Bank 3", "16", "520", 45.0f, 45.0f, -254.5f, 141.5f),
-    RB3("Right Bank 3", "17", "520", 180.0f, -45.0f, 254.5f, 141.5f);
+    LB1("Left Bank 1", "12", "517", 45.0f, 45.0f, -65.0f, 48.0f),
+    RB1("Right Bank 1", "13", "517", 180.0f, -45.0f, 65.0f, 48.0f),
+    LB2("Left Bank 2", "14", "519", 45.0f, 45.0f, -107.0f, 148.0f),
+    RB2("Right Bank 2", "15", "519", 180.0f, -45.0f, 107.0f, 148.0f),
+    LB3("Left Bank 3", "16", "520", 45.0f, 45.0f, -149.0f, 248.0f),
+    RB3("Right Bank 3", "17", "520", 180.0f, -45.0f, 149.0f, 248.0f);
 
     private final String templateName;
     private final String gfxLayer;
