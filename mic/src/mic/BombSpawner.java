@@ -73,11 +73,20 @@ enum BombManeuver {
     Back1("Back 1", "1", "524", 0.0f, 0.0f, 0.0f, 0.0f),
     Back2("Back 2", "2", "525", 0.0f, 0.0f, 0.0f, 113.0f),
     Back3("Back 3", "3", "526", 0.0f, 0.0f, 0.0f, 226.0f),
-    Back5("Back 5", "8", "528", 0.0f, 0.0f, 0.0f, 452.0f),
-    LT1("Left Turn 1", "4", "521", 90.0f, 90.0f, -98.0f, -16.0f),
-    RT1("Right Turn 1", "5", "521", 180.0f, -90.0f, 98.0f, -16.0f),
-    LT3("Left Turn 3", "6", "523", 90.0f, 90.0f, -254.5f, 141.5f),
-    RT3("Right Turn 3", "7", "523", 180.0f, -90.0f, 254.5f, 141.5f);
+    Back4("Back 4", "4", "527", 0.0f, 0.0f, 0.0f, 339.0f),
+    Back5("Back 5", "5", "528", 0.0f, 0.0f, 0.0f, 452.0f),
+    LT1("Left Turn 1", "6", "521", 90.0f, 90.0f, -98.0f, -16.0f),
+    RT1("Right Turn 1", "7", "521", 180.0f, -90.0f, 98.0f, -16.0f),
+    LT2("Left Turn 2", "8", "522", 90.0f, 90.0f, -98.0f, -16.0f),
+    RT2("Right Turn 2", "9", "522", 180.0f, -90.0f, 98.0f, -16.0f),
+    LT3("Left Turn 3", "10", "523", 90.0f, 90.0f, -254.5f, 141.5f),
+    RT3("Right Turn 3", "11", "523", 180.0f, -90.0f, 254.5f, 141.5f),
+    LB1("Left Bank 1", "12", "521", 90.0f, 90.0f, -98.0f, -16.0f),
+    RB1("Right Bank 1", "13", "521", 180.0f, -90.0f, 98.0f, -16.0f),
+    LB2("Left Bank 2", "14", "522", 90.0f, 90.0f, -98.0f, -16.0f),
+    RB2("Right Bank 2", "15", "522", 180.0f, -90.0f, 98.0f, -16.0f),
+    LB3("Left Bank 3", "16", "523", 90.0f, 90.0f, -254.5f, 141.5f),
+    RB3("Right Bank 3", "17", "523", 180.0f, -90.0f, 254.5f, 141.5f);
 
     private final String templateName;
     private final String gfxLayer;
@@ -128,11 +137,20 @@ public class BombSpawner extends Decorator implements EditablePiece {
             .put("SHIFT 1", BombManeuver.Back1)
             .put("SHIFT 2", BombManeuver.Back2)
             .put("SHIFT 3", BombManeuver.Back3)
+            .put("SHIFT 4", BombManeuver.Back4)
             .put("SHIFT 5", BombManeuver.Back5)
             .put("CTRL SHIFT 1", BombManeuver.LT1)
             .put("ALT SHIFT 1", BombManeuver.RT1)
+            .put("CTRL SHIFT 2", BombManeuver.LT2)
+            .put("ALT SHIFT 2", BombManeuver.RT2)
             .put("CTRL SHIFT 3", BombManeuver.LT3)
             .put("ALT SHIFT 3", BombManeuver.RT3)
+            .put("CTRL 1", BombManeuver.LB1)
+            .put("ALT 1", BombManeuver.RB1)
+            .put("CTRL 2", BombManeuver.LB2)
+            .put("ALT 2", BombManeuver.RB2)
+            .put("CTRL 3", BombManeuver.LB3)
+            .put("ALT 3", BombManeuver.RB3)
             .build();
 
     private static Map<String, BombToken> keyStrokeToBomb = ImmutableMap.<String, BombToken>builder()
