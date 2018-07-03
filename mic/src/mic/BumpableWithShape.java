@@ -17,12 +17,19 @@ import java.util.ArrayList;
 
 //TO DO great place to add nub to corner distance, blue line
 enum chassisInfo{
+
     unknown("unknown", 0.0, 0.0, 0.0, 0.0, 0.0, 0.0),
+
+    //the following numbers are for 1st edition ships
     small("small", 113.0, 113.0, 9.0, 8.3296, 40.45, 44.52),
     large("large", 226.0, 226.0, 10.0, 11.1650, 42.025, 0.0),
     hugeLittle("GR-75 size", 226.0, 551.0, 10.0, 11.1650, 40.45, 0.0),
     hugeBig("CR90 size", 226.0, 635.0, 10.0, 11.1650, 40.45, 0.0),
-    medium("medium", 169.0, 169.0, 9.5, 10.0, 41.5, 44.52);
+
+    //the following numbers are for 2nd edition ships
+    small2e("small", 113.0, 113.0, 9.0, 8.04, 40.62, 41.78),
+    medium2e("medium", 171.0, 171.0, 9.5, 10.125, 41.4, 41.78),
+    large2e("large", 226.0, 226.0, 10.0, 12.105, 41.76, 41.78);
 
     private final String chassisName;
     private final double width;
@@ -125,26 +132,45 @@ public class BumpableWithShape {
         return list;
     }
     private chassisInfo figureOutChassis() {
+        int whichEdition = 1; // 1 1st, 2 2nd
         Shape rawShape = getRawShape(bumpable);
         double rawWidth = rawShape.getBounds().width;
         double rawHeight = rawShape.getBounds().height;
 
+        try{
+            if (bumpable.getState().contains("this_is_2pointoh")){
+                whichEdition = 2;
+            }
+        }catch(Exception e){};
+
         chassisInfo result = chassisInfo.unknown;
-        if(Double.compare(rawWidth,chassisInfo.small.getWidth())==0) {
-            result= chassisInfo.small;
+
+        if(whichEdition==1){
+            if(Double.compare(rawWidth,chassisInfo.small.getWidth())==0) {
+                result= chassisInfo.small;
+            }
+            else if(Double.compare(rawWidth,chassisInfo.large.getWidth())==0
+                    && Double.compare(rawHeight,chassisInfo.large.getHeight()+chassis.large.getNubFudge())==0) {
+                result= chassisInfo.large;
+            }
+            else if(Double.compare(rawWidth,chassisInfo.hugeLittle.getWidth())==0
+                    && Double.compare(rawHeight,chassisInfo.hugeLittle.getHeight()+chassis.hugeLittle.getNubFudge())==0) result= chassisInfo.hugeLittle;
+            else if(Double.compare(rawWidth,chassisInfo.hugeBig.getWidth())==0
+                    && Double.compare(rawHeight,chassisInfo.hugeBig.getHeight()+chassis.hugeBig.getNubFudge())==0) result= chassisInfo.hugeBig;
+            //logToChat("rawWidth " + Double.toString(rawWidth) + " rawHeight " + Double.toString(rawHeight) + " chassis " + result.getChassisName());
+        } else if(whichEdition==2){
+            if(Double.compare(rawWidth,chassisInfo.small2e.getWidth())==0) {
+                result= chassisInfo.small2e;
+            }
+            else if(Double.compare(rawWidth,chassisInfo.medium2e.getWidth())==0){
+                result= chassisInfo.medium2e;
+            }
+            else if(Double.compare(rawWidth,chassisInfo.large2e.getWidth())==0
+                    && Double.compare(rawHeight,chassisInfo.large2e.getHeight()+chassis.large2e.getNubFudge())==0) {
+                result= chassisInfo.large2e;
+            }
         }
-        else if(Double.compare(rawWidth,chassisInfo.medium.getWidth())==0){
-            result= chassisInfo.medium;
-        }
-        else if(Double.compare(rawWidth,chassisInfo.large.getWidth())==0
-                && Double.compare(rawHeight,chassisInfo.large.getHeight()+chassis.large.getNubFudge())==0) {
-            result= chassisInfo.large;
-        }
-        else if(Double.compare(rawWidth,chassisInfo.hugeLittle.getWidth())==0
-                && Double.compare(rawHeight,chassisInfo.hugeLittle.getHeight()+chassis.hugeLittle.getNubFudge())==0) result= chassisInfo.hugeLittle;
-        else if(Double.compare(rawWidth,chassisInfo.hugeBig.getWidth())==0
-                && Double.compare(rawHeight,chassisInfo.hugeBig.getHeight()+chassis.hugeBig.getNubFudge())==0) result= chassisInfo.hugeBig;
-        //logToChat("rawWidth " + Double.toString(rawWidth) + " rawHeight " + Double.toString(rawHeight) + " chassis " + result.getChassisName());
+
         return result;
     }
 
