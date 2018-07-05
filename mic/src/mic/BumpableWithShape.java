@@ -140,10 +140,14 @@ public class BumpableWithShape {
         try{
             if (bumpable.getState().contains("this_is_2pointoh")){
                 whichEdition = 2;
+                Util.logToChat("2.0 ship detected");
             }
         }catch(Exception e){};
 
         chassisInfo result = chassisInfo.unknown;
+
+        Util.logToChat("this is the detected width: " + Double.toString(rawWidth));
+        Util.logToChat("this is the detected height: " + Double.toString(rawHeight));
 
         if(whichEdition==1){
             if(Double.compare(rawWidth,chassisInfo.small.getWidth())==0) {
