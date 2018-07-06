@@ -71,7 +71,54 @@ enum RepoManeuver {
     BR1_Left_AFAP_Large("BR Left as Forward as Possible", "524", 0.0f, -141.25f, -56.5f, 0.0f, -283.0f, -113.0f),
     BR1_Left_ABAP_Large("BR Left as Backward as Possible", "524", 0.0f, -141.25f, 56.5f, 0.0f, -283.0f, 113.0f),
     BR1_Right_AFAP_Large("BR Right as Forward as Possible", "524", 0.0f, 141.25f, -56.5f, 0.0f, 283.0f, -113.0f),
-    BR1_Right_ABAP_Large("BR Right as Backward as Possible", "524", 0.0f, 141.25f, 56.5f, 0.0f, 283.0f, 113.0f);
+    BR1_Right_ABAP_Large("BR Right as Backward as Possible", "524", 0.0f, 141.25f, 56.5f, 0.0f, 283.0f, 113.0f),
+
+    //Section for 2.0 style barrel roll. AFAP and ABAP will be limited by the back and front edges and will spawn the template for habit building
+//TO DO - adjust mid BR which will also spawn the ship's final position. do the routing at the keystroke analysis level - use this or that map or map2e
+    BR1_Left_AFAP_2E("BR Left as Forward as Possible", "524", -90.0f, -113.0f, 0.0f, 0.0f, -226.0f, -56.5f),
+
+    BR1_Left_2E("BR Left", "524", -90.0f, -113.0f, 0.0f, 0.0f, -226.0f, 0.0f),
+
+    BR1_Left_ABAP_2E("BR Left as Backward as Possible", "524", -90.0f, -113.0f, 0.0f, 0.0f, -226.0f, 56.5f),
+    BR1_Right_AFAP_2E("BR Right as Forward as Possible", "524", -90.0f, 113.0f, 0.0f, 0.0f, 226.0f, -56.5f),
+
+    BR1_Right_2E("BR Right", "524", -90.0f, 113.0f, 0.0f, 0.0f, 226.0f, 0.0f),
+
+    BR1_Right_ABAP_2E("BR Right as Backward as Possible", "524", -90.0f, 113.0f, 0.0f, 0.0f, 226.0f, 56.5f),
+    //small Zeta Ace BR
+    BR2_Left_AFAP_2E("BR2 Left as Forward as Possible", "525", -90.0f, -169.5f, 0.0f, 0.0f, -339.0f, -56.5f),
+
+    BR2_Left_2E("BR2 Left", "525", -90.0f, -169.5f, 0.0f, 0.0f, -339.0f, 0.0f),
+
+    BR2_Left_ABAP_2E("BR2 Left as Backward as Possible", "525", -90.0f, -169.5f, 0.0f, 0.0f, -339.0f, 56.5f),
+    BR2_Right_AFAP_2E("BR2 Right as Forward as Possible", "525", -90.0f, 169.5f, 0.0f, 0.0f, 339.0f, -56.5f),
+
+    BR2_Right_2E("BR2 Right", "525", -90.0f, 169.5f, 0.0f, 0.0f, 339.0f, 0.0f),
+
+    BR2_Right_ABAP_2E("BR2 Right as Backward as Possible", "525", -90.0f, 169.5f, 0.0f, 0.0f, 339.0f, 56.5f),
+    //medium normal BR
+    BR1_Left_AFAP_Medium_2E("BR Left as Forward as Possible", "524", 0.0f, -141.25f, 0.0f, 0.0f, -283.0f, -113.0f),
+
+    BR1_Left_Medium_2E("BR Left", "524", 0.0f, -141.25f, 0.0f, 0.0f, -283.0f, 0.0f),
+
+    BR1_Left_ABAP_Medium_2E("BR Left as Backward as Possible", "524", 0.0f, -141.25f, 0.0f, 0.0f, -283.0f, 113.0f),
+    BR1_Right_AFAP_Medium_2E("BR Right as Forward as Possible", "524", 0.0f, 141.25f, 0.0f, 0.0f, 283.0f, -113.0f),
+
+    BR1_Right_Medium_2E("BR Right", "524", 0.0f, 141.25f, 0.0f, 0.0f, 283.0f, 0.0f),
+
+    BR1_Right_ABAP_Medium_2E("BR Right as Backward as Possible", "524", 0.0f, 141.25f, 0.0f, 0.0f, 283.0f, 113.0f),
+    //large normal BR
+    BR1_Left_AFAP_Large_2E("BR Left as Forward as Possible", "524", 0.0f, -141.25f, 0.0f, 0.0f, -283.0f, -113.0f),
+
+    BR1_Left_Large_2E("BR Left as Forward as Possible", "524", 0.0f, -141.25f, 0.0f, 0.0f, -283.0f, 0.0f),
+
+    BR1_Left_ABAP_Large_2E("BR Left as Backward as Possible", "524", 0.0f, -141.25f, 0.0f, 0.0f, -283.0f, 113.0f),
+    BR1_Right_AFAP_Large_2E("BR Right as Forward as Possible", "524", 0.0f, 141.25f, 0.0f, 0.0f, 283.0f, -113.0f),
+
+    BR1_Right_Large_2E("BR Right", "524", 0.0f, 141.25f, 0.0f, 0.0f, 283.0f, 0.0f),
+
+    BR1_Right_ABAP_Large_2E("BR Right as Backward as Possible", "524", 0.0f, 141.25f, 0.0f, 0.0f, 283.0f, 113.0f),
+    ;
 
     private final String repoName;
     private final String gpID;
@@ -160,6 +207,23 @@ public class ShipReposition extends Decorator implements EditablePiece {
             .put("ALT 9", RepoManeuver.BR2_Right_AFAP)
             .put("ALT SHIFT 9", RepoManeuver.BR2_Right_ABAP)
             .build();
+
+    //Map for 2e keystrokes
+    private static Map<String, RepoManeuver> keyStrokeToRepositionShip_2e = ImmutableMap.<String, RepoManeuver>builder()
+            .put("CTRL 8", RepoManeuver.BR1_Left_AFAP_2E)
+            .put("CTRL R", RepoManeuver.BR1_Left_2E)
+            .put("CTRL SHIFT 8", RepoManeuver.BR1_Left_ABAP_2E)
+            .put("ALT 8", RepoManeuver.BR1_Right_AFAP_2E)
+            .put("ALT R", RepoManeuver.BR1_Right_2E)
+            .put("ALT SHIFT 8", RepoManeuver.BR1_Right_ABAP_2E)
+            .put("CTRL 9", RepoManeuver.BR2_Left_AFAP_2E)
+            .put("J", RepoManeuver.BR2_Left_2E)
+            .put("CTRL SHIFT 9", RepoManeuver.BR2_Left_ABAP_2E)
+            .put("ALT 9", RepoManeuver.BR2_Right_AFAP_2E)
+            .put("K", RepoManeuver.BR2_Right_2E)
+            .put("ALT SHIFT 9", RepoManeuver.BR2_Right_ABAP_2E)
+            .build();
+
 
 
     public ShipReposition() {
