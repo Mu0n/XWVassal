@@ -200,10 +200,16 @@ Boolean isThisTheOne = false;
                 this.fov.execute();
                 return bigCommand;
             }
+            Util.logToChat("line210");
+            Util.logToChat(this.getInner().getState().toString());
+
             thisShip = new BumpableWithShape(this, "Ship",
-                    this.getInner().getProperty("Pilot Name").toString(), this.getInner().getProperty("Craft ID #").toString());
+                    this.getInner().getProperty("Pilot Name").toString(), this.getInner().getProperty("Craft ID #").toString(),
+                    this.getInner().getProperty("this_is_2pointoh").equals("yass")?true:false);
 
             thisShip.refreshSpecialPoints();
+            Util.logToChat("line 207 thisShip chassis.getname " + thisShip.chassis.getChassisName());
+            Util.logToChat("line 208 thisShip vertices " + thisShip.getVertices().toString());
             //Prepare the start of the appropriate chat announcement string - which ship are we doing this from, which kind of autorange
             prepAnnouncementStart();
 
@@ -247,7 +253,8 @@ Boolean isThisTheOne = false;
             return;
         }
         thisShip = new BumpableWithShape(this, "Ship",
-                this.getInner().getProperty("Pilot Name").toString(), this.getInner().getProperty("Craft ID #").toString());
+                this.getInner().getProperty("Pilot Name").toString(), this.getInner().getProperty("Craft ID #").toString(),
+                this.piece.getState().contains("this_is_2pointoh"));
 
         thisShip.refreshSpecialPoints();
         //Prepare the start of the appropriate chat announcement string - which ship are we doing this from, which kind of autorange
@@ -2359,13 +2366,13 @@ Boolean isThisTheOne = false;
                 try{
                     testFlipString = ((Decorator) piece).getDecorator(piece,piece.getClass()).getProperty("whichShape").toString();
                 } catch (Exception e) {}
-                bumpables.add(new BumpableWithShape((Decorator)piece, "Asteroid", "2".equals(testFlipString)));
+                bumpables.add(new BumpableWithShape((Decorator)piece, "Asteroid", "2".equals(testFlipString), false));
             } else if (piece.getState().contains("this_is_a_debris")) {
                 String testFlipString = "";
                 try{
                     testFlipString = ((Decorator) piece).getDecorator(piece,piece.getClass()).getProperty("whichShape").toString();
                 } catch (Exception e) {}
-                bumpables.add(new BumpableWithShape((Decorator)piece,"Debris","2".equals(testFlipString)));
+                bumpables.add(new BumpableWithShape((Decorator)piece,"Debris","2".equals(testFlipString), false));
             }
         }
         return bumpables;
@@ -2802,7 +2809,8 @@ Boolean isThisTheOne = false;
         for (GamePiece piece : pieces) {
             if (piece.getState().contains("this_is_a_ship") && piece.getId() != this.piece.getId()) {
                 ships.add(new BumpableWithShape((Decorator)piece, "Ship",
-                        piece.getProperty("Pilot Name").toString(), piece.getProperty("Craft ID #").toString()));
+                        piece.getProperty("Pilot Name").toString(), piece.getProperty("Craft ID #").toString(),
+                        piece.getState().contains("this_is_2pointoh")));
             }
         }
         return ships;

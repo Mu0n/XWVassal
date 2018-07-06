@@ -105,20 +105,21 @@ public class BumpableWithShape {
 
     public ArrayList<Point2D.Double> tPts = new ArrayList<Point2D.Double>(); //array of transformed (rotated and translated) special points
 
-    BumpableWithShape(Decorator bumpable, String type, boolean wantFlip) {
+    BumpableWithShape(Decorator bumpable, String type, boolean wantFlip, boolean is2pointoh) {
         this.bumpable = bumpable;
         this.shape = wantFlip ? getBumpableCompareShapeButFlip(bumpable) : getBumpableCompareShape(bumpable);
         this.type = type;
-        this.chassis = figureOutChassis();
+        this.chassis = figureOutChassis(is2pointoh);
     }
-    BumpableWithShape(Decorator bumpable, String type, String pilotName, String shipName) {
+    BumpableWithShape(Decorator bumpable, String type, String pilotName, String shipName, boolean is2pointoh) {
+        Util.logToChat("line 115 best BumpableWithShape constructor reached");
         this.bumpable = bumpable;
         this.shape = getBumpableCompareShape(bumpable);
         this.rectWithNoNubs = getRectWithNoNubs();
         this.type = type;
         this.pilotName = pilotName;
         this.shipName = shipName;
-        this.chassis = figureOutChassis();
+        this.chassis = figureOutChassis(is2pointoh);
         this.figureVertices();
         this.figureOutLocalPoints(3);
     }
@@ -131,25 +132,14 @@ public class BumpableWithShape {
         list.add(downLeftVertex);
         return list;
     }
-    private chassisInfo figureOutChassis() {
-        int whichEdition = 1; // 1 1st, 2 2nd
+    private chassisInfo figureOutChassis(boolean is2pointoh) {
         Shape rawShape = getRawShape(bumpable);
         double rawWidth = rawShape.getBounds().width;
         double rawHeight = rawShape.getBounds().height;
 
-        try{
-            if (bumpable.getState().contains("this_is_2pointoh")){
-                whichEdition = 2;
-                Util.logToChat("2.0 ship detected");
-            }
-        }catch(Exception e){};
-
         chassisInfo result = chassisInfo.unknown;
 
-        Util.logToChat("this is the detected width: " + Double.toString(rawWidth));
-        Util.logToChat("this is the detected height: " + Double.toString(rawHeight));
-
-        if(whichEdition==1){
+        if(is2pointoh==false){
             if(Double.compare(rawWidth,chassisInfo.small.getWidth())==0) {
                 result= chassisInfo.small;
             }
@@ -162,7 +152,7 @@ public class BumpableWithShape {
             else if(Double.compare(rawWidth,chassisInfo.hugeBig.getWidth())==0
                     && Double.compare(rawHeight,chassisInfo.hugeBig.getHeight()+chassis.hugeBig.getNubFudge())==0) result= chassisInfo.hugeBig;
             //logToChat("rawWidth " + Double.toString(rawWidth) + " rawHeight " + Double.toString(rawHeight) + " chassis " + result.getChassisName());
-        } else if(whichEdition==2){
+        } else if(is2pointoh==true){
             if(Double.compare(rawWidth,chassisInfo.small2e.getWidth())==0) {
                 result= chassisInfo.small2e;
             }
@@ -248,7 +238,7 @@ public class BumpableWithShape {
         double halfsize = getChassisWidth()/2.0;
 
         double arcAngleInRad = Math.PI*chassis.getArcHalfAngle()/180.0; //half angle of the arc being used TO DO: get the proper mobile turret arc angle, front aux arc, etc or just ignore it inside the switch
-
+Util.logToChat("line 253 half angle " + Double.toString(chassis.getArcHalfAngle()) + " halfsize " + Double.toString(halfsize) + " corner2FA " + Double.toString(chassis.getCornerToFiringArc()));
         frontLeftArcBase = new Point2D.Double(-halfsize + chassis.getCornerToFiringArc(), -halfsize);
         frontRightArcBase = new Point2D.Double(halfsize - chassis.getCornerToFiringArc(), -halfsize);
 
@@ -295,6 +285,7 @@ public class BumpableWithShape {
         Point center = bumpable.getPosition();
         double angle = getAngle();
 
+        Util.logToChat("line 298 position " + Integer.toString(center.x) + " " + Integer.toString(center.y));
         tPts.add(getATransformedPoint(frontLeftArcBase.x, frontLeftArcBase.y, 0.0, 0.0, angle, center.getX(), center.getY())); //0
         tPts.add(getATransformedPoint(frontRightArcBase.x, frontRightArcBase.y, 0.0, 0.0, angle, center.getX(), center.getY()));  //1
 
@@ -322,6 +313,9 @@ public class BumpableWithShape {
         tPts.add(getATransformedPoint(rightFrontalEnd.x, rightFrontalEnd.y, 0.0,  0.0, angle, center.getX(), center.getY())); //17
         tPts.add(getATransformedPoint(leftBackwardEnd.x, leftBackwardEnd.y, 0.0, 0.0, angle, center.getX(), center.getY())); //18
         tPts.add(getATransformedPoint(rightBackwardEnd.x, rightBackwardEnd.y, 0.0, 0.0, angle, center.getX(), center.getY())); //19
+
+
+        Util.logToChat("line 328 frontrightarcbase " + Double.toString(frontRightArcBase.x) + " " + Double.toString(frontRightArcBase.y));
     }
 
     Point2D.Double getATransformedPoint(double offX, double offY, double extraOffX, double extraOffY, double shipAngle, double centerX, double centerY)

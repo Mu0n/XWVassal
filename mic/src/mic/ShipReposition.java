@@ -527,21 +527,22 @@ public class ShipReposition extends Decorator implements EditablePiece {
                 try{
                     testFlipString = ((Decorator) piece).getDecorator(piece,piece.getClass()).getProperty("whichShape").toString();
                 } catch (Exception e) {}
-                bumpables.add(new BumpableWithShape((Decorator)piece, "Asteroid", "2".equals(testFlipString)));
+                bumpables.add(new BumpableWithShape((Decorator)piece, "Asteroid", "2".equals(testFlipString), false));
             } else if (piece.getState().contains("this_is_a_debris")) {
                 String testFlipString = "";
                 try{
                     testFlipString = ((Decorator) piece).getDecorator(piece,piece.getClass()).getProperty("whichShape").toString();
                 } catch (Exception e) {}
-                bumpables.add(new BumpableWithShape((Decorator)piece,"Debris","2".equals(testFlipString)));
+                bumpables.add(new BumpableWithShape((Decorator)piece,"Debris","2".equals(testFlipString), false));
             } else if (piece.getState().contains("this_is_a_bomb")) {
-                bumpables.add(new BumpableWithShape((Decorator)piece, "Mine", false));
+                bumpables.add(new BumpableWithShape((Decorator)piece, "Mine", false, false));
             } else if(wantShipsToo == true && piece.getState().contains("this_is_a_ship")){
                 //MrMurphM
             //    GamePiece newPiece = PieceCloner.getInstance().clonePiece(piece);
             //    newPiece.setPosition(piece.getPosition());
                 //END
-                BumpableWithShape tentativeBumpable = new BumpableWithShape((Decorator)piece, "Ship",false);
+                BumpableWithShape tentativeBumpable = new BumpableWithShape((Decorator)piece, "Ship",false,
+                        this.getInner().getState().contains("this_is_2pointoh"));
                 if (getId().equals(tentativeBumpable.bumpable.getId())) {
                     continue;
                 }
@@ -557,7 +558,7 @@ public class ShipReposition extends Decorator implements EditablePiece {
     }
 
     private boolean isLargeShip(Decorator ship) {
-        BumpableWithShape test = new BumpableWithShape(ship, "Ship", "notimportant", "notimportant");
+        BumpableWithShape test = new BumpableWithShape(ship, "Ship", "notimportant", "notimportant", false);
         return test.chassis.getChassisName().equals("large");
     }
 

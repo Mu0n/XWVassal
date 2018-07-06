@@ -148,7 +148,7 @@ public class DialStack  extends Decorator implements EditablePiece {
         for (GamePiece piece : pieces) {
             if (piece.getState().contains("this_is_a_dial")) {
                 ships.add(new BumpableWithShape((Decorator)piece, "Dial",
-                        piece.getProperty("Pilot Name").toString(), piece.getProperty("Craft ID #").toString()));
+                        piece.getProperty("Pilot Name").toString(), piece.getProperty("Craft ID #").toString(), false));
             }
         }
         return ships;

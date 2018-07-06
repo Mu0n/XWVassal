@@ -497,7 +497,8 @@ public class BombSpawner extends Decorator implements EditablePiece {
         for (GamePiece piece : pieces) {
             if (piece.getState().contains("this_is_a_ship")) {
                 ships.add(new BumpableWithShape((Decorator)piece, "Ship",
-                        piece.getProperty("Pilot Name").toString(), piece.getProperty("Craft ID #").toString()));
+                        piece.getProperty("Pilot Name").toString(), piece.getProperty("Craft ID #").toString(),
+                        this.getInner().getState().contains("this_is_2pointoh")));
             }
         }
         return ships;
@@ -510,22 +511,23 @@ public class BombSpawner extends Decorator implements EditablePiece {
         for (GamePiece piece : pieces) {
             if (piece.getState().contains("this_is_a_ship")) {
                 bumpables.add(new BumpableWithShape((Decorator)piece,"Ship",
-                        piece.getProperty("Pilot Name").toString(), piece.getProperty("Craft ID #").toString()));
+                        piece.getProperty("Pilot Name").toString(), piece.getProperty("Craft ID #").toString(),
+                        this.getInner().getState().contains("this_is_2pointoh")));
             } else if (piece.getState().contains("this_is_an_asteroid")) {
                 // comment out this line and the next three that add to bumpables if bumps other than with ships shouldn't be detected yet
                 String testFlipString = "";
                 try{
                     testFlipString = ((Decorator) piece).getDecorator(piece,piece.getClass()).getProperty("whichShape").toString();
                 } catch (Exception e) {}
-                bumpables.add(new BumpableWithShape((Decorator)piece, "Asteroid", "2".equals(testFlipString)));
+                bumpables.add(new BumpableWithShape((Decorator)piece, "Asteroid", "2".equals(testFlipString), false));
             } else if (piece.getState().contains("this_is_a_debris")) {
                 String testFlipString = "";
                 try{
                     testFlipString = ((Decorator) piece).getDecorator(piece,piece.getClass()).getProperty("whichShape").toString();
                 } catch (Exception e) {}
-                bumpables.add(new BumpableWithShape((Decorator)piece,"Debris","2".equals(testFlipString)));
+                bumpables.add(new BumpableWithShape((Decorator)piece,"Debris","2".equals(testFlipString), false));
             } else if (piece.getState().contains("this_is_a_bomb")) {
-                bumpables.add(new BumpableWithShape((Decorator)piece, "Mine", false));
+                bumpables.add(new BumpableWithShape((Decorator)piece, "Mine", false, false));
             }
         }
         return bumpables;
