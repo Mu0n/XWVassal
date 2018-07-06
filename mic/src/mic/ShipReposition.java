@@ -395,6 +395,7 @@ public class ShipReposition extends Decorator implements EditablePiece {
     private Shape getCopyOfShapeWithoutActionsForOverlapCheck(GamePiece oldPiece,RepoManeuver repoTemplate ) {
         // Copy the old piece, but don't set the State
         GamePiece newPiece = GameModule.getGameModule().createPiece(oldPiece.getType());
+        Util.logToChat("shiprepo line 398 newPiece is null?" + (newPiece==null?"yesss":"nope"));
         VASSAL.build.module.Map var3 = oldPiece.getMap();
         this.piece.setMap((VASSAL.build.module.Map) null);
         // manually set the same position of the old piece
@@ -406,6 +407,7 @@ public class ShipReposition extends Decorator implements EditablePiece {
         templateAngle = repoTemplate.getTemplateAngle(); //repo maneuver's angle
         double shipAngle = this.getRotator().getAngle(); //ship angle
         FreeRotator rotater = (FreeRotator) Decorator.getDecorator(newPiece, FreeRotator.class);
+        Util.logToChat("ship reposition line 409 rotator null check" + (rotater==null?"yesnull":"nonull"));
         rotater.setAngle(shipAngle);
         return newPiece.getShape();
     }
