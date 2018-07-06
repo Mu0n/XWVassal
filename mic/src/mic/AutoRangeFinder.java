@@ -205,7 +205,7 @@ Boolean isThisTheOne = false;
 
             thisShip = new BumpableWithShape(this, "Ship",
                     this.getInner().getProperty("Pilot Name").toString(), this.getInner().getProperty("Craft ID #").toString(),
-                    this.getInner().getProperty("this_is_2pointoh").equals("yass")?true:false);
+                    this.getInner().getState().contains("this_is_2pointoh"));
 
             thisShip.refreshSpecialPoints();
             Util.logToChat("line 207 thisShip chassis.getname " + thisShip.chassis.getChassisName());
@@ -254,7 +254,7 @@ Boolean isThisTheOne = false;
         }
         thisShip = new BumpableWithShape(this, "Ship",
                 this.getInner().getProperty("Pilot Name").toString(), this.getInner().getProperty("Craft ID #").toString(),
-                this.piece.getState().contains("this_is_2pointoh"));
+                this.getInner().getState().contains("this_is_2pointoh"));
 
         thisShip.refreshSpecialPoints();
         //Prepare the start of the appropriate chat announcement string - which ship are we doing this from, which kind of autorange
