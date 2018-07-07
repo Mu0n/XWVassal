@@ -112,7 +112,6 @@ public class BumpableWithShape {
         this.chassis = figureOutChassis(is2pointoh);
     }
     BumpableWithShape(Decorator bumpable, String type, String pilotName, String shipName, boolean is2pointoh) {
-        Util.logToChat("line 115 best BumpableWithShape constructor reached");
         this.bumpable = bumpable;
         this.shape = getBumpableCompareShape(bumpable);
         this.rectWithNoNubs = getRectWithNoNubs();
@@ -238,7 +237,6 @@ public class BumpableWithShape {
         double halfsize = getChassisWidth()/2.0;
 
         double arcAngleInRad = Math.PI*chassis.getArcHalfAngle()/180.0; //half angle of the arc being used TO DO: get the proper mobile turret arc angle, front aux arc, etc or just ignore it inside the switch
-Util.logToChat("line 253 half angle " + Double.toString(chassis.getArcHalfAngle()) + " halfsize " + Double.toString(halfsize) + " corner2FA " + Double.toString(chassis.getCornerToFiringArc()));
         frontLeftArcBase = new Point2D.Double(-halfsize + chassis.getCornerToFiringArc(), -halfsize);
         frontRightArcBase = new Point2D.Double(halfsize - chassis.getCornerToFiringArc(), -halfsize);
 
@@ -285,7 +283,6 @@ Util.logToChat("line 253 half angle " + Double.toString(chassis.getArcHalfAngle(
         Point center = bumpable.getPosition();
         double angle = getAngle();
 
-        Util.logToChat("line 298 position " + Integer.toString(center.x) + " " + Integer.toString(center.y));
         tPts.add(getATransformedPoint(frontLeftArcBase.x, frontLeftArcBase.y, 0.0, 0.0, angle, center.getX(), center.getY())); //0
         tPts.add(getATransformedPoint(frontRightArcBase.x, frontRightArcBase.y, 0.0, 0.0, angle, center.getX(), center.getY()));  //1
 
@@ -315,7 +312,6 @@ Util.logToChat("line 253 half angle " + Double.toString(chassis.getArcHalfAngle(
         tPts.add(getATransformedPoint(rightBackwardEnd.x, rightBackwardEnd.y, 0.0, 0.0, angle, center.getX(), center.getY())); //19
 
 
-        Util.logToChat("line 328 frontrightarcbase " + Double.toString(frontRightArcBase.x) + " " + Double.toString(frontRightArcBase.y));
     }
 
     Point2D.Double getATransformedPoint(double offX, double offY, double extraOffX, double extraOffY, double shipAngle, double centerX, double centerY)

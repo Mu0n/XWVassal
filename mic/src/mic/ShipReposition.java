@@ -75,49 +75,49 @@ enum RepoManeuver {
 
     //Section for 2.0 style barrel roll. AFAP and ABAP will be limited by the back and front edges and will spawn the template for habit building
 //TO DO - adjust mid BR which will also spawn the ship's final position. do the routing at the keystroke analysis level - use this or that map or map2e
-    BR1_Left_AFAP_2E("BR Left as Forward as Possible", "524", -90.0f, -113.0f, 0.0f, 0.0f, -226.0f, -56.5f),
+    BR1_Left_AFAP_2E("BR Left as Forward as Possible", "524", -90.0f, -113.0f, 0.0f, 0.0f, -226.0f, -28.25f),
 
     BR1_Left_2E("BR Left", "524", -90.0f, -113.0f, 0.0f, 0.0f, -226.0f, 0.0f),
 
-    BR1_Left_ABAP_2E("BR Left as Backward as Possible", "524", -90.0f, -113.0f, 0.0f, 0.0f, -226.0f, 56.5f),
-    BR1_Right_AFAP_2E("BR Right as Forward as Possible", "524", -90.0f, 113.0f, 0.0f, 0.0f, 226.0f, -56.5f),
+    BR1_Left_ABAP_2E("BR Left as Backward as Possible", "524", -90.0f, -113.0f, 0.0f, 0.0f, -226.0f, 28.25f),
+    BR1_Right_AFAP_2E("BR Right as Forward as Possible", "524", -90.0f, 113.0f, 0.0f, 0.0f, 226.0f, -28.25f),
 
     BR1_Right_2E("BR Right", "524", -90.0f, 113.0f, 0.0f, 0.0f, 226.0f, 0.0f),
 
-    BR1_Right_ABAP_2E("BR Right as Backward as Possible", "524", -90.0f, 113.0f, 0.0f, 0.0f, 226.0f, 56.5f),
+    BR1_Right_ABAP_2E("BR Right as Backward as Possible", "524", -90.0f, 113.0f, 0.0f, 0.0f, 226.0f, 28.25f),
     //small Zeta Ace BR
-    BR2_Left_AFAP_2E("BR2 Left as Forward as Possible", "525", -90.0f, -169.5f, 0.0f, 0.0f, -339.0f, -56.5f),
+    BR2_Left_AFAP_2E("BR2 Left as Forward as Possible", "525", -90.0f, -169.5f, 0.0f, 0.0f, -339.0f, -28.25f),
 
     BR2_Left_2E("BR2 Left", "525", -90.0f, -169.5f, 0.0f, 0.0f, -339.0f, 0.0f),
 
-    BR2_Left_ABAP_2E("BR2 Left as Backward as Possible", "525", -90.0f, -169.5f, 0.0f, 0.0f, -339.0f, 56.5f),
-    BR2_Right_AFAP_2E("BR2 Right as Forward as Possible", "525", -90.0f, 169.5f, 0.0f, 0.0f, 339.0f, -56.5f),
+    BR2_Left_ABAP_2E("BR2 Left as Backward as Possible", "525", -90.0f, -169.5f, 0.0f, 0.0f, -339.0f, 28.25f),
+    BR2_Right_AFAP_2E("BR2 Right as Forward as Possible", "525", -90.0f, 169.5f, 0.0f, 0.0f, 339.0f, -28.25f),
 
     BR2_Right_2E("BR2 Right", "525", -90.0f, 169.5f, 0.0f, 0.0f, 339.0f, 0.0f),
 
-    BR2_Right_ABAP_2E("BR2 Right as Backward as Possible", "525", -90.0f, 169.5f, 0.0f, 0.0f, 339.0f, 56.5f),
+    BR2_Right_ABAP_2E("BR2 Right as Backward as Possible", "525", -90.0f, 169.5f, 0.0f, 0.0f, 339.0f, 28.25f),
     //medium normal BR
-    BR1_Left_AFAP_Medium_2E("BR Left as Forward as Possible", "524", 0.0f, -141.25f, 0.0f, 0.0f, -283.0f, -113.0f),
+    BR1_Left_AFAP_Medium_2E("BR Left as Forward as Possible", "524", 0.0f, -113.75f, 0.0f, 0.0f, -227.5f, -29.0f),
 
-    BR1_Left_Medium_2E("BR Left", "524", 0.0f, -141.25f, 0.0f, 0.0f, -283.0f, 0.0f),
+    BR1_Left_Medium_2E("BR Left", "524", 0.0f, -113.75f, 0.0f, 0.0f, -227.5f, 0.0f),
 
-    BR1_Left_ABAP_Medium_2E("BR Left as Backward as Possible", "524", 0.0f, -141.25f, 0.0f, 0.0f, -283.0f, 113.0f),
-    BR1_Right_AFAP_Medium_2E("BR Right as Forward as Possible", "524", 0.0f, 141.25f, 0.0f, 0.0f, 283.0f, -113.0f),
+    BR1_Left_ABAP_Medium_2E("BR Left as Backward as Possible", "524", 0.0f, -113.75f, 0.0f, 0.0f, -227.5f, 29.0f),
+    BR1_Right_AFAP_Medium_2E("BR Right as Forward as Possible", "524", 0.0f, 113.75f, 0.0f, 0.0f, 227.5f, -29.0f),
 
-    BR1_Right_Medium_2E("BR Right", "524", 0.0f, 141.25f, 0.0f, 0.0f, 283.0f, 0.0f),
+    BR1_Right_Medium_2E("BR Right", "524", 0.0f, 113.75f, 0.0f, 0.0f, 227.5f, 0.0f),
 
-    BR1_Right_ABAP_Medium_2E("BR Right as Backward as Possible", "524", 0.0f, 141.25f, 0.0f, 0.0f, 283.0f, 113.0f),
+    BR1_Right_ABAP_Medium_2E("BR Right as Backward as Possible", "524", 0.0f, 113.75f, 0.0f, 0.0f, 227.5f, 29.0f),
     //large normal BR
-    BR1_Left_AFAP_Large_2E("BR Left as Forward as Possible", "524", 0.0f, -141.25f, 0.0f, 0.0f, -283.0f, -113.0f),
+    BR1_Left_AFAP_Large_2E("BR Left as Forward as Possible", "524", 0.0f, -141.25f, 0.0f, 0.0f, -283.0f, -56.5f),
 
     BR1_Left_Large_2E("BR Left as Forward as Possible", "524", 0.0f, -141.25f, 0.0f, 0.0f, -283.0f, 0.0f),
 
-    BR1_Left_ABAP_Large_2E("BR Left as Backward as Possible", "524", 0.0f, -141.25f, 0.0f, 0.0f, -283.0f, 113.0f),
-    BR1_Right_AFAP_Large_2E("BR Right as Forward as Possible", "524", 0.0f, 141.25f, 0.0f, 0.0f, 283.0f, -113.0f),
+    BR1_Left_ABAP_Large_2E("BR Left as Backward as Possible", "524", 0.0f, -141.25f, 0.0f, 0.0f, -283.0f, 56.5f),
+    BR1_Right_AFAP_Large_2E("BR Right as Forward as Possible", "524", 0.0f, 141.25f, 0.0f, 0.0f, 283.0f, -56.5f),
 
     BR1_Right_Large_2E("BR Right", "524", 0.0f, 141.25f, 0.0f, 0.0f, 283.0f, 0.0f),
 
-    BR1_Right_ABAP_Large_2E("BR Right as Backward as Possible", "524", 0.0f, 141.25f, 0.0f, 0.0f, 283.0f, 113.0f),
+    BR1_Right_ABAP_Large_2E("BR Right as Backward as Possible", "524", 0.0f, 141.25f, 0.0f, 0.0f, 283.0f, 56.5f),
     ;
 
     private final String repoName;
@@ -237,7 +237,9 @@ public class ShipReposition extends Decorator implements EditablePiece {
 
     private Command spawnRepoTemplate(RepoManeuver theManeu) {
         //Prep step, check if it's a large ship, and only deal with regular barrel rolls, because it's all they can do anyway, rerouting to the correct RepoManeuver
-        if(isLargeShip(this))
+        int size = whichSizeShip(this, false);
+
+        if(size==3)
         {
             switch(theManeu){
                 case BR1_Left_Mid:
@@ -289,29 +291,81 @@ public class ShipReposition extends Decorator implements EditablePiece {
         return placeCommand;
     }
 
-    private Command repositionTheShip(RepoManeuver repoTemplate) {
+    private Command repositionTheShip(RepoManeuver repoTemplate, boolean is2pointOh) {
         //Getting into this function, repoShip is associated with the template used to reposition the ship. We also need the non-mapped final ship tentative position
         Boolean spawnTemplate = false;
 
-        //Prep step, check if it's a large ship, and only deal with regular barrel rolls, because it's all they can do anyway, rerouting to the correct RepoManeuver
-        if(isLargeShip(this))
-        {
+        int size = whichSizeShip(this, is2pointOh);
+        //Prep step, check if it's a medium ship, and only deal with regular barrel rolls, because it's all they can do anyway, rerouting to the correct RepoManeuver
+        if(size == 2){
             switch(repoTemplate){
-                case BR1_Left_AFAP:
-                    repoTemplate = RepoManeuver.BR1_Left_AFAP_Large;
+                case BR1_Left_AFAP_2E:
+                    repoTemplate = RepoManeuver.BR1_Left_AFAP_Medium_2E;
                     break;
-                case BR1_Left_ABAP:
-                    repoTemplate = RepoManeuver.BR1_Left_ABAP_Large;
+                case BR1_Left_2E:
+                    repoTemplate = RepoManeuver.BR1_Left_Medium_2E;
                     break;
-                case BR1_Right_AFAP:
-                    repoTemplate = RepoManeuver.BR1_Right_AFAP_Large;
+                case BR1_Left_ABAP_2E:
+                    repoTemplate = RepoManeuver.BR1_Left_ABAP_Medium_2E;
                     break;
-                case BR1_Right_ABAP:
-                    repoTemplate = RepoManeuver.BR1_Right_ABAP_Large;
+                case BR1_Right_AFAP_2E:
+                    repoTemplate = RepoManeuver.BR1_Right_AFAP_Medium_2E;
+                    break;
+                case BR1_Right_2E:
+                    repoTemplate = RepoManeuver.BR1_Right_Medium_2E;
+                    break;
+                case BR1_Right_ABAP_2E:
+                    repoTemplate = RepoManeuver.BR1_Right_ABAP_Medium_2E;
                     break;
                 default:
                     return null;
             }
+        }
+
+        //Prep step, check if it's a large ship, and only deal with regular barrel rolls, because it's all they can do anyway, rerouting to the correct RepoManeuver
+        if(size == 3 && is2pointOh == true) {
+            switch (repoTemplate) {
+                case BR1_Left_AFAP_2E:
+                    repoTemplate = RepoManeuver.BR1_Left_AFAP_Large_2E;
+                    break;
+                case BR1_Left_2E:
+                    repoTemplate = RepoManeuver.BR1_Left_Large_2E;
+                    break;
+                case BR1_Left_ABAP_2E:
+                    repoTemplate = RepoManeuver.BR1_Left_ABAP_Large_2E;
+                    break;
+                case BR1_Right_AFAP_2E:
+                    repoTemplate = RepoManeuver.BR1_Right_AFAP_Large_2E;
+                    break;
+                case BR1_Right_2E:
+                    repoTemplate = RepoManeuver.BR1_Right_Large_2E;
+                    break;
+                case BR1_Right_ABAP_2E:
+                    repoTemplate = RepoManeuver.BR1_Right_ABAP_Large_2E;
+                    break;
+                default:
+                    return null;
+            }
+        }
+
+            if(size == 3 && is2pointOh == false)
+            {
+                switch(repoTemplate){
+                    case BR1_Left_AFAP:
+                        repoTemplate = RepoManeuver.BR1_Left_AFAP_Large;
+                        break;
+                    case BR1_Left_ABAP:
+                        repoTemplate = RepoManeuver.BR1_Left_ABAP_Large;
+                        break;
+                    case BR1_Right_AFAP:
+                        repoTemplate = RepoManeuver.BR1_Right_AFAP_Large;
+                        break;
+                    case BR1_Right_ABAP:
+                        repoTemplate = RepoManeuver.BR1_Right_ABAP_Large;
+                        break;
+                    default:
+                        return null;
+                }
         }
 
         //STEP 1: Collision reposition template, centered as in in the image file, centered on 0,0 (upper left corner)
@@ -459,7 +513,6 @@ public class ShipReposition extends Decorator implements EditablePiece {
     private Shape getCopyOfShapeWithoutActionsForOverlapCheck(GamePiece oldPiece,RepoManeuver repoTemplate ) {
         // Copy the old piece, but don't set the State
         GamePiece newPiece = GameModule.getGameModule().createPiece(oldPiece.getType());
-        Util.logToChat("shiprepo line 398 newPiece is null?" + (newPiece==null?"yesss":"nope"));
         VASSAL.build.module.Map var3 = oldPiece.getMap();
         this.piece.setMap((VASSAL.build.module.Map) null);
         // manually set the same position of the old piece
@@ -471,7 +524,6 @@ public class ShipReposition extends Decorator implements EditablePiece {
         templateAngle = repoTemplate.getTemplateAngle(); //repo maneuver's angle
         double shipAngle = this.getRotator().getAngle(); //ship angle
         FreeRotator rotater = (FreeRotator) Decorator.getDecorator(newPiece, FreeRotator.class);
-        Util.logToChat("ship reposition line 409 rotator null check" + (rotater==null?"yesnull":"nonull"));
         rotater.setAngle(shipAngle);
         return newPiece.getShape();
     }
@@ -481,6 +533,8 @@ public class ShipReposition extends Decorator implements EditablePiece {
 
         Boolean hasSomethingHappened  = false;
 
+        //Test for 2.0 ship
+        boolean is2pointohShip = this.getInner().getState().contains("this_is_2pointoh");
         //Any keystroke made on a ship will remove the orange shades
         previousCollisionVisualization = new MapVisualizations();
 
@@ -509,31 +563,34 @@ public class ShipReposition extends Decorator implements EditablePiece {
                 }
         }
 
-        RepoManeuver repoTemplateDrop = getKeystrokeTemplateDrop(stroke);
-        // Template drop requested
-        if (repoTemplateDrop != null && stroke.isOnKeyRelease() == false) {
-            hasSomethingHappened = true;
-            Command tempCommand = spawnRepoTemplate(repoTemplateDrop);
-            result.append(tempCommand);
 
-            List<BumpableWithShape> obstacles = getBumpablesOnMap(false);
+            RepoManeuver repoTemplateDrop = getKeystrokeTemplateDrop(stroke);
+            if(is2pointohShip==false){ //for now, reserve template drops to 1.0 ships only    // Template drop requested
+            if (repoTemplateDrop != null && stroke.isOnKeyRelease() == false) {
+                hasSomethingHappened = true;
+                Command tempCommand = spawnRepoTemplate(repoTemplateDrop);
+                result.append(tempCommand);
+
+                List<BumpableWithShape> obstacles = getBumpablesOnMap(false);
 
 
-            if(shapeForOverlap != null){
-                List<BumpableWithShape> overlappingObstacles = findCollidingEntities(shapeForOverlap, obstacles);
-                if(overlappingObstacles.size() > 0) {
-                    for(BumpableWithShape bws : overlappingObstacles)
-                    {
-                        previousCollisionVisualization.add(bws.shape);
-                        logToChat("*** Warning: reposition template currently overlaps an obstacle");
+                if(shapeForOverlap != null){
+                    List<BumpableWithShape> overlappingObstacles = findCollidingEntities(shapeForOverlap, obstacles);
+                    if(overlappingObstacles.size() > 0) {
+                        for(BumpableWithShape bws : overlappingObstacles)
+                        {
+                            previousCollisionVisualization.add(bws.shape);
+                            logToChat("*** Warning: reposition template currently overlaps an obstacle");
+                        }
+                        previousCollisionVisualization.add(shapeForOverlap);
                     }
-                    previousCollisionVisualization.add(shapeForOverlap);
                 }
+                result.append(piece.keyEvent(stroke));
             }
-            result.append(piece.keyEvent(stroke));
         }
 
-        RepoManeuver repoShip = getKeystrokeRepoManeuver(stroke);
+
+        RepoManeuver repoShip = getKeystrokeRepoManeuver(stroke, is2pointohShip);
         //Ship reposition requested
         if(repoShip != null  && stroke.isOnKeyRelease() == false) {
             hasSomethingHappened = true;
@@ -543,11 +600,8 @@ public class ShipReposition extends Decorator implements EditablePiece {
                 this.previousCollisionVisualization.shapes.clear();
             }*/
 
-
-
-
             //detect that the ship's final position overlaps a ship or obstacle
-            Command repoCommand = repositionTheShip(repoShip);
+            Command repoCommand = repositionTheShip(repoShip, is2pointohShip);
             if(repoCommand == null) return piece.keyEvent(stroke);
             else{
                 result.append(repoCommand);
@@ -623,9 +677,15 @@ public class ShipReposition extends Decorator implements EditablePiece {
         return this.piece.getId();
     }
 
-    private boolean isLargeShip(Decorator ship) {
-        BumpableWithShape test = new BumpableWithShape(ship, "Ship", "notimportant", "notimportant", false);
-        return test.chassis.getChassisName().equals("large");
+    //1=small,2=medium,3=large
+    private int whichSizeShip(Decorator ship, boolean is2pointoh) {
+        BumpableWithShape test = new BumpableWithShape(ship, "Ship", "notimportant", "notimportant", is2pointoh);
+        String chassisNameResult = test.chassis.getChassisName();
+        if(chassisNameResult.equals("small")) return 1;
+        if(chassisNameResult.equals("medium")) return 2;
+        if(chassisNameResult.equals("large")) return 3;
+
+        return 1; //default size
     }
 
     private PieceSlot findPieceSlotByID(String gpID) {
@@ -646,11 +706,21 @@ public class ShipReposition extends Decorator implements EditablePiece {
         }
         return null;
     }
-    private RepoManeuver getKeystrokeRepoManeuver(KeyStroke keyStroke) {
-        String hotKey = HotKeyConfigurer.getString(keyStroke);
-          if (keyStrokeToRepositionShip.containsKey(hotKey)) {
 
-            return keyStrokeToRepositionShip.get(hotKey);
+    //updated to take into account 2.0 reposition hotkeys with a separate map
+    private RepoManeuver getKeystrokeRepoManeuver(KeyStroke keyStroke, boolean is2pointohShip) {
+        String hotKey = HotKeyConfigurer.getString(keyStroke);
+        if(is2pointohShip==false){
+            if (keyStrokeToRepositionShip.containsKey(hotKey)) {
+
+                return keyStrokeToRepositionShip.get(hotKey);
+            }
+        }
+        else {
+            if (keyStrokeToRepositionShip_2e.containsKey(hotKey)) {
+
+                return keyStrokeToRepositionShip_2e.get(hotKey);
+            }
         }
         return null;
     }

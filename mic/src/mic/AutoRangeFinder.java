@@ -200,16 +200,12 @@ Boolean isThisTheOne = false;
                 this.fov.execute();
                 return bigCommand;
             }
-            Util.logToChat("line210");
-            Util.logToChat(this.getInner().getState().toString());
 
             thisShip = new BumpableWithShape(this, "Ship",
                     this.getInner().getProperty("Pilot Name").toString(), this.getInner().getProperty("Craft ID #").toString(),
                     this.getInner().getState().contains("this_is_2pointoh"));
 
             thisShip.refreshSpecialPoints();
-            Util.logToChat("line 207 thisShip chassis.getname " + thisShip.chassis.getChassisName());
-            Util.logToChat("line 208 thisShip vertices " + thisShip.getVertices().toString());
             //Prepare the start of the appropriate chat announcement string - which ship are we doing this from, which kind of autorange
             prepAnnouncementStart();
 
