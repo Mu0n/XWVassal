@@ -49,6 +49,42 @@ public class AutoSquadSpawn extends AbstractConfigurable {
         GameModule.getGameModule().sendAndLog(placeCommand);
     }
 
+    private Map getMap() {
+        for (Map loopMap : GameModule.getGameModule().getComponentsOf(Map.class)) {
+            if ("Contested Sector".equals(loopMap.getMapName())) {
+                return loopMap;
+            }
+        }
+        return null;
+    }
+
+    private void hackSpawnTCdemo1()
+    {
+        VassalXWSPieceLoader vxpl = new VassalXWSPieceLoader();
+        Map theMap = getMap();
+        List<PieceSlot> stemPieceSlots = GameModule.getGameModule().getAllDescendantComponentsOf(PieceSlot.class);
+        PieceSlot smallShipSlot = null;
+
+        for(PieceSlot pieceSlot : stemPieceSlots )
+        {
+            String slotName = pieceSlot.getConfigureName();
+            if(slotName.startsWith("ship -- medium 2e") && smallShipSlot == null)
+            {
+                smallShipSlot = pieceSlot;
+                continue;
+            }
+        }
+
+
+        GamePiece piece = mic.Util.newPiece(smallShipSlot);
+        piece.setProperty("Initiative",3);
+        piece.setProperty("Shield Rating",3);
+        piece.setProperty("Hull Rating",5);
+
+        spawnPiece(piece, new Point(100,100), theMap);
+
+    }
+
     private void spawnForPlayer(int playerIndex) {
         listHasHoundsTooth = false;
         houndsToothPilotSkill = 0;
@@ -172,9 +208,16 @@ public class AutoSquadSpawn extends AbstractConfigurable {
                 whichEdition = 1;
             }
             else {
+                //TODOSPAWN2E very complex forking here
                 xwsList2 = loadListFromRawJson2(userInput);
                 whichEdition = 2;
             }
+        }
+        else if(userInput.startsWith("tcdemo1")){
+            hackSpawnTCdemo1();
+        }
+        else if(userInput.startsWith("tcdemo2")){
+            //hackSpawnTCdemo1();
         }
         else {
             whichEdition = 1;
