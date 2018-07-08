@@ -156,16 +156,40 @@ public class AutoSquadSpawn extends AbstractConfigurable {
             logToChat("Error - could not find anything in the input field of the autospawn dialog.");
             return;
         }
-        XWSList xwsList = loadListFromUserInput(userInput);
 
-        // validate the list
+        int whichEdition = 0;
+        XWSList xwsList = new XWSList();
+        XWSList2 xwsList2 = new XWSList2();
 
-        try {
-            //tempHack for 2.0 ready made lists
-            if("2nd Edition beta".equals(aComboBox.getSelectedItem().toString())){
-                logToChat("Beta List for X-Wing 2.0 is being prepped");
+        if (userInput == null || userInput.length() == 0) {
+            return;
+        }
+        userInput = userInput.trim();
+        //first 2 cases - raw json, but must decide between 1e and 2e
+        if (userInput.startsWith("{")) {
+            if(isListFor2ndEdition(userInput) == false) {
+                xwsList = loadListFromRawJson(userInput);
+                whichEdition = 1;
             }
-            else if(!"Base Game".equals(aComboBox.getSelectedItem().toString()) && !"2nd Edition beta".equals(aComboBox.getSelectedItem().toString()))
+            else {
+                xwsList2 = loadListFromRawJson2(userInput);
+                whichEdition = 2;
+            }
+        }
+        else {
+            whichEdition = 1;
+            xwsList = loadListFromUrl(userInput);
+        }
+
+        if(whichEdition==2){
+            userInput="{\"description\":\"\",\"faction\":\"imperial\",\"name\":\"Unnamed Squadron\",\"pilots\":[{\"name\":\"captainferoph\",\"points\":24,\"ship\":\"tiereaper\"},{\"name\":\"maarekstele\",\"points\":27,\"ship\":\"tieadvanced\"}],\"points\":93,\"vendor\":{\"yasb\":{\"builder\":\"(Yet Another) X-Wing Miniatures Squad Builder\",\"builder_url\":\"http://geordanr.github.io/xwing/\",\"link\":\"http://geordanr.github.io/xwing/?f=Galactic%20Empire&d=v4!s!293:-1,-1,-1:-1:-1:;19:-1,-1:-1:-1:;12:-1:-1:-1:;12:-1:-1:-1:;12:-1:-1:-1:&sn=Unnamed%20Squadron&obs=\"}},\"version\":\"0.3.0\"}";
+            xwsList = loadListFromRawJson(userInput);
+            whichEdition=1;
+        }
+        // validate the list
+if(whichEdition == 1) {
+        try {
+            if(!"Base Game".equals(aComboBox.getSelectedItem().toString()))
             {
                 logToChat("Attempting to load a squad in a mode that's not the base game");
                 loadData("true".equals(mgmr.getGameMode(aComboBox.getSelectedItem().toString()).getWantFullControl())?true:false,
@@ -456,6 +480,7 @@ public class AutoSquadSpawn extends AbstractConfigurable {
         String listName = xwsList.getName();
         logToChat("The '" + aComboBox.getSelectedItem().toString() + "' game mode was used to spawn a %s point list%s loaded from %s", pieces.getSquadPoints(),
                 listName != null ? " '" + listName + "'" : "", xwsList.getXwsSource());
+        }
     }
 
     private void validateList(XWSList list) throws XWSpawnException
@@ -828,19 +853,42 @@ public class AutoSquadSpawn extends AbstractConfigurable {
         }
     }
 
-    private XWSList loadListFromRawJson(String userInput) {
+    //this is a quick json read to see if it's a 2nd edition squad. if so, report true at once.
+    private boolean isListFor2ndEdition(String userInput) {
         try {
             XWSList list = getMapper().readValue(userInput, XWSList.class);
             list.setXwsSource("JSON");
 
-            if("second".equals(list.getFfgEdition())) logToChat("line 832 AutoSquadSpawn : confirmed 2e list");
-
+            if("second".equals(list.getFfgEdition())){
+                return true;
+            }
+            return false;
+        } catch (Exception e) {
+            logToChat("Unable to load raw JSON list '%s': %s", userInput, e.toString());
+            return false;
+        }
+    }
+    private XWSList loadListFromRawJson(String userInput) {
+        try {
+            XWSList list = getMapper().readValue(userInput, XWSList.class);
+            list.setXwsSource("JSON");
             return list;
         } catch (Exception e) {
             logToChat("Unable to load raw JSON list '%s': %s", userInput, e.toString());
             return null;
         }
     }
+    private XWSList2 loadListFromRawJson2(String userInput){
+        try{
+            XWSList2 list2 = getMapper().readValue(userInput, XWSList2.class);
+            list2.setXwsSource("JSON");
+            return list2;
+        }catch (Exception e) {
+            logToChat("Unable to load raw JSON list '%s': %s", userInput, e.toString());
+            return null;
+        }
+    }
+
 
     private XWSList handleHoundsTooth(XWSList list)
     {
@@ -896,7 +944,7 @@ public class AutoSquadSpawn extends AbstractConfigurable {
         if (userInput.startsWith("{")) {
             return loadListFromRawJson(userInput);
         }
-        return loadListFromUrl(userInput);
+        return loadListFromUrl(userInput); //if there's ever a web squad builder that has a backend thing that can prepare a community driven squad json, then TODOSPAWN2E deal with those cases in here
     }
 
     // <editor-fold desc="unused vassal hooks">
