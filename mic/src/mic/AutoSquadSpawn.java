@@ -161,7 +161,11 @@ public class AutoSquadSpawn extends AbstractConfigurable {
         // validate the list
 
         try {
-            if(!"Base Game".equals(aComboBox.getSelectedItem().toString()))
+            //tempHack for 2.0 ready made lists
+            if("2nd Edition beta".equals(aComboBox.getSelectedItem().toString())){
+                logToChat("Beta List for X-Wing 2.0 is being prepped");
+            }
+            else if(!"Base Game".equals(aComboBox.getSelectedItem().toString()) && !"2nd Edition beta".equals(aComboBox.getSelectedItem().toString()))
             {
                 logToChat("Attempting to load a squad in a mode that's not the base game");
                 loadData("true".equals(mgmr.getGameMode(aComboBox.getSelectedItem().toString()).getWantFullControl())?true:false,
