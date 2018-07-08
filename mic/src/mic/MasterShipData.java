@@ -52,7 +52,12 @@ public class MasterShipData extends ArrayList<MasterShipData.ShipData> {
         return loadedData.get(shipXwsId);
     }
 
-    protected static void loadData() {
+    protected static void loadData2() {
+// load data from xwing-data
+        loadFromXwingData2();
+    }
+
+        protected static void loadData() {
 
         // load data from xwing-data
         loadFromXwingData();
@@ -162,6 +167,19 @@ public class MasterShipData extends ArrayList<MasterShipData.ShipData> {
         mergedShip.setBaseReport1Identifier(mergeProperties(baseShip.getBaseReport1Identifier(),overrideShip.getBaseReport1Identifier()));
         mergedShip.setBaseReport2Identifier(mergeProperties(baseShip.getBaseReport2Identifier(),overrideShip.getBaseReport2Identifier()));
         return mergedShip;
+    }
+    private static void loadFromXwingData2() {
+        // load from xwing-data
+        MasterShipData data = Util.loadRemoteJson(REMOTE_URL, MasterShipData.class);
+        if (data == null) {
+            // Util.logToChat("Unable to load xwing-data for ships from the web, falling back to local copy");
+            data = Util.loadClasspathJson("ships2.json", MasterShipData.class);
+        }
+
+        loadedData = Maps.newHashMap();
+        for(ShipData ship : data) {
+            loadedData.put(ship.getXws(), ship);
+        }
     }
 
     private static void loadFromXwingData()

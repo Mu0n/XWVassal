@@ -181,20 +181,16 @@ public class AutoSquadSpawn extends AbstractConfigurable {
             xwsList = loadListFromUrl(userInput);
         }
 
-        if(whichEdition==2){
-            userInput="{\"description\":\"\",\"faction\":\"imperial\",\"name\":\"Unnamed Squadron\",\"pilots\":[{\"name\":\"captainferoph\",\"points\":24,\"ship\":\"tiereaper\"},{\"name\":\"maarekstele\",\"points\":27,\"ship\":\"tieadvanced\"}],\"points\":93,\"vendor\":{\"yasb\":{\"builder\":\"(Yet Another) X-Wing Miniatures Squad Builder\",\"builder_url\":\"http://geordanr.github.io/xwing/\",\"link\":\"http://geordanr.github.io/xwing/?f=Galactic%20Empire&d=v4!s!293:-1,-1,-1:-1:-1:;19:-1,-1:-1:-1:;12:-1:-1:-1:;12:-1:-1:-1:;12:-1:-1:-1:&sn=Unnamed%20Squadron&obs=\"}},\"version\":\"0.3.0\"}";
-            xwsList = loadListFromRawJson(userInput);
-            whichEdition=1;
-        }
-        // validate the list
-if(whichEdition == 1) {
         try {
             if(!"Base Game".equals(aComboBox.getSelectedItem().toString()))
             {
                 logToChat("Attempting to load a squad in a mode that's not the base game");
                 loadData("true".equals(mgmr.getGameMode(aComboBox.getSelectedItem().toString()).getWantFullControl())?true:false,
                         mgmr.getGameMode(aComboBox.getSelectedItem().toString()).getDispatchersURL());
-            }else loadData();
+            }else {
+                if(whichEdition==1) loadData();
+                else if(whichEdition==2) loadData2();
+            }
             validateList(xwsList);
         }catch(XWSpawnException e)
         {
@@ -480,9 +476,22 @@ if(whichEdition == 1) {
         String listName = xwsList.getName();
         logToChat("The '" + aComboBox.getSelectedItem().toString() + "' game mode was used to spawn a %s point list%s loaded from %s", pieces.getSquadPoints(),
                 listName != null ? " '" + listName + "'" : "", xwsList.getXwsSource());
-        }
+
     }
 
+    private void validateList2(XWSList2 list)
+    {
+        XWSList2 newList = null;
+        for(XWSList2.XWSPilot2 pilot : list.getPilots())
+        {
+            String shipXws = pilot.getShip();
+            String pilotXws = pilot.getXws();
+            if(MasterShipData.getShipData(shipXws) == null)
+            {
+                
+            }
+        }
+    }
     private void validateList(XWSList list) throws XWSpawnException
     {
         boolean error = false;
@@ -821,6 +830,12 @@ if(whichEdition == 1) {
         MasterPilotData.loadData();
         MasterUpgradeData.loadData();
         MasterShipData.loadData();
+    }
+    private void loadData2() {
+        this.slotLoader.loadPieces();
+        MasterPilotData.loadData2();
+        MasterUpgradeData.loadData2();
+        MasterShipData.loadData2();
     }
 
     private void loadData(Boolean wantFullControl, String altDispatcherString) {

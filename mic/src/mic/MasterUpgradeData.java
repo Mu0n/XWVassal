@@ -66,6 +66,12 @@ public class MasterUpgradeData extends ArrayList<MasterUpgradeData.UpgradeData> 
             }
     }
 
+    protected static void loadData2(){
+        if(loadedData == null) {
+            // load data from xwing-data
+            loadFromXwingData2();
+        }
+    }
     protected static void loadData() {
 
         if(loadedData == null) {
@@ -139,7 +145,27 @@ public class MasterUpgradeData extends ArrayList<MasterUpgradeData.UpgradeData> 
 
         return mergedUpgrade;
     }
+    private static void loadFromXwingData2()
+    {
+        MasterUpgradeData data = Util.loadRemoteJson(REMOTE_URL, MasterUpgradeData.class);
+        if (data == null) {
+            //  Util.logToChat("Unable to load xwing-data for upgrades from the web, falling back to local copy");
+            data = Util.loadClasspathJson("upgrades2.json", MasterUpgradeData.class);
+        }
 
+        loadedData = Maps.newHashMap();
+
+        for(UpgradeData upgrade : data) {
+            if(loadedData.get(upgrade.getXws()) == null)
+            {
+                loadedData.put(upgrade.getXws(), upgrade);
+            }else{
+                MasterUpgradeData.UpgradeData oldUpgrade = loadedData.get(upgrade.getXws());
+                oldUpgrade.setText2("// " + upgrade.getName() + ": " + upgrade.getText());
+                loadedData.put(upgrade.getXws(), oldUpgrade);
+            }
+        }
+    }
     private static void loadFromXwingData()
     {
         MasterUpgradeData data = Util.loadRemoteJson(REMOTE_URL, MasterUpgradeData.class);
