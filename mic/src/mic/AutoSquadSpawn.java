@@ -60,29 +60,65 @@ public class AutoSquadSpawn extends AbstractConfigurable {
 
     private void hackSpawnTCdemo1()
     {
-        VassalXWSPieceLoader vxpl = new VassalXWSPieceLoader();
         Map theMap = getMap();
-        List<PieceSlot> stemPieceSlots = GameModule.getGameModule().getAllDescendantComponentsOf(PieceSlot.class);
-        PieceSlot smallShipSlot = null;
+        List<PieceSlot> allSlots = GameModule.getGameModule().getAllDescendantComponentsOf(PieceSlot.class);
+        PieceSlot mediumStemSlot = null;
+        PieceSlot smallStemSlot = null;
+        PieceSlot smallSingleTurretStemSlot = null;
+        PieceSlot stemDialSlot = null;
 
-        for(PieceSlot pieceSlot : stemPieceSlots )
+
+        for(PieceSlot pieceSlot : allSlots )
         {
             String slotName = pieceSlot.getConfigureName();
-            if(slotName.startsWith("ship -- medium 2e") && smallShipSlot == null)
+            if(slotName.equals("ship -- medium 2e") && mediumStemSlot == null)
             {
-                smallShipSlot = pieceSlot;
+                mediumStemSlot = pieceSlot;
                 continue;
             }
+            if(slotName.equals("Rebel Stem Dial") && stemDialSlot == null)
+            {
+                stemDialSlot = pieceSlot;
+                continue;
+            }
+            if(slotName.equals("ship -- small 2e") && smallStemSlot == null)
+            {
+                smallStemSlot = pieceSlot;
+                continue;
+            }
+            if(slotName.equals("ship -- small 2e single turret") && smallSingleTurretStemSlot == null)
+             {
+                 smallSingleTurretStemSlot = pieceSlot;
+                continue;
+             }
         }
-
-
-        GamePiece piece = mic.Util.newPiece(smallShipSlot);
-        piece.setProperty("Initiative",3);
+        GamePiece piece = mic.Util.newPiece(mediumStemSlot);
+        piece.setProperty("Initiative",2);
         piece.setProperty("Shield Rating",3);
         piece.setProperty("Hull Rating",5);
-
+        piece.setProperty("Pilot Name","Benthic Two Tubes");
         spawnPiece(piece, new Point(100,100), theMap);
 
+        GamePiece piece2 = mic.Util.newPiece(smallStemSlot);
+        piece.setProperty("Initiative",2);
+        piece.setProperty("Shield Rating",2);
+        piece.setProperty("Hull Rating",4);
+        piece.setProperty("Pilot Name","Edrio");
+        spawnPiece(piece2, new Point(400,100), theMap);
+
+        GamePiece piece3 = mic.Util.newPiece(smallStemSlot);
+        piece.setProperty("Initiative",4);
+        piece.setProperty("Shield Rating",3);
+        piece.setProperty("Hull Rating",4);
+        piece.setProperty("Pilot Name","Jek Porkins");
+        spawnPiece(piece3, new Point(100,400), theMap);
+
+        GamePiece piece4 = mic.Util.newPiece(smallSingleTurretStemSlot);
+        piece.setProperty("Initiative",2);
+        piece.setProperty("Shield Rating",3);
+        piece.setProperty("Hull Rating",4);
+        piece.setProperty("Pilot Name","Gray Squadron");
+        spawnPiece(piece4, new Point(400,400), theMap);
     }
 
     private void spawnForPlayer(int playerIndex) {
