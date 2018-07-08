@@ -100,24 +100,24 @@ public class AutoSquadSpawn extends AbstractConfigurable {
         spawnPiece(piece, new Point(100,100), theMap);
 
         GamePiece piece2 = mic.Util.newPiece(smallStemSlot);
-        piece.setProperty("Initiative",2);
-        piece.setProperty("Shield Rating",2);
-        piece.setProperty("Hull Rating",4);
-        piece.setProperty("Pilot Name","Edrio");
+        piece2.setProperty("Initiative",2);
+        piece2.setProperty("Shield Rating",2);
+        piece2.setProperty("Hull Rating",4);
+        piece2.setProperty("Pilot Name","Edrio");
         spawnPiece(piece2, new Point(400,100), theMap);
 
         GamePiece piece3 = mic.Util.newPiece(smallStemSlot);
-        piece.setProperty("Initiative",4);
-        piece.setProperty("Shield Rating",3);
-        piece.setProperty("Hull Rating",4);
-        piece.setProperty("Pilot Name","Jek Porkins");
+        piece3.setProperty("Initiative",4);
+        piece3.setProperty("Shield Rating",3);
+        piece3.setProperty("Hull Rating",4);
+        piece3.setProperty("Pilot Name","Jek Porkins");
         spawnPiece(piece3, new Point(100,400), theMap);
 
         GamePiece piece4 = mic.Util.newPiece(smallSingleTurretStemSlot);
-        piece.setProperty("Initiative",2);
-        piece.setProperty("Shield Rating",3);
-        piece.setProperty("Hull Rating",4);
-        piece.setProperty("Pilot Name","Gray Squadron");
+        piece4.setProperty("Initiative",2);
+        piece4.setProperty("Shield Rating",3);
+        piece4.setProperty("Hull Rating",4);
+        piece4.setProperty("Pilot Name","Gray Squadron");
         spawnPiece(piece4, new Point(400,400), theMap);
     }
 
