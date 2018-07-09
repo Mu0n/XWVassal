@@ -182,7 +182,6 @@ public class StemShip extends Decorator implements EditablePiece {
 
         }
 
-
         protected void executeCommand()
         {
             // find the appropriate baseImage

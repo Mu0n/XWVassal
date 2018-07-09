@@ -64,7 +64,7 @@ public class AutoSquadSpawn extends AbstractConfigurable {
         Map theMap = playerMap;
         List<PieceSlot> allSlots = GameModule.getGameModule().getAllDescendantComponentsOf(PieceSlot.class);
         PieceSlot mediumStemSlot = null;
-        PieceSlot smallStemSlot = null;
+        PieceSlot smallXwingSlot = null;
         PieceSlot smallSingleTurretStemSlot = null;
         PieceSlot stemDialSlot = null;
 
@@ -82,9 +82,9 @@ public class AutoSquadSpawn extends AbstractConfigurable {
                 stemDialSlot = pieceSlot;
                 continue;
             }
-            if(slotName.equals("ship -- small 2e") && smallStemSlot == null)
+            if(slotName.equals("ship -- small 2e xwing") && smallXwingSlot == null)
             {
-                smallStemSlot = pieceSlot;
+                smallXwingSlot = pieceSlot;
                 continue;
             }
             if(slotName.equals("ship -- small 2e single turret") && smallSingleTurretStemSlot == null)
@@ -111,7 +111,7 @@ public class AutoSquadSpawn extends AbstractConfigurable {
 
 
 
-        GamePiece piece2 = mic.Util.newPiece(smallStemSlot);
+        GamePiece piece2 = mic.Util.newPiece(smallXwingSlot);
         piece2.setProperty("Initiative",2);
         piece2.setProperty("Shield Rating",2);
         piece2.setProperty("Hull Rating",4);
@@ -127,7 +127,7 @@ public class AutoSquadSpawn extends AbstractConfigurable {
         spawnPiece(dialPiece2, new Point(1100,100), theMap);
 
 
-        GamePiece piece3 = mic.Util.newPiece(smallStemSlot);
+        GamePiece piece3 = mic.Util.newPiece(smallXwingSlot);
         piece3.setProperty("Initiative",4);
         piece3.setProperty("Shield Rating",3);
         piece3.setProperty("Hull Rating",4);
