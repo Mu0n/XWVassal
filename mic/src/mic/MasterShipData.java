@@ -429,6 +429,7 @@ public class MasterShipData extends ArrayList<MasterShipData.ShipData> {
 
         public List<String> getDialManeuvers()
         {
+
             return this.dialManeuvers;
         }
 

@@ -19,6 +19,7 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -58,9 +59,9 @@ public class AutoSquadSpawn extends AbstractConfigurable {
         return null;
     }
 
-    private void hackSpawnTCdemo1()
+    private void hackSpawnTCdemo1(Map playerMap)
     {
-        Map theMap = getMap();
+        Map theMap = playerMap;
         List<PieceSlot> allSlots = GameModule.getGameModule().getAllDescendantComponentsOf(PieceSlot.class);
         PieceSlot mediumStemSlot = null;
         PieceSlot smallStemSlot = null;
@@ -97,28 +98,64 @@ public class AutoSquadSpawn extends AbstractConfigurable {
         piece.setProperty("Shield Rating",3);
         piece.setProperty("Hull Rating",5);
         piece.setProperty("Pilot Name","Benthic Two Tubes");
-        spawnPiece(piece, new Point(100,100), theMap);
+        spawnPiece(piece, new Point(400,100), theMap);
+        //GamePiece dialPiece1 = GamePieceGenerator.generateDial(ship);
+        GamePiece dialPiece1 = mic.Util.newPiece(stemDialSlot);
+        // execute the command
+        List<String> aMoveList = Arrays.asList("0OR","1BG","1FG","1NG","2TW","2BG","2FG","2NG","2YW","3BW","3FW","3NW","4FW");
+        StemDial.DialGenerateCommand myDialGen = new StemDial.DialGenerateCommand(aMoveList, "Benthic", dialPiece1, "Rebel Alliance");
+        dialPiece1.setProperty("Pilot Name","2.0 Dial");
+        dialPiece1.setProperty("Craft ID #","Benthic");
+        myDialGen.execute();
+        spawnPiece(dialPiece1, new Point(900,100), theMap);
+
+
 
         GamePiece piece2 = mic.Util.newPiece(smallStemSlot);
         piece2.setProperty("Initiative",2);
         piece2.setProperty("Shield Rating",2);
         piece2.setProperty("Hull Rating",4);
         piece2.setProperty("Pilot Name","Edrio");
-        spawnPiece(piece2, new Point(400,100), theMap);
+        spawnPiece(piece2, new Point(700,100), theMap);
+        GamePiece dialPiece2 = mic.Util.newPiece(stemDialSlot);
+        // execute the command
+        aMoveList = Arrays.asList("1BG","1FG","1NG","2TW","2BG","2FG","2NG","2YW","3ER","3TW","3BW","3FW","3NW","3YW","3RR","4FW","4KR");
+        StemDial.DialGenerateCommand myDialGen2 = new StemDial.DialGenerateCommand(aMoveList, "Edrio", dialPiece2, "Rebel Alliance");
+        dialPiece2.setProperty("Pilot Name","2.0 Dial");
+        dialPiece2.setProperty("Craft ID #","Edrio");
+        myDialGen2.execute();
+        spawnPiece(dialPiece2, new Point(1100,100), theMap);
+
 
         GamePiece piece3 = mic.Util.newPiece(smallStemSlot);
         piece3.setProperty("Initiative",4);
         piece3.setProperty("Shield Rating",3);
         piece3.setProperty("Hull Rating",4);
         piece3.setProperty("Pilot Name","Jek Porkins");
-        spawnPiece(piece3, new Point(100,400), theMap);
+        spawnPiece(piece3, new Point(400,400), theMap);
+        GamePiece dialPiece3 = mic.Util.newPiece(stemDialSlot);
+        // execute the command
+        aMoveList = Arrays.asList("1BG","1FG","1NG","2TW","2BG","2FG","2NG","2YW","3ER","3TW","3BW","3FW","3NW","3YW","3RR","4FW","4KR");
+        StemDial.DialGenerateCommand myDialGen3 = new StemDial.DialGenerateCommand(aMoveList, "Jek", dialPiece3, "Rebel Alliance");
+        dialPiece3.setProperty("Pilot Name","2.0 Dial");
+        dialPiece3.setProperty("Craft ID #","Jek");
+        myDialGen3.execute();
+        spawnPiece(dialPiece3, new Point(900,300), theMap);
 
         GamePiece piece4 = mic.Util.newPiece(smallSingleTurretStemSlot);
         piece4.setProperty("Initiative",2);
         piece4.setProperty("Shield Rating",3);
         piece4.setProperty("Hull Rating",4);
-        piece4.setProperty("Pilot Name","Gray Squadron");
-        spawnPiece(piece4, new Point(400,400), theMap);
+        piece4.setProperty("Pilot Name","Gray Sq.");
+        spawnPiece(piece4, new Point(700,400), theMap);
+        GamePiece dialPiece4 = mic.Util.newPiece(stemDialSlot);
+        // execute the command
+        aMoveList = Arrays.asList("1BG","1FG","1NG","2TW","2BW","2FG","2NW","2YW","3TR","3BW","3FW","3NW","3YR","4FR","4KR");
+        StemDial.DialGenerateCommand myDialGen4 = new StemDial.DialGenerateCommand(aMoveList, "GSB", dialPiece4, "Rebel Alliance");
+        dialPiece4.setProperty("Pilot Name","2.0 Dial");
+        dialPiece4.setProperty("Craft ID #","GSB");
+        myDialGen4.execute();
+        spawnPiece(dialPiece4, new Point(1100,300), theMap);
     }
 
     private void spawnForPlayer(int playerIndex) {
@@ -250,7 +287,7 @@ public class AutoSquadSpawn extends AbstractConfigurable {
             }
         }
         else if(userInput.startsWith("tcdemo1")){
-            hackSpawnTCdemo1();
+            hackSpawnTCdemo1(playerMap);
         }
         else if(userInput.startsWith("tcdemo2")){
             //hackSpawnTCdemo1();

@@ -381,6 +381,15 @@ public class StemDial extends Decorator implements EditablePiece {
 
         }
 
+        DialGenerateCommand(List<String> aMoveList, String aShipName, GamePiece piece, String thisFaction) {
+            // more direcct approach where the move list and the ship name are dictated directly without a master list fetch
+            faction = thisFaction;
+            newMoveList = aMoveList;
+            shipName = aShipName;
+            this.piece = piece;
+
+        }
+
         // construct the dial Layers trait (Embellishment class) layer by layer according to the previous Array of Arrays.
         protected void executeCommand() {
 
