@@ -67,6 +67,8 @@ public class AutoSquadSpawn extends AbstractConfigurable {
         PieceSlot smallXwingSlot = null;
         PieceSlot smallSingleTurretStemSlot = null;
         PieceSlot stemDialSlot = null;
+        PieceSlot cheapoCard = null;
+        PieceSlot chargeToken = null;
 
 
         for(PieceSlot pieceSlot : allSlots )
@@ -92,6 +94,14 @@ public class AutoSquadSpawn extends AbstractConfigurable {
                  smallSingleTurretStemSlot = pieceSlot;
                 continue;
              }
+             if(slotName.equals("Small TextBox") && cheapoCard == null){
+                cheapoCard = pieceSlot;
+                continue;
+             }
+            if(slotName.equals("2.0 Charge") && chargeToken == null){
+                chargeToken = pieceSlot;
+                continue;
+            }
         }
         GamePiece piece = mic.Util.newPiece(mediumStemSlot);
         piece.setProperty("Initiative",2);
@@ -108,8 +118,21 @@ public class AutoSquadSpawn extends AbstractConfigurable {
         dialPiece1.setProperty("Craft ID #","Benthic");
         myDialGen.execute();
         spawnPiece(dialPiece1, new Point(900,100), theMap);
+        GamePiece pilotCard = mic.Util.newPiece(cheapoCard);
+        pilotCard.setProperty("Line_1","Benthic Two Tubes");
+        spawnPiece(pilotCard, new Point(400,600), theMap);
 
+        GamePiece upCard1 = mic.Util.newPiece(cheapoCard);
+        upCard1.setProperty("Line_1","Pivot Wing");
+        spawnPiece(upCard1, new Point(650,630), theMap);
 
+        GamePiece upCard2 = mic.Util.newPiece(cheapoCard);
+        upCard2.setProperty("Line_1","Perceptive Copilot");
+        spawnPiece(upCard2, new Point(900,630), theMap);
+
+        GamePiece upCard3 = mic.Util.newPiece(cheapoCard);
+        upCard3.setProperty("Line_1","Advanced Sensors");
+        spawnPiece(upCard3, new Point(1150,630), theMap);
 
         GamePiece piece2 = mic.Util.newPiece(smallXwingSlot);
         piece2.setProperty("Initiative",2);
@@ -125,6 +148,12 @@ public class AutoSquadSpawn extends AbstractConfigurable {
         dialPiece2.setProperty("Craft ID #","Edrio");
         myDialGen2.execute();
         spawnPiece(dialPiece2, new Point(1100,100), theMap);
+        GamePiece pilotCard2 = mic.Util.newPiece(cheapoCard);
+        pilotCard2.setProperty("Line_1","Edrio");
+        spawnPiece(pilotCard2, new Point(400,700), theMap);
+        upCard1 = mic.Util.newPiece(cheapoCard);
+        upCard1.setProperty("Line_1","Servomotor S-Foils");
+        spawnPiece(upCard1, new Point(650,730), theMap);
 
 
         GamePiece piece3 = mic.Util.newPiece(smallXwingSlot);
@@ -141,6 +170,19 @@ public class AutoSquadSpawn extends AbstractConfigurable {
         dialPiece3.setProperty("Craft ID #","Jek");
         myDialGen3.execute();
         spawnPiece(dialPiece3, new Point(900,300), theMap);
+        GamePiece pilotCard3 = mic.Util.newPiece(cheapoCard);
+        pilotCard3.setProperty("Line_1","Jek Porkins");
+        spawnPiece(pilotCard3, new Point(400,800), theMap);
+        upCard1 = mic.Util.newPiece(cheapoCard);
+        upCard1.setProperty("Line_1","Servomotor S-Foils");
+        spawnPiece(upCard1, new Point(650,830), theMap);
+        upCard2 = mic.Util.newPiece(cheapoCard);
+        upCard2.setProperty("Line_1","Proton Torpedoes");
+        spawnPiece(upCard2, new Point(900,830), theMap);
+        GamePiece chargePiece1 = mic.Util.newPiece(chargeToken);
+        GamePiece chargePiece2 = mic.Util.newPiece(chargeToken);
+        spawnPiece(chargePiece1, new Point(950,890), theMap);
+        spawnPiece(chargePiece2, new Point(1000, 890), theMap);
 
         GamePiece piece4 = mic.Util.newPiece(smallSingleTurretStemSlot);
         piece4.setProperty("Initiative",2);
@@ -156,6 +198,19 @@ public class AutoSquadSpawn extends AbstractConfigurable {
         dialPiece4.setProperty("Craft ID #","GSB");
         myDialGen4.execute();
         spawnPiece(dialPiece4, new Point(1100,300), theMap);
+        GamePiece pilotCard4 = mic.Util.newPiece(cheapoCard);
+        pilotCard4.setProperty("Line_1","Gray Squadron Bomber");
+        spawnPiece(pilotCard4, new Point(400,900), theMap);
+        upCard1 = mic.Util.newPiece(cheapoCard);
+        upCard1.setProperty("Line_1","Ion Cannon Turret");
+        spawnPiece(upCard1, new Point(650,930), theMap);
+        upCard2 = mic.Util.newPiece(cheapoCard);
+        upCard2.setProperty("Line_1","Seismic Charges");
+        spawnPiece(upCard2, new Point(900,930), theMap);
+        chargePiece1 = mic.Util.newPiece(chargeToken);
+        chargePiece2 = mic.Util.newPiece(chargeToken);
+        spawnPiece(chargePiece1, new Point(950,990), theMap);
+        spawnPiece(chargePiece2, new Point(1000, 990), theMap);
     }
 
     private void spawnForPlayer(int playerIndex) {
