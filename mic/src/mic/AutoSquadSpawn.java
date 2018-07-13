@@ -103,13 +103,17 @@ public class AutoSquadSpawn extends AbstractConfigurable {
                 continue;
             }
         }
+
+        int pilotColPosX = 400;
+
+        int upgradeSpacing = cheapoCard.getPiece().getShape().getBounds().width;
+
         GamePiece piece = mic.Util.newPiece(mediumStemSlot);
         piece.setProperty("Initiative",2);
         piece.setProperty("Shield Rating",3);
         piece.setProperty("Hull Rating",5);
         piece.setProperty("Pilot Name","Benthic Two Tubes");
         spawnPiece(piece, new Point(400,100), theMap);
-        //GamePiece dialPiece1 = GamePieceGenerator.generateDial(ship);
         GamePiece dialPiece1 = mic.Util.newPiece(stemDialSlot);
         // execute the command
         List<String> aMoveList = Arrays.asList("0OR","1BG","1FG","1NG","2TW","2BG","2FG","2NG","2YW","3BW","3FW","3NW","4FW");
@@ -120,19 +124,23 @@ public class AutoSquadSpawn extends AbstractConfigurable {
         spawnPiece(dialPiece1, new Point(900,100), theMap);
         GamePiece pilotCard = mic.Util.newPiece(cheapoCard);
         pilotCard.setProperty("Line_1","Benthic Two Tubes");
-        spawnPiece(pilotCard, new Point(400,600), theMap);
+        pilotCard.setProperty("xwstext", "After you perform a [focus] action, you may transfer 1 of your focus tokens to a friendly ship at range 1-2.");
+        spawnPiece(pilotCard, new Point(pilotColPosX,600), theMap);
 
         GamePiece upCard1 = mic.Util.newPiece(cheapoCard);
         upCard1.setProperty("Line_1","Pivot Wing");
-        spawnPiece(upCard1, new Point(650,630), theMap);
+        upCard1.setProperty("xwstext", "Open: Before you activate, you may flip this card. Closed: While you defend, roll 1 fewer defense die. After you execute a [0 Stop] maneuver, you may rotate your ship 90˚ or 180˚. Before you activate, you may flip this card.");
+        spawnPiece(upCard1, new Point(pilotColPosX+upgradeSpacing,630), theMap);
 
         GamePiece upCard2 = mic.Util.newPiece(cheapoCard);
         upCard2.setProperty("Line_1","Perceptive Copilot");
-        spawnPiece(upCard2, new Point(900,630), theMap);
+        upCard2.setProperty("xwstext", "After you perform a [focus] action, gain 1 focus token.");
+        spawnPiece(upCard2, new Point(pilotColPosX+2*upgradeSpacing,630), theMap);
 
         GamePiece upCard3 = mic.Util.newPiece(cheapoCard);
         upCard3.setProperty("Line_1","Advanced Sensors");
-        spawnPiece(upCard3, new Point(1150,630), theMap);
+        upCard3.setProperty("xwstext", "After you reveal your dial, you may perform 1 action. If you do, you cannot perform another action during your activation.");
+        spawnPiece(upCard3, new Point(pilotColPosX+3*upgradeSpacing,630), theMap);
 
         GamePiece piece2 = mic.Util.newPiece(smallXwingSlot);
         piece2.setProperty("Initiative",2);
@@ -150,10 +158,12 @@ public class AutoSquadSpawn extends AbstractConfigurable {
         spawnPiece(dialPiece2, new Point(1100,100), theMap);
         GamePiece pilotCard2 = mic.Util.newPiece(cheapoCard);
         pilotCard2.setProperty("Line_1","Edrio");
-        spawnPiece(pilotCard2, new Point(400,700), theMap);
+        pilotCard2.setProperty("xwstext", "Before you activate, if you are focused, you may perform an action.");
+        spawnPiece(pilotCard2, new Point(pilotColPosX,700), theMap);
         upCard1 = mic.Util.newPiece(cheapoCard);
         upCard1.setProperty("Line_1","Servomotor S-Foils");
-        spawnPiece(upCard1, new Point(650,730), theMap);
+        upCard1.setProperty("xwstext", "Open: Before you activate, you may flip this card. Closed: While you defend, roll 1 fewer defense die. After you execute a [0 5] maneuver, you may rotate your ship 90˚ or 180˚. Before you activate, you may flip this card.");
+        spawnPiece(upCard1, new Point(pilotColPosX+upgradeSpacing,730), theMap);
 
 
         GamePiece piece3 = mic.Util.newPiece(smallXwingSlot);
@@ -172,13 +182,15 @@ public class AutoSquadSpawn extends AbstractConfigurable {
         spawnPiece(dialPiece3, new Point(900,300), theMap);
         GamePiece pilotCard3 = mic.Util.newPiece(cheapoCard);
         pilotCard3.setProperty("Line_1","Jek Porkins");
-        spawnPiece(pilotCard3, new Point(400,800), theMap);
+        spawnPiece(pilotCard3, new Point(pilotColPosX,800), theMap);
         upCard1 = mic.Util.newPiece(cheapoCard);
         upCard1.setProperty("Line_1","Servomotor S-Foils");
-        spawnPiece(upCard1, new Point(650,830), theMap);
+        upCard1.setProperty("xwstext", "Open: Before you activate, you may flip this card. Closed: While you defend, roll 1 fewer defense die. After you execute a [0 5] maneuver, you may rotate your ship 90˚ or 180˚. Before you activate, you may flip this card.");
+        spawnPiece(upCard1, new Point(pilotColPosX+upgradeSpacing,830), theMap);
         upCard2 = mic.Util.newPiece(cheapoCard);
         upCard2.setProperty("Line_1","Proton Torpedoes");
-        spawnPiece(upCard2, new Point(900,830), theMap);
+        upCard2.setProperty("xwstext", "Attack (Lock): Spend 1 [Charge]. Change 1 [Hit] result to a [Crit] result.");
+        spawnPiece(upCard2, new Point(pilotColPosX+2*upgradeSpacing,830), theMap);
         GamePiece chargePiece1 = mic.Util.newPiece(chargeToken);
         GamePiece chargePiece2 = mic.Util.newPiece(chargeToken);
         spawnPiece(chargePiece1, new Point(920,890), theMap);
@@ -200,13 +212,15 @@ public class AutoSquadSpawn extends AbstractConfigurable {
         spawnPiece(dialPiece4, new Point(1100,300), theMap);
         GamePiece pilotCard4 = mic.Util.newPiece(cheapoCard);
         pilotCard4.setProperty("Line_1","Gray Squadron Bomber");
-        spawnPiece(pilotCard4, new Point(400,900), theMap);
+        spawnPiece(pilotCard4, new Point(pilotColPosX,900), theMap);
         upCard1 = mic.Util.newPiece(cheapoCard);
         upCard1.setProperty("Line_1","Ion Cannon Turret");
-        spawnPiece(upCard1, new Point(650,930), theMap);
+        upCard1.setProperty("xwstext", "Attack: If this attack hits, spend 1 [Hit] or [Crit] result to cause the defender to suffer 1 [Hit] damage. All remaining [Hit]/[Crit] results inflict ion tokens instead of damage.");
+        spawnPiece(upCard1, new Point(pilotColPosX+upgradeSpacing,930), theMap);
         upCard2 = mic.Util.newPiece(cheapoCard);
         upCard2.setProperty("Line_1","Seismic Charges");
-        spawnPiece(upCard2, new Point(900,930), theMap);
+        upCard2.setProperty("xwstext", "Bomb Suring the System Phase, you may spend 1 [Charge] to drop a Seismic Charge with the [1 Forward] template.");
+        spawnPiece(upCard2, new Point(pilotColPosX+2*upgradeSpacing,930), theMap);
         chargePiece1 = mic.Util.newPiece(chargeToken);
         chargePiece2 = mic.Util.newPiece(chargeToken);
         spawnPiece(chargePiece1, new Point(920,990), theMap);
