@@ -321,8 +321,8 @@ public class AutoSquadSpawn extends AbstractConfigurable {
         spawnPiece(piece2, new Point(700,100), theMap);
         GamePiece dialPiece2 = mic.Util.newPiece(stemDialSlot);
         // execute the command
-        aMoveList = Arrays.asList("1BG","1FG","1NG","2TW","2BG","2FG","2NG","2YW","3ER","3TW","3BW","3FW","3NW","3YW","3RR","4FW","4KR");
-        StemDial.DialGenerateCommand myDialGen2 = new StemDial.DialGenerateCommand(aMoveList, "Edrio", dialPiece2, "Rebel Alliance");
+        aMoveList = Arrays.asList("1BG","1FW","1NG","2TW","2BG","2FG","2NG","2YW","3ER","3TW","3BW","3FG","3NW","3YW","3RR","4FW","4KR","5FW");
+        StemDial.DialGenerateCommand myDialGen2 = new StemDial.DialGenerateCommand(aMoveList, "Edrio", dialPiece2, "Galactic Empire");
         dialPiece2.setProperty("Pilot Name","2.0 Dial");
         dialPiece2.setProperty("Craft ID #","Edrio");
         myDialGen2.execute();
