@@ -234,8 +234,8 @@ public class AutoSquadSpawn extends AbstractConfigurable {
         Map theMap = playerMap;
         List<PieceSlot> allSlots = GameModule.getGameModule().getAllDescendantComponentsOf(PieceSlot.class);
         PieceSlot mediumStemSlot = null;
-        PieceSlot smallXwingSlot = null;
-        PieceSlot smallSingleTurretStemSlot = null;
+        PieceSlot smallTiefSlot = null;
+        PieceSlot smallx1Slot = null;
         PieceSlot stemDialSlot = null;
         PieceSlot cheapoCard = null;
         PieceSlot chargeToken = null;
@@ -244,19 +244,25 @@ public class AutoSquadSpawn extends AbstractConfigurable {
         for(PieceSlot pieceSlot : allSlots )
         {
             String slotName = pieceSlot.getConfigureName();
-            if(slotName.equals("ship -- medium 2e") && mediumStemSlot == null)
+            if(slotName.equals("ship -- 2e Reaper") && mediumStemSlot == null)
             {
                 mediumStemSlot = pieceSlot;
                 continue;
             }
-            if(slotName.equals("Rebel Stem Dial") && stemDialSlot == null)
+            if(slotName.equals("Imperial Stem Dial") && stemDialSlot == null)
             {
                 stemDialSlot = pieceSlot;
                 continue;
             }
-            if(slotName.equals("ship -- small 2e xwing") && smallXwingSlot == null)
+            if(slotName.equals("ship -- small 2e tief") && smallTiefSlot == null)
             {
-                smallXwingSlot = pieceSlot;
+                smallTiefSlot = pieceSlot;
+                continue;
+            }
+
+            if(slotName.equals("ship -- small 2e x1") && smallx1Slot == null)
+            {
+                smallx1Slot = pieceSlot;
                 continue;
             }
             if(slotName.equals("Small TextBox") && cheapoCard == null){
@@ -277,19 +283,19 @@ public class AutoSquadSpawn extends AbstractConfigurable {
         piece.setProperty("Initiative",2);
         piece.setProperty("Shield Rating",3);
         piece.setProperty("Hull Rating",5);
-        piece.setProperty("Pilot Name","Benthic Two Tubes");
+        piece.setProperty("Pilot Name","Captain Feroph");
         spawnPiece(piece, new Point(400,100), theMap);
         GamePiece dialPiece1 = mic.Util.newPiece(stemDialSlot);
         // execute the command
-        List<String> aMoveList = Arrays.asList("0OR","1BG","1FG","1NG","2TW","2BG","2FG","2NG","2YW","3BW","3FW","3NW","4FW");
-        StemDial.DialGenerateCommand myDialGen = new StemDial.DialGenerateCommand(aMoveList, "Benthic", dialPiece1, "Rebel Alliance");
+        List<String> aMoveList = Arrays.asList("0OR","1LR","1TR","1BG","1FG","1NG","1YR","1PR","2TR","2BW","2FG","2NW","2YR","3BW","3FG","3NW");
+        StemDial.DialGenerateCommand myDialGen = new StemDial.DialGenerateCommand(aMoveList, "Feroph", dialPiece1, "Galactic Empire");
         dialPiece1.setProperty("Pilot Name","2.0 Dial");
-        dialPiece1.setProperty("Craft ID #","Benthic");
+        dialPiece1.setProperty("Craft ID #","Feroph");
         myDialGen.execute();
         spawnPiece(dialPiece1, new Point(900,100), theMap);
         GamePiece pilotCard = mic.Util.newPiece(cheapoCard);
-        pilotCard.setProperty("Line_1","Benthic Two Tubes");
-        pilotCard.setProperty("xwstext", "Benthic Two Tubes - After you perform a [focus] action, you may transfer 1 of your focus tokens to a friendly ship at range 1-2.");
+        pilotCard.setProperty("Line_1","Captain Feroph");
+        pilotCard.setProperty("xwstext", "Captain Feroph - While you defend, if the attacker does not have any green tokens, you may change 1 of your f/blank results to an e result.");
         spawnPiece(pilotCard, new Point(pilotColPosX,600), theMap);
 
         GamePiece upCard1 = mic.Util.newPiece(cheapoCard);
@@ -307,7 +313,7 @@ public class AutoSquadSpawn extends AbstractConfigurable {
         upCard3.setProperty("xwstext", "Advanced Sensors - After you reveal your dial, you may perform 1 action. If you do, you cannot perform another action during your activation.");
         spawnPiece(upCard3, new Point(pilotColPosX+3*upgradeSpacing,630), theMap);
 
-        GamePiece piece2 = mic.Util.newPiece(smallXwingSlot);
+        GamePiece piece2 = mic.Util.newPiece(smallTiefSlot);
         piece2.setProperty("Initiative",2);
         piece2.setProperty("Shield Rating",2);
         piece2.setProperty("Hull Rating",4);
@@ -331,7 +337,7 @@ public class AutoSquadSpawn extends AbstractConfigurable {
         spawnPiece(upCard1, new Point(pilotColPosX+upgradeSpacing,730), theMap);
 
 
-        GamePiece piece3 = mic.Util.newPiece(smallXwingSlot);
+        GamePiece piece3 = mic.Util.newPiece(smallTiefSlot);
         piece3.setProperty("Initiative",4);
         piece3.setProperty("Shield Rating",3);
         piece3.setProperty("Hull Rating",4);
@@ -491,16 +497,17 @@ public class AutoSquadSpawn extends AbstractConfigurable {
                 whichEdition = 2;
             }
         }
-        else if(userInput.startsWith("tcdemo1")){
+        else if(userInput.equals("tcdemo1")){
             hackSpawnTCdemo1(playerMap);
         }
-        else if(userInput.startsWith("tcdemo2")){
+        else if(userInput.equals("tcdemo2")){
             hackSpawnTCdemo2(playerMap);
         }
         else {
             whichEdition = 1;
             try {xwsList = loadListFromUrl(userInput);}
             catch(Exception e){logToChat("Was not able to load the list");}
+            return;
         }
 
         try {
