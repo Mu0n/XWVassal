@@ -181,7 +181,7 @@ public class AutoSquadSpawn extends AbstractConfigurable {
         spawnPiece(upCard2, new Point(900,830), theMap);
         GamePiece chargePiece1 = mic.Util.newPiece(chargeToken);
         GamePiece chargePiece2 = mic.Util.newPiece(chargeToken);
-        spawnPiece(chargePiece1, new Point(950,890), theMap);
+        spawnPiece(chargePiece1, new Point(920,890), theMap);
         spawnPiece(chargePiece2, new Point(1000, 890), theMap);
 
         GamePiece piece4 = mic.Util.newPiece(smallSingleTurretStemSlot);
@@ -209,7 +209,7 @@ public class AutoSquadSpawn extends AbstractConfigurable {
         spawnPiece(upCard2, new Point(900,930), theMap);
         chargePiece1 = mic.Util.newPiece(chargeToken);
         chargePiece2 = mic.Util.newPiece(chargeToken);
-        spawnPiece(chargePiece1, new Point(950,990), theMap);
+        spawnPiece(chargePiece1, new Point(920,990), theMap);
         spawnPiece(chargePiece2, new Point(1000, 990), theMap);
     }
 
