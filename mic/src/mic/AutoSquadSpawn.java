@@ -318,7 +318,7 @@ public class AutoSquadSpawn extends AbstractConfigurable {
         upCard4.setProperty("xwstext", "Optimized Prototype - While you perform a [Front Arc] primary attack against a ship locked by a friendly ship with the Director Krennic upgrade, you may spend 1 [Hit]/[Crit]/[Focus] result. If you do, choose one: the defender loses 1 shield, or the defender flips 1 of its facedown damage cards.");
         spawnPiece(upCard4, new Point(pilotColPosX+4*upgradeSpacing,630), theMap);
 
-        GamePiece piece2 = mic.Util.newPiece(smallTiefSlot);
+        GamePiece piece2 = mic.Util.newPiece(smallx1Slot);
         piece2.setProperty("Initiative",5);
         piece2.setProperty("Shield Rating",2);
         piece2.setProperty("Hull Rating",3);
