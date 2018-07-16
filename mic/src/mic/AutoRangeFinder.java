@@ -200,8 +200,10 @@ Boolean isThisTheOne = false;
                 this.fov.execute();
                 return bigCommand;
             }
+
             thisShip = new BumpableWithShape(this, "Ship",
-                    this.getInner().getProperty("Pilot Name").toString(), this.getInner().getProperty("Craft ID #").toString());
+                    this.getInner().getProperty("Pilot Name").toString(), this.getInner().getProperty("Craft ID #").toString(),
+                    this.getInner().getState().contains("this_is_2pointoh"));
 
             thisShip.refreshSpecialPoints();
             //Prepare the start of the appropriate chat announcement string - which ship are we doing this from, which kind of autorange
@@ -247,7 +249,8 @@ Boolean isThisTheOne = false;
             return;
         }
         thisShip = new BumpableWithShape(this, "Ship",
-                this.getInner().getProperty("Pilot Name").toString(), this.getInner().getProperty("Craft ID #").toString());
+                this.getInner().getProperty("Pilot Name").toString(), this.getInner().getProperty("Craft ID #").toString(),
+                this.getInner().getState().contains("this_is_2pointoh"));
 
         thisShip.refreshSpecialPoints();
         //Prepare the start of the appropriate chat announcement string - which ship are we doing this from, which kind of autorange
@@ -856,6 +859,10 @@ Boolean isThisTheOne = false;
         if("2".equals(whichSideString)) return 2;
         if("3".equals(whichSideString)) return 3;
         if("4".equals(whichSideString)) return 4;
+
+        //2.0 additions for pulsar-type double turrets
+        if("13".equals(whichSideString)) return 13;
+        if("24".equals(whichSideString)) return 24;
         return 1;
     }
 
@@ -2355,13 +2362,13 @@ Boolean isThisTheOne = false;
                 try{
                     testFlipString = ((Decorator) piece).getDecorator(piece,piece.getClass()).getProperty("whichShape").toString();
                 } catch (Exception e) {}
-                bumpables.add(new BumpableWithShape((Decorator)piece, "Asteroid", "2".equals(testFlipString)));
+                bumpables.add(new BumpableWithShape((Decorator)piece, "Asteroid", "2".equals(testFlipString), false));
             } else if (piece.getState().contains("this_is_a_debris")) {
                 String testFlipString = "";
                 try{
                     testFlipString = ((Decorator) piece).getDecorator(piece,piece.getClass()).getProperty("whichShape").toString();
                 } catch (Exception e) {}
-                bumpables.add(new BumpableWithShape((Decorator)piece,"Debris","2".equals(testFlipString)));
+                bumpables.add(new BumpableWithShape((Decorator)piece,"Debris","2".equals(testFlipString), false));
             }
         }
         return bumpables;
@@ -2423,14 +2430,14 @@ Boolean isThisTheOne = false;
             }
             return fusion;
         }
-        if(chosenOption == mobileSideArcOption) { //Lancer-Class
+        if(chosenOption == mobileSideArcOption) { //Lancer-Class and now many more in 2.0
             //preferably, if the mobile side is 1, this should not lead to a situation where you get a front band through normal ways and then a second one through here. filter out this situation before it happens
             int mobileSide = getMobileEdge();
 
             ArrayList<Shape> listShape = new ArrayList<Shape>();
-            if(mobileSide == 2) listShape.add(new Rectangle2D.Double(chassisWidth/2.0, -chassisHeight/2.0, RANGE3, chassisHeight)); //right
-            if(mobileSide == 3) listShape.add(new Rectangle2D.Double(-wantedWidth/2.0, chassisHeight/2.0, wantedWidth, RANGE3)); //back
-            if(mobileSide == 4) listShape.add(new Rectangle2D.Double(-chassisWidth/2.0 - RANGE3, -chassisHeight/2.0, RANGE3, chassisHeight)); //left
+            if(mobileSide == 2 || mobileSide == 6) listShape.add(new Rectangle2D.Double(chassisWidth/2.0, -chassisHeight/2.0, RANGE3, chassisHeight)); //right or rightleft
+            if(mobileSide == 3 || mobileSide == 5) listShape.add(new Rectangle2D.Double(-wantedWidth/2.0, chassisHeight/2.0, wantedWidth, RANGE3)); //back or frontback
+            if(mobileSide == 4 || mobileSide == 6) listShape.add(new Rectangle2D.Double(-chassisWidth/2.0 - RANGE3, -chassisHeight/2.0, RANGE3, chassisHeight)); //left or rightleft
 
             ArrayList<Shape> keptTransformedlistShape = new ArrayList<Shape>();
             for(Shape s : listShape){
@@ -2798,7 +2805,8 @@ Boolean isThisTheOne = false;
         for (GamePiece piece : pieces) {
             if (piece.getState().contains("this_is_a_ship") && piece.getId() != this.piece.getId()) {
                 ships.add(new BumpableWithShape((Decorator)piece, "Ship",
-                        piece.getProperty("Pilot Name").toString(), piece.getProperty("Craft ID #").toString()));
+                        piece.getProperty("Pilot Name").toString(), piece.getProperty("Craft ID #").toString(),
+                        piece.getState().contains("this_is_2pointoh")));
             }
         }
         return ships;

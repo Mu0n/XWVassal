@@ -97,7 +97,7 @@ public class ModuleIntegrityChecker {
             if(MasterConditionData.getConditionData(condition.getXws()) != null ) {
                 condition.setStatus(XWOTAUtils.imageExistsInModule(condition.getImage()));
                 condition.setTokenStatus(XWOTAUtils.imageExistsInModule(condition.getTokenImage()));
-                if(((condition.getStatus() && condition.getTokenStatus()) || (!condition.getStatus() || !condition.getTokenStatus()) && (XWOTAUtils.imageExistsInOTA("conditions",condition.getImage(),OTAContentsChecker.OTA_RAW_BRANCH_URL)&& XWOTAUtils.imageExistsInOTA("condition",condition.getTokenImage(), OTAContentsChecker.OTA_RAW_BRANCH_URL)))) {
+                if(((condition.getStatus() && condition.getTokenStatus()) || (!condition.getStatus() || !condition.getTokenStatus()) && (XWOTAUtils.imageExistsInOTA("conditions",condition.getImage(),OTAContentsChecker.OTA_RAW_BRANCH_URL)&& XWOTAUtils.imageExistsInOTA("conditions",condition.getTokenImage(), OTAContentsChecker.OTA_RAW_BRANCH_URL)))) {
                     conditionList.add(condition);
                 }
             }

@@ -17,11 +17,19 @@ import java.util.ArrayList;
 
 //TO DO great place to add nub to corner distance, blue line
 enum chassisInfo{
+
     unknown("unknown", 0.0, 0.0, 0.0, 0.0, 0.0, 0.0),
+
+    //the following numbers are for 1st edition ships
     small("small", 113.0, 113.0, 9.0, 8.3296, 40.45, 44.52),
     large("large", 226.0, 226.0, 10.0, 11.1650, 42.025, 0.0),
     hugeLittle("GR-75 size", 226.0, 551.0, 10.0, 11.1650, 40.45, 0.0),
-    hugeBig("CR90 size", 226.0, 635.0, 10.0, 11.1650, 40.45, 0.0);
+    hugeBig("CR90 size", 226.0, 635.0, 10.0, 11.1650, 40.45, 0.0),
+
+    //the following numbers are for 2nd edition ships
+    small2e("small", 113.0, 113.0, 9.0, 8.04, 40.62, 41.78),
+    medium2e("medium", 171.0, 171.0, 9.5, 10.125, 41.4, 41.78),
+    large2e("large", 226.0, 226.0, 10.0, 12.105, 41.76, 41.78);
 
     private final String chassisName;
     private final double width;
@@ -97,20 +105,20 @@ public class BumpableWithShape {
 
     public ArrayList<Point2D.Double> tPts = new ArrayList<Point2D.Double>(); //array of transformed (rotated and translated) special points
 
-    BumpableWithShape(Decorator bumpable, String type, boolean wantFlip) {
+    BumpableWithShape(Decorator bumpable, String type, boolean wantFlip, boolean is2pointoh) {
         this.bumpable = bumpable;
         this.shape = wantFlip ? getBumpableCompareShapeButFlip(bumpable) : getBumpableCompareShape(bumpable);
         this.type = type;
-        this.chassis = figureOutChassis();
+        this.chassis = figureOutChassis(is2pointoh);
     }
-    BumpableWithShape(Decorator bumpable, String type, String pilotName, String shipName) {
+    BumpableWithShape(Decorator bumpable, String type, String pilotName, String shipName, boolean is2pointoh) {
         this.bumpable = bumpable;
         this.shape = getBumpableCompareShape(bumpable);
         this.rectWithNoNubs = getRectWithNoNubs();
         this.type = type;
         this.pilotName = pilotName;
         this.shipName = shipName;
-        this.chassis = figureOutChassis();
+        this.chassis = figureOutChassis(is2pointoh);
         this.figureVertices();
         this.figureOutLocalPoints(3);
     }
@@ -123,24 +131,39 @@ public class BumpableWithShape {
         list.add(downLeftVertex);
         return list;
     }
-    private chassisInfo figureOutChassis() {
+    private chassisInfo figureOutChassis(boolean is2pointoh) {
         Shape rawShape = getRawShape(bumpable);
         double rawWidth = rawShape.getBounds().width;
         double rawHeight = rawShape.getBounds().height;
 
         chassisInfo result = chassisInfo.unknown;
-        if(Double.compare(rawWidth,chassisInfo.small.getWidth())==0) {
-            result= chassisInfo.small;
+
+        if(is2pointoh==false){
+            if(Double.compare(rawWidth,chassisInfo.small.getWidth())==0) {
+                result= chassisInfo.small;
+            }
+            else if(Double.compare(rawWidth,chassisInfo.large.getWidth())==0
+                    && Double.compare(rawHeight,chassisInfo.large.getHeight()+chassis.large.getNubFudge())==0) {
+                result= chassisInfo.large;
+            }
+            else if(Double.compare(rawWidth,chassisInfo.hugeLittle.getWidth())==0
+                    && Double.compare(rawHeight,chassisInfo.hugeLittle.getHeight()+chassis.hugeLittle.getNubFudge())==0) result= chassisInfo.hugeLittle;
+            else if(Double.compare(rawWidth,chassisInfo.hugeBig.getWidth())==0
+                    && Double.compare(rawHeight,chassisInfo.hugeBig.getHeight()+chassis.hugeBig.getNubFudge())==0) result= chassisInfo.hugeBig;
+            //logToChat("rawWidth " + Double.toString(rawWidth) + " rawHeight " + Double.toString(rawHeight) + " chassis " + result.getChassisName());
+        } else if(is2pointoh==true){
+            if(Double.compare(rawWidth,chassisInfo.small2e.getWidth())==0) {
+                result= chassisInfo.small2e;
+            }
+            else if(Double.compare(rawWidth,chassisInfo.medium2e.getWidth())==0){
+                result= chassisInfo.medium2e;
+            }
+            else if(Double.compare(rawWidth,chassisInfo.large2e.getWidth())==0
+                    && Double.compare(rawHeight,chassisInfo.large2e.getHeight()+chassis.large2e.getNubFudge())==0) {
+                result= chassisInfo.large2e;
+            }
         }
-        else if(Double.compare(rawWidth,chassisInfo.large.getWidth())==0
-                && Double.compare(rawHeight,chassisInfo.large.getHeight()+chassis.large.getNubFudge())==0) {
-            result= chassisInfo.large;
-        }
-        else if(Double.compare(rawWidth,chassisInfo.hugeLittle.getWidth())==0
-                && Double.compare(rawHeight,chassisInfo.hugeLittle.getHeight()+chassis.hugeLittle.getNubFudge())==0) result= chassisInfo.hugeLittle;
-        else if(Double.compare(rawWidth,chassisInfo.hugeBig.getWidth())==0
-                && Double.compare(rawHeight,chassisInfo.hugeBig.getHeight()+chassis.hugeBig.getNubFudge())==0) result= chassisInfo.hugeBig;
-        //logToChat("rawWidth " + Double.toString(rawWidth) + " rawHeight " + Double.toString(rawHeight) + " chassis " + result.getChassisName());
+
         return result;
     }
 
@@ -214,7 +237,6 @@ public class BumpableWithShape {
         double halfsize = getChassisWidth()/2.0;
 
         double arcAngleInRad = Math.PI*chassis.getArcHalfAngle()/180.0; //half angle of the arc being used TO DO: get the proper mobile turret arc angle, front aux arc, etc or just ignore it inside the switch
-
         frontLeftArcBase = new Point2D.Double(-halfsize + chassis.getCornerToFiringArc(), -halfsize);
         frontRightArcBase = new Point2D.Double(halfsize - chassis.getCornerToFiringArc(), -halfsize);
 
@@ -288,6 +310,8 @@ public class BumpableWithShape {
         tPts.add(getATransformedPoint(rightFrontalEnd.x, rightFrontalEnd.y, 0.0,  0.0, angle, center.getX(), center.getY())); //17
         tPts.add(getATransformedPoint(leftBackwardEnd.x, leftBackwardEnd.y, 0.0, 0.0, angle, center.getX(), center.getY())); //18
         tPts.add(getATransformedPoint(rightBackwardEnd.x, rightBackwardEnd.y, 0.0, 0.0, angle, center.getX(), center.getY())); //19
+
+
     }
 
     Point2D.Double getATransformedPoint(double offX, double offY, double extraOffX, double extraOffY, double shipAngle, double centerX, double centerY)

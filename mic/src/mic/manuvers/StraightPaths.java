@@ -32,7 +32,7 @@ public enum StraightPaths implements ManeuverPath {
         return this.length;
     }
 
-    public List<PathPart> getPathParts(int numSegments, double baseOffset, boolean isLargeBase) {
+    public List<PathPart> getPathParts(int numSegments, double baseOffset, int whichSizeShip) {
         List<PathPart> parts = Lists.newArrayList();
 
         double revModifier = this.reverse ? -1 : 1;
