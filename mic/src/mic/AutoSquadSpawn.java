@@ -420,6 +420,168 @@ public class AutoSquadSpawn extends AbstractConfigurable {
         spawnPiece(chargePiece3, new Point(920 - upgradeSpacing,1090), theMap);
     }
 
+
+    private void hackSpawnWorldsDemo1(Map playerMap) {
+        Map theMap = playerMap;
+        List<PieceSlot> allSlots = GameModule.getGameModule().getAllDescendantComponentsOf(PieceSlot.class);
+        PieceSlot mediumStemSlot = null;
+        PieceSlot smallTiefSlot = null;
+        PieceSlot smallx1Slot = null;
+        PieceSlot stemDialSlot = null;
+        PieceSlot cheapoCard = null;
+        PieceSlot chargeToken = null;
+
+
+        for(PieceSlot pieceSlot : allSlots )
+        {
+            String slotName = pieceSlot.getConfigureName();
+            if(slotName.equals("Imperial Stem Dial") && stemDialSlot == null)
+            {
+                stemDialSlot = pieceSlot;
+                continue;
+            }
+            if(slotName.equals("ship -- small 2e tief") && smallTiefSlot == null)
+            {
+                smallTiefSlot = pieceSlot;
+                continue;
+            }
+
+            if(slotName.equals("ship -- small 2e x1") && smallx1Slot == null)
+            {
+                smallx1Slot = pieceSlot;
+                continue;
+            }
+            if(slotName.equals("Small TextBox") && cheapoCard == null){
+                cheapoCard = pieceSlot;
+                continue;
+            }
+            if(slotName.equals("2.0 Charge") && chargeToken == null){
+                chargeToken = pieceSlot;
+                continue;
+            }
+        }
+
+        int pilotColPosX = 400;
+
+        int upgradeSpacing = cheapoCard.getPiece().getShape().getBounds().width;
+
+
+
+        GamePiece piece2 = mic.Util.newPiece(smallx1Slot);
+        piece2.setProperty("Initiative",6);
+        piece2.setProperty("Shield Rating",2);
+        piece2.setProperty("Hull Rating",3);
+        piece2.setProperty("Force Rating",3);
+        piece2.setProperty("Pilot Name","Vader");
+        spawnPiece(piece2, new Point(700,100), theMap);
+        GamePiece dialPiece2 = mic.Util.newPiece(stemDialSlot);
+        // execute the command
+        List<String> aMoveList = Arrays.asList("1BG","1FW","1NG","2TW","2BG","2FG","2NG","2YW","3ER","3TW","3BW","3FG","3NW","3YW","3RR","4FW","4KR","5FW");
+        StemDial.DialGenerateCommand myDialGen2 = new StemDial.DialGenerateCommand(aMoveList, "Darth Vader", dialPiece2, "Galactic Empire");
+        dialPiece2.setProperty("Pilot Name","2.0 Dial");
+        dialPiece2.setProperty("Craft ID #","Darth Vader");
+        myDialGen2.execute();
+        spawnPiece(dialPiece2, new Point(1100,100), theMap);
+        GamePiece pilotCard2 = mic.Util.newPiece(cheapoCard);
+        pilotCard2.setProperty("Line_1","Darth Vader");
+        pilotCard2.setProperty("xwstext", "Darth Vader - Advanced Targeting Computer: While you perform a primary attack against a defender you have locked, roll 1 additional attack die and change 1 [Hit] result to a [Crit] result. Pilot Ability: After you perform an action, you may spend 1 [Force] to perform an action.");
+        spawnPiece(pilotCard2, new Point(pilotColPosX,700), theMap);
+        GamePiece upCard1 = mic.Util.newPiece(cheapoCard);
+        upCard1.setProperty("Line_1","Sense");
+        upCard1.setProperty("xwstext", "Sense - During the System Phase, you may choose 1 ship at range 0-1 and look at its dial. If you spend 1 [Force], you may choose a ship at range 0-3 instead.");
+        spawnPiece(upCard1, new Point(pilotColPosX+upgradeSpacing,730), theMap);
+        GamePiece upCard2 = mic.Util.newPiece(cheapoCard);
+        upCard2.setProperty("Line_1","Fire-Control System");
+        upCard2.setProperty("xwstext", "Fire-Control System - While you perform an attack, if you have a lock on the defender, you may reroll 1 attack die. If you do, you cannot spend your lock during this attack.");
+        spawnPiece(upCard2, new Point(pilotColPosX+2*upgradeSpacing,730), theMap);
+        GamePiece upCard3 = mic.Util.newPiece(cheapoCard);
+        upCard3.setProperty("Line_1","Cluster Missiles");
+        upCard3.setProperty("xwstext", "Cluster Missiles - Attack (Lock): Spend 1 [Charge]. After this attack, you may perform this attack as a bonus attack against a different target at range 0-1 of the defender, ignoring the (Lock) requirement.");
+        spawnPiece(upCard3, new Point(pilotColPosX+3*upgradeSpacing,730), theMap);
+        GamePiece chargePiece1 = mic.Util.newPiece(chargeToken);
+        spawnPiece(chargePiece1, new Point(pilotColPosX+3*upgradeSpacing+80,790), theMap);
+        GamePiece chargePiece2 = mic.Util.newPiece(chargeToken);
+        spawnPiece(chargePiece2, new Point(pilotColPosX+3*upgradeSpacing+20,790), theMap);
+        GamePiece chargePiece3 = mic.Util.newPiece(chargeToken);
+        spawnPiece(chargePiece3, new Point(pilotColPosX+3*upgradeSpacing-40,790), theMap);
+        GamePiece chargePiece4 = mic.Util.newPiece(chargeToken);
+        spawnPiece(chargePiece4, new Point(pilotColPosX+3*upgradeSpacing-100,790), theMap);
+
+        GamePiece piece3 = mic.Util.newPiece(smallTiefSlot);
+        piece3.setProperty("Initiative",3);
+        piece3.setProperty("Shield Rating",0);
+        piece3.setProperty("Hull Rating",3);
+        piece3.setProperty("Pilot Name","BSA 1");
+        spawnPiece(piece3, new Point(400,400), theMap);
+        GamePiece dialPiece3 = mic.Util.newPiece(stemDialSlot);
+        // execute the command
+        aMoveList = Arrays.asList("1TW","1YW","2TW","2BG","2FG","2NG","2YW","3TW","3BW","3FG","3NW","3YW","3KR","4FW","4KR","5FW");
+        StemDial.DialGenerateCommand myDialGen3 = new StemDial.DialGenerateCommand(aMoveList, "BSA1", dialPiece3, "Galactic Empire");
+        dialPiece3.setProperty("Pilot Name","2.0 Dial");
+        dialPiece3.setProperty("Craft ID #","BSA 1");
+        myDialGen3.execute();
+        spawnPiece(dialPiece3, new Point(900,300), theMap);
+        GamePiece pilotCard3 = mic.Util.newPiece(cheapoCard);
+        pilotCard3.setProperty("Line_1","Black Squadron Ace");
+        pilotCard3.setProperty("xwstext", "Black Squadron Ace (no special ability)");
+        spawnPiece(pilotCard3, new Point(pilotColPosX,800), theMap);
+        upCard1 = mic.Util.newPiece(cheapoCard);
+        upCard1.setProperty("Line_1","Crack Shot");
+        upCard1.setProperty("xwstext", "Crack Shot - While you perform a primary attack, if the defender is in your [Bullseye Arc], before the Neutralize Results step, you may spend 1 [Charge] to cancel 1 [Evade] result.");
+        spawnPiece(upCard1, new Point(pilotColPosX+upgradeSpacing,830), theMap);
+        chargePiece1 = mic.Util.newPiece(chargeToken);
+        spawnPiece(chargePiece1, new Point(920-upgradeSpacing,890), theMap);
+
+        GamePiece piece4 = mic.Util.newPiece(smallTiefSlot);
+        piece4.setProperty("Initiative",3);
+        piece4.setProperty("Shield Rating",0);
+        piece4.setProperty("Hull Rating",3);
+        piece4.setProperty("Pilot Name","BSA 2");
+        spawnPiece(piece4, new Point(550,400), theMap);
+        GamePiece dialPiece4 = mic.Util.newPiece(stemDialSlot);
+        // execute the command
+        aMoveList = Arrays.asList("1TW","1YW","2TW","2BG","2FG","2NG","2YW","3TW","3BW","3FG","3NW","3YW","3KR","4FW","4KR","5FW");
+        StemDial.DialGenerateCommand myDialGen4 = new StemDial.DialGenerateCommand(aMoveList, "BSA2", dialPiece4, "Galactic Empire");
+        dialPiece4.setProperty("Pilot Name","2.0 Dial");
+        dialPiece4.setProperty("Craft ID #","BSA 2");
+        myDialGen4.execute();
+        spawnPiece(dialPiece4, new Point(1100,300), theMap);
+        GamePiece pilotCard4 = mic.Util.newPiece(cheapoCard);
+        pilotCard4.setProperty("Line_1","Black Squadron Ace");
+        pilotCard4.setProperty("xwstext", "Black Squadron Ace (no special ability)");
+        spawnPiece(pilotCard4, new Point(pilotColPosX,900), theMap);
+        upCard1 = mic.Util.newPiece(cheapoCard);
+        upCard1.setProperty("Line_1","Crack Shot");
+        upCard1.setProperty("xwstext", "Crack Shot - While you perform a primary attack, if the defender is in your [Bullseye Arc], before the Neutralize Results step, you may spend 1 [Charge] to cancel 1 [Evade] result.");
+        spawnPiece(upCard1, new Point(pilotColPosX+upgradeSpacing,930), theMap);
+        chargePiece2 = mic.Util.newPiece(chargeToken);
+        spawnPiece(chargePiece2, new Point(920-upgradeSpacing,990), theMap);
+
+        GamePiece piece5 = mic.Util.newPiece(smallTiefSlot);
+        piece5.setProperty("Initiative",3);
+        piece5.setProperty("Shield Rating",0);
+        piece5.setProperty("Hull Rating",3);
+        piece5.setProperty("Pilot Name","BSA 3");
+        spawnPiece(piece5, new Point(700,400), theMap);
+        GamePiece dialPiece5 = mic.Util.newPiece(stemDialSlot);
+        aMoveList = Arrays.asList("1TW","1YW","2TW","2BG","2FG","2NG","2YW","3TW","3BW","3FG","3NW","3YW","3KR","4FW","4KR","5FW");
+        StemDial.DialGenerateCommand myDialGen5 = new StemDial.DialGenerateCommand(aMoveList, "BSA3", dialPiece5, "Galactic Empire");
+        dialPiece5.setProperty("Pilot Name","2.0 Dial");
+        dialPiece5.setProperty("Craft ID #","BSA 3");
+        myDialGen5.execute();
+        spawnPiece(dialPiece5, new Point(1300,300), theMap);
+        GamePiece pilotCard5 = mic.Util.newPiece(cheapoCard);
+        pilotCard5.setProperty("Line_1","Black Squadron Ace");
+        pilotCard5.setProperty("xwstext", "Black Squadron Ace (no special ability)");
+        spawnPiece(pilotCard5, new Point(pilotColPosX,1000), theMap);
+        upCard1 = mic.Util.newPiece(cheapoCard);
+        upCard1.setProperty("Line_1","Crack Shot");
+        upCard1.setProperty("xwstext", "Crack Shot - While you perform a primary attack, if the defender is in your [Bullseye Arc], before the Neutralize Results step, you may spend 1 [Charge] to cancel 1 [Evade] result.");
+        spawnPiece(upCard1, new Point(pilotColPosX+upgradeSpacing,1030), theMap);
+        chargePiece3 = mic.Util.newPiece(chargeToken);
+        spawnPiece(chargePiece3, new Point(920 - upgradeSpacing,1090), theMap);
+    }
+
     private void spawnForPlayer(int playerIndex) {
         listHasHoundsTooth = false;
         houndsToothPilotSkill = 0;
@@ -557,6 +719,9 @@ public class AutoSquadSpawn extends AbstractConfigurable {
         }
         else if(userInput.equals("tcdemo2")){
             hackSpawnTCdemo2(playerMap);
+        }
+        else if(userInput.equals("worldsdemo1")){
+            hackSpawnWorldsDemo1(playerMap);
         }
         //step 4: did not find the hard coded lists, is not a json, so loads up a URL squad
         else {
