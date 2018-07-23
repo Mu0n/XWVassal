@@ -151,8 +151,7 @@ public class AutoSquadSpawn extends AbstractConfigurable {
         GamePiece dialPiece2 = mic.Util.newPiece(stemDialSlot);
         // execute the command
         aMoveList = Arrays.asList("1BG","1FG","1NG","2TW","2BG","2FG","2NG","2YW","3ER","3TW","3BW","3FW","3NW","3YW","3RR","4FW","4KR");
-        StemDial.DialGenerateCommand myDialGen2 = new StemDial.DialGenerateCommand(aMoveList, "Edrio", dialPiece2, "Rebel Alliance");
-        dialPiece2.setProperty("Pilot Name","2.0 Dial");
+        StemDial.DialGenerateCommand myDialGen2 = new StemDial.DialGenerateCommand(aMoveList, "Edrio", dialPiece2, "Rebel Alliance"); dialPiece2.setProperty("Pilot Name","2.0 Dial");
         dialPiece2.setProperty("Craft ID #","Edrio");
         myDialGen2.execute();
         spawnPiece(dialPiece2, new Point(1100,100), theMap);
@@ -162,7 +161,7 @@ public class AutoSquadSpawn extends AbstractConfigurable {
         spawnPiece(pilotCard2, new Point(pilotColPosX,700), theMap);
         upCard1 = mic.Util.newPiece(cheapoCard);
         upCard1.setProperty("Line_1","Servomotor S-Foils");
-        upCard1.setProperty("xwstext", "Servomotor S-Foils - Open: Before you activate, you may flip this card. Closed: While you perform a primary attack, roll 1 fewer attack die. Before you activate, you may flip this card. Opened: Before you activate, you may flip this card.");
+        upCard1.setProperty("xwstext", "Servomotor S-Foils - Open: Before you activate, you may flip this card. Closed: Adds-{White Boost; White Focus -> Red Boost} While you perform a primary attack, roll 1 fewer attack die. Before you activate, you may flip this card.");
         spawnPiece(upCard1, new Point(pilotColPosX+upgradeSpacing,730), theMap);
 
 
@@ -186,7 +185,7 @@ public class AutoSquadSpawn extends AbstractConfigurable {
         spawnPiece(pilotCard3, new Point(pilotColPosX,800), theMap);
         upCard1 = mic.Util.newPiece(cheapoCard);
         upCard1.setProperty("Line_1","Servomotor S-Foils");
-        upCard1.setProperty("xwstext", "Servomotor S-Foils - Open: Before you activate, you may flip this card. Closed: While you perform a primary attack, roll 1 fewer attack die. Before you activate, you may flip this card. Opened: Before you activate, you may flip this card.");
+        upCard1.setProperty("xwstext", "Servomotor S-Foils - Open: Before you activate, you may flip this card. Closed: Adds-{White Boost; White Focus -> Red Boost} While you perform a primary attack, roll 1 fewer attack die. Before you activate, you may flip this card.");
         spawnPiece(upCard1, new Point(pilotColPosX+upgradeSpacing,830), theMap);
         upCard2 = mic.Util.newPiece(cheapoCard);
         upCard2.setProperty("Line_1","Proton Torpedoes");
@@ -217,7 +216,7 @@ public class AutoSquadSpawn extends AbstractConfigurable {
         spawnPiece(pilotCard4, new Point(pilotColPosX,900), theMap);
         upCard1 = mic.Util.newPiece(cheapoCard);
         upCard1.setProperty("Line_1","Ion Cannon Turret");
-        upCard1.setProperty("xwstext", "Ion Cannon Turret - Attack: If this attack hits, spend 1 [Hit] or [Crit] result to cause the defender to suffer 1 [Hit] damage. All remaining [Hit]/[Crit] results inflict ion tokens instead of damage.");
+        upCard1.setProperty("xwstext", "Ion Cannon Turret: Adds-{White Rotate Turret} Attack: If this attack hits, spend 1 [Hit] or [Crit] result to cause the defender to suffer 1 [Hit] damage. All remaining [Hit]/[Crit] results inflict ion tokens instead of damage.");
         spawnPiece(upCard1, new Point(pilotColPosX+upgradeSpacing,930), theMap);
         upCard2 = mic.Util.newPiece(cheapoCard);
         upCard2.setProperty("Line_1","Seismic Charges");
@@ -307,12 +306,12 @@ public class AutoSquadSpawn extends AbstractConfigurable {
 
         GamePiece upCard2 = mic.Util.newPiece(cheapoCard);
         upCard2.setProperty("Line_1","Tactical Officer");
-        upCard2.setProperty("xwstext", "Tactical Officer - (Makes the coordinate action white). In the chaos of a starfighter battle, a single order can mean the difference between a victory and a massacre.");
+        upCard2.setProperty("xwstext", "Tactical Officer - {Makes the coordinate action white}. In the chaos of a starfighter battle, a single order can mean the difference between a victory and a massacre.");
         spawnPiece(upCard2, new Point(pilotColPosX+2*upgradeSpacing,630), theMap);
 
         GamePiece upCard3 = mic.Util.newPiece(cheapoCard);
         upCard3.setProperty("Line_1","Director Krennic");
-        upCard3.setProperty("xwstext", "Director Krennic - Setup: Before placing forces, assign the Optimized Prototype condition to another friendly ship.");
+        upCard3.setProperty("xwstext", "Director Krennic - Adds-{White Lock} Setup: Before placing forces, assign the Optimized Prototype condition to another friendly ship.");
         spawnPiece(upCard3, new Point(pilotColPosX+3*upgradeSpacing,630), theMap);
 
         GamePiece upCard4 = mic.Util.newPiece(cheapoCard);
