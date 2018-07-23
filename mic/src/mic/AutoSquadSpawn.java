@@ -162,7 +162,7 @@ public class AutoSquadSpawn extends AbstractConfigurable {
         spawnPiece(pilotCard2, new Point(pilotColPosX,700), theMap);
         upCard1 = mic.Util.newPiece(cheapoCard);
         upCard1.setProperty("Line_1","Servomotor S-Foils");
-        upCard1.setProperty("xwstext", "Servomotor S-Foils - Open: Before you activate, you may flip this card. Closed: While you defend, roll 1 fewer defense die. After you execute a [0 5] maneuver, you may rotate your ship 90˚ or 180˚. Before you activate, you may flip this card.");
+        upCard1.setProperty("xwstext", "Servomotor S-Foils - Open: Before you activate, you may flip this card. Closed: While you perform a primary attack, roll 1 fewer attack die. Before you activate, you may flip this card. Opened: Before you activate, you may flip this card.");
         spawnPiece(upCard1, new Point(pilotColPosX+upgradeSpacing,730), theMap);
 
 
@@ -186,7 +186,7 @@ public class AutoSquadSpawn extends AbstractConfigurable {
         spawnPiece(pilotCard3, new Point(pilotColPosX,800), theMap);
         upCard1 = mic.Util.newPiece(cheapoCard);
         upCard1.setProperty("Line_1","Servomotor S-Foils");
-        upCard1.setProperty("xwstext", "Servomotor S-Foils - Open: Before you activate, you may flip this card. Closed: While you defend, roll 1 fewer defense die. After you execute a [0 5] maneuver, you may rotate your ship 90˚ or 180˚. Before you activate, you may flip this card.");
+        upCard1.setProperty("xwstext", "Servomotor S-Foils - Open: Before you activate, you may flip this card. Closed: While you perform a primary attack, roll 1 fewer attack die. Before you activate, you may flip this card. Opened: Before you activate, you may flip this card.");
         spawnPiece(upCard1, new Point(pilotColPosX+upgradeSpacing,830), theMap);
         upCard2 = mic.Util.newPiece(cheapoCard);
         upCard2.setProperty("Line_1","Proton Torpedoes");
@@ -302,6 +302,8 @@ public class AutoSquadSpawn extends AbstractConfigurable {
         upCard1.setProperty("Line_1","Elusive");
         upCard1.setProperty("xwstext", "Elusive - While you defend, you may spend 1 [Charge] to reroll 1 defense die. After you fully execute a red maneuver, recover 1 [Charge].");
         spawnPiece(upCard1, new Point(pilotColPosX+upgradeSpacing,630), theMap);
+        GamePiece chargePiece1 = mic.Util.newPiece(chargeToken);
+        spawnPiece(chargePiece1, new Point(920-upgradeSpacing,690), theMap);
 
         GamePiece upCard2 = mic.Util.newPiece(cheapoCard);
         upCard2.setProperty("Line_1","Tactical Officer");
@@ -345,6 +347,7 @@ public class AutoSquadSpawn extends AbstractConfigurable {
         upCard2.setProperty("xwstext", "Fire-Control System - While you perform an attack, if you have a lock on the defender, you may reroll 1 attack die. If you do, you cannot spend your lock during this attack.");
         spawnPiece(upCard2, new Point(pilotColPosX+2*upgradeSpacing,730), theMap);
 
+
         GamePiece piece3 = mic.Util.newPiece(smallTiefSlot);
         piece3.setProperty("Initiative",3);
         piece3.setProperty("Shield Rating",0);
@@ -367,7 +370,7 @@ public class AutoSquadSpawn extends AbstractConfigurable {
         upCard1.setProperty("Line_1","Crack Shot");
         upCard1.setProperty("xwstext", "Crack Shot - While you perform a primary attack, if the defender is in your [Bullseye Arc], before the Neutralize Results step, you may spend 1 [Charge] to cancel 1 [Evade] result.");
         spawnPiece(upCard1, new Point(pilotColPosX+upgradeSpacing,830), theMap);
-        GamePiece chargePiece1 = mic.Util.newPiece(chargeToken);
+        chargePiece1 = mic.Util.newPiece(chargeToken);
         spawnPiece(chargePiece1, new Point(920-upgradeSpacing,890), theMap);
 
         GamePiece piece4 = mic.Util.newPiece(smallTiefSlot);
