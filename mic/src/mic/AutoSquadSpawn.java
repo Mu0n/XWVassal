@@ -167,7 +167,7 @@ public class AutoSquadSpawn extends AbstractConfigurable {
 
         GamePiece piece3 = mic.Util.newPiece(smallXwingSlot);
         piece3.setProperty("Initiative",4);
-        piece3.setProperty("Shield Rating",3);
+        piece3.setProperty("Shield Rating",2);
         piece3.setProperty("Hull Rating",4);
         piece3.setProperty("Pilot Name","Jek Porkins");
         spawnPiece(piece3, new Point(400,400), theMap);
