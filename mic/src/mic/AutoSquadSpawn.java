@@ -59,13 +59,12 @@ public class AutoSquadSpawn extends AbstractConfigurable {
         return null;
     }
 
-    private void hackSpawnTCdemo1(Map playerMap)
+    private void hackSpawnWorldsDemo2(Map playerMap)
     {
         Map theMap = playerMap;
         List<PieceSlot> allSlots = GameModule.getGameModule().getAllDescendantComponentsOf(PieceSlot.class);
         PieceSlot mediumStemSlot = null;
-        PieceSlot smallXwingSlot = null;
-        PieceSlot smallSingleTurretStemSlot = null;
+        PieceSlot smallFangSlot = null;
         PieceSlot stemDialSlot = null;
         PieceSlot cheapoCard = null;
         PieceSlot chargeToken = null;
@@ -74,26 +73,21 @@ public class AutoSquadSpawn extends AbstractConfigurable {
         for(PieceSlot pieceSlot : allSlots )
         {
             String slotName = pieceSlot.getConfigureName();
-            if(slotName.equals("ship -- medium 2e") && mediumStemSlot == null)
+            if(slotName.equals("ship -- medium 2e aux") && mediumStemSlot == null)
             {
                 mediumStemSlot = pieceSlot;
                 continue;
             }
-            if(slotName.equals("Rebel Stem Dial") && stemDialSlot == null)
+            if(slotName.equals("Scum Stem Dial") && stemDialSlot == null)
             {
                 stemDialSlot = pieceSlot;
                 continue;
             }
-            if(slotName.equals("ship -- small 2e xwing") && smallXwingSlot == null)
+            if(slotName.equals("ship -- small 2e fang") && smallFangSlot == null)
             {
-                smallXwingSlot = pieceSlot;
+                smallFangSlot = pieceSlot;
                 continue;
             }
-            if(slotName.equals("ship -- small 2e single turret") && smallSingleTurretStemSlot == null)
-             {
-                 smallSingleTurretStemSlot = pieceSlot;
-                continue;
-             }
              if(slotName.equals("Small TextBox") && cheapoCard == null){
                 cheapoCard = pieceSlot;
                 continue;
@@ -109,27 +103,27 @@ public class AutoSquadSpawn extends AbstractConfigurable {
         int upgradeSpacing = cheapoCard.getPiece().getShape().getBounds().width;
 
         GamePiece piece = mic.Util.newPiece(mediumStemSlot);
-        piece.setProperty("Initiative",2);
-        piece.setProperty("Shield Rating",3);
-        piece.setProperty("Hull Rating",5);
-        piece.setProperty("Pilot Name","Benthic Two Tubes");
+        piece.setProperty("Initiative",5);
+        piece.setProperty("Shield Rating",4);
+        piece.setProperty("Hull Rating",6);
+        piece.setProperty("Pilot Name","Boba Fett");
         spawnPiece(piece, new Point(400,100), theMap);
         GamePiece dialPiece1 = mic.Util.newPiece(stemDialSlot);
         // execute the command
-        List<String> aMoveList = Arrays.asList("0OR","1BG","1FG","1NG","2TW","2BG","2FG","2NG","2YW","3BW","3FW","3NW","4FW");
-        StemDial.DialGenerateCommand myDialGen = new StemDial.DialGenerateCommand(aMoveList, "Benthic", dialPiece1, "Rebel Alliance");
+        List<String> aMoveList = Arrays.asList("1TW","1BG","1FG","1NG","1YW","2TW","2BW","2FG","2NW","2YW","3ER","3BW","3FG","3NW","3RR","4FW","4KR");
+        StemDial.DialGenerateCommand myDialGen = new StemDial.DialGenerateCommand(aMoveList, "Boba", dialPiece1, "Scum and Villainy");
         dialPiece1.setProperty("Pilot Name","2.0 Dial");
-        dialPiece1.setProperty("Craft ID #","Benthic");
+        dialPiece1.setProperty("Craft ID #","Boba Fett");
         myDialGen.execute();
         spawnPiece(dialPiece1, new Point(900,100), theMap);
         GamePiece pilotCard = mic.Util.newPiece(cheapoCard);
-        pilotCard.setProperty("Line_1","Benthic Two Tubes");
-        pilotCard.setProperty("xwstext", "Benthic Two Tubes - After you perform a [focus] action, you may transfer 1 of your focus tokens to a friendly ship at range 1-2.");
+        pilotCard.setProperty("Line_1","Boba Fett");
+        pilotCard.setProperty("xwstext", "Boba Fett - While you defend or perform an attack, you may reroll 1 of your dice for each enemy ship at range 0-1.");
         spawnPiece(pilotCard, new Point(pilotColPosX,600), theMap);
 
         GamePiece upCard1 = mic.Util.newPiece(cheapoCard);
-        upCard1.setProperty("Line_1","Pivot Wing");
-        upCard1.setProperty("xwstext", "Pivot Wing - Open: Before you activate, you may flip this card. Closed: While you defend, roll 1 fewer defense die. After you execute a [0 Stop] maneuver, you may rotate your ship 90˚ or 180˚. Before you activate, you may flip this card.");
+        upCard1.setProperty("Line_1","Inertial Dampeners");
+        upCard1.setProperty("xwstext", "Inertial Dampeners - Before you would execute a maneuver, you may spend 1 shield. If you do, execute a while [0 5] instead of the maneuver you revealed, then gain 1 stress token.");
         spawnPiece(upCard1, new Point(pilotColPosX+upgradeSpacing,630), theMap);
 
         GamePiece upCard2 = mic.Util.newPiece(cheapoCard);
@@ -138,94 +132,62 @@ public class AutoSquadSpawn extends AbstractConfigurable {
         spawnPiece(upCard2, new Point(pilotColPosX+2*upgradeSpacing,630), theMap);
 
         GamePiece upCard3 = mic.Util.newPiece(cheapoCard);
-        upCard3.setProperty("Line_1","Advanced Sensors");
-        upCard3.setProperty("xwstext", "Advanced Sensors - After you reveal your dial, you may perform 1 action. If you do, you cannot perform another action during your activation.");
-        spawnPiece(upCard3, new Point(pilotColPosX+3*upgradeSpacing,630), theMap);
+        upCard3.setProperty("Line_1","Seismic Charges");
+        upCard3.setProperty("xwstext", "Seismic Charges - Bomb Suring the System Phase, you may spend 1 [Charge] to drop a Seismic Charge with the [1 Forward] template.");
+        spawnPiece(upCard3, new Point(pilotColPosX+2*upgradeSpacing,630), theMap);
+        GamePiece chargePiece1 = mic.Util.newPiece(chargeToken);
+        GamePiece chargePiece2 = mic.Util.newPiece(chargeToken);
+        spawnPiece(chargePiece1, new Point(920,690), theMap);
+        spawnPiece(chargePiece2, new Point(1000, 690), theMap);
 
-        GamePiece piece2 = mic.Util.newPiece(smallXwingSlot);
-        piece2.setProperty("Initiative",2);
-        piece2.setProperty("Shield Rating",2);
+        GamePiece piece2 = mic.Util.newPiece(smallFangSlot);
+        piece2.setProperty("Initiative",4);
+        piece2.setProperty("Shield Rating",0);
         piece2.setProperty("Hull Rating",4);
-        piece2.setProperty("Pilot Name","Edrio");
+        piece2.setProperty("Pilot Name","Joy");
         spawnPiece(piece2, new Point(700,100), theMap);
         GamePiece dialPiece2 = mic.Util.newPiece(stemDialSlot);
         // execute the command
-        aMoveList = Arrays.asList("1BG","1FG","1NG","2TW","2BG","2FG","2NG","2YW","3ER","3TW","3BW","3FW","3NW","3YW","3RR","4FW","4KR");
-        StemDial.DialGenerateCommand myDialGen2 = new StemDial.DialGenerateCommand(aMoveList, "Edrio", dialPiece2, "Rebel Alliance"); dialPiece2.setProperty("Pilot Name","2.0 Dial");
-        dialPiece2.setProperty("Craft ID #","Edrio");
+        aMoveList = Arrays.asList("1TW","1YW","2ER","2TG","2BG","2FG","2NG","2YG","2RR","3TW","3BW","3FG","3NW","3YW","4FW","4KR","5FW");
+        StemDial.DialGenerateCommand myDialGen2 = new StemDial.DialGenerateCommand(aMoveList, "Edrio", dialPiece2, "Scum and Villainy"); dialPiece2.setProperty("Pilot Name","2.0 Dial");
+        dialPiece2.setProperty("Craft ID #","Joy");
         myDialGen2.execute();
         spawnPiece(dialPiece2, new Point(1100,100), theMap);
         GamePiece pilotCard2 = mic.Util.newPiece(cheapoCard);
-        pilotCard2.setProperty("Line_1","Edrio Two Tubes");
-        pilotCard2.setProperty("xwstext", "Edrio Two Tubes - Before you activate, if you are focused, you may perform an action.");
+        pilotCard2.setProperty("Line_1","Joy Rekkoff");
+        pilotCard2.setProperty("xwstext", "Joy Rekkoff - Concordia Faceoff: While you defend, if the attack range is 1 and you are in the attacker's [Front Arc], change 1 result to an [Evade] result. Pilot Ability: While you perform an attack, you may spend 1 [Charge] from an equipped [Torpedo] upgrade. If you do, the defender rolls 1 fewer defense die.");
         spawnPiece(pilotCard2, new Point(pilotColPosX,700), theMap);
         upCard1 = mic.Util.newPiece(cheapoCard);
-        upCard1.setProperty("Line_1","Servomotor S-Foils");
-        upCard1.setProperty("xwstext", "Servomotor S-Foils - Open: Before you activate, you may flip this card. Closed: Adds-{White Boost; White Focus -> Red Boost} While you perform a primary attack, roll 1 fewer attack die. Before you activate, you may flip this card.");
+        upCard1.setProperty("Line_1","Fearless");
+        upCard1.setProperty("xwstext", "Fearless - While you perform a [Front Arc] primary attack, if the attack range is 1 and you are in the defender's [Front Arc], you may change 1 of your results to a [Hit] result.");
         spawnPiece(upCard1, new Point(pilotColPosX+upgradeSpacing,730), theMap);
+        upCard2 = mic.Util.newPiece(cheapoCard);
+        upCard2.setProperty("Line_1","Ion Torpedoes");
+        upCard2.setProperty("xwstext", "Ion Torpedoes - Attack (Lock): Spend 1 [Charge]. If this attack hits, spend 1 [Hit] or [Crit] result to cause the defender to suffer 1 [Hit] damage. All remaining [Hit]/[Crit] results inflict ion tokens instead of damage.");
+        spawnPiece(upCard2, new Point(pilotColPosX+2*upgradeSpacing,730), theMap);
+        chargePiece1 = mic.Util.newPiece(chargeToken);
+        chargePiece2 = mic.Util.newPiece(chargeToken);
+        spawnPiece(chargePiece1, new Point(920,790), theMap);
+        spawnPiece(chargePiece2, new Point(1000, 790), theMap);
 
-
-        GamePiece piece3 = mic.Util.newPiece(smallXwingSlot);
-        piece3.setProperty("Initiative",4);
-        piece3.setProperty("Shield Rating",2);
+        GamePiece piece3 = mic.Util.newPiece(smallFangSlot);
+        piece3.setProperty("Initiative",1);
+        piece3.setProperty("Shield Rating",0);
         piece3.setProperty("Hull Rating",4);
-        piece3.setProperty("Pilot Name","Jek Porkins");
+        piece3.setProperty("Pilot Name","Z Recruit");
         spawnPiece(piece3, new Point(400,400), theMap);
         GamePiece dialPiece3 = mic.Util.newPiece(stemDialSlot);
         // execute the command
-        aMoveList = Arrays.asList("1BG","1FG","1NG","2TW","2BG","2FG","2NG","2YW","3ER","3TW","3BW","3FW","3NW","3YW","3RR","4FW","4KR");
-        StemDial.DialGenerateCommand myDialGen3 = new StemDial.DialGenerateCommand(aMoveList, "Jek", dialPiece3, "Rebel Alliance");
+        aMoveList = Arrays.asList("1TW","1YW","2ER","2TG","2BG","2FG","2NG","2YG","2RR","3TW","3BW","3FG","3NW","3YW","4FW","4KR","5FW");
+        StemDial.DialGenerateCommand myDialGen3 = new StemDial.DialGenerateCommand(aMoveList, "Z Recruit", dialPiece3, "Scum and Villainy");
         dialPiece3.setProperty("Pilot Name","2.0 Dial");
         dialPiece3.setProperty("Craft ID #","Jek");
         myDialGen3.execute();
         spawnPiece(dialPiece3, new Point(900,300), theMap);
         GamePiece pilotCard3 = mic.Util.newPiece(cheapoCard);
-        pilotCard3.setProperty("Line_1","Jek Porkins");
-        pilotCard3.setProperty("xwstext", "Jek Porkins - After you receive a stress token, you may roll 1 attack die to remove it. On a d result, suffer 1 d damage.");
+        pilotCard3.setProperty("Line_1","Zealous Recruit");
+        pilotCard3.setProperty("xwstext", "Zealous Recruit - Concordia Faceoff: While you defend, if the attack range is 1 and you are in the attacker's [Front Arc], change 1 result to an [Evade] result. Generic, no pilot ability: Mandalorian Fang Fighter pilots must master the Concordia Faceoff maneuver, leveraging their ships' narrow attack profile to execute deadly head-on charges.");
         spawnPiece(pilotCard3, new Point(pilotColPosX,800), theMap);
-        upCard1 = mic.Util.newPiece(cheapoCard);
-        upCard1.setProperty("Line_1","Servomotor S-Foils");
-        upCard1.setProperty("xwstext", "Servomotor S-Foils - Open: Before you activate, you may flip this card. Closed: Adds-{White Boost; White Focus -> Red Boost} While you perform a primary attack, roll 1 fewer attack die. Before you activate, you may flip this card.");
-        spawnPiece(upCard1, new Point(pilotColPosX+upgradeSpacing,830), theMap);
-        upCard2 = mic.Util.newPiece(cheapoCard);
-        upCard2.setProperty("Line_1","Proton Torpedoes");
-        upCard2.setProperty("xwstext", "Proton Torpedoes - Attack (Lock): Spend 1 [Charge]. Change 1 [Hit] result to a [Crit] result.");
-        spawnPiece(upCard2, new Point(pilotColPosX+2*upgradeSpacing,830), theMap);
-        GamePiece chargePiece1 = mic.Util.newPiece(chargeToken);
-        GamePiece chargePiece2 = mic.Util.newPiece(chargeToken);
-        spawnPiece(chargePiece1, new Point(920,890), theMap);
-        spawnPiece(chargePiece2, new Point(1000, 890), theMap);
-
-        GamePiece piece4 = mic.Util.newPiece(smallSingleTurretStemSlot);
-        piece4.setProperty("Initiative",2);
-        piece4.setProperty("Shield Rating",2);
-        piece4.setProperty("Hull Rating",6);
-        piece4.setProperty("Pilot Name","Gray Sq.");
-        spawnPiece(piece4, new Point(700,400), theMap);
-        GamePiece dialPiece4 = mic.Util.newPiece(stemDialSlot);
-        // execute the command
-        aMoveList = Arrays.asList("1BG","1FG","1NG","2TW","2BW","2FG","2NW","2YW","3TR","3BW","3FW","3NW","3YR","4FR","4KR");
-        StemDial.DialGenerateCommand myDialGen4 = new StemDial.DialGenerateCommand(aMoveList, "GSB", dialPiece4, "Rebel Alliance");
-        dialPiece4.setProperty("Pilot Name","2.0 Dial");
-        dialPiece4.setProperty("Craft ID #","GSB");
-        myDialGen4.execute();
-        spawnPiece(dialPiece4, new Point(1100,300), theMap);
-        GamePiece pilotCard4 = mic.Util.newPiece(cheapoCard);
-        pilotCard4.setProperty("Line_1","Gray Squadron Bomber");
-        pilotCard4.setProperty("xwstext", "Gray Squadron Bomber - No pilot ability.");
-        spawnPiece(pilotCard4, new Point(pilotColPosX,900), theMap);
-        upCard1 = mic.Util.newPiece(cheapoCard);
-        upCard1.setProperty("Line_1","Ion Cannon Turret");
-        upCard1.setProperty("xwstext", "Ion Cannon Turret: Adds-{White Rotate Turret} Attack: If this attack hits, spend 1 [Hit] or [Crit] result to cause the defender to suffer 1 [Hit] damage. All remaining [Hit]/[Crit] results inflict ion tokens instead of damage.");
-        spawnPiece(upCard1, new Point(pilotColPosX+upgradeSpacing,930), theMap);
-        upCard2 = mic.Util.newPiece(cheapoCard);
-        upCard2.setProperty("Line_1","Seismic Charges");
-        upCard2.setProperty("xwstext", "Seismic Charges - Bomb Suring the System Phase, you may spend 1 [Charge] to drop a Seismic Charge with the [1 Forward] template.");
-        spawnPiece(upCard2, new Point(pilotColPosX+2*upgradeSpacing,930), theMap);
-        chargePiece1 = mic.Util.newPiece(chargeToken);
-        chargePiece2 = mic.Util.newPiece(chargeToken);
-        spawnPiece(chargePiece1, new Point(920,990), theMap);
-        spawnPiece(chargePiece2, new Point(1000, 990), theMap);
     }
 
 
@@ -584,6 +546,176 @@ public class AutoSquadSpawn extends AbstractConfigurable {
         spawnPiece(chargePiece3, new Point(920 - upgradeSpacing,1090), theMap);
     }
 
+    private void hackSpawnTCdemo1(Map playerMap)
+    {
+        Map theMap = playerMap;
+        List<PieceSlot> allSlots = GameModule.getGameModule().getAllDescendantComponentsOf(PieceSlot.class);
+        PieceSlot mediumStemSlot = null;
+        PieceSlot smallXwingSlot = null;
+        PieceSlot smallSingleTurretStemSlot = null;
+        PieceSlot stemDialSlot = null;
+        PieceSlot cheapoCard = null;
+        PieceSlot chargeToken = null;
+
+
+        for(PieceSlot pieceSlot : allSlots )
+        {
+            String slotName = pieceSlot.getConfigureName();
+            if(slotName.equals("ship -- medium 2e") && mediumStemSlot == null)
+            {
+                mediumStemSlot = pieceSlot;
+                continue;
+            }
+            if(slotName.equals("Rebel Stem Dial") && stemDialSlot == null)
+            {
+                stemDialSlot = pieceSlot;
+                continue;
+            }
+            if(slotName.equals("ship -- small 2e xwing") && smallXwingSlot == null)
+            {
+                smallXwingSlot = pieceSlot;
+                continue;
+            }
+            if(slotName.equals("ship -- small 2e single turret") && smallSingleTurretStemSlot == null)
+            {
+                smallSingleTurretStemSlot = pieceSlot;
+                continue;
+            }
+            if(slotName.equals("Small TextBox") && cheapoCard == null){
+                cheapoCard = pieceSlot;
+                continue;
+            }
+            if(slotName.equals("2.0 Charge") && chargeToken == null){
+                chargeToken = pieceSlot;
+                continue;
+            }
+        }
+
+        int pilotColPosX = 400;
+
+        int upgradeSpacing = cheapoCard.getPiece().getShape().getBounds().width;
+
+        GamePiece piece = mic.Util.newPiece(mediumStemSlot);
+        piece.setProperty("Initiative",2);
+        piece.setProperty("Shield Rating",3);
+        piece.setProperty("Hull Rating",5);
+        piece.setProperty("Pilot Name","Benthic Two Tubes");
+        spawnPiece(piece, new Point(400,100), theMap);
+        GamePiece dialPiece1 = mic.Util.newPiece(stemDialSlot);
+        // execute the command
+        List<String> aMoveList = Arrays.asList("0OR","1BG","1FG","1NG","2TW","2BG","2FG","2NG","2YW","3BW","3FW","3NW","4FW");
+        StemDial.DialGenerateCommand myDialGen = new StemDial.DialGenerateCommand(aMoveList, "Benthic", dialPiece1, "Rebel Alliance");
+        dialPiece1.setProperty("Pilot Name","2.0 Dial");
+        dialPiece1.setProperty("Craft ID #","Benthic");
+        myDialGen.execute();
+        spawnPiece(dialPiece1, new Point(900,100), theMap);
+        GamePiece pilotCard = mic.Util.newPiece(cheapoCard);
+        pilotCard.setProperty("Line_1","Benthic Two Tubes");
+        pilotCard.setProperty("xwstext", "Benthic Two Tubes - After you perform a [focus] action, you may transfer 1 of your focus tokens to a friendly ship at range 1-2.");
+        spawnPiece(pilotCard, new Point(pilotColPosX,600), theMap);
+
+        GamePiece upCard1 = mic.Util.newPiece(cheapoCard);
+        upCard1.setProperty("Line_1","Pivot Wing");
+        upCard1.setProperty("xwstext", "Pivot Wing - Open: Before you activate, you may flip this card. Closed: While you defend, roll 1 fewer defense die. After you execute a [0 Stop] maneuver, you may rotate your ship 90˚ or 180˚. Before you activate, you may flip this card.");
+        spawnPiece(upCard1, new Point(pilotColPosX+upgradeSpacing,630), theMap);
+
+        GamePiece upCard2 = mic.Util.newPiece(cheapoCard);
+        upCard2.setProperty("Line_1","Perceptive Copilot");
+        upCard2.setProperty("xwstext", "Perceptive Copilot - After you perform a [focus] action, gain 1 focus token.");
+        spawnPiece(upCard2, new Point(pilotColPosX+2*upgradeSpacing,630), theMap);
+
+        GamePiece upCard3 = mic.Util.newPiece(cheapoCard);
+        upCard3.setProperty("Line_1","Advanced Sensors");
+        upCard3.setProperty("xwstext", "Advanced Sensors - After you reveal your dial, you may perform 1 action. If you do, you cannot perform another action during your activation.");
+        spawnPiece(upCard3, new Point(pilotColPosX+3*upgradeSpacing,630), theMap);
+
+        GamePiece piece2 = mic.Util.newPiece(smallXwingSlot);
+        piece2.setProperty("Initiative",2);
+        piece2.setProperty("Shield Rating",2);
+        piece2.setProperty("Hull Rating",4);
+        piece2.setProperty("Pilot Name","Edrio");
+        spawnPiece(piece2, new Point(700,100), theMap);
+        GamePiece dialPiece2 = mic.Util.newPiece(stemDialSlot);
+        // execute the command
+        aMoveList = Arrays.asList("1BG","1FG","1NG","2TW","2BG","2FG","2NG","2YW","3ER","3TW","3BW","3FW","3NW","3YW","3RR","4FW","4KR");
+        StemDial.DialGenerateCommand myDialGen2 = new StemDial.DialGenerateCommand(aMoveList, "Edrio", dialPiece2, "Rebel Alliance"); dialPiece2.setProperty("Pilot Name","2.0 Dial");
+        dialPiece2.setProperty("Craft ID #","Edrio");
+        myDialGen2.execute();
+        spawnPiece(dialPiece2, new Point(1100,100), theMap);
+        GamePiece pilotCard2 = mic.Util.newPiece(cheapoCard);
+        pilotCard2.setProperty("Line_1","Edrio Two Tubes");
+        pilotCard2.setProperty("xwstext", "Edrio Two Tubes - Before you activate, if you are focused, you may perform an action.");
+        spawnPiece(pilotCard2, new Point(pilotColPosX,700), theMap);
+        upCard1 = mic.Util.newPiece(cheapoCard);
+        upCard1.setProperty("Line_1","Servomotor S-Foils");
+        upCard1.setProperty("xwstext", "Servomotor S-Foils - Open: Before you activate, you may flip this card. Closed: Adds-{White Boost; White Focus -> Red Boost} While you perform a primary attack, roll 1 fewer attack die. Before you activate, you may flip this card.");
+        spawnPiece(upCard1, new Point(pilotColPosX+upgradeSpacing,730), theMap);
+
+
+        GamePiece piece3 = mic.Util.newPiece(smallXwingSlot);
+        piece3.setProperty("Initiative",4);
+        piece3.setProperty("Shield Rating",2);
+        piece3.setProperty("Hull Rating",4);
+        piece3.setProperty("Pilot Name","Jek Porkins");
+        spawnPiece(piece3, new Point(400,400), theMap);
+        GamePiece dialPiece3 = mic.Util.newPiece(stemDialSlot);
+        // execute the command
+        aMoveList = Arrays.asList("1BG","1FG","1NG","2TW","2BG","2FG","2NG","2YW","3ER","3TW","3BW","3FW","3NW","3YW","3RR","4FW","4KR");
+        StemDial.DialGenerateCommand myDialGen3 = new StemDial.DialGenerateCommand(aMoveList, "Jek", dialPiece3, "Rebel Alliance");
+        dialPiece3.setProperty("Pilot Name","2.0 Dial");
+        dialPiece3.setProperty("Craft ID #","Jek");
+        myDialGen3.execute();
+        spawnPiece(dialPiece3, new Point(900,300), theMap);
+        GamePiece pilotCard3 = mic.Util.newPiece(cheapoCard);
+        pilotCard3.setProperty("Line_1","Jek Porkins");
+        pilotCard3.setProperty("xwstext", "Jek Porkins - After you receive a stress token, you may roll 1 attack die to remove it. On a d result, suffer 1 d damage.");
+        spawnPiece(pilotCard3, new Point(pilotColPosX,800), theMap);
+        upCard1 = mic.Util.newPiece(cheapoCard);
+        upCard1.setProperty("Line_1","Servomotor S-Foils");
+        upCard1.setProperty("xwstext", "Servomotor S-Foils - Open: Before you activate, you may flip this card. Closed: Adds-{White Boost; White Focus -> Red Boost} While you perform a primary attack, roll 1 fewer attack die. Before you activate, you may flip this card.");
+        spawnPiece(upCard1, new Point(pilotColPosX+upgradeSpacing,830), theMap);
+        upCard2 = mic.Util.newPiece(cheapoCard);
+        upCard2.setProperty("Line_1","Proton Torpedoes");
+        upCard2.setProperty("xwstext", "Proton Torpedoes - Attack (Lock): Spend 1 [Charge]. Change 1 [Hit] result to a [Crit] result.");
+        spawnPiece(upCard2, new Point(pilotColPosX+2*upgradeSpacing,830), theMap);
+        GamePiece chargePiece1 = mic.Util.newPiece(chargeToken);
+        GamePiece chargePiece2 = mic.Util.newPiece(chargeToken);
+        spawnPiece(chargePiece1, new Point(920,890), theMap);
+        spawnPiece(chargePiece2, new Point(1000, 890), theMap);
+
+        GamePiece piece4 = mic.Util.newPiece(smallSingleTurretStemSlot);
+        piece4.setProperty("Initiative",2);
+        piece4.setProperty("Shield Rating",2);
+        piece4.setProperty("Hull Rating",6);
+        piece4.setProperty("Pilot Name","Gray Sq.");
+        spawnPiece(piece4, new Point(700,400), theMap);
+        GamePiece dialPiece4 = mic.Util.newPiece(stemDialSlot);
+        // execute the command
+        aMoveList = Arrays.asList("1BG","1FG","1NG","2TW","2BW","2FG","2NW","2YW","3TR","3BW","3FW","3NW","3YR","4FR","4KR");
+        StemDial.DialGenerateCommand myDialGen4 = new StemDial.DialGenerateCommand(aMoveList, "GSB", dialPiece4, "Rebel Alliance");
+        dialPiece4.setProperty("Pilot Name","2.0 Dial");
+        dialPiece4.setProperty("Craft ID #","GSB");
+        myDialGen4.execute();
+        spawnPiece(dialPiece4, new Point(1100,300), theMap);
+        GamePiece pilotCard4 = mic.Util.newPiece(cheapoCard);
+        pilotCard4.setProperty("Line_1","Gray Squadron Bomber");
+        pilotCard4.setProperty("xwstext", "Gray Squadron Bomber - No pilot ability.");
+        spawnPiece(pilotCard4, new Point(pilotColPosX,900), theMap);
+        upCard1 = mic.Util.newPiece(cheapoCard);
+        upCard1.setProperty("Line_1","Ion Cannon Turret");
+        upCard1.setProperty("xwstext", "Ion Cannon Turret: Adds-{White Rotate Turret} Attack: If this attack hits, spend 1 [Hit] or [Crit] result to cause the defender to suffer 1 [Hit] damage. All remaining [Hit]/[Crit] results inflict ion tokens instead of damage.");
+        spawnPiece(upCard1, new Point(pilotColPosX+upgradeSpacing,930), theMap);
+        upCard2 = mic.Util.newPiece(cheapoCard);
+        upCard2.setProperty("Line_1","Seismic Charges");
+        upCard2.setProperty("xwstext", "Seismic Charges - Bomb Suring the System Phase, you may spend 1 [Charge] to drop a Seismic Charge with the [1 Forward] template.");
+        spawnPiece(upCard2, new Point(pilotColPosX+2*upgradeSpacing,930), theMap);
+        chargePiece1 = mic.Util.newPiece(chargeToken);
+        chargePiece2 = mic.Util.newPiece(chargeToken);
+        spawnPiece(chargePiece1, new Point(920,990), theMap);
+        spawnPiece(chargePiece2, new Point(1000, 990), theMap);
+    }
+
+
     private void spawnForPlayer(int playerIndex) {
         listHasHoundsTooth = false;
         houndsToothPilotSkill = 0;
@@ -724,6 +856,8 @@ public class AutoSquadSpawn extends AbstractConfigurable {
         }
         else if(userInput.equals("worldsdemo1")){
             hackSpawnWorldsDemo1(playerMap);
+        }else if(userInput.equals("worldsdemo2")){
+            hackSpawnWorldsDemo2(playerMap);
         }
         //step 4: did not find the hard coded lists, is not a json, so loads up a URL squad
         else {
