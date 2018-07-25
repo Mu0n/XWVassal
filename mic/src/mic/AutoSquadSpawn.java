@@ -129,7 +129,7 @@ public class AutoSquadSpawn extends AbstractConfigurable {
         GamePiece upCard2 = mic.Util.newPiece(cheapoCard);
         upCard2.setProperty("Line_1","Perceptive Copilot");
         upCard2.setProperty("xwstext", "Perceptive Copilot - After you perform a [focus] action, gain 1 focus token.");
-        spawnPiece(upCard2, new Point(pilotColPosX+2*upgradeSpacing,630), theMap);
+        spawnPiece(upCard2, new Point(pilotColPosX+3*upgradeSpacing,630), theMap);
 
         GamePiece upCard3 = mic.Util.newPiece(cheapoCard);
         upCard3.setProperty("Line_1","Seismic Charges");
