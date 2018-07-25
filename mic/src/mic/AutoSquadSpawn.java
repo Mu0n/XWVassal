@@ -123,7 +123,7 @@ public class AutoSquadSpawn extends AbstractConfigurable {
 
         GamePiece upCard1 = mic.Util.newPiece(cheapoCard);
         upCard1.setProperty("Line_1","Inertial Dampeners");
-        upCard1.setProperty("xwstext", "Inertial Dampeners - Before you would execute a maneuver, you may spend 1 shield. If you do, execute a while [0 5] instead of the maneuver you revealed, then gain 1 stress token.");
+        upCard1.setProperty("xwstext", "Inertial Dampeners - Before you would execute a maneuver, you may spend 1 shield. If you do, execute a white [0 Stop] instead of the maneuver you revealed, then gain 1 stress token.");
         spawnPiece(upCard1, new Point(pilotColPosX+upgradeSpacing,630), theMap);
 
         GamePiece upCard2 = mic.Util.newPiece(cheapoCard);
