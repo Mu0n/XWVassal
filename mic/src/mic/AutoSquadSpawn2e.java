@@ -65,7 +65,8 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
         sourceInfoPanel.setAlignmentX(JPanel.RIGHT_ALIGNMENT);
 
 
-        JLabel sourceExplanationLabel = new JLabel("Select the game mode here (preliminary version for modes other than the base game):");
+        JLabel sourceExplanationLabel = new JLabel("This is a rough preliminary version of the 2nd edition squad autospawn window.");
+        final JComboBox galacticEmpireComboBox = new JComboBox();
 
 
         sourcePanel.add(sourceExplanationLabel);
@@ -75,15 +76,6 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
         JPanel explanationPanel = new JPanel();
         explanationPanel.setLayout(new BoxLayout(explanationPanel, BoxLayout.Y_AXIS));
         explanationPanel.setAlignmentX(Component.RIGHT_ALIGNMENT);
-        JLabel autoSpawnExplanationLabel = new JLabel("Please paste (CTRL-V can be used to paste text copied with CTRL-C from a browser) ");
-        JLabel autoSpawnExplanationLabel2 = new JLabel("a voidstate url or ID, YASB url, FABS url, or raw XWS JSON.");
-        JLabel autoSpawnExplanationLabel3 = new JLabel("If the list uses new elements, a download delay may occur");
-
-
-        explanationPanel.add(autoSpawnExplanationLabel);
-        explanationPanel.add(autoSpawnExplanationLabel2);
-        explanationPanel.add(autoSpawnExplanationLabel3);
-
 
         rootPanel.add(sourcePanel);
         rootPanel.add(sourceInfoPanel);
@@ -91,9 +83,14 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
         rootPanel.add(new JSeparator());
         rootPanel.add(Box.createRigidArea(new Dimension(0,8)));
         rootPanel.add(explanationPanel);
+        rootPanel.add(galacticEmpireComboBox);
+
         JFrame frame = new JFrame();
         frame.setPreferredSize(new Dimension(800,500));
         frame.add(rootPanel);
+
+        String userInput = "";
+        userInput = JOptionPane.showInputDialog(frame, rootPanel, "2.0 Squad AutoSpawn for player " + Integer.toString(playerInfo.getSide()), JOptionPane.PLAIN_MESSAGE);
     }
 
 
