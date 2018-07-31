@@ -47,8 +47,8 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
             JOptionPane.showMessageDialog(playerMap.getView(), "Cannot spawn squads for other players");
             return;
         }
-
         final List<XWS2Pilots> allShips = XWS2Pilots.loadFromRemote();
+        final List<XWS2Upgrades> allUpgrades = XWS2Upgrades.loadFromRemote();
 
         final JFrame frame = new JFrame();
         //Panel which will include a Combo box for selecting the source of the xwing-data to use
@@ -99,6 +99,12 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
         JComboBox upgradeTypes = new JComboBox();
         upgradeTypes.addItem("Select Upgrade Type.");
         JComboBox upgrades = new JComboBox();
+        for(XWS2Upgrades ups : allUpgrades) {
+            for(XWS2Upgrades.anUpgrade anUp : ups.getUpgrades())
+            {
+                upgrades.addItem(anUp.getName());
+            }
+        }
         JButton addUpg = new JButton("Add");
         addUpg.addActionListener(new ActionListener() {
             @Override
