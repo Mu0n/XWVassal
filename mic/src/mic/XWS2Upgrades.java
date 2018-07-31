@@ -1,10 +1,16 @@
 package mic;
 
+import com.fasterxml.jackson.annotation.JacksonInject;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonRootName;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
 
+import java.io.BufferedInputStream;
+import java.io.InputStream;
+import java.net.URL;
 import java.util.List;
 
 /**
@@ -16,21 +22,39 @@ public class XWS2Upgrades {
     private static String remoteUrl = "https://raw.githubusercontent.com/Mu0n/XWVassalOTA2e/master/upgrades.json";
 
 
-    @JsonProperty("upgrades")
-    private List<anUpgrade> upgrades = Lists.newArrayList();
+    @JsonProperty("name")
+    private String name;
 
-    public List<anUpgrade> getUpgrades() { return this.upgrades; }
+    @JsonProperty("limited")
+    private int limited;
 
+    @JsonProperty("sides")
+    List<side> sides = Lists.newArrayList();
 
-    public static class anUpgrade{
-        public anUpgrade() { super(); }
-        public anUpgrade(String name){
-            this.name = name;
+    public String getName() { return this.name;}
+    public int getLimited() { return this.limited; }
+    public List<side> getSides() { return this.sides; }
+
+    public static class side{
+        public side() { super(); }
+        public side(String title, String type, String ability){
+            this.title = title;
+            this.type = type;
+            this.ability = ability;
         }
-        @JsonProperty("name")
-        private String name;
 
-        public String getName() { return this.name;}
+        @JsonProperty("title")
+        private String title;
+
+        @JsonProperty("type")
+        private String type;
+
+        @JsonProperty("ability")
+        private String ability;
+
+        public String getTitle() { return this.title; }
+        public String getType() { return this.type; }
+        public String getAbility() { return this.ability; }
     }
 
     public static class upgradesDataSources{
@@ -66,12 +90,29 @@ public class XWS2Upgrades {
         List<XWS2Upgrades> allUpgrades = Lists.newArrayList();
         for(oneUpgradeDataSource oUDS : whereToGetUpgrades.getUpgrades()){
             try {
-                allUpgrades.add(Util.loadRemoteJson(oUDS.getURL(), XWS2Upgrades.class));
+                List<XWS2Upgrades> aList = XWS2Upgrades.loadRemoteJsonArray(new URL(oUDS.getURL()));
+                for(XWS2Upgrades anUp : aList){
+                    allUpgrades.add(anUp);
+                }
+
             }catch (Exception e){
                 Util.logToChat(e.getMessage() + " on upgrade type " + oUDS.getName());
                 continue;
             }
         }
         return allUpgrades;
+    }
+
+    private static ObjectMapper mapper = new ObjectMapper()
+            .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+
+    public static List<XWS2Upgrades> loadRemoteJsonArray(URL url) {
+        try {
+            InputStream inputStream = new BufferedInputStream(url.openStream());
+            return mapper.readValue(inputStream,  mapper.getTypeFactory().constructCollectionType(List.class, XWS2Upgrades.class));
+        } catch (Exception e) {
+            System.out.println("Unhandled error parsing remote json: \n" + e.toString());
+            return null;
+        }
     }
 }

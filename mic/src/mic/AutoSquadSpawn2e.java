@@ -96,24 +96,28 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
         final JPanel anUpgradePanel = new JPanel();
         anUpgradePanel.setLayout(new BoxLayout(anUpgradePanel, BoxLayout.X_AXIS));
         anUpgradePanel.add(Box.createRigidArea(new Dimension(25,0)));
-        JComboBox upgradeTypes = new JComboBox();
-        upgradeTypes.addItem("Select Upgrade Type.");
-        JComboBox upgrades = new JComboBox();
-        for(XWS2Upgrades ups : allUpgrades) {
-            for(XWS2Upgrades.anUpgrade anUp : ups.getUpgrades())
-            {
-                upgrades.addItem(anUp.getName());
-            }
-        }
+        final JComboBox upgradeTypesComboBox = new JComboBox();
+        final JComboBox upgradesComboBox = new JComboBox();
+        upgradeTypesComboBox.addItem("Select Upgrade Type.");
+        populateUpgradeTypes(upgradeTypesComboBox, allUpgrades);
+        upgradeTypesComboBox.addItemListener(new ItemListener() {
+                                                 @Override
+                                                 public void itemStateChanged(ItemEvent e) {
+                                                    upgradesComboBox.removeAllItems();
+                                                    for(XWS2Upgrades ups : allUpgrades){
+                                                        if(upgradeTypesComboBox.getSelectedItem().equals(ups.getSides().get(0).getType())) upgradesComboBox.addItem(ups.getName());
+                                                    }
+                                                 }
+                                             });
         JButton addUpg = new JButton("Add");
         addUpg.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                addUpgradeEntry(upgradeWholeBoxForShipPanel, frame);
+                addUpgradeEntry(upgradeWholeBoxForShipPanel, frame, allUpgrades);
             }
         });
-        anUpgradePanel.add(upgradeTypes);
-        anUpgradePanel.add(upgrades);
+        anUpgradePanel.add(upgradeTypesComboBox);
+        anUpgradePanel.add(upgradesComboBox);
         anUpgradePanel.add(addUpg);
 
         upgradeWholeBoxForShipPanel.add(anUpgradePanel);
@@ -121,14 +125,14 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
 
         JButton addShipButton = new JButton("Add Ship");
         addShipButton.addActionListener(new ActionListener() {public void actionPerformed(ActionEvent evt) {
-            cloneShipBehavior(false, empireShipComboList, empirePilotComboList, rootPanel, frame, allShips);
+            cloneShipBehavior(false, empireShipComboList, empirePilotComboList, rootPanel, frame, allShips, allUpgrades);
         }
         });
         JButton cloneShipButton = new JButton("Clone Ship");
         cloneShipButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                cloneShipBehavior(true, empireShipComboList, empirePilotComboList, rootPanel, frame, allShips);
+                cloneShipBehavior(true, empireShipComboList, empirePilotComboList, rootPanel, frame, allShips, allUpgrades);
             }
         });
 
@@ -165,7 +169,7 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
         cloneButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                cloneShipBehavior(true, empireShipComboList,empirePilotComboList, rootPanel, frame, allShips);
+                cloneShipBehavior(true, empireShipComboList,empirePilotComboList, rootPanel, frame, allShips, allUpgrades);
             }
         });
 
@@ -186,13 +190,41 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
         frame.requestFocus();
     }
 
-    private void addUpgradeEntry(final JPanel theUpgPanel, final JFrame frame) {
+    private void populateUpgradeTypes(JComboBox upgradeTypesComboBox, List<XWS2Upgrades> allUpgrades) {
+        List<String> upgradeTypesSoFar = Lists.newArrayList();
+        for(XWS2Upgrades up : allUpgrades)
+        {
+            for(XWS2Upgrades.side side : up.getSides())
+            {
+                if(upgradeTypesSoFar.contains(side.getType()) == false) upgradeTypesSoFar.add(side.getType());
+            }
+        }
+        for(String s : upgradeTypesSoFar)
+        {
+            upgradeTypesComboBox.addItem(s);
+        }
+    }
+
+    private void addUpgradeEntry(final JPanel theUpgPanel, final JFrame frame, final List<XWS2Upgrades> allUpgrades) {
         final JPanel anUpgradePanel = new JPanel();
         anUpgradePanel.setLayout(new BoxLayout(anUpgradePanel, BoxLayout.X_AXIS));
         anUpgradePanel.add(Box.createRigidArea(new Dimension(25,0)));
-        JComboBox upgradeTypes = new JComboBox();
-        upgradeTypes.addItem("Select Upgrade Type.");
-        JComboBox upgrades = new JComboBox();
+        final JComboBox upgradeTypesComboBox = new JComboBox();
+        upgradeTypesComboBox.addItem("Select Upgrade Type.");
+        populateUpgradeTypes(upgradeTypesComboBox, allUpgrades);
+
+        final JComboBox upgradesComboBox = new JComboBox();
+
+        upgradeTypesComboBox.addItemListener(new ItemListener() {
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+                upgradesComboBox.removeAllItems();
+                for(XWS2Upgrades ups : allUpgrades){
+                    if(upgradeTypesComboBox.getSelectedItem().equals(ups.getSides().get(0).getType())) upgradesComboBox.addItem(ups.getName());
+                }
+            }
+        });
+
         JButton remUpg = new JButton("[X]");
         remUpg.addActionListener(new ActionListener() {
             @Override
@@ -207,8 +239,8 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
                 frame.invalidate();
             }
         });
-        anUpgradePanel.add(upgradeTypes);
-        anUpgradePanel.add(upgrades);
+        anUpgradePanel.add(upgradeTypesComboBox);
+        anUpgradePanel.add(upgradesComboBox);
         anUpgradePanel.add(remUpg);
 
         theUpgPanel.add(anUpgradePanel);
@@ -218,7 +250,7 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
         frame.pack();
     }
 
-    private void cloneShipBehavior(final boolean wantCloning, final JComboBox toCopyShip, final JComboBox toCopyPilot, final JPanel rootPanel, final JFrame frame, final List<XWS2Pilots> allShips) {
+    private void cloneShipBehavior(final boolean wantCloning, final JComboBox toCopyShip, final JComboBox toCopyPilot, final JPanel rootPanel, final JFrame frame, final List<XWS2Pilots> allShips, final List<XWS2Upgrades> allUpgrades) {
         if(toCopyShip.getSelectedItem().toString().equals("Select a ship.")) {
             JFrame warnFrame = new JFrame();
             JOptionPane.showMessageDialog(warnFrame, "Please select a ship and a pilot before cloning.");
@@ -271,6 +303,10 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
 
         final JPanel anotherPanel = new JPanel();
 
+        anotherPanel.add(Box.createRigidArea(new Dimension(15,15)));
+        anotherPanel.add(new JSeparator());
+        anotherPanel.add(Box.createRigidArea(new Dimension(15,15)));
+
         anotherPanel.add(empireShipComboList);
         anotherPanel.add(empirePilotComboList);
 
@@ -282,7 +318,7 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
         cloneButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                cloneShipBehavior(true, empireShipComboList,empirePilotComboList, rootPanel, frame, allShips);
+                cloneShipBehavior(true, empireShipComboList,empirePilotComboList, rootPanel, frame, allShips, allUpgrades);
             }
         });
         removeButton.addActionListener(new ActionListener() {public void actionPerformed(ActionEvent evt) {
@@ -302,14 +338,23 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
         anotherUpgradeWholeThing.setLayout(new BoxLayout(anotherUpgradeWholeThing, BoxLayout.Y_AXIS));
         JPanel firstUpgrade = new JPanel();
         firstUpgrade.setLayout(new BoxLayout(firstUpgrade, BoxLayout.X_AXIS));
-        JComboBox newUTypes = new JComboBox();
+        final JComboBox newUTypes = new JComboBox();
         newUTypes.addItem("Select Upgrade Type.");
-        JComboBox newUpgradeCombo = new JComboBox();
+        final JComboBox newUpgradeCombo = new JComboBox();
+        populateUpgradeTypes(newUTypes, allUpgrades);
         JButton newUpgButton = new JButton("Add");
+        newUpgradeCombo.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                    newUpgradeCombo.removeAllItems();
+                    for(XWS2Upgrades ups : allUpgrades){
+                        if(newUTypes.getSelectedItem().equals(ups.getSides().get(0).getType())) newUpgradeCombo.addItem(ups.getName());
+                    }
+        }});
         newUpgButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                addUpgradeEntry(anotherUpgradeWholeThing, frame);
+                addUpgradeEntry(anotherUpgradeWholeThing, frame, allUpgrades);
             }
         });
         firstUpgrade.add(newUTypes);
@@ -320,6 +365,7 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
         rootPanel.add(anotherPanel);
         rootPanel.add(anotherUpgradeWholeThing);
         rootPanel.setSize(new Dimension(rootPanel.getWidth(), rootPanel.getHeight() + anotherUpgradeWholeThing.getHeight()));
+        anotherUpgradeWholeThing.updateUI();
         rootPanel.updateUI();
         frame.setSize(new Dimension(frame.getWidth(), frame.getHeight() + anotherUpgradeWholeThing.getHeight()));
         frame.validate();
