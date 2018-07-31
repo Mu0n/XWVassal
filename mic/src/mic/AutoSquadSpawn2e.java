@@ -343,7 +343,7 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
         final JComboBox newUpgradeCombo = new JComboBox();
         populateUpgradeTypes(newUTypes, allUpgrades);
         JButton newUpgButton = new JButton("Add");
-        newUpgradeCombo.addActionListener(new ActionListener() {
+        newUTypes.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                     newUpgradeCombo.removeAllItems();
