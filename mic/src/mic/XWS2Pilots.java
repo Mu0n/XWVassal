@@ -9,7 +9,7 @@ import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class XWS2Pilots {
-    private static String remoteUrl = "https://raw.githubusercontent.com/guidokessels/xwing-data2/master/data/pilots/galactic-empire/alpha-class-star-wing.json";
+    private static String remoteUrl = "https://raw.githubusercontent.com/Mu0n/XWVassalOTA2e/master/ships.json";
 
     @JsonProperty("name")
     private String name;
@@ -106,8 +106,45 @@ public class XWS2Pilots {
 
     }
 
-    public static XWS2Pilots loadFromRemote() {
-        return Util.loadRemoteJson(remoteUrl, XWS2Pilots.class);
+    public static class pilotsDataSources{
+        public pilotsDataSources() { super(); }
+        public pilotsDataSources(List<oneShipDataSource> ships){
+            this.ships = ships;
+        }
+        @JsonProperty("ships")
+        List<oneShipDataSource> ships = Lists.newArrayList();
+
+        public List<oneShipDataSource> getShips(){return this.ships;}
+    }
+
+    public static class oneShipDataSource{
+        public oneShipDataSource() { super();}
+        public oneShipDataSource(String name, String url){
+            this.name = name;
+            this.url = url;
+        }
+        @JsonProperty("name")
+        private String name;
+
+        @JsonProperty("url")
+        private String url;
+
+        public String getName(){return this.name;}
+        public String getURL(){return this.url;}
+    }
+    public static List<XWS2Pilots> loadFromRemote() {
+        pilotsDataSources whereToGetPilots = Util.loadRemoteJson(remoteUrl, pilotsDataSources.class);
+
+        List<XWS2Pilots> allPilots = Lists.newArrayList();
+        for(oneShipDataSource oSDS : whereToGetPilots.getShips()){
+            try {
+                allPilots.add(Util.loadRemoteJson(oSDS.getURL(), XWS2Pilots.class));
+            }catch (Exception e){
+                Util.logToChat(e.getMessage() + " on ship " + oSDS.getName());
+                continue;
+            }
+        }
+        return allPilots;
     }
 
 
