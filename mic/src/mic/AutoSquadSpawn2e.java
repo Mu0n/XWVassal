@@ -34,6 +34,9 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
 
 
     private List<JButton> spawnButtons = Lists.newArrayList();
+    private List<JButton> selfReplButtonList = Lists.newArrayList();
+    private List<JPanel> selfReplPanelList = Lists.newArrayList();
+
 
     private void spawnPiece(GamePiece piece, Point position, Map playerMap) {
         Command placeCommand = playerMap.placeOrMerge(piece, position);
@@ -54,8 +57,12 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
             return;
         }
 
+
+        final JFrame frame = new JFrame();
+        frame.setPreferredSize(new Dimension(1200,1300));
+
         //Panel which will include a Combo box for selecting the source of the xwing-data to use
-        JPanel rootPanel = new JPanel();
+        final JPanel rootPanel = new JPanel();
         rootPanel.setLayout(new BoxLayout(rootPanel, BoxLayout.Y_AXIS));
         JPanel sourcePanel = new JPanel();
         sourcePanel.setLayout(new BoxLayout(sourcePanel, BoxLayout.X_AXIS));
@@ -67,6 +74,12 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
 
         JLabel sourceExplanationLabel = new JLabel("This is a rough preliminary version of the 2nd edition squad autospawn window.");
         final JComboBox galacticEmpireComboBox = new JComboBox();
+        JButton firstButton = new JButton("click me");
+        firstButton.addActionListener(new ActionListener() {public void actionPerformed(ActionEvent evt) {
+            selfReplicate(rootPanel, frame);
+        }
+        });
+        selfReplButtonList.add(new JButton("click me"));
 
 
         sourcePanel.add(sourceExplanationLabel);
@@ -84,13 +97,36 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
         rootPanel.add(Box.createRigidArea(new Dimension(0,8)));
         rootPanel.add(explanationPanel);
         rootPanel.add(galacticEmpireComboBox);
-
-        JFrame frame = new JFrame();
-        frame.setPreferredSize(new Dimension(800,500));
+        rootPanel.add(firstButton);
+        JScrollPane jSP = new JScrollPane(rootPanel);
         frame.add(rootPanel);
+        frame.add(jSP);
 
         String userInput = "";
+
         userInput = JOptionPane.showInputDialog(frame, rootPanel, "2.0 Squad AutoSpawn for player " + Integer.toString(playerInfo.getSide()), JOptionPane.PLAIN_MESSAGE);
+
+        if("ok".equals(userInput)){
+            XWS2Pilots alphaClassTest = XWS2Pilots.loadFromRemote();
+            for(XWS2Pilots.Pilot2e pilot : alphaClassTest.getPilots()){
+                logToChat("pilot " + pilot.getName());
+            }
+        }
+    }
+
+    private void selfReplicate(final JPanel rootPanel, final JFrame frame) {
+        JButton another = new JButton("Click me");
+        another.addActionListener(new ActionListener() {public void actionPerformed(ActionEvent evt) {
+            selfReplicate(rootPanel, frame);
+        }
+        });
+        rootPanel.add(another);
+        rootPanel.setSize(new Dimension(rootPanel.getWidth(), rootPanel.getHeight() + another.getHeight()));
+        rootPanel.updateUI();
+        frame.setSize(new Dimension(frame.getWidth(), frame.getHeight() + another.getHeight()));
+        frame.validate();
+        frame.invalidate();
+        frame.pack();
     }
 
 
