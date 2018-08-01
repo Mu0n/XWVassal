@@ -137,6 +137,14 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
 
         rootPanel.add(entryField);
 
+        JButton createXWS2Button = new JButton("Export to XWS2");
+        createXWS2Button.setToolTipText("XWS2 is a community-defined text format used by squad builders (web, apps, etc.) in order to exchange squads.");
+        createXWS2Button.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                generateXWS2(rootPanel, entryField);
+            }
+        });
         JButton validateButton = new JButton("Spawn List");
         validateButton.addActionListener(new ActionListener() {
             @Override
@@ -147,6 +155,7 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
             }
         });
 
+        rootPanel.add(createXWS2Button);
         rootPanel.add(validateButton);
         JButton cloneButton = new JButton("Clone Ship");
         cloneButton.addActionListener(new ActionListener() {
@@ -171,6 +180,10 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
         frame.setVisible(true);
         frame.toFront();
         frame.requestFocus();
+    }
+
+    private void generateXWS2(JPanel rootPanel, JTextField entryField) {
+        entryField.setText("yeah da button works.");
     }
 
 
