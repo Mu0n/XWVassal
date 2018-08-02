@@ -47,6 +47,7 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
     //Main interface via a Java Swing JFrame. The complexity has outgrown an InputDialog - we now use ActionListener on the JComboBox and JButton to react to the user commands
     private void spawnForPlayer(int playerIndex) {
 
+        final String faction = "Galactic Empire";
         Map playerMap = getPlayerMap(playerIndex);
         if (playerMap == null) {
             logToChat("Unexpected error, couldn't find map for player side " + playerIndex);
@@ -83,10 +84,8 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
 
         final JComboBox empirePilotComboList = new JComboBox();
         empirePilotComboList.setToolTipText("Select a pilot");
-        for(XWS2Pilots ship : allShips)
-        {
-            empireShipComboList.addItem(ship.getName());
-        }
+        populateShipComboBox(empireShipComboList, faction, allShips);
+
         empireShipComboList.addItemListener(new ItemListener() {
             @Override
             public void itemStateChanged(ItemEvent e) {
@@ -108,14 +107,14 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
 
         JButton addShipButton = new JButton("Add Ship");
         addShipButton.addActionListener(new ActionListener() {public void actionPerformed(ActionEvent evt) {
-            copyOrCloneShipButtonBehavior(false, empireShipComboList, empirePilotComboList, rootPanel, frame, allShips, allUpgrades);
+            copyOrCloneShipButtonBehavior(faction, false, empireShipComboList, empirePilotComboList, rootPanel, frame, allShips, allUpgrades);
         }
         });
         JButton cloneShipButton = new JButton("Clone Ship");
         cloneShipButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                copyOrCloneShipButtonBehavior(true, empireShipComboList, empirePilotComboList, rootPanel, frame, allShips, allUpgrades);
+                copyOrCloneShipButtonBehavior(faction, true, empireShipComboList, empirePilotComboList, rootPanel, frame, allShips, allUpgrades);
             }
         });
 
@@ -155,13 +154,18 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
             }
         });
 
-        rootPanel.add(createXWS2Button);
-        rootPanel.add(validateButton);
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.X_AXIS));
+
+        buttonPanel.add(createXWS2Button);
+        buttonPanel.add(validateButton);
+
+        rootPanel.add(buttonPanel);
         JButton cloneButton = new JButton("Clone Ship");
         cloneButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                copyOrCloneShipButtonBehavior(true, empireShipComboList,empirePilotComboList, rootPanel, frame, allShips, allUpgrades);
+                copyOrCloneShipButtonBehavior(faction, true, empireShipComboList,empirePilotComboList, rootPanel, frame, allShips, allUpgrades);
             }
         });
 
@@ -259,8 +263,15 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
     }
 
 
+    private void populateShipComboBox(JComboBox shipComboBox, String faction, List<XWS2Pilots> allShips)
+    {
+        for(XWS2Pilots ship : allShips)
+        {
+            if(ship.getFaction().equals(faction)) shipComboBox.addItem(ship.getName());
+        }
+    }
     //Reacts to both "Add Ship" and "Clone Ship" buttons
-    private void copyOrCloneShipButtonBehavior(final boolean wantCloning, final JComboBox toCopyShip, final JComboBox toCopyPilot, final JPanel rootPanel, final JFrame frame, final List<XWS2Pilots> allShips, final List<XWS2Upgrades> allUpgrades) {
+    private void copyOrCloneShipButtonBehavior(final String faction, final boolean wantCloning, final JComboBox toCopyShip, final JComboBox toCopyPilot, final JPanel rootPanel, final JFrame frame, final List<XWS2Pilots> allShips, final List<XWS2Upgrades> allUpgrades) {
         if(toCopyShip.getSelectedItem().toString().equals("Select a ship.")) {
             JFrame warnFrame = new JFrame();
             JOptionPane.showMessageDialog(warnFrame, "Please select a ship and a pilot before cloning.");
@@ -269,10 +280,8 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
         final JComboBox empireShipComboList = new JComboBox();
         empireShipComboList.setToolTipText("Select a ship.");
         empireShipComboList.addItem("Select a ship.");
-        for(XWS2Pilots ship : allShips)
-        {
-            empireShipComboList.addItem(ship.getName());
-        }
+
+        populateShipComboBox(empireShipComboList, faction, allShips);
         if(wantCloning==true){
             empireShipComboList.setSelectedItem(toCopyShip.getSelectedItem());
         }
@@ -330,7 +339,7 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
         cloneButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                copyOrCloneShipButtonBehavior(true, empireShipComboList,empirePilotComboList, rootPanel, frame, allShips, allUpgrades);
+                copyOrCloneShipButtonBehavior(faction,true, empireShipComboList,empirePilotComboList, rootPanel, frame, allShips, allUpgrades);
             }
         });
         removeButton.addActionListener(new ActionListener() {public void actionPerformed(ActionEvent evt) {
