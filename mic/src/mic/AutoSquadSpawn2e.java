@@ -77,6 +77,7 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
 
         JLabel sourceExplanationLabel = new JLabel("This is a rough preliminary version of the 2nd edition squad autospawn window.");
         final JTextField entryField = new JTextField("Enter a valid XWS2 squad here.");
+        entryField.setSize(850,150);
 
         final JComboBox empireShipComboList = new JComboBox();
         empireShipComboList.setToolTipText("Select a ship.");
@@ -187,7 +188,13 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
     }
 
     private void generateXWS2(JPanel rootPanel, JTextField entryField) {
+        String cumulativePile = "";
         entryField.setText("yeah da button works.");
+        for(Component c : rootPanel.getComponents())
+        {
+            cumulativePile += c.getName()  + " ";
+        }
+        entryField.setText(cumulativePile);
     }
 
 
