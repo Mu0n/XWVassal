@@ -183,42 +183,52 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
     private void generateXWS2(JPanel rootPanel, JTextField entryField) {
         String cumulativePile = "{\"description\":\"\",\"faction\":\"imperial\",\"name\":\"New Squadron\",\"pilots\":[{";
 
-
         List<ReadShipInfo> stuffToXWS = Lists.newArrayList();
 
         //start at rootpanel. The ship+pilot is going to be under a JPanel
         //their upgrades are going to be under a JPanel/JPanel
+        ReadShipInfo currentShip = new ReadShipInfo();
+
+        boolean aShipWasDetected = false;
+
         for(Component c : rootPanel.getComponents())
         {
             //a JPanel is found - will probably find a ship
             if(c.getClass().toString().equals(JPanel.class.toString())){
                 int comboBoxSeenCount = 0;
-                ReadShipInfo currentShip = new ReadShipInfo();
-
-                //check for a ship under rootPanel/JPanel
+                int upgradeSeenCount = 0;
+                //check for a ship under rootPanel/JPanel hopefully oneShipPanel, or wholeUpgradePanel
                 for(Component d : ((JPanel)c).getComponents()){
-                    //found a combobox. might be ship or pilot
+                    //found a combobox. might be ship or pilot.
                     if(d.getClass().toString().equals(JComboBox.class.toString()))
                     {
                         //the ship hasn't been selected, so get out of this rootPanel/JPanel loop
                         if(((JComboBox) d).getSelectedItem().equals("Select a ship.")) break;
                         else {
-                            if(comboBoxSeenCount%2==0) {
-                                comboBoxSeenCount++;
+                            if(comboBoxSeenCount==0) {
+                                if(aShipWasDetected){
+                                    //looped to new ship
+                                    logToChat("adding a xws ship");
+                                    logToChat("current ship type "+ currentShip.getShipType() + " and pilot " + currentShip.getShipName());
+                                    stuffToXWS.add(currentShip);
+                                    currentShip = new ReadShipInfo();
+                                    aShipWasDetected = false;
+                                }
+                                comboBoxSeenCount = 1;
                                 currentShip.setTypeName(Canonicalizer.getCleanedName((((JComboBox) d).getSelectedItem()).toString()));
-                                continue;
                             }
-                            else if(comboBoxSeenCount%2 == 1)
+                            else if(comboBoxSeenCount== 1)
                             {
-                                comboBoxSeenCount++;
+                                comboBoxSeenCount = 2;
                                 currentShip.setShipName(Canonicalizer.getCleanedName((((JComboBox) d).getSelectedItem()).toString()));
+                                aShipWasDetected = true;
+                                comboBoxSeenCount=0;
                             }
                         }
                     }
-                    //getting to rootPanel/JPanel/JPanel a series of upgrades
+                    //getting to rootPanel/JPanela series of upgrades wholeUpgradePanel/anUpgradePanel
                     else if(d.getClass().toString().equals(JPanel.class.toString()))
                     {
-                        int upgradeSeenCount = 1;
                         String detectedType = "";
                         String detectedUpg = "";
 
@@ -227,42 +237,62 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
                             {
                                 if(((JComboBox) e).getSelectedItem().equals("Select Upgrade Type.")) break;
                                 else {
-                                    if(upgradeSeenCount%2!=0){
+                                    if(upgradeSeenCount==0){
                                         detectedType = Canonicalizer.getCleanedName((((JComboBox) e).getSelectedItem()).toString());
-                                        upgradeSeenCount++;
-                                    }else {
+                                        logToChat("detected up type " + detectedType);
+                                        upgradeSeenCount=1;
+                                    }else if(upgradeSeenCount==1){
                                         detectedUpg = Canonicalizer.getCleanedName((((JComboBox) e).getSelectedItem()).toString());
-                                        upgradeSeenCount++;
+                                        logToChat("detected up name " + detectedUpg);
+                                        upgradeSeenCount=2;
                                     }
-                                    if(!detectedType.equals("") && !detectedUpg.equals("")){
+                                    if(upgradeSeenCount==2){
                                         currentShip.addUpgrade(detectedType, detectedUpg);
-                                        detectedType = "";
-                                        detectedUpg = "";
+                                        upgradeSeenCount=0;
                                     }
                                 }
                             }
-                        }
-                    } //end of a series of upgrades
+                        } //end of the for loop of a series of upgrades, maybe found some, maybe didn't.
+                        //gets only 1 upgrade per ship HERE
+                    } //end if of a series of upgrades, maybe found some, maybe didn't.
+                    //makes too many ship entries HERE
 
                 }//end of for loop
-                stuffToXWS.add(currentShip);
-                //write out the ship
             } //end of rootPanel/JPanel (of a ship)
         }//end of rootPanel
+
+//adds the last ship
+        if(aShipWasDetected){
+            //last ship to add at the end of everything
+            logToChat("adding a xws ship");
+            logToChat("current ship type "+ currentShip.getShipType() + " and pilot " + currentShip.getShipName());
+            stuffToXWS.add(currentShip);
+        }
 
         cumulativePile+="}],\"points\":88,\"vendor\":{\"yasb\":{\"builder\":\"(Yet Another) X-Wing Miniatures Squad Builder\",\"builder_url\":\"https://raithos.github.io/\",\"link\":\"https://raithos.github.io/?f=Galactic%20Empire&d=v4!s!168:-1,10,-1,-1,-1,-1:-1:-1:;217:116,-1:-1:-1:&sn=New%20Squadron&obs=\"}},\"version\":\"0.3.0\"}";
         entryField.setText(cumulativePile);
         String output = "";
+
+        logToChat("stuff xws has this many elements " + Integer.toString(stuffToXWS.size()));
         for(ReadShipInfo rsi : stuffToXWS){
-            output+=" shiptype: " + rsi.getShipType() + " pilot: " + rsi.getShipName();
+            String shipString =" shiptype: " + rsi.getShipType() + " pilot: " + rsi.getShipName();
+            logToChat(shipString);
+            output+= shipString;
             for(ReadUpgradesInfo rui : rsi.getUpgradeBins())
             {
-                output+= " upgType: " + rui.getType();
+
+                String updateTypeString = " upgType: " + rui.getType();
+                logToChat(updateTypeString);
+                output += updateTypeString;
                 for(String u : rui.getUpgrades()){
-                    output += " " + u + " ";
+
+                    String updateString = " " + u + ", ";
+                    logToChat(updateString);
+                    output+=updateString;
                 }
             }
         }
+
         JOptionPane.showMessageDialog(null, output);
     }
 
@@ -473,7 +503,6 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
                 upgradeBins.add(new ReadUpgradesInfo(type, upgrade));
             }
         }
-
     }
 
     public static class ReadUpgradesInfo{
