@@ -162,18 +162,11 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
         buttonPanel.add(validateButton);
 
         rootPanel.add(buttonPanel);
-        JButton cloneButton = new JButton("Clone Ship");
-        cloneButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                copyOrCloneShipButtonBehavior(faction, true, empireShipComboList,empirePilotComboList, rootPanel, frame, allShips, allUpgrades);
-            }
-        });
 
         oneShipPanel.add(empireShipComboList);
         oneShipPanel.add(empirePilotComboList);
         oneShipPanel.add(addShipButton);
-        oneShipPanel.add(cloneButton);
+        oneShipPanel.add(cloneShipButton);
 
         rootPanel.add(oneShipPanel);
         rootPanel.add(upgradeWholeBoxForShipPanel);
@@ -188,15 +181,71 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
     }
 
     private void generateXWS2(JPanel rootPanel, JTextField entryField) {
-        String cumulativePile = "";
-        entryField.setText("yeah da button works.");
+        String cumulativePile = "{\"description\":\"\",\"faction\":\"imperial\",\"name\":\"New Squadron\",\"pilots\":[{";
+
+        //start at rootpanel. The ship+pilot is going to be under a JPanel
+        //their upgrades are going to be under a JPanel/JPanel
         for(Component c : rootPanel.getComponents())
         {
-            cumulativePile += c.getName()  + " ";
-        }
-        entryField.setText(cumulativePile);
-    }
 
+            List<String> shipStrings = Lists.newArrayList();
+            List<String> pilotStrings = Lists.newArrayList();
+
+            List<List<String>> upgradeTypes = Lists.newArrayList();
+            List<List<String>> upgradeNames = Lists.newArrayList();
+
+            //a JPanel is found - will probably find a ship
+            if(c.getClass().toString().equals(JPanel.class.toString())){
+                boolean shipIsRead = false;
+                List<String> subUpType = Lists.newArrayList();
+                List<String> subUpName = Lists.newArrayList();
+
+                //check for a ship under rootPanel/JPanel
+                for(Component d : ((JPanel)c).getComponents()){
+                    //found a combobox. might be ship or pilot
+                    if(d.getClass().toString().equals(JComboBox.class.toString()))
+                    {
+                        //the ship hasn't been selected, so get out of this rootPanel/JPanel loop
+                        if(((JComboBox) d).getSelectedItem().equals("Select a ship.")) break;
+                        else {
+                            if(shipIsRead == false) {
+                                shipIsRead = true;
+                                shipStrings.add(Canonicalizer.getCleanedName((((JComboBox) d).getSelectedItem()).toString()));
+                                continue;
+                            }
+                            if(shipIsRead == true)
+                            {
+                                pilotStrings.add(Canonicalizer.getCleanedName((((JComboBox) d).getSelectedItem()).toString()));
+                            }
+                        }
+                    }
+                    //getting to rootPanel/JPanel/JPanel a series of upgrades
+                    else if(d.getClass().toString().equals(JPanel.class.toString()))
+                    {
+                        for(Component e : ((JPanel) d).getComponents()){
+                            if(e.getClass().toString().equals(JComboBox.class.toString()))
+                            {
+                                if(((JComboBox) e).getSelectedItem().equals("Select Upgrade Type.")) break;
+                                else cumulativePile += Canonicalizer.getCleanedName((((JComboBox) e).getSelectedItem()).toString()) + " ";
+                            }
+                        }
+                    } //end of a series of upgrades
+
+                }
+                //write out the ship
+                if(shipIsRead == true && !shipStrings.isEmpty() && !pilotStrings.isEmpty())
+                {
+                    for(int i=0; i < shipStrings.size(); i++){
+                        cumulativePile += "\"name\":\""+pilotStrings.get(i)+"\",";
+                        cumulativePile += "\"ship\":\""+shipStrings.get(i)+"\"";
+                    }
+                }
+            } //end of rootPanel/JPanel (of a ship)
+        }//end of rootPanel
+        cumulativePile+="}],\"points\":88,\"vendor\":{\"yasb\":{\"builder\":\"(Yet Another) X-Wing Miniatures Squad Builder\",\"builder_url\":\"https://raithos.github.io/\",\"link\":\"https://raithos.github.io/?f=Galactic%20Empire&d=v4!s!168:-1,10,-1,-1,-1,-1:-1:-1:;217:116,-1:-1:-1:&sn=New%20Squadron&obs=\"}},\"version\":\"0.3.0\"}";
+        entryField.setText(cumulativePile);
+        //JOptionPane.showMessageDialog(null, cumulativePile);
+    }
 
     //Helper method that will populate the leftmost combobox for an upgrade - lists the types of upgrades (should be fairly stable)
     private void populateUpgradeTypes(JComboBox upgradeTypesComboBox, List<XWS2Upgrades> allUpgrades) {
