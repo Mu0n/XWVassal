@@ -45,9 +45,11 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
     }
 
     //Main interface via a Java Swing JFrame. The complexity has outgrown an InputDialog - we now use ActionListener on the JComboBox and JButton to react to the user commands
-    private void spawnForPlayer(int playerIndex) {
+    private void spawnForPlayer(final int playerIndex) {
+        final List<String> factionsWanted = Lists.newArrayList();
+        factionsWanted.add("Galactic Empire");
+        factionsWanted.add("Rebel Alliance");
 
-        final String faction = "Galactic Empire";
         Map playerMap = getPlayerMap(playerIndex);
         if (playerMap == null) {
             logToChat("Unexpected error, couldn't find map for player side " + playerIndex);
@@ -59,6 +61,44 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
             JOptionPane.showMessageDialog(playerMap.getView(), "Cannot spawn squads for other players");
             return;
         }
+
+        final JFrame frame = new JFrame();
+        final JPanel rootPanel = new JPanel();
+        rootPanel.setLayout(new BoxLayout(rootPanel, BoxLayout.Y_AXIS));
+        JPanel sourceInfoPanel = new JPanel();
+        sourceInfoPanel.setLayout(new BoxLayout(sourceInfoPanel, BoxLayout.Y_AXIS));
+        sourceInfoPanel.setAlignmentX(JPanel.RIGHT_ALIGNMENT);
+        JLabel sourceExplanationLabel = new JLabel("This is a rough preliminary version of the 2nd edition squad autospawn window.");
+
+        sourceInfoPanel.add(sourceExplanationLabel);
+
+        rootPanel.add(sourceInfoPanel);
+        rootPanel.add(Box.createRigidArea(new Dimension(0,8)));
+        rootPanel.add(new JSeparator());
+        rootPanel.add(Box.createRigidArea(new Dimension(0,8)));
+
+        JButton builderButton = new JButton("Internal Squad Builder");
+        builderButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                internalSquadBuilder(playerIndex, factionsWanted);
+            }
+        });
+
+        rootPanel.add(builderButton);
+
+        frame.add(rootPanel);
+        frame.setSize(900,500);
+        frame.setTitle("2.0 Squad Autospawn for player " + Integer.toString(playerIndex));
+        frame.pack();
+        frame.setVisible(true);
+        frame.toFront();
+        frame.requestFocus();
+
+
+    }
+
+    private void internalSquadBuilder(int playerIndex, final List<String> factionsWanted){
         final List<XWS2Pilots> allShips = XWS2Pilots.loadFromRemote();
         final List<XWS2Upgrades> allUpgrades = XWS2Upgrades.loadFromRemote();
 
@@ -79,24 +119,24 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
         final JTextField entryField = new JTextField("Enter a valid XWS2 squad here.");
         entryField.setSize(850,150);
 
-        final JComboBox empireShipComboList = new JComboBox();
-        empireShipComboList.setToolTipText("Select a ship.");
-        empireShipComboList.addItem("Select a ship.");
+        final JComboBox ShipComboList = new JComboBox();
+        ShipComboList.setToolTipText("Select a ship.");
+        ShipComboList.addItem("Select a ship.");
 
-        final JComboBox empirePilotComboList = new JComboBox();
-        empirePilotComboList.setToolTipText("Select a pilot");
-        populateShipComboBox(empireShipComboList, faction, allShips);
+        final JComboBox PilotComboList = new JComboBox();
+        PilotComboList.setToolTipText("Select a pilot");
+        populateShipComboBox(ShipComboList, factionsWanted, allShips);
 
-        empireShipComboList.addItemListener(new ItemListener() {
+        ShipComboList.addItemListener(new ItemListener() {
             @Override
             public void itemStateChanged(ItemEvent e) {
-                empirePilotComboList.removeAllItems();
+                PilotComboList.removeAllItems();
                 for(XWS2Pilots ship : allShips){
-                    if(ship.getName().equals(empireShipComboList.getSelectedItem()))
+                    if(ship.getName().equals(ShipComboList.getSelectedItem()))
                     {
                         for(XWS2Pilots.Pilot2e pilot : ship.getPilots())
                         {
-                            empirePilotComboList.addItem(pilot.getName());
+                            PilotComboList.addItem(pilot.getName());
                         }
                     }
                 }
@@ -108,14 +148,14 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
 
         JButton addShipButton = new JButton("Add Ship");
         addShipButton.addActionListener(new ActionListener() {public void actionPerformed(ActionEvent evt) {
-            copyOrCloneShipButtonBehavior(faction, false, empireShipComboList, empirePilotComboList, rootPanel, frame, allShips, allUpgrades);
+            copyOrCloneShipButtonBehavior(factionsWanted, false, ShipComboList, PilotComboList, rootPanel, frame, allShips, allUpgrades);
         }
         });
         JButton cloneShipButton = new JButton("Clone Ship");
         cloneShipButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                copyOrCloneShipButtonBehavior(faction, true, empireShipComboList, empirePilotComboList, rootPanel, frame, allShips, allUpgrades);
+                copyOrCloneShipButtonBehavior(factionsWanted, true, ShipComboList, PilotComboList, rootPanel, frame, allShips, allUpgrades);
             }
         });
 
@@ -163,8 +203,8 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
 
         rootPanel.add(buttonPanel);
 
-        oneShipPanel.add(empireShipComboList);
-        oneShipPanel.add(empirePilotComboList);
+        oneShipPanel.add(ShipComboList);
+        oneShipPanel.add(PilotComboList);
         oneShipPanel.add(addShipButton);
         oneShipPanel.add(cloneShipButton);
 
@@ -173,7 +213,7 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
 
         frame.add(rootPanel);
         frame.setSize(900,500);
-        frame.setTitle("2.0 Squad Autospawn for player " + Integer.toString(playerInfo.getSide()));
+        frame.setTitle("2.0 Squad Autospawn for player " + Integer.toString(playerIndex));
         frame.pack();
         frame.setVisible(true);
         frame.toFront();
@@ -181,7 +221,7 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
     }
 
     private void generateXWS2(JPanel rootPanel, JTextField entryField) {
-        String cumulativePile = "{\"description\":\"\",\"faction\":\"imperial\",\"name\":\"New Squadron\",\"pilots\":[{";
+        String output = "{\"description\":\"\",\"faction\":\"imperial\",\"name\":\"New Squadron\",\"pilots\":[{";
 
         List<ReadShipInfo> stuffToXWS = Lists.newArrayList();
 
@@ -208,8 +248,6 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
                             if(comboBoxSeenCount==0) {
                                 if(aShipWasDetected){
                                     //looped to new ship
-                                    logToChat("adding a xws ship");
-                                    logToChat("current ship type "+ currentShip.getShipType() + " and pilot " + currentShip.getShipName());
                                     stuffToXWS.add(currentShip);
                                     currentShip = new ReadShipInfo();
                                     aShipWasDetected = false;
@@ -239,11 +277,9 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
                                 else {
                                     if(upgradeSeenCount==0){
                                         detectedType = Canonicalizer.getCleanedName((((JComboBox) e).getSelectedItem()).toString());
-                                        logToChat("detected up type " + detectedType);
                                         upgradeSeenCount=1;
                                     }else if(upgradeSeenCount==1){
                                         detectedUpg = Canonicalizer.getCleanedName((((JComboBox) e).getSelectedItem()).toString());
-                                        logToChat("detected up name " + detectedUpg);
                                         upgradeSeenCount=2;
                                     }
                                     if(upgradeSeenCount==2){
@@ -264,36 +300,35 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
 //adds the last ship
         if(aShipWasDetected){
             //last ship to add at the end of everything
-            logToChat("adding a xws ship");
-            logToChat("current ship type "+ currentShip.getShipType() + " and pilot " + currentShip.getShipName());
             stuffToXWS.add(currentShip);
         }
 
-        cumulativePile+="}],\"points\":88,\"vendor\":{\"yasb\":{\"builder\":\"(Yet Another) X-Wing Miniatures Squad Builder\",\"builder_url\":\"https://raithos.github.io/\",\"link\":\"https://raithos.github.io/?f=Galactic%20Empire&d=v4!s!168:-1,10,-1,-1,-1,-1:-1:-1:;217:116,-1:-1:-1:&sn=New%20Squadron&obs=\"}},\"version\":\"0.3.0\"}";
-        entryField.setText(cumulativePile);
-        String output = "";
+        for(int i=0; i< stuffToXWS.size(); i++){ //parse all ship/pilot entries
+            String shipString ="\"ship\":\"" + stuffToXWS.get(i).getShipType() + "\",";
+            String pilotString = "\"name\":\"" + stuffToXWS.get(i).getShipName() + "\",";
+            String upgradesStartString = "\"upgrades\":{";
+            output+= shipString + pilotString + upgradesStartString;
 
-        logToChat("stuff xws has this many elements " + Integer.toString(stuffToXWS.size()));
-        for(ReadShipInfo rsi : stuffToXWS){
-            String shipString =" shiptype: " + rsi.getShipType() + " pilot: " + rsi.getShipName();
-            logToChat(shipString);
-            output+= shipString;
-            for(ReadUpgradesInfo rui : rsi.getUpgradeBins())
+            for(int j=0; j<stuffToXWS.get(i).getUpgradeBins().size(); j++) //parse all upgrade types
             {
-
-                String updateTypeString = " upgType: " + rui.getType();
-                logToChat(updateTypeString);
-                output += updateTypeString;
-                for(String u : rui.getUpgrades()){
-
-                    String updateString = " " + u + ", ";
-                    logToChat(updateString);
-                    output+=updateString;
+                String upgradeTypeString = "\""+ stuffToXWS.get(i).getUpgradeBins().get(j).getType() +"\":[";
+                output += upgradeTypeString;
+                for(int k=0; k<stuffToXWS.get(i).getUpgradeBins().get(j).getUpgrades().size(); k++){ // parse upgrades within a type
+                    String upgradeString = "\""+stuffToXWS.get(i).getUpgradeBins().get(j).getUpgrades().get(k)+"\"";
+                    output+=upgradeString;
+                    if(k!=stuffToXWS.get(i).getUpgradeBins().get(j).getUpgrades().size()-1) output+=","; //not the last upgrade in an upg type
                 }
+                output+="]"; //marks the end of an upgrade type
+                if(j!=stuffToXWS.get(i).getUpgradeBins().size()-1) output+=","; //not the last upgrade type in the upgrades
             }
+            String upgradesEndString = "}"; //marks the end of upgrades
+            output += upgradesEndString;
+            output += "}"; //marks the end of a ship/pilot entry
+            if(i!=stuffToXWS.size()-1) output+= ",{"; //not the last ship/pilot entry
         }
+        output+="],\"vendor\":{\"yasb\":{\"builder\":\"(Yet Another) X-Wing Miniatures Squad Builder\",\"builder_url\":\"https://raithos.github.io/\",\"link\":\"https://raithos.github.io/?f=Galactic%20Empire&d=v4!s!168:-1,10,-1,-1,-1,-1:-1:-1:;217:116,-1:-1:-1:&sn=New%20Squadron&obs=\"}},\"version\":\"0.3.0\"}";
 
-        JOptionPane.showMessageDialog(null, output);
+        logToChat(output);
     }
 
     //Helper method that will populate the leftmost combobox for an upgrade - lists the types of upgrades (should be fairly stable)
@@ -368,15 +403,16 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
     }
 
 
-    private void populateShipComboBox(JComboBox shipComboBox, String faction, List<XWS2Pilots> allShips)
+    private void populateShipComboBox(JComboBox shipComboBox, final List<String> factionsWanted, List<XWS2Pilots> allShips)
     {
         for(XWS2Pilots ship : allShips)
         {
-            if(ship.getFaction().equals(faction)) shipComboBox.addItem(ship.getName());
+            //if(ship.getFaction().equals(factionsWanted)) shipComboBox.addItem(ship.getName());
+            if(factionsWanted.contains(ship.getFaction())) shipComboBox.addItem(ship.getName());
         }
     }
     //Reacts to both "Add Ship" and "Clone Ship" buttons
-    private void copyOrCloneShipButtonBehavior(final String faction, final boolean wantCloning, final JComboBox toCopyShip, final JComboBox toCopyPilot, final JPanel rootPanel, final JFrame frame, final List<XWS2Pilots> allShips, final List<XWS2Upgrades> allUpgrades) {
+    private void copyOrCloneShipButtonBehavior(final List<String> factionsWanted, final boolean wantCloning, final JComboBox toCopyShip, final JComboBox toCopyPilot, final JPanel rootPanel, final JFrame frame, final List<XWS2Pilots> allShips, final List<XWS2Upgrades> allUpgrades) {
         if(toCopyShip.getSelectedItem().toString().equals("Select a ship.")) {
             JFrame warnFrame = new JFrame();
             JOptionPane.showMessageDialog(warnFrame, "Please select a ship and a pilot before cloning.");
@@ -386,7 +422,7 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
         empireShipComboList.setToolTipText("Select a ship.");
         empireShipComboList.addItem("Select a ship.");
 
-        populateShipComboBox(empireShipComboList, faction, allShips);
+        populateShipComboBox(empireShipComboList, factionsWanted, allShips);
         if(wantCloning==true){
             empireShipComboList.setSelectedItem(toCopyShip.getSelectedItem());
         }
@@ -444,7 +480,7 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
         cloneButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                copyOrCloneShipButtonBehavior(faction,true, empireShipComboList,empirePilotComboList, rootPanel, frame, allShips, allUpgrades);
+                copyOrCloneShipButtonBehavior(factionsWanted,true, empireShipComboList,empirePilotComboList, rootPanel, frame, allShips, allUpgrades);
             }
         });
         removeButton.addActionListener(new ActionListener() {public void actionPerformed(ActionEvent evt) {
