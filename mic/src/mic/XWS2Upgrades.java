@@ -19,8 +19,8 @@ import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class XWS2Upgrades {
-    private static String remoteUrl = "https://gist.githubusercontent.com/guidokessels/0751793c9635eb67dcc2cad897e14b4b/raw/6ec0489ca527c49258297ead1945604bf3d3d046/xwing-data2-manifest.json";
-
+    //private static String remoteUrl = "https://gist.githubusercontent.com/guidokessels/0751793c9635eb67dcc2cad897e14b4b/raw/6ec0489ca527c49258297ead1945604bf3d3d046/xwing-data2-manifest.json";
+    private static String remoteUrl = "https://raw.githubusercontent.com/Mu0n/XWVassalOTA2e/master/upgrades.json";
 
     @JsonProperty("name")
     private String name;

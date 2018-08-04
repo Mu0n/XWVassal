@@ -9,9 +9,7 @@ import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class XWS2Pilots {
-    //private static String remoteUrl = "https://raw.githubusercontent.com/Mu0n/XWVassalOTA2e/master/ships.json";
-    private static String remoteUrl = "https://gist.githubusercontent.com/guidokessels/0751793c9635eb67dcc2cad897e14b4b/raw/6ec0489ca527c49258297ead1945604bf3d3d046/xwing-data2-manifest.json";
-    private static String rootURL = "https://raw.githubusercontent.com/guidokessels/xwing-data2/master/";
+    private static String remoteUrl = "https://raw.githubusercontent.com/Mu0n/XWVassalOTA2e/master/ships.json";
 
     @JsonProperty("name")
     private String name;
@@ -108,21 +106,15 @@ public class XWS2Pilots {
 
     }
 
-    public static class manifestSource{
-        public manifestSource() { super(); }
-        public manifestSource(List<oneFactionDataSource> oneFaction){
-            this.pilots = oneFaction;
+    public static class pilotsDataSources{
+        public pilotsDataSources() { super(); }
+        public pilotsDataSources(List<oneShipDataSource> ships){
+            this.ships = ships;
         }
-        @JsonProperty("pilots")
-        List<oneFactionDataSource> pilots = Lists.newArrayList();
+        @JsonProperty("ships")
+        List<oneShipDataSource> ships = Lists.newArrayList();
 
-        public List<oneFactionDataSource> getOneFaction(){return this.pilots;}
-    }
-
-    public static class oneFactionDataSource{
-        public oneFactionDataSource() { super(); }
-        public oneFactionDataSource(List<oneShipDataSource> ships) {this.ships = ships;}
-        @JsonProperty("")
+        public List<oneShipDataSource> getShips(){return this.ships;}
     }
 
     public static class oneShipDataSource{
@@ -154,7 +146,4 @@ public class XWS2Pilots {
         }
         return allPilots;
     }
-
-
 }
-

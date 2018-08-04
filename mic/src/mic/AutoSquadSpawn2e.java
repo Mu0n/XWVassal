@@ -8,6 +8,7 @@ import VASSAL.build.module.Map;
 import VASSAL.build.module.documentation.HelpFile;
 import VASSAL.command.Command;
 import VASSAL.counters.GamePiece;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 
 import javax.swing.*;
@@ -35,6 +36,12 @@ import static mic.Util.*;
  */
 public class AutoSquadSpawn2e extends AbstractConfigurable {
 
+    private static java.util.Map<String, String> xwingdata2ToYasb2 = ImmutableMap.<String, String>builder()
+            .put("Rebel Alliance","rebel")
+            .put("Galactic Empire","imperial")
+            .put("Scum and Villainy","scum")
+            .build();
+
 //keepsake for this whole class' behavior inside the player window - they must be kept track so they can be removed safely later
     private List<JButton> spawnButtons = Lists.newArrayList();
 
@@ -47,8 +54,6 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
     //Main interface via a Java Swing JFrame. The complexity has outgrown an InputDialog - we now use ActionListener on the JComboBox and JButton to react to the user commands
     private void spawnForPlayer(final int playerIndex) {
         final List<String> factionsWanted = Lists.newArrayList();
-        factionsWanted.add("Galactic Empire");
-        factionsWanted.add("Rebel Alliance");
 
         Map playerMap = getPlayerMap(playerIndex);
         if (playerMap == null) {
@@ -77,15 +82,56 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
         rootPanel.add(new JSeparator());
         rootPanel.add(Box.createRigidArea(new Dimension(0,8)));
 
+        final JCheckBox empireCheck = new JCheckBox("Empire");
+        empireCheck.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if(empireCheck.isSelected()) factionsWanted.add("Galactic Empire");
+                else factionsWanted.remove("Galactic Empire");
+            }
+        });
+
+        final JCheckBox allianceCheck = new JCheckBox("Alliance");
+        allianceCheck.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if(allianceCheck.isSelected()) factionsWanted.add("Rebel Alliance");
+                else factionsWanted.remove("Rebel Alliance");
+            }
+        });
+
+        final JCheckBox scumCheck = new JCheckBox("Scum and Villainy");
+        scumCheck.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if(scumCheck.isSelected()) factionsWanted.add("Scum and Villainy");
+                else factionsWanted.remove("Scum and Villainy");
+            }
+        });
+
+
+
         JButton builderButton = new JButton("Internal Squad Builder");
         builderButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                if(factionsWanted.isEmpty()) {
+                    JFrame warnFrame = new JFrame();
+                    JOptionPane.showMessageDialog(warnFrame, "Check at least 1 faction before opening the internal builder");
+                    return;
+                }
                 internalSquadBuilder(playerIndex, factionsWanted);
             }
         });
 
-        rootPanel.add(builderButton);
+        JPanel builderPanel = new JPanel();
+        builderPanel.setLayout(new BoxLayout(builderPanel,BoxLayout.X_AXIS));
+        builderPanel.add(empireCheck);
+        builderPanel.add(allianceCheck);
+        builderPanel.add(scumCheck);
+        builderPanel.add(builderButton);
+
+        rootPanel.add(builderPanel);
 
         frame.add(rootPanel);
         frame.setSize(900,500);
@@ -115,8 +161,8 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
 
         JPanel oneShipPanel = new JPanel();
 
-        JLabel sourceExplanationLabel = new JLabel("This is a rough preliminary version of the 2nd edition squad autospawn window.");
-        final JTextField entryField = new JTextField("Enter a valid XWS2 squad here.");
+        JLabel sourceExplanationLabel = new JLabel("You can build a list in this popup window. Its validity will not be checked. Illegal upgrades may be chosen and cross faction is possible.");
+        final JTextField entryField = new JTextField("Enter a valid XWS squad here.");
         entryField.setSize(850,150);
 
         final JComboBox ShipComboList = new JComboBox();
@@ -177,12 +223,16 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
 
         rootPanel.add(entryField);
 
-        JButton createXWS2Button = new JButton("Export to XWS2");
-        createXWS2Button.setToolTipText("XWS2 is a community-defined text format used by squad builders (web, apps, etc.) in order to exchange squads.");
+        JButton createXWS2Button = new JButton("Export to XWS");
+        createXWS2Button.setToolTipText("XWS is a community-defined text format used by squad builders (web, apps, etc.) in order to exchange squads.");
         createXWS2Button.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                generateXWS2(rootPanel, entryField);
+                String theFaction = "mixed";
+                if (factionsWanted.size() == 1 && xwingdata2ToYasb2.containsKey(factionsWanted.get(0).toString())) {
+                    theFaction = xwingdata2ToYasb2.get(factionsWanted.get(0).toString());
+                }
+                generateXWS(rootPanel, entryField, theFaction);
             }
         });
         JButton validateButton = new JButton("Spawn List");
@@ -220,8 +270,8 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
         frame.requestFocus();
     }
 
-    private void generateXWS2(JPanel rootPanel, JTextField entryField) {
-        String output = "{\"description\":\"\",\"faction\":\"imperial\",\"name\":\"New Squadron\",\"pilots\":[{";
+    private void generateXWS(JPanel rootPanel, JTextField entryField, String factionString) {
+        String output = "{\"description\":\"\",\"faction\":\""+factionString+"\",\"name\":\"New Squadron\",\"pilots\":[{";
 
         List<ReadShipInfo> stuffToXWS = Lists.newArrayList();
 
