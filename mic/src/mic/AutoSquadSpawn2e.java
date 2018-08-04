@@ -38,9 +38,9 @@ import static mic.Util.*;
 public class AutoSquadSpawn2e extends AbstractConfigurable {
 
     private static java.util.Map<String, String> xwingdata2ToYasb2 = ImmutableMap.<String, String>builder()
-            .put("Rebel Alliance","rebel")
-            .put("Galactic Empire","imperial")
-            .put("Scum and Villainy","scum")
+            .put("Rebel Alliance","rebelalliance")
+            .put("Galactic Empire","galacticempire")
+            .put("Scum and Villainy","scumandvillainy")
             .build();
 
 //keepsake for this whole class' behavior inside the player window - they must be kept track so they can be removed safely later
