@@ -17,6 +17,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.util.HashMap;
 import java.util.List;
 
 import static mic.Util.*;
@@ -240,8 +241,12 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
         validateButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if("ok".equals(entryArea.getText())){
-
+                XWSList xwsList = new XWSList();
+                xwsList = loadListFromRawJson(entryArea.getText());
+                try{
+                validateList(xwsList);
+                } catch (Exception exc) {
+                    logToChat("Unable to load raw JSON list '%s': %s", entryArea.getText(), exc.toString());
                 }
             }
         });
@@ -608,7 +613,80 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
         public void setType(String type) { this.type = type; }
         public void addUpgrade(String upgrade) {upgrades.add(upgrade); }
         public void removeUpgrade(String upgrade) { upgrades.remove(upgrade); }
+    }
 
+
+    private void validateList(XWSList list) throws XWSpawnException
+    {
+        boolean error = false;
+        XWSpawnException exception = new XWSpawnException();
+        XWSList newList = null;
+        HashMap<String,String> skippedPilots = new HashMap<String,String>();
+        for (XWSList.XWSPilot pilot : list.getPilots())
+        {
+
+            String shipXws = pilot.getShip();
+            String pilotXws = pilot.getXws();
+
+            // check the ship
+            if(MasterShipData.getShipData(shipXws) == null)
+            {
+
+                // the ship is not valid
+                error = true;
+                exception.addMessage("Ship "+shipXws+" was not found.  Skipping.");
+                // skippedPilots.put(pilot.getXws(),"X");
+                skippedPilots.put(pilot.getName(),"X");
+
+            }else if(MasterPilotData.getPilotData(shipXws,pilotXws,list.getFaction()) == null && MasterPilotData.getPilotData(shipXws,pilot.getName(),list.getFaction()) == null)
+            {
+
+                error = true;
+                exception.addMessage("Pilot "+pilot.getName()+" was not found.  Skipping.");
+                //  skippedPilots.put(pilot.getXws(),"X");
+                skippedPilots.put(pilot.getName(),"X");
+            }
+
+        }
+
+        if(error)
+        {
+            // create a new list, removing the pilots/ships that aren't valid
+            newList = new XWSList();
+            newList.setDescription(list.getDescription());
+            newList.setFaction(list.getFaction());
+            newList.setName(list.getName());
+            newList.setObstacles(list.getObstacles());
+            newList.setPoints(list.getPoints());
+            newList.setVendor(list.getVendor());
+            newList.setVersion(list.getVersion());
+            newList.setXwsSource(list.getXwsSource());
+
+            for (XWSList.XWSPilot pilot : list.getPilots())
+            {
+
+
+                if(skippedPilots.get(pilot.getName()) == null)
+                {
+
+                    newList.addPilot(pilot);
+                }
+            }
+            exception.setNewList(newList);
+            // throw the exception
+            throw exception;
+        }
+    }
+
+    private XWSList loadListFromRawJson(String userInput) {
+        try {
+            XWSList list = getMapper().readValue(userInput, XWSList.class);
+            list.setXwsSource("JSON");
+            return list;
+        } catch (Exception e) {
+            logToChat("Unable to load raw JSON list '%s': %s", userInput, e.toString());
+            return null;
+        }
     }
 
     public void addTo(Buildable parent) {
