@@ -154,16 +154,17 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
         rootPanel.setLayout(new BoxLayout(rootPanel, BoxLayout.Y_AXIS));
         JPanel sourcePanel = new JPanel();
         sourcePanel.setLayout(new BoxLayout(sourcePanel, BoxLayout.X_AXIS));
-        sourcePanel.setAlignmentX(JPanel.RIGHT_ALIGNMENT);
         JPanel sourceInfoPanel = new JPanel();
         sourceInfoPanel.setLayout(new BoxLayout(sourceInfoPanel, BoxLayout.Y_AXIS));
-        sourceInfoPanel.setAlignmentX(JPanel.RIGHT_ALIGNMENT);
 
         JPanel oneShipPanel = new JPanel();
 
         JLabel sourceExplanationLabel = new JLabel("You can build a list in this popup window. Its validity will not be checked. Illegal upgrades may be chosen and cross faction is possible.");
-        final JTextField entryField = new JTextField("Enter a valid XWS squad here.");
-        entryField.setSize(850,150);
+        final JTextArea entryArea = new JTextArea("Enter a valid XWS squad here.");
+        entryArea.setPreferredSize(new Dimension(850,150));
+        entryArea.setMaximumSize(new Dimension(850,150));
+        entryArea.setLineWrap(true);
+        entryArea.setAutoscrolls(true);
 
         final JComboBox ShipComboList = new JComboBox();
         ShipComboList.setToolTipText("Select a ship.");
@@ -221,7 +222,7 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
         rootPanel.add(Box.createRigidArea(new Dimension(0,8)));
         rootPanel.add(explanationPanel);
 
-        rootPanel.add(entryField);
+        rootPanel.add(entryArea);
 
         JButton createXWS2Button = new JButton("Export to XWS");
         createXWS2Button.setToolTipText("XWS is a community-defined text format used by squad builders (web, apps, etc.) in order to exchange squads.");
@@ -232,14 +233,14 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
                 if (factionsWanted.size() == 1 && xwingdata2ToYasb2.containsKey(factionsWanted.get(0).toString())) {
                     theFaction = xwingdata2ToYasb2.get(factionsWanted.get(0).toString());
                 }
-                generateXWS(rootPanel, entryField, theFaction);
+                generateXWS(rootPanel, entryArea, theFaction);
             }
         });
         JButton validateButton = new JButton("Spawn List");
         validateButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if("ok".equals(entryField.getText())){
+                if("ok".equals(entryArea.getText())){
 
                 }
             }
@@ -270,7 +271,7 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
         frame.requestFocus();
     }
 
-    private void generateXWS(JPanel rootPanel, JTextField entryField, String factionString) {
+    private void generateXWS(JPanel rootPanel, JTextArea entryArea, String factionString) {
         String output = "{\"description\":\"\",\"faction\":\""+factionString+"\",\"name\":\"New Squadron\",\"pilots\":[{";
 
         List<ReadShipInfo> stuffToXWS = Lists.newArrayList();
@@ -378,7 +379,7 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
         }
         output+="],\"vendor\":{\"yasb\":{\"builder\":\"(Yet Another) X-Wing Miniatures Squad Builder\",\"builder_url\":\"https://raithos.github.io/\",\"link\":\"https://raithos.github.io/?f=Galactic%20Empire&d=v4!s!168:-1,10,-1,-1,-1,-1:-1:-1:;217:116,-1:-1:-1:&sn=New%20Squadron&obs=\"}},\"version\":\"0.3.0\"}";
 
-        logToChat(output);
+        entryArea.setText(output);
     }
 
     //Helper method that will populate the leftmost combobox for an upgrade - lists the types of upgrades (should be fairly stable)
