@@ -56,6 +56,9 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
 
     //Main interface via a Java Swing JFrame. The complexity has outgrown an InputDialog - we now use ActionListener on the JComboBox and JButton to react to the user commands
     private void spawnForPlayer(final int playerIndex) {
+        final List<XWS2Pilots> allShips = XWS2Pilots.loadFromRemote();
+        final List<XWS2Upgrades> allUpgrades = XWS2Upgrades.loadFromRemote();
+
         final List<String> factionsWanted = Lists.newArrayList();
 
         Map playerMap = getPlayerMap(playerIndex);
@@ -123,7 +126,7 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
                     JOptionPane.showMessageDialog(warnFrame, "Check at least 1 faction before opening the internal builder");
                     return;
                 }
-                internalSquadBuilder(playerIndex, factionsWanted);
+                internalSquadBuilder(playerIndex, factionsWanted, allShips, allUpgrades);
             }
         });
 
@@ -147,9 +150,8 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
 
     }
 
-    private void internalSquadBuilder(int playerIndex, final List<String> factionsWanted){
-        final List<XWS2Pilots> allShips = XWS2Pilots.loadFromRemote();
-        final List<XWS2Upgrades> allUpgrades = XWS2Upgrades.loadFromRemote();
+    private void internalSquadBuilder(int playerIndex, final List<String> factionsWanted, final List<XWS2Pilots> allShips, final List<XWS2Upgrades> allUpgrades){
+
 
         final JFrame frame = new JFrame();
         //Panel which will include a Combo box for selecting the source of the xwing-data to use
@@ -243,13 +245,13 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
         validateButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                XWSList xwsList = new XWSList();
-                xwsList = loadListFromRawJson(entryArea.getText());
+                XWSList xwsList = loadListFromRawJson(entryArea.getText());
                 try{
                 validateList(xwsList);
                 } catch (Exception exc) {
                     logToChat("Unable to load raw JSON list '%s': %s", entryArea.getText(), exc.toString());
                 }
+                ParseThroughXWSList(xwsList);
             }
         });
 
@@ -276,6 +278,16 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
         frame.setVisible(true);
         frame.toFront();
         frame.requestFocus();
+    }
+
+    private void ParseThroughXWSList(XWSList xwsList) {
+        logToChat("XWS Parse||| faction = " + xwsList.getFaction());
+        for(XWSList.XWSPilot pilot : xwsList.getPilots())
+        {
+            logToChat("XWS Parse||| pilot = " + pilot.getName());
+            logToChat("XWS Parse||| ship = " + pilot.getShip());
+            logToChat("XWS Parse||| upgrades: ");
+        }
     }
 
     private void generateXWS(JPanel rootPanel, JTextArea entryArea, String factionString) {
