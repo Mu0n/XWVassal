@@ -824,9 +824,7 @@ public class AutoSquadSpawn extends AbstractConfigurable {
             return;
         }
 
-        int whichEdition = 0;
         XWSList xwsList = new XWSList();
-        XWSList2 xwsList2 = new XWSList2();
 
         //step 1: throw out empty entries
         if (userInput == null || userInput.length() == 0) {
@@ -835,17 +833,7 @@ public class AutoSquadSpawn extends AbstractConfigurable {
         userInput = userInput.trim();
         //step 2: detects a JSON something
         if (userInput.startsWith("{")) {
-            //step 2a (might be ditched): checks if it can find "ffgedition":"second" as a key:value; if it can't load a 1.0 list
-            if(isListFor2ndEdition(userInput) == false) {
-                xwsList = loadListFromRawJson(userInput);
-                whichEdition = 1;
-            }
-            //step 2b: loads a 2.0 JSON
-            else {
-                //TODOSPAWN2E very complex forking here - MIGHT DITCH THIS
-                xwsList2 = loadListFromRawJson2(userInput);
-                whichEdition = 2;
-            }
+            xwsList = loadListFromRawJson(userInput);
         }
         //Step 3: not a JSON, so tries to load the hard coded lists
         else if(userInput.equals("tcdemo1")){
@@ -861,7 +849,6 @@ public class AutoSquadSpawn extends AbstractConfigurable {
         }
         //step 4: did not find the hard coded lists, is not a json, so loads up a URL squad
         else {
-            whichEdition = 1;
             try {xwsList = loadListFromUrl(userInput);}
             catch(Exception e){
                 logToChat("Was not able to load the list");
@@ -876,11 +863,8 @@ public class AutoSquadSpawn extends AbstractConfigurable {
                 logToChat("Attempting to load a squad in a mode that's not the base game");
                 loadData("true".equals(mgmr.getGameMode(aComboBox.getSelectedItem().toString()).getWantFullControl())?true:false,
                         mgmr.getGameMode(aComboBox.getSelectedItem().toString()).getDispatchersURL());
-            }else
-                {
-                if(whichEdition==1) loadData();
-                else if(whichEdition==2) loadData2();
-            }
+            }else loadData();
+
             validateList(xwsList);
         }catch(XWSpawnException e)
         {
@@ -1521,11 +1505,6 @@ public class AutoSquadSpawn extends AbstractConfigurable {
         MasterPilotData.loadData();
         MasterUpgradeData.loadData();
         MasterShipData.loadData();
-    }
-    private void loadData2() {
-        this.slotLoader.loadPieces();
-        MasterPilotData.loadData2();
-        MasterUpgradeData.loadData2();
     }
 
     private void loadData(Boolean wantFullControl, String altDispatcherString) {
