@@ -1526,7 +1526,6 @@ public class AutoSquadSpawn extends AbstractConfigurable {
         this.slotLoader.loadPieces();
         MasterPilotData.loadData2();
         MasterUpgradeData.loadData2();
-        MasterShipData.loadData2();
     }
 
     private void loadData(Boolean wantFullControl, String altDispatcherString) {
@@ -1565,9 +1564,6 @@ public class AutoSquadSpawn extends AbstractConfigurable {
             XWSList list = getMapper().readValue(userInput, XWSList.class);
             list.setXwsSource("JSON");
 
-            if("second".equals(list.getFfgEdition())){
-                return true;
-            }
             return false;
         } catch (Exception e) {
             logToChat("Unable to load raw JSON list '%s': %s", userInput, e.toString());

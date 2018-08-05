@@ -46,8 +46,6 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
 //keepsake for this whole class' behavior inside the player window - they must be kept track so they can be removed safely later
     private List<JButton> spawnButtons = Lists.newArrayList();
 
-    final List<XWS2Pilots> allShips;
-    final List<XWS2Upgrades> allUpgrades;
 
 
     private void spawnPiece(GamePiece piece, Point position, Map playerMap) {

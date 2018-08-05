@@ -15,9 +15,6 @@ import java.util.Map;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class XWSList {
 
-    @JsonProperty("ffgedition")
-    private String ffgedition;
-
     @JsonProperty("name")
     private String name;
 
@@ -44,9 +41,6 @@ public class XWSList {
 
     @JsonIgnore
     private String xwsSource;
-
-    public String getFfgEdition() {return ffgedition; }
-    public void setFfgedition(String ffgedition) { this.ffgedition = ffgedition; }
 
     public String getName() {
         return name;
@@ -134,7 +128,7 @@ public class XWSList {
             this.name = name;
             this.ship = ship;
             this.upgrades = upgrades;
-            this.vendor = vendor;
+            //this.vendor = vendor;
             this.points = points;
         }
 
@@ -153,8 +147,10 @@ public class XWSList {
         @JsonProperty("upgrades")
         private Map<String, List<String>> upgrades = Maps.newHashMap();
 
+        /*
         @JsonProperty("vendor")
         private Map<String, Map<String, String>> vendor = Maps.newHashMap();
+*/
 
         @JsonProperty("points")
         private Integer points;
@@ -181,10 +177,6 @@ public class XWSList {
 
         public Map<String, List<String>> getUpgrades() {
             return upgrades;
-        }
-
-        public Map<String, Map<String, String>> getVendor() {
-            return vendor;
         }
 
         public Integer getPoints() {
