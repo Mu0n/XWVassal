@@ -34,7 +34,7 @@ public class VassalXWSPieceLoader {
             .build();
 
     private static List<String> obstacleTabNames = Lists.newArrayList(
-            "Asteroids", "TFA Asteroids", "Debris"
+            "Asteroids", "TFA_Asteroids", "Debris"
     );
 
     Map<String, VassalXWSPilotPieces> pilotPiecesMap = Maps.newHashMap();
