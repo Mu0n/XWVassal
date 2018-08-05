@@ -36,6 +36,14 @@ public class XWS2Pilots {
     public List<Stat2e> getStats() {return this.stats;}
     public List<Pilot2e> getPilots() { return this.pilots;}
 
+    public boolean containsPilot(String pilotName){
+        for(Pilot2e pilot : getPilots())
+        {
+            if(pilot.getName().equals(pilotName)) return true;
+        }
+        return false;
+    }
+
     public static class Stat2e{
         public Stat2e() { super(); }
 

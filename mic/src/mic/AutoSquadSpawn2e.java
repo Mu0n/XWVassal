@@ -247,7 +247,7 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
             public void actionPerformed(ActionEvent e) {
                 XWSList xwsList = loadListFromRawJson(entryArea.getText());
                 try{
-                validateList(xwsList);
+                validateList(xwsList, allShips, allUpgrades);
                 } catch (Exception exc) {
                     logToChat("Unable to load raw JSON list '%s': %s", entryArea.getText(), exc.toString());
                 }
@@ -630,7 +630,7 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
     }
 
 
-    private void validateList(XWSList list) throws XWSpawnException
+    private void validateList(XWSList list, final List<XWS2Pilots> allShips, final List<XWS2Upgrades> allUpgrades) throws XWSpawnException
     {
         boolean error = false;
         XWSpawnException exception = new XWSpawnException();
@@ -638,29 +638,42 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
         HashMap<String,String> skippedPilots = new HashMap<String,String>();
         for (XWSList.XWSPilot pilot : list.getPilots())
         {
-
+            //Get the stuff from the XWS formatted json
             String shipXws = pilot.getShip();
             String pilotXws = pilot.getXws();
 
-            // check the ship
-            if(MasterShipData.getShipData(shipXws) == null)
+            //Check the ships' presence in the xwing-data2 bank
+            //assume the ship is not found first
+            boolean signalErrorInShip = true;
+            for(XWS2Pilots shipFromData : allShips)
             {
-
-                // the ship is not valid
+                if(shipFromData.getName().equals(shipXws)) {
+                    signalErrorInShip = false; // invalidate the problem in ship finding
+                    break;
+                }
+            }
+            if(signalErrorInShip == true)
+            {
                 error = true;
                 exception.addMessage("Ship "+shipXws+" was not found.  Skipping.");
                 // skippedPilots.put(pilot.getXws(),"X");
                 skippedPilots.put(pilot.getName(),"X");
+            }
 
-            }else if(MasterPilotData.getPilotData(shipXws,pilotXws,list.getFaction()) == null && MasterPilotData.getPilotData(shipXws,pilot.getName(),list.getFaction()) == null)
+            //assume there's a problem finding the pilot
+            boolean signalErrorInPilot = true;
+            for(XWS2Pilots shipPilot : allShips)
             {
-
+                if(shipPilot.containsPilot(pilot.getName())==true) signalErrorInPilot = false;
+                break;
+            }
+            if(signalErrorInPilot == true)
+            {
                 error = true;
                 exception.addMessage("Pilot "+pilot.getName()+" was not found.  Skipping.");
                 //  skippedPilots.put(pilot.getXws(),"X");
                 skippedPilots.put(pilot.getName(),"X");
             }
-
         }
 
         if(error)
