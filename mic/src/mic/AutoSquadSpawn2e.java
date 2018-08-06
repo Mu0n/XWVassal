@@ -396,7 +396,7 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
             output += "}"; //marks the end of a ship/pilot entry
             if(i!=stuffToXWS.size()-1) output+= ",{"; //not the last ship/pilot entry
         }
-        output+="],\"vendor\":{\"yasb\":{\"builder\":\"(Yet Another) X-Wing Miniatures Squad Builder\",\"builder_url\":\"https://raithos.github.io/\",\"link\":\"https://raithos.github.io/?f=Galactic%20Empire&d=v4!s!168:-1,10,-1,-1,-1,-1:-1:-1:;217:116,-1:-1:-1:&sn=New%20Squadron&obs=\"}},\"version\":\"0.3.0\"}";
+        output+="],\"vendor\":{\"yasb\":{\"builder\":\"Internal Vassal Squad Builder\",\"builder_url\":\"none\",\"link\":\"none\"}},\"version\":\"2.0.0\"}";
 
         entryArea.setText(output);
     }
