@@ -38,7 +38,7 @@ import static mic.Util.*;
 public class AutoSquadSpawn2e extends AbstractConfigurable {
 
 
-    private VassalXWSPieceLoader slotLoader = new VassalXWSPieceLoader2e();
+    private VassalXWSPieceLoader2e slotLoader = new VassalXWSPieceLoader2e();
 
     private static java.util.Map<String, String> xwingdata2ToYasb2 = ImmutableMap.<String, String>builder()
             .put("Rebel Alliance","rebelalliance")

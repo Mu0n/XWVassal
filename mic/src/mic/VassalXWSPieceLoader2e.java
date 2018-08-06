@@ -51,6 +51,7 @@ public class VassalXWSPieceLoader2e {
             loadPieces();
         }
 
+        //gotta make a 2e version of this
         VassalXWSListPieces pieces = new VassalXWSListPieces();
 
         Multiset<String> pilotCounts = HashMultiset.create();
@@ -63,7 +64,7 @@ public class VassalXWSPieceLoader2e {
         for (XWSList.XWSPilot pilot : list.getPilots())
         {
 
-            String xwsShip = Canonicalizer.getCanonicalShipName(pilot.getShip());
+            String xwsShip = Canonicalizer.getCleanedName(pilot.getShip());
             MasterShipData.ShipData shipData = MasterShipData.getShipData(pilot.getShip());
 
 
