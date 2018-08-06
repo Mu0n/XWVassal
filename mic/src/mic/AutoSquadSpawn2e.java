@@ -634,20 +634,27 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
     {
         boolean error = false;
         XWSpawnException exception = new XWSpawnException();
+
         XWSList newList = null;
         HashMap<String,String> skippedPilots = new HashMap<String,String>();
         for (XWSList.XWSPilot pilot : list.getPilots())
         {
+            int savedShipIndex = -1;
+            logToChat("scanning XWS pilot " + pilot.getName() + " of ship " + pilot.getShip());
             //Get the stuff from the XWS formatted json
             String shipXws = pilot.getShip();
-            String pilotXws = pilot.getXws();
+            String pilotXws = pilot.getName();
 
             //Check the ships' presence in the xwing-data2 bank
             //assume the ship is not found first
             boolean signalErrorInShip = true;
             for(XWS2Pilots shipFromData : allShips)
             {
-                if(shipFromData.getName().equals(shipXws)) {
+                logToChat("step 1 ship checking " + shipFromData.getName());
+                if(Canonicalizer.getCleanedName(shipFromData.getName()).equals(shipXws)) {
+                    savedShipIndex = allShips.indexOf(shipFromData);
+
+                    logToChat("found a match for ship!");
                     signalErrorInShip = false; // invalidate the problem in ship finding
                     break;
                 }
@@ -660,20 +667,26 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
                 skippedPilots.put(pilot.getName(),"X");
             }
 
-            //assume there's a problem finding the pilot
-            boolean signalErrorInPilot = true;
-            for(XWS2Pilots shipPilot : allShips)
+            if(signalErrorInShip == false) //only bother with pilot checking if the ship has been verified to have been found
             {
-                if(shipPilot.containsPilot(pilot.getName())==true) signalErrorInPilot = false;
-                break;
+                //assume there's a problem finding the pilot
+                boolean signalErrorInPilot = true;
+                logToChat("step 2 pilot checking " + pilotXws);
+                if(allShips.get(savedShipIndex).containsCleanedPilot(Canonicalizer.getCleanedName(pilotXws))) {
+                    signalErrorInPilot = false;
+                    logToChat("found a match for pilot!");
+                    break;
+                }
+
+                if(signalErrorInPilot == true)
+                {
+                    error = true;
+                    exception.addMessage("Pilot "+pilot.getName()+" was not found.  Skipping.");
+                    //  skippedPilots.put(pilot.getXws(),"X");
+                    skippedPilots.put(pilot.getName(),"X");
+                }
             }
-            if(signalErrorInPilot == true)
-            {
-                error = true;
-                exception.addMessage("Pilot "+pilot.getName()+" was not found.  Skipping.");
-                //  skippedPilots.put(pilot.getXws(),"X");
-                skippedPilots.put(pilot.getName(),"X");
-            }
+
         }
 
         if(error)
@@ -691,8 +704,6 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
 
             for (XWSList.XWSPilot pilot : list.getPilots())
             {
-
-
                 if(skippedPilots.get(pilot.getName()) == null)
                 {
 
