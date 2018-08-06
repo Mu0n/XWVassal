@@ -37,6 +37,9 @@ import static mic.Util.*;
  */
 public class AutoSquadSpawn2e extends AbstractConfigurable {
 
+
+    private VassalXWSPieceLoader slotLoader = new VassalXWSPieceLoader2e();
+
     private static java.util.Map<String, String> xwingdata2ToYasb2 = ImmutableMap.<String, String>builder()
             .put("Rebel Alliance","rebelalliance")
             .put("Galactic Empire","galacticempire")
@@ -250,8 +253,9 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
                 validateList(xwsList, allShips, allUpgrades);
                 } catch (Exception exc) {
                     logToChat("Unable to load raw JSON list '%s': %s", entryArea.getText(), exc.toString());
+                    return;
                 }
-                ParseThroughXWSList(xwsList);
+                DealWithXWSList(xwsList);
             }
         });
 
@@ -280,14 +284,21 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
         frame.requestFocus();
     }
 
-    private void ParseThroughXWSList(XWSList xwsList) {
-        logToChat("XWS Parse||| faction = " + xwsList.getFaction());
-        for(XWSList.XWSPilot pilot : xwsList.getPilots())
-        {
-            logToChat("XWS Parse||| pilot = " + pilot.getName());
-            logToChat("XWS Parse||| ship = " + pilot.getShip());
-            logToChat("XWS Parse||| upgrades: ");
+    private void DealWithXWSList(XWSList xwsList) {
+        if (xwsList == null || xwsList.getPilots() == null || xwsList.getPilots().size() == 0) {
+            return;
         }
+
+        // If the list includes a yv666 with Hound's Tooth upgrade or modified YT-1300 with escape craft, add the necessary stuff
+        //xwsList = handleHoundsToothIshThings(xwsList);
+        VassalXWSListPieces pieces = slotLoader.loadListFromXWS(xwsList);
+
+        Point startPosition = new Point(150, 150);
+        Point dialstartPosition = new Point(300, 100);
+        Point tokensStartPosition = new Point(300, 220);
+        Point tlStartPosition = new Point(300, 290);
+        int shipBaseY = 110;
+
     }
 
     private void generateXWS(JPanel rootPanel, JTextArea entryArea, String factionString) {
