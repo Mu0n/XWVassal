@@ -639,7 +639,8 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
         HashMap<String,String> skippedPilots = new HashMap<String,String>();
         for (XWSList.XWSPilot pilot : list.getPilots())
         {
-            int savedShipIndex = -1;
+            //savedShipIndex is a list because the pilot might be something like a TIE/ln pilot and the search must not stop at only 1 faction of that ship (e.g. empire) when the wanted pilot is of another (e.g. Captain Rex)
+            List<Integer> savedShipIndex = Lists.newArrayList();
             logToChat("scanning XWS pilot " + pilot.getName() + " of ship " + pilot.getShip());
             //Get the stuff from the XWS formatted json
             String shipXws = pilot.getShip();
@@ -652,11 +653,11 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
             {
                 logToChat("step 1 ship checking " + shipFromData.getName());
                 if(Canonicalizer.getCleanedName(shipFromData.getName()).equals(shipXws)) {
-                    savedShipIndex = allShips.indexOf(shipFromData);
+                    savedShipIndex.add(allShips.indexOf(shipFromData));
 
                     logToChat("found a match for ship!");
                     signalErrorInShip = false; // invalidate the problem in ship finding
-                    break;
+                    continue;
                 }
             }
             if(signalErrorInShip == true)
@@ -672,10 +673,13 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
                 //assume there's a problem finding the pilot
                 boolean signalErrorInPilot = true;
                 logToChat("step 2 pilot checking " + pilotXws);
-                if(allShips.get(savedShipIndex).containsCleanedPilot(Canonicalizer.getCleanedName(pilotXws))) {
-                    signalErrorInPilot = false;
-                    logToChat("found a match for pilot!");
-                    break;
+                for(Integer oneIndexToCheck : savedShipIndex)
+                {
+                    if(allShips.get(oneIndexToCheck).containsCleanedPilot(Canonicalizer.getCleanedName(pilotXws))) {
+                        signalErrorInPilot = false;
+                        logToChat("found a match for pilot!");
+                        break;
+                    }
                 }
 
                 if(signalErrorInPilot == true)
