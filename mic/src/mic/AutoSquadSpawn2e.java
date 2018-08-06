@@ -6,6 +6,7 @@ import VASSAL.build.Buildable;
 import VASSAL.build.GameModule;
 import VASSAL.build.module.Map;
 import VASSAL.build.module.documentation.HelpFile;
+import VASSAL.build.widget.PieceSlot;
 import VASSAL.command.Command;
 import VASSAL.counters.GamePiece;
 import com.google.common.collect.ImmutableMap;
@@ -44,6 +45,10 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
             .put("Rebel Alliance","rebelalliance")
             .put("Galactic Empire","galacticempire")
             .put("Scum and Villainy","scumandvillainy")
+            .put("First Order","firstorder")
+            .put("Resistance","resistance")
+            .put("Galactic Republic","galacticrepublic")
+            .put("Separatist Army","separatistarmy")
             .build();
 
 //keepsake for this whole class' behavior inside the player window - they must be kept track so they can be removed safely later
@@ -153,7 +158,7 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
 
     }
 
-    private void internalSquadBuilder(int playerIndex, final List<String> factionsWanted, final List<XWS2Pilots> allShips, final List<XWS2Upgrades> allUpgrades){
+    private void internalSquadBuilder(final int playerIndex, final List<String> factionsWanted, final List<XWS2Pilots> allShips, final List<XWS2Upgrades> allUpgrades){
 
 
         final JFrame frame = new JFrame();
@@ -255,7 +260,7 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
                     logToChat("Unable to load raw JSON list '%s': %s", entryArea.getText(), exc.toString());
                     return;
                 }
-                DealWithXWSList(xwsList);
+                DealWithXWSList(xwsList, playerIndex);
             }
         });
 
@@ -284,8 +289,24 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
         frame.requestFocus();
     }
 
-    private void DealWithXWSList(XWSList xwsList) {
+
+    private Map getPlayerMap(int playerIndex) {
+        for (Map loopMap : GameModule.getGameModule().getComponentsOf(Map.class)) {
+            if (("Player " + Integer.toString(playerIndex)).equals(loopMap.getMapName())) {
+                return loopMap;
+            }
+        }
+        return null;
+    }
+
+    private void DealWithXWSList(XWSList xwsList, int playerIndex) {
         if (xwsList == null || xwsList.getPilots() == null || xwsList.getPilots().size() == 0) {
+            return;
+        }
+
+        Map playerMap = getPlayerMap(playerIndex);
+        if (playerMap == null) {
+            logToChat("Unexpected error, couldn't find map for player side " + playerIndex);
             return;
         }
 
@@ -299,7 +320,144 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
         Point tlStartPosition = new Point(300, 290);
         int shipBaseY = 110;
 
-    }
+        int totalPilotHeight = 0;
+        int totalDialsWidth = 0;
+        int totalTokenWidth = 0;
+        int totalTLWidth = 0;
+
+        List<GamePiece> shipBases = Lists.newArrayList();
+
+        List<Point> chargeTokenLocations = Lists.newArrayList(); // list of coordinates to place charge tokens
+        int chargeYOffset = 0; // Y-Offset of where to place charge tokens relative to the upgrade card
+        PieceSlot chargePieceSlot = null;
+
+        for (VassalXWSPilotPieces ship : pieces.getShips())
+        {
+            //Nastah pup to do later; also use this example to do escape craft maybe? if it comes as a card
+            /*
+            if(ship.getPilotData().getXws().equals("nashtahpuppilot")) //<- NULL HERE?
+            {
+                MasterPilotData.PilotData nashtahPilotData = ship.getPilotData();
+                nashtahPilotData.setSkill(houndsToothPilotSkill);
+                ship.setPilotData(nashtahPilotData);
+
+            }
+            */
+
+            // ======================================================
+            // Generate the ship base pieces
+            // ======================================================
+            //TO DO in 2e
+            GamePiece shipPiece = GamePieceGenerator2e.generateShip(ship);
+
+            shipBases.add(shipPiece);
+
+            // ======================================================
+            // Generate the Pilot Pieces
+            // ======================================================
+            GamePiece pilotPiece = GamePieceGenerator2e.generatePilot(ship);
+
+            int pilotWidth = (int) pilotPiece.boundingBox().getWidth();
+            int pilotHeight = (int) pilotPiece.boundingBox().getHeight();
+            totalPilotHeight += pilotHeight;
+            spawnPiece(pilotPiece, new Point(
+                            (int) startPosition.getX(),
+                            (int) startPosition.getY() + totalPilotHeight),
+                    playerMap);
+
+
+            // ======================================================
+            // Generate the Dial
+            // ======================================================
+            GamePiece dialPiece = GamePieceGenerator2e.generateDial(ship);
+
+            int dialWidth = (int) dialPiece.boundingBox().getWidth();
+            spawnPiece(dialPiece, new Point((int) dialstartPosition.getX() + totalDialsWidth, (int) dialstartPosition.getY()), playerMap);
+            totalDialsWidth += dialWidth;
+
+            int totalUpgradeWidth = 0;
+            for (VassalXWSPilotPieces.Upgrade upgrade : ship.getUpgrades()) {
+
+                GamePiece upgradePiece = GamePieceGenerator.generateUpgrade(upgrade);
+            }
+
+            // ======================================================
+            //TODO Generate the Conditions
+            // ======================================================
+            for (VassalXWSPilotPieces.Condition condition: ship.getConditions()) {
+                GamePiece conditionPiece = GamePieceGenerator.generateCondition(condition);
+                /*
+                GamePiece conditionPiece = newPiece(condition.getPieceSlot());
+                if(condition.getPieceSlot().getConfigureName().startsWith("Stem"))
+                {
+                    // this is an unreleased condition.  Need to set the name
+                    conditionPiece.setProperty("Upgrade Name",condition.getXwsName());
+                }*/
+                spawnPiece(conditionPiece, new Point(
+                                (int) startPosition.getX() + pilotWidth + totalUpgradeWidth,
+                                (int) startPosition.getY() + totalPilotHeight),
+                        playerMap);
+                totalUpgradeWidth += conditionPiece.boundingBox().getWidth();
+
+
+                // spawn the condition token
+                GamePiece conditionTokenPiece = GamePieceGenerator.generateConditionToken(condition);
+                spawnPiece(conditionTokenPiece, new Point(
+                                (int) startPosition.getX() + pilotWidth + totalUpgradeWidth,
+                                (int) startPosition.getY() + totalPilotHeight),
+                        playerMap);
+                totalUpgradeWidth += conditionTokenPiece.boundingBox().getWidth();
+            } //loop to next condition
+
+
+            // ======================================================
+            // Add all of the appropriate tokens
+            // ======================================================
+            for (GamePiece token : ship.getTokensForDisplay()) {
+                PieceSlot pieceSlot = new PieceSlot(token);
+                if ("Target Lock".equals(pieceSlot.getConfigureName())) {//if a target lock token, place elsewhere
+                    spawnPiece(token, new Point(
+                                    (int) tokensStartPosition.getX() + totalTLWidth,
+                                    (int) tlStartPosition.getY()),
+                            playerMap);
+                    totalTLWidth += token.boundingBox().getWidth();
+                }else if("Charge".equals(pieceSlot.getConfigureName()))
+                {
+                    // place the ordnance tokens
+                    for(Point aPoint : chargeTokenLocations)
+                    {
+                        GamePiece chargeToken = newPiece(pieceSlot);
+                        spawnPiece(chargeToken, aPoint, playerMap);
+                    }
+                }else {
+                    spawnPiece(token, new Point(
+                                    (int) tokensStartPosition.getX() + totalTokenWidth,
+                                    (int) tokensStartPosition.getY()),
+                            playerMap);
+                    totalTokenWidth += token.boundingBox().getWidth();
+                }
+            }// loop to next token*/
+        } //loop to next pilot
+
+        int shipBaseX = (int) dialstartPosition.getX() + totalDialsWidth - 30;
+        for (GamePiece piece : shipBases) {
+            int halfBase = (int) (piece.getShape().getBounds2D().getWidth() / 2.0);
+            spawnPiece(piece, new Point(shipBaseX + halfBase, shipBaseY), playerMap);
+            shipBaseX += piece.getShape().getBounds2D().getWidth() + 10.0;
+        }
+
+        int obstacleX = (int) dialstartPosition.getX() + totalDialsWidth - 30;
+        int obstacleStartY = shipBaseY + 200;
+        for (GamePiece obstacle : pieces.getObstaclesForDisplay()) {
+            int halfSize = (int) (obstacle.boundingBox().getWidth() / 2.0);
+            spawnPiece(obstacle, new Point(obstacleX + halfSize, obstacleStartY), playerMap);
+            obstacleX += obstacle.getShape().getBounds().getWidth();
+        }
+
+        String listName = xwsList.getName();
+        logToChat("The '" + "Base 2.0 Game" + "' game mode was used to spawn a %s point list%s loaded from %s", pieces.getSquadPoints(),
+                listName != null ? " '" + listName + "'" : "", xwsList.getXwsSource());
+        }
 
     private void generateXWS(JPanel rootPanel, JTextArea entryArea, String factionString) {
         String output = "{\"description\":\"\",\"faction\":\""+factionString+"\",\"name\":\"New Squadron\",\"pilots\":[{";
@@ -765,16 +923,6 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
             getPlayerMap(i).getToolBar().remove(spawnButtons.get(i - 1));
         }
     }
-
-    private Map getPlayerMap(int playerIndex) {
-        for (Map loopMap : GameModule.getGameModule().getComponentsOf(Map.class)) {
-            if (("Player " + Integer.toString(playerIndex)).equals(loopMap.getMapName())) {
-                return loopMap;
-            }
-        }
-        return null;
-    }
-
 
     // <editor-fold desc="unused vassal hooks">
     @Override
