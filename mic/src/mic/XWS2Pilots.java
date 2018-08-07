@@ -181,6 +181,9 @@ public class XWS2Pilots {
         @JsonProperty("actions")
         private List<String> actions = Lists.newArrayList();
 
+        @JsonProperty("shipability")
+        private ShipAbility shipAbility = new ShipAbility();
+
         public String getName(){return this.name;}
         public String getCaption() {return this.caption;}
         public int getInitiative() { return this.initiative;}
@@ -189,9 +192,27 @@ public class XWS2Pilots {
         public String getXWS2() { return this.xws2; }
         public List<String> getConditions() { return this.conditions; }
         public List<String> getActions() { return this.actions; }
+        public ShipAbility getShipAbility() { return this.shipAbility; }
 
         public boolean isUnique() { if(limited>0) return true;
         return false;}
+    }
+
+    public static class ShipAbility{
+        public ShipAbility() {super(); }
+        public ShipAbility(String name, String text){
+            this.name = name;
+            this.text = text;
+        }
+
+        @JsonProperty("name")
+        private String name;
+
+        @JsonProperty("text")
+        private String text;
+
+        public String getName(){ return this.name;}
+        public String getText(){ return this.text; }
     }
 
     public static class pilotsDataSources{

@@ -123,6 +123,24 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
             }
         });
 
+        final JCheckBox firstorderCheck = new JCheckBox("First Order");
+        firstorderCheck.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if(firstorderCheck.isSelected()) factionsWanted.add("First Order");
+                else factionsWanted.remove("First Order");
+            }
+        });
+
+        final JCheckBox resistanceCheck = new JCheckBox("Resistance");
+        resistanceCheck.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if(resistanceCheck.isSelected()) factionsWanted.add("Resistance");
+                else factionsWanted.remove("Resistance");
+            }
+        });
+
 
 
         JButton builderButton = new JButton("Internal Squad Builder");
@@ -143,6 +161,8 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
         builderPanel.add(empireCheck);
         builderPanel.add(allianceCheck);
         builderPanel.add(scumCheck);
+        builderPanel.add(firstorderCheck);
+        builderPanel.add(resistanceCheck);
         builderPanel.add(builderButton);
 
         rootPanel.add(builderPanel);
@@ -182,9 +202,9 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
         final JComboBox ShipComboList = new JComboBox();
         ShipComboList.setToolTipText("Select a ship.");
         ShipComboList.addItem("Select a ship.");
-
         final JComboBox PilotComboList = new JComboBox();
         PilotComboList.setToolTipText("Select a pilot");
+
         populateShipComboBox(ShipComboList, factionsWanted, allShips);
 
         ShipComboList.addItemListener(new ItemListener() {
@@ -192,7 +212,9 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
             public void itemStateChanged(ItemEvent e) {
                 PilotComboList.removeAllItems();
                 for(XWS2Pilots ship : allShips){
-                    if(ship.getName().equals(ShipComboList.getSelectedItem()))
+                    String[] parts = (ShipComboList.getSelectedItem()).toString().split("_");
+
+                    if(ship.getFaction().equals(parts[0]) && ship.getName().equals(parts[1]))
                     {
                         for(XWS2Pilots.Pilot2e pilot : ship.getPilots())
                         {
@@ -313,7 +335,6 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
         //CERTAINTY BOOKMARK ^^^ P SURE THE ABOVE IS CERTIFIED. VVVV BELOW IS UNCERTAIN
 
 
-
         // If the list includes a yv666 with Hound's Tooth upgrade or modified YT-1300 with escape craft, add the necessary stuff
         //xwsList = handleHoundsToothIshThings(xwsList);
         VassalXWSListPieces2e pieces = slotLoader.loadListFromXWS(xwsList, allPilots, allUpgrades);
@@ -335,8 +356,7 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
         int chargeYOffset = 0; // Y-Offset of where to place charge tokens relative to the upgrade card
         PieceSlot chargePieceSlot = null;
 
-        for (VassalXWSPilotPieces2e ship : pieces.getShips())
-        {
+        for (VassalXWSPilotPieces2e ship : pieces.getShips()) {
             //Nastah pup to do later; also use this example to do escape craft maybe? if it comes as a card
             /*
             if(ship.getPilotData().getXws().equals("nashtahpuppilot")) //<- NULL HERE?
@@ -352,22 +372,22 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
             // Generate the ship base pieces
             // ======================================================
             //TO DO in 2e
-            GamePiece shipPiece = GamePieceGenerator2e.generateShip(ship, allPilots);
+            //// GamePiece shipPiece = GamePieceGenerator2e.generateShip(ship, allPilots);
 
-            shipBases.add(shipPiece);
+            ////  shipBases.add(shipPiece);
 
             // ======================================================
             // Generate the Pilot Pieces
             // ======================================================
-            GamePiece pilotPiece = GamePieceGenerator2e.generatePilot(ship, allPilots);
+            ////  GamePiece pilotPiece = GamePieceGenerator2e.generatePilot(ship, allPilots);
 
-            int pilotWidth = (int) pilotPiece.boundingBox().getWidth();
-            int pilotHeight = (int) pilotPiece.boundingBox().getHeight();
-            totalPilotHeight += pilotHeight;
-            spawnPiece(pilotPiece, new Point(
-                            (int) startPosition.getX(),
-                            (int) startPosition.getY() + totalPilotHeight),
-                    playerMap);
+            ////   int pilotWidth = (int) pilotPiece.boundingBox().getWidth();
+            //// int pilotHeight = (int) pilotPiece.boundingBox().getHeight();
+            ////  totalPilotHeight += pilotHeight;
+            ////  spawnPiece(pilotPiece, new Point(
+            ////               (int) startPosition.getX(),
+            ////                 (int) startPosition.getY() + totalPilotHeight),
+            ////       playerMap);
 
 
             // ======================================================
@@ -379,17 +399,20 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
             spawnPiece(dialPiece, new Point((int) dialstartPosition.getX() + totalDialsWidth, (int) dialstartPosition.getY()), playerMap);
             totalDialsWidth += dialWidth;
 
+            /*
             int totalUpgradeWidth = 0;
             for (VassalXWSPilotPieces2e.Upgrade upgrade : ship.getUpgrades()) {
 
                 GamePiece upgradePiece = GamePieceGenerator2e.generateUpgrade(upgrade);
-            }
+            }*/
 
             // ======================================================
             //TODO Generate the Conditions
             // ======================================================
-            for (VassalXWSPilotPieces2e.Condition condition: ship.getConditions()) {
-                GamePiece conditionPiece = GamePieceGenerator2e.generateCondition(condition);
+
+
+            ////for (VassalXWSPilotPieces2e.Condition condition: ship.getConditions()) {
+            ////GamePiece conditionPiece = GamePieceGenerator2e.generateCondition(condition);
                 /*
                 GamePiece conditionPiece = newPiece(condition.getPieceSlot());
                 if(condition.getPieceSlot().getConfigureName().startsWith("Stem"))
@@ -397,27 +420,27 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
                     // this is an unreleased condition.  Need to set the name
                     conditionPiece.setProperty("Upgrade Name",condition.getXwsName());
                 }*/
-                spawnPiece(conditionPiece, new Point(
-                                (int) startPosition.getX() + pilotWidth + totalUpgradeWidth,
-                                (int) startPosition.getY() + totalPilotHeight),
-                        playerMap);
-                totalUpgradeWidth += conditionPiece.boundingBox().getWidth();
+            ////spawnPiece(conditionPiece, new Point(
+            /////(int) startPosition.getX() + pilotWidth + totalUpgradeWidth,
+            /////(int) startPosition.getY() + totalPilotHeight),
+            //// playerMap);
+            //// totalUpgradeWidth += conditionPiece.boundingBox().getWidth();
 
 
-                // spawn the condition token
-                GamePiece conditionTokenPiece = GamePieceGenerator2e.generateConditionToken(condition);
-                spawnPiece(conditionTokenPiece, new Point(
-                                (int) startPosition.getX() + pilotWidth + totalUpgradeWidth,
-                                (int) startPosition.getY() + totalPilotHeight),
-                        playerMap);
-                totalUpgradeWidth += conditionTokenPiece.boundingBox().getWidth();
-            } //loop to next condition
+            // spawn the condition token
+            ////  GamePiece conditionTokenPiece = GamePieceGenerator2e.generateConditionToken(condition);
+            ////  spawnPiece(conditionTokenPiece, new Point(
+            ////                (int) startPosition.getX() + pilotWidth + totalUpgradeWidth,
+            ////                 (int) startPosition.getY() + totalPilotHeight),
+            ////          playerMap);
+            ////     totalUpgradeWidth += conditionTokenPiece.boundingBox().getWidth();
+            ////    } //loop to next condition
 
 
             // ======================================================
             // Add all of the appropriate tokens
             // ======================================================
-            for (GamePiece token : ship.getTokensForDisplay()) {
+            /*   for (GamePiece token : ship.getTokensForDisplay()) {
                 PieceSlot pieceSlot = new PieceSlot(token);
                 if ("Target Lock".equals(pieceSlot.getConfigureName())) {//if a target lock token, place elsewhere
                     spawnPiece(token, new Point(
@@ -440,28 +463,31 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
                             playerMap);
                     totalTokenWidth += token.boundingBox().getWidth();
                 }
-            }// loop to next token*/
+            }// loop to next token
         } //loop to next pilot
-
-        int shipBaseX = (int) dialstartPosition.getX() + totalDialsWidth - 30;
-        for (GamePiece piece : shipBases) {
-            int halfBase = (int) (piece.getShape().getBounds2D().getWidth() / 2.0);
-            spawnPiece(piece, new Point(shipBaseX + halfBase, shipBaseY), playerMap);
-            shipBaseX += piece.getShape().getBounds2D().getWidth() + 10.0;
+        */
+/*
+            int shipBaseX = (int) dialstartPosition.getX() + totalDialsWidth - 30;
+            for (GamePiece piece : shipBases) {
+                int halfBase = (int) (piece.getShape().getBounds2D().getWidth() / 2.0);
+                spawnPiece(piece, new Point(shipBaseX + halfBase, shipBaseY), playerMap);
+                shipBaseX += piece.getShape().getBounds2D().getWidth() + 10.0;
+            }
+*/
+            /*
+            int obstacleX = (int) dialstartPosition.getX() + totalDialsWidth - 30;
+            int obstacleStartY = shipBaseY + 200;
+            for (GamePiece obstacle : pieces.getObstaclesForDisplay()) {
+                int halfSize = (int) (obstacle.boundingBox().getWidth() / 2.0);
+                spawnPiece(obstacle, new Point(obstacleX + halfSize, obstacleStartY), playerMap);
+                obstacleX += obstacle.getShape().getBounds().getWidth();
+            }
+*/
+            String listName = xwsList.getName();
+            logToChat("The '" + "Base 2.0 Game" + "' game mode was used to spawn a %s point list%s loaded from %s", pieces.getSquadPoints(),
+                    listName != null ? " '" + listName + "'" : "", xwsList.getXwsSource());
         }
-
-        int obstacleX = (int) dialstartPosition.getX() + totalDialsWidth - 30;
-        int obstacleStartY = shipBaseY + 200;
-        for (GamePiece obstacle : pieces.getObstaclesForDisplay()) {
-            int halfSize = (int) (obstacle.boundingBox().getWidth() / 2.0);
-            spawnPiece(obstacle, new Point(obstacleX + halfSize, obstacleStartY), playerMap);
-            obstacleX += obstacle.getShape().getBounds().getWidth();
-        }
-
-        String listName = xwsList.getName();
-        logToChat("The '" + "Base 2.0 Game" + "' game mode was used to spawn a %s point list%s loaded from %s", pieces.getSquadPoints(),
-                listName != null ? " '" + listName + "'" : "", xwsList.getXwsSource());
-        }
+    }
 
     private void generateXWS(JPanel rootPanel, JTextArea entryArea, String factionString) {
         String output = "{\"description\":\"\",\"faction\":\""+factionString+"\",\"name\":\"New Squadron\",\"pilots\":[{";
@@ -549,6 +575,7 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
         for(int i=0; i< stuffToXWS.size(); i++){ //parse all ship/pilot entries
             String shipString ="\"ship\":\"" + stuffToXWS.get(i).getShipType() + "\",";
             String pilotString = "\"name\":\"" + stuffToXWS.get(i).getShipName() + "\",";
+            String xws2String = "\"xws2\":\"" + stuffToXWS.get(i).getShipPilotXWS2() + "\",";
             String upgradesStartString = "\"upgrades\":{";
             output+= shipString + pilotString + upgradesStartString;
 
@@ -651,7 +678,7 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
         for(XWS2Pilots ship : allShips)
         {
             //if(ship.getFaction().equals(factionsWanted)) shipComboBox.addItem(ship.getName());
-            if(factionsWanted.contains(ship.getFaction())) shipComboBox.addItem(ship.getName());
+            if(factionsWanted.contains(ship.getFaction())) shipComboBox.addItem(ship.getFaction() + "_" + ship.getName());
         }
     }
     //Reacts to both "Add Ship" and "Clone Ship" buttons
@@ -661,42 +688,45 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
             JOptionPane.showMessageDialog(warnFrame, "Please select a ship and a pilot before cloning.");
             return;
         }
-        final JComboBox empireShipComboList = new JComboBox();
-        empireShipComboList.setToolTipText("Select a ship.");
-        empireShipComboList.addItem("Select a ship.");
+        final JComboBox shipComboList = new JComboBox();
+        shipComboList.setToolTipText("Select a ship.");
+        shipComboList.addItem("Select a ship.");
 
-        populateShipComboBox(empireShipComboList, factionsWanted, allShips);
+        populateShipComboBox(shipComboList, factionsWanted, allShips);
         if(wantCloning==true){
-            empireShipComboList.setSelectedItem(toCopyShip.getSelectedItem());
+            shipComboList.setSelectedItem(toCopyShip.getSelectedItem());
         }
 
-        final JComboBox empirePilotComboList = new JComboBox();
-        empirePilotComboList.setToolTipText("Select a pilot");
-        empirePilotComboList.addItem("");
+        final JComboBox pilotComboList = new JComboBox();
+        pilotComboList.setToolTipText("Select a pilot");
+        pilotComboList.addItem("");
         for(XWS2Pilots ship : allShips)
         {
-            if(ship.getName().equals(empireShipComboList.getSelectedItem()))
+            String[] parts = (shipComboList.getSelectedItem()).toString().split("_");
+            if(ship.getFaction().equals(parts[0]) && ship.getName().equals(parts[1]))
             {
                 for(XWS2Pilots.Pilot2e pilot : ship.getPilots())
                 {
-                    empirePilotComboList.addItem(pilot.getName());
+                    pilotComboList.addItem(pilot.getName());
                 }
             }
         }
         if(wantCloning==true){
-            empirePilotComboList.setSelectedItem(toCopyPilot.getSelectedItem());
+            pilotComboList.setSelectedItem(toCopyPilot.getSelectedItem());
         }
 
-        empireShipComboList.addItemListener(new ItemListener() {
+        shipComboList.addItemListener(new ItemListener() {
             @Override
             public void itemStateChanged(ItemEvent e) {
-                empirePilotComboList.removeAllItems();
+                pilotComboList.removeAllItems();
                 for(XWS2Pilots ship : allShips){
-                    if(ship.getName().equals(empireShipComboList.getSelectedItem()))
+                    String[] parts = (shipComboList.getSelectedItem()).toString().split("_");
+
+                    if(ship.getFaction().equals(parts[0]) && ship.getName().equals(parts[1]))
                     {
                         for(XWS2Pilots.Pilot2e pilot : ship.getPilots())
                         {
-                            empirePilotComboList.addItem(pilot.getName());
+                            pilotComboList.addItem(pilot.getName());
                         }
                     }
                 }
@@ -707,8 +737,8 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
 
         final JPanel anotherShipPanel = new JPanel();
 
-        anotherShipPanel.add(empireShipComboList);
-        anotherShipPanel.add(empirePilotComboList);
+        anotherShipPanel.add(shipComboList);
+        anotherShipPanel.add(pilotComboList);
 
         final JButton cloneButton = new JButton("Clone Ship");
         final JButton removeButton = new JButton("Remove Ship");
@@ -723,7 +753,7 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
         cloneButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                copyOrCloneShipButtonBehavior(factionsWanted,true, empireShipComboList,empirePilotComboList, rootPanel, frame, allShips, allUpgrades);
+                copyOrCloneShipButtonBehavior(factionsWanted,true, shipComboList,pilotComboList, rootPanel, frame, allShips, allUpgrades);
             }
         });
         removeButton.addActionListener(new ActionListener() {public void actionPerformed(ActionEvent evt) {
@@ -758,6 +788,7 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
     public static class ReadShipInfo{
         private String shipName="";
         private String shipType="";
+        private String shipPilotXWS2="";
 
         private List<ReadUpgradesInfo> upgradeBins = Lists.newArrayList();
 
@@ -765,10 +796,18 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
 
         public String getShipName() { return shipName; }
         public String getShipType() { return shipType; }
+        public String getShipPilotXWS2() { return shipPilotXWS2; }
+
         public List<ReadUpgradesInfo> getUpgradeBins() { return upgradeBins; }
 
         public void setShipName(String name) { this.shipName = name; }
         public void setTypeName(String type) { this.shipType = type; }
+        public void setShipPilotXWS2(String faction, String shipName, String type)
+        {
+            //TO DO change this hard coded faction
+            //this.shipPilotXWS2 = faction + "-" + shipType + "-" + shipName;
+            this.shipPilotXWS2 = "rebelalliance" + "-" + shipType + "-" + shipName;
+        }
         public void addUpgrade(String type, String upgrade){
             boolean notFound = true;
             for(ReadUpgradesInfo bin : upgradeBins)
@@ -814,56 +853,30 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
         {
             //savedShipIndex is a list because the pilot might be something like a TIE/ln pilot and the search must not stop at only 1 faction of that ship (e.g. empire) when the wanted pilot is of another (e.g. Captain Rex)
             List<Integer> savedShipIndex = Lists.newArrayList();
-            logToChat("scanning XWS pilot " + pilot.getName() + " of ship " + pilot.getShip());
+            logToChat("scanning XWS pilot unique key " + pilot.getXws2());
             //Get the stuff from the XWS formatted json
             String shipXws = pilot.getShip();
-            String pilotXws = pilot.getName();
+            String pilotXWS2 = pilot.getXws2();
 
-            //Check the ships' presence in the xwing-data2 bank
-            //assume the ship is not found first
-            boolean signalErrorInShip = true;
+            //Check the unique pilot xws2 key in all ships
+            boolean signalError = true;
             for(XWS2Pilots shipFromData : allShips)
             {
-                logToChat("step 1 ship checking " + shipFromData.getName());
-                if(Canonicalizer.getCleanedName(shipFromData.getName()).equals(shipXws)) {
-                    savedShipIndex.add(allShips.indexOf(shipFromData));
-
-                    logToChat("found a match for ship!");
-                    signalErrorInShip = false; // invalidate the problem in ship finding
-                    continue;
+                if(shipFromData.getSpecificPilot(pilotXWS2, allShips) == null) continue;
+                else {
+                    logToChat("found a match for ship! " + pilotXWS2);
+                    signalError = false; // invalidate the problem in ship finding
+                    break;
                 }
             }
-            if(signalErrorInShip == true)
+
+            if(signalError == true)
             {
                 error = true;
-                exception.addMessage("Ship "+shipXws+" was not found.  Skipping.");
+                exception.addMessage("Ship/Pilot combo "+pilotXWS2+" was not found.  Skipping.");
                 // skippedPilots.put(pilot.getXws(),"X");
-                skippedPilots.put(pilot.getName(),"X");
+                skippedPilots.put(pilotXWS2,"X");
             }
-
-            if(signalErrorInShip == false) //only bother with pilot checking if the ship has been verified to have been found
-            {
-                //assume there's a problem finding the pilot
-                boolean signalErrorInPilot = true;
-                logToChat("step 2 pilot checking " + pilotXws);
-                for(Integer oneIndexToCheck : savedShipIndex)
-                {
-                    if(allShips.get(oneIndexToCheck).containsCleanedPilot(Canonicalizer.getCleanedName(pilotXws))) {
-                        signalErrorInPilot = false;
-                        logToChat("found a match for pilot!");
-                        break;
-                    }
-                }
-
-                if(signalErrorInPilot == true)
-                {
-                    error = true;
-                    exception.addMessage("Pilot "+pilot.getName()+" was not found.  Skipping.");
-                    //  skippedPilots.put(pilot.getXws(),"X");
-                    skippedPilots.put(pilot.getName(),"X");
-                }
-            }
-
         }
 
         if(error)
