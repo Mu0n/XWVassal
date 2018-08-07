@@ -240,7 +240,14 @@ public class XWS2Pilots {
         {
             for(XWS2Pilots.Pilot2e aPilot : aShip.getPilots())
             {
-                if(aPilot.getXWS2().equals(Canonicalizer.getCleanedName(searchedXWS2Name))) return aShip;
+             String foundXWS2="";
+                try{
+
+                Util.logToChat("xws2=" + aPilot.getXWS2());
+                    foundXWS2 =  aPilot.getXWS2();
+            }catch(Exception e){}
+
+                if(foundXWS2.equals(Canonicalizer.getCleanedName(searchedXWS2Name))) return aShip;
             }
         }
         return null;
