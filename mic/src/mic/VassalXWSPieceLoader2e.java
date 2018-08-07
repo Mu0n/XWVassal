@@ -39,20 +39,20 @@ public class VassalXWSPieceLoader2e {
             "Asteroids", "TFA_Asteroids", "Debris"
     );
 
-    Map<String, VassalXWSPilotPieces> pilotPiecesMap = Maps.newHashMap();
-    Map<String, VassalXWSPilotPieces.Upgrade> upgradePiecesMap = Maps.newHashMap();
+    Map<String, VassalXWSPilotPieces2e> pilotPiecesMap = Maps.newHashMap();
+    Map<String, VassalXWSPilotPieces2e.Upgrade> upgradePiecesMap = Maps.newHashMap();
     Map<Tokens, PieceSlot> tokenPiecesMap = Maps.newHashMap();
     Map<Obstacles, PieceSlot> obstaclesPiecesMap = Maps.newHashMap();
   //  Map<String, VassalXWSPilotPieces.Condition> conditionPiecesMap = Maps.newHashMap();
 
-    public VassalXWSListPieces loadListFromXWS(XWSList list) {
+    public VassalXWSListPieces2e loadListFromXWS(XWSList list) {
         if (pilotPiecesMap.isEmpty() || upgradePiecesMap.isEmpty()
                 || tokenPiecesMap.isEmpty()|| obstaclesPiecesMap.isEmpty()) {
             loadPieces();
         }
 
         //gotta make a 2e version of this
-        VassalXWSListPieces pieces = new VassalXWSListPieces();
+        VassalXWSListPieces2e pieces = new VassalXWSListPieces2e();
 
         Multiset<String> pilotCounts = HashMultiset.create();
         for (XWSList.XWSPilot pilot : list.getPilots()) {
@@ -72,7 +72,7 @@ public class VassalXWSPieceLoader2e {
 
 
             // generate the pilot card
-            VassalXWSPilotPieces barePieces = new VassalXWSPilotPieces();
+            VassalXWSPilotPieces2e barePieces = new VassalXWSPilotPieces2e();
             barePieces.setPilotData(pilotData);
             barePieces.setShipData(shipData);
 
@@ -135,10 +135,10 @@ public class VassalXWSPieceLoader2e {
                 barePieces.setShip(largeShipSlot);
             }
 
-            VassalXWSPilotPieces pilotPieces = new VassalXWSPilotPieces(barePieces);
+            VassalXWSPilotPieces2e pilotPieces = new VassalXWSPilotPieces2e(barePieces);
 
             if (pilotPieces.getPilotData() != null) {
-                List<VassalXWSPilotPieces.Condition> foundConditions = getConditionsForCard(pilotPieces.getPilotData().getConditions(),stemConditionSlot);
+                List<VassalXWSPilotPieces2e.Condition> foundConditions = getConditionsForCard(pilotPieces.getPilotData().getConditions(),stemConditionSlot);
                 pilotPieces.getConditions().addAll(foundConditions);
             }
 
@@ -155,9 +155,9 @@ public class VassalXWSPieceLoader2e {
                 for (String upgradeName : pilot.getUpgrades().get(upgradeType))
                 {
                     String upgradeKey = getUpgradeMapKey(upgradeType, upgradeName);
-                    VassalXWSPilotPieces.Upgrade upgrade = upgradePiecesMap.get(upgradeKey);
+                    VassalXWSPilotPieces2e.Upgrade upgrade = upgradePiecesMap.get(upgradeKey);
 
-                    upgrade = new VassalXWSPilotPieces.Upgrade(upgradeName, stemUpgradeSlot);
+                    upgrade = new VassalXWSPilotPieces2e.Upgrade(upgradeName, stemUpgradeSlot);
                     MasterUpgradeData.UpgradeData newUpgradeData = MasterUpgradeData.getUpgradeData(upgradeName);
                     upgrade.setUpgradeData(newUpgradeData);
 
@@ -202,7 +202,7 @@ public class VassalXWSPieceLoader2e {
                     }*/
 
                     if (upgrade.getUpgradeData() != null) {
-                        List<VassalXWSPilotPieces.Condition> foundConditions = getConditionsForCard(upgrade.getUpgradeData().getConditions(),stemConditionSlot);
+                        List<VassalXWSPilotPieces2e.Condition> foundConditions = getConditionsForCard(upgrade.getUpgradeData().getConditions(),stemConditionSlot);
                         pilotPieces.getConditions().addAll(foundConditions);
                     }
 
@@ -210,7 +210,7 @@ public class VassalXWSPieceLoader2e {
                 }
             }
 
-            List<Tokens> tokens = Tokens.loadForPilot(pilotPieces);
+            List<Tokens2e> tokens = Tokens2e.loadForPilot(pilotPieces);
             for (Tokens token : tokens) {
                 PieceSlot tokenSlot = tokenPiecesMap.get(token);
                 if (tokenSlot != null) {
@@ -424,9 +424,9 @@ public class VassalXWSPieceLoader2e {
         return pieces;
     }
 
-    private List<VassalXWSPilotPieces.Condition> getConditionsForCard(List<String> conditions, PieceSlot stemConditionSlot)
+    private List<VassalXWSPilotPieces2e.Condition> getConditionsForCard(List<String> conditions, PieceSlot stemConditionSlot)
     {
-        List<VassalXWSPilotPieces.Condition> conditionSlots = Lists.newArrayList();
+        List<VassalXWSPilotPieces2e.Condition> conditionSlots = Lists.newArrayList();
         for (String conditionName : conditions)
         {
            // String canonicalConditionName = Canonicalizer.getCanonicalUpgradeName("conditions", conditionName);
@@ -436,7 +436,7 @@ public class VassalXWSPieceLoader2e {
 
             // MrMurphM
             MasterConditionData.ConditionData newConditionData = MasterConditionData.getConditionDataByName(conditionName);
-            VassalXWSPilotPieces.Condition condition = new VassalXWSPilotPieces.Condition(stemConditionSlot, conditionName,  newConditionData.getName());
+            VassalXWSPilotPieces2e.Condition condition = new VassalXWSPilotPieces2e.Condition(stemConditionSlot, conditionName,  newConditionData.getName());
 
           //  MasterUpgradeData.UpgradeData newUpgradeData = MasterUpgradeData.getUpgradeData(conditionName);
             condition.setConditionData(newConditionData);

@@ -310,9 +310,15 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
             return;
         }
 
+
+
+        //CERTAINTY BOOKMARK ^^^ P SURE THE ABOVE IS CERTIFIED. VVVV BELOW IS UNCERTAIN
+
+
+
         // If the list includes a yv666 with Hound's Tooth upgrade or modified YT-1300 with escape craft, add the necessary stuff
         //xwsList = handleHoundsToothIshThings(xwsList);
-        VassalXWSListPieces pieces = slotLoader.loadListFromXWS(xwsList);
+        VassalXWSListPieces2e pieces = slotLoader.loadListFromXWS(xwsList);
 
         Point startPosition = new Point(150, 150);
         Point dialstartPosition = new Point(300, 100);
