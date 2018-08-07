@@ -1154,19 +1154,6 @@ public class AutoSquadSpawn extends AbstractConfigurable {
     }
 
 
-    private void validateList2(XWSList2 list)
-    {
-        XWSList2 newList = null;
-        for(XWSList2.XWSPilot2 pilot : list.getPilots())
-        {
-            String shipXws = pilot.getShip();
-            String pilotXws = pilot.getXws();
-            if(MasterShipData.getShipData(shipXws) == null)
-            {
-                
-            }
-        }
-    }
     private void validateList(XWSList list) throws XWSpawnException
     {
         boolean error = false;
@@ -1555,16 +1542,6 @@ public class AutoSquadSpawn extends AbstractConfigurable {
             list.setXwsSource("JSON");
             return list;
         } catch (Exception e) {
-            logToChat("Unable to load raw JSON list '%s': %s", userInput, e.toString());
-            return null;
-        }
-    }
-    private XWSList2 loadListFromRawJson2(String userInput){
-        try{
-            XWSList2 list2 = getMapper().readValue(userInput, XWSList2.class);
-            list2.setXwsSource("JSON");
-            return list2;
-        }catch (Exception e) {
             logToChat("Unable to load raw JSON list '%s': %s", userInput, e.toString());
             return null;
         }

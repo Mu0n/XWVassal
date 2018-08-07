@@ -38,14 +38,14 @@ public class VassalXWSPilotPieces2e {
     private PieceSlot pilotCard;
     private PieceSlot dial;
     private PieceSlot movementCard;
-    private List<Upgrade> upgrades = new ArrayList<Upgrade>();
-    private List<Condition> conditions = new ArrayList<Condition>();
+    private List<VassalXWSPilotPieces2e.Upgrade> upgrades = new ArrayList<Upgrade>();
+    private List<VassalXWSPilotPieces2e.Condition> conditions = new ArrayList<Condition>();
     private PieceSlot movementStrip;
     private PieceSlot openDial;
-    private MasterShipData.ShipData shipData;
-    private MasterPilotData.PilotData pilotData;
+    private XWS2Pilots shipData;
+    private XWS2Pilots.Pilot2e pilotData;
     private Integer shipNumber = null;
-    private Map<Tokens, PieceSlot> tokens = Maps.newHashMap();
+    private Map<Tokens2e, PieceSlot> tokens = Maps.newHashMap();
     private PieceSlot ship;
 
     public VassalXWSPilotPieces2e() {
@@ -63,7 +63,7 @@ public class VassalXWSPilotPieces2e {
         this.pilotData = pieces.pilotData;
     }
 
-    public List<Condition> getConditions() {
+    public List<VassalXWSPilotPieces2e.Condition> getConditions() {
         return this.conditions;
     }
 
@@ -100,19 +100,19 @@ public class VassalXWSPilotPieces2e {
         this.movementCard = movementCard;
     }
 
-    public List<Upgrade> getUpgrades() {
+    public List<VassalXWSPilotPieces2e.Upgrade> getUpgrades() {
         return upgrades;
     }
 
-    public Map<Tokens, PieceSlot> getTokens() {
+    public Map<Tokens2e, PieceSlot> getTokens() {
         return tokens;
     }
 
     public List<GamePiece> getTokensForDisplay() {
         List<GamePiece> tokenPieces = Lists.newArrayList();
-        for (Tokens token : tokens.keySet()) {
+        for (Tokens2e token : tokens.keySet()) {
             GamePiece piece = Util.newPiece(tokens.get(token));
-            if (token == Tokens.targetlock && pilotData != null) {
+            if (token == Tokens2e.lock && pilotData != null) {
                 piece.setProperty("ID", getDisplayPilotName());
             }
             tokenPieces.add(piece);
@@ -136,7 +136,7 @@ public class VassalXWSPilotPieces2e {
         return openDial;
     }
 
-    public void setShipData(MasterShipData.ShipData shipData) {
+    public void setShipData(XWS2Pilots shipData) {
         this.shipData = shipData;
     }
 
@@ -153,7 +153,7 @@ public class VassalXWSPilotPieces2e {
         return shipNumber;
     }
 
-    public void setPilotData(MasterPilotData.PilotData pilotData) {
+    public void setPilotData(XWS2Pilots.Pilot2e pilotData) {
         this.pilotData = pilotData;
     }
 
@@ -174,93 +174,13 @@ public class VassalXWSPilotPieces2e {
         return piece;
     }
 
-    public GamePiece cloneDial() {
+    public GamePiece cloneDial(String fullShipName) {
         GamePiece piece = Util.newPiece(this.dial);
 
-        setPilotShipName(piece);
+        setPilotShipName(piece, fullShipName);
 
         return piece;
     }
-/*
-    public GamePiece cloneShip() {
-        GamePiece piece = Util.newPiece(this.ship);
-
-        int skillModifier = 0;
-        int attackModifier = 0;
-        int agilityModifier = 0;
-        int energyModifier = 0;
-        int shieldsModifier = 0;
-        int hullModifier = 0;
-
-        for (Upgrade upgrade : this.upgrades) {
-
-            MasterUpgradeData.UpgradeGrants doubleSideCardStats = DoubleSideCardPriorityPicker.getDoubleSideCardStats(upgrade.getXwsName());
-            ArrayList<MasterUpgradeData.UpgradeGrants> grants = new ArrayList<MasterUpgradeData.UpgradeGrants>();
-            if (doubleSideCardStats != null) {
-                grants.add(doubleSideCardStats);
-            } else {
-                grants.addAll(upgrade.getUpgradeData().getGrants());
-            }
-
-            for (MasterUpgradeData.UpgradeGrants modifier : grants) {
-                if (modifier.isStatsModifier()) {
-                    String name = modifier.getName();
-                    int value = modifier.getValue();
-
-                    if (name.equals("attack")) attackModifier += value;
-                    else if (name.equals("agility")) agilityModifier += value;
-                    else if (name.equals("hull")) hullModifier += value;
-                    else if (name.equals("shields")) shieldsModifier += value;
-                    else if (name.equals("skill")) skillModifier += value;
-                    else if (name.equals("energy")) energyModifier += value;
-                }
-            }
-        }
-
-        if (this.shipData != null) {
-            int agility = this.shipData.getAgility();
-            int hull = this.shipData.getHull();
-            int shields = this.shipData.getShields();
-            int attack = this.shipData.getAttack();
-
-            if (this.pilotData != null && this.pilotData.getShipOverrides() != null) {
-                MasterPilotData.ShipOverrides shipOverrides = this.pilotData.getShipOverrides();
-                agility = shipOverrides.getAgility();
-                hull = shipOverrides.getHull();
-                shields = shipOverrides.getShields();
-                attack = shipOverrides.getAttack();
-            }
-
-            piece.setProperty("Defense Rating", agility + agilityModifier);
-            piece.setProperty("Hull Rating", hull + hullModifier);
-            piece.setProperty("Attack Rating", attack + attackModifier);
-            piece.setProperty("Shield Rating", shields + shieldsModifier);
-
-            if (this.shipData.getEnergy() > 0) {
-                int energy = this.shipData.getEnergy();
-                piece.setProperty("Energy Rating", energy + energyModifier);
-            }
-        }
-
-        if (this.pilotData != null) {
-            int ps = this.pilotData.getSkill() + skillModifier;
-            piece.setProperty("Pilot Skill", ps);
-        }
-
-        setPilotShipName(piece);
-
-        if(this.ship.getConfigureName().equals("ship -- Nu Stem Small Ship") ||
-                this.ship.getConfigureName().equals("ship -- Nu Stem Large Ship"))
-        {
-            // this is a stem ship, so we need to configure it
-
-      //      piece = configureStemShip(this.ship.getConfigureName(), this.pilotData.getFaction(), shipData, piece);
-
-
-        }
-        return piece;
-    }
-*/
 
     private GamePiece addPrototypeToPiece(GamePiece piece, String prototypeName)
     {
@@ -274,9 +194,9 @@ public class VassalXWSPilotPieces2e {
         return piece;
     }
 
-    private void setPilotShipName(GamePiece piece) {
+    private void setPilotShipName(GamePiece piece, String fullShipName) {
         if (pilotData != null) {
-            piece.setProperty("Pilot Name", getDisplayShipName());
+            piece.setProperty("Pilot Name", getDisplayShipName(fullShipName));
         }
         piece.setProperty("Craft ID #", getDisplayPilotName());
     }
@@ -296,11 +216,11 @@ public class VassalXWSPilotPieces2e {
         return pilotName;
     }
 
-    private String getDisplayShipName() {
+    private String getDisplayShipName(String fullShipName) {
         String shipName = "";
         if (pilotData != null) {
             shipName = Acronymizer.acronymizer(
-                    this.pilotData.getShip(),
+                    fullShipName,
                     this.pilotData.isUnique(),
                     this.shipData.hasSmallBase());
         }
@@ -308,11 +228,11 @@ public class VassalXWSPilotPieces2e {
         return shipName;
     }
 
-    public MasterShipData.ShipData getShipData() {
+    public XWS2Pilots getShipData() {
         return shipData;
     }
 
-    public MasterPilotData.PilotData getPilotData() {
+    public XWS2Pilots.Pilot2e getPilotData() {
         return pilotData;
     }
 

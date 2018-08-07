@@ -8,15 +8,15 @@ import com.google.common.collect.Maps;
 
 import java.util.List;
 import java.util.Map;
+
 /**
- * Created by Mic on 2018-07-07.
- * This is the squad json spec for 2e lists. At the time of creation, no idea how that will hold up.
+ * Created by mjuneau on 7/8/18.
+ * Almost identical to XWSList at the beginning of the creation of this file, save for 2 diffs:
+ * 1) removed the YT2400 naming glitch patch
+ * 2) added a XWS2 String in the pilots static class - this will be used to uniquely identify a pilot with faction-ship-pilot-sku
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class XWSList2 {
-
-    @JsonProperty("ffgedition")
-    private String ffgedition;
+public class XWSList2e {
 
     @JsonProperty("name")
     private String name;
@@ -37,16 +37,13 @@ public class XWSList2 {
     private List<String> obstacles = Lists.newArrayList();
 
     @JsonProperty("pilots")
-    private List<XWSList2.XWSPilot2> pilots = Lists.newArrayList();
+    private List<XWSPilot> pilots = Lists.newArrayList();
 
     @JsonProperty("vendor")
     private Map<String, Map<String, String>> vendor = Maps.newHashMap();
 
     @JsonIgnore
     private String xwsSource;
-
-    public String getFfgEdition() {return ffgedition; }
-    public void setFfgedition(String ffgedition) { this.ffgedition = ffgedition; }
 
     public String getName() {
         return name;
@@ -97,7 +94,7 @@ public class XWSList2 {
         this.obstacles = obstacles;
     }
 
-    public List<XWSList2.XWSPilot2> getPilots() {
+    public List<XWSPilot> getPilots() {
         return pilots;
     }
 
@@ -118,23 +115,24 @@ public class XWSList2 {
         this.xwsSource = xwsSource;
     }
 
-    public void addPilot(XWSList2.XWSPilot2 newPilot)
+    public void addPilot(XWSPilot newPilot)
     {
         pilots.add(newPilot);
     }
 
-    public static class XWSPilot2 {
+    public static class XWSPilot {
 
-        public XWSPilot2()
+        public XWSPilot()
         {
             super();
         }
-        public XWSPilot2(String name, String ship, Map upgrades, Map vendor, Integer points)
+        public XWSPilot(String name, String ship, String xws2, Map upgrades, Map vendor, Integer points)
         {
             this.name = name;
             this.ship = ship;
+            this.xws2 = xws2;
             this.upgrades = upgrades;
-            this.vendor = vendor;
+            //this.vendor = vendor;
             this.points = points;
         }
 
@@ -143,6 +141,9 @@ public class XWSList2 {
 
         @JsonProperty("xws")
         private String xws;
+
+        @JsonProperty("xws2")
+        private String xws2;
 
         @JsonProperty("name")
         private String name;
@@ -153,8 +154,10 @@ public class XWSList2 {
         @JsonProperty("upgrades")
         private Map<String, List<String>> upgrades = Maps.newHashMap();
 
+        /*
         @JsonProperty("vendor")
         private Map<String, Map<String, String>> vendor = Maps.newHashMap();
+*/
 
         @JsonProperty("points")
         private Integer points;
@@ -172,6 +175,7 @@ public class XWSList2 {
             return xws;
         }
 
+        public String getXws2() { return xws2; }
         public String getShip() {
             return ship;
         }
@@ -180,13 +184,8 @@ public class XWSList2 {
             return upgrades;
         }
 
-        public Map<String, Map<String, String>> getVendor() {
-            return vendor;
-        }
-
         public Integer getPoints() {
             return points;
         }
     }
 }
-

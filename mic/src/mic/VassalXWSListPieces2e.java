@@ -10,14 +10,14 @@ import java.util.List;
  * Created by amatheny on 2/8/17.
  */
 public class VassalXWSListPieces2e {
-    private List<VassalXWSPilotPieces> ships = Lists.newArrayList();
+    private List<VassalXWSPilotPieces2e> ships = Lists.newArrayList();
     private List<PieceSlot> obstacles = Lists.newArrayList();
 
-    public List<VassalXWSPilotPieces> getShips() {
+    public List<VassalXWSPilotPieces2e> getShips() {
         return ships;
     }
 
-    public void setShips(List<VassalXWSPilotPieces> ships) {
+    public void setShips(List<VassalXWSPilotPieces2e> ships) {
         this.ships = ships;
     }
 
@@ -43,19 +43,19 @@ public class VassalXWSListPieces2e {
         }
 
         int total = 0;
-        for (VassalXWSPilotPieces ship : ships) {
+        for (VassalXWSPilotPieces2e ship : ships) {
             if (ship.getPilotData() == null) {
                 Util.logToChat("Unable to calculate points for " + ship.getPilotCard().getConfigureName());
                 continue;
             }
-            total += ship.getPilotData().getPoints();
+            //total += ship.getPilotData().getPoints();
             int systemCost = 0;
             int eliteCost = 0;
             boolean isTIEx1Here = false;
             boolean isVaksaiHere = false;
             boolean isRenegadeRefitHere = false;
             int vaksaiAccumulatedRebate = 0;
-            for (VassalXWSPilotPieces.Upgrade upgrade : ship.getUpgrades()) {
+            for (VassalXWSPilotPieces2e.Upgrade upgrade : ship.getUpgrades()) {
                 if (upgrade.getUpgradeData() == null) {
                     Util.logToChat("Unable to calculate points for " + upgrade.getXwsName());
                     continue;

@@ -36,6 +36,60 @@ public class XWS2Pilots {
     public List<Stat2e> getStats() {return this.stats;}
     public List<Pilot2e> getPilots() { return this.pilots;}
 
+    public int getHull(){
+        for(Stat2e stat : stats)
+        {
+            if(stat.getType().equals("hull")) return stat.getValue();
+        }
+        return 0;
+    }
+    public int getAgility(){
+        for(Stat2e stat : stats)
+        {
+            if(stat.getType().equals("agility")) return stat.getValue();
+        }
+        return 0;
+    }
+    public int getShields(){
+        for(Stat2e stat : stats)
+        {
+            if(stat.getType().equals("shields")) return stat.getValue();
+        }
+        return 0;
+    }
+    public int getCharge(){
+        for(Stat2e stat : stats)
+        {
+            if(stat.getType().equals("charge")) return stat.getValue();
+        }
+        return 0;
+    }
+    public int getForce(){
+        for(Stat2e stat : stats)
+        {
+            if(stat.getType().equals("force")) return stat.getValue();
+        }
+        return 0;
+    }
+    public int getFrontArc(){
+        for(Stat2e stat : stats)
+        {
+            if(stat.getArc().equals("Front Arc") && stat.getType().equals("attack")) return stat.getValue();
+        }
+        return 0;
+    }
+    public int getRearArc(){
+        for(Stat2e stat : stats)
+        {
+            if(stat.getArc().equals("Rear Arc") && stat.getType().equals("attack")) return stat.getValue();
+        }
+        return 0;
+    }
+    public boolean hasSmallBase() {
+        if(size.equals("small")) return true;
+        return false;
+    }
+
     public boolean containsPilot(String pilotName){
         for(Pilot2e pilot : getPilots())
         {
@@ -88,6 +142,8 @@ public class XWS2Pilots {
         public int getValue(){
             return this.value;
         }
+
+
     }
 
     public static class Pilot2e{
@@ -116,12 +172,26 @@ public class XWS2Pilots {
         @JsonProperty("ability")
         private String ability;
 
+        @JsonProperty("xws2")
+        private String xws2;
+
+        @JsonProperty("conditions")
+        private List<String> conditions = Lists.newArrayList();
+
+        @JsonProperty("actions")
+        private List<String> actions = Lists.newArrayList();
+
         public String getName(){return this.name;}
         public String getCaption() {return this.caption;}
         public int getInitiative() { return this.initiative;}
         public int getLimited() { return this.limited;}
         public String getAbility() { return this.ability; }
+        public String getXWS2() { return this.xws2; }
+        public List<String> getConditions() { return this.conditions; }
+        public List<String> getActions() { return this.actions; }
 
+        public boolean isUnique() { if(limited>0) return true;
+        return false;}
     }
 
     public static class pilotsDataSources{
@@ -163,5 +233,27 @@ public class XWS2Pilots {
             }
         }
         return allPilots;
+    }
+
+    public static XWS2Pilots getSpecificShip(String searchedXWS2Name, List<XWS2Pilots> allShips){
+        for(XWS2Pilots aShip : allShips)
+        {
+            for(XWS2Pilots.Pilot2e aPilot : aShip.getPilots())
+            {
+                if(aPilot.getXWS2().equals(Canonicalizer.getCleanedName(searchedXWS2Name))) return aShip;
+            }
+        }
+        return null;
+    }
+
+    public static XWS2Pilots.Pilot2e getSpecificPilot(String searchedXWS2Name, List<XWS2Pilots> allShips){
+        for(XWS2Pilots aShip : allShips)
+        {
+            for(XWS2Pilots.Pilot2e aPilot : aShip.getPilots())
+            {
+                if(aPilot.getXWS2().equals(Canonicalizer.getCleanedName(searchedXWS2Name))) return aPilot;
+            }
+        }
+        return null;
     }
 }

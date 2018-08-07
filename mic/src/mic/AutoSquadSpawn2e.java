@@ -253,14 +253,14 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
         validateButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                XWSList xwsList = loadListFromRawJson(entryArea.getText());
+                XWSList2e xwsList = loadListFromRawJson(entryArea.getText());
                 try{
                 validateList(xwsList, allShips, allUpgrades);
                 } catch (Exception exc) {
                     logToChat("Unable to load raw JSON list '%s': %s", entryArea.getText(), exc.toString());
                     return;
                 }
-                DealWithXWSList(xwsList, playerIndex);
+                DealWithXWSList(xwsList, playerIndex, allShips, allUpgrades);
             }
         });
 
@@ -299,7 +299,7 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
         return null;
     }
 
-    private void DealWithXWSList(XWSList xwsList, int playerIndex) {
+    private void DealWithXWSList(XWSList2e xwsList, int playerIndex, List<XWS2Pilots> allPilots, List<XWS2Upgrades> allUpgrades) {
         if (xwsList == null || xwsList.getPilots() == null || xwsList.getPilots().size() == 0) {
             return;
         }
@@ -310,15 +310,13 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
             return;
         }
 
-
-
         //CERTAINTY BOOKMARK ^^^ P SURE THE ABOVE IS CERTIFIED. VVVV BELOW IS UNCERTAIN
 
 
 
         // If the list includes a yv666 with Hound's Tooth upgrade or modified YT-1300 with escape craft, add the necessary stuff
         //xwsList = handleHoundsToothIshThings(xwsList);
-        VassalXWSListPieces2e pieces = slotLoader.loadListFromXWS(xwsList);
+        VassalXWSListPieces2e pieces = slotLoader.loadListFromXWS(xwsList, allPilots, allUpgrades);
 
         Point startPosition = new Point(150, 150);
         Point dialstartPosition = new Point(300, 100);
@@ -337,7 +335,7 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
         int chargeYOffset = 0; // Y-Offset of where to place charge tokens relative to the upgrade card
         PieceSlot chargePieceSlot = null;
 
-        for (VassalXWSPilotPieces ship : pieces.getShips())
+        for (VassalXWSPilotPieces2e ship : pieces.getShips())
         {
             //Nastah pup to do later; also use this example to do escape craft maybe? if it comes as a card
             /*
@@ -354,14 +352,14 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
             // Generate the ship base pieces
             // ======================================================
             //TO DO in 2e
-            GamePiece shipPiece = GamePieceGenerator2e.generateShip(ship);
+            GamePiece shipPiece = GamePieceGenerator2e.generateShip(ship, allPilots);
 
             shipBases.add(shipPiece);
 
             // ======================================================
             // Generate the Pilot Pieces
             // ======================================================
-            GamePiece pilotPiece = GamePieceGenerator2e.generatePilot(ship);
+            GamePiece pilotPiece = GamePieceGenerator2e.generatePilot(ship, allPilots);
 
             int pilotWidth = (int) pilotPiece.boundingBox().getWidth();
             int pilotHeight = (int) pilotPiece.boundingBox().getHeight();
@@ -375,23 +373,23 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
             // ======================================================
             // Generate the Dial
             // ======================================================
-            GamePiece dialPiece = GamePieceGenerator2e.generateDial(ship);
+            GamePiece dialPiece = GamePieceGenerator2e.generateDial(ship, allPilots);
 
             int dialWidth = (int) dialPiece.boundingBox().getWidth();
             spawnPiece(dialPiece, new Point((int) dialstartPosition.getX() + totalDialsWidth, (int) dialstartPosition.getY()), playerMap);
             totalDialsWidth += dialWidth;
 
             int totalUpgradeWidth = 0;
-            for (VassalXWSPilotPieces.Upgrade upgrade : ship.getUpgrades()) {
+            for (VassalXWSPilotPieces2e.Upgrade upgrade : ship.getUpgrades()) {
 
-                GamePiece upgradePiece = GamePieceGenerator.generateUpgrade(upgrade);
+                GamePiece upgradePiece = GamePieceGenerator2e.generateUpgrade(upgrade);
             }
 
             // ======================================================
             //TODO Generate the Conditions
             // ======================================================
-            for (VassalXWSPilotPieces.Condition condition: ship.getConditions()) {
-                GamePiece conditionPiece = GamePieceGenerator.generateCondition(condition);
+            for (VassalXWSPilotPieces2e.Condition condition: ship.getConditions()) {
+                GamePiece conditionPiece = GamePieceGenerator2e.generateCondition(condition);
                 /*
                 GamePiece conditionPiece = newPiece(condition.getPieceSlot());
                 if(condition.getPieceSlot().getConfigureName().startsWith("Stem"))
@@ -407,7 +405,7 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
 
 
                 // spawn the condition token
-                GamePiece conditionTokenPiece = GamePieceGenerator.generateConditionToken(condition);
+                GamePiece conditionTokenPiece = GamePieceGenerator2e.generateConditionToken(condition);
                 spawnPiece(conditionTokenPiece, new Point(
                                 (int) startPosition.getX() + pilotWidth + totalUpgradeWidth,
                                 (int) startPosition.getY() + totalPilotHeight),
@@ -805,14 +803,14 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
     }
 
 
-    private void validateList(XWSList list, final List<XWS2Pilots> allShips, final List<XWS2Upgrades> allUpgrades) throws XWSpawnException
+    private void validateList(XWSList2e list, final List<XWS2Pilots> allShips, final List<XWS2Upgrades> allUpgrades) throws XWSpawnException
     {
         boolean error = false;
         XWSpawnException exception = new XWSpawnException();
 
-        XWSList newList = null;
+        XWSList2e newList = null;
         HashMap<String,String> skippedPilots = new HashMap<String,String>();
-        for (XWSList.XWSPilot pilot : list.getPilots())
+        for (XWSList2e.XWSPilot pilot : list.getPilots())
         {
             //savedShipIndex is a list because the pilot might be something like a TIE/ln pilot and the search must not stop at only 1 faction of that ship (e.g. empire) when the wanted pilot is of another (e.g. Captain Rex)
             List<Integer> savedShipIndex = Lists.newArrayList();
@@ -871,7 +869,7 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
         if(error)
         {
             // create a new list, removing the pilots/ships that aren't valid
-            newList = new XWSList();
+            newList = new XWSList2e();
             newList.setDescription(list.getDescription());
             newList.setFaction(list.getFaction());
             newList.setName(list.getName());
@@ -881,23 +879,22 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
             newList.setVersion(list.getVersion());
             newList.setXwsSource(list.getXwsSource());
 
-            for (XWSList.XWSPilot pilot : list.getPilots())
+            for (XWSList2e.XWSPilot pilot : list.getPilots())
             {
                 if(skippedPilots.get(pilot.getName()) == null)
                 {
-
                     newList.addPilot(pilot);
                 }
             }
-            exception.setNewList(newList);
+            exception.setNewList2e(newList);
             // throw the exception
             throw exception;
         }
     }
 
-    private XWSList loadListFromRawJson(String userInput) {
+    private XWSList2e loadListFromRawJson(String userInput) {
         try {
-            XWSList list = getMapper().readValue(userInput, XWSList.class);
+            XWSList2e list = getMapper().readValue(userInput, XWSList2e.class);
             list.setXwsSource("JSON");
             return list;
         } catch (Exception e) {

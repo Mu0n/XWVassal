@@ -14,7 +14,7 @@ import java.awt.*;
 import java.util.Map;
 
 
-public class StemPilot extends Decorator implements EditablePiece {
+public class StemPilot2e extends Decorator implements EditablePiece {
 
     private static Map<String, String> factionBacks = ImmutableMap.<String, String>builder()
             .put("Rebel Alliance","Pilot-Rebel_Back.jpg")
@@ -36,11 +36,11 @@ public class StemPilot extends Decorator implements EditablePiece {
     public static final String ID = "stemPilot";
 
 
-    public StemPilot(){
+    public StemPilot2e(){
         this(null);
     }
 
-    public StemPilot(GamePiece piece){
+    public StemPilot2e(GamePiece piece){
         setInner(piece);
 
     }
@@ -128,19 +128,19 @@ public class StemPilot extends Decorator implements EditablePiece {
         static String shipName = "";
         static String xwsText = "";
 
-        PilotGenerateCommand(GamePiece piece, MasterPilotData.PilotData pilotData, MasterShipData.ShipData shipData)
+        PilotGenerateCommand(GamePiece piece, XWS2Pilots shipData, XWS2Pilots.Pilot2e pilotData)
         {
             //xwsPilotName = pilotXWS;
 
-            shipXWS = shipData.getXws();
-            faction = pilotData.getFaction();
+            shipXWS = Canonicalizer.getCleanedName(shipData.getName());
+            faction = shipData.getFaction();
             pilotName = pilotData.getName();
             shipName = shipData.getName();
-            xwsText = pilotData.getText();
+            xwsText = pilotData.getAbility();
 
             String factionXWS = Canonicalizer.getCanonicalFactionName(faction);
 
-            pilotXWSencoding = factionXWS+"_"+shipXWS+"_"+pilotData.getXws();
+            pilotXWSencoding = factionXWS+"_"+shipXWS+"_"+pilotData.getXWS2();
 
             this.piece = piece;
 /*
@@ -347,10 +347,10 @@ public class StemPilot extends Decorator implements EditablePiece {
         //the following class is used to send the info to the other player whenever a ship generation command is issued, so it can be done locally on all machines playing/watching the game
         //only the ship XWS string is sent
         public static class PilotGeneratorEncoder implements CommandEncoder {
-            private static final Logger logger = LoggerFactory.getLogger(StemPilot.class);
+            private static final Logger logger = LoggerFactory.getLogger(StemPilot2e.class);
             private static final String commandPrefix = "PilotGeneratorEncoder=";
 
-            public static StemPilot.PilotGenerateCommand.PilotGeneratorEncoder INSTANCE = new StemPilot.PilotGenerateCommand.PilotGeneratorEncoder();
+            public static StemPilot2e.PilotGenerateCommand.PilotGeneratorEncoder INSTANCE = new StemPilot2e.PilotGenerateCommand.PilotGeneratorEncoder();
 
             public Command decode(String command) {
                 if (command == null || !command.contains(commandPrefix)) {

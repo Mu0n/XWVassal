@@ -43,33 +43,28 @@ public class VassalXWSPieceLoader2e {
     Map<String, VassalXWSPilotPieces2e.Upgrade> upgradePiecesMap = Maps.newHashMap();
     Map<Tokens, PieceSlot> tokenPiecesMap = Maps.newHashMap();
     Map<Obstacles, PieceSlot> obstaclesPiecesMap = Maps.newHashMap();
-  //  Map<String, VassalXWSPilotPieces.Condition> conditionPiecesMap = Maps.newHashMap();
+    // Map<String, VassalXWSPilotPieces2e.Condition> conditionPiecesMap = Maps.newHashMap();
 
-    public VassalXWSListPieces2e loadListFromXWS(XWSList list) {
+    public VassalXWSListPieces2e loadListFromXWS(XWSList2e list, List<XWS2Pilots> allPilots, List<XWS2Upgrades> allUpgrades) {
         if (pilotPiecesMap.isEmpty() || upgradePiecesMap.isEmpty()
                 || tokenPiecesMap.isEmpty()|| obstaclesPiecesMap.isEmpty()) {
-            loadPieces();
+            loadPieces(allPilots);
         }
 
-        //gotta make a 2e version of this
         VassalXWSListPieces2e pieces = new VassalXWSListPieces2e();
 
         Multiset<String> pilotCounts = HashMultiset.create();
-        for (XWSList.XWSPilot pilot : list.getPilots()) {
+        for (XWSList2e.XWSPilot pilot : list.getPilots()) {
             pilotCounts.add(pilot.getName());
         }
 
         Multiset<String> genericPilotsAdded = HashMultiset.create();
 
-        for (XWSList.XWSPilot pilot : list.getPilots())
+        for (XWSList2e.XWSPilot pilot : list.getPilots())
         {
-
             String xwsShip = Canonicalizer.getCleanedName(pilot.getShip());
-            MasterShipData.ShipData shipData = MasterShipData.getShipData(pilot.getShip());
-
-
-            MasterPilotData.PilotData pilotData = MasterPilotData.getPilotData(xwsShip,pilot.getName(),list.getFaction() );
-
+            XWS2Pilots shipData = XWS2Pilots.getSpecificShip(pilot.getXws2(), allPilots);
+            XWS2Pilots.Pilot2e pilotData = XWS2Pilots.getSpecificPilot(pilot.getXws2(), allPilots);
 
             // generate the pilot card
             VassalXWSPilotPieces2e barePieces = new VassalXWSPilotPieces2e();
@@ -83,6 +78,7 @@ public class VassalXWSPieceLoader2e {
 
             // add the stem ship
             PieceSlot smallShipSlot = null;
+            PieceSlot mediumShipSlot = null;
             PieceSlot largeShipSlot = null;
 
             // stem upgrade
@@ -211,7 +207,7 @@ public class VassalXWSPieceLoader2e {
             }
 
             List<Tokens2e> tokens = Tokens2e.loadForPilot(pilotPieces);
-            for (Tokens token : tokens) {
+            for (Tokens2e token : tokens) {
                 PieceSlot tokenSlot = tokenPiecesMap.get(token);
                 if (tokenSlot != null) {
                     pilotPieces.getTokens().put(token, tokenSlot);
@@ -479,7 +475,7 @@ public class VassalXWSPieceLoader2e {
         */
     }
 
-    public void loadPieces() {
+    public void loadPieces(List<XWS2Pilots> allShips) {
         pilotPiecesMap = Maps.newHashMap();
         upgradePiecesMap = Maps.newHashMap();
         tokenPiecesMap = Maps.newHashMap();
@@ -504,7 +500,7 @@ public class VassalXWSPieceLoader2e {
                 case imperial:
                 case rebel:
                 case scum:
-                    loadPilots(listWidget, parentType);
+                    loadPilots(listWidget, parentType, allShips);
                     break;
             }
         }
@@ -565,7 +561,7 @@ public class VassalXWSPieceLoader2e {
             String upgradeName = Canonicalizer.getCanonicalUpgradeName(upgradeType, upgrade.getConfigureName());
 
             String mapKey = getUpgradeMapKey(upgradeType, upgradeName);
-            VassalXWSPilotPieces.Upgrade upgradePiece = new VassalXWSPilotPieces.Upgrade(upgradeName, upgrade);
+            VassalXWSPilotPieces2e.Upgrade upgradePiece = new VassalXWSPilotPieces2e.Upgrade(upgradeName, upgrade);
 
             MasterUpgradeData.UpgradeData upgradeData = MasterUpgradeData.getUpgradeData(upgradeName);
             if (upgradeData != null) {
@@ -578,7 +574,7 @@ public class VassalXWSPieceLoader2e {
 
 
 
-    private void loadPilots(ListWidget shipList, ListParentType faction) {
+    private void loadPilots(ListWidget shipList, ListParentType faction, List<XWS2Pilots> allShips) {
 
         if (faction != ListParentType.rebel && faction != ListParentType.scum && faction != ListParentType.imperial) {
             return;
@@ -632,16 +628,16 @@ public class VassalXWSPieceLoader2e {
             pilots.add(slot);
         }
 
-        MasterShipData.ShipData shipData = MasterShipData.getShipData(shipName);
+        XWS2Pilots shipData = XWS2Pilots.getSpecificShip(shipName, allShips);
 
         for (PieceSlot pilot : pilots) {
             String pilotName = Canonicalizer.getCanonicalPilotName(pilot.getConfigureName());
 
-            MasterPilotData.PilotData pilotData = MasterPilotData.getPilotData(shipName, pilotName, faction.name());
+            XWS2Pilots.Pilot2e pilotData = XWS2Pilots.getSpecificPilot(pilot.getConfigureName(), allShips);
 
             String mapKey = getPilotMapKey(faction.name(), shipName, pilotName);
 
-            VassalXWSPilotPieces pilotPieces = new VassalXWSPilotPieces();
+            VassalXWSPilotPieces2e pilotPieces = new VassalXWSPilotPieces2e();
             pilotPieces.setShipData(shipData);
             pilotPieces.setDial(dial);
             pilotPieces.setShip(AltArtShipPicker.getAltArtShip(pilotName, altArtShips, defaultShip));
@@ -662,8 +658,8 @@ public class VassalXWSPieceLoader2e {
         return String.format("%s/%s", upgradeType, upgradeName);
     }
 
-    public List<String> validateAgainstRemote() {
-        loadPieces();
+    public List<String> validateAgainstRemote(List<XWS2Pilots> allShips) {
+        loadPieces(allShips);
         XWSMasterPilots masterPilots = XWSMasterPilots.loadFromRemote();
 
         List<String> missingKeys = Lists.newArrayList();
