@@ -39,26 +39,15 @@ public class VassalXWSPieceLoader2e {
             "Asteroids", "TFA_Asteroids", "Debris"
     );
 
-    Map<String, VassalXWSPilotPieces2e> pilotPiecesMap = Maps.newHashMap();
-    Map<String, VassalXWSPilotPieces2e.Upgrade> upgradePiecesMap = Maps.newHashMap();
+
     Map<Tokens2e, PieceSlot> tokenPiecesMap = Maps.newHashMap();
     Map<Obstacles, PieceSlot> obstaclesPiecesMap = Maps.newHashMap();
     // Map<String, VassalXWSPilotPieces2e.Condition> conditionPiecesMap = Maps.newHashMap();
 
     public VassalXWSListPieces2e loadListFromXWS(XWSList2e list, List<XWS2Pilots> allPilots, List<XWS2Upgrades> allUpgrades) {
-        Util.logToChat("pieceloader line 49 start of loadListFromXWS");
-        if (pilotPiecesMap.isEmpty()) {
-            loadPieces(allPilots);
-        }
-        Util.logToChat("pieceloader line 53 after loadPieces(allPilots");
+
         VassalXWSListPieces2e pieces = new VassalXWSListPieces2e();
-
         Multiset<String> pilotCounts = HashMultiset.create();
-        for (XWSList2e.XWSPilot pilot : list.getPilots()) {
-            pilotCounts.add(pilot.getName());
-        }
-
-        Multiset<String> genericPilotsAdded = HashMultiset.create();
 
         for (XWSList2e.XWSPilot pilot : list.getPilots())
         {
@@ -119,13 +108,6 @@ public class VassalXWSPieceLoader2e {
             }
 
             VassalXWSPilotPieces2e pilotPieces = new VassalXWSPilotPieces2e(barePieces);
-
-
-            if (pilotCounts.count(pilot.getName()) > 1) {
-                genericPilotsAdded.add(pilot.getName());
-                pilotPieces.setShipNumber(genericPilotsAdded.count(pilot.getName()));
-            }
-
 
             pieces.getShips().add(pilotPieces);
 
@@ -191,8 +173,6 @@ public class VassalXWSPieceLoader2e {
     }
 
     public void loadPieces(List<XWS2Pilots> allShips) {
-        pilotPiecesMap = Maps.newHashMap();
-        upgradePiecesMap = Maps.newHashMap();
         tokenPiecesMap = Maps.newHashMap();
         obstaclesPiecesMap = Maps.newHashMap();
 
@@ -210,7 +190,6 @@ public class VassalXWSPieceLoader2e {
                     loadChits(listWidget);
                     break;
                 case upgrades:
-                    loadUpgrades(listWidget);
                     break;
                 case imperial:
                 case rebel:
@@ -267,26 +246,6 @@ public class VassalXWSPieceLoader2e {
             tokenPiecesMap.put(token, tokenSlot);
         }
     }
-
-    private void loadUpgrades(ListWidget listWidget) {
-        String upgradeType = Canonicalizer.getCanonicalUpgradeTypeName(listWidget.getConfigureName());
-        List<PieceSlot> upgrades = listWidget.getAllDescendantComponentsOf(PieceSlot.class);
-
-        for (PieceSlot upgrade : upgrades) {
-            String upgradeName = Canonicalizer.getCanonicalUpgradeName(upgradeType, upgrade.getConfigureName());
-
-            String mapKey = getUpgradeMapKey(upgradeType, upgradeName);
-            VassalXWSPilotPieces2e.Upgrade upgradePiece = new VassalXWSPilotPieces2e.Upgrade(upgradeName, upgrade);
-
-            MasterUpgradeData.UpgradeData upgradeData = MasterUpgradeData.getUpgradeData(upgradeName);
-            if (upgradeData != null) {
-                upgradePiece.setUpgradeData(upgradeData);
-            }
-
-            upgradePiecesMap.put(mapKey, upgradePiece);
-        }
-    }
-
 
 
     private void loadPilots(ListWidget shipList, ListParentType faction, List<XWS2Pilots> allShips) {
@@ -347,13 +306,26 @@ Util.logToChat("line 300 pieceloader2e shipName " + shipName);
         if(shipData == null) return;
         //Util.logToChat("pieceloader2e line 344  shipData " + ((shipData==null)?"is null":"is not null"));
 
+        //cycles through all the pilot PieceSlots of the wanted pilots List and wishes to gather the loaded pilotData from xwing-data2 for that specific ship/pilot key
         for (PieceSlot pilot : pilots) {
+
+
             Util.logToChat("pieceloader2e line 347 pilot parse " + ((pilot==null)?"is null":"is not null"));
 
             String pilotName = Canonicalizer.getCanonicalPilotName(pilot.getConfigureName());
 
 Util.logToChat("pieceloader2e line 347 right after getting getConfigureName for a pilot");
-            XWS2Pilots.Pilot2e pilotData = XWS2Pilots.getSpecificPilot(pilot.getConfigureName(), allShips);
+            //get the right pilotData from the same ship, but make sure to verify it's the right faction too!
+            XWS2Pilots.Pilot2e pilotData = null;
+            for(XWS2Pilots xws2pilot : allShips){
+                Util.logToChat("pieceloader2e line 362 xws2.getFaction " + xws2pilot.getFaction() + " shipData.getFaction " + shipData.getFaction());
+                if(xws2pilot.getFaction()!=shipData.getFaction()) continue;
+                pilotData = XWS2Pilots.getSpecificPilot(pilot.getConfigureName(), allShips);
+            }
+            if(pilotData == null) {
+                Util.logToChat("couldn't find the right pilot data");
+                return;
+            }
             Util.logToChat("pieceloader2e line 349 pilotConfigName = " + pilot.getConfigureName() + " pilotName " + pilotName + " pilotData Name " + pilotData.getName());
             String mapKey = getPilotMapKey(faction.name(), shipName, pilotName);
 
@@ -366,7 +338,6 @@ Util.logToChat("pieceloader2e line 347 right after getting getConfigureName for 
             pilotPieces.setMovementStrip(movementStrip);
             pilotPieces.setOpenDial(openDial);
             pilotPieces.setPilotData(pilotData);
-            pilotPiecesMap.put(mapKey, pilotPieces);
         }
     }
 
@@ -378,37 +349,6 @@ Util.logToChat("pieceloader2e line 347 right after getting getConfigureName for 
         return String.format("%s/%s", upgradeType, upgradeName);
     }
 
-    public List<String> validateAgainstRemote(List<XWS2Pilots> allShips) {
-        loadPieces(allShips);
-        XWSMasterPilots masterPilots = XWSMasterPilots.loadFromRemote();
-
-        List<String> missingKeys = Lists.newArrayList();
-
-        for (XWSMasterPilots.FactionPilots factionPilots : Lists.newArrayList(masterPilots.rebel, masterPilots.scum, masterPilots.imperial)) {
-            for (String shipName : factionPilots.ships.keySet()) {
-                for (String pilotName : factionPilots.ships.get(shipName).pilots.keySet()) {
-                    String pieceKey = getPilotMapKey(Canonicalizer.getCleanedName(factionPilots.name), shipName, pilotName);
-                    if (!this.pilotPiecesMap.containsKey(pieceKey)) {
-                        missingKeys.add(pieceKey);
-                        Util.logToChat("Missing pilot: " + pieceKey);
-                    }
-                }
-            }
-        }
-
-        Map<String, XWSMasterUpgrades.UpgradeType> masterUpgrades = XWSMasterUpgrades.loadFromRemote();
-        for (String upgradeType : masterUpgrades.keySet()) {
-            for (String upgradeName : masterUpgrades.get(upgradeType).upgrades.keySet()) {
-                String pieceKey = getUpgradeMapKey(upgradeType, upgradeName);
-                if (!upgradePiecesMap.containsKey(pieceKey)) {
-                    missingKeys.add(pieceKey);
-                    Util.logToChat("Missing upgrade: " + pieceKey);
-                }
-            }
-        }
-
-        return missingKeys;
-    }
 
     private enum ListParentType {
         rebel("Rebel"),

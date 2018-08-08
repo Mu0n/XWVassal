@@ -16,7 +16,6 @@ public class VassalXWSListPieces2e {
     public List<VassalXWSPilotPieces2e> getShips() {
         return ships;
     }
-
     public void setShips(List<VassalXWSPilotPieces2e> ships) {
         this.ships = ships;
     }
@@ -24,7 +23,6 @@ public class VassalXWSListPieces2e {
     public List<PieceSlot> getObstacles() {
         return obstacles;
     }
-
     public void setObstacles(List<PieceSlot> obstacles) {
         this.obstacles = obstacles;
     }

@@ -253,8 +253,16 @@ public class GamePieceGenerator2e
 
     public static GamePiece generateDial(VassalXWSPilotPieces2e ship, List<XWS2Pilots> allShips)
     {
-
-        XWS2Pilots shipData = XWS2Pilots.getSpecificShip(ship.getShip().getConfigureName(), allShips);
+        XWS2Pilots shipData = null;
+        try {
+            Util.logToChat("dial creation, must find xwspilotpieces2e ship config name:" + ship.getShip().getConfigureName());
+            shipData = XWS2Pilots.getSpecificShip(ship.getShip().getConfigureName(), allShips);
+        } catch(Exception e)
+        {
+            Util.logToChat("couldn't find a ship dial reference for generating its dial");
+            return null;
+        }
+        if(shipData==null) return null;
 
         String faction = ship.getShipData().getFaction();
 
@@ -303,8 +311,6 @@ public class GamePieceGenerator2e
         myDialGen.execute();
 
         dial.setProperty("ShipXwsId",Canonicalizer.getCleanedName(ship.getShipData().getName()));
-        dial.setProperty("Pilot Name", getDisplayShipName(ship.getPilotData(),shipData));
-        dial.setProperty("Craft ID #", getDisplayPilotName(ship.getPilotData(),shipData,ship.getShipNumber()));
         return dial;
     }
 

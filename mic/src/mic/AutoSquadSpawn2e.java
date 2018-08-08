@@ -285,6 +285,10 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
                     logToChat("Unable to load raw JSON list '%s': %s", entryArea.getText(), exc.toString());
                     return;
                 }
+                if (xwsList == null || xwsList.getPilots() == null || xwsList.getPilots().size() == 0) {
+                    logToChat("raw JSON list has no detected pilots in it.");
+                    return;
+                }
                 DealWithXWSList(xwsList, playerIndex, allShips, allUpgrades);
             }
         });
@@ -325,9 +329,6 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
     }
 
     private void DealWithXWSList(XWSList2e xwsList, int playerIndex, List<XWS2Pilots> allPilots, List<XWS2Upgrades> allUpgrades) {
-        if (xwsList == null || xwsList.getPilots() == null || xwsList.getPilots().size() == 0) {
-            return;
-        }
 
         Map playerMap = getPlayerMap(playerIndex);
         if (playerMap == null) {
@@ -342,150 +343,31 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
         //xwsList = handleHoundsToothIshThings(xwsList);
         VassalXWSListPieces2e pieces = slotLoader.loadListFromXWS(xwsList, allPilots, allUpgrades);
 
-        Point startPosition = new Point(150, 150);
         Point dialstartPosition = new Point(300, 100);
-        Point tokensStartPosition = new Point(300, 220);
-        Point tlStartPosition = new Point(300, 290);
-        int shipBaseY = 110;
-
-        int totalPilotHeight = 0;
         int totalDialsWidth = 0;
-        int totalTokenWidth = 0;
-        int totalTLWidth = 0;
 
-        List<GamePiece> shipBases = Lists.newArrayList();
-
-        List<Point> chargeTokenLocations = Lists.newArrayList(); // list of coordinates to place charge tokens
-        int chargeYOffset = 0; // Y-Offset of where to place charge tokens relative to the upgrade card
-        PieceSlot chargePieceSlot = null;
+        for(VassalXWSPilotPieces2e ship : pieces.getShips())
+        {
+            logToChat("pieces manifest - ship name " + ship.getShipData().getName() + " pilot name " + ship.getPilotData().getName());
+        }
 
         for (VassalXWSPilotPieces2e ship : pieces.getShips()) {
-            //Nastah pup to do later; also use this example to do escape craft maybe? if it comes as a card
-            /*
-            if(ship.getPilotData().getXws().equals("nashtahpuppilot")) //<- NULL HERE?
-            {
-                MasterPilotData.PilotData nashtahPilotData = ship.getPilotData();
-                nashtahPilotData.setSkill(houndsToothPilotSkill);
-                ship.setPilotData(nashtahPilotData);
-
-            }
-            */
-
-            // ======================================================
-            // Generate the ship base pieces
-            // ======================================================
-            //TO DO in 2e
-            //// GamePiece shipPiece = GamePieceGenerator2e.generateShip(ship, allPilots);
-
-            ////  shipBases.add(shipPiece);
-
-            // ======================================================
-            // Generate the Pilot Pieces
-            // ======================================================
-            ////  GamePiece pilotPiece = GamePieceGenerator2e.generatePilot(ship, allPilots);
-
-            ////   int pilotWidth = (int) pilotPiece.boundingBox().getWidth();
-            //// int pilotHeight = (int) pilotPiece.boundingBox().getHeight();
-            ////  totalPilotHeight += pilotHeight;
-            ////  spawnPiece(pilotPiece, new Point(
-            ////               (int) startPosition.getX(),
-            ////                 (int) startPosition.getY() + totalPilotHeight),
-            ////       playerMap);
-
-
             // ======================================================
             // Generate the Dial
             // ======================================================
             GamePiece dialPiece = GamePieceGenerator2e.generateDial(ship, allPilots);
 
-            int dialWidth = (int) dialPiece.boundingBox().getWidth();
+            int dialWidth = 0;
+            try {
+                dialWidth = (int) dialPiece.boundingBox().getWidth();
+            } catch (Exception e)
+            {
+                logToChat("Couldn't find the dial infor for this ship: " + ship.getShipData().getName());
+                continue;
+            }
             spawnPiece(dialPiece, new Point((int) dialstartPosition.getX() + totalDialsWidth, (int) dialstartPosition.getY()), playerMap);
             totalDialsWidth += dialWidth;
 
-            /*
-            int totalUpgradeWidth = 0;
-            for (VassalXWSPilotPieces2e.Upgrade upgrade : ship.getUpgrades()) {
-
-                GamePiece upgradePiece = GamePieceGenerator2e.generateUpgrade(upgrade);
-            }*/
-
-            // ======================================================
-            //TODO Generate the Conditions
-            // ======================================================
-
-
-            ////for (VassalXWSPilotPieces2e.Condition condition: ship.getConditions()) {
-            ////GamePiece conditionPiece = GamePieceGenerator2e.generateCondition(condition);
-                /*
-                GamePiece conditionPiece = newPiece(condition.getPieceSlot());
-                if(condition.getPieceSlot().getConfigureName().startsWith("Stem"))
-                {
-                    // this is an unreleased condition.  Need to set the name
-                    conditionPiece.setProperty("Upgrade Name",condition.getXwsName());
-                }*/
-            ////spawnPiece(conditionPiece, new Point(
-            /////(int) startPosition.getX() + pilotWidth + totalUpgradeWidth,
-            /////(int) startPosition.getY() + totalPilotHeight),
-            //// playerMap);
-            //// totalUpgradeWidth += conditionPiece.boundingBox().getWidth();
-
-
-            // spawn the condition token
-            ////  GamePiece conditionTokenPiece = GamePieceGenerator2e.generateConditionToken(condition);
-            ////  spawnPiece(conditionTokenPiece, new Point(
-            ////                (int) startPosition.getX() + pilotWidth + totalUpgradeWidth,
-            ////                 (int) startPosition.getY() + totalPilotHeight),
-            ////          playerMap);
-            ////     totalUpgradeWidth += conditionTokenPiece.boundingBox().getWidth();
-            ////    } //loop to next condition
-
-
-            // ======================================================
-            // Add all of the appropriate tokens
-            // ======================================================
-            /*   for (GamePiece token : ship.getTokensForDisplay()) {
-                PieceSlot pieceSlot = new PieceSlot(token);
-                if ("Target Lock".equals(pieceSlot.getConfigureName())) {//if a target lock token, place elsewhere
-                    spawnPiece(token, new Point(
-                                    (int) tokensStartPosition.getX() + totalTLWidth,
-                                    (int) tlStartPosition.getY()),
-                            playerMap);
-                    totalTLWidth += token.boundingBox().getWidth();
-                }else if("Charge".equals(pieceSlot.getConfigureName()))
-                {
-                    // place the ordnance tokens
-                    for(Point aPoint : chargeTokenLocations)
-                    {
-                        GamePiece chargeToken = newPiece(pieceSlot);
-                        spawnPiece(chargeToken, aPoint, playerMap);
-                    }
-                }else {
-                    spawnPiece(token, new Point(
-                                    (int) tokensStartPosition.getX() + totalTokenWidth,
-                                    (int) tokensStartPosition.getY()),
-                            playerMap);
-                    totalTokenWidth += token.boundingBox().getWidth();
-                }
-            }// loop to next token
-        } //loop to next pilot
-        */
-/*
-            int shipBaseX = (int) dialstartPosition.getX() + totalDialsWidth - 30;
-            for (GamePiece piece : shipBases) {
-                int halfBase = (int) (piece.getShape().getBounds2D().getWidth() / 2.0);
-                spawnPiece(piece, new Point(shipBaseX + halfBase, shipBaseY), playerMap);
-                shipBaseX += piece.getShape().getBounds2D().getWidth() + 10.0;
-            }
-*/
-            /*
-            int obstacleX = (int) dialstartPosition.getX() + totalDialsWidth - 30;
-            int obstacleStartY = shipBaseY + 200;
-            for (GamePiece obstacle : pieces.getObstaclesForDisplay()) {
-                int halfSize = (int) (obstacle.boundingBox().getWidth() / 2.0);
-                spawnPiece(obstacle, new Point(obstacleX + halfSize, obstacleStartY), playerMap);
-                obstacleX += obstacle.getShape().getBounds().getWidth();
-            }
-*/
             String listName = xwsList.getName();
             logToChat("The '" + "Base 2.0 Game" + "' game mode was used to spawn a %s point list%s loaded from %s", pieces.getSquadPoints(),
                     listName != null ? " '" + listName + "'" : "", xwsList.getXwsSource());
@@ -867,14 +749,12 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
             String pilotXWS2 = Canonicalizer.getCleanedName(pilot.getName());
             //TO USE when xwing-data2 has them
             // String pilotXWS2 = pilot.getXws2();
-            logToChat("spawn line 864 scanning XWS pilot unique key " + pilot.getXws2() + " and attempting to match with " + pilotXWS2);
             //Check the unique pilot xws2 key in all ships
             boolean signalError = true;
             for(XWS2Pilots shipFromData : allShips)
             {
                 if(shipFromData.getSpecificPilot(pilotXWS2, allShips) == null) continue;
                 else {
-                    logToChat("spawn line 877 found a match for ship! " + pilotXWS2);
                     signalError = false; // invalidate the problem in ship finding
                     break;
                 }
@@ -883,7 +763,6 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
             if(signalError == true)
             {
                 error = true;
-                exception.addMessage("spawn line 886 - ship/Pilot combo "+pilotXWS2+" was not found.  Skipping.");
                 // skippedPilots.put(pilot.getXws(),"X");
                 skippedPilots.put(pilotXWS2,"X");
             }
