@@ -218,7 +218,9 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
                     {
                         for(XWS2Pilots.Pilot2e pilot : ship.getPilots())
                         {
-                            PilotComboList.addItem(pilot.getName());
+                            //TO DO change when xws2 arrives
+                            //PilotComboList.addItem(pilot.getName() + "_" + pilot.getXWS2());
+                            PilotComboList.addItem(pilot.getName() + "_" + Canonicalizer.getCleanedName(pilot.getName()));
                         }
                     }
                 }
@@ -522,12 +524,17 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
                                     aShipWasDetected = false;
                                 }
                                 comboBoxSeenCount = 1;
-                                currentShip.setTypeName(Canonicalizer.getCleanedName((((JComboBox) d).getSelectedItem()).toString()));
+                                String[] parts = (((JComboBox) d).getSelectedItem()).toString().split("_");
+                                if(parts.length > 1) currentShip.setTypeName(Canonicalizer.getCleanedName(parts[1]));
+                                else currentShip.setTypeName(parts[0]);
                             }
                             else if(comboBoxSeenCount== 1)
                             {
                                 comboBoxSeenCount = 2;
-                                currentShip.setShipName(Canonicalizer.getCleanedName((((JComboBox) d).getSelectedItem()).toString()));
+                                String[] parts = (((JComboBox) d).getSelectedItem()).toString().split("_");
+                                currentShip.setShipName(parts[0]);
+                                if(parts.length > 1) currentShip.setShipPilotXWS2(Canonicalizer.getCleanedName(parts[1]));
+                                else currentShip.setShipPilotXWS2(Canonicalizer.getCleanedName(parts[0]));
                                 aShipWasDetected = true;
                                 comboBoxSeenCount=0;
                             }
@@ -577,7 +584,7 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
             String pilotString = "\"name\":\"" + stuffToXWS.get(i).getShipName() + "\",";
             String xws2String = "\"xws2\":\"" + stuffToXWS.get(i).getShipPilotXWS2() + "\",";
             String upgradesStartString = "\"upgrades\":{";
-            output+= shipString + pilotString + upgradesStartString;
+            output+= shipString + pilotString + xws2String + upgradesStartString;
 
             for(int j=0; j<stuffToXWS.get(i).getUpgradeBins().size(); j++) //parse all upgrade types
             {
@@ -802,11 +809,11 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
 
         public void setShipName(String name) { this.shipName = name; }
         public void setTypeName(String type) { this.shipType = type; }
-        public void setShipPilotXWS2(String faction, String shipName, String type)
+        public void setShipPilotXWS2(String xws2)
         {
             //TO DO change this hard coded faction
             //this.shipPilotXWS2 = faction + "-" + shipType + "-" + shipName;
-            this.shipPilotXWS2 = "rebelalliance" + "-" + shipType + "-" + shipName;
+            this.shipPilotXWS2 = xws2;
         }
         public void addUpgrade(String type, String upgrade){
             boolean notFound = true;
@@ -856,7 +863,9 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
             logToChat("scanning XWS pilot unique key " + pilot.getXws2());
             //Get the stuff from the XWS formatted json
             String shipXws = pilot.getShip();
-            String pilotXWS2 = pilot.getXws2();
+            String pilotXWS2 = Canonicalizer.getCleanedName(pilot.getName());
+            //TO USE when xwing-data2 has them
+            // String pilotXWS2 = pilot.getXws2();
 
             //Check the unique pilot xws2 key in all ships
             boolean signalError = true;

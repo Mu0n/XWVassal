@@ -9,7 +9,9 @@ import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class XWS2Pilots {
-    private static String remoteUrl = "https://raw.githubusercontent.com/Mu0n/XWVassalOTA2e/master/ships.json";
+    private static String remoteUrl = "https://raw.githubusercontent.com/Mu0n/XWVassalOTA2e/master/manifest.json";
+    private static String guidoRootUrl = "https://raw.githubusercontent.com/guidokessels/xwing-data2/master/";
+
 
     @JsonProperty("name")
     private String name;
@@ -158,7 +160,7 @@ public class XWS2Pilots {
         }
 
         @JsonProperty("name")
-        private String name;
+        private String name="unknown";
 
         @JsonProperty("caption")
         private String caption;
@@ -173,7 +175,7 @@ public class XWS2Pilots {
         private String ability;
 
         @JsonProperty("xws2")
-        private String xws2;
+        private String xws2 = "";
 
         @JsonProperty("conditions")
         private List<String> conditions = Lists.newArrayList();
@@ -217,40 +219,55 @@ public class XWS2Pilots {
 
     public static class pilotsDataSources{
         public pilotsDataSources() { super(); }
-        public pilotsDataSources(List<oneShipDataSource> ships){
-            this.ships = ships;
+        public pilotsDataSources(List<OneFactionGroup> factionPilots){
+            this.factionPilots = factionPilots;
         }
+        @JsonProperty("pilots")
+        List<OneFactionGroup> factionPilots = Lists.newArrayList();
+
+        public List<OneFactionGroup> getPilots(){return this.factionPilots;}
+    }
+
+    public static class OneFactionGroup{
+        public OneFactionGroup() { super(); }
+        public OneFactionGroup(String faction, List<String> suffixes){
+            this.faction = faction;
+            this.suffixes = suffixes;
+        }
+
+        @JsonProperty("faction")
+        private String faction;
+
         @JsonProperty("ships")
-        List<oneShipDataSource> ships = Lists.newArrayList();
+        private List<String> suffixes = Lists.newArrayList();
 
-        public List<oneShipDataSource> getShips(){return this.ships;}
+        public String getFaction() { return faction; }
+        public List<String> getShipUrlSuffixes() { return suffixes; }
     }
 
-    public static class oneShipDataSource{
-        public oneShipDataSource() { super();}
-        public oneShipDataSource(String name, String url){
-            this.name = name;
-            this.url = url;
-        }
-        @JsonProperty("name")
-        private String name;
-
-        @JsonProperty("url")
-        private String url;
-
-        public String getName(){return this.name;}
-        public String getURL(){return this.url;}
-    }
     public static List<XWS2Pilots> loadFromRemote() {
         pilotsDataSources whereToGetPilots = Util.loadRemoteJson(remoteUrl, pilotsDataSources.class);
 
         List<XWS2Pilots> allPilots = Lists.newArrayList();
-        for(oneShipDataSource oSDS : whereToGetPilots.getShips()){
-            try {
-                allPilots.add(Util.loadRemoteJson(oSDS.getURL(), XWS2Pilots.class));
-            }catch (Exception e){
-                Util.logToChat(e.getMessage() + " on ship " + oSDS.getName());
-                continue;
+        for(OneFactionGroup oSDS : whereToGetPilots.getPilots()){
+            for(String suffix : oSDS.getShipUrlSuffixes())
+            {
+                try {
+                    allPilots.add(Util.loadRemoteJson(guidoRootUrl + suffix, XWS2Pilots.class));
+                }catch (Exception e){
+                    Util.logToChat(e.getMessage() + " on ship " + suffix);
+                    continue;
+                }
+            }
+
+        }
+
+        // temp massive list production for Guido to get the XWS2 tags going
+        for(XWS2Pilots ship : allPilots)
+        {
+            Util.logToChat("SCAN4Guido ship " + ship.getName());
+            for(XWS2Pilots.Pilot2e p : ship.getPilots()){
+                Util.logToChat("pilot - "+Canonicalizer.getCleanedName(p.getName()));
             }
         }
         return allPilots;
