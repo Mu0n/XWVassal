@@ -297,7 +297,7 @@ public class VassalXWSPieceLoader2e {
         }
 
         String shipName = Canonicalizer.getCanonicalShipName(shipList.getConfigureName());
-
+Util.logToChat("line 300 pieceloader2e shipName " + shipName);
         PieceSlot defaultShip = null;
         Map<String, PieceSlot> altArtShips = Maps.newHashMap();
         PieceSlot dial = null;
@@ -339,14 +339,22 @@ public class VassalXWSPieceLoader2e {
             pilots.add(slot);
         }
 
-        XWS2Pilots shipData = XWS2Pilots.getSpecificShip(shipName, allShips);
+        XWS2Pilots shipData = null;
+        for(XWS2Pilots sh : allShips)
+        {
+            if(shipName.equals(Canonicalizer.getCleanedName(sh.getName()))) shipData = sh;
+        }
+        if(shipData == null) return;
+        //Util.logToChat("pieceloader2e line 344  shipData " + ((shipData==null)?"is null":"is not null"));
 
         for (PieceSlot pilot : pilots) {
+            Util.logToChat("pieceloader2e line 347 pilot parse " + ((pilot==null)?"is null":"is not null"));
+
             String pilotName = Canonicalizer.getCanonicalPilotName(pilot.getConfigureName());
 
-
+Util.logToChat("pieceloader2e line 347 right after getting getConfigureName for a pilot");
             XWS2Pilots.Pilot2e pilotData = XWS2Pilots.getSpecificPilot(pilot.getConfigureName(), allShips);
-            Util.logToChat("pieceloader2e line 345 pilotConfigName = " + pilot.getConfigureName() + " pilotName " + pilotName + " pilotData Name " + pilotData.getName());
+            Util.logToChat("pieceloader2e line 349 pilotConfigName = " + pilot.getConfigureName() + " pilotName " + pilotName + " pilotData Name " + pilotData.getName());
             String mapKey = getPilotMapKey(faction.name(), shipName, pilotName);
 
             VassalXWSPilotPieces2e pilotPieces = new VassalXWSPilotPieces2e();

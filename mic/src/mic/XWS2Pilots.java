@@ -282,9 +282,12 @@ public class XWS2Pilots {
                 try{
 
                //Util.logToChat("xws2=" + aPilot.getXWS2());
-                    foundXWS2 =  aPilot.getXWS2();
+                    //TO DO replace with this
+                    //foundXWS2 =  aPilot.getXWS2();
+                    foundXWS2 =  Canonicalizer.getCleanedName(aPilot.getName());
             }catch(Exception e){}
 
+            Util.logToChat("XWS2Pilots getSpecific ship line 290 foundXWS2 " + foundXWS2 + " searchedXWS2 "+ searchedXWS2Name);
                 if(foundXWS2.equals(Canonicalizer.getCleanedName(searchedXWS2Name))) return aShip;
             }
         }
@@ -296,7 +299,10 @@ public class XWS2Pilots {
         {
             for(XWS2Pilots.Pilot2e aPilot : aShip.getPilots())
             {
-                if(aPilot.getXWS2().equals(Canonicalizer.getCleanedName(searchedXWS2Name))) return aPilot;
+                String theXWS2String = Canonicalizer.getCleanedName(aPilot.getName());
+                // TODO replace with this eventually
+                // String theXWS2String = aPilot.getXWS2();
+                if(theXWS2String.equals(Canonicalizer.getCleanedName(searchedXWS2Name))) return aPilot;
             }
         }
         return null;
