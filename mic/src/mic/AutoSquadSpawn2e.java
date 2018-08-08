@@ -861,13 +861,13 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
         {
             //savedShipIndex is a list because the pilot might be something like a TIE/ln pilot and the search must not stop at only 1 faction of that ship (e.g. empire) when the wanted pilot is of another (e.g. Captain Rex)
             List<Integer> savedShipIndex = Lists.newArrayList();
-            logToChat("spawn line 864 scanning XWS pilot unique key " + pilot.getXws2());
+
             //Get the stuff from the XWS formatted json
             String shipXws = pilot.getShip();
             String pilotXWS2 = Canonicalizer.getCleanedName(pilot.getName());
             //TO USE when xwing-data2 has them
             // String pilotXWS2 = pilot.getXws2();
-
+            logToChat("spawn line 864 scanning XWS pilot unique key " + pilot.getXws2() + " and attempting to match with " + pilotXWS2);
             //Check the unique pilot xws2 key in all ships
             boolean signalError = true;
             for(XWS2Pilots shipFromData : allShips)
@@ -889,6 +889,7 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
             }
         }
 
+        if(error) logToChat("ERROR DETECTED");
         if(error)
         {
             // create a new list, removing the pilots/ships that aren't valid

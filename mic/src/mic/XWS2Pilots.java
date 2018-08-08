@@ -267,7 +267,7 @@ public class XWS2Pilots {
         {
            // Util.logToChat("SCAN4Guido ship " + ship.getName());
             for(XWS2Pilots.Pilot2e p : ship.getPilots()){
-                Util.logToChat(Canonicalizer.getCleanedName(p.getName()));
+                //Util.logToChat(Canonicalizer.getCleanedName(p.getName()));
             }
         }
         return allPilots;
