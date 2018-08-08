@@ -261,20 +261,28 @@ public class GamePieceGenerator2e
         PieceSlot rebelDialSlot = null;
         PieceSlot imperialDialSlot = null;
         PieceSlot scumDialSlot = null;
+        PieceSlot firstOrderDialSlot = null;
+        PieceSlot resistanceDialSlot = null;
 
         // find the 3 slots for the auto-gen dials
         List<PieceSlot> pieceSlots = GameModule.getGameModule().getAllDescendantComponentsOf(PieceSlot.class);
 
         for (PieceSlot pieceSlot : pieceSlots) {
             String slotName = pieceSlot.getConfigureName();
-            if (slotName.startsWith("Rebel Stem Dial") && rebelDialSlot == null) {
+            if (slotName.startsWith("Rebel Stem2e Dial") && rebelDialSlot == null) {
                 rebelDialSlot = pieceSlot;
                 continue;
-            } else if (slotName.startsWith("Imperial Stem Dial") && imperialDialSlot == null) {
+            } else if (slotName.startsWith("Imperial Stem2e Dial") && imperialDialSlot == null) {
                 imperialDialSlot = pieceSlot;
                 continue;
-            } else if (slotName.startsWith("Scum Stem Dial") && scumDialSlot == null) {
+            } else if (slotName.startsWith("Scum Stem2e Dial") && scumDialSlot == null) {
                 scumDialSlot = pieceSlot;
+                continue;
+            } else if (slotName.startsWith("Resistance Stem2e Dial") && resistanceDialSlot == null) {
+                resistanceDialSlot = pieceSlot;
+                continue;
+            } else if (slotName.startsWith("FirstOrder Stem2e Dial") && firstOrderDialSlot == null) {
+                firstOrderDialSlot = pieceSlot;
                 continue;
             }
         }
