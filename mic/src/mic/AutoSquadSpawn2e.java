@@ -277,6 +277,7 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
         validateButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                logToChat("spawn line 280 - entry Area text " + entryArea.getText());
                 XWSList2e xwsList = loadListFromRawJson(entryArea.getText());
                 try{
                 validateList(xwsList, allShips, allUpgrades);
@@ -860,7 +861,7 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
         {
             //savedShipIndex is a list because the pilot might be something like a TIE/ln pilot and the search must not stop at only 1 faction of that ship (e.g. empire) when the wanted pilot is of another (e.g. Captain Rex)
             List<Integer> savedShipIndex = Lists.newArrayList();
-            logToChat("scanning XWS pilot unique key " + pilot.getXws2());
+            logToChat("spawn line 864 scanning XWS pilot unique key " + pilot.getXws2());
             //Get the stuff from the XWS formatted json
             String shipXws = pilot.getShip();
             String pilotXWS2 = Canonicalizer.getCleanedName(pilot.getName());
@@ -873,7 +874,7 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
             {
                 if(shipFromData.getSpecificPilot(pilotXWS2, allShips) == null) continue;
                 else {
-                    logToChat("found a match for ship! " + pilotXWS2);
+                    logToChat("spawn line 877 found a match for ship! " + pilotXWS2);
                     signalError = false; // invalidate the problem in ship finding
                     break;
                 }
@@ -882,7 +883,7 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
             if(signalError == true)
             {
                 error = true;
-                exception.addMessage("Ship/Pilot combo "+pilotXWS2+" was not found.  Skipping.");
+                exception.addMessage("spawn line 886 - ship/Pilot combo "+pilotXWS2+" was not found.  Skipping.");
                 // skippedPilots.put(pilot.getXws(),"X");
                 skippedPilots.put(pilotXWS2,"X");
             }

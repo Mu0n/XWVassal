@@ -9,7 +9,7 @@ import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class XWS2Pilots {
-    private static String remoteUrl = "https://raw.githubusercontent.com/Mu0n/XWVassalOTA2e/master/manifest.json";
+    private static String remoteUrl = "https://raw.githubusercontent.com/guidokessels/xwing-data2/master/data/manifest.json";
     private static String guidoRootUrl = "https://raw.githubusercontent.com/guidokessels/xwing-data2/master/";
 
 
@@ -265,9 +265,9 @@ public class XWS2Pilots {
         // temp massive list production for Guido to get the XWS2 tags going
         for(XWS2Pilots ship : allPilots)
         {
-            Util.logToChat("SCAN4Guido ship " + ship.getName());
+           // Util.logToChat("SCAN4Guido ship " + ship.getName());
             for(XWS2Pilots.Pilot2e p : ship.getPilots()){
-                Util.logToChat("pilot - "+Canonicalizer.getCleanedName(p.getName()));
+                Util.logToChat(Canonicalizer.getCleanedName(p.getName()));
             }
         }
         return allPilots;
@@ -281,7 +281,7 @@ public class XWS2Pilots {
              String foundXWS2="";
                 try{
 
-                Util.logToChat("xws2=" + aPilot.getXWS2());
+               //Util.logToChat("xws2=" + aPilot.getXWS2());
                     foundXWS2 =  aPilot.getXWS2();
             }catch(Exception e){}
 

@@ -46,10 +46,11 @@ public class VassalXWSPieceLoader2e {
     // Map<String, VassalXWSPilotPieces2e.Condition> conditionPiecesMap = Maps.newHashMap();
 
     public VassalXWSListPieces2e loadListFromXWS(XWSList2e list, List<XWS2Pilots> allPilots, List<XWS2Upgrades> allUpgrades) {
+        Util.logToChat("pieceloader line 49 start of loadListFromXWS");
         if (pilotPiecesMap.isEmpty()) {
             loadPieces(allPilots);
         }
-
+        Util.logToChat("pieceloader line 53 after loadPieces(allPilots");
         VassalXWSListPieces2e pieces = new VassalXWSListPieces2e();
 
         Multiset<String> pilotCounts = HashMultiset.create();
@@ -290,16 +291,12 @@ public class VassalXWSPieceLoader2e {
 
     private void loadPilots(ListWidget shipList, ListParentType faction, List<XWS2Pilots> allShips) {
 
+        Util.logToChat("PieceLoader2e line 293  attempting to loadPilots");
         if (faction != ListParentType.rebel && faction != ListParentType.scum && faction != ListParentType.imperial) {
             return;
         }
 
         String shipName = Canonicalizer.getCanonicalShipName(shipList.getConfigureName());
-
-        if (shipName.equals("gr75transport") || shipName.startsWith("gozanticlasscruiser") || shipName.equals("croccruiser")) {
-            // TODO: Make GR75, Gozanti, and croc ship slot name start with 'ship --'
-            return;
-        }
 
         PieceSlot defaultShip = null;
         Map<String, PieceSlot> altArtShips = Maps.newHashMap();
@@ -347,8 +344,9 @@ public class VassalXWSPieceLoader2e {
         for (PieceSlot pilot : pilots) {
             String pilotName = Canonicalizer.getCanonicalPilotName(pilot.getConfigureName());
 
-            XWS2Pilots.Pilot2e pilotData = XWS2Pilots.getSpecificPilot(pilot.getConfigureName(), allShips);
 
+            XWS2Pilots.Pilot2e pilotData = XWS2Pilots.getSpecificPilot(pilot.getConfigureName(), allShips);
+            Util.logToChat("pieceloader2e line 345 pilotConfigName = " + pilot.getConfigureName() + " pilotName " + pilotName + " pilotData Name " + pilotData.getName());
             String mapKey = getPilotMapKey(faction.name(), shipName, pilotName);
 
             VassalXWSPilotPieces2e pilotPieces = new VassalXWSPilotPieces2e();

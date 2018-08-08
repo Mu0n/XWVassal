@@ -139,9 +139,6 @@ public class XWSList2e {
         @JsonProperty("multisection_id")
         private Integer multisectionId;
 
-        @JsonProperty("xws")
-        private String xws;
-
         @JsonProperty("xws2")
         private String xws2;
 
@@ -169,12 +166,6 @@ public class XWSList2e {
         public String getName() {
             return name;
         }
-
-
-        public String getXws() {
-            return xws;
-        }
-
         public String getXws2() { return xws2; }
         public String getShip() {
             return ship;
