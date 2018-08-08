@@ -714,7 +714,7 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
             {
                 for(XWS2Pilots.Pilot2e pilot : ship.getPilots())
                 {
-                    pilotComboList.addItem(pilot.getName());
+                    pilotComboList.addItem(pilot.getName() + "_" + Canonicalizer.getCleanedName(pilot.getName()));
                 }
             }
         }
@@ -733,7 +733,7 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
                     {
                         for(XWS2Pilots.Pilot2e pilot : ship.getPilots())
                         {
-                            pilotComboList.addItem(pilot.getName());
+                            pilotComboList.addItem(pilot.getName() + "_" + Canonicalizer.getCleanedName(pilot.getName()));
                         }
                     }
                 }
