@@ -251,7 +251,7 @@ public class GamePieceGenerator2e
         return targetPieceSlot;
     }
 
-    public static GamePiece generateDial(List<String> dialMoves, String faction, String pilotNameTag, String shipTag)
+    public static GamePiece generateDial(XWS2Pilots.Pilot2e pilotData, XWS2Pilots shipData)
     {
         PieceSlot rebelDialSlot = null;
         PieceSlot imperialDialSlot = null;
@@ -282,6 +282,7 @@ public class GamePieceGenerator2e
             }
         }
 
+        String faction = shipData.getFaction();
         // grab the correct dial for the faction
         GamePiece dial = null;
         if(faction.contentEquals("Rebel Alliance")) {
@@ -296,12 +297,17 @@ public class GamePieceGenerator2e
             dial = Util.newPiece(scumDialSlot);
         }
 
+
         // execute the command
-        StemDial2e.DialGenerateCommand myDialGen = new StemDial2e.DialGenerateCommand(dialMoves, shipTag, dial, faction);
+        StemDial2e.DialGenerateCommand myDialGen = new StemDial2e.DialGenerateCommand(shipData.getDial(), shipData.getName(), dial, faction);
 
         myDialGen.execute();
 
-        dial.setProperty("ShipXwsId",Canonicalizer.getCleanedName(shipTag));
+        //is this even needed
+        //dial.setProperty("ShipXwsId",Canonicalizer.getCleanedName(shipTag));
+        dial.setProperty("Pilot Name", getDisplayShipName(pilotData, shipData));
+        dial.setProperty("Craft ID #", getDisplayPilotName(pilotData, shipData, 0));
+
         return dial;
     }
 

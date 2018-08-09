@@ -358,11 +358,9 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
             // Generate the Dial
             // ======================================================
             XWS2Pilots shipInQuestionFromXWD2 = XWS2Pilots.getSpecificShipFromPilotXWS2(ship.getPilotData().getXWS2(),allPilots);
+            XWS2Pilots.Pilot2e pilotInQuestionFromXWD2 = XWS2Pilots.getSpecificPilot(ship.getPilotData().getXWS2(), allPilots);
 
-            GamePiece dialPiece = GamePieceGenerator2e.generateDial(shipInQuestionFromXWD2.getDial(),
-                    shipInQuestionFromXWD2.getFaction(),
-                    ship.getPilotData().getXWS2(),
-                    shipInQuestionFromXWD2.getName());
+            GamePiece dialPiece = GamePieceGenerator2e.generateDial(pilotInQuestionFromXWD2, shipInQuestionFromXWD2);
 
             int dialWidth = 0;
             try {
