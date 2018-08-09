@@ -16,37 +16,31 @@ import static mic.Util.logToChat;
  */
 public class GamePieceGenerator2e
 {
-    private static final String SMALL_STEM_SHIP_SLOT_NAME = "ship -- 2e Stem Small Ship";
-    private static final String MEDIUM_STEM_SHIP_SLOT_NAME = "ship -- 2e Stem Medium Ship";
-    private static final String LARGE_STEM_SHIP_SLOT_NAME = "ship -- 2e Stem Large Ship";
+    private static final String SMALL_STEM_SHIP_SLOT_NAME = "ship -- Stem2e Small Ship";
+    private static final String MEDIUM_STEM_SHIP_SLOT_NAME = "ship -- Stem2e Medium Ship";
+    private static final String LARGE_STEM_SHIP_SLOT_NAME = "ship -- Stem2e Large Ship";
 
-    private static final String SMALL_STEM_SHIP_SINGLE_TURRET_SLOT_NAME = "ship -- 2e Stem Small Single Turret Ship";
-    private static final String MEDIUM_STEM_SHIP_SINGLE_TURRET_SLOT_NAME = "ship -- 2e Stem Medium Single Turret Ship";
-    private static final String LARGE_STEM_SHIP_SINGLE_TURRET_SLOT_NAME = "ship -- 2e Stem Large Single Turret Ship";
+    private static final String SMALL_STEM_SHIP_SINGLE_TURRET_SLOT_NAME = "ship -- Stem2e Small Single Turret Ship";
+    private static final String MEDIUM_STEM_SHIP_SINGLE_TURRET_SLOT_NAME = "ship -- Stem2e Medium Single Turret Ship";
+    private static final String LARGE_STEM_SHIP_SINGLE_TURRET_SLOT_NAME = "ship -- Stem2e Large Single Turret Ship";
 
-    private static final String MEDIUM_STEM_SHIP_DOUBLE_TURRET_SLOT_NAME = "ship -- 2e Stem Medium Double Turret Ship";
-    private static final String LARGE_STEM_SHIP_DOUBLE_TURRET_SLOT_NAME = "ship -- 2e Stem Large Double Turret Ship";
+    private static final String MEDIUM_STEM_SHIP_DOUBLE_TURRET_SLOT_NAME = "ship -- Stem2e Medium Double Turret Ship";
+    private static final String LARGE_STEM_SHIP_DOUBLE_TURRET_SLOT_NAME = "ship -- Stem2e Large Double Turret Ship";
 
     private static final String SHIP_BASE_SIZE_SMALL = "small";
     private static final String SHIP_BASE_SIZE_MEDIUM = "medium";
     private static final String SHIP_BASE_SIZE_LARGE = "large";
 
     // generate a ship GamePiece
-    public static GamePiece generateShip(VassalXWSPilotPieces2e ship, List<XWS2Pilots> allShips)
+    public static GamePiece generateShip(VassalXWSPilotPieces2e ship)
     {
-        XWS2Pilots.Pilot2e pilotData = ship.getPilotData();
-
-        // get the master data for the ship
-        XWS2Pilots shipData = XWS2Pilots.getSpecificShipFromPilotXWS2(ship.getPilotData().getXWS2(),allShips);
-        String faction = ship.getShipData().getFaction();
-
-        // generate the piece from the stem ships
+                // generate the piece from the stem ships
         GamePiece newShip = null;
       //  boolean shipContainsMobileArc = containsMobileArc(shipData);
-        if(shipData.getSize().contentEquals(SHIP_BASE_SIZE_SMALL))
+        if(ship.getShipData().getSize().contentEquals(SHIP_BASE_SIZE_SMALL))
         {
             newShip = Util.newPiece(getPieceSlotByName(SMALL_STEM_SHIP_SLOT_NAME));
-        }else if(shipData.getSize().contentEquals(SHIP_BASE_SIZE_LARGE))
+        }else if(ship.getShipData().getSize().contentEquals(SHIP_BASE_SIZE_LARGE))
         {
             //TO DO deal with mobilearc detection
             /*
@@ -61,17 +55,25 @@ public class GamePieceGenerator2e
         }
 
         // determine if the ship needs bomb drop
-       boolean needsBombCapability = determineIfShipNeedsBombCapability(ship, allShips);
+        //boolean needsBombCapability = determineIfShipNeedsBombCapability(ship, allShips);
 
         // execute the command to build the ship piece
+        /*
+        ShipGenerateCommand(String shipXws,   GamePiece piece, String faction, String xwsPilot,
+        boolean needsBombCapability, Boolean hasDualBase,
+            String dualBaseToggleMenuText, String base1ReportIdentifier, String base2ReportIdentifier) {
+        */
         //TO DO deal with dual base detection and associated text
         //StemShip.ShipGenerateCommand myShipGen = new StemShip.ShipGenerateCommand(Canonicalizer.getCleanedName(ship.getShipData().getName()), newShip, faction, pilotData.getXWS2(),needsBombCapability, shipData.hasDualBase(), shipData.getDualBaseToggleMenuText(),shipData.getBaseReport1Identifier(),shipData.getBaseReport2Identifier());
-        StemShip.ShipGenerateCommand myShipGen = new StemShip.ShipGenerateCommand(Canonicalizer.getCleanedName(ship.getShipData().getName()), newShip, faction, pilotData.getXWS2(),needsBombCapability, false, "","","");
+        StemShip2e.ShipGenerateCommand myShipGen = new StemShip2e.ShipGenerateCommand(
+                ship.getShipData().getName(),
+                newShip, ship.getShipData().getFaction(), ship.getPilotData().getXWS2(),false,
+                false, "","","");
 
         myShipGen.execute();
 
         // add the stats to the piece
-        newShip = setShipProperties(newShip,ship.getUpgrades(), shipData, pilotData, ship);
+        //newShip = setShipProperties(newShip,ship.getUpgrades(), shipData, pilotData, ship);
         return newShip;
     }
 

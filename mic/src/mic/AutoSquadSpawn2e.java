@@ -342,8 +342,11 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
         // If the list includes a yv666 with Hound's Tooth upgrade or modified YT-1300 with escape craft, add the necessary stuff
         //xwsList = handleHoundsToothIshThings(xwsList);
         VassalXWSListPieces2e pieces = slotLoader.loadListFromXWS(xwsList, allPilots, allUpgrades);
+        List<GamePiece> shipBases = Lists.newArrayList();
 
+        Point startPosition = new Point(150, 150);
         Point dialstartPosition = new Point(300, 100);
+        int shipBaseY = 110;
         int totalDialsWidth = 0;
 
         for(VassalXWSPilotPieces2e ship : pieces.getShips())
@@ -354,6 +357,17 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
         }
 
         for (VassalXWSPilotPieces2e ship : pieces.getShips()) {
+
+
+            // ======================================================
+            // Generate the ship base pieces
+            // ======================================================
+            GamePiece shipPiece = GamePieceGenerator2e.generateShip(ship);
+
+            shipBases.add(shipPiece);
+
+
+
             // ======================================================
             // Generate the Dial
             // ======================================================
