@@ -77,7 +77,6 @@ public class VassalXWSPieceLoader {
             // get the pilot card slot
             PieceSlot stemPilotSlot = null;
 
-
             // add the stem ship
             PieceSlot smallShipSlot = null;
             PieceSlot largeShipSlot = null;
@@ -118,7 +117,6 @@ public class VassalXWSPieceLoader {
                     stemConditionTokenSlot = pieceSlot;
                     continue;
                 }
-
             }
 
             // fill in the pilot cards

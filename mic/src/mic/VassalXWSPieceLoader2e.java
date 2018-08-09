@@ -46,10 +46,21 @@ public class VassalXWSPieceLoader2e {
 
     public VassalXWSListPieces2e loadListFromXWS(XWSList2e list, List<XWS2Pilots> allPilots, List<XWS2Upgrades> allUpgrades) {
 
+        //the following object is the full structure shebang that'll get returned at the end
         VassalXWSListPieces2e pieces = new VassalXWSListPieces2e();
+
+        //The following is used to get duplicate names for pilots, in order to know if it has to add a number to dials, e.g. ESP 1, ESP 2, etc.
+        Multiset<String> pilotCounts = HashMultiset.create();
+        for (XWSList2e.XWSPilot xwsList2ePilot : list.getPilots()) {
+            pilotCounts.add(xwsList2ePilot.getName());
+        }
+        //The following is used to keep track of multiples of generic pilot
+        Multiset<String> genericPilotsAdded = HashMultiset.create();
 
         for (XWSList2e.XWSPilot pilot : list.getPilots())
         {
+            //Using a unique pilot xws2 tag in order to search its specific ship data (which includes the faction and dial moves)
+            // and pilot data (which includes ship abiltity
             String xwsPilotToSearch = Canonicalizer.getCleanedName(pilot.getXws2());
 
             XWS2Pilots shipData = XWS2Pilots.getSpecificShipFromPilotXWS2(xwsPilotToSearch, allPilots);
@@ -60,13 +71,79 @@ public class VassalXWSPieceLoader2e {
             barePieces.setPilotData(pilotData);
             barePieces.setShipData(shipData);
 
+            // Add the pilot card
+            // get the pilot card slot
+            PieceSlot stemPilotSlot = null;
+
+
+            // add the stem ship
+            PieceSlot smallShipSlot = null;
+            PieceSlot mediumShipSlot = null;
+            PieceSlot largeShipSlot = null;
+
+            // stem upgrade
+            PieceSlot stemUpgradeSlot = null;
+            PieceSlot stemConditionSlot = null;
+            PieceSlot stemConditionTokenSlot = null;
+
+            // ==================================================
+            // Get the stem slots
+            // ==================================================
+            List<PieceSlot> stemPieceSlots = GameModule.getGameModule().getAllDescendantComponentsOf(PieceSlot.class);
+
+            for (PieceSlot pieceSlot : stemPieceSlots) {
+                String slotName = pieceSlot.getConfigureName();
+                if (slotName.startsWith("Stem2e Pilot") && stemPilotSlot == null) {
+                    stemPilotSlot = pieceSlot;
+                    continue;
+                } else if(slotName.startsWith("ship -- Stem2e Small Ship")&& smallShipSlot == null) {
+                    smallShipSlot = pieceSlot;
+                    continue;
+                } else if(slotName.startsWith("ship -- Stem2e Medium Ship")&& mediumShipSlot == null) {
+                    mediumShipSlot = pieceSlot;
+                    continue;
+                }else if(slotName.startsWith("ship -- Stem2e Large Ship")&& largeShipSlot == null) {
+                    largeShipSlot = pieceSlot;
+                    continue;
+                }else if(slotName.equals("Stem2e Upgrade") && stemUpgradeSlot == null) {
+                    stemUpgradeSlot = pieceSlot;
+                    continue;
+                }else if(slotName.equals("Stem2e Condition") && stemConditionSlot == null) {
+                    stemConditionSlot = pieceSlot;
+                    continue;
+                }else if(slotName.equals("Stem2e Condition Token") && stemConditionTokenSlot == null) {
+                    stemConditionTokenSlot = pieceSlot;
+                    continue;
+                }
+            }
+
+            // fill in the pilot cards
+            barePieces.setPilotCard(stemPilotSlot);
+
+            // fill in the ships
+            if(shipData.getSize().equals("small"))
+            {
+                barePieces.setShip(smallShipSlot);
+            }else if(shipData.getSize().equals("medium")) {
+                barePieces.setShip(mediumShipSlot);
+            }else if(shipData.getSize().equals("large")) {
+                barePieces.setShip(largeShipSlot);
+            }
+
             VassalXWSPilotPieces2e pilotPieces = new VassalXWSPilotPieces2e(barePieces);
+
+
+            //TO DO
+            //something about conditions here to copy over
+            //
+
+            if (pilotCounts.count(pilot.getName()) > 1) {
+                genericPilotsAdded.add(pilot.getName());
+                pilotPieces.setShipNumber(genericPilotsAdded.count(pilot.getName()));
+            }
+
             pieces.getShips().add(pilotPieces);
 
-            String aDial="";
-            for(String aMove : pilotPieces.getShipData().getDial()){
-                aDial += aMove + ",";
-            }
         }
         return pieces;
     }
