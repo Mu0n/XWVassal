@@ -47,7 +47,6 @@ public class VassalXWSPieceLoader2e {
     public VassalXWSListPieces2e loadListFromXWS(XWSList2e list, List<XWS2Pilots> allPilots, List<XWS2Upgrades> allUpgrades) {
 
         VassalXWSListPieces2e pieces = new VassalXWSListPieces2e();
-        Multiset<String> pilotCounts = HashMultiset.create();
 
         for (XWSList2e.XWSPilot pilot : list.getPilots())
         {
@@ -60,60 +59,10 @@ public class VassalXWSPieceLoader2e {
             barePieces.setPilotData(pilotData);
             barePieces.setShipData(shipData);
 
-            // Add the pilot card
-            // get the pilot card slot
-            PieceSlot stemPilotSlot = null;
-
-
-            // add the stem ship
-            PieceSlot smallShipSlot = null;
-            PieceSlot mediumShipSlot = null;
-            PieceSlot largeShipSlot = null;
-
-            // stem upgrade
-            PieceSlot stemUpgradeSlot = null;
-            PieceSlot stemConditionSlot = null;
-            PieceSlot stemConditionTokenSlot = null;
-
-            // ==================================================
-            // Get the stem slots
-            // ==================================================
-            List<PieceSlot> stemPieceSlots = GameModule.getGameModule().getAllDescendantComponentsOf(PieceSlot.class);
-
-            for (PieceSlot pieceSlot : stemPieceSlots) {
-                String slotName = pieceSlot.getConfigureName();
-                if (slotName.startsWith("Stem Pilot") && stemPilotSlot == null) {
-                    stemPilotSlot = pieceSlot;
-                    continue;
-
-                } else if(slotName.startsWith("ship -- 2e Stem Small Ship")&& smallShipSlot == null)
-                {
-                    smallShipSlot = pieceSlot;
-                    continue;
-                }
-
-            }
-
-            // fill in the pilot cards
-            barePieces.setPilotCard(stemPilotSlot);
-
-            // fill in the ships
-            if(shipData.getSize().equals("small"))
-            {
-                barePieces.setShip(smallShipSlot);
-            }else if(shipData.getSize().equals("medium")) {
-                barePieces.setShip(mediumShipSlot);
-            }else if(shipData.getSize().equals("large")) {
-                barePieces.setShip(largeShipSlot);
-            }
-
             VassalXWSPilotPieces2e pilotPieces = new VassalXWSPilotPieces2e(barePieces);
-
             pieces.getShips().add(pilotPieces);
-
+            Util.logToChat("line 64 loadList dial list " + pilotPieces.getShipData().getDial().toArray().toString());
         }
-
-
         return pieces;
     }
 

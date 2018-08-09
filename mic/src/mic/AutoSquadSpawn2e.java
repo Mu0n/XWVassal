@@ -349,6 +349,8 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
         for(VassalXWSPilotPieces2e ship : pieces.getShips())
         {
             logToChat("pieces manifest - ship name " + ship.getShipData().getName() + " pilot name " + ship.getPilotData().getName());
+            XWS2Pilots shipInQuestionFromXWD2 = XWS2Pilots.getSpecificShip(ship.getShipData().getName(),allPilots);
+            logToChat("that ship's dial's first move" + shipInQuestionFromXWD2.getDial().get(0));
         }
 
         for (VassalXWSPilotPieces2e ship : pieces.getShips()) {

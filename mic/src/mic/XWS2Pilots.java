@@ -159,6 +159,8 @@ public class XWS2Pilots {
             this.ability = ability;
         }
 
+        private String faction;
+
         @JsonProperty("name")
         private String name="unknown";
 
@@ -195,6 +197,14 @@ public class XWS2Pilots {
         public List<String> getConditions() { return this.conditions; }
         public List<String> getActions() { return this.actions; }
         public ShipAbility getShipAbility() { return this.shipAbility; }
+
+        //not part of the JSON, but useful
+        public String getFaction(){
+            return faction;
+        }
+        public void setFaction(String wantedFaction){
+            this.faction = wantedFaction;
+        }
 
         public boolean isUnique() { if(limited>0) return true;
         return false;}
@@ -245,6 +255,7 @@ public class XWS2Pilots {
         public List<String> getShipUrlSuffixes() { return suffixes; }
     }
 
+
     public static List<XWS2Pilots> loadFromRemote() {
         pilotsDataSources whereToGetPilots = Util.loadRemoteJson(remoteUrl, pilotsDataSources.class);
 
@@ -253,7 +264,16 @@ public class XWS2Pilots {
             for(String suffix : oSDS.getShipUrlSuffixes())
             {
                 try {
-                    allPilots.add(Util.loadRemoteJson(guidoRootUrl + suffix, XWS2Pilots.class));
+                    XWS2Pilots pilotsToAdd = Util.loadRemoteJson(guidoRootUrl + suffix, XWS2Pilots.class);
+                    //adding faction to every pilot
+                    for(XWS2Pilots.Pilot2e p : pilotsToAdd.getPilots()){
+                     p.setFaction(pilotsToAdd.getFaction());
+                        //TODO remove this when xws2 is here
+                        p.xws2 = Canonicalizer.getCleanedName(p.getName());
+                        //////
+                    }
+
+                    allPilots.add(pilotsToAdd);
                 }catch (Exception e){
                     Util.logToChat(e.getMessage() + " on ship " + suffix);
                     continue;
@@ -273,22 +293,26 @@ public class XWS2Pilots {
         return allPilots;
     }
 
+    //slower version that goes through all ships of all factions
     public static XWS2Pilots getSpecificShip(String searchedXWS2Name, List<XWS2Pilots> allShips){
         for(XWS2Pilots aShip : allShips)
         {
             for(XWS2Pilots.Pilot2e aPilot : aShip.getPilots())
             {
-             String foundXWS2="";
+                String foundXWS2="";
                 try{
 
-               //Util.logToChat("xws2=" + aPilot.getXWS2());
+                    //Util.logToChat("xws2=" + aPilot.getXWS2());
                     //TO DO replace with this
                     //foundXWS2 =  aPilot.getXWS2();
                     foundXWS2 =  Canonicalizer.getCleanedName(aPilot.getName());
-            }catch(Exception e){}
+                }catch(Exception e){}
 
-            Util.logToChat("XWS2Pilots getSpecific ship line 290 foundXWS2 " + foundXWS2 + " searchedXWS2 "+ searchedXWS2Name);
-                if(foundXWS2.equals(Canonicalizer.getCleanedName(searchedXWS2Name))) return aShip;
+                Util.logToChat("XWS2Pilots getSpecific ship line 290 foundXWS2 " + foundXWS2 + " searchedXWS2 "+ searchedXWS2Name);
+                if(foundXWS2.equals(Canonicalizer.getCleanedName(searchedXWS2Name))) {
+                    Util.logToChat("match");
+                    return aShip;
+                }
             }
         }
         return null;
