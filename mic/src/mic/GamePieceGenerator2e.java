@@ -37,7 +37,7 @@ public class GamePieceGenerator2e
         XWS2Pilots.Pilot2e pilotData = ship.getPilotData();
 
         // get the master data for the ship
-        XWS2Pilots shipData = XWS2Pilots.getSpecificShip(ship.toString(),allShips);
+        XWS2Pilots shipData = XWS2Pilots.getSpecificShipFromPilotXWS2(ship.getPilotData().getXWS2(),allShips);
         String faction = ship.getShipData().getFaction();
 
         // generate the piece from the stem ships
@@ -251,21 +251,8 @@ public class GamePieceGenerator2e
         return targetPieceSlot;
     }
 
-    public static GamePiece generateDial(VassalXWSPilotPieces2e ship, List<XWS2Pilots> allShips)
+    public static GamePiece generateDial(List<String> dialMoves, String faction, String pilotNameTag, String shipTag)
     {
-        XWS2Pilots shipData = null;
-        try {
-            Util.logToChat("dial creation, must find xwspilotpieces2e ship config name:" + ship.getShip().getConfigureName());
-            shipData = XWS2Pilots.getSpecificShip(ship.getShip().getConfigureName(), allShips);
-        } catch(Exception e)
-        {
-            Util.logToChat("couldn't find a ship dial reference for generating its dial");
-            return null;
-        }
-        if(shipData==null) return null;
-
-        String faction = ship.getShipData().getFaction();
-
         PieceSlot rebelDialSlot = null;
         PieceSlot imperialDialSlot = null;
         PieceSlot scumDialSlot = null;
@@ -297,20 +284,24 @@ public class GamePieceGenerator2e
 
         // grab the correct dial for the faction
         GamePiece dial = null;
-        if(faction.contentEquals("Rebel Alliance") || faction.contentEquals("Resistance")) {
+        if(faction.contentEquals("Rebel Alliance")) {
             dial = Util.newPiece(rebelDialSlot);
-        }else if(faction.contentEquals("Galactic Empire") || faction.contentEquals("First Order")) {
+        }else if(faction.contentEquals("Resistance")){
+            dial = Util.newPiece(resistanceDialSlot);
+        } if(faction.contentEquals("Galactic Empire")) {
             dial = Util.newPiece(imperialDialSlot);
+        }else if(faction.contentEquals("First Order")){
+        dial = Util.newPiece(firstOrderDialSlot);
         }else if(faction.contentEquals("Scum and Villainy")) {
             dial = Util.newPiece(scumDialSlot);
         }
 
         // execute the command
-        StemDial.DialGenerateCommand myDialGen = new StemDial.DialGenerateCommand(Canonicalizer.getCleanedName(ship.getShipData().getName()), dial, faction);
+        StemDial2e.DialGenerateCommand myDialGen = new StemDial2e.DialGenerateCommand(dialMoves, shipTag, dial, faction);
 
         myDialGen.execute();
 
-        dial.setProperty("ShipXwsId",Canonicalizer.getCleanedName(ship.getShipData().getName()));
+        dial.setProperty("ShipXwsId",Canonicalizer.getCleanedName(shipTag));
         return dial;
     }
 
@@ -377,7 +368,7 @@ public class GamePieceGenerator2e
 
         // this is a stem card = fill it in
 
-        XWS2Pilots shipData = XWS2Pilots.getSpecificShip(ship.getShip().getConfigureName(), allShips);
+        XWS2Pilots shipData = XWS2Pilots.getSpecificShipFromPilotXWS2(ship.getPilotData().getXWS2(), allShips);
         XWS2Pilots.Pilot2e pilotData = XWS2Pilots.getSpecificPilot(ship.getPilotData().getXWS2(), allShips);
         //    newPilot.setProperty("Ship Type",shipData.getName());
         //    newPilot.setProperty("Pilot Name",pilotData.getName());

@@ -293,27 +293,35 @@ public class XWS2Pilots {
         return allPilots;
     }
 
-    //slower version that goes through all ships of all factions
-    public static XWS2Pilots getSpecificShip(String searchedXWS2Name, List<XWS2Pilots> allShips){
+
+    public static XWS2Pilots getSpecificShipFromPilotXWS2(String searchedXWS2Name, List<XWS2Pilots> allShips){
         for(XWS2Pilots aShip : allShips)
         {
             for(XWS2Pilots.Pilot2e aPilot : aShip.getPilots())
             {
                 String foundXWS2="";
                 try{
-
                     //Util.logToChat("xws2=" + aPilot.getXWS2());
                     //TO DO replace with this
                     //foundXWS2 =  aPilot.getXWS2();
                     foundXWS2 =  Canonicalizer.getCleanedName(aPilot.getName());
                 }catch(Exception e){}
 
-                Util.logToChat("XWS2Pilots getSpecific ship line 290 foundXWS2 " + foundXWS2 + " searchedXWS2 "+ searchedXWS2Name);
+                Util.logToChat("XWS2Pilots getSpecific ship line 311 foundXWS2 " + foundXWS2 + " searchedXWS2 "+ searchedXWS2Name);
                 if(foundXWS2.equals(Canonicalizer.getCleanedName(searchedXWS2Name))) {
                     Util.logToChat("match");
                     return aShip;
                 }
             }
+        }
+        return null;
+    }
+
+    public static XWS2Pilots getSpecificShipFromShipXWS2(String searchedXWS2Name, List<XWS2Pilots> allShips){
+        for(XWS2Pilots aShip : allShips)
+        {
+            if(Canonicalizer.getCleanedName(aShip.getName()).equals(Canonicalizer.getCleanedName(searchedXWS2Name)))
+                return aShip;
         }
         return null;
     }
@@ -324,6 +332,8 @@ public class XWS2Pilots {
             for(XWS2Pilots.Pilot2e aPilot : aShip.getPilots())
             {
                 String theXWS2String = Canonicalizer.getCleanedName(aPilot.getName());
+                Util.logToChat("XWS2Pilots getSpecificPilot ship line 327 foundXWS2 " + theXWS2String + " searchedXWS2 "+ searchedXWS2Name);
+
                 // TODO replace with this eventually
                 // String theXWS2String = aPilot.getXWS2();
                 if(theXWS2String.equals(Canonicalizer.getCleanedName(searchedXWS2Name))) return aPilot;

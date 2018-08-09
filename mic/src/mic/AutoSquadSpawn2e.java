@@ -348,8 +348,8 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
 
         for(VassalXWSPilotPieces2e ship : pieces.getShips())
         {
-            logToChat("pieces manifest - ship name " + ship.getShipData().getName() + " pilot name " + ship.getPilotData().getName());
-            XWS2Pilots shipInQuestionFromXWD2 = XWS2Pilots.getSpecificShip(ship.getShipData().getName(),allPilots);
+            logToChat("pieces manifest - ship name " + ship.getShipData().getName() + " pilot name " + ship.getPilotData().getXWS2());
+            XWS2Pilots shipInQuestionFromXWD2 = XWS2Pilots.getSpecificShipFromPilotXWS2(ship.getPilotData().getXWS2(),allPilots);
             logToChat("that ship's dial's first move" + shipInQuestionFromXWD2.getDial().get(0));
         }
 
@@ -357,7 +357,12 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
             // ======================================================
             // Generate the Dial
             // ======================================================
-            GamePiece dialPiece = GamePieceGenerator2e.generateDial(ship, allPilots);
+            XWS2Pilots shipInQuestionFromXWD2 = XWS2Pilots.getSpecificShipFromPilotXWS2(ship.getPilotData().getXWS2(),allPilots);
+
+            GamePiece dialPiece = GamePieceGenerator2e.generateDial(shipInQuestionFromXWD2.getDial(),
+                    shipInQuestionFromXWD2.getFaction(),
+                    ship.getPilotData().getXWS2(),
+                    shipInQuestionFromXWD2.getName());
 
             int dialWidth = 0;
             try {
@@ -466,7 +471,7 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
 
         for(int i=0; i< stuffToXWS.size(); i++){ //parse all ship/pilot entries
             String shipString ="\"ship\":\"" + stuffToXWS.get(i).getShipType() + "\",";
-            String pilotString = "\"name\":\"" + stuffToXWS.get(i).getShipName() + "\",";
+            String pilotString = "\"name\":\"" + Canonicalizer.getCleanedName(stuffToXWS.get(i).getShipName()) + "\",";
             String xws2String = "\"xws2\":\"" + stuffToXWS.get(i).getShipPilotXWS2() + "\",";
             String upgradesStartString = "\"upgrades\":{";
             output+= shipString + pilotString + xws2String + upgradesStartString;
@@ -678,9 +683,9 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
 
 
     public static class ReadShipInfo{
-        private String shipName="";
-        private String shipType="";
-        private String shipPilotXWS2="";
+        private String shipName=""; //name of pilot; for menus and UIs
+        private String shipType=""; //name of ship
+        private String shipPilotXWS2=""; //unique xws2 key for pilot
 
         private List<ReadUpgradesInfo> upgradeBins = Lists.newArrayList();
 
@@ -696,8 +701,6 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
         public void setTypeName(String type) { this.shipType = type; }
         public void setShipPilotXWS2(String xws2)
         {
-            //TO DO change this hard coded faction
-            //this.shipPilotXWS2 = faction + "-" + shipType + "-" + shipName;
             this.shipPilotXWS2 = xws2;
         }
         public void addUpgrade(String type, String upgrade){

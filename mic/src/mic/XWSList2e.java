@@ -128,9 +128,9 @@ public class XWSList2e {
         }
         public XWSPilot(String name, String ship, String xws2, Map upgrades, Map vendor, Integer points)
         {
-            this.name = name;
-            this.ship = ship;
-            this.xws2 = xws2;
+            this.name = name; //pilot, regular format for menus
+            this.ship = ship; //ship type
+            this.xws2 = xws2; //unique pilot
             this.upgrades = upgrades;
             //this.vendor = vendor;
             this.points = points;

@@ -50,9 +50,10 @@ public class VassalXWSPieceLoader2e {
 
         for (XWSList2e.XWSPilot pilot : list.getPilots())
         {
-            String xwsShip = Canonicalizer.getCleanedName(pilot.getShip());
-            XWS2Pilots shipData = XWS2Pilots.getSpecificShip(pilot.getXws2(), allPilots);
-            XWS2Pilots.Pilot2e pilotData = XWS2Pilots.getSpecificPilot(pilot.getXws2(), allPilots);
+            String xwsPilotToSearch = Canonicalizer.getCleanedName(pilot.getXws2());
+
+            XWS2Pilots shipData = XWS2Pilots.getSpecificShipFromPilotXWS2(xwsPilotToSearch, allPilots);
+            XWS2Pilots.Pilot2e pilotData = XWS2Pilots.getSpecificPilot(xwsPilotToSearch, allPilots);
 
             // generate the pilot card
             VassalXWSPilotPieces2e barePieces = new VassalXWSPilotPieces2e();
@@ -61,7 +62,11 @@ public class VassalXWSPieceLoader2e {
 
             VassalXWSPilotPieces2e pilotPieces = new VassalXWSPilotPieces2e(barePieces);
             pieces.getShips().add(pilotPieces);
-            Util.logToChat("line 64 loadList dial list " + pilotPieces.getShipData().getDial().toArray().toString());
+
+            String aDial="";
+            for(String aMove : pilotPieces.getShipData().getDial()){
+                aDial += aMove + ",";
+            }
         }
         return pieces;
     }
