@@ -21,7 +21,7 @@ public class StemShip2e extends Decorator implements EditablePiece {
 
     private static final String BASE_SHIP_LAYER_NAME = "Layer - Base Ship";
     private static final String TOGGLE_BASE_TRIGGER_ACTION_NAME = "Trigger Action   - Toggle Ship Base";
-    private static final String SHIP_BASE_IMAGE_PREFIX = "Ship_Base";
+    private static final String SHIP_BASE_IMAGE_PREFIX = "Ship_2e_Base";
 
 
     private static Map<String, String> firingArcTypes = ImmutableMap.<String, String>builder()
@@ -136,19 +136,18 @@ public class StemShip2e extends Decorator implements EditablePiece {
         String base1ReportIdentifier;
         String base2ReportIdentifier;
 
-        ShipGenerateCommand(String shipXws,   GamePiece piece, String faction, String xwsPilot,
+        ShipGenerateCommand(VassalXWSPilotPieces2e source, String shipXws,   GamePiece piece, String faction, String xwsPilot,
                             boolean needsBombCapability, Boolean hasDualBase,
                             String dualBaseToggleMenuText, String base1ReportIdentifier, String base2ReportIdentifier) {
         //ShipGenerateCommand(String shipXws,   GamePiece piece, String faction, String xwsPilot) {
 
             // fetch the maneuver array of arrays according to the xws name passed on from autospawn or other means
-            xwsShipName = shipXws;
+            xwsShipName = Canonicalizer.getCleanedName(shipXws);
             this.faction = faction;
-               MasterShipData.ShipData shipData = MasterShipData.getShipData(xwsShipName);
-            shipName = shipData.getName();
+            shipName = source.getShipData().getName();
             this.piece = piece;
             this.xwsPilot = xwsPilot;
-            this.size = shipData.getSize();
+            this.size = source.getShipData().getSize();
             this.needsBombCapability = needsBombCapability;
 
             this.dualBase = hasDualBase == null ? false : hasDualBase.booleanValue();
@@ -371,7 +370,10 @@ public class StemShip2e extends Decorator implements EditablePiece {
             return piece;
         }
 
-        private GamePiece buildShipBaseLayer(GamePiece piece, String faction, String xwsShipName, String xwsPilot, String size, boolean dualBase, String dualBaseMenuText, String base1ReportIdentifier, String base2ReportIdentifier)
+        private GamePiece buildShipBaseLayer(GamePiece piece, String faction,
+                                             String xwsShipName, String xwsPilot,
+                                             String size, boolean dualBase, String dualBaseMenuText,
+                                             String base1ReportIdentifier, String base2ReportIdentifier)
         {
 
 
@@ -549,7 +551,7 @@ public class StemShip2e extends Decorator implements EditablePiece {
             }
             sb.append(".png");
 
-
+            Util.logToChat("ship image I'm trying to find " + sb.toString());
 
             String shipArt = new String();
             shipArt = sb.toString();

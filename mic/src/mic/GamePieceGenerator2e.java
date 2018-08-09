@@ -66,7 +66,7 @@ public class GamePieceGenerator2e
         //TO DO deal with dual base detection and associated text
         //StemShip.ShipGenerateCommand myShipGen = new StemShip.ShipGenerateCommand(Canonicalizer.getCleanedName(ship.getShipData().getName()), newShip, faction, pilotData.getXWS2(),needsBombCapability, shipData.hasDualBase(), shipData.getDualBaseToggleMenuText(),shipData.getBaseReport1Identifier(),shipData.getBaseReport2Identifier());
         StemShip2e.ShipGenerateCommand myShipGen = new StemShip2e.ShipGenerateCommand(
-                ship.getShipData().getName(),
+                ship, ship.getShipData().getName(),
                 newShip, ship.getShipData().getFaction(), ship.getPilotData().getXWS2(),false,
                 false, "","","");
 
