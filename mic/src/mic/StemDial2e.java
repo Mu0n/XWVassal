@@ -164,146 +164,7 @@ public class StemDial2e extends Decorator implements EditablePiece {
             .put("5KW", "Move_5_U_W.png")
             .put("5KR", "Move_5_U_R.png")
             .build();
-/*
-    // Dial Hide images (ship image that shows active player that the dial is hidden
-    // xwsship / image
-    private static Map<String, String> dialHideImages = ImmutableMap.<String, String>builder()
-            .put("xwing","Dial_Hide_Rebel_X-Wing.png")
-            .put("ywing","Dial_Hide_Rebel_Y-Wing.png")
-            .put("awing","Dial_Hide_Rebel_A-Wing.png")
-            .put("yt1300","Dial_Hide_Rebel_YT-1300.png")
-            .put("tiefighter","Dial_Hide_Empire_TIE_Fighter.png")
-            .put("tieadvanced","Dial_Hide_Empire_TIE_Advanced.png")
-            .put("tieinterceptor","Dial_Hide_Empire_TIE_Interceptor.png")
-            .put("firespray31","Dial_Hide_Empire_Firespray-31.png")
-            .put("hwk290","Dial_Hide_Rebel_HWK-290.png")
-            .put("lambdaclassshuttle","Dial_Hide_Empire_Lambda-Class_Shuttle.png")
-            .put("bwing","Dial_Hide_Rebel_B-Wing.png")
-            .put("tiebomber","Dial_Hide_Empire_TIE_Bomber.png")
-            .put("gr75mediumtransport","Dial_Hide_Rebel_GR-75.png")
-            .put("z95headhunter","Dial_Hide_Rebel_Z95.png")
-            .put("tiedefender","Dial_Hide_Empire_TIE_Defender.png")
-            .put("ewing","Dial_Hide_Rebel_E-Wing.png")
-            .put("tiephantom","Dial_Hide_Empire_TIE_Phantom.png")
-            // do we need both of these?
-            .put("cr90corvettefore","Dial_Hide_Rebel_CR90.png")
-            .put("cr90corvetteaft","Dial_Hide_Rebel_CR90.png")
-            .put("yt2400","Dial_Hide_Rebel_YT-2400.png")
-            .put("vt49decimator","Dial_Hide_Empire_VT-49.png")
-            .put("starviper","Dial_Hide_Scum_StarViper.png")
-            .put("m3ainterceptor","Dial_Hide_Scum_m3-a.png")
-            .put("aggressor","Dial_Hide_Scum_Aggressor.png")
-            // do we need both of these?
-            .put("raiderclasscorvettefore","Dial_Hide_Imperial_Raider.png")
-            .put("raiderclasscorvetteaft","Dial_Hide_Imperial_Raider.png")
-            .put("yv666","Dial_Hide_Scum_YV-666.png")
-            .put("kihraxzfighter","Dial_Hide_Scum_Kihraxz.png")
-            .put("kwing","Dial_Hide_Rebel_K-Wing.png")
-            .put("tiepunisher","Dial_Hide_Imperial_Tie_Punisher.png")
-            .put("t70xwing","Dial_Hide_Rebel_T70_X-Wing.png")
-            .put("tiefofighter","Dial_Hide_Empire_TIEFO_Fighter.png")
-            .put("vcx100","Dial_Hide_Rebel_VCX-100.png")
-            .put("attackshuttle","Dial_Hide_Rebel_Attack_Shuttle.png")
-            .put("jumpmaster5000","Dial_Hide_Scum-JM5k.png")
-            .put("g1astarfighter","Dial_Hide_Scum-G-1Ai.png")
-            .put("tieadvprototype","Dial_Hide_Empire_TAP.png")
-            .put("gozanticlasscruiser","Dial_Hide_Empire_Gozanti.png")
-            .put("arc170","Dial_Hide_Rebel_ARC-170.png")
-            .put("tiesffighter","Dial_Hide_Empire_SF_Fighter.png")
-            .put("protectoratestarfighter","Ship_Protectorate_Starfighter.png")
-            .put("lancerclasspursuitcraft","Dial_Hide_Scum_Lancer-Class.png")
-            .put("upsilonclassshuttle","Dial_Hide_Empire_Upsilon.png")
-            .put("quadjumper","Dial_Hide_Scum_Quadjumper.png")
-            .put("tiestriker","Dial_Hide_Empire_TIE Striker.png")
-            .put("uwing","Dial_Hide_Rebel_U-Wing.png")
-            .put("croccruiser","Dial_Hide_Empire_CROC.png")
-            .put("auzituckgunship","Dial_Hide_Rebel_Auzituck_Gunship.png")
-            .put("tieaggressor","Dial_Hide_Empire_TIE_Aggressor.png")
-            .put("scurrgh6bomber","Dial_Hide_Rebel_Scurrg.png")
-            .put("alphaclassstarwing","Dial_Hide_Empire_Alpha_Class.png")
-            .put("m12lkimogilafighter","Dial_Hide_Scum_kimogila.png")
-            .put("sheathipedeclassshuttle","Dial_Hide_Rebel_Sheathipede.png")
-            .put("tiesilencer","Dial_Hide_Empire_TIE-Silencer.png")
-            .put("bsf17bomber","Dial_Hide_Rebel_BSF-17.png")
-            .put("unreleased","Dial_Hide_WIP.png")
-            .build();
-*/
-/*
-    // Dial Back images - images that the opposing player sees when the dial is hidden
-    // xwsship/faction / image
-    private static Map<String, String> dialBackImages = ImmutableMap.<String, String>builder()
-            .put("xwing/Rebel Alliance","Dial_Back_Rebel_X-Wing_n.png")
-            .put("ywing/Rebel Alliance","Dial_Back_Rebel_Y-Wing_n.png")
-            .put("ywing/Scum and Villainy","Dial_Back_Scum_Y-Wing_n.png")
-            .put("awing/Rebel Alliance","Dial_Back_Rebel_A-Wing_n.png")
-            .put("yt1300/Rebel Alliance","Dial_Back_Rebel_YT-1300_n.png")
-            .put("yt1300/Resistance","Dial_Back_Rebel_YT-1300_n.png")
-            .put("tiefighter/Galactic Empire","Dial_Back_Empire_TIE_Fighter_n.png")
-            .put("tiefighter/Rebel Alliance","Dial_Back_Rebel_Sab_TIE_Fighter_n.png")
-            .put("tieadvanced/Galactic Empire","Dial_Back_Empire_TIE_Advanced_n.png")
-            .put("tieinterceptor/Galactic Empire","Dial_Back_Empire_TIE_Interceptor_n.png")
-            .put("firespray31/Galactic Empire","Dial_Back_Empire_Firespray-31_n.png")
-            .put("firespray31/Scum and Villainy","Dial_Back_Scum_FS-31_n.png")
-            .put("hwk290/Rebel Alliance","Dial_Back_Rebel_HWK-290_n.png")
-            .put("hwk290/Scum and Villainy","Dial_Back_Scum_HWK-290_n.png")
-            .put("lambdaclassshuttle/Galactic Empire","Dial_Back_Empire_Lambda-Class_Shuttle_n.png")
-            .put("bwing/Rebel Alliance","Dial_Back_Rebel_B-Wing_n.png")
-            .put("tiebomber/Galactic Empire","Dial_Back_Empire_TIE_Bomber_n.png")
-            .put("gr75mediumtransport/Rebel Alliance","Dial_Back_Rebel_GR-75.png")
-            .put("z95headhunter/Rebel Alliance","Dial_Back_Rebel_Z95_n.png")
-            .put("z95headhunter/Scum and Villainy","Dial_Back_Scum_Z95_n.png")
-            .put("tiedefender/Galactic Empire","Dial_Back_Empire_TIE_Defender_n.png")
-            .put("ewing/Rebel Alliance","Dial_Back_Rebel_E-Wing_n.png")
-            .put("tiephantom/Galactic Empire","Dial_Back_Empire_TIE_Phantom_n.png")
-            // do we need both of these?
-            .put("cr90corvettefore/Rebel Alliance","Dial_Back_Rebel_CR90_n.png")
-            .put("cr90corvetteaft/Rebel Alliance","Dial_Back_Rebel_CR90_n.png")
-            .put("yt2400/Rebel Alliance","Dial_Back_Rebel_YT-2400_n.png")
-            .put("vt49decimator/Galactic Empire","Dial_Back_Empire_VT-49_n.png")
-            .put("starviper/Scum and Villainy","Dial_Back_Scum_StarViper_n.png")
-            .put("m3ainterceptor/Scum and Villainy","Dial_Back_Scum_m3-a_n.png")
-            .put("aggressor/Scum and Villainy","Dial_Back_Scum_Aggressor_n.png")
-            // do we need both of these?
-            .put("raiderclasscorvettefore/Galactic Empire","Dial_Back_Empire_Raider_n.png")
-            .put("raiderclasscorvetteaft/Galactic Empire","Dial_Back_Empire_Raider_n.png")
-            .put("yv666/Scum and Villainy","Dial_Back_Scum_YV-666_n.png")
-            .put("kihraxzfighter/Scum and Villainy","Dial_Back_Scum_kihraxz_n.png")
-            .put("kwing/Rebel Alliance","Dial_Back_Rebel_K-Wing_n.png")
-            .put("tiepunisher/Galactic Empire","Dial_Back_Empire_TIE_Punisher_n.png")
-            .put("t70xwing/Resistance","Dial_Back_Rebel_T70_X-Wing_n.png")
-            .put("tiefofighter/First Order","Dial_Back_Empire_TIEFO_Fighter copy_n.png")
-            .put("vcx100/Rebel Alliance","Dial_Back_Rebel_VCX-100_n.png")
-            .put("attackshuttle/Rebel Alliance","Dial_Back_Rebel_Attack_Shuttle_n.png")
-            .put("jumpmaster5000/Scum and Villainy","Dial_Back_Scum_JM5k_n.png")
-            .put("g1astarfighter/Scum and Villainy","Dial_Back_Scum_G-1A_n.png")
-            .put("tieadvprototype/Galactic Empire","Dial_Back_Empire_TAP_n.png")
-            .put("gozanticlasscruiser/Galactic Empire","Dial_Back_Empire_Gozanti_n.png")
-            .put("arc170/Rebel Alliance","Dial_Back_Rebel_ARC-170_n.png")
-            .put("tiesffighter/First Order","Dial_Back_Empire_SF_Fighter_n.png")
-            .put("protectoratestarfighter/Scum and Villainy","Dial_Back_Scum_Protectorate_Starfighter_n.png")
-            .put("lancerclasspursuitcraft/Scum and Villainy","Dial_Back_Scum_Lancer-Class_n.png")
-            .put("upsilonclassshuttle/First Order","Dial_Back_Empire_Upsilon_n.png")
-            .put("quadjumper/Scum and Villainy","Dial_Back_Scum_Quadjumper_n.png")
-            .put("tiestriker/Galactic Empire","Dial_Back_Empire_TIE Striker_n.png")
-            .put("uwing/Rebel Alliance","Dial_Back_Rebel_U-Wing_n.png")
-            .put("croccruiser/Scum and Villainy","Dial_Back_Scum_Croc_n.png")
-            .put("auzituckgunship/Rebel Alliance","Dial_Back_Rebel_Auzituck_Gunship_n.png")
-            .put("tieaggressor/Galactic Empire","Dial_Back_Empire_TIE_Aggressor_n.png")
-            .put("scurrgh6bomber/Rebel Alliance","Dial_Back_Rebel_Scurrg_n.png")
-            .put("scurrgh6bomber/Scum and Villainy","Dial_Back_Scum_Scurrg_n.png")
-            .put("alphaclassstarwing/Galactic Empire","Dial_Back_Empire_Alpha_Class.png")
-            .put("m12lkimogilafighter/Scum and Villainy","Dial_Back_Scum_kimogila.png")
-            .put("sheathipedeclassshuttle/Rebel Alliance","Dial_Back_Rebel_Sheathipede.png")
-            .put("tiesilencer/First Order","Dial_Back_Empire_TIE_Silencer.png")
-            .put("bsf17bomber/Resistance","Dial_Back_Rebel_BSF-17.png")
 
-            .put("unreleased/Resistance","Dial_Back_Rebel_WIP.png")
-            .put("unreleased/Rebel Alliance","Dial_Back_Rebel_WIP.png")
-            .put("unreleased/First Order","Dial_Back_Empire_WIP.png")
-            .put("unreleased/Galactic Empire","Dial_Back_Empire_WIP.png")
-            .put("unreleased/Scum and Villainy","Dial_Back_Scum_WIP.png")
-            .build();
-*/
     public StemDial2e(){
         this(null);
     }
@@ -392,7 +253,6 @@ public class StemDial2e extends Decorator implements EditablePiece {
             newMoveList = aMoveList;
             shipName = aShipName;
             this.piece = piece;
-
         }
 
         // construct the dial Layers trait (Embellishment class) layer by layer according to the previous Array of Arrays.
@@ -474,14 +334,16 @@ public class StemDial2e extends Decorator implements EditablePiece {
 
             // first get the core faction name from the subfaction (i.e. Resistance => RebelAlliance
             String coreFactionName = null;
-            if(faction.equalsIgnoreCase("Rebel Alliance") || faction.equalsIgnoreCase("Resistance"))
+            if(faction.equalsIgnoreCase("Rebel Alliance"))
             {
                 coreFactionName = "rebelalliance";
-            }else if(faction.equalsIgnoreCase("Galactic Empire") || faction.equalsIgnoreCase("First Order"))
-            {
+            }else if(faction.equalsIgnoreCase("Resistance")){
+                coreFactionName = "resistance";
+            } else if(faction.equalsIgnoreCase("Galactic Empire")){
                 coreFactionName = "galacticempire";
-            }else if(faction.equalsIgnoreCase("Scum and Villainy"))
-            {
+            }else if(faction.equalsIgnoreCase("First Order")) {
+                coreFactionName = "firstorder";
+            } else if(faction.equalsIgnoreCase("Scum and Villainy")){
                 coreFactionName = "scumandvillainy";
             }
 
