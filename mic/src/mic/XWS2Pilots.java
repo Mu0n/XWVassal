@@ -38,6 +38,13 @@ public class XWS2Pilots {
     public List<Stat2e> getStats() {return this.stats;}
     public List<Pilot2e> getPilots() { return this.pilots;}
 
+    public int getInitiative(){
+        for(Stat2e stat : stats)
+        {
+            if(stat.getType().equals("initiative")) return stat.getValue();
+        }
+        return 0;
+    }
     public int getHull(){
         for(Stat2e stat : stats)
         {

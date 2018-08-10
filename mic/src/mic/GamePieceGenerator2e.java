@@ -64,8 +64,6 @@ public class GamePieceGenerator2e
         boolean needsBombCapability, Boolean hasDualBase,
             String dualBaseToggleMenuText, String base1ReportIdentifier, String base2ReportIdentifier) {
         */
-        //TO DO deal with dual base detection and associated text
-        //StemShip.ShipGenerateCommand myShipGen = new StemShip.ShipGenerateCommand(Canonicalizer.getCleanedName(ship.getShipData().getName()), newShip, faction, pilotData.getXWS2(),needsBombCapability, shipData.hasDualBase(), shipData.getDualBaseToggleMenuText(),shipData.getBaseReport1Identifier(),shipData.getBaseReport2Identifier());
         StemShip2e.ShipGenerateCommand myShipGen = new StemShip2e.ShipGenerateCommand(
                 ship, ship.getShipData().getName(),
                 newShip, ship.getShipData().getFaction(), ship.getPilotData().getXWS2(),false,
@@ -74,11 +72,11 @@ public class GamePieceGenerator2e
         myShipGen.execute();
 
         // add the stats to the piece
-        //newShip = setShipProperties(newShip,ship.getUpgrades(), shipData, pilotData, ship);
+        newShip = setShipProperties(newShip,ship);
         return newShip;
     }
 
-    public static GamePiece setShipProperties(GamePiece piece, List<VassalXWSPilotPieces2e.Upgrade> upgrades,XWS2Pilots shipData,XWS2Pilots.Pilot2e pilotData,VassalXWSPilotPieces2e ship ) {
+    public static GamePiece setShipProperties(GamePiece piece,VassalXWSPilotPieces2e ship ) {
         //GamePiece piece = Util.newPiece(this.ship);
 
         int initiativeModifier = 0;
@@ -87,7 +85,7 @@ public class GamePieceGenerator2e
         int hullModifier = 0;
         int forceModifier = 0;
 
-
+/*
         for (VassalXWSPilotPieces2e.Upgrade upgrade : upgrades) {
 
             MasterUpgradeData.UpgradeGrants doubleSideCardStats = DoubleSideCardPriorityPicker.getDoubleSideCardStats(upgrade.getXwsName());
@@ -120,12 +118,13 @@ public class GamePieceGenerator2e
                     else if (name.equals("charge")) chargeModifier += value;
                 }
             }
-        }
+        }*/
 
-        if (shipData != null)
+        if (ship.getShipData() != null)
         {
-            int hull = shipData.getHull();
-            int shields = shipData.getShields();
+            int hull = ship.getShipData().getHull();
+            int shields = ship.getShipData().getShields();
+            int initiative = ship.getShipData().getInitiative();
 
             //TO DO overrides, ugh
             /*
@@ -137,24 +136,24 @@ public class GamePieceGenerator2e
             }
             */
 
+            piece.setProperty("Initiative", initiative + initiativeModifier);
             piece.setProperty("Hull Rating", hull + hullModifier);
             piece.setProperty("Shield Rating", shields + shieldsModifier);
 
-            /* use this example for force and charge
-            if (shipData.getEnergy() > 0) {
-                int energy = shipData.getEnergy();
-                piece.setProperty("Energy Rating", energy + energyModifier);
+
+            if (ship.getShipData().getCharge() > 0) {
+                int charge = ship.getShipData().getCharge();
+                piece.setProperty("Charge Rating", charge + chargeModifier);
             }
-            */
+            if (ship.getShipData().getForce() > 0) {
+                int force = ship.getShipData().getForce();
+                piece.setProperty("Force Rating", force + forceModifier);
+            }
+
         }
 
-        if (pilotData != null) {
-            int ps = pilotData.getInitiative() + initiativeModifier;
-            piece.setProperty("Initiative", ps);
-        }
-
-        if (pilotData != null) {
-            piece.setProperty("Pilot Name", getDisplayShipName(pilotData,shipData));
+        if (ship.getShipData().getName() != null) {
+            piece.setProperty("Pilot Name", getDisplayShipName(ship));
         }
 
         return piece;
@@ -308,7 +307,7 @@ public class GamePieceGenerator2e
 
         //is this even needed
         //dial.setProperty("ShipXwsId",Canonicalizer.getCleanedName(shipTag));
-        dial.setProperty("Pilot Name", getDisplayShipName(ship.getPilotData(), ship.getShipData()));
+        dial.setProperty("Pilot Name", getDisplayShipName(ship));
         dial.setProperty("Craft ID #", getDisplayPilotName(ship.getPilotData(), ship.getShipData(), ship.getShipNumber()));
 
         return dial;
@@ -406,14 +405,14 @@ public class GamePieceGenerator2e
         return pilotName;
     }
 
-    private static String getDisplayShipName(XWS2Pilots.Pilot2e pilotData, XWS2Pilots shipData) {
+    private static String getDisplayShipName(VassalXWSPilotPieces2e ship) {
         String shipName = "";
 
-        if (pilotData != null) {
+        if (ship.getPilotData() != null) {
             shipName = Acronymizer.acronymizer(
-                    shipData.getName(),
-                    pilotData.isUnique(),
-                    shipData.hasSmallBase());
+                    ship.getShipData().getName(),
+                    ship.getPilotData().isUnique(),
+                    ship.getShipData().hasSmallBase());
         }
 
         return shipName;
