@@ -26,11 +26,11 @@ public class StemPilot2e extends Decorator implements EditablePiece {
 
 
     private static Map<String, String> wipImages = ImmutableMap.<String, String>builder()
-            .put("Rebel Alliance","Pilot_WIP_Rebel.jpg")
-            .put("Resistance","Pilot_WIP_Resistance.jpg")
-            .put("Galactic Empire","Pilot_WIP_Empire.jpg")
-            .put("First Order","Pilot_WIP_First_Order.jpg")
-            .put("Scum and Villainy","Pilot_WIP_Scum.jpg")
+            .put("Rebel Alliance","Pilot2e_WIP_Rebel.jpg")
+            .put("Resistance","Pilot2e_WIP_Resistance.jpg")
+            .put("Galactic Empire","Pilot2e_WIP_Empire.jpg")
+            .put("First Order","Pilot2e_WIP_First_Order.jpg")
+            .put("Scum and Villainy","Pilot2e_WIP_Scum.jpg")
             .build();
 
     public static final String ID = "stemPilot";
