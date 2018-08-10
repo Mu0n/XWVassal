@@ -124,7 +124,7 @@ public class GamePieceGenerator2e
         {
             int hull = ship.getShipData().getHull();
             int shields = ship.getShipData().getShields();
-            int initiative = ship.getShipData().getInitiative();
+            int initiative = ship.getPilotData().getInitiative();
 
             //TO DO overrides, ugh
             /*
@@ -153,7 +153,7 @@ public class GamePieceGenerator2e
         }
 
         if (ship.getShipData().getName() != null) {
-            piece.setProperty("Pilot Name", getDisplayShipName(ship));
+            piece.setProperty("Pilot Name", getDisplayPilotName(ship, ship.getShipNumber()));
         }
 
         return piece;
@@ -308,7 +308,7 @@ public class GamePieceGenerator2e
         //is this even needed
         //dial.setProperty("ShipXwsId",Canonicalizer.getCleanedName(shipTag));
         dial.setProperty("Pilot Name", getDisplayShipName(ship));
-        dial.setProperty("Craft ID #", getDisplayPilotName(ship.getPilotData(), ship.getShipData(), ship.getShipNumber()));
+        dial.setProperty("Craft ID #", getDisplayPilotName(ship, ship.getShipNumber()));
 
         return dial;
     }
@@ -388,15 +388,15 @@ public class GamePieceGenerator2e
         return newPilot;
     }
 
-    private static String getDisplayPilotName(XWS2Pilots.Pilot2e pilotData, XWS2Pilots shipData, Integer shipNumber )
+    private static String getDisplayPilotName(VassalXWSPilotPieces2e ship, Integer shipNumber )
     {
         String pilotName = "";
 
-        if (pilotData != null) {
+        if (ship.getPilotData() != null) {
             pilotName = Acronymizer.acronymizer(
-                    pilotData.getName(),
-                    pilotData.isUnique(),
-                    shipData.hasSmallBase());
+                    ship.getPilotData().getName(),
+                    ship.getPilotData().isUnique(),
+                    ship.getShipData().hasSmallBase());
         }
 
         if (shipNumber != null && shipNumber > 0) {
