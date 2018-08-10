@@ -24,7 +24,6 @@ public class StemPilot2e extends Decorator implements EditablePiece {
             .put("Scum and Villainy","Pilot-S&V_Back.jpg")
             .build();
 
-
     private static Map<String, String> wipImages = ImmutableMap.<String, String>builder()
             .put("Rebel Alliance","Pilot2e_WIP_Rebel.jpg")
             .put("Resistance","Pilot2e_WIP_Resistance.jpg")
@@ -35,19 +34,16 @@ public class StemPilot2e extends Decorator implements EditablePiece {
 
     public static final String ID = "stemPilot";
 
-
     public StemPilot2e(){
         this(null);
     }
 
     public StemPilot2e(GamePiece piece){
         setInner(piece);
-
     }
 
     @Override
     public void mySetState(String s) {
-
     }
     @Override
     public String myGetState() {
@@ -122,26 +118,28 @@ public class StemPilot2e extends Decorator implements EditablePiece {
         //       String shipName;
         static String faction = "";
         static String pilotName = "";
-        String shipXWS = "";
+        static String pilotXWS2 = "";
         static String pilotXWSencoding = "";
         //static String stemPieceName = "";
         static String shipName = "";
-        static String xwsText = "";
+        static String pilotAbilityText="";
+        static String shipAbilityName="";
+        static String shipAbilityText="";
+
 
         PilotGenerateCommand(GamePiece piece, VassalXWSPilotPieces2e ship)
         {
-            //xwsPilotName = pilotXWS;
-
-
-            shipXWS = Canonicalizer.getCleanedName(ship.getShipData().getName());
+            pilotXWS2 = Canonicalizer.getCleanedName(ship.getShipData().getName());
             faction = ship.getShipData().getFaction();
             pilotName = ship.getPilotData().getName();
             shipName = ship.getShipData().getName();
-            xwsText = ship.getPilotData().getAbility();
+            pilotAbilityText = ship.getPilotData().getAbility();
+            shipAbilityName = ship.getPilotData().getShipAbility().getName();
+            shipAbilityText = ship.getPilotData().getShipAbility().getText();
 
             String factionXWS = Canonicalizer.getCanonicalFactionName(faction);
 
-            pilotXWSencoding = factionXWS+"_"+shipXWS+"_"+ship.getPilotData().getXWS2();
+            pilotXWSencoding = factionXWS+"_"+pilotXWS2+"_"+ship.getPilotData().getXWS2();
 
             this.piece = piece;
 
@@ -153,14 +151,16 @@ public class StemPilot2e extends Decorator implements EditablePiece {
 
             this.piece.setProperty("Ship Type",shipName);
             this.piece.setProperty("Pilot Name",pilotName);
-
+            this.piece.setProperty("xws2",pilotXWS2);
+            this.piece.setProperty("pilotability",pilotAbilityText);
+            this.piece.setProperty("shipability",shipAbilityName +": " + shipAbilityText);
         }
 
         // construct the Pilot Card piece
         protected void executeCommand()
         {
             String factionXWS = faction.toLowerCase().replaceAll(" ","");
-            String pilotCardImage = "Pilot_"+pilotXWSencoding+".jpg";
+            String pilotCardImage = "Pilot2e_"+pilotXWSencoding+".jpg";
 
             // check to see that the pilot card image exists in the module.
             // if it doesn't then use a WIP image
@@ -181,9 +181,16 @@ public class StemPilot2e extends Decorator implements EditablePiece {
                 piece.setProperty("Pilot Name",pilotName);
             }
 
-
-            piece.setProperty("xwstag", pilotName);
-            if(xwsText !=null) if(!xwsText.isEmpty()) piece.setProperty("xwstext", xwsText);
+            piece.setProperty("xws2", pilotName);
+            if(pilotName !=null) if(!pilotName.isEmpty()) {
+                piece.setProperty("xws2", pilotName);
+            }
+            if(pilotAbilityText !=null) if(!pilotAbilityText.isEmpty()) {
+                piece.setProperty("pilotability", pilotAbilityText);
+            }
+            if(shipAbilityText !=null) if(!shipAbilityText.isEmpty()) {
+                piece.setProperty("shipability", shipAbilityName +": " + shipAbilityText);
+            }
         }
 
         private GamePiece buildImageLayer(GamePiece piece, String pilotCardImage, String pilotName, String faction)
@@ -206,140 +213,6 @@ public class StemPilot2e extends Decorator implements EditablePiece {
 
             return piece;
         }
-/*
-        private GamePiece buildSideActions(GamePiece piece, String size)
-        {
-            String action1 = "";
-            String action2 = "";
-            String action3 = "";
-            //large
-            if(size.equals("large"))
-            {
-                action3 = "emb2;;2;;Cycle 3rd Action;2;;;2;;Clear 3rd Action;90,195;1;false;128;30;,Action-Focus.png,Action-Evade.png,Action-Barrel_Roll.png,Action-Boost.png,Action-Elite.png,Action-Crew.png,Action-Bomb.png,Action-Reinforce.png,Action-Coordinate.png,Action-Illicit.png,Action-Rotate_Arc.png,Action-SLAM.png,Action-Cloak.png,Action-Reload.png,Action-Target_Lock.png,Action-Mech.png;,,,,,,,,,,,,,,,,;true;Actions_Side1;;;false;;1;1;true;;65,195;";
-                action2 = "emb2;;2;;Cycle 2nd Action;2;;;2;;Clear 2nd Action;90,130;1;false;128;0;,Action-Focus.png,Action-Evade.png,Action-Barrel_Roll.png,Action-Boost.png,Action-Elite.png,Action-Crew.png,Action-Bomb.png,Action-Reinforce.png,Action-Coordinate.png,Action-Illicit.png,Action-Rotate_Arc.png,Action-SLAM.png,Action-Cloak.png,Action-Reload.png,Action-Target_Lock.png,Action-Mech.png;,,,,,,,,,,,,,,,,;true;Actions_Side2;;;false;;1;1;true;;65,130;";
-                action1 = "emb2;;2;;Cycle 1st Action;2;;;2;;Clear 1st Action;90,65;1;false;128;-30;,Action-Focus.png,Action-Evade.png,Action-Barrel_Roll.png,Action-Boost.png,Action-Elite.png,Action-Crew.png,Action-Bomb.png,Action-Reinforce.png,Action-Coordinate.png,Action-Illicit.png,Action-Rotate_Arc.png,Action-SLAM.png,Action-Cloak.png,Action-Reload.png,Action-Target_Lock.png,Action-Mech.png;,,,,,,,,,,,,,,,,;true;Actions_Side3;;;false;;1;1;true;;65,65;";
-            }else if(size.equals("small"))
-            {
-                action3 = "emb2;;2;;Cycle 3rd Action;2;;;2;;Clear 3rd Action;90,195;1;false;70;30;,Action-Focus.png,Action-Evade.png,Action-Barrel_Roll.png,Action-Boost.png,Action-Elite.png,Action-Crew.png,Action-Bomb.png,Action-Reinforce.png,Action-Coordinate.png,Action-Illicit.png,Action-Rotate_Arc.png,Action-SLAM.png,Action-Cloak.png,Action-Reload.png,Action-Target_Lock.png,Action-Mech.png;,,,,,,,,,,,,,,,,;true;Actions_Side1;;;false;;1;1;true;;65,195;";
-                action2 = "emb2;;2;;Cycle 2nd Action;2;;;2;;Clear 2nd Action;90,130;1;false;70;0;,Action-Focus.png,Action-Evade.png,Action-Barrel_Roll.png,Action-Boost.png,Action-Elite.png,Action-Crew.png,Action-Bomb.png,Action-Reinforce.png,Action-Coordinate.png,Action-Illicit.png,Action-Rotate_Arc.png,Action-SLAM.png,Action-Cloak.png,Action-Reload.png,Action-Target_Lock.png,Action-Mech.png;,,,,,,,,,,,,,,,,;true;Actions_Side2;;;false;;1;1;true;;65,130;";
-                action1 = "emb2;;2;;Cycle 1st Action;2;;;2;;Clear 1st Action;90,65;1;false;70;-30;,Action-Focus.png,Action-Evade.png,Action-Barrel_Roll.png,Action-Boost.png,Action-Elite.png,Action-Crew.png,Action-Bomb.png,Action-Reinforce.png,Action-Coordinate.png,Action-Illicit.png,Action-Rotate_Arc.png,Action-SLAM.png,Action-Cloak.png,Action-Reload.png,Action-Target_Lock.png,Action-Mech.png;,,,,,,,,,,,,,,,,;true;Actions_Side3;;;false;;1;1;true;;65,65;";
-            }
-            //small
-
-            Embellishment actionEmb = new Embellishment();
-            actionEmb.mySetType(action3);
-            actionEmb.setInner(piece);
-
-
-            piece = actionEmb;
-
-            actionEmb = new Embellishment();
-            actionEmb.mySetType(action2);
-            actionEmb.setInner(piece);
-
-            piece = actionEmb;
-
-            actionEmb = new Embellishment();
-            actionEmb.mySetType(action1);
-            actionEmb.setInner(piece);
-
-            piece = actionEmb;
-
-            /*
-            //3rd 128,30
-            //emb2;;2;;Cycle 3rd Action;2;;;2;;Clear 3rd Action;90,195;1;false;128;30;,Action-Focus.png,Action-Evade.png,Action-Barrel_Roll.png,Action-Boost.png,Action-Elite.png,Action-Crew.png,Action-Bomb.png,Action-Reinforce.png,Action-Coordinate.png,Action-Illicit.png,Action-Rotate_Arc.png,Action-SLAM.png,Action-Cloak.png,Action-Reload.png,Action-Target_Lock.png,Action-Mech.png;,,,,,,,,,,,,,,,,;true;Actions_Side1;;;false;;1;1;true;;65,195;
-
-            //2nd 128,0
-            //emb2;;2;;Cycle 2nd Action;2;;;2;;Clear 2nd Action;90,130;1;false;128;0;,Action-Focus.png,Action-Evade.png,Action-Barrel_Roll.png,Action-Boost.png,Action-Elite.png,Action-Crew.png,Action-Bomb.png,Action-Reinforce.png,Action-Coordinate.png,Action-Illicit.png,Action-Rotate_Arc.png,Action-SLAM.png,Action-Cloak.png,Action-Reload.png,Action-Target_Lock.png,Action-Mech.png;,,,,,,,,,,,,,,,,;true;Actions_Side2;;;false;;1;1;true;;65,130;
-
-            //1st 128,-30
-            //emb2;;2;;Cycle 1st Action;2;;;2;;Clear 1st Action;90,65;1;false;128;-30;,Action-Focus.png,Action-Evade.png,Action-Barrel_Roll.png,Action-Boost.png,Action-Elite.png,Action-Crew.png,Action-Bomb.png,Action-Reinforce.png,Action-Coordinate.png,Action-Illicit.png,Action-Rotate_Arc.png,Action-SLAM.png,Action-Cloak.png,Action-Reload.png,Action-Target_Lock.png,Action-Mech.png;,,,,,,,,,,,,,,,,;true;Actions_Side3;;;false;;1;1;true;;65,65;
-
-            return piece;
-        }
-*/
-/*
-        private GamePiece buildCardboardActions(GamePiece piece, List<String> actionList, String size)
-        {
-
-            String actionImage = null;
-            int actionNumber = 0;
-            for(String action : actionList)
-            {
-                actionImage = (String)cardboardActionImages.get(action);
-
-                actionNumber++;
-
-                // build the action string
-                StringBuilder sb = new StringBuilder();
-                sb.append("emb2;Activate;2;;;2;;;2;;;;1;false;");
-                sb.append((String)cardboardActionCoordinates.get(size+actionNumber));
-                sb.append(";");
-                sb.append(actionImage);
-                sb.append(";;false;Action_");
-                sb.append(action);
-                sb.append(";;;false;;1;1;true;65,130;;");
-
-                // add the action
-                Embellishment actionEmb = new Embellishment();
-                actionEmb.mySetType(sb.toString());
-                actionEmb.setInner(piece);
-
-                // the embellishment is now the outer piece
-                piece = actionEmb;
-            }
-            return piece;
-
-        }
-*/
-/*
-        private GamePiece buildCardboardFiringArcs(GamePiece piece,String faction, List<String> arcList, String size)
-        {
-            StringBuilder arcImagePrefixSB = new StringBuilder();
-            arcImagePrefixSB.append(size);
-            arcImagePrefixSB.append("/");
-
-            // find the faction
-            if(faction.equals("Rebel Alliance") || faction.equals("Resistance"))
-            {
-                arcImagePrefixSB.append("rebel");
-            }else if(faction.equals("Galactic Empire") ||faction.equals("First Order"))
-            {
-                arcImagePrefixSB.append("imperial");
-            }else if(faction.equals("Scum & Villainy"))
-            {
-                arcImagePrefixSB.append("scum");
-            }
-
-            arcImagePrefixSB.append("/");
-
-            String arcImage = "";
-            for(String arc : arcList)
-            {
-                // look up the image for the arc
-                arcImage = (String)cardboardFiringArcImages.get(arcImagePrefixSB.toString() + arc);
-
-                // build the arc string
-                StringBuilder sb = new StringBuilder();
-                sb.append("emb2;Activate;2;;;2;;;2;;;;1;false;0;0;");
-                sb.append(arcImage);
-                sb.append(";;false;Arc_");
-                sb.append(arc); // add arc name to name of Emb
-                sb.append(";;;false;;1;1;true;65,130;;");
-
-                // add the arc
-                Embellishment arcEmb = new Embellishment();
-                arcEmb.mySetType(sb.toString());
-                arcEmb.setInner(piece);
-
-                // the embellishment is now the outer piece
-                piece = arcEmb;
-
-            }
-            return piece;
-
-        }
-*/
 
         protected Command myUndoCommand() {
             return null;
