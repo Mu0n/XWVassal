@@ -13,7 +13,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.Map;
 
-//another class suffering from the switcharoo Pilot Name being ship name and craft ID
+//another class suffering from the switcharoo Pilot ID # being ship name and Ship Type being pilot name
 
 public class StemPilot2e extends Decorator implements EditablePiece {
 
@@ -126,6 +126,7 @@ public class StemPilot2e extends Decorator implements EditablePiece {
         static String pilotAbilityText="";
         static String shipAbilityName="";
         static String shipAbilityText="";
+        int shipNumber;
 
 
         PilotGenerateCommand(GamePiece piece, VassalXWSPilotPieces2e ship)
@@ -138,20 +139,14 @@ public class StemPilot2e extends Decorator implements EditablePiece {
             shipAbilityName = ship.getPilotData().getShipAbility().getName();
             shipAbilityText = ship.getPilotData().getShipAbility().getText();
 
+            if(ship.getShipNumber()!=null) shipNumber = ship.getShipNumber();
             String factionXWS = Canonicalizer.getCanonicalFactionName(faction);
 
             pilotXWSencoding = factionXWS+"_"+pilotXWS2+"_"+ship.getPilotData().getXWS2();
 
             this.piece = piece;
 
-            if (ship.getShipNumber() != null && ship.getShipNumber() > 0) {
-                this.piece.setProperty("Pilot ID #", ship.getShipNumber());
-            } else {
-                this.piece.setProperty("Pilot ID #", "");
-            }
-
-            this.piece.setProperty("Ship Type",shipName);
-            this.piece.setProperty("Pilot Name",pilotName);
+            //this.piece.setProperty("Pilot Name",pilotName);
             this.piece.setProperty("xws2",pilotXWS2);
             this.piece.setProperty("pilotability",pilotAbilityText);
             if(shipAbilityText==null) this.piece.setProperty("shipability","No Ship Ability");
@@ -161,14 +156,15 @@ public class StemPilot2e extends Decorator implements EditablePiece {
         // construct the Pilot Card piece
         protected void executeCommand()
         {
-            String factionXWS = faction.toLowerCase().replaceAll(" ","");
             String pilotCardImage = "Pilot2e_"+pilotXWSencoding+".jpg";
 
+            Util.logToChat("pilotCardImage is " + pilotCardImage);
             // check to see that the pilot card image exists in the module.
             // if it doesn't then use a WIP image
             boolean useWipImage = false;
             if(!XWOTAUtils.imageExistsInModule(pilotCardImage))
             {
+                Util.logToChat("didn't find " + pilotCardImage);
                 pilotCardImage = wipImages.get(faction);
                 useWipImage = true;
             }
@@ -179,9 +175,19 @@ public class StemPilot2e extends Decorator implements EditablePiece {
 
             if(useWipImage)
             {
-                piece.setProperty("Ship Type",shipName);
-                piece.setProperty("Pilot Name",pilotName);
+
+
+                if (shipNumber > 0) {
+                    this.piece.setProperty("Pilot ID #", shipNumber);
+                } else {
+                    this.piece.setProperty("Pilot ID #", "");
+                }
+
+                this.piece.setProperty("Pilot Name",pilotName);
+
             }
+
+            this.piece.setProperty("Ship Type",shipName);
 
             piece.setProperty("xws2", pilotName);
             if(pilotName !=null) if(!pilotName.isEmpty()) {

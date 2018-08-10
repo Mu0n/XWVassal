@@ -368,6 +368,7 @@ public class GamePieceGenerator2e
     public static GamePiece generatePilot(VassalXWSPilotPieces2e ship) {
 
         GamePiece newPilot = Util.newPiece(ship.getPilotCard());
+        /*
         if (ship.getShipNumber() != null && ship.getShipNumber() > 0) {
             newPilot.setProperty("Pilot ID #", ship.getShipNumber());
         } else {
@@ -375,11 +376,9 @@ public class GamePieceGenerator2e
         }
 
         // this is a stem card = fill it in
-
-
         newPilot.setProperty("Ship Type",ship.getShipData().getName());
         newPilot.setProperty("Pilot Name",ship.getPilotData().getName());
-
+*/
         StemPilot2e.PilotGenerateCommand myShipGen = new StemPilot2e.PilotGenerateCommand(newPilot, ship);
 
         myShipGen.execute();
