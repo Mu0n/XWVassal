@@ -36,11 +36,11 @@ public class GamePieceGenerator2e
     {
                 // generate the piece from the stem ships
         GamePiece newShip = null;
-        Util.logToChat("generator2e size " + ship.getShipData().getSize());
       //  boolean shipContainsMobileArc = containsMobileArc(shipData);
-        if(ship.getShipData().getSize().contentEquals(SHIP_BASE_SIZE_SMALL))
-        {
+        if(ship.getShipData().getSize().contentEquals(SHIP_BASE_SIZE_SMALL)) {
             newShip = Util.newPiece(getPieceSlotByName(SMALL_STEM_SHIP_SLOT_NAME));
+        }else if(ship.getShipData().getSize().contentEquals(SHIP_BASE_SIZE_MEDIUM)) {
+            newShip = Util.newPiece(getPieceSlotByName(MEDIUM_STEM_SHIP_SLOT_NAME));
         }else if(ship.getShipData().getSize().contentEquals(SHIP_BASE_SIZE_LARGE))
         {
             //TO DO deal with mobilearc detection
