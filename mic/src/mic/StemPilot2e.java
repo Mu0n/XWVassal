@@ -176,14 +176,12 @@ public class StemPilot2e extends Decorator implements EditablePiece {
             if(useWipImage)
             {
 
-
+            String combinedIDAndShipName ="";
                 if (shipNumber > 0) {
-                    this.piece.setProperty("Pilot ID #", shipNumber);
-                } else {
-                    this.piece.setProperty("Pilot ID #", "");
+                    combinedIDAndShipName = Integer.toString(shipNumber);
                 }
 
-                this.piece.setProperty("Pilot Name",pilotName);
+                this.piece.setProperty("Pilot Name",combinedIDAndShipName + " " + pilotName);
 
             }
 
