@@ -19,7 +19,7 @@ import static mic.Util.logToChat;
  * Uses CTRL-Q and is used to report in the chatlog, the xwing-data fetched "text" field.
  */
 public class ReportCardText2e extends Decorator implements EditablePiece {
-    public static final String ID = "reportCardText2";
+    public static final String ID = "ReportCardText2";
 
     public ReportCardText2e(){
         this(null);
