@@ -163,10 +163,10 @@ public class StemShip2e extends Decorator implements EditablePiece {
             piece = buildShipBaseLayer(piece,faction,xwsShipName,xwsPilot, size, dualBase, dualBaseToggleMenuText, base1ReportIdentifier,base2ReportIdentifier);
 
             // Add the Target Lock capability
-            piece = addTargetLock(piece,faction,size);
+            //piece = addTargetLock(piece,faction,size);
 
             // add the firing arcs needed
-            piece = addFiringArcs(piece,faction,size,xwsShipName);
+            //piece = addFiringArcs(piece,faction,size,xwsShipName);
 
 
 
@@ -193,7 +193,7 @@ public class StemShip2e extends Decorator implements EditablePiece {
                 arc = i.next();
                 if(!arc.equals("Mobile") && !arc.equals("Turret")) {
                     if (arc.equals("Front")) {
-                        emb = (Embellishment) Util.getEmbellishment(newGamePiece, "Layer - Show Front Firing Arc");
+                        emb = (Embellishment) Util.getEmbellishment(newGamePiece, "Layer - Show Arc");
 
                     } else {
                         emb = (Embellishment) Util.getEmbellishment(newGamePiece, "Layer - Show Auxiliary Firing Arc");
@@ -215,7 +215,7 @@ public class StemShip2e extends Decorator implements EditablePiece {
         private GamePiece addTargetLock(GamePiece newGamePiece, String faction, String newSize)
         {
 
-            final String targetLockLayerName = "Layer - Show Target Lock";
+            final String targetLockLayerName = "Layer - Show Lock";
             final String rebelSmallImage = "TargetLock_Rebel.svg";
             final String rebelMediumImage = "TargetLock_Rebel_Medium.svg";
             final String rebelLargeImage = "TargetLock_Rebel_Large.svg";
@@ -388,10 +388,12 @@ public class StemShip2e extends Decorator implements EditablePiece {
             if(!dualBase) {
                 // first find the base image name
                 String shipBaseImage = findShipBaseImage(faction,xwsShipName, xwsPilot, size);
+                Util.logToChat("shipBaseImage found  " + shipBaseImage);
                // mic.Util.logToChat(xwsShipName + " is NOT dual based");
                 StringBuffer sb = new StringBuffer();
                 sb.append("emb2;Activate;2;;Ghost;2;;;2;;;;1;false;0;0;");
                 sb.append(shipBaseImage);
+
                 if(size.equals("small")) {
                     sb.append(",Ship_Small_SeeThrough.png");
 
@@ -404,7 +406,9 @@ public class StemShip2e extends Decorator implements EditablePiece {
                 }
                 sb.append(";base1,ghost1;false;Base Ship;;;true;ULevel;1;1;true;65,130;;");
                 // now get the Layer
+                Util.logToChat("is piece null? " +((piece==null)?"yes":"no"));
                 Embellishment myEmb = (Embellishment)Util.getEmbellishment(piece,BASE_SHIP_LAYER_NAME);
+                Util.logToChat("is myEmb null? " +((myEmb==null)?"yes":"no"));
              //   mic.Util.logToChat(myEmb.myGetType());
                 myEmb.mySetType(sb.toString());
 

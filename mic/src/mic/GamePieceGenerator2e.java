@@ -27,15 +27,16 @@ public class GamePieceGenerator2e
     private static final String MEDIUM_STEM_SHIP_DOUBLE_TURRET_SLOT_NAME = "ship -- Stem2e Medium Double Turret Ship";
     private static final String LARGE_STEM_SHIP_DOUBLE_TURRET_SLOT_NAME = "ship -- Stem2e Large Double Turret Ship";
 
-    private static final String SHIP_BASE_SIZE_SMALL = "small";
-    private static final String SHIP_BASE_SIZE_MEDIUM = "medium";
-    private static final String SHIP_BASE_SIZE_LARGE = "large";
+    private static final String SHIP_BASE_SIZE_SMALL = "Small";
+    private static final String SHIP_BASE_SIZE_MEDIUM = "Medium";
+    private static final String SHIP_BASE_SIZE_LARGE = "Large";
 
     // generate a ship GamePiece
     public static GamePiece generateShip(VassalXWSPilotPieces2e ship)
     {
                 // generate the piece from the stem ships
         GamePiece newShip = null;
+        Util.logToChat("generator2e size " + ship.getShipData().getSize());
       //  boolean shipContainsMobileArc = containsMobileArc(shipData);
         if(ship.getShipData().getSize().contentEquals(SHIP_BASE_SIZE_SMALL))
         {

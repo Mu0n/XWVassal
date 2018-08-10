@@ -389,6 +389,13 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
             logToChat("The '" + "Base 2.0 Game" + "' game mode was used to spawn a %s point list%s loaded from %s", pieces.getSquadPoints(),
                     listName != null ? " '" + listName + "'" : "", xwsList.getXwsSource());
         }
+
+        int shipBaseX = (int) dialstartPosition.getX() + totalDialsWidth - 30;
+        for (GamePiece piece : shipBases) {
+            int halfBase = (int) (piece.getShape().getBounds2D().getWidth() / 2.0);
+            spawnPiece(piece, new Point(shipBaseX + halfBase, shipBaseY), playerMap);
+            shipBaseX += piece.getShape().getBounds2D().getWidth() + 10.0;
+        }
     }
 
     private void generateXWS(JPanel rootPanel, JTextArea entryArea, String factionString) {
