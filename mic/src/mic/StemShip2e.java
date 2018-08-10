@@ -23,36 +23,33 @@ public class StemShip2e extends Decorator implements EditablePiece {
     private static final String TOGGLE_BASE_TRIGGER_ACTION_NAME = "Trigger Action   - Toggle Ship Base";
     private static final String SHIP_BASE_IMAGE_PREFIX = "Ship_2e_Base";
 
-
     private static Map<String, String> firingArcTypes = ImmutableMap.<String, String>builder()
-            // Front
-            .put("small/rebelalliance/Front","emb2;;2;;Show Firing Arc;2;;;2;;;;;true;0;-479;,Arc_2e_Rebel_Small.svg;,;true;Show Firing Arc;;;false;;1;1;true;;70,130;")
-            .put("small/galacticempire/Front","emb2;;2;;Show Firing Arc;2;;;2;;;;;true;0;-479;,Arc_2e_Empire_Small.svg;,;true;Show Firing Arc;;;false;;1;1;true;;70,130;")
-            .put("small/scumandvillainy/Front","emb2;;2;;Show Firing Arc;2;;;2;;;;;true;0;-479;,Arc_2e_Scum_Small.svg;,;true;Show Firing Arc;;;false;;1;1;true;;70,130;")
-            .put("small/resistance/Front","emb2;;2;;Show Firing Arc;2;;;2;;;;;true;0;-479;,Arc_2e_Resistance_Small.svg;,;true;Show Firing Arc;;;false;;1;1;true;;70,130;")
-            .put("small/firstorder/Front","emb2;;2;;Show Firing Arc;2;;;2;;;;;true;0;-479;,Arc_2e_FirstOrder_Small.svg;,;true;Show Firing Arc;;;false;;1;1;true;;70,130;")
+            // Front Arc
+            .put("small/rebelalliance/Front Arc","emb2;;2;;Toggle Firing Arc;2;;;2;;;;;true;0;-480;,Arc_2e_Rebel_Small.svg;,;true;Arc;;;false;;1;1;true;;70,130;")
+            .put("small/galacticempire/Front Arc","emb2;;2;;Toggle Firing Arc;2;;;2;;;;;true;0;-480;,Arc_2e_Empire_Small.svg;,;true;Arc;;;false;;1;1;true;;70,130;")
+            .put("small/scumandvillainy/Front Arc","emb2;;2;;Toggle Firing Arc;2;;;2;;;;;true;0;-480;,Arc_2e_Scum_Small.svg;,;true;Arc;;;false;;1;1;true;;70,130;")
+            .put("small/resistance/Front Arc","emb2;;2;;Toggle Firing Arc;2;;;2;;;;;true;0;-480;,Arc_2e_Resistance_Small.svg;,;true;Arc;;;false;;1;1;true;;70,130;")
+            .put("small/firstorder/Front Arc","emb2;;2;;Toggle Firing Arc;2;;;2;;;;;true;0;-480;,Arc_2e_FirstOrder_Small.svg;,;true;Arc;;;false;;1;1;true;;70,130;")
 
-            .put("small/galacticempire/Front","emb2;;2;;Show Firing Arc;2;;;2;;;;;true;0;-479;,AltArc_Imperial.svg;,;true;Show Firing Arc;;;false;;1;1;true;;70,130;")
-            .put("small/scumandvillainy/Front","emb2;;2;;Show Firing Arc;2;;;2;;;;;true;0;-479;,AltArc_Scum.svg;,;true;Show Firing Arc;;;false;;1;1;true;;70,130;")
-            .put("large/rebelalliance/Front","emb2;;2;;Show Firing Arc;2;;;2;;;;;true;0;-536;,Big_Firing-Arc_Rebel.svg;,;true;Show Big Firing Arc;;;false;;1;1;true;;70,130;")
-            .put("large/galacticempire/Front","emb2;;2;;Show Firing Arc;2;;;2;;;;;true;0;-536;,Big_Firing-Arc_Imperial.svg;,;true;Show Big Firing Arc;;;false;;1;1;true;;70,130;")
-            .put("large/scumandvillainy/Front","emb2;;2;;Show Firing Arc;2;;;2;;;;;true;0;-536;,Big_Firing-Arc_Scum.svg;,;true;Show Big Firing Arc;;;false;;1;1;true;;70,130;")
+            .put("large/rebelalliance/Front Arc","emb2;;2;;Toggle Firing Arc;2;;;2;;;;;true;0;-536;,Big_Firing-Arc_Rebel.svg;,;true;Show Big Firing Arc;;;false;;1;1;true;;70,130;")
+            .put("large/galacticempire/Front Arc","emb2;;2;;Toggle Firing Arc;2;;;2;;;;;true;0;-536;,Big_Firing-Arc_Imperial.svg;,;true;Show Big Firing Arc;;;false;;1;1;true;;70,130;")
+            .put("large/scumandvillainy/Front Arc","emb2;;2;;Toggle Firing Arc;2;;;2;;;;;true;0;-536;,Big_Firing-Arc_Scum.svg;,;true;Show Big Firing Arc;;;false;;1;1;true;;70,130;")
 
-            // Aux 180
-            .put("small/rebelalliance/Auxiliary 180","emb2;;2;;Show Auxiliary Arc;2;;;2;;;;;true;0;-423;,auzituck_arc.svg;,;true;Show Auxiliary Firing Arc;;;false;;1;1;true;;78,130;")
-            .put("small/galacticempire/Auxiliary 180","emb2;;2;;Show Auxiliary Arc;2;;;2;;;;;true;0;-423;,small_imperial_aux180_arc.svg;,;true;Show Auxiliary Firing Arc;;;false;;1;1;true;;78,130;")
-            .put("small/scumandvillainy/Auxiliary 180","emb2;;2;;Show Auxiliary Arc;2;;;2;;;;;true;0;-423;,small_scum_aux180_arc.svg;,;true;Show Auxiliary Firing Arc;;;false;;1;1;true;;78,130;")
-            .put("large/rebelalliance/Auxiliary 180","emb2;;2;;Show Aux Arc;2;;;2;;;;;true;0;-480;,large_rebel_aux180_arc.svg;,;true;Show Big Aux Arc;;;false;;1;1;true;;78,130;")
-            .put("large/galacticempire/Auxiliary 180","emb2;;2;;Show Aux Arc;2;;;2;;;;;true;0;-480;,large_imperial_aux180_arc.svg;,;true;Show Big Aux Arc;;;false;;1;1;true;;78,130;")
-            .put("large/scumandvillainy/Auxiliary 180","emb2;;2;;Show Aux Arc;2;;;2;;;;;true;0;-480;,hound's_tooth_arc.svg;,;true;Show Big Aux Arc;;;false;;1;1;true;;78,130;")
+            // Full Front Arc
+            .put("small/rebelalliance/Full Front Arc","emb2;;2;;Show Auxiliary Arc;2;;;2;;;;;true;0;-423;,auzituck_arc.svg;,;true;Show Auxiliary Firing Arc;;;false;;1;1;true;;78,130;")
+            .put("small/galacticempire/Full Front Arc","emb2;;2;;Show Auxiliary Arc;2;;;2;;;;;true;0;-423;,small_imperial_aux180_arc.svg;,;true;Show Auxiliary Firing Arc;;;false;;1;1;true;;78,130;")
+            .put("small/scumandvillainy/Full Front Arc","emb2;;2;;Show Auxiliary Arc;2;;;2;;;;;true;0;-423;,small_scum_aux180_arc.svg;,;true;Show Auxiliary Firing Arc;;;false;;1;1;true;;78,130;")
+            .put("large/rebelalliance/Full Front Arc","emb2;;2;;Show Aux Arc;2;;;2;;;;;true;0;-480;,large_rebel_aux180_arc.svg;,;true;Show Big Aux Arc;;;false;;1;1;true;;78,130;")
+            .put("large/galacticempire/Full Front Arc","emb2;;2;;Show Aux Arc;2;;;2;;;;;true;0;-480;,large_imperial_aux180_arc.svg;,;true;Show Big Aux Arc;;;false;;1;1;true;;78,130;")
+            .put("large/scumandvillainy/Full Front Arc","emb2;;2;;Show Aux Arc;2;;;2;;;;;true;0;-480;,hound's_tooth_arc.svg;,;true;Show Big Aux Arc;;;false;;1;1;true;;78,130;")
 
-            // Aux Rear
-            .put("small/rebelalliance/Auxiliary Rear","emb2;;2;;Show Auxiliary Arc;2;;;2;;;;;true;0;481;,AltArc_Rebel_Aux.svg;,;true;Show Auxiliary Firing Arc;;;false;;1;1;true;;86,130;")
-            .put("small/galacticempire/Auxiliary Rear","emb2;;2;;Show Auxiliary Arc;2;;;2;;;;;true;0;481;,AltArc_Imperial_Aux.svg;,;true;Show Auxiliary Firing Arc;;;false;;1;1;true;;86,130;")
-            .put("small/scumandvillainy/Auxiliary Rear","emb2;;2;;Show Auxiliary Arc;2;;;2;;;;;true;0;481;,AltArc_Scum_Aux.svg;,;true;Show Auxiliary Firing Arc;;;false;;1;1;true;;86,130;")
-            .put("large/rebelalliance/Auxiliary Rear","emb2;;2;;Show Auxiliary Arc;2;;;2;;;;;true;0;537;,Big_Firing-Arc_Rebel_Aux.svg;,;true;Show Big Auxiliary Firing Arc;;;false;;1;1;true;;86,130;")
-            .put("large/galacticempire/Auxiliary Rear","emb2;;2;;Show Auxiliary Arc;2;;;2;;;;;true;0;537;,Big_Firing-Arc_Imperial_Aux.svg;,;true;Show Big Auxiliary Firing Arc;;;false;;1;1;true;;86,130;")
-            .put("large/scumandvillainy/Auxiliary Rear","emb2;;2;;Show Auxiliary Arc;2;;;2;;;;;true;0;537;,Big_Firing-Arc_Scum_Aux.svg;,;true;Show Big Auxiliary Firing Arc;;;false;;1;1;true;;86,130;")
+            // Rear Arc
+            .put("small/rebelalliance/Rear Arc","emb2;;2;;Show Auxiliary Arc;2;;;2;;;;;true;0;481;,AltArc_Rebel_Aux.svg;,;true;Show Auxiliary Firing Arc;;;false;;1;1;true;;86,130;")
+            .put("small/galacticempire/Rear Arc","emb2;;2;;Show Auxiliary Arc;2;;;2;;;;;true;0;481;,AltArc_Imperial_Aux.svg;,;true;Show Auxiliary Firing Arc;;;false;;1;1;true;;86,130;")
+            .put("small/scumandvillainy/Rear Arc","emb2;;2;;Show Auxiliary Arc;2;;;2;;;;;true;0;481;,AltArc_Scum_Aux.svg;,;true;Show Auxiliary Firing Arc;;;false;;1;1;true;;86,130;")
+            .put("large/rebelalliance/Rear Arc","emb2;;2;;Show Auxiliary Arc;2;;;2;;;;;true;0;537;,Big_Firing-Arc_Rebel_Aux.svg;,;true;Show Big Auxiliary Firing Arc;;;false;;1;1;true;;86,130;")
+            .put("large/galacticempire/Rear Arc","emb2;;2;;Show Auxiliary Arc;2;;;2;;;;;true;0;537;,Big_Firing-Arc_Imperial_Aux.svg;,;true;Show Big Auxiliary Firing Arc;;;false;;1;1;true;;86,130;")
+            .put("large/scumandvillainy/Rear Arc","emb2;;2;;Show Auxiliary Arc;2;;;2;;;;;true;0;537;,Big_Firing-Arc_Scum_Aux.svg;,;true;Show Big Auxiliary Firing Arc;;;false;;1;1;true;;86,130;")
 
             // Bullseye
             .put("small/rebelalliance/Bullseye","emb2;;2;;Show Bullseye Arc;2;;;2;;;;;true;0;-479;,Bullseye_Arc_Rebel.svg;,;true;Show Bullseye Arc;;;false;;1;1;true;;88,130;")
@@ -139,6 +136,7 @@ public class StemShip2e extends Decorator implements EditablePiece {
         String dualBaseToggleMenuText;
         String base1ReportIdentifier;
         String base2ReportIdentifier;
+        VassalXWSPilotPieces2e source;
 
         ShipGenerateCommand(VassalXWSPilotPieces2e source, String shipXws,   GamePiece piece, String faction, String xwsPilot,
                             boolean needsBombCapability, Boolean hasDualBase,
@@ -153,6 +151,7 @@ public class StemShip2e extends Decorator implements EditablePiece {
             this.xwsPilot = xwsPilot;
             this.size = source.getShipData().getSize();
             this.needsBombCapability = needsBombCapability;
+            this.source = source;
 
             this.dualBase = hasDualBase == null ? false : hasDualBase.booleanValue();
             this.dualBaseToggleMenuText = dualBaseToggleMenuText;
@@ -170,7 +169,7 @@ public class StemShip2e extends Decorator implements EditablePiece {
             //piece = addTargetLock(piece,faction,size);
 
             // add the firing arcs needed
-            //piece = addFiringArcs(piece,faction,size,xwsShipName);
+            piece = addFiringArcs(piece);
 
 
 
@@ -181,37 +180,50 @@ public class StemShip2e extends Decorator implements EditablePiece {
         }
 
 
-        private GamePiece addFiringArcs(GamePiece newGamePiece, String faction, String newSize, String xws )
+        private GamePiece addFiringArcs(GamePiece newGamePiece)
         {
             String newFaction = XWOTAUtils.simplifyFactionName(faction);
 
             // first get the list of arcs needed
-            List<String> firingArcs = MasterShipData.getShipData(xwsShipName).getFiringArcs();
             String arc = null;
-            Iterator<String> i = firingArcs.iterator();
+            Iterator<XWS2Pilots.Stat2e> i = source.getShipData().getStats().iterator();
             Embellishment emb = null;
             String arcKey = null;
             String newType = null;
             while(i.hasNext())
             {
-                arc = i.next();
-                if(!arc.equals("Mobile") && !arc.equals("Turret")) {
-                    if (arc.equals("Front")) {
-                        emb = (Embellishment) Util.getEmbellishment(newGamePiece, "Layer - Show Arc");
+                arc = i.next().getArc();
+                if(arc.equals("Front Arc")) {
+                    emb = (Embellishment) Util.getEmbellishment(newGamePiece, "Layer - Arc");
+                } else if(arc.equals("Rear Arc")) {
+                    emb = (Embellishment) Util.getEmbellishment(newGamePiece, "Layer - Show Auxiliary Firing Arc");
+                } else if(arc.equals("Single Turret Arc")) {
+                } else if(arc.equals("Double Turret Arc")) {
+                } else if(arc.equals("Full Front Arc")) {
+                }
 
-                    } else {
-                        emb = (Embellishment) Util.getEmbellishment(newGamePiece, "Layer - Show Auxiliary Firing Arc");
-                    }
 
-                    arcKey = newSize + "/" + newFaction + "/" + arc;
+                    arcKey = Canonicalizer.getCleanedName(source.getShipData().getSize()) + "/"
+                            + Canonicalizer.getCleanedName(source.getPilotData().getFaction()) + "/" + arc;
+
+                Util.logToChat("StemShip line 212 arcKey = " + arcKey);
                     newType = firingArcTypes.get(arcKey);
                     if(newType != null && !newType.isEmpty())
                     {
                         emb.mySetType(newType);
                     }
 
-                }
             }
+
+            //add bullseye for all
+            /*
+            emb = (Embellishment) Util.getEmbellishment(newGamePiece, "Show Bullseye Arc");
+            arc = "Bullseye";
+            arcKey = Canonicalizer.getCleanedName(source.getShipData().getSize()) + "/"
+                    + Canonicalizer.getCleanedName(source.getPilotData().getFaction()) + "/" + arc;
+            newType = firingArcTypes.get(arcKey);
+            emb.mySetType(newType);
+*/
 
             return newGamePiece;
         }

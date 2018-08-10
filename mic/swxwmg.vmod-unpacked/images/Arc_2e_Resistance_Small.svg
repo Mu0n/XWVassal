@@ -9,18 +9,18 @@
     </rdf:RDF>
   </metadata>
   <defs id="defs3031"/>
-  <rect x="551.7557" width="94.52" id="rect3000" y="0" height="847.5" style="fill:#da9339;fill-opacity:0.15"/>
-  <rect x="551.7557" width="94.52" id="rect3001" y="282.5" height="565" style="fill:#da9339;fill-opacity:0.15"/>
-  <rect x="551.7557" width="94.52" id="rect3002" y="565" height="282.5" style="fill:#da9339;fill-opacity:0.15"/>
+  <rect x="551.7557" width="94.52" id="rect3000" y="0" height="847.5" style="fill:#ff4e00;fill-opacity:0.15"/>
+  <rect x="551.7557" width="94.52" id="rect3001" y="282.5" height="565" style="fill:#ff4e00;fill-opacity:0.15"/>
+  <rect x="551.7557" width="94.52" id="rect3002" y="565" height="282.5" style="fill:#ff4e00;fill-opacity:0.15"/>
   
 	
 	
-	<path style="fill:#da9339;fill-opacity:0.15" id="path3021" d="M 0,204.2101 A 847.5,847.5 0 0 1 551.7557,0 v 847.5 z"/>
-	<path style="fill:#da9339;fill-opacity:0.15" id="path3021" d="M 183.9186,418.6401 A 565,565 0 0 1 551.7557,282.5 v 565 z"/>
-	<path style="fill:#da9339;fill-opacity:0.15" id="path3021" d="M 367.8372,633.07 A 282.5,282.5 0 0 1 551.7557,565 v 282.5 z"/>
+	<path style="fill:#ff4e00;fill-opacity:0.15" id="path3021" d="M 0,204.2101 A 847.5,847.5 0 0 1 551.7557,0 v 847.5 z"/>
+	<path style="fill:#ff4e00;fill-opacity:0.15" id="path3021" d="M 183.9186,418.6401 A 565,565 0 0 1 551.7557,282.5 v 565 z"/>
+	<path style="fill:#ff4e00;fill-opacity:0.15" id="path3021" d="M 367.8372,633.07 A 282.5,282.5 0 0 1 551.7557,565 v 282.5 z"/>
 	
 	
-	<path style="fill:#da9339;fill-opacity:0.15" id="path3021" d="M 1198.031,204.2101 A 847.5,847.5 1 0 0 646.2757,0 v 847.5 z"/>
-	<path style="fill:#da9339;fill-opacity:0.15" id="path3021" d="M 1014.113,418.6401 A 565,565 1 0 0 646.2757,282.5 v 565 z"/>
-	<path style="fill:#da9339;fill-opacity:0.15" id="path3021" d="M 830.1943,633.07 A 282.5,282.5 1 0 0 646.2757,565 v 282.5 z"/>
+	<path style="fill:#ff4e00;fill-opacity:0.15" id="path3021" d="M 1198.031,204.2101 A 847.5,847.5 1 0 0 646.2757,0 v 847.5 z"/>
+	<path style="fill:#ff4e00;fill-opacity:0.15" id="path3021" d="M 1014.113,418.6401 A 565,565 1 0 0 646.2757,282.5 v 565 z"/>
+	<path style="fill:#ff4e00;fill-opacity:0.15" id="path3021" d="M 830.1943,633.07 A 282.5,282.5 1 0 0 646.2757,565 v 282.5 z"/>
 </svg>
