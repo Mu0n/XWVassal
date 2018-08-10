@@ -365,7 +365,7 @@ public class GamePieceGenerator2e
         return conditionTokenPiece;
     }
 
-    public static GamePiece generatePilot(VassalXWSPilotPieces2e ship, List<XWS2Pilots> allShips) {
+    public static GamePiece generatePilot(VassalXWSPilotPieces2e ship) {
 
         GamePiece newPilot = Util.newPiece(ship.getPilotCard());
         if (ship.getShipNumber() != null && ship.getShipNumber() > 0) {
@@ -376,12 +376,11 @@ public class GamePieceGenerator2e
 
         // this is a stem card = fill it in
 
-        XWS2Pilots shipData = XWS2Pilots.getSpecificShipFromPilotXWS2(ship.getPilotData().getXWS2(), allShips);
-        XWS2Pilots.Pilot2e pilotData = XWS2Pilots.getSpecificPilot(ship.getPilotData().getXWS2(), allShips);
-        //    newPilot.setProperty("Ship Type",shipData.getName());
-        //    newPilot.setProperty("Pilot Name",pilotData.getName());
 
-        StemPilot2e.PilotGenerateCommand myShipGen = new StemPilot2e.PilotGenerateCommand(newPilot, shipData, pilotData);
+        newPilot.setProperty("Ship Type",ship.getShipData().getName());
+        newPilot.setProperty("Pilot Name",ship.getPilotData().getName());
+
+        StemPilot2e.PilotGenerateCommand myShipGen = new StemPilot2e.PilotGenerateCommand(newPilot, ship);
 
         myShipGen.execute();
 

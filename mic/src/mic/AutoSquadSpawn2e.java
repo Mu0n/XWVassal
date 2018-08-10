@@ -346,6 +346,7 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
 
         Point startPosition = new Point(150, 150);
         Point dialstartPosition = new Point(300, 100);
+        int totalPilotHeight = 0;
         int shipBaseY = 110;
         int totalDialsWidth = 0;
 
@@ -366,6 +367,19 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
 
             shipBases.add(shipPiece);
 
+
+            // ======================================================
+            // Generate the Pilot Pieces
+            // ======================================================
+            GamePiece pilotPiece = GamePieceGenerator2e.generatePilot(ship);
+
+            int pilotWidth = (int) pilotPiece.boundingBox().getWidth();
+            int pilotHeight = (int) pilotPiece.boundingBox().getHeight();
+            totalPilotHeight += pilotHeight;
+            spawnPiece(pilotPiece, new Point(
+                            (int) startPosition.getX(),
+                            (int) startPosition.getY() + totalPilotHeight),
+                    playerMap);
 
 
             // ======================================================

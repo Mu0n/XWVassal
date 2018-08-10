@@ -128,31 +128,32 @@ public class StemPilot2e extends Decorator implements EditablePiece {
         static String shipName = "";
         static String xwsText = "";
 
-        PilotGenerateCommand(GamePiece piece, XWS2Pilots shipData, XWS2Pilots.Pilot2e pilotData)
+        PilotGenerateCommand(GamePiece piece, VassalXWSPilotPieces2e ship)
         {
             //xwsPilotName = pilotXWS;
 
-            shipXWS = Canonicalizer.getCleanedName(shipData.getName());
-            faction = shipData.getFaction();
-            pilotName = pilotData.getName();
-            shipName = shipData.getName();
-            xwsText = pilotData.getAbility();
+
+            shipXWS = Canonicalizer.getCleanedName(ship.getShipData().getName());
+            faction = ship.getShipData().getFaction();
+            pilotName = ship.getPilotData().getName();
+            shipName = ship.getShipData().getName();
+            xwsText = ship.getPilotData().getAbility();
 
             String factionXWS = Canonicalizer.getCanonicalFactionName(faction);
 
-            pilotXWSencoding = factionXWS+"_"+shipXWS+"_"+pilotData.getXWS2();
+            pilotXWSencoding = factionXWS+"_"+shipXWS+"_"+ship.getPilotData().getXWS2();
 
             this.piece = piece;
-/*
-            if (shipNumber != null && shipNumber > 0) {
-                this.piece.setProperty("Pilot ID #", shipNumber);
+
+            if (ship.getShipNumber() != null && ship.getShipNumber() > 0) {
+                this.piece.setProperty("Pilot ID #", ship.getShipNumber());
             } else {
                 this.piece.setProperty("Pilot ID #", "");
             }
 
             this.piece.setProperty("Ship Type",shipName);
             this.piece.setProperty("Pilot Name",pilotName);
-*/
+
         }
 
         // construct the Pilot Card piece
