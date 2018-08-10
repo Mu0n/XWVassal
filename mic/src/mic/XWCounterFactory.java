@@ -43,6 +43,8 @@ public class XWCounterFactory extends BasicCommandEncoder {
             piece = new StemDial(inner);
         }else if (type.startsWith(ReportCardText.ID)) {
             piece = new ReportCardText(inner);
+        }else if (type.startsWith(ReportCardText2e.ID)) {
+            piece = new ReportCardText2e(inner);
         }else {
             piece = super.createDecorator(type, inner);
         }
