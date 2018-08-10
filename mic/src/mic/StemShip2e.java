@@ -27,10 +27,10 @@ public class StemShip2e extends Decorator implements EditablePiece {
     private static Map<String, String> firingArcTypes = ImmutableMap.<String, String>builder()
             // Front
             .put("small/rebelalliance/Front","emb2;;2;;Show Firing Arc;2;;;2;;;;;true;0;-479;,Arc_2e_Rebel_Small.svg;,;true;Show Firing Arc;;;false;;1;1;true;;70,130;")
-            .put("small/galacticempire/Front","emb2;;2;;Show Firing Arc;2;;;2;;;;;true;0;-479;,Arc_2e_Rebel_Small.svg;,;true;Show Firing Arc;;;false;;1;1;true;;70,130;")
-            .put("small/scumandvillainy/Front","emb2;;2;;Show Firing Arc;2;;;2;;;;;true;0;-479;,Arc_2e_Rebel_Small.svg;,;true;Show Firing Arc;;;false;;1;1;true;;70,130;")
-            .put("small/resistance/Front","emb2;;2;;Show Firing Arc;2;;;2;;;;;true;0;-479;,Arc_2e_Rebel_Small.svg;,;true;Show Firing Arc;;;false;;1;1;true;;70,130;")
-            .put("small/firstorder/Front","emb2;;2;;Show Firing Arc;2;;;2;;;;;true;0;-479;,Arc_2e_Rebel_Small.svg;,;true;Show Firing Arc;;;false;;1;1;true;;70,130;")
+            .put("small/galacticempire/Front","emb2;;2;;Show Firing Arc;2;;;2;;;;;true;0;-479;,Arc_2e_Empire_Small.svg;,;true;Show Firing Arc;;;false;;1;1;true;;70,130;")
+            .put("small/scumandvillainy/Front","emb2;;2;;Show Firing Arc;2;;;2;;;;;true;0;-479;,Arc_2e_Scum_Small.svg;,;true;Show Firing Arc;;;false;;1;1;true;;70,130;")
+            .put("small/resistance/Front","emb2;;2;;Show Firing Arc;2;;;2;;;;;true;0;-479;,Arc_2e_Resistance_Small.svg;,;true;Show Firing Arc;;;false;;1;1;true;;70,130;")
+            .put("small/firstorder/Front","emb2;;2;;Show Firing Arc;2;;;2;;;;;true;0;-479;,Arc_2e_FirstOrder_Small.svg;,;true;Show Firing Arc;;;false;;1;1;true;;70,130;")
 
             .put("small/galacticempire/Front","emb2;;2;;Show Firing Arc;2;;;2;;;;;true;0;-479;,AltArc_Imperial.svg;,;true;Show Firing Arc;;;false;;1;1;true;;70,130;")
             .put("small/scumandvillainy/Front","emb2;;2;;Show Firing Arc;2;;;2;;;;;true;0;-479;,AltArc_Scum.svg;,;true;Show Firing Arc;;;false;;1;1;true;;70,130;")
