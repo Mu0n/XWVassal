@@ -32,8 +32,10 @@ public class ReportCardText2e extends Decorator implements EditablePiece {
     @Override
     public Command keyEvent(KeyStroke stroke) {
         if (KeyStroke.getKeyStroke(KeyEvent.VK_Q, KeyEvent.CTRL_DOWN_MASK,false).equals(stroke)) {
-            logToChat("*-- Pilot Ability for " + this.getProperty("xws2").toString() + ": " + this.getProperty("pilotability"));
-            logToChat("*-- Ship Ability for " + this.getProperty("xws2").toString() + ": " + this.getProperty("shipability"));
+            logToChat("*-- Pilot Ability for " + this.getProperty("xws2").toString() + ": "
+                    + (this.getProperty("pilotability").equals("")?"No defined pilot ability (generic)":this.getProperty("pilotability")));
+            logToChat("*-- Ship Ability for " + this.getProperty("xws2").toString() + ": "
+                    + (this.getProperty("shipability").equals("")?"No defined ship ability":this.getProperty("shipability")));
         }
 
         return piece.keyEvent(stroke);

@@ -153,7 +153,8 @@ public class StemPilot2e extends Decorator implements EditablePiece {
             this.piece.setProperty("Pilot Name",pilotName);
             this.piece.setProperty("xws2",pilotXWS2);
             this.piece.setProperty("pilotability",pilotAbilityText);
-            this.piece.setProperty("shipability",shipAbilityName +": " + shipAbilityText);
+            if(shipAbilityText==null) this.piece.setProperty("shipability","No Ship Ability");
+            else this.piece.setProperty("shipability",shipAbilityName +": " + shipAbilityText);
         }
 
         // construct the Pilot Card piece

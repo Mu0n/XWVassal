@@ -200,7 +200,7 @@ public class XWS2Pilots {
         @JsonProperty("actions")
         private List<String> actions = Lists.newArrayList();
 
-        @JsonProperty("shipability")
+        @JsonProperty("shipAbility")
         private ShipAbility shipAbility = new ShipAbility();
 
         public String getName(){return this.name;}
