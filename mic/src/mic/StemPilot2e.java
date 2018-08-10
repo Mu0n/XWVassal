@@ -13,6 +13,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.Map;
 
+//another class suffering from the switcharoo Pilot Name being ship name and craft ID
 
 public class StemPilot2e extends Decorator implements EditablePiece {
 
