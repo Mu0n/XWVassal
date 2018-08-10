@@ -66,6 +66,7 @@ public class XWS2Pilots {
         }
         return 0;
     }
+    //charge impossible on ships?
     public int getCharge(){
         for(Stat2e stat : stats)
         {
@@ -73,6 +74,7 @@ public class XWS2Pilots {
         }
         return 0;
     }
+    //force impossible on ships?
     public int getForce(){
         for(Stat2e stat : stats)
         {
@@ -183,6 +185,12 @@ public class XWS2Pilots {
         @JsonProperty("ability")
         private String ability;
 
+        @JsonProperty("force")
+        private ForceData forceData = new ForceData(0,0);
+
+        @JsonProperty("charges")
+        private ChargeData chargeData = new ChargeData(0,0);
+
         @JsonProperty("xws2")
         private String xws2 = "";
 
@@ -204,6 +212,8 @@ public class XWS2Pilots {
         public List<String> getConditions() { return this.conditions; }
         public List<String> getActions() { return this.actions; }
         public ShipAbility getShipAbility() { return this.shipAbility; }
+        public ForceData getForceData() { return this.forceData;}
+        public ChargeData getChargeData() { return this.chargeData;}
 
         //not part of the JSON, but useful
         public String getFaction(){
@@ -215,6 +225,39 @@ public class XWS2Pilots {
 
         public boolean isUnique() { if(limited>0) return true;
         return false;}
+    }
+
+    public static class ChargeData{
+        public ChargeData() { super(); }
+        public ChargeData(int value, int recovers)
+        {
+            this.value = value;
+            this.recovers = recovers;
+        }
+        @JsonProperty("value")
+        private int value;
+
+        @JsonProperty("recovers")
+        private int recovers;
+
+        public int getValue(){ return value; }
+        public int getRecovers() { return recovers; }
+    }
+    public static class ForceData{
+        public ForceData() {super();}
+        public ForceData(int value, int recovers) {
+            this.value = value;
+            this.recovers = recovers;
+        }
+
+        @JsonProperty("value")
+        private int value;
+
+        @JsonProperty("recovers")
+        private int recovers;
+
+        public int getValue(){ return value; }
+        public int getRecovers() { return recovers; }
     }
 
     public static class ShipAbility{

@@ -141,12 +141,12 @@ public class GamePieceGenerator2e
             piece.setProperty("Shield Rating", shields + shieldsModifier);
 
 
-            if (ship.getShipData().getCharge() > 0) {
-                int charge = ship.getShipData().getCharge();
+            if (ship.getPilotData().getChargeData().getValue() > 0) {
+                int charge = ship.getPilotData().getChargeData().getValue();
                 piece.setProperty("Charge Rating", charge + chargeModifier);
             }
-            if (ship.getShipData().getForce() > 0) {
-                int force = ship.getShipData().getForce();
+            if (ship.getPilotData().getForceData().getValue() > 0) {
+                int force = ship.getPilotData().getForceData().getValue();
                 piece.setProperty("Force Rating", force + forceModifier);
             }
 
