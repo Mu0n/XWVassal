@@ -38,8 +38,13 @@ public class OTAContentsChecker extends AbstractConfigurable {
     // private static final String OTA_RAW_GITHUB_BRANCH = "dual-based-ships";
 
     private static final String OTA_RAW_GITHUB_ROOT = "https://raw.githubusercontent.com/Mu0n/XWVassalOTA/";
+    private static final String OTA_RAW_GITHUB_ROOT_2E = "https://raw.githubusercontent.com/Mu0n/XWVassalOTA2e/";
+
     public static final String OTA_RAW_BRANCH_URL = OTA_RAW_GITHUB_ROOT + OTA_RAW_GITHUB_BRANCH + "/";
+    public static final String OTA_RAW_BRANCH_URL_2E = OTA_RAW_GITHUB_ROOT_2E + OTA_RAW_GITHUB_BRANCH + "/";
+
     private static final String OTA_RAW_GITHUB_JSON_URL = OTA_RAW_BRANCH_URL + "json/";
+    private static final String OTA_RAW_GITHUB_JSON_URL_2E = OTA_RAW_BRANCH_URL_2E + "json/";
 
     public static final String OTA_UPGRADES_JSON_URL = OTA_RAW_GITHUB_JSON_URL + "upgrade_images.json";
     public static final String OTA_SHIPS_JSON_URL = OTA_RAW_GITHUB_JSON_URL + "ship_images.json";
@@ -48,10 +53,23 @@ public class OTAContentsChecker extends AbstractConfigurable {
     public static final String OTA_CONDITIONS_JSON_URL =  OTA_RAW_GITHUB_JSON_URL + "condition_images.json";
     public static final String OTA_ACTIONS_JSON_URL =  OTA_RAW_GITHUB_JSON_URL + "action_images.json";
 
+    public static final String OTA_UPGRADES_JSON_URL_2E = OTA_RAW_GITHUB_JSON_URL_2E + "upgrade_images.json";
+    public static final String OTA_SHIPS_JSON_URL_2E = OTA_RAW_GITHUB_JSON_URL_2E + "ship_images.json";
+    public static final String OTA_PILOTS_JSON_URL_2E = OTA_RAW_GITHUB_JSON_URL_2E + "pilot_images.json";
+    public static final String OTA_DIALHIDES_JSON_URL_2E =  OTA_RAW_GITHUB_JSON_URL_2E + "dial_images.json";
+    public static final String OTA_CONDITIONS_JSON_URL_2E =  OTA_RAW_GITHUB_JSON_URL_2E + "condition_images.json";
+
+
     public static final String OTA_DISPATCHER_UPGRADES_JSON_URL = OTA_RAW_GITHUB_JSON_URL + "dispatcher_upgrades.json";
     public static final String OTA_DISPATCHER_PILOTS_JSON_URL = OTA_RAW_GITHUB_JSON_URL + "dispatcher_pilots.json";
     public static final String OTA_DISPATCHER_SHIPS_JSON_URL = OTA_RAW_GITHUB_JSON_URL + "dispatcher_ships.json";
     public static final String OTA_DISPATCHER_CONDITIONS_JSON_URL = OTA_RAW_GITHUB_JSON_URL + "dispatcher_conditions.json";
+
+
+    public static final String OTA_DISPATCHER_UPGRADES_JSON_URL_2E = OTA_RAW_GITHUB_JSON_URL_2E + "dispatcher_upgrades.json";
+    public static final String OTA_DISPATCHER_PILOTS_JSON_URL_2E = OTA_RAW_GITHUB_JSON_URL_2E + "dispatcher_pilots.json";
+    public static final String OTA_DISPATCHER_SHIPS_JSON_URL_2E = OTA_RAW_GITHUB_JSON_URL_2E + "dispatcher_ships.json";
+    public static final String OTA_DISPATCHER_CONDITIONS_JSON_URL_2E = OTA_RAW_GITHUB_JSON_URL_2E + "dispatcher_conditions.json";
 
     String aComboBoxChoice = "Base Game";
     String chosenURL = OTA_RAW_BRANCH_URL;
@@ -62,6 +80,8 @@ public class OTAContentsChecker extends AbstractConfigurable {
             .put("rebelalliance","Rebel Alliance")
             .put("resistance","Resistance")
             .put("scumandvillainy","Scum and Villainy")
+            .put("galacticrepublic","Galactic Republic")
+            .put("separatistarmy","Separatist Army")
             .build();
 
     private JButton contentCheckerButton = new JButton();
@@ -196,6 +216,7 @@ public class OTAContentsChecker extends AbstractConfigurable {
                 }
             }
             pilots = null;
+
             //logToChat("after pilots, missingCount = " + Integer.toString(missingCount));
 
             // =============================================================
