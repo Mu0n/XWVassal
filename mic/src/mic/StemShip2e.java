@@ -58,25 +58,54 @@ public class StemShip2e extends Decorator implements EditablePiece {
             .put("large/scumandvillainy/Full Front Arc","emb2;;2;;Show Aux Arc;2;;;2;;;;;true;0;-480;,hound's_tooth_arc.svg;,;true;Show Big Aux Arc;;;false;;1;1;true;;78,130;")
 
             // Rear Arc
-            .put("small/rebelalliance/Rear Arc","emb2;;2;;Show Auxiliary Arc;2;;;2;;;;;true;0;481;,AltArc_Rebel_Aux.svg;,;true;Show Auxiliary Firing Arc;;;false;;1;1;true;;86,130;")
-            .put("small/galacticempire/Rear Arc","emb2;;2;;Show Auxiliary Arc;2;;;2;;;;;true;0;481;,AltArc_Imperial_Aux.svg;,;true;Show Auxiliary Firing Arc;;;false;;1;1;true;;86,130;")
-            .put("small/scumandvillainy/Rear Arc","emb2;;2;;Show Auxiliary Arc;2;;;2;;;;;true;0;481;,AltArc_Scum_Aux.svg;,;true;Show Auxiliary Firing Arc;;;false;;1;1;true;;86,130;")
-            .put("large/rebelalliance/Rear Arc","emb2;;2;;Show Auxiliary Arc;2;;;2;;;;;true;0;537;,Big_Firing-Arc_Rebel_Aux.svg;,;true;Show Big Auxiliary Firing Arc;;;false;;1;1;true;;86,130;")
-            .put("large/galacticempire/Rear Arc","emb2;;2;;Show Auxiliary Arc;2;;;2;;;;;true;0;537;,Big_Firing-Arc_Imperial_Aux.svg;,;true;Show Big Auxiliary Firing Arc;;;false;;1;1;true;;86,130;")
-            .put("large/scumandvillainy/Rear Arc","emb2;;2;;Show Auxiliary Arc;2;;;2;;;;;true;0;537;,Big_Firing-Arc_Scum_Aux.svg;,;true;Show Big Auxiliary Firing Arc;;;false;;1;1;true;;86,130;")
+            .put("small/rebelalliance/Rear Arc","emb2;;2;;Show Auxiliary Arc;2;;;2;;;;;true;0;481;,Arc_2e_Rebel_Small_Aux.svg;,;true;Show Auxiliary Firing Arc;;;false;;1;1;true;;86,130;")
+            .put("small/galacticempire/Rear Arc","emb2;;2;;Show Auxiliary Arc;2;;;2;;;;;true;0;481;,Arc_2e_Empire_Small_Aux.svg;,;true;Show Auxiliary Firing Arc;;;false;;1;1;true;;86,130;")
+            .put("small/scumandvillainy/Rear Arc","emb2;;2;;Show Auxiliary Arc;2;;;2;;;;;true;0;481;,Arc_2e_Scum_Small_Aux.svg;,;true;Show Auxiliary Firing Arc;;;false;;1;1;true;;86,130;")
+            .put("small/resistance/Rear Arc","emb2;;2;;Show Auxiliary Arc;2;;;2;;;;;true;0;481;,Arc_2e_Resistance_Small_Aux.svg;,;true;Show Auxiliary Firing Arc;;;false;;1;1;true;;86,130;")
+            .put("small/firstorder/Rear Arc","emb2;;2;;Show Auxiliary Arc;2;;;2;;;;;true;0;481;,Arc_2e_FirstOrder_Small_Aux.svg;,;true;Show Auxiliary Firing Arc;;;false;;1;1;true;;86,130;")
+            .put("small/galacticrepublic/Rear Arc","emb2;;2;;Show Auxiliary Arc;2;;;2;;;;;true;0;481;,Arc_2e_Republic_Small_Aux.svg;,;true;Show Auxiliary Firing Arc;;;false;;1;1;true;;86,130;")
+            .put("small/cis/Rear Arc","emb2;;2;;Show Auxiliary Arc;2;;;2;;;;;true;0;481;,Arc_2e_CIS_Small_Aux.svg;,;true;Show Auxiliary Firing Arc;;;false;;1;1;true;;86,130;")
+
+            .put("medium/rebelalliance/Rear Arc","emb2;;2;;Show Auxiliary Arc;2;;;2;;;;;true;0;509;,Arc_2e_Rebel_Medium_Aux.svg;,;true;Show Auxiliary Firing Arc;;;false;;1;1;true;;86,130;")
+            .put("medium/galacticempire/Rear Arc","emb2;;2;;Show Auxiliary Arc;2;;;2;;;;;true;0;509;,Arc_2e_Empire_Medium_Aux.svg;,;true;Show Auxiliary Firing Arc;;;false;;1;1;true;;86,130;")
+            .put("medium/scumandvillainy/Rear Arc","emb2;;2;;Show Auxiliary Arc;2;;;2;;;;;true;0;509;,Arc_2e_Scum_Medium_Aux.svg;,;true;Show Auxiliary Firing Arc;;;false;;1;1;true;;86,130;")
+            .put("medium/resistance/Rear Arc","emb2;;2;;Show Auxiliary Arc;2;;;2;;;;;true;0;509;,Arc_2e_Resistance_Medium_Aux.svg;,;true;Show Auxiliary Firing Arc;;;false;;1;1;true;;86,130;")
+            .put("medium/firstorder/Rear Arc","emb2;;2;;Show Auxiliary Arc;2;;;2;;;;;true;0;509;,Arc_2e_FirstOrder_Medium_Aux.svg;,;true;Show Auxiliary Firing Arc;;;false;;1;1;true;;86,130;")
+            .put("medium/galacticrepublic/Rear Arc","emb2;;2;;Show Auxiliary Arc;2;;;2;;;;;true;0;509;,Arc_2e_Republic_Medium_Aux.svg;,;true;Show Auxiliary Firing Arc;;;false;;1;1;true;;86,130;")
+            .put("medium/cis/Rear Arc","emb2;;2;;Show Auxiliary Arc;2;;;2;;;;;true;0;509;,Arc_2e_CIS_Medium_Aux.svg;,;true;Show Auxiliary Firing Arc;;;false;;1;1;true;;86,130;")
+
+            .put("large/rebelalliance/Rear Arc","emb2;;2;;Show Auxiliary Arc;2;;;2;;;;;true;0;537;,Arc_2e_Rebel_Large_Aux.svg;,;true;Show Auxiliary Firing Arc;;;false;;1;1;true;;86,130;")
+            .put("large/galacticempire/Rear Arc","emb2;;2;;Show Auxiliary Arc;2;;;2;;;;;true;0;537;,Arc_2e_Empire_Large_Aux.svg;,;true;Show Auxiliary Firing Arc;;;false;;1;1;true;;86,130;")
+            .put("large/scumandvillainy/Rear Arc","emb2;;2;;Show Auxiliary Arc;2;;;2;;;;;true;0;537;,Arc_2e_Scum_Large_Aux.svg;,;true;Show Auxiliary Firing Arc;;;false;;1;1;true;;86,130;")
+            .put("large/resistance/Rear Arc","emb2;;2;;Show Auxiliary Arc;2;;;2;;;;;true;0;537;,Arc_2e_Resistance_Large_Aux.svg;,;true;Show Auxiliary Firing Arc;;;false;;1;1;true;;86,130;")
+            .put("large/firstorder/Rear Arc","emb2;;2;;Show Auxiliary Arc;2;;;2;;;;;true;0;537;,Arc_2e_FirstOrder_Large_Aux.svg;,;true;Show Auxiliary Firing Arc;;;false;;1;1;true;;86,130;")
+            .put("large/galacticrepublic/Rear Arc","emb2;;2;;Show Auxiliary Arc;2;;;2;;;;;true;0;537;,Arc_2e_Republic_Large_Aux.svg;,;true;Show Auxiliary Firing Arc;;;false;;1;1;true;;86,130;")
+            .put("large/cis/Rear Arc","emb2;;2;;Show Auxiliary Arc;2;;;2;;;;;true;0;537;,Arc_2e_CIS_Large_Aux.svg;,;true;Show Auxiliary Firing Arc;;;false;;1;1;true;;86,130;")
 
             // Bullseye
-            .put("small/rebelalliance/Bullseye","emb2;;2;;Show Bullseye Arc;2;;;2;;;;;true;0;-479;,Arc_2e_BE_Rebel.svg;,;true;Show Bullseye Arc;;;false;;1;1;true;;88,130;")
-            .put("small/galacticempire/Bullseye","emb2;;2;;Show Bullseye Arc;2;;;2;;;;;true;0;-479;,Arc_2e_BE_Empire.svg;,;true;Show Bullseye Arc;;;false;;1;1;true;;88,130;")
-            .put("small/scumandvillainy/Bullseye","emb2;;2;;Show Bullseye Arc;2;;;2;;;;;true;0;-479;,Arc_2e_BE_Scum.svg;,;true;Show Bullseye Arc;;;false;;1;1;true;;88,130;")
+            .put("small/rebelalliance/Bullseye","emb2;;2;;Toggle Bullseye Arc;2;;;2;;;;;true;0;-479;,Arc_2e_BE_Rebel.svg;,;true;Show Bullseye Arc;;;false;;1;1;true;;88,130;")
+            .put("small/galacticempire/Bullseye","emb2;;2;;Toggle Bullseye Arc;2;;;2;;;;;true;0;-479;,Arc_2e_BE_Empire.svg;,;true;Show Bullseye Arc;;;false;;1;1;true;;88,130;")
+            .put("small/scumandvillainy/Bullseye","emb2;;2;;Toggle Bullseye Arc;2;;;2;;;;;true;0;-479;,Arc_2e_BE_Scum.svg;,;true;Show Bullseye Arc;;;false;;1;1;true;;88,130;")
+            .put("small/resistance/Bullseye","emb2;;2;;Toggle Bullseye Arc;2;;;2;;;;;true;0;-479;,Arc_2e_BE_Resistance.svg;,;true;Show Bullseye Arc;;;false;;1;1;true;;88,130;")
+            .put("small/firstorder/Bullseye","emb2;;2;;Toggle Bullseye Arc;2;;;2;;;;;true;0;-479;,Arc_2e_BE_FirstOrder.svg;,;true;Show Bullseye Arc;;;false;;1;1;true;;88,130;")
+            .put("small/galacticrepublic/Bullseye","emb2;;2;;Toggle Bullseye Arc;2;;;2;;;;;true;0;-479;,Arc_2e_BE_Republic.svg;,;true;Show Bullseye Arc;;;false;;1;1;true;;88,130;")
+            .put("small/cis/Bullseye","emb2;;2;;Toggle Bullseye Arc;2;;;2;;;;;true;0;-479;,Arc_2e_BE_CIS.svg;,;true;Show Bullseye Arc;;;false;;1;1;true;;88,130;")
 
-            .put("medium/rebelalliance/Bullseye","emb2;;2;;Show Bullseye Arc;2;;;2;;;;;true;0;-507;,Arc_2e_BE_Rebel.svg;,;true;Show Bullseye Arc;;;false;;1;1;true;;88,130;")
-            .put("medium/galacticempire/Bullseye","emb2;;2;;Show Bullseye Arc;2;;;2;;;;;true;0;-507;,Arc_2e_BE_Empire.svg;,;true;Show Bullseye Arc;;;false;;1;1;true;;88,130;")
-            .put("medium/scumandvillainy/Bullseye","emb2;;2;;Show Bullseye Arc;2;;;2;;;;;true;0;-507;,Arc_2e_BE_Scum.svg;,;true;Show Bullseye Arc;;;false;;1;1;true;;88,130;")
+            .put("medium/rebelalliance/Bullseye","emb2;;2;;Toggle Bullseye Arc;2;;;2;;;;;true;0;-507;,Arc_2e_BE_Rebel.svg;,;true;Show Bullseye Arc;;;false;;1;1;true;;88,130;")
+            .put("medium/galacticempire/Bullseye","emb2;;2;;Toggle Bullseye Arc;2;;;2;;;;;true;0;-507;,Arc_2e_BE_Empire.svg;,;true;Show Bullseye Arc;;;false;;1;1;true;;88,130;")
+            .put("medium/scumandvillainy/Bullseye","emb2;;2;;Toggle Bullseye Arc;2;;;2;;;;;true;0;-507;,Arc_2e_BE_Scum.svg;,;true;Show Bullseye Arc;;;false;;1;1;true;;88,130;")
+            .put("medium/resistance/Bullseye","emb2;;2;;Toggle Bullseye Arc;2;;;2;;;;;true;0;-507;,Arc_2e_BE_Resistance.svg;,;true;Show Bullseye Arc;;;false;;1;1;true;;88,130;")
+            .put("medium/firstorder/Bullseye","emb2;;2;;Toggle Bullseye Arc;2;;;2;;;;;true;0;-507;,Arc_2e_BE_FirstOrder.svg;,;true;Show Bullseye Arc;;;false;;1;1;true;;88,130;")
+            .put("medium/galacticrepublic/Bullseye","emb2;;2;;Toggle Bullseye Arc;2;;;2;;;;;true;0;-507;,Arc_2e_BE_Republic.svg;,;true;Show Bullseye Arc;;;false;;1;1;true;;88,130;")
+            .put("medium/cis/Bullseye","emb2;;2;;Toggle Bullseye Arc;2;;;2;;;;;true;0;-507;,Arc_2e_BE_CIS.svg;,;true;Show Bullseye Arc;;;false;;1;1;true;;88,130;")
 
-            .put("large/rebelalliance/Bullseye","emb2;;2;;Show Bullseye Arc;2;;;2;;;;;true;0;-535;,Arc_2e_BE_Rebel.svg;,;true;Show Bullseye Arc;;;false;;1;1;true;;88,130;")
-            .put("large/galacticempire/Bullseye","emb2;;2;;Show Bullseye Arc;2;;;2;;;;;true;0;-535;,Arc_2e_BE_Empire.svg;,;true;Show Bullseye Arc;;;false;;1;1;true;;88,130;")
-            .put("large/scumandvillainy/Bullseye","emb2;;2;;Show Bullseye Arc;2;;;2;;;;;true;0;-535;,Arc_2e_BE_Scum.svg;,;true;Show Bullseye Arc;;;false;;1;1;true;;88,130;")
+            .put("large/rebelalliance/Bullseye","emb2;;2;;Toggle Bullseye Arc;2;;;2;;;;;true;0;-535;,Arc_2e_BE_Rebel.svg;,;true;Show Bullseye Arc;;;false;;1;1;true;;88,130;")
+            .put("large/galacticempire/Bullseye","emb2;;2;;Toggle Bullseye Arc;2;;;2;;;;;true;0;-535;,Arc_2e_BE_Empire.svg;,;true;Show Bullseye Arc;;;false;;1;1;true;;88,130;")
+            .put("large/scumandvillainy/Bullseye","emb2;;2;;Toggle Bullseye Arc;2;;;2;;;;;true;0;-535;,Arc_2e_BE_Scum.svg;,;true;Show Bullseye Arc;;;false;;1;1;true;;88,130;")
+            .put("large/resistance/Bullseye","emb2;;2;;Toggle Bullseye Arc;2;;;2;;;;;true;0;-535;,Arc_2e_BE_Resistance.svg;,;true;Show Bullseye Arc;;;false;;1;1;true;;88,130;")
+            .put("large/firstorder/Bullseye","emb2;;2;;Toggle Bullseye Arc;2;;;2;;;;;true;0;-535;,Arc_2e_BE_FirstOrder.svg;,;true;Show Bullseye Arc;;;false;;1;1;true;;88,130;")
+            .put("large/galacticrepublic/Bullseye","emb2;;2;;Toggle Bullseye Arc;2;;;2;;;;;true;0;-535;,Arc_2e_BE_Republic.svg;,;true;Show Bullseye Arc;;;false;;1;1;true;;88,130;")
+            .put("large/cis/Bullseye","emb2;;2;;Toggle Bullseye Arc;2;;;2;;;;;true;0;-535;,Arc_2e_BE_CIS.svg;,;true;Show Bullseye Arc;;;false;;1;1;true;;88,130;")
 
             .build();
 
@@ -235,14 +264,22 @@ public class StemShip2e extends Decorator implements EditablePiece {
             }
 
             //add bullseye for all
-
-            emb = (Embellishment) Util.getEmbellishment(newGamePiece, "Show Bullseye Arc");
+            emb=null;
+            emb = (Embellishment) Util.getEmbellishment(newGamePiece, "Layer - Show Bullseye Arc");
             arc = "Bullseye";
             arcKey = Canonicalizer.getCleanedName(source.getShipData().getSize()) + "/"
                     + Canonicalizer.getCleanedName(source.getPilotData().getFaction()) + "/" + arc;
-            newType = firingArcTypes.get(arcKey);
-            emb.mySetType(newType);
 
+            Util.logToChat("StemShip line 244 arcKey = " + arcKey);
+            newType=null;
+
+                newType = firingArcTypes.get(arcKey);
+
+
+           if(newType != null && !newType.isEmpty())
+        {
+            emb.mySetType(newType);
+        }
 
             return newGamePiece;
         }
