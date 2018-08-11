@@ -66,12 +66,17 @@ public class StemShip2e extends Decorator implements EditablePiece {
             .put("large/scumandvillainy/Rear Arc","emb2;;2;;Show Auxiliary Arc;2;;;2;;;;;true;0;537;,Big_Firing-Arc_Scum_Aux.svg;,;true;Show Big Auxiliary Firing Arc;;;false;;1;1;true;;86,130;")
 
             // Bullseye
-            .put("small/rebelalliance/Bullseye","emb2;;2;;Show Bullseye Arc;2;;;2;;;;;true;0;-479;,Bullseye_Arc_Rebel.svg;,;true;Show Bullseye Arc;;;false;;1;1;true;;88,130;")
-            .put("small/galacticempire/Bullseye","emb2;;2;;Show Bullseye Arc;2;;;2;;;;;true;0;-479;,Bullseye_Arc_Imperial.svg;,;true;Show Bullseye Arc;;;false;;1;1;true;;88,130;")
-            .put("small/scumandvillainy/Bullseye","emb2;;2;;Show Bullseye Arc;2;;;2;;;;;true;0;-479;,Bullseye_Arc_Scum.svg;,;true;Show Bullseye Arc;;;false;;1;1;true;;88,130;")
-            .put("large/rebelalliance/Bullseye","")
-            .put("large/galacticempire/Bullseye","")
-            .put("large/scumandvillainy/Bullseye","")
+            .put("small/rebelalliance/Bullseye","emb2;;2;;Show Bullseye Arc;2;;;2;;;;;true;0;-479;,Arc_2e_BE_Rebel.svg;,;true;Show Bullseye Arc;;;false;;1;1;true;;88,130;")
+            .put("small/galacticempire/Bullseye","emb2;;2;;Show Bullseye Arc;2;;;2;;;;;true;0;-479;,Arc_2e_BE_Empire.svg;,;true;Show Bullseye Arc;;;false;;1;1;true;;88,130;")
+            .put("small/scumandvillainy/Bullseye","emb2;;2;;Show Bullseye Arc;2;;;2;;;;;true;0;-479;,Arc_2e_BE_Scum.svg;,;true;Show Bullseye Arc;;;false;;1;1;true;;88,130;")
+
+            .put("medium/rebelalliance/Bullseye","emb2;;2;;Show Bullseye Arc;2;;;2;;;;;true;0;-507;,Arc_2e_BE_Rebel.svg;,;true;Show Bullseye Arc;;;false;;1;1;true;;88,130;")
+            .put("medium/galacticempire/Bullseye","emb2;;2;;Show Bullseye Arc;2;;;2;;;;;true;0;-507;,Arc_2e_BE_Empire.svg;,;true;Show Bullseye Arc;;;false;;1;1;true;;88,130;")
+            .put("medium/scumandvillainy/Bullseye","emb2;;2;;Show Bullseye Arc;2;;;2;;;;;true;0;-507;,Arc_2e_BE_Scum.svg;,;true;Show Bullseye Arc;;;false;;1;1;true;;88,130;")
+
+            .put("large/rebelalliance/Bullseye","emb2;;2;;Show Bullseye Arc;2;;;2;;;;;true;0;-535;,Arc_2e_BE_Rebel.svg;,;true;Show Bullseye Arc;;;false;;1;1;true;;88,130;")
+            .put("large/galacticempire/Bullseye","emb2;;2;;Show Bullseye Arc;2;;;2;;;;;true;0;-535;,Arc_2e_BE_Empire.svg;,;true;Show Bullseye Arc;;;false;;1;1;true;;88,130;")
+            .put("large/scumandvillainy/Bullseye","emb2;;2;;Show Bullseye Arc;2;;;2;;;;;true;0;-535;,Arc_2e_BE_Scum.svg;,;true;Show Bullseye Arc;;;false;;1;1;true;;88,130;")
 
             .build();
 
@@ -230,14 +235,14 @@ public class StemShip2e extends Decorator implements EditablePiece {
             }
 
             //add bullseye for all
-            /*
+
             emb = (Embellishment) Util.getEmbellishment(newGamePiece, "Show Bullseye Arc");
             arc = "Bullseye";
             arcKey = Canonicalizer.getCleanedName(source.getShipData().getSize()) + "/"
                     + Canonicalizer.getCleanedName(source.getPilotData().getFaction()) + "/" + arc;
             newType = firingArcTypes.get(arcKey);
             emb.mySetType(newType);
-*/
+
 
             return newGamePiece;
         }
