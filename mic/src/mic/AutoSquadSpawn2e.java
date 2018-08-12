@@ -140,6 +140,23 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
                 else factionsWanted.remove("Resistance");
             }
         });
+        final JCheckBox republicCheck = new JCheckBox("Galactic Republic");
+        republicCheck.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if(republicCheck.isSelected()) factionsWanted.add("Galactic Republic");
+                else factionsWanted.remove("Galactic Republic");
+            }
+        });
+
+        final JCheckBox cisCheck = new JCheckBox("CIS");
+        cisCheck.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if(cisCheck.isSelected()) factionsWanted.add("CIS");
+                else factionsWanted.remove("CIS");
+            }
+        });
 
 
 
@@ -163,6 +180,8 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
         builderPanel.add(scumCheck);
         builderPanel.add(firstorderCheck);
         builderPanel.add(resistanceCheck);
+        builderPanel.add(republicCheck);
+        builderPanel.add(cisCheck);
         builderPanel.add(builderButton);
 
         rootPanel.add(builderPanel);

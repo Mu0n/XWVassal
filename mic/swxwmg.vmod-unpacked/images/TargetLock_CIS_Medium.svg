@@ -8,21 +8,21 @@
       </cc:Work>
     </rdf:RDF>
   </metadata>
-  <defs id="defs3031"/> <rect x="847.5" width="171" height="847.5" y="0" id="rect3000" style="fill:#ff0000;fill-opacity:0.15"/>
-  <rect x="847.5" width="171" height="565" y="282.5" id="rect3001" style="fill:#ff0000;fill-opacity:0.15"/>
-  <rect x="847.5" width="171" height="282.5" y="565" id="rect3002" style="fill:#ff0000;fill-opacity:0.15"/>
+  <defs id="defs3031"/> <rect x="847.5" width="171" height="847.5" y="0" id="rect3000" style="fill:#c7c900;fill-opacity:0.15"/>
+  <rect x="847.5" width="171" height="565" y="282.5" id="rect3001" style="fill:#c7c900;fill-opacity:0.15"/>
+  <rect x="847.5" width="171" height="282.5" y="565" id="rect3002" style="fill:#c7c900;fill-opacity:0.15"/>
   
-  <rect x="847.5" width="171" height="847.5" y="1018.5" id="rect3000" style="fill:#ff0000;fill-opacity:0.15"/>
-  <rect x="847.5" width="171" height="565" y="1018.5" id="rect3001" style="fill:#ff0000;fill-opacity:0.15"/>
-  <rect x="847.5" width="171" height="282.5" y="1018.5" id="rect3002" style="fill:#ff0000;fill-opacity:0.15"/>  
+  <rect x="847.5" width="171" height="847.5" y="1018.5" id="rect3000" style="fill:#c7c900;fill-opacity:0.15"/>
+  <rect x="847.5" width="171" height="565" y="1018.5" id="rect3001" style="fill:#c7c900;fill-opacity:0.15"/>
+  <rect x="847.5" width="171" height="282.5" y="1018.5" id="rect3002" style="fill:#c7c900;fill-opacity:0.15"/>  
   
-  <rect x="0" width="847.5" height="171" y="847.5" id="rect3000" style="fill:#ff0000;fill-opacity:0.15"/>
-  <rect x="282.5" width="565" height="171" y="847.5" id="rect3001" style="fill:#ff0000;fill-opacity:0.15"/>
-  <rect x="565" width="282.5" height="171" y="847.5" id="rect3002" style="fill:#ff0000;fill-opacity:0.15"/>
+  <rect x="0" width="847.5" height="171" y="847.5" id="rect3000" style="fill:#c7c900;fill-opacity:0.15"/>
+  <rect x="282.5" width="565" height="171" y="847.5" id="rect3001" style="fill:#c7c900;fill-opacity:0.15"/>
+  <rect x="565" width="282.5" height="171" y="847.5" id="rect3002" style="fill:#c7c900;fill-opacity:0.15"/>
   	
-  <rect x="1018.5" width="847.5" height="171" y="847.5" id="rect3000" style="fill:#ff0000;fill-opacity:0.15"/>
-  <rect x="1018.5" width="565" height="171" y="847.5" id="rect3001" style="fill:#ff0000;fill-opacity:0.15"/>
-  <rect x="1018.5" width="282.5" height="171" y="847.5" id="rect3002" style="fill:#ff0000;fill-opacity:0.15"/>
+  <rect x="1018.5" width="847.5" height="171" y="847.5" id="rect3000" style="fill:#c7c900;fill-opacity:0.15"/>
+  <rect x="1018.5" width="565" height="171" y="847.5" id="rect3001" style="fill:#c7c900;fill-opacity:0.15"/>
+  <rect x="1018.5" width="282.5" height="171" y="847.5" id="rect3002" style="fill:#c7c900;fill-opacity:0.15"/>
   		
 	<path style="fill:#c7c900;fill-opacity:0.15" d="M 0,847.5 A 847.5,847.5 0 0 1 847.5,0 v 847.5 z" id="path3021"/>
 	<path style="fill:#c7c900;fill-opacity:0.15" d="M 282.5,847.5 A 565,565 0 0 1 847.5,282.5 v 565 z" id="path3021"/>

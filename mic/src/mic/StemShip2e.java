@@ -193,7 +193,7 @@ public class StemShip2e extends Decorator implements EditablePiece {
 
             // fetch the maneuver array of arrays according to the xws name passed on from autospawn or other means
             xwsShipName = Canonicalizer.getCleanedName(shipXws);
-            this.faction = faction;
+            this.faction = Canonicalizer.getCleanedName(faction);
             shipName = source.getShipData().getName();
             this.piece = piece;
             this.xwsPilot = xwsPilot;
@@ -214,7 +214,7 @@ public class StemShip2e extends Decorator implements EditablePiece {
             piece = buildShipBaseLayer(piece,faction,xwsShipName,xwsPilot, size, dualBase, dualBaseToggleMenuText, base1ReportIdentifier,base2ReportIdentifier);
 
             // Add the Target Lock capability
-           // piece = addTargetLock(piece,faction,size);
+           piece = addTargetLock(piece,faction,size);
 
             // add the firing arcs needed
             piece = addFiringArcs(piece);
@@ -287,7 +287,7 @@ public class StemShip2e extends Decorator implements EditablePiece {
         private GamePiece addTargetLock(GamePiece newGamePiece, String faction, String newSize)
         {
 
-            final String targetLockLayerName = "Layer - Show Lock";
+            final String targetLockLayerName = "Layer - Lock";
 
             final String cisSmallImage = "TargetLock_CIS.svg";
             final String cisMediumImage = "TargetLock_CIS_Medium.svg";
@@ -321,8 +321,11 @@ public class StemShip2e extends Decorator implements EditablePiece {
 
             Embellishment myEmb = (Embellishment)Util.getEmbellishment(newGamePiece,targetLockLayerName);
 
+            newSize = Canonicalizer.getCleanedName(newSize);
+
             StringBuilder sb = new StringBuilder();
-            sb.append("emb2;;2;;Show Target Lock;2;;;2;;;;;true;0;0;,");
+            sb.append("emb2;;2;;Toggle Lock;2;;;2;;;;1;true;0;0;,");
+            Util.logToChat("newSize " + newSize + " faction " + faction);
             if(newSize.equals("small") && newFaction.equals("rebelalliance"))
             {
                 sb.append(rebelSmallImage);
@@ -396,9 +399,14 @@ public class StemShip2e extends Decorator implements EditablePiece {
                 sb.append(cisLargeImage);
             }
 
-            sb.append(";,;true;Show Target Lock;;;false;;1;1;true;;76,130;");
+            sb.append(";,;true;Lock;;;false;;0;1;true;;76,130;");
+            Util.logToChat("sb " + sb);
+            try{
 
-            myEmb.mySetType(sb.toString());
+                myEmb.mySetType(sb.toString());
+            }catch(Exception e){
+                Util.logToChat("stemship2e line 406 can't load the TL gfx");
+            }
 
             return newGamePiece;
         }
