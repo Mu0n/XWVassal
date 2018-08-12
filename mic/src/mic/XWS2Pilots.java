@@ -9,8 +9,11 @@ import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class XWS2Pilots {
-    private static String remoteUrl = "https://raw.githubusercontent.com/guidokessels/xwing-data2/master/data/manifest.json";
-    private static String guidoRootUrl = "https://raw.githubusercontent.com/guidokessels/xwing-data2/master/";
+    //private static String remoteUrl = "https://raw.githubusercontent.com/guidokessels/xwing-data2/master/data/manifest.json";
+
+    private static String remoteUrl = "https://raw.githubusercontent.com/Mu0nHub/xwing-data2/master/data/manifest.json";
+    //private static String guidoRootUrl = "https://raw.githubusercontent.com/guidokessels/xwing-data2/master/";
+    private static String guidoRootUrl = "https://raw.githubusercontent.com/Mu0nHub/xwing-data2/master/";
 
 
     @JsonProperty("name")
@@ -191,8 +194,8 @@ public class XWS2Pilots {
         @JsonProperty("charges")
         private ChargeData chargeData = new ChargeData(0,0);
 
-        @JsonProperty("xws2")
-        private String xws2 = "";
+        @JsonProperty("xws")
+        private String xws = "";
 
         @JsonProperty("conditions")
         private List<String> conditions = Lists.newArrayList();
@@ -208,7 +211,7 @@ public class XWS2Pilots {
         public int getInitiative() { return this.initiative;}
         public int getLimited() { return this.limited;}
         public String getAbility() { return this.ability; }
-        public String getXWS2() { return this.xws2; }
+        public String getXWS() { return this.xws; }
         public List<String> getConditions() { return this.conditions; }
         public List<String> getActions() { return this.actions; }
         public ShipAbility getShipAbility() { return this.shipAbility; }
@@ -318,9 +321,7 @@ public class XWS2Pilots {
                     //adding faction to every pilot
                     for(XWS2Pilots.Pilot2e p : pilotsToAdd.getPilots()){
                      p.setFaction(pilotsToAdd.getFaction());
-                        //TODO remove this when xws2 is here
-                        p.xws2 = Canonicalizer.getCleanedName(p.getName());
-                        //////
+                        Util.logToChat("line 325 XWS2 Pilot xws at loading: "+ p.getXWS());
                     }
 
                     allPilots.add(pilotsToAdd);
@@ -330,15 +331,6 @@ public class XWS2Pilots {
                 }
             }
 
-        }
-
-        // temp massive list production for Guido to get the XWS2 tags going
-        for(XWS2Pilots ship : allPilots)
-        {
-           // Util.logToChat("SCAN4Guido ship " + ship.getName());
-            for(XWS2Pilots.Pilot2e p : ship.getPilots()){
-                //Util.logToChat(Canonicalizer.getCleanedName(p.getName()));
-            }
         }
         return allPilots;
     }
@@ -351,27 +343,17 @@ public class XWS2Pilots {
             {
                 String foundXWS2="";
                 try{
-                    //Util.logToChat("xws2=" + aPilot.getXWS2());
-                    //TO DO replace with this
-                    //foundXWS2 =  aPilot.getXWS2();
-                    foundXWS2 =  Canonicalizer.getCleanedName(aPilot.getName());
+
+                    Util.logToChat("xws2=" + aPilot.getXWS());
+                    foundXWS2 =  aPilot.getXWS();
                 }catch(Exception e){}
 
-                Util.logToChat("XWS2Pilots getSpecific ship line 311 foundXWS2 " + foundXWS2 + " searchedXWS2 "+ searchedXWS2Name);
-                if(foundXWS2.equals(Canonicalizer.getCleanedName(searchedXWS2Name))) {
+                Util.logToChat("XWS2Pilots getSpecific ship line 361 foundXWS2 " + foundXWS2 + " searchedXWS2 "+ searchedXWS2Name);
+                if(foundXWS2.equals(searchedXWS2Name)) {
                     Util.logToChat("match");
                     return aShip;
                 }
             }
-        }
-        return null;
-    }
-
-    public static XWS2Pilots getSpecificShipFromShipXWS2(String searchedXWS2Name, List<XWS2Pilots> allShips){
-        for(XWS2Pilots aShip : allShips)
-        {
-            if(Canonicalizer.getCleanedName(aShip.getName()).equals(Canonicalizer.getCleanedName(searchedXWS2Name)))
-                return aShip;
         }
         return null;
     }
@@ -381,12 +363,12 @@ public class XWS2Pilots {
         {
             for(XWS2Pilots.Pilot2e aPilot : aShip.getPilots())
             {
-                String theXWS2String = Canonicalizer.getCleanedName(aPilot.getName());
-                Util.logToChat("XWS2Pilots getSpecificPilot ship line 327 foundXWS2 " + theXWS2String + " searchedXWS2 "+ searchedXWS2Name);
+                String theXWS2String = aPilot.getXWS();
+                Util.logToChat("XWS2Pilots getSpecificPilot ship line 386 foundXWS2 " + theXWS2String + " searchedXWS2 "+ searchedXWS2Name);
 
                 // TODO replace with this eventually
                 // String theXWS2String = aPilot.getXWS2();
-                if(theXWS2String.equals(Canonicalizer.getCleanedName(searchedXWS2Name))) return aPilot;
+                if(theXWS2String.equals(searchedXWS2Name)) return aPilot;
             }
         }
         return null;

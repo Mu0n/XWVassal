@@ -193,7 +193,10 @@ public class StemShip2e extends Decorator implements EditablePiece {
 
             // fetch the maneuver array of arrays according to the xws name passed on from autospawn or other means
             xwsShipName = Canonicalizer.getCleanedName(shipXws);
-            this.faction = faction;
+            Util.logToChat("line 196 stemship2e faction pre " + faction);
+            this.faction = Canonicalizer.getCleanedName(faction);
+
+            Util.logToChat("line 196 stemship2e faction post " + this.faction);
             shipName = source.getShipData().getName();
             this.piece = piece;
             this.xwsPilot = xwsPilot;
@@ -214,7 +217,7 @@ public class StemShip2e extends Decorator implements EditablePiece {
             piece = buildShipBaseLayer(piece,faction,xwsShipName,xwsPilot, size, dualBase, dualBaseToggleMenuText, base1ReportIdentifier,base2ReportIdentifier);
 
             // Add the Target Lock capability
-            //piece = addTargetLock(piece,faction,size);
+           piece = addTargetLock(piece,faction,size);
 
             // add the firing arcs needed
             piece = addFiringArcs(piece);
@@ -287,29 +290,45 @@ public class StemShip2e extends Decorator implements EditablePiece {
         private GamePiece addTargetLock(GamePiece newGamePiece, String faction, String newSize)
         {
 
-            final String targetLockLayerName = "Layer - Show Lock";
-            final String rebelSmallImage = "TargetLock_Rebel.svg";
-            final String rebelMediumImage = "TargetLock_Rebel_Medium.svg";
-            final String rebelLargeImage = "TargetLock_Rebel_Large.svg";
-            final String imperialSmallImage = "TargetLock_Imperial.svg";
-            final String imperialMediumImage = "TargetLock_Imperial_Medium.svg";
-            final String imperialLargeImage = "TargetLock_Imperial_Large.svg";
-            final String scumSmallImage = "TargetLock_Scum.svg";
-            final String scumMediumImage = "TargetLock_Scum_Medium.svg";
-            final String scumLargeImage = "TargetLock_Scum_Large.svg";
-            final String resistanceSmallImage = "TargetLock_Resistance.svg";
-            final String resistanceMediumImage = "TargetLock_Resistance_Medium.svg";
-            final String resistanceLargeImage = "TargetLock_Resistance_Large.svg";
+            final String targetLockLayerName = "Layer - Lock";
+
+            final String cisSmallImage = "TargetLock_CIS.svg";
+            final String cisMediumImage = "TargetLock_CIS_Medium.svg";
+            final String cisLargeImage = "TargetLock_CIS_Large.svg";
+
             final String firstorderSmallImage = "TargetLock_FirstOrder.svg";
             final String firstorderMediumImage = "TargetLock_FirstOrder_Medium.svg";
             final String firstorderLargeImage = "TargetLock_FirstOrder_Large.svg";
+
+            final String rebelSmallImage = "TargetLock_Rebel.svg";
+            final String rebelMediumImage = "TargetLock_Rebel_Medium.svg";
+            final String rebelLargeImage = "TargetLock_Rebel_Large.svg";
+
+            final String republicSmallImage = "TargetLock_Republic.svg";
+            final String republicMediumImage = "TargetLock_Republic_Medium.svg";
+            final String republicLargeImage = "TargetLock_Republic_Large.svg";
+
+            final String resistanceSmallImage = "TargetLock_Resistance.svg";
+            final String resistanceMediumImage = "TargetLock_Resistance_Medium.svg";
+            final String resistanceLargeImage = "TargetLock_Resistance_Large.svg";
+
+            final String imperialSmallImage = "TargetLock_Imperial.svg";
+            final String imperialMediumImage = "TargetLock_Imperial_Medium.svg";
+            final String imperialLargeImage = "TargetLock_Imperial_Large.svg";
+
+            final String scumSmallImage = "TargetLock_Scum.svg";
+            final String scumMediumImage = "TargetLock_Scum_Medium.svg";
+            final String scumLargeImage = "TargetLock_Scum_Large.svg";
 
             String newFaction = XWOTAUtils.simplifyFactionName(faction);
 
             Embellishment myEmb = (Embellishment)Util.getEmbellishment(newGamePiece,targetLockLayerName);
 
+            newSize = Canonicalizer.getCleanedName(newSize);
+
             StringBuilder sb = new StringBuilder();
-            sb.append("emb2;;2;;Show Target Lock;2;;;2;;;;;true;0;0;,");
+            sb.append("emb2;;2;;Toggle Lock;2;;;2;;;;1;true;0;0;,");
+            Util.logToChat("newSize " + newSize + " faction " + faction);
             if(newSize.equals("small") && newFaction.equals("rebelalliance"))
             {
                 sb.append(rebelSmallImage);
@@ -325,7 +344,17 @@ public class StemShip2e extends Decorator implements EditablePiece {
             }else if(newSize.equals("small") && newFaction.equals("firstorder") )
             {
                 sb.append(firstorderSmallImage);
-            }else if(newSize.equals("medium") && newFaction.equals("rebelalliance"))
+            }else if(newSize.equals("small") && newFaction.equals("republic") )
+            {
+                sb.append(republicSmallImage);
+            }else if(newSize.equals("small") && newFaction.equals("cis") )
+            {
+                sb.append(cisSmallImage);
+            }
+
+
+
+            else if(newSize.equals("medium") && newFaction.equals("rebelalliance"))
             {
                 sb.append(rebelMediumImage);
             }else if(newSize.equals("medium") && newFaction.equals("galacticempire") )
@@ -340,7 +369,17 @@ public class StemShip2e extends Decorator implements EditablePiece {
             }else if(newSize.equals("medium") && newFaction.equals("firstorder") )
             {
                 sb.append(firstorderMediumImage);
-            }else if(newSize.equals("large") && newFaction.equals("rebelalliance"))
+            }else if(newSize.equals("medium") && newFaction.equals("republic") )
+            {
+                sb.append(republicMediumImage);
+            }else if(newSize.equals("medium") && newFaction.equals("cis") )
+            {
+                sb.append(cisMediumImage);
+            }
+
+
+
+            else if(newSize.equals("large") && newFaction.equals("rebelalliance"))
             {
                 sb.append(rebelLargeImage);
             }else if(newSize.equals("large") && newFaction.equals("galacticempire") )
@@ -355,11 +394,22 @@ public class StemShip2e extends Decorator implements EditablePiece {
             }else if(newSize.equals("large") && newFaction.equals("firstorder") )
             {
                 sb.append(firstorderLargeImage);
+            }else if(newSize.equals("large") && newFaction.equals("republic") )
+            {
+                sb.append(republicLargeImage);
+            }else if(newSize.equals("large") && newFaction.equals("cis") )
+            {
+                sb.append(cisLargeImage);
             }
 
-            sb.append(";,;true;Show Target Lock;;;false;;1;1;true;;76,130;");
+            sb.append(";,;true;Lock;;;false;;0;1;true;;76,130;");
+            Util.logToChat("sb " + sb);
+            try{
 
-            myEmb.mySetType(sb.toString());
+                myEmb.mySetType(sb.toString());
+            }catch(Exception e){
+                Util.logToChat("stemship2e line 406 can't load the TL gfx");
+            }
 
             return newGamePiece;
         }
@@ -459,7 +509,7 @@ public class StemShip2e extends Decorator implements EditablePiece {
             //  overwrite the layer with a new state
             if(!dualBase) {
                 // first find the base image name
-                String shipBaseImage = findShipBaseImage(faction,xwsShipName, xwsPilot, size);
+                String shipBaseImage = findShipBaseImage(xwsShipName, xwsPilot, size);
                 Util.logToChat("shipBaseImage found  " + shipBaseImage);
                // mic.Util.logToChat(xwsShipName + " is NOT dual based");
                 StringBuffer sb = new StringBuffer();
@@ -595,19 +645,19 @@ public class StemShip2e extends Decorator implements EditablePiece {
 
         }
 
-        private String findShipBaseImage(String faction, String xwsShipName, String xwsPilot, String size)
+        private String findShipBaseImage(String xwsShipName, String xwsPilot, String size)
         {
             StringBuffer sb = new StringBuffer();
             sb.append(SHIP_BASE_IMAGE_PREFIX);
             sb.append("_");
-            sb.append(XWOTAUtils.simplifyFactionName(faction));
+            sb.append(this.faction);
             sb.append("_");
             sb.append(xwsShipName);
 
             boolean dualArt = false;
             String dualBase = null;
             // now check for alt art
-            String shipImage = AltArtShipPicker.getNewAltArtShip(xwsPilot, xwsShipName, faction);
+            String shipImage = AltArtShipPicker.getNewAltArtShip(xwsPilot, xwsShipName, this.faction);
 
             // if there's a blank string in shipImage[0], then it's a standard art
             // if there's a string in shipImage[1], then it's a dual base ship
@@ -647,7 +697,7 @@ public class StemShip2e extends Decorator implements EditablePiece {
                 // build the name
                 sb = new StringBuffer();
                 sb.append(SHIP_BASE_IMAGE_PREFIX).append("_");
-                sb.append(XWOTAUtils.simplifyFactionName(faction));
+                sb.append(this.faction);
                 sb.append("_wip_");
                 sb.append(size);
                 sb.append(".png");

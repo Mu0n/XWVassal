@@ -131,7 +131,7 @@ public class StemPilot2e extends Decorator implements EditablePiece {
 
         PilotGenerateCommand(GamePiece piece, VassalXWSPilotPieces2e ship)
         {
-            pilotXWS2 = Canonicalizer.getCleanedName(ship.getShipData().getName());
+            pilotXWS2 = ship.getPilotData().getXWS();
             faction = ship.getShipData().getFaction();
             pilotName = ship.getPilotData().getName();
             shipName = ship.getShipData().getName();
@@ -142,7 +142,7 @@ public class StemPilot2e extends Decorator implements EditablePiece {
             if(ship.getShipNumber()!=null) shipNumber = ship.getShipNumber();
             String factionXWS = Canonicalizer.getCanonicalFactionName(faction);
 
-            pilotXWSencoding = factionXWS+"_"+pilotXWS2+"_"+ship.getPilotData().getXWS2();
+            pilotXWSencoding = factionXWS+"_"+pilotXWS2+"_"+ship.getPilotData().getXWS();
 
             this.piece = piece;
 

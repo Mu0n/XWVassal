@@ -52,7 +52,7 @@ public class VassalXWSPieceLoader2e {
         //The following is used to get duplicate names for pilots, in order to know if it has to add a number to dials, e.g. ESP 1, ESP 2, etc.
         Multiset<String> pilotCounts = HashMultiset.create();
         for (XWSList2e.XWSPilot xwsList2ePilot : list.getPilots()) {
-            pilotCounts.add(xwsList2ePilot.getName());
+            pilotCounts.add(xwsList2ePilot.getXws());
         }
         //The following is used to keep track of multiples of generic pilot
         Multiset<String> genericPilotsAdded = HashMultiset.create();
@@ -61,7 +61,7 @@ public class VassalXWSPieceLoader2e {
         {
             //Using a unique pilot xws2 tag in order to search its specific ship data (which includes the faction and dial moves)
             // and pilot data (which includes ship abiltity
-            String xwsPilotToSearch = Canonicalizer.getCleanedName(pilot.getXws2());
+            String xwsPilotToSearch = pilot.getXws();
 
             XWS2Pilots shipData = XWS2Pilots.getSpecificShipFromPilotXWS2(xwsPilotToSearch, allPilots);
             XWS2Pilots.Pilot2e pilotData = XWS2Pilots.getSpecificPilot(xwsPilotToSearch, allPilots);
@@ -203,33 +203,6 @@ public class VassalXWSPieceLoader2e {
         */
     }
 
-    public void loadPieces(List<XWS2Pilots> allShips) {
-        tokenPiecesMap = Maps.newHashMap();
-        obstaclesPiecesMap = Maps.newHashMap();
-
-        List<ListWidget> listWidgets = GameModule.getGameModule().getAllDescendantComponentsOf(ListWidget.class);
-        for (ListWidget listWidget : listWidgets) {
-            if (!(listWidget.getParent() instanceof TabWidget)) {
-                continue;
-            }
-            ListParentType parentType = ListParentType.fromTab(listWidget.getParent());
-            if (parentType == null) {
-                continue;
-            }
-            switch (parentType) {
-                case chits:
-                    loadChits(listWidget);
-                    break;
-                case upgrades:
-                    break;
-                case imperial:
-                case rebel:
-                case scum:
-                    loadPilots(listWidget, parentType, allShips);
-                    break;
-            }
-        }
-    }
 
     private void loadChits(ListWidget listWidget) {
         List<ListWidget> chitLists = listWidget.getAllDescendantComponentsOf(ListWidget.class);

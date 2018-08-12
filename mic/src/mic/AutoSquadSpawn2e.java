@@ -48,7 +48,7 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
             .put("First Order","firstorder")
             .put("Resistance","resistance")
             .put("Galactic Republic","galacticrepublic")
-            .put("Separatist Army","separatistarmy")
+            .put("CIS","cis")
             .build();
 
 //keepsake for this whole class' behavior inside the player window - they must be kept track so they can be removed safely later
@@ -140,6 +140,23 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
                 else factionsWanted.remove("Resistance");
             }
         });
+        final JCheckBox republicCheck = new JCheckBox("Galactic Republic");
+        republicCheck.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if(republicCheck.isSelected()) factionsWanted.add("Galactic Republic");
+                else factionsWanted.remove("Galactic Republic");
+            }
+        });
+
+        final JCheckBox cisCheck = new JCheckBox("CIS");
+        cisCheck.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if(cisCheck.isSelected()) factionsWanted.add("CIS");
+                else factionsWanted.remove("CIS");
+            }
+        });
 
 
 
@@ -163,6 +180,8 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
         builderPanel.add(scumCheck);
         builderPanel.add(firstorderCheck);
         builderPanel.add(resistanceCheck);
+        builderPanel.add(republicCheck);
+        builderPanel.add(cisCheck);
         builderPanel.add(builderButton);
 
         rootPanel.add(builderPanel);
@@ -218,9 +237,7 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
                     {
                         for(XWS2Pilots.Pilot2e pilot : ship.getPilots())
                         {
-                            //TO DO change when xws2 arrives
-                            //PilotComboList.addItem(pilot.getName() + "_" + pilot.getXWS2());
-                            PilotComboList.addItem(pilot.getName() + "_" + Canonicalizer.getCleanedName(pilot.getName()));
+                            PilotComboList.addItem(pilot.getName() + "_" + pilot.getXWS());
                         }
                     }
                 }
@@ -352,8 +369,8 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
 
         for(VassalXWSPilotPieces2e ship : pieces.getShips())
         {
-            logToChat("pieces manifest - ship name " + ship.getShipData().getName() + " pilot name " + ship.getPilotData().getXWS2());
-            XWS2Pilots shipInQuestionFromXWD2 = XWS2Pilots.getSpecificShipFromPilotXWS2(ship.getPilotData().getXWS2(),allPilots);
+            logToChat("pieces manifest - ship name " + ship.getShipData().getName() + " pilot name " + ship.getPilotData().getXWS());
+            XWS2Pilots shipInQuestionFromXWD2 = XWS2Pilots.getSpecificShipFromPilotXWS2(ship.getPilotData().getXWS(),allPilots);
             logToChat("that ship's dial's first move" + shipInQuestionFromXWD2.getDial().get(0));
         }
 
@@ -454,8 +471,8 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
                                 comboBoxSeenCount = 2;
                                 String[] parts = (((JComboBox) d).getSelectedItem()).toString().split("_");
                                 currentShip.setShipName(parts[0]);
-                                if(parts.length > 1) currentShip.setShipPilotXWS2(Canonicalizer.getCleanedName(parts[1]));
-                                else currentShip.setShipPilotXWS2(Canonicalizer.getCleanedName(parts[0]));
+                                if(parts.length > 1) currentShip.setShipPilotXWS2(parts[1]);
+                                else currentShip.setShipPilotXWS2(parts[0]);
                                 aShipWasDetected = true;
                                 comboBoxSeenCount=0;
                             }
@@ -503,7 +520,7 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
         for(int i=0; i< stuffToXWS.size(); i++){ //parse all ship/pilot entries
             String shipString ="\"ship\":\"" + stuffToXWS.get(i).getShipType() + "\",";
             String pilotString = "\"name\":\"" + Canonicalizer.getCleanedName(stuffToXWS.get(i).getShipName()) + "\",";
-            String xws2String = "\"xws2\":\"" + stuffToXWS.get(i).getShipPilotXWS2() + "\",";
+            String xws2String = "\"xws\":\"" + stuffToXWS.get(i).getShipPilotXWS2() + "\",";
             String upgradesStartString = "\"upgrades\":{";
             output+= shipString + pilotString + xws2String + upgradesStartString;
 
@@ -635,7 +652,7 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
             {
                 for(XWS2Pilots.Pilot2e pilot : ship.getPilots())
                 {
-                    pilotComboList.addItem(pilot.getName() + "_" + Canonicalizer.getCleanedName(pilot.getName()));
+                    pilotComboList.addItem(pilot.getName() + "_" + pilot.getXWS());
                 }
             }
         }
@@ -781,8 +798,8 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
             List<Integer> savedShipIndex = Lists.newArrayList();
 
             //Get the stuff from the XWS formatted json
-            String shipXws = pilot.getShip();
-            String pilotXWS2 = Canonicalizer.getCleanedName(pilot.getName());
+            String pilotXWS2 = pilot.getXws();
+
             //TO USE when xwing-data2 has them
             // String pilotXWS2 = pilot.getXws2();
             //Check the unique pilot xws2 key in all ships
