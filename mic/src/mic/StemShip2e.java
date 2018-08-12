@@ -193,7 +193,10 @@ public class StemShip2e extends Decorator implements EditablePiece {
 
             // fetch the maneuver array of arrays according to the xws name passed on from autospawn or other means
             xwsShipName = Canonicalizer.getCleanedName(shipXws);
+            Util.logToChat("line 196 stemship2e faction pre " + faction);
             this.faction = Canonicalizer.getCleanedName(faction);
+
+            Util.logToChat("line 196 stemship2e faction post " + this.faction);
             shipName = source.getShipData().getName();
             this.piece = piece;
             this.xwsPilot = xwsPilot;
@@ -506,7 +509,7 @@ public class StemShip2e extends Decorator implements EditablePiece {
             //  overwrite the layer with a new state
             if(!dualBase) {
                 // first find the base image name
-                String shipBaseImage = findShipBaseImage(faction,xwsShipName, xwsPilot, size);
+                String shipBaseImage = findShipBaseImage(xwsShipName, xwsPilot, size);
                 Util.logToChat("shipBaseImage found  " + shipBaseImage);
                // mic.Util.logToChat(xwsShipName + " is NOT dual based");
                 StringBuffer sb = new StringBuffer();
@@ -642,19 +645,19 @@ public class StemShip2e extends Decorator implements EditablePiece {
 
         }
 
-        private String findShipBaseImage(String faction, String xwsShipName, String xwsPilot, String size)
+        private String findShipBaseImage(String xwsShipName, String xwsPilot, String size)
         {
             StringBuffer sb = new StringBuffer();
             sb.append(SHIP_BASE_IMAGE_PREFIX);
             sb.append("_");
-            sb.append(XWOTAUtils.simplifyFactionName(faction));
+            sb.append(this.faction);
             sb.append("_");
             sb.append(xwsShipName);
 
             boolean dualArt = false;
             String dualBase = null;
             // now check for alt art
-            String shipImage = AltArtShipPicker.getNewAltArtShip(xwsPilot, xwsShipName, faction);
+            String shipImage = AltArtShipPicker.getNewAltArtShip(xwsPilot, xwsShipName, this.faction);
 
             // if there's a blank string in shipImage[0], then it's a standard art
             // if there's a string in shipImage[1], then it's a dual base ship
@@ -694,7 +697,7 @@ public class StemShip2e extends Decorator implements EditablePiece {
                 // build the name
                 sb = new StringBuffer();
                 sb.append(SHIP_BASE_IMAGE_PREFIX).append("_");
-                sb.append(XWOTAUtils.simplifyFactionName(faction));
+                sb.append(this.faction);
                 sb.append("_wip_");
                 sb.append(size);
                 sb.append(".png");

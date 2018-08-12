@@ -113,7 +113,7 @@ public enum Tokens2e {
                 }
 
                 if (pilot.getPilotData() != null) {
-                    String shipPilot = pilot.getPilotData().getXWS2();
+                    String shipPilot = pilot.getPilotData().getXWS();
                     if (token.pilots.contains(shipPilot)) {
                         tokens.add(token);
                     }
