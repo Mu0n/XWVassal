@@ -113,7 +113,9 @@ public class AutoRangeFinder extends Decorator implements EditablePiece, MouseLi
     Boolean wantExtraBandsMorFA = false;
     int bestBandRange = 0;
 
-Boolean isThisTheOne = false;
+    Boolean isThisTheOne = false;
+    boolean twoPointOh = false;
+
     // Mouse stuff
     protected Point anchor;
     protected String anchorLocation = "";
@@ -201,9 +203,11 @@ Boolean isThisTheOne = false;
                 return bigCommand;
             }
 
+            twoPointOh = this.getInner().getState().contains("this_is_2pointoh");
+
             thisShip = new BumpableWithShape(this, "Ship",
                     this.getInner().getProperty("Pilot Name").toString(), this.getInner().getProperty("Craft ID #").toString(),
-                    this.getInner().getState().contains("this_is_2pointoh"));
+                    twoPointOh);
 
             thisShip.refreshSpecialPoints();
             //Prepare the start of the appropriate chat announcement string - which ship are we doing this from, which kind of autorange
@@ -302,7 +306,8 @@ Boolean isThisTheOne = false;
                 bestLine = findBestLineInSimpleArcs(D1, D2, D3, 3);
                 break;
             case frontAuxArcOption:
-                bestLine = findBestLineInFrontAuxArcs(D1, D2, D3, 3);
+                if(twoPointOh == false) bestLine = findBestLineInFrontAuxArcs(D1, D2, D3, 3);
+                else Util.logToChat("2.0 full front arc options needed");
                 break;
             case mobileSideArcOption:
                 bestLine = findBestLineInMobileArc(D1, D2, D3, 3);
@@ -1677,7 +1682,23 @@ Boolean isThisTheOne = false;
             E1 = thisShip.tPts.get(6);
             E2 = thisShip.tPts.get(7);
         }
-        else if(whichOption == frontAuxArcOption){
+        else if(whichOption == frontAuxArcOption && twoPointOh == false){
+            A1 = thisShip.tPts.get(8);
+            A2 = thisShip.tPts.get(0);
+
+            E1 = thisShip.tPts.get(10);
+            E2 = thisShip.tPts.get(2);
+
+            A3 = thisShip.tPts.get(1);
+            A4 = thisShip.tPts.get(9);
+
+            E3 = thisShip.tPts.get(3);
+            E4 = thisShip.tPts.get(11);
+
+            E2B = thisShip.tPts.get(16);
+            E3B = thisShip.tPts.get(17);
+        }
+        else if(whichOption == frontAuxArcOption && twoPointOh == true){
             A1 = thisShip.tPts.get(8);
             A2 = thisShip.tPts.get(0);
 
