@@ -369,7 +369,7 @@ public class StemShip2e extends Decorator implements EditablePiece {
             }else if(newSize.equals("medium") && faction.equals("firstorder") )
             {
                 sb.append(firstorderMediumImage);
-            }else if(newSize.equals("medium") && faction.equals("republic") )
+            }else if(newSize.equals("medium") && faction.equals("galacticrepublic") )
             {
                 sb.append(republicMediumImage);
             }else if(newSize.equals("medium") && faction.equals("cis") )
@@ -394,7 +394,7 @@ public class StemShip2e extends Decorator implements EditablePiece {
             }else if(newSize.equals("large") && faction.equals("firstorder") )
             {
                 sb.append(firstorderLargeImage);
-            }else if(newSize.equals("large") && faction.equals("republic") )
+            }else if(newSize.equals("large") && faction.equals("galacticrepublic") )
             {
                 sb.append(republicLargeImage);
             }else if(newSize.equals("large") && faction.equals("cis") )
