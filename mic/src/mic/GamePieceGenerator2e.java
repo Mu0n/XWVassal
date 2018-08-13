@@ -36,23 +36,27 @@ public class GamePieceGenerator2e
     {
                 // generate the piece from the stem ships
         GamePiece newShip = null;
-      //  boolean shipContainsMobileArc = containsMobileArc(shipData);
-        if(ship.getShipData().getSize().contentEquals(SHIP_BASE_SIZE_SMALL)) {
-            newShip = Util.newPiece(getPieceSlotByName(SMALL_STEM_SHIP_SLOT_NAME));
-        }else if(ship.getShipData().getSize().contentEquals(SHIP_BASE_SIZE_MEDIUM)) {
-            newShip = Util.newPiece(getPieceSlotByName(MEDIUM_STEM_SHIP_SLOT_NAME));
-        }else if(ship.getShipData().getSize().contentEquals(SHIP_BASE_SIZE_LARGE))
+
+        //single and double turret arc have to be checked first because they are more involved pieces
+       boolean shipContainsSingleTurret = containsSingleTurret(ship);
+       boolean shipContainsDoubleTurret = containsDoubleTurret(ship);
+
+       if(ship.getShipData().getSize().contentEquals(SHIP_BASE_SIZE_SMALL))
+       {
+           if(shipContainsSingleTurret) newShip = Util.newPiece(getPieceSlotByName(SMALL_STEM_SHIP_SINGLE_TURRET_SLOT_NAME));
+           else newShip = Util.newPiece(getPieceSlotByName(SMALL_STEM_SHIP_SLOT_NAME));
+        }
+        else if(ship.getShipData().getSize().contentEquals(SHIP_BASE_SIZE_MEDIUM))
         {
-            //TO DO deal with mobilearc detection
-            /*
-            if(containsMobileArc(shipData))
-            {
-                //newShip = Util.newPiece(getPieceSlotByName(LARGE_STEM_SHIP_MOBILE_ARC_SLOT_NAME));
-            }else {
-                newShip = Util.newPiece(getPieceSlotByName(LARGE_STEM_SHIP_SLOT_NAME));
-            }
-            */
-            newShip = Util.newPiece(getPieceSlotByName(LARGE_STEM_SHIP_SLOT_NAME));
+            if(shipContainsSingleTurret) newShip = Util.newPiece(getPieceSlotByName(MEDIUM_STEM_SHIP_SINGLE_TURRET_SLOT_NAME));
+            else if(shipContainsDoubleTurret) newShip = Util.newPiece(getPieceSlotByName(MEDIUM_STEM_SHIP_DOUBLE_TURRET_SLOT_NAME));
+            else newShip = Util.newPiece(getPieceSlotByName(MEDIUM_STEM_SHIP_SLOT_NAME));
+        }
+        else if(ship.getShipData().getSize().contentEquals(SHIP_BASE_SIZE_LARGE))
+        {
+            if(shipContainsSingleTurret) newShip = Util.newPiece(getPieceSlotByName(LARGE_STEM_SHIP_SINGLE_TURRET_SLOT_NAME));
+            else if(shipContainsDoubleTurret) newShip = Util.newPiece(getPieceSlotByName(LARGE_STEM_SHIP_DOUBLE_TURRET_SLOT_NAME));
+            else newShip = Util.newPiece(getPieceSlotByName(LARGE_STEM_SHIP_SLOT_NAME));
         }
 
         // determine if the ship needs bomb drop
@@ -68,7 +72,6 @@ public class GamePieceGenerator2e
                 ship, ship.getShipData().getName(),
                 newShip, ship.getShipData().getFaction(), ship.getPilotData().getXWS(),false,
                 false, "","","");
-
         myShipGen.execute();
 
         // add the stats to the piece
@@ -78,13 +81,11 @@ public class GamePieceGenerator2e
 
     public static GamePiece setShipProperties(GamePiece piece,VassalXWSPilotPieces2e ship ) {
         //GamePiece piece = Util.newPiece(this.ship);
-
         int initiativeModifier = 0;
         int chargeModifier = 0;
         int shieldsModifier = 0;
         int hullModifier = 0;
         int forceModifier = 0;
-
 /*
         for (VassalXWSPilotPieces2e.Upgrade upgrade : upgrades) {
 
@@ -135,7 +136,6 @@ public class GamePieceGenerator2e
                 shields = shipOverrides.getShields();
             }
             */
-
             piece.setProperty("Initiative", initiative + initiativeModifier);
             piece.setProperty("Hull Rating", hull + hullModifier);
             piece.setProperty("Shield Rating", shields + shieldsModifier);
@@ -149,7 +149,6 @@ public class GamePieceGenerator2e
                 int force = ship.getPilotData().getForceData().getValue();
                 piece.setProperty("Force Rating", force + forceModifier);
             }
-
         }
 
         if (ship.getShipData().getName() != null) {
@@ -161,24 +160,22 @@ public class GamePieceGenerator2e
 
 
 
-    private static boolean containsMobileArc(MasterShipData.ShipData shipData)
-    {
-        boolean foundMobileArc = false;
-        List<String>arcs = shipData.getFiringArcs();
-        Iterator<String> i = arcs.iterator();
-        String arc = null;
-        while(i.hasNext() && !foundMobileArc)
-        {
-            arc = i.next();
-            if(arc.equals("Mobile"))
-            {
-                foundMobileArc = true;
-            }
+    private static boolean containsSingleTurret(VassalXWSPilotPieces2e ship){
+        boolean foundSingleTurret = false;
+        for(XWS2Pilots.Stat2e stat : ship.getShipData().getStats()){
+            if(stat.getArc().equals("Single Turret Arc")) foundSingleTurret = true;
         }
-
-        return foundMobileArc;
+        //TODO add code for single turret granted from upgrade card
+        return foundSingleTurret;
     }
-
+    private static boolean containsDoubleTurret(VassalXWSPilotPieces2e ship) {
+        boolean foundDoubleTurret = false;
+        for(XWS2Pilots.Stat2e stat : ship.getShipData().getStats()){
+            if(stat.getArc().equals("Double Turret Arc")) foundDoubleTurret = true;
+        }
+        //TODO add code for single turret granted from upgrade card
+        return foundDoubleTurret;
+    }
 
     //TO DO not sure where the bomb information will be polled from
     private static boolean determineIfShipNeedsBombCapability(VassalXWSPilotPieces2e ship, List<XWS2Pilots> allPilots)

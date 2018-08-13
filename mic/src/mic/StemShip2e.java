@@ -248,8 +248,6 @@ public class StemShip2e extends Decorator implements EditablePiece {
                     emb = (Embellishment) Util.getEmbellishment(newGamePiece, "Layer - Arc");
                 } else if(arc.equals("Rear Arc")) {
                     emb = (Embellishment) Util.getEmbellishment(newGamePiece, "Layer - Show Auxiliary Firing Arc");
-                } else if(arc.equals("Single Turret Arc")) {
-                } else if(arc.equals("Double Turret Arc")) {
                 } else if(arc.equals("Full Front Arc")) {
                     emb = (Embellishment) Util.getEmbellishment(newGamePiece, "Layer - Show Full Front Arc");
                 }
