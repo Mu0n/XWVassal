@@ -329,75 +329,75 @@ public class StemShip2e extends Decorator implements EditablePiece {
             StringBuilder sb = new StringBuilder();
             sb.append("emb2;;2;;Toggle Lock;2;;;2;;;;1;true;0;0;,");
             Util.logToChat("newSize " + newSize + " faction " + faction);
-            if(newSize.equals("small") && newFaction.equals("rebelalliance"))
+            if(newSize.equals("small") && faction.equals("rebelalliance"))
             {
                 sb.append(rebelSmallImage);
-            }else if(newSize.equals("small") && newFaction.equals("galacticempire") )
+            }else if(newSize.equals("small") && faction.equals("galacticempire") )
             {
                 sb.append(imperialSmallImage);
-            }else if(newSize.equals("small") && newFaction.equals("scumandvillainy") )
+            }else if(newSize.equals("small") && faction.equals("scumandvillainy") )
             {
                 sb.append(scumSmallImage);
-            }else if(newSize.equals("small") && newFaction.equals("resistance") )
+            }else if(newSize.equals("small") && faction.equals("resistance") )
             {
                 sb.append(resistanceSmallImage);
-            }else if(newSize.equals("small") && newFaction.equals("firstorder") )
+            }else if(newSize.equals("small") && faction.equals("firstorder") )
             {
                 sb.append(firstorderSmallImage);
-            }else if(newSize.equals("small") && newFaction.equals("republic") )
+            }else if(newSize.equals("small") && faction.equals("republic") )
             {
                 sb.append(republicSmallImage);
-            }else if(newSize.equals("small") && newFaction.equals("cis") )
+            }else if(newSize.equals("small") && faction.equals("cis") )
             {
                 sb.append(cisSmallImage);
             }
 
 
 
-            else if(newSize.equals("medium") && newFaction.equals("rebelalliance"))
+            else if(newSize.equals("medium") && faction.equals("rebelalliance"))
             {
                 sb.append(rebelMediumImage);
-            }else if(newSize.equals("medium") && newFaction.equals("galacticempire") )
+            }else if(newSize.equals("medium") && faction.equals("galacticempire") )
             {
                 sb.append(imperialMediumImage);
-            }else if(newSize.equals("medium") && newFaction.equals("scumandvillainy") )
+            }else if(newSize.equals("medium") && faction.equals("scumandvillainy") )
             {
                 sb.append(scumMediumImage);
-            }else if(newSize.equals("medium") && newFaction.equals("resistance") )
+            }else if(newSize.equals("medium") && faction.equals("resistance") )
             {
                 sb.append(resistanceMediumImage);
-            }else if(newSize.equals("medium") && newFaction.equals("firstorder") )
+            }else if(newSize.equals("medium") && faction.equals("firstorder") )
             {
                 sb.append(firstorderMediumImage);
-            }else if(newSize.equals("medium") && newFaction.equals("republic") )
+            }else if(newSize.equals("medium") && faction.equals("republic") )
             {
                 sb.append(republicMediumImage);
-            }else if(newSize.equals("medium") && newFaction.equals("cis") )
+            }else if(newSize.equals("medium") && faction.equals("cis") )
             {
                 sb.append(cisMediumImage);
             }
 
 
 
-            else if(newSize.equals("large") && newFaction.equals("rebelalliance"))
+            else if(newSize.equals("large") && faction.equals("rebelalliance"))
             {
                 sb.append(rebelLargeImage);
-            }else if(newSize.equals("large") && newFaction.equals("galacticempire") )
+            }else if(newSize.equals("large") && faction.equals("galacticempire") )
             {
                 sb.append(imperialLargeImage);
-            }else if(newSize.equals("large") && newFaction.equals("scumandvillainy") )
+            }else if(newSize.equals("large") && faction.equals("scumandvillainy") )
             {
                 sb.append(scumLargeImage);
-            }else if(newSize.equals("large") && newFaction.equals("resistance") )
+            }else if(newSize.equals("large") && faction.equals("resistance") )
             {
                 sb.append(resistanceLargeImage);
-            }else if(newSize.equals("large") && newFaction.equals("firstorder") )
+            }else if(newSize.equals("large") && faction.equals("firstorder") )
             {
                 sb.append(firstorderLargeImage);
-            }else if(newSize.equals("large") && newFaction.equals("republic") )
+            }else if(newSize.equals("large") && faction.equals("republic") )
             {
                 sb.append(republicLargeImage);
-            }else if(newSize.equals("large") && newFaction.equals("cis") )
+            }else if(newSize.equals("large") && faction.equals("cis") )
             {
                 sb.append(cisLargeImage);
             }

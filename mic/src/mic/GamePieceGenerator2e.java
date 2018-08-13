@@ -260,6 +260,8 @@ public class GamePieceGenerator2e
         PieceSlot scumDialSlot = null;
         PieceSlot firstOrderDialSlot = null;
         PieceSlot resistanceDialSlot = null;
+        PieceSlot cisDialSlot = null;
+        PieceSlot republicDialSlot = null;
 
         // find the 3 slots for the auto-gen dials
         List<PieceSlot> pieceSlots = GameModule.getGameModule().getAllDescendantComponentsOf(PieceSlot.class);
@@ -281,6 +283,12 @@ public class GamePieceGenerator2e
             } else if (slotName.startsWith("FirstOrder Stem2e Dial") && firstOrderDialSlot == null) {
                 firstOrderDialSlot = pieceSlot;
                 continue;
+            }else if (slotName.startsWith("Republic Stem2e Dial") && republicDialSlot == null) {
+                republicDialSlot = pieceSlot;
+                continue;
+            } else if (slotName.startsWith("CIS Stem2e Dial") && cisDialSlot == null) {
+                cisDialSlot = pieceSlot;
+                continue;
             }
         }
 
@@ -297,7 +305,11 @@ public class GamePieceGenerator2e
         dial = Util.newPiece(firstOrderDialSlot);
         }else if(faction.contentEquals("Scum and Villainy")) {
             dial = Util.newPiece(scumDialSlot);
-        }
+        }else if(faction.contentEquals("Galactic Republic")){
+        dial = Util.newPiece(republicDialSlot);
+    }else if(faction.contentEquals("CIS")) {
+        dial = Util.newPiece(cisDialSlot);
+    }
 
 
         // execute the command
