@@ -251,6 +251,7 @@ public class StemShip2e extends Decorator implements EditablePiece {
                 } else if(arc.equals("Single Turret Arc")) {
                 } else if(arc.equals("Double Turret Arc")) {
                 } else if(arc.equals("Full Front Arc")) {
+                    emb = (Embellishment) Util.getEmbellishment(newGamePiece, "Layer - Show Full Front Arc");
                 }
 
 
