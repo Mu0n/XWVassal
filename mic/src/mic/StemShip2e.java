@@ -344,7 +344,7 @@ public class StemShip2e extends Decorator implements EditablePiece {
             }else if(newSize.equals("small") && faction.equals("firstorder") )
             {
                 sb.append(firstorderSmallImage);
-            }else if(newSize.equals("small") && faction.equals("republic") )
+            }else if(newSize.equals("small") && faction.equals("galacticrepublic") )
             {
                 sb.append(republicSmallImage);
             }else if(newSize.equals("small") && faction.equals("cis") )
