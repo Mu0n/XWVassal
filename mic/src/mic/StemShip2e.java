@@ -50,17 +50,17 @@ public class StemShip2e extends Decorator implements EditablePiece {
             .put("large/cis/Front Arc","emb2;;2;;Toggle Firing Arc;2;;;2;;;;;true;0;-537;,Arc_2e_CIS_Large.svg;,;true;Arc;;;false;;1;1;true;;70,130;")
 
             // Full Front Arc
-            .put("small/rebelalliance/Full Front Arc","emb2;;2;;Show Auxiliary Arc;2;;;2;;;;;true;0;-423;,Arc_2e_Rebel_Small_FFA.svg;,;true;Show Auxiliary Firing Arc;;;false;;1;1;true;;78,130;")
-            .put("small/galacticempire/Full Front Arc","emb2;;2;;Show Auxiliary Arc;2;;;2;;;;;true;0;-423;,Arc_2e_Empire_Small_FFA.svg;,;true;Show Auxiliary Firing Arc;;;false;;1;1;true;;78,130;")
-            .put("small/scumandvillainy/Full Front Arc","emb2;;2;;Show Auxiliary Arc;2;;;2;;;;;true;0;-423;,Arc_2e_Scum_Small_FFA.svg;,;true;Show Auxiliary Firing Arc;;;false;;1;1;true;;78,130;")
+            .put("small/rebelalliance/Full Front Arc","emb2;;2;;Show Auxiliary Arc;2;;;2;;;;;true;0;-452;,Arc_2e_Rebel_Small_FFA.svg;,;true;Show Auxiliary Firing Arc;;;false;;1;1;true;;78,130;")
+            .put("small/galacticempire/Full Front Arc","emb2;;2;;Show Auxiliary Arc;2;;;2;;;;;true;0;-452;,Arc_2e_Empire_Small_FFA.svg;,;true;Show Auxiliary Firing Arc;;;false;;1;1;true;;78,130;")
+            .put("small/scumandvillainy/Full Front Arc","emb2;;2;;Show Auxiliary Arc;2;;;2;;;;;true;0;-452;,Arc_2e_Scum_Small_FFA.svg;,;true;Show Auxiliary Firing Arc;;;false;;1;1;true;;78,130;")
 
-            .put("medium/rebelalliance/Full Front Arc","emb2;;2;;Show Auxiliary Arc;2;;;2;;;;;true;0;-423;,Arc_2e_Rebel_Medium_FFA.svg;,;true;Show Auxiliary Firing Arc;;;false;;1;1;true;;78,130;")
-            .put("medium/galacticempire/Full Front Arc","emb2;;2;;Show Auxiliary Arc;2;;;2;;;;;true;0;-423;,Arc_2e_Empire_Medium_FFA.svg;,;true;Show Auxiliary Firing Arc;;;false;;1;1;true;;78,130;")
-            .put("medium/scumandvillainy/Full Front Arc","emb2;;2;;Show Auxiliary Arc;2;;;2;;;;;true;0;-423;,Arc_2e_Scum_Medium_FFA.svg;,;true;Show Auxiliary Firing Arc;;;false;;1;1;true;;78,130;")
+            .put("medium/rebelalliance/Full Front Arc","emb2;;2;;Show Auxiliary Arc;2;;;2;;;;;true;0;-466.5;,Arc_2e_Rebel_Medium_FFA.svg;,;true;Show Auxiliary Firing Arc;;;false;;1;1;true;;78,130;")
+            .put("medium/galacticempire/Full Front Arc","emb2;;2;;Show Auxiliary Arc;2;;;2;;;;;true;0;-466.5;,Arc_2e_Empire_Medium_FFA.svg;,;true;Show Auxiliary Firing Arc;;;false;;1;1;true;;78,130;")
+            .put("medium/scumandvillainy/Full Front Arc","emb2;;2;;Show Auxiliary Arc;2;;;2;;;;;true;0;-466.5;,Arc_2e_Scum_Medium_FFA.svg;,;true;Show Auxiliary Firing Arc;;;false;;1;1;true;;78,130;")
 
-            .put("large/rebelalliance/Full Front Arc","emb2;;2;;Show Aux Arc;2;;;2;;;;;true;0;-480;,large_rebel_aux180_arc.svg;,;true;Show Big Aux Arc;;;false;;1;1;true;;78,130;")
-            .put("large/galacticempire/Full Front Arc","emb2;;2;;Show Aux Arc;2;;;2;;;;;true;0;-480;,large_imperial_aux180_arc.svg;,;true;Show Big Aux Arc;;;false;;1;1;true;;78,130;")
-            .put("large/scumandvillainy/Full Front Arc","emb2;;2;;Show Aux Arc;2;;;2;;;;;true;0;-480;,hound's_tooth_arc.svg;,;true;Show Big Aux Arc;;;false;;1;1;true;;78,130;")
+            .put("large/rebelalliance/Full Front Arc","emb2;;2;;Show Aux Arc;2;;;2;;;;;true;0;-480.25;,large_rebel_aux180_arc.svg;,;true;Show Big Aux Arc;;;false;;1;1;true;;78,130;")
+            .put("large/galacticempire/Full Front Arc","emb2;;2;;Show Aux Arc;2;;;2;;;;;true;0;-480.25;,large_imperial_aux180_arc.svg;,;true;Show Big Aux Arc;;;false;;1;1;true;;78,130;")
+            .put("large/scumandvillainy/Full Front Arc","emb2;;2;;Show Aux Arc;2;;;2;;;;;true;0;-480.25;,hound's_tooth_arc.svg;,;true;Show Big Aux Arc;;;false;;1;1;true;;78,130;")
 
             // Rear Arc
             .put("small/rebelalliance/Rear Arc","emb2;;2;;Show Auxiliary Arc;2;;;2;;;;;true;0;481;,Arc_2e_Rebel_Small_Aux.svg;,;true;Show Auxiliary Firing Arc;;;false;;1;1;true;;86,130;")
