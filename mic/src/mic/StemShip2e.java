@@ -258,8 +258,7 @@ public class StemShip2e extends Decorator implements EditablePiece {
                 }
 
 
-                    arcKey = Canonicalizer.getCleanedName(source.getShipData().getSize()) + "/"
-                            + Canonicalizer.getCleanedName(source.getPilotData().getFaction()) + "/" + arc;
+                    arcKey = Canonicalizer.getCleanedName(source.getShipData().getSize()) + "/" + Canonicalizer.getCleanedName(source.getPilotData().getFaction()) + "/" + arc;
 
                 Util.logToChat("StemShip line 212 arcKey = " + arcKey);
                     newType = firingArcTypes.get(arcKey);
