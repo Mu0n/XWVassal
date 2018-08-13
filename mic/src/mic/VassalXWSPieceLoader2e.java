@@ -137,9 +137,9 @@ public class VassalXWSPieceLoader2e {
             //something about conditions here to copy over
             //
 
-            if (pilotCounts.count(pilot.getName()) > 1) {
-                genericPilotsAdded.add(pilot.getName());
-                pilotPieces.setShipNumber(genericPilotsAdded.count(pilot.getName()));
+            if (pilotCounts.count(pilot.getXws()) > 1) {
+                genericPilotsAdded.add(pilot.getXws());
+                pilotPieces.setShipNumber(genericPilotsAdded.count(pilot.getXws()));
             }
 
             pieces.getShips().add(pilotPieces);

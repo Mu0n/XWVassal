@@ -50,9 +50,14 @@ public class StemShip2e extends Decorator implements EditablePiece {
             .put("large/cis/Front Arc","emb2;;2;;Toggle Firing Arc;2;;;2;;;;;true;0;-537;,Arc_2e_CIS_Large.svg;,;true;Arc;;;false;;1;1;true;;70,130;")
 
             // Full Front Arc
-            .put("small/rebelalliance/Full Front Arc","emb2;;2;;Show Auxiliary Arc;2;;;2;;;;;true;0;-423;,auzituck_arc.svg;,;true;Show Auxiliary Firing Arc;;;false;;1;1;true;;78,130;")
-            .put("small/galacticempire/Full Front Arc","emb2;;2;;Show Auxiliary Arc;2;;;2;;;;;true;0;-423;,small_imperial_aux180_arc.svg;,;true;Show Auxiliary Firing Arc;;;false;;1;1;true;;78,130;")
-            .put("small/scumandvillainy/Full Front Arc","emb2;;2;;Show Auxiliary Arc;2;;;2;;;;;true;0;-423;,small_scum_aux180_arc.svg;,;true;Show Auxiliary Firing Arc;;;false;;1;1;true;;78,130;")
+            .put("small/rebelalliance/Full Front Arc","emb2;;2;;Show Auxiliary Arc;2;;;2;;;;;true;0;-423;,Arc_2e_Rebel_Small_FFA.svg;,;true;Show Auxiliary Firing Arc;;;false;;1;1;true;;78,130;")
+            .put("small/galacticempire/Full Front Arc","emb2;;2;;Show Auxiliary Arc;2;;;2;;;;;true;0;-423;,Arc_2e_Empire_Small_FFA.svg;,;true;Show Auxiliary Firing Arc;;;false;;1;1;true;;78,130;")
+            .put("small/scumandvillainy/Full Front Arc","emb2;;2;;Show Auxiliary Arc;2;;;2;;;;;true;0;-423;,Arc_2e_Scum_Small_FFA.svg;,;true;Show Auxiliary Firing Arc;;;false;;1;1;true;;78,130;")
+
+            .put("medium/rebelalliance/Full Front Arc","emb2;;2;;Show Auxiliary Arc;2;;;2;;;;;true;0;-423;,Arc_2e_Rebel_Medium_FFA.svg;,;true;Show Auxiliary Firing Arc;;;false;;1;1;true;;78,130;")
+            .put("medium/galacticempire/Full Front Arc","emb2;;2;;Show Auxiliary Arc;2;;;2;;;;;true;0;-423;,Arc_2e_Empire_Medium_FFA.svg;,;true;Show Auxiliary Firing Arc;;;false;;1;1;true;;78,130;")
+            .put("medium/scumandvillainy/Full Front Arc","emb2;;2;;Show Auxiliary Arc;2;;;2;;;;;true;0;-423;,Arc_2e_Scum_Medium_FFA.svg;,;true;Show Auxiliary Firing Arc;;;false;;1;1;true;;78,130;")
+
             .put("large/rebelalliance/Full Front Arc","emb2;;2;;Show Aux Arc;2;;;2;;;;;true;0;-480;,large_rebel_aux180_arc.svg;,;true;Show Big Aux Arc;;;false;;1;1;true;;78,130;")
             .put("large/galacticempire/Full Front Arc","emb2;;2;;Show Aux Arc;2;;;2;;;;;true;0;-480;,large_imperial_aux180_arc.svg;,;true;Show Big Aux Arc;;;false;;1;1;true;;78,130;")
             .put("large/scumandvillainy/Full Front Arc","emb2;;2;;Show Aux Arc;2;;;2;;;;;true;0;-480;,hound's_tooth_arc.svg;,;true;Show Big Aux Arc;;;false;;1;1;true;;78,130;")
@@ -248,14 +253,12 @@ public class StemShip2e extends Decorator implements EditablePiece {
                     emb = (Embellishment) Util.getEmbellishment(newGamePiece, "Layer - Arc");
                 } else if(arc.equals("Rear Arc")) {
                     emb = (Embellishment) Util.getEmbellishment(newGamePiece, "Layer - Show Auxiliary Firing Arc");
-                } else if(arc.equals("Single Turret Arc")) {
-                } else if(arc.equals("Double Turret Arc")) {
                 } else if(arc.equals("Full Front Arc")) {
+                    emb = (Embellishment) Util.getEmbellishment(newGamePiece, "Layer - Show Full Front Arc");
                 }
 
 
-                    arcKey = Canonicalizer.getCleanedName(source.getShipData().getSize()) + "/"
-                            + Canonicalizer.getCleanedName(source.getPilotData().getFaction()) + "/" + arc;
+                    arcKey = Canonicalizer.getCleanedName(source.getShipData().getSize()) + "/" + Canonicalizer.getCleanedName(source.getPilotData().getFaction()) + "/" + arc;
 
                 Util.logToChat("StemShip line 212 arcKey = " + arcKey);
                     newType = firingArcTypes.get(arcKey);
@@ -320,6 +323,7 @@ public class StemShip2e extends Decorator implements EditablePiece {
             final String scumMediumImage = "TargetLock_Scum_Medium.svg";
             final String scumLargeImage = "TargetLock_Scum_Large.svg";
 
+            String newFaction = XWOTAUtils.simplifyFactionName(faction);
 
             Embellishment myEmb = (Embellishment)Util.getEmbellishment(newGamePiece,targetLockLayerName);
 
@@ -343,7 +347,7 @@ public class StemShip2e extends Decorator implements EditablePiece {
             }else if(newSize.equals("small") && faction.equals("firstorder") )
             {
                 sb.append(firstorderSmallImage);
-            }else if(newSize.equals("small") && faction.equals("republic") )
+            }else if(newSize.equals("small") && faction.equals("galacticrepublic") )
             {
                 sb.append(republicSmallImage);
             }else if(newSize.equals("small") && faction.equals("cis") )
@@ -368,7 +372,7 @@ public class StemShip2e extends Decorator implements EditablePiece {
             }else if(newSize.equals("medium") && faction.equals("firstorder") )
             {
                 sb.append(firstorderMediumImage);
-            }else if(newSize.equals("medium") && faction.equals("republic") )
+            }else if(newSize.equals("medium") && faction.equals("galacticrepublic") )
             {
                 sb.append(republicMediumImage);
             }else if(newSize.equals("medium") && faction.equals("cis") )
@@ -393,7 +397,7 @@ public class StemShip2e extends Decorator implements EditablePiece {
             }else if(newSize.equals("large") && faction.equals("firstorder") )
             {
                 sb.append(firstorderLargeImage);
-            }else if(newSize.equals("large") && faction.equals("republic") )
+            }else if(newSize.equals("large") && faction.equals("galacticrepublic") )
             {
                 sb.append(republicLargeImage);
             }else if(newSize.equals("large") && faction.equals("cis") )
@@ -404,6 +408,7 @@ public class StemShip2e extends Decorator implements EditablePiece {
             sb.append(";,;true;Lock;;;false;;0;1;true;;76,130;");
             Util.logToChat("sb " + sb);
             try{
+
                 myEmb.mySetType(sb.toString());
             }catch(Exception e){
                 Util.logToChat("stemship2e line 406 can't load the TL gfx");

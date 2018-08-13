@@ -316,6 +316,7 @@ public class StemDial2e extends Decorator implements EditablePiece {
             Embellishment myEmb = (Embellishment)Util.getEmbellishment(piece,"Layer - Move");
             //Embellishment myEmb = (Embellishment)Decorator.getDecorator(piece,Embellishment.class);
 
+            Util.logToChat("line 319 stemdial2e stateString " + stateString + " myEmb is null? " + ((myEmb==null)?"yes":"no"));
             myEmb.mySetType(stateString.toString());
 
         }
@@ -330,6 +331,8 @@ public class StemDial2e extends Decorator implements EditablePiece {
             final String wipFirstOrderMask = "Dial_Back_Empire_WIP.pngg";
             final String wipEmpireMask = "Dial_Back_Empire_WIP.png";
             final String wipScumMask = "Dial_Back_Scum_WIP.png";
+            final String wipRepublicMask = "Dial_Back_Republic_WIP.png";
+            final String wipCISMask = "Dial_Back_CIS_WIP.png";
 
 
             // first get the core faction name from the subfaction (i.e. Resistance => RebelAlliance
@@ -345,6 +348,10 @@ public class StemDial2e extends Decorator implements EditablePiece {
                 coreFactionName = "firstorder";
             } else if(faction.equalsIgnoreCase("Scum and Villainy")){
                 coreFactionName = "scumandvillainy";
+            }else if(faction.equalsIgnoreCase("Galactic Republic")){
+                coreFactionName = "galacticrepublic";
+            }else if(faction.equalsIgnoreCase("CIS")){
+                coreFactionName = "cis";
             }
 
             // get the back image
@@ -369,6 +376,12 @@ public class StemDial2e extends Decorator implements EditablePiece {
                 }else if(faction.equalsIgnoreCase("Scum and Villainy"))
                 {
                     dialMaskImageName = wipScumMask;
+                }else if(faction.equalsIgnoreCase("Galactic Republic"))
+                {
+                    dialMaskImageName = wipRepublicMask;
+                }else if(faction.equalsIgnoreCase("CIS"))
+                {
+                    dialMaskImageName = wipCISMask;
                 }
             }
 
