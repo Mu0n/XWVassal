@@ -316,6 +316,7 @@ public class StemDial2e extends Decorator implements EditablePiece {
             Embellishment myEmb = (Embellishment)Util.getEmbellishment(piece,"Layer - Move");
             //Embellishment myEmb = (Embellishment)Decorator.getDecorator(piece,Embellishment.class);
 
+            Util.logToChat("line 319 stemdial2e stateString " + stateString + " myEmb is null? " + ((myEmb==null)?"yes":"no"));
             myEmb.mySetType(stateString.toString());
 
         }
