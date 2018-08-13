@@ -128,25 +128,24 @@ public class XWSList2e {
         }
         public XWSPilot(String name, String ship, String xws, Map upgrades, Map vendor, Integer points)
         {
+            /*
             this.name = name; //pilot, regular format for menus
-            this.ship = ship; //ship type
+            this.ship = ship; //ship type*/
+
             this.xws = xws; //unique pilot
             this.upgrades = upgrades;
             //this.vendor = vendor;
             this.points = points;
         }
 
-        @JsonProperty("multisection_id")
-        private Integer multisectionId;
-
-        @JsonProperty("xws")
+        @JsonProperty("id")
         private String xws;
 
-        @JsonProperty("name")
-        private String name;
+        //@JsonProperty("name")
+        //private String name;
 
-        @JsonProperty("ship")
-        private String ship;
+        //@JsonProperty("ship")
+        //private String ship;
 
         @JsonProperty("upgrades")
         private Map<String, List<String>> upgrades = Maps.newHashMap();
@@ -159,17 +158,14 @@ public class XWSList2e {
         @JsonProperty("points")
         private Integer points;
 
-        public Integer getMultisectionId() {
-            return multisectionId;
-        }
-
+/*
         public String getName() {
             return name;
-        }
+        }*/
         public String getXws() { return xws; }
-        public String getShip() {
+        /*public String getShip() {
             return ship;
-        }
+        }*/
 
         public Map<String, List<String>> getUpgrades() {
             return upgrades;

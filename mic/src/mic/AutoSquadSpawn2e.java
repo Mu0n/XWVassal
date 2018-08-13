@@ -518,11 +518,11 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
         }
 
         for(int i=0; i< stuffToXWS.size(); i++){ //parse all ship/pilot entries
-            String shipString ="\"ship\":\"" + stuffToXWS.get(i).getShipType() + "\",";
+            //String shipString ="\"ship\":\"" + stuffToXWS.get(i).getShipType() + "\",";
             String pilotString = "\"name\":\"" + Canonicalizer.getCleanedName(stuffToXWS.get(i).getShipName()) + "\",";
-            String xws2String = "\"xws\":\"" + stuffToXWS.get(i).getShipPilotXWS2() + "\",";
+            String xws2String = "\"id\":\"" + stuffToXWS.get(i).getShipPilotXWS2() + "\",";
             String upgradesStartString = "\"upgrades\":{";
-            output+= shipString + pilotString + xws2String + upgradesStartString;
+            output+= pilotString + xws2String + upgradesStartString;
 
             for(int j=0; j<stuffToXWS.get(i).getUpgradeBins().size(); j++) //parse all upgrade types
             {
@@ -837,7 +837,7 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
 
             for (XWSList2e.XWSPilot pilot : list.getPilots())
             {
-                if(skippedPilots.get(pilot.getName()) == null)
+                if(skippedPilots.get(pilot.getXws()) == null)
                 {
                     newList.addPilot(pilot);
                 }
