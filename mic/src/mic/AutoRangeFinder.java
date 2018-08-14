@@ -1714,7 +1714,7 @@ public class AutoRangeFinder extends Decorator implements EditablePiece, MouseLi
             E2B = thisShip.tPts.get(16);
             E3B = thisShip.tPts.get(17);
         }
-        else if(whichOption == mobileSideArcOption){
+        else if(whichOption == mobileSideArcOption && twoPointOh == false){
                 //left side check
                 A1 = thisShip.tPts.get(5);
                 A2 = thisShip.tPts.get(0);
@@ -1728,6 +1728,20 @@ public class AutoRangeFinder extends Decorator implements EditablePiece, MouseLi
 
                 E3 = thisShip.tPts.get(3);
                 E4 = thisShip.tPts.get(6);
+        }else if(whichOption == mobileSideArcOption && twoPointOh == true){
+            //left side check
+            A1 = thisShip.tPts.get(5);
+            A2 = thisShip.tPts.get(0);
+
+            E1 = thisShip.tPts.get(7);
+            E2 = thisShip.tPts.get(2);
+
+            //right side check
+            A3 = thisShip.tPts.get(1);
+            A4 = thisShip.tPts.get(4);
+
+            E3 = thisShip.tPts.get(3);
+            E4 = thisShip.tPts.get(6);
         }
         else if(whichOption == bullseyeArcOption){
             A1 = thisShip.tPts.get(12);
@@ -1749,13 +1763,14 @@ public class AutoRangeFinder extends Decorator implements EditablePiece, MouseLi
                 bigAnnounce += "for Target Lock/Turrets - from ";
                 break;
             case backArcOption:
-                bigAnnounce += "for the backward auxiliary arc - from";
+                bigAnnounce += "for the backward auxiliary arc - from ";
                 break;
             case frontAuxArcOption:
-                bigAnnounce += "for the front pair of auxiliary arcs - from";
+                if(twoPointOh == false) bigAnnounce += "for the front pair of auxiliary arcs - from ";
+                else bigAnnounce += "for the full front arc - from ";
                 break;
             case  bullseyeArcOption:
-                bigAnnounce += "for the bullseye arc - from";
+                bigAnnounce += "for the bullseye arc - from ";
                 break;
         }
 

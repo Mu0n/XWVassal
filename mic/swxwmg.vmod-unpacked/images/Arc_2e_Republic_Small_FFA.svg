@@ -18,7 +18,7 @@
 
 <rect x="847.5" width="113" id="rect3016" y="0" height="847.5" style="fill:#2f78ff;fill-opacity:0.25"/>
 <rect x="847.5" width="113" id="rect3017" y="282.5" height="565" style="fill:#2f78ff;fill-opacity:0.25"/>
-<rect x="847.5" width="113.5" id="rect3018" y="565" height="282.5" style="fill:#2f78ff;fill-opacity:0.25"/>
+<rect x="847.5" width="113" id="rect3018" y="565" height="282.5" style="fill:#2f78ff;fill-opacity:0.25"/>
 
 <path style="fill:#2f78ff;fill-opacity:0.25" d="M 847.5, 0 A 847.5,847.5 1 0 0 0,847.5 h 847.5" id="path3017"/>
 <path style="fill:#2f78ff;fill-opacity:0.25" d="M 847.5, 282.5 A 565,565 1 0 0 282.5,847.5 h 565" id="path3017"/>
