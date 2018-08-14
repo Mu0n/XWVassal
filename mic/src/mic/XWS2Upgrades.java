@@ -1,9 +1,9 @@
 package mic;
 
-import com.fasterxml.jackson.annotation.JacksonInject;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonRootName;
+import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
@@ -19,21 +19,42 @@ import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class XWS2Upgrades {
-    //private static String remoteUrl = "https://gist.githubusercontent.com/guidokessels/0751793c9635eb67dcc2cad897e14b4b/raw/6ec0489ca527c49258297ead1945604bf3d3d046/xwing-data2-manifest.json";
-    private static String remoteUrl = "https://raw.githubusercontent.com/Mu0n/XWVassalOTA2e/master/upgrades.json";
 
-    @JsonProperty("name")
-    private String name;
+    private static String remoteUrl = "https://raw.githubusercontent.com/Mu0nHub/xwing-data2/master/data/manifest.json";
+    //private static String guidoRootUrl = "https://raw.githubusercontent.com/guidokessels/xwing-data2/master/";
+    private static String guidoRootUrl = "https://raw.githubusercontent.com/Mu0nHub/xwing-data2/master/";
 
-    @JsonProperty("limited")
-    private int limited;
+    @JsonUnwrapped
+    private List<OneUpgrade> upgrades = Lists.newArrayList();
 
-    @JsonProperty("sides")
-    List<side> sides = Lists.newArrayList();
+    public XWS2Upgrades() {}
 
-    public String getName() { return this.name;}
-    public int getLimited() { return this.limited; }
-    public List<side> getSides() { return this.sides; }
+    public List<OneUpgrade> getUpgrades(){return upgrades;}
+    public void add(OneUpgrade oneUp){ upgrades.add(oneUp);}
+
+//more like upgrade type
+
+    public class OneUpgrade{
+        public OneUpgrade() { super(); }
+        public OneUpgrade(String name, int limited, List<side> sides){
+            this.name = name;
+            this.limited = limited;
+            this.sides = sides;
+        }
+
+        @JsonProperty("name")
+        private String name;
+
+        @JsonProperty("limited")
+        private int limited;
+
+        @JsonProperty("sides")
+        List<side> sides = Lists.newArrayList();
+
+        public String getName() { return this.name;}
+        public int getLimited() { return this.limited; }
+        public List<side> getSides() { return this.sides; }
+    }
 
     public static class side{
         public side() { super(); }
@@ -55,53 +76,43 @@ public class XWS2Upgrades {
         public String getTitle() { return this.title; }
         public String getType() { return this.type; }
         public String getAbility() { return this.ability; }
+
+
+
     }
 
     public static class upgradesDataSources{
         public upgradesDataSources() { super(); }
-        public upgradesDataSources(List<XWS2Upgrades.oneUpgradeDataSource> upgrades){
-            this.upgrades = upgrades;
+        public upgradesDataSources(List<String> urlEnd){
+            this.urlEnds = urlEnd;
         }
         @JsonProperty("upgrades")
-        List<XWS2Upgrades.oneUpgradeDataSource> upgrades = Lists.newArrayList();
+        List<String> urlEnds = Lists.newArrayList();
 
-        public List<XWS2Upgrades.oneUpgradeDataSource> getUpgrades(){return this.upgrades;}
+        public List<String> getUrlEnds(){return this.urlEnds;}
     }
 
-    public static class oneUpgradeDataSource{
-        public oneUpgradeDataSource() { super();}
-        public oneUpgradeDataSource(String name, String url){
-            this.name = name;
-            this.url = url;
-        }
-        @JsonProperty("name")
-        private String name;
 
-        @JsonProperty("url")
-        private String url;
+    public static List<XWS2Upgrades.OneUpgrade> loadFromRemote() {
+        upgradesDataSources whereToGetUpgrades = XWS2Upgrades.loadRemoteJsonArray(new URL(remoteUrl.toString()), upgradesDataSources.class);
 
-        public String getName(){return this.name;}
-        public String getURL(){return this.url;}
-    }
-
-    public static List<XWS2Upgrades> loadFromRemote() {
-        upgradesDataSources whereToGetUpgrades = Util.loadRemoteJson(remoteUrl, upgradesDataSources.class);
-
-        List<XWS2Upgrades> allUpgrades = Lists.newArrayList();
-        for(oneUpgradeDataSource oUDS : whereToGetUpgrades.getUpgrades()){
+        List<XWS2Upgrades.OneUpgrade> allUpgrades = Lists.newArrayList();
+        for(String urlEnd : whereToGetUpgrades.getUrlEnds()){
             try {
-                List<XWS2Upgrades> aList = XWS2Upgrades.loadRemoteJsonArray(new URL(oUDS.getURL()));
-                for(XWS2Upgrades anUp : aList){
-                    allUpgrades.add(anUp);
+                XWS2Upgrades upgradesToAdd = Util.loadRemoteJson(guidoRootUrl+urlEnd, XWS2Upgrades.class);
+                for(XWS2Upgrades.OneUpgrade oneUp : upgradesToAdd.getUpgrades()){
+                    allUpgrades.add(oneUp);
                 }
 
             }catch (Exception e){
-                Util.logToChat(e.getMessage() + " on upgrade type " + oUDS.getName());
+                Util.logToChat(e.getMessage() + " on upgrade type " + urlEnd);
                 continue;
             }
         }
         return allUpgrades;
     }
+
+
 
     private static ObjectMapper mapper = new ObjectMapper()
             .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);

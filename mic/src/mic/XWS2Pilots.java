@@ -321,7 +321,6 @@ public class XWS2Pilots {
                     //adding faction to every pilot
                     for(XWS2Pilots.Pilot2e p : pilotsToAdd.getPilots()){
                      p.setFaction(pilotsToAdd.getFaction());
-                        Util.logToChat("line 325 XWS2 Pilot xws at loading: "+ p.getXWS());
                     }
 
                     allPilots.add(pilotsToAdd);
@@ -343,14 +342,10 @@ public class XWS2Pilots {
             {
                 String foundXWS2="";
                 try{
-
-                    Util.logToChat("xws2=" + aPilot.getXWS());
                     foundXWS2 =  aPilot.getXWS();
                 }catch(Exception e){}
 
-                Util.logToChat("XWS2Pilots getSpecific ship line 361 foundXWS2 " + foundXWS2 + " searchedXWS2 "+ searchedXWS2Name);
                 if(foundXWS2.equals(searchedXWS2Name)) {
-                    Util.logToChat("match");
                     return aShip;
                 }
             }
@@ -364,10 +359,6 @@ public class XWS2Pilots {
             for(XWS2Pilots.Pilot2e aPilot : aShip.getPilots())
             {
                 String theXWS2String = aPilot.getXWS();
-                Util.logToChat("XWS2Pilots getSpecificPilot ship line 386 foundXWS2 " + theXWS2String + " searchedXWS2 "+ searchedXWS2Name);
-
-                // TODO replace with this eventually
-                // String theXWS2String = aPilot.getXWS2();
                 if(theXWS2String.equals(searchedXWS2Name)) return aPilot;
             }
         }

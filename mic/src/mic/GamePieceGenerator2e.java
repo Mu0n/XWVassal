@@ -70,7 +70,7 @@ public class GamePieceGenerator2e
         */
         StemShip2e.ShipGenerateCommand myShipGen = new StemShip2e.ShipGenerateCommand(
                 ship, ship.getShipData().getName(),
-                newShip, ship.getShipData().getFaction(), ship.getPilotData().getXWS(),false,
+                newShip, ship.getShipData().getFaction(), ship.getPilotData().getXWS(),true,
                 false, "","","");
         myShipGen.execute();
 

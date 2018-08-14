@@ -58,21 +58,21 @@ public class StemShip2e extends Decorator implements EditablePiece {
             .put("small/galacticrepublic/Full Front Arc","emb2;;2;;Show Auxiliary Arc;2;;;2;;;;;true;0;-452;,Arc_2e_Republic_Small_FFA.svg;,;true;Show Auxiliary Firing Arc;;;false;;1;1;true;;78,130;")
             .put("small/cis/Full Front Arc","emb2;;2;;Show Auxiliary Arc;2;;;2;;;;;true;0;-452;,Arc_2e_CIS_Small_FFA.svg;,;true;Show Auxiliary Firing Arc;;;false;;1;1;true;;78,130;")
 
-            .put("medium/rebelalliance/Full Front Arc","emb2;;2;;Show Auxiliary Arc;2;;;2;;;;;true;0;-466.5;,Arc_2e_Rebel_Medium_FFA.svg;,;true;Show Auxiliary Firing Arc;;;false;;1;1;true;;78,130;")
-            .put("medium/galacticempire/Full Front Arc","emb2;;2;;Show Auxiliary Arc;2;;;2;;;;;true;0;-466.5;,Arc_2e_Empire_Medium_FFA.svg;,;true;Show Auxiliary Firing Arc;;;false;;1;1;true;;78,130;")
-            .put("medium/scumandvillainy/Full Front Arc","emb2;;2;;Show Auxiliary Arc;2;;;2;;;;;true;0;-466.5;,Arc_2e_Scum_Medium_FFA.svg;,;true;Show Auxiliary Firing Arc;;;false;;1;1;true;;78,130;")
-            .put("medium/resistance/Full Front Arc","emb2;;2;;Show Auxiliary Arc;2;;;2;;;;;true;0;-466.5;,Arc_2e_Resistance_Medium_FFA.svg;,;true;Show Auxiliary Firing Arc;;;false;;1;1;true;;78,130;")
-            .put("medium/firstorder/Full Front Arc","emb2;;2;;Show Auxiliary Arc;2;;;2;;;;;true;0;-466.5;,Arc_2e_FirstOrder_Medium_FFA.svg;,;true;Show Auxiliary Firing Arc;;;false;;1;1;true;;78,130;")
-            .put("medium/galacticrepublic/Full Front Arc","emb2;;2;;Show Auxiliary Arc;2;;;2;;;;;true;0;-466.5;,Arc_2e_Republic_Medium_FFA.svg;,;true;Show Auxiliary Firing Arc;;;false;;1;1;true;;78,130;")
-            .put("medium/cis/Full Front Arc","emb2;;2;;Show Auxiliary Arc;2;;;2;;;;;true;0;-466.5;,Arc_2e_CIS_Medium_FFA.svg;,;true;Show Auxiliary Firing Arc;;;false;;1;1;true;;78,130;")
+            .put("medium/rebelalliance/Full Front Arc","emb2;;2;;Show Auxiliary Arc;2;;;2;;;;;true;0;-466;,Arc_2e_Rebel_Medium_FFA.svg;,;true;Show Auxiliary Firing Arc;;;false;;1;1;true;;78,130;")
+            .put("medium/galacticempire/Full Front Arc","emb2;;2;;Show Auxiliary Arc;2;;;2;;;;;true;0;-466;,Arc_2e_Empire_Medium_FFA.svg;,;true;Show Auxiliary Firing Arc;;;false;;1;1;true;;78,130;")
+            .put("medium/scumandvillainy/Full Front Arc","emb2;;2;;Show Auxiliary Arc;2;;;2;;;;;true;0;-466;,Arc_2e_Scum_Medium_FFA.svg;,;true;Show Auxiliary Firing Arc;;;false;;1;1;true;;78,130;")
+            .put("medium/resistance/Full Front Arc","emb2;;2;;Show Auxiliary Arc;2;;;2;;;;;true;0;-466;,Arc_2e_Resistance_Medium_FFA.svg;,;true;Show Auxiliary Firing Arc;;;false;;1;1;true;;78,130;")
+            .put("medium/firstorder/Full Front Arc","emb2;;2;;Show Auxiliary Arc;2;;;2;;;;;true;0;-466;,Arc_2e_FirstOrder_Medium_FFA.svg;,;true;Show Auxiliary Firing Arc;;;false;;1;1;true;;78,130;")
+            .put("medium/galacticrepublic/Full Front Arc","emb2;;2;;Show Auxiliary Arc;2;;;2;;;;;true;0;-466;,Arc_2e_Republic_Medium_FFA.svg;,;true;Show Auxiliary Firing Arc;;;false;;1;1;true;;78,130;")
+            .put("medium/cis/Full Front Arc","emb2;;2;;Show Auxiliary Arc;2;;;2;;;;;true;0;-466;,Arc_2e_CIS_Medium_FFA.svg;,;true;Show Auxiliary Firing Arc;;;false;;1;1;true;;78,130;")
 
-            .put("large/rebelalliance/Full Front Arc","emb2;;2;;Show Aux Arc;2;;;2;;;;;true;0;-480.25;,Arc_2e_Rebel_Large_FFA.svg;,;true;Show Big Aux Arc;;;false;;1;1;true;;78,130;")
-            .put("large/galacticempire/Full Front Arc","emb2;;2;;Show Aux Arc;2;;;2;;;;;true;0;-480.25;,Arc_2e_Empire_Large_FFA.svg;,;true;Show Big Aux Arc;;;false;;1;1;true;;78,130;")
-            .put("large/scumandvillainy/Full Front Arc","emb2;;2;;Show Aux Arc;2;;;2;;;;;true;0;-480.25;,Arc_2e_Scum_Large_FFA.svg;,;true;Show Big Aux Arc;;;false;;1;1;true;;78,130;")
-            .put("large/resistance/Full Front Arc","emb2;;2;;Show Aux Arc;2;;;2;;;;;true;0;-480.25;,Arc_2e_Resistance_Large_FFA.svg;,;true;Show Big Aux Arc;;;false;;1;1;true;;78,130;")
-            .put("large/firstorder/Full Front Arc","emb2;;2;;Show Aux Arc;2;;;2;;;;;true;0;-480.25;,Arc_2e_FirstOrder_Large_FFA.svg;,;true;Show Big Aux Arc;;;false;;1;1;true;;78,130;")
-            .put("large/galacticrepublic/Full Front Arc","emb2;;2;;Show Aux Arc;2;;;2;;;;;true;0;-480.25;,Arc_2e_Republic_Large_FFA.svg;,;true;Show Big Aux Arc;;;false;;1;1;true;;78,130;")
-            .put("large/cis/Full Front Arc","emb2;;2;;Show Aux Arc;2;;;2;;;;;true;0;-480.25;,Arc_2e_CIS_Large_FFA.svg;,;true;Show Big Aux Arc;;;false;;1;1;true;;78,130;")
+            .put("large/rebelalliance/Full Front Arc","emb2;;2;;Show Aux Arc;2;;;2;;;;;true;0;-480;,Arc_2e_Rebel_Large_FFA.svg;,;true;Show Big Aux Arc;;;false;;1;1;true;;78,130;")
+            .put("large/galacticempire/Full Front Arc","emb2;;2;;Show Aux Arc;2;;;2;;;;;true;0;-480;,Arc_2e_Empire_Large_FFA.svg;,;true;Show Big Aux Arc;;;false;;1;1;true;;78,130;")
+            .put("large/scumandvillainy/Full Front Arc","emb2;;2;;Show Aux Arc;2;;;2;;;;;true;0;-480;,Arc_2e_Scum_Large_FFA.svg;,;true;Show Big Aux Arc;;;false;;1;1;true;;78,130;")
+            .put("large/resistance/Full Front Arc","emb2;;2;;Show Aux Arc;2;;;2;;;;;true;0;-480;,Arc_2e_Resistance_Large_FFA.svg;,;true;Show Big Aux Arc;;;false;;1;1;true;;78,130;")
+            .put("large/firstorder/Full Front Arc","emb2;;2;;Show Aux Arc;2;;;2;;;;;true;0;-480;,Arc_2e_FirstOrder_Large_FFA.svg;,;true;Show Big Aux Arc;;;false;;1;1;true;;78,130;")
+            .put("large/galacticrepublic/Full Front Arc","emb2;;2;;Show Aux Arc;2;;;2;;;;;true;0;-480;,Arc_2e_Republic_Large_FFA.svg;,;true;Show Big Aux Arc;;;false;;1;1;true;;78,130;")
+            .put("large/cis/Full Front Arc","emb2;;2;;Show Aux Arc;2;;;2;;;;;true;0;-480;,Arc_2e_CIS_Large_FFA.svg;,;true;Show Big Aux Arc;;;false;;1;1;true;;78,130;")
 
             // Rear Arc
             .put("small/rebelalliance/Rear Arc","emb2;;2;;Show Auxiliary Arc;2;;;2;;;;;true;0;481;,Arc_2e_Rebel_Small_Aux.svg;,;true;Show Auxiliary Firing Arc;;;false;;1;1;true;;86,130;")
@@ -210,10 +210,7 @@ public class StemShip2e extends Decorator implements EditablePiece {
 
             // fetch the maneuver array of arrays according to the xws name passed on from autospawn or other means
             xwsShipName = Canonicalizer.getCleanedName(shipXws);
-            Util.logToChat("line 196 stemship2e faction pre " + faction);
             this.faction = Canonicalizer.getCleanedName(faction);
-
-            Util.logToChat("line 196 stemship2e faction post " + this.faction);
             shipName = source.getShipData().getName();
             this.piece = piece;
             this.xwsPilot = xwsPilot;
@@ -239,8 +236,6 @@ public class StemShip2e extends Decorator implements EditablePiece {
             // add the firing arcs needed
             piece = addFiringArcs(piece);
 
-
-
             if(this.needsBombCapability) {
                 piece = addBombCapability(piece,size);
             }
@@ -261,18 +256,14 @@ public class StemShip2e extends Decorator implements EditablePiece {
             while(i.hasNext())
             {
                 arc = i.next().getArc();
-                if(arc.equals("Front Arc")) {
-                    emb = (Embellishment) Util.getEmbellishment(newGamePiece, "Layer - Arc");
-                } else if(arc.equals("Rear Arc")) {
+                if(arc.equals("Rear Arc")) {
                     emb = (Embellishment) Util.getEmbellishment(newGamePiece, "Layer - Show Auxiliary Firing Arc");
                 } else if(arc.equals("Full Front Arc")) {
                     emb = (Embellishment) Util.getEmbellishment(newGamePiece, "Layer - Show Full Front Arc");
                 }
 
-
                     arcKey = Canonicalizer.getCleanedName(source.getShipData().getSize()) + "/" + Canonicalizer.getCleanedName(source.getPilotData().getFaction()) + "/" + arc;
 
-                Util.logToChat("StemShip line 212 arcKey = " + arcKey);
                     newType = firingArcTypes.get(arcKey);
                     if(newType != null && !newType.isEmpty())
                     {
@@ -281,30 +272,32 @@ public class StemShip2e extends Decorator implements EditablePiece {
 
             }
 
+            //add front arc for all, for card effects mostly even if there's no front arc primary weapon
+            emb = (Embellishment) Util.getEmbellishment(newGamePiece, "Layer - Arc");
+            arc = "Front Arc";
+            arcKey = Canonicalizer.getCleanedName(source.getShipData().getSize()) + "/"
+                    + Canonicalizer.getCleanedName(source.getPilotData().getFaction()) + "/" + arc;
+            newType = firingArcTypes.get(arcKey);
+            if(newType != null && !newType.isEmpty())
+            {
+                emb.mySetType(newType);
+            }
+
             //add bullseye for all
-            emb=null;
             emb = (Embellishment) Util.getEmbellishment(newGamePiece, "Layer - Show Bullseye Arc");
             arc = "Bullseye";
             arcKey = Canonicalizer.getCleanedName(source.getShipData().getSize()) + "/"
                     + Canonicalizer.getCleanedName(source.getPilotData().getFaction()) + "/" + arc;
-
-            Util.logToChat("StemShip line 244 arcKey = " + arcKey);
-            newType=null;
-
-                newType = firingArcTypes.get(arcKey);
-
-
-           if(newType != null && !newType.isEmpty())
-        {
-            emb.mySetType(newType);
-        }
-
+            newType = firingArcTypes.get(arcKey);
+            if(newType != null && !newType.isEmpty())
+            {
+                emb.mySetType(newType);
+            }
             return newGamePiece;
         }
 
         private GamePiece addTargetLock(GamePiece newGamePiece, String faction, String newSize)
         {
-
             final String targetLockLayerName = "Layer - Lock";
 
             final String cisSmallImage = "TargetLock_CIS.svg";

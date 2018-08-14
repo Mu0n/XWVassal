@@ -44,7 +44,7 @@ public class VassalXWSPieceLoader2e {
     Map<Obstacles, PieceSlot> obstaclesPiecesMap = Maps.newHashMap();
     // Map<String, VassalXWSPilotPieces2e.Condition> conditionPiecesMap = Maps.newHashMap();
 
-    public VassalXWSListPieces2e loadListFromXWS(XWSList2e list, List<XWS2Pilots> allPilots, List<XWS2Upgrades> allUpgrades) {
+    public VassalXWSListPieces2e loadListFromXWS(XWSList2e list, List<XWS2Pilots> allPilots, List<XWS2Upgrades.OneUpgrade> allUpgrades) {
 
         //the following object is the full structure shebang that'll get returned at the end
         VassalXWSListPieces2e pieces = new VassalXWSListPieces2e();

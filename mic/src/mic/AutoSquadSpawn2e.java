@@ -65,7 +65,7 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
     //Main interface via a Java Swing JFrame. The complexity has outgrown an InputDialog - we now use ActionListener on the JComboBox and JButton to react to the user commands
     private void spawnForPlayer(final int playerIndex) {
         final List<XWS2Pilots> allShips = XWS2Pilots.loadFromRemote();
-        final List<XWS2Upgrades> allUpgrades = XWS2Upgrades.loadFromRemote();
+        final List<XWS2Upgrades.OneUpgrade> allUpgrades = XWS2Upgrades.loadFromRemote();
 
         final List<String> factionsWanted = Lists.newArrayList();
 
@@ -197,7 +197,7 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
 
     }
 
-    private void internalSquadBuilder(final int playerIndex, final List<String> factionsWanted, final List<XWS2Pilots> allShips, final List<XWS2Upgrades> allUpgrades){
+    private void internalSquadBuilder(final int playerIndex, final List<String> factionsWanted, final List<XWS2Pilots> allShips, final List<XWS2Upgrades.OneUpgrade> allUpgrades){
 
 
         final JFrame frame = new JFrame();
@@ -345,7 +345,7 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
         return null;
     }
 
-    private void DealWithXWSList(XWSList2e xwsList, int playerIndex, List<XWS2Pilots> allPilots, List<XWS2Upgrades> allUpgrades) {
+    private void DealWithXWSList(XWSList2e xwsList, int playerIndex, List<XWS2Pilots> allPilots, List<XWS2Upgrades.OneUpgrade> allUpgrades) {
 
         Map playerMap = getPlayerMap(playerIndex);
         if (playerMap == null) {
@@ -547,9 +547,9 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
     }
 
     //Helper method that will populate the leftmost combobox for an upgrade - lists the types of upgrades (should be fairly stable)
-    private void populateUpgradeTypes(JComboBox upgradeTypesComboBox, List<XWS2Upgrades> allUpgrades) {
+    private void populateUpgradeTypes(JComboBox upgradeTypesComboBox, List<XWS2Upgrades.OneUpgrade> allUpgrades) {
         List<String> upgradeTypesSoFar = Lists.newArrayList();
-        for(XWS2Upgrades up : allUpgrades)
+        for(XWS2Upgrades.OneUpgrade up : allUpgrades)
         {
             for(XWS2Upgrades.side side : up.getSides())
             {
@@ -564,7 +564,7 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
 
 
     //helper method that adds a panel containing 2 new comboboxes (upgrade type + upgrade within that type), the [x] delete button. Should be used as well by the Add/clone Pilot method
-    private void addUpgradeEntry(boolean wantAddButtonAsFirstUpgrade, final JPanel theUpgPanelHolderVert, final JFrame frame, final List<XWS2Upgrades> allUpgrades) {
+    private void addUpgradeEntry(boolean wantAddButtonAsFirstUpgrade, final JPanel theUpgPanelHolderVert, final JFrame frame, final List<XWS2Upgrades.OneUpgrade> allUpgrades) {
         final JPanel anUpgradePanel = new JPanel();
         anUpgradePanel.setLayout(new BoxLayout(anUpgradePanel, BoxLayout.X_AXIS));
         anUpgradePanel.add(Box.createRigidArea(new Dimension(25,0)));
@@ -578,7 +578,7 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
             @Override
             public void itemStateChanged(ItemEvent e) {
                 upgradesComboBox.removeAllItems();
-                for(XWS2Upgrades ups : allUpgrades){
+                for(XWS2Upgrades.OneUpgrade ups : allUpgrades){
                     if(upgradeTypesComboBox.getSelectedItem().equals(ups.getSides().get(0).getType())) upgradesComboBox.addItem(ups.getName());
                 }
             }
@@ -627,7 +627,9 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
         }
     }
     //Reacts to both "Add Ship" and "Clone Ship" buttons
-    private void copyOrCloneShipButtonBehavior(final List<String> factionsWanted, final boolean wantCloning, final JComboBox toCopyShip, final JComboBox toCopyPilot, final JPanel rootPanel, final JFrame frame, final List<XWS2Pilots> allShips, final List<XWS2Upgrades> allUpgrades) {
+    private void copyOrCloneShipButtonBehavior(final List<String> factionsWanted, final boolean wantCloning, final JComboBox toCopyShip,
+                                               final JComboBox toCopyPilot, final JPanel rootPanel,
+                                               final JFrame frame, final List<XWS2Pilots> allShips, final List<XWS2Upgrades.OneUpgrade> allUpgrades) {
         if(toCopyShip.getSelectedItem().toString().equals("Select a ship.")) {
             JFrame warnFrame = new JFrame();
             JOptionPane.showMessageDialog(warnFrame, "Please select a ship and a pilot before cloning.");
@@ -785,7 +787,7 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
     }
 
 
-    private void validateList(XWSList2e list, final List<XWS2Pilots> allShips, final List<XWS2Upgrades> allUpgrades) throws XWSpawnException
+    private void validateList(XWSList2e list, final List<XWS2Pilots> allShips, final List<XWS2Upgrades.OneUpgrade> allUpgrades) throws XWSpawnException
     {
         boolean error = false;
         XWSpawnException exception = new XWSpawnException();
