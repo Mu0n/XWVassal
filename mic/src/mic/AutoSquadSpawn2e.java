@@ -574,6 +574,8 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
 
         final JComboBox upgradesComboBox = new JComboBox();
 
+        logToChat("number of upgrades entries " + Integer.toString(allUpgrades.size()));
+
         upgradeTypesComboBox.addItemListener(new ItemListener() {
             @Override
             public void itemStateChanged(ItemEvent e) {
