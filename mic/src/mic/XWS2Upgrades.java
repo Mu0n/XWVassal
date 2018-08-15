@@ -19,9 +19,9 @@ import java.util.List;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class XWS2Upgrades {
 
-    private static String remoteUrl = "https://raw.githubusercontent.com/Mu0nHub/xwing-data2/master/data/manifest.json";
+    private static String remoteUrl = "https://raw.githubusercontent.com/guidokessels/xwing-data2/master/data/manifest.json";
     //private static String guidoRootUrl = "https://raw.githubusercontent.com/guidokessels/xwing-data2/master/";
-    private static String guidoRootUrl = "https://raw.githubusercontent.com/Mu0nHub/xwing-data2/master/";
+    private static String guidoRootUrl = "https://raw.githubusercontent.com/guidokessels/xwing-data2/master/";
 
     @JsonUnwrapped
     private List<OneUpgrade> upgrades = Lists.newArrayList();
@@ -34,7 +34,7 @@ public class XWS2Upgrades {
 
 //more like upgrade type
 
-    public class OneUpgrade{
+    public static class OneUpgrade {
         public OneUpgrade() { super(); }
         public OneUpgrade(String name, int limited, List<side> sides){
             this.name = name;
@@ -56,7 +56,7 @@ public class XWS2Upgrades {
         public List<side> getSides() { return this.sides; }
     }
 
-    public static class side{
+    public static class side {
         public side() { super(); }
         public side(String title, String type, String ability){
             this.title = title;
@@ -138,7 +138,6 @@ public class XWS2Upgrades {
         try {
             InputStream inputStream = new BufferedInputStream(url.openStream());
             List<XWS2Upgrades.OneUpgrade> rawData = mapper.readValue(inputStream,  mapper.getTypeFactory().constructCollectionType(List.class, XWS2Upgrades.OneUpgrade.class));
-            //XWS2Upgrades.OneUpgrade[] rawData =  mapper.readValue(url, XWS2Upgrades.OneUpgrade[].class);
             Util.logToChat("count in rawData " + Integer.toString(rawData.size()));
             Util.logToChat("first element in rawData " + rawData.get(0).getName());
             return rawData;
