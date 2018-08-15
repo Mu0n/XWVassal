@@ -93,7 +93,7 @@ public class XWS2Upgrades {
     }
 
 
-    public static List<XWS2Upgrades.OneUpgrade> loadFromRemote() {
+    public static XWS2Upgrades loadFromRemote() {
 
         upgradesDataSources whereToGetUpgrades = new upgradesDataSources();
         try{
@@ -102,12 +102,20 @@ public class XWS2Upgrades {
 
         }
 
-        List<XWS2Upgrades.OneUpgrade> allUpgrades = Lists.newArrayList();
+        XWS2Upgrades allUpgrades = new XWS2Upgrades();
         for(String urlEnd : whereToGetUpgrades.getUrlEnds()){
-            try {
-                Util.logToChat("reading url end " + urlEnd);
-                List<XWS2Upgrades.OneUpgrade> upgradesListRead = XWS2Upgrades.loadRemoteJsonArrayOfOneUpgrades(new URL(guidoRootUrl+urlEnd));
 
+            List<XWS2Upgrades.OneUpgrade> upgradesListRead = Lists.newArrayList();
+            try {
+                Util.logToChat("full combined URL about to read an upgrade type " + guidoRootUrl + urlEnd);
+                upgradesListRead = XWS2Upgrades.loadRemoteJsonArrayOfOneUpgrades(new URL(guidoRootUrl+urlEnd));
+                //XWS2Upgrades upgradesListRead = Util.loadRemoteJson(new URL(guidoRootUrl+urlEnd), XWS2Upgrades.class);
+            }catch (Exception e){
+                Util.logToChat(e.getMessage() + " on loading a single urlEnd " + urlEnd);
+                continue;
+            }
+
+            try{
                 Util.logToChat("upgradesListRead size " + Integer.toString(upgradesListRead.size()));
                 for(XWS2Upgrades.OneUpgrade oneUp : upgradesListRead){
                     Util.logToChat("reading upgrade " + oneUp.getName());
@@ -115,7 +123,7 @@ public class XWS2Upgrades {
                 }
 
             }catch (Exception e){
-                Util.logToChat(e.getMessage() + " on upgrade type " + urlEnd);
+                Util.logToChat(e.getMessage() + " on upgrade type at " + urlEnd);
                 continue;
             }
         }
@@ -129,7 +137,11 @@ public class XWS2Upgrades {
     public static List<XWS2Upgrades.OneUpgrade> loadRemoteJsonArrayOfOneUpgrades(URL url) {
         try {
             InputStream inputStream = new BufferedInputStream(url.openStream());
-            return mapper.readValue(inputStream,  mapper.getTypeFactory().constructCollectionType(List.class, XWS2Upgrades.OneUpgrade.class));
+            List<XWS2Upgrades.OneUpgrade> rawData = mapper.readValue(inputStream,  mapper.getTypeFactory().constructCollectionType(List.class, XWS2Upgrades.OneUpgrade.class));
+            //XWS2Upgrades.OneUpgrade[] rawData =  mapper.readValue(url, XWS2Upgrades.OneUpgrade[].class);
+            Util.logToChat("count in rawData " + Integer.toString(rawData.size()));
+            Util.logToChat("first element in rawData " + rawData.get(0).getName());
+            return rawData;
         } catch (Exception e) {
             System.out.println("Unhandled error parsing remote json: \n" + e.toString());
             return null;
