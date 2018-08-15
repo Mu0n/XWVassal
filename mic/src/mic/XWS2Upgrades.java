@@ -2,7 +2,6 @@ package mic;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonRootName;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -94,13 +93,19 @@ public class XWS2Upgrades {
 
 
     public static List<XWS2Upgrades.OneUpgrade> loadFromRemote() {
-        upgradesDataSources whereToGetUpgrades = XWS2Upgrades.loadRemoteJsonArray(new URL(remoteUrl.toString()), upgradesDataSources.class);
+
+        upgradesDataSources whereToGetUpgrades = new upgradesDataSources();
+        try{
+            whereToGetUpgrades = XWS2Upgrades.loadRemoteJsonArrayOfUrlEnds(new URL(remoteUrl));
+        }catch(Exception e){
+
+        }
 
         List<XWS2Upgrades.OneUpgrade> allUpgrades = Lists.newArrayList();
         for(String urlEnd : whereToGetUpgrades.getUrlEnds()){
             try {
-                XWS2Upgrades upgradesToAdd = Util.loadRemoteJson(guidoRootUrl+urlEnd, XWS2Upgrades.class);
-                for(XWS2Upgrades.OneUpgrade oneUp : upgradesToAdd.getUpgrades()){
+                XWS2Upgrades upgradesListRead = XWS2Upgrades.loadRemoteJsonArrayOfOneUpgrades(new URL(guidoRootUrl+urlEnd));
+                for(XWS2Upgrades.OneUpgrade oneUp : upgradesListRead.getUpgrades()){
                     allUpgrades.add(oneUp);
                 }
 
@@ -117,7 +122,17 @@ public class XWS2Upgrades {
     private static ObjectMapper mapper = new ObjectMapper()
             .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
-    public static List<XWS2Upgrades> loadRemoteJsonArray(URL url) {
+    public static upgradesDataSources loadRemoteJsonArrayOfUrlEnds(URL url) {
+        try {
+            InputStream inputStream = new BufferedInputStream(url.openStream());
+            return mapper.readValue(inputStream,  mapper.getTypeFactory().constructCollectionType(List.class, upgradesDataSources.class));
+        } catch (Exception e) {
+            System.out.println("Unhandled error parsing remote json: \n" + e.toString());
+            return null;
+        }
+    }
+
+    public static XWS2Upgrades loadRemoteJsonArrayOfOneUpgrades(URL url) {
         try {
             InputStream inputStream = new BufferedInputStream(url.openStream());
             return mapper.readValue(inputStream,  mapper.getTypeFactory().constructCollectionType(List.class, XWS2Upgrades.class));
