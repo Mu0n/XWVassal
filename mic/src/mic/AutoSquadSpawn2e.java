@@ -19,6 +19,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 
 import static mic.Util.*;
@@ -366,7 +367,7 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
         int totalPilotHeight = 0;
         int shipBaseY = 110;
         int totalDialsWidth = 0;
-        int fudgePilotUpgradeFrontier = -50;
+        int fudgePilotUpgradeFrontier = -350;
 
         for(VassalXWSPilotPieces2e ship : pieces.getShips())
         {
@@ -421,16 +422,28 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
             // ======================================================
             // Generate the Upgrades
             // ======================================================
-            int totalUpgradeWidth = 0;
+            int totalUpgradeWidth = 251*ship.getUpgrades().size();
 
-            for (VassalXWSPilotPieces2e.Upgrade upgrade : ship.getUpgrades()) {
+            VassalXWSPilotPieces2e.Upgrade upgrade = new VassalXWSPilotPieces2e.Upgrade("",null);
+            if(ship.getUpgrades().size()!=0) {
+                for (int i = ship.getUpgrades().size() - 1; i > -1; i--) {
+                    //for (VassalXWSPilotPieces2e.Upgrade upgrade : ship.getUpgrades()) {
 
-                GamePiece upgradePiece = GamePieceGenerator2e.generateUpgrade(upgrade);
-                spawnPiece(upgradePiece, new Point(
-                                (int) startPosition.getX() + pilotWidth + totalUpgradeWidth + fudgePilotUpgradeFrontier,
-                                (int) startPosition.getY() + totalPilotHeight),
-                        playerMap);
-                totalUpgradeWidth += upgradePiece.boundingBox().getWidth();
+                    try {
+                        upgrade = ship.getUpgrades().get(i);
+                    } catch (Exception e) {
+                    }
+
+                    if (upgrade == null) break;
+                    GamePiece upgradePiece = GamePieceGenerator2e.generateUpgrade(upgrade);
+                    spawnPiece(upgradePiece, new Point(
+                                    (int) startPosition.getX() + pilotWidth + totalUpgradeWidth + fudgePilotUpgradeFrontier,
+                                    (int) startPosition.getY() + totalPilotHeight),
+                            playerMap);
+                    totalUpgradeWidth -= 251;
+
+                }
+
 
             }
 

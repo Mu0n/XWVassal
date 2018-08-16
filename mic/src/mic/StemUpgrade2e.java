@@ -14,8 +14,8 @@ import java.awt.*;
 public class StemUpgrade2e extends Decorator implements EditablePiece {
     public static final String ID = "stemUpgrade";
 
-    private static final String wipGenericFrontImage = "Stem_Upgrade_WIP.png";
-    private static final String wipGenericBackImage = "Stem_Upgrade_WIP_back.png";
+    private static final String wipGenericFrontImage = "Stem2e_Upgrade_WIP.png";
+    private static final String wipGenericBackImage = "Stem2e_Upgrade_WIP_back.png";
 
     public StemUpgrade2e(){
         this(null);
@@ -105,8 +105,8 @@ public class StemUpgrade2e extends Decorator implements EditablePiece {
         protected void executeCommand() {
 
             // get the upgrade front image
-            String frontImage = "Upgrade_" + upgradeType + "_" + upgradeXWS + ".jpg";
-
+            // String frontImage = "Upgrade_" + upgradeType + "_" + upgradeXWS + ".jpg";
+            String frontImage = "Stem2e_Upgrade_WIP.jpg";
             // check to see that the upgrade card image exists in the module.
             // if it doesn't then use a WIP image
             boolean useWipImage = false;
