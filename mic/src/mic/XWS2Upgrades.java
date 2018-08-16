@@ -10,6 +10,7 @@ import com.google.common.collect.Lists;
 import java.io.BufferedInputStream;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -19,9 +20,11 @@ import java.util.List;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class XWS2Upgrades {
 
-    private static String remoteUrl = "https://raw.githubusercontent.com/guidokessels/xwing-data2/master/data/manifest.json";
+    //private static String remoteUrl = "https://raw.githubusercontent.com/guidokessels/xwing-data2/master/data/manifest.json";
+    private static String remoteUrl = "https://raw.githubusercontent.com/Mu0nHub/xwing-data2/master/data/manifest.json";
     //private static String guidoRootUrl = "https://raw.githubusercontent.com/guidokessels/xwing-data2/master/";
-    private static String guidoRootUrl = "https://raw.githubusercontent.com/guidokessels/xwing-data2/master/";
+   // private static String guidoRootUrl = "https://raw.githubusercontent.com/guidokessels/xwing-data2/master/";
+    private static String guidoRootUrl = "https://raw.githubusercontent.com/Mu0nHub/xwing-data2/master/";
 
     @JsonUnwrapped
     private List<OneUpgrade> upgrades = Lists.newArrayList();
@@ -36,10 +39,11 @@ public class XWS2Upgrades {
 
     public static class OneUpgrade {
         public OneUpgrade() { super(); }
-        public OneUpgrade(String name, int limited, List<side> sides){
+        public OneUpgrade(String name, int limited, List<side> sides, String xws){
             this.name = name;
             this.limited = limited;
             this.sides = sides;
+            this.xws = xws;
         }
 
         @JsonProperty("name")
@@ -51,9 +55,13 @@ public class XWS2Upgrades {
         @JsonProperty("sides")
         List<side> sides = Lists.newArrayList();
 
+        @JsonProperty("xws")
+        private String xws;
+
         public String getName() { return this.name;}
         public int getLimited() { return this.limited; }
         public List<side> getSides() { return this.sides; }
+        public String getXws() { return this.xws; }
     }
 
     public static class side {
@@ -73,9 +81,13 @@ public class XWS2Upgrades {
         @JsonProperty("ability")
         private String ability;
 
+        @JsonProperty("slots")
+        private List<String> slots = Lists.newArrayList();
+
         public String getTitle() { return this.title; }
         public String getType() { return this.type; }
         public String getAbility() { return this.ability; }
+        public List<String> getSlots(){ return slots; }
 
 
 
@@ -145,5 +157,16 @@ public class XWS2Upgrades {
             System.out.println("Unhandled error parsing remote json: \n" + e.toString());
             return null;
         }
+    }
+
+    public static XWS2Upgrades.OneUpgrade getSpecificPilot(String searchedXWS2Name, XWS2Upgrades allUpgrades){
+        for(XWS2Upgrades.OneUpgrade anUp : allUpgrades.upgrades)
+        {
+
+           String theXWS2String = anUp.getXws();
+           if(theXWS2String.equals(searchedXWS2Name)) return anUp;
+
+        }
+        return null;
     }
 }

@@ -297,7 +297,7 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
                 logToChat("spawn line 280 - entry Area text " + entryArea.getText());
                 XWSList2e xwsList = loadListFromRawJson(entryArea.getText());
                 try{
-                validateList(xwsList, allShips, allUpgrades);
+                validateList(xwsList, allShips);
                 } catch (Exception exc) {
                     logToChat("Unable to load raw JSON list '%s': %s", entryArea.getText(), exc.toString());
                     return;
@@ -366,6 +366,7 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
         int totalPilotHeight = 0;
         int shipBaseY = 110;
         int totalDialsWidth = 0;
+        int fudgePilotUpgradeFrontier = -50;
 
         for(VassalXWSPilotPieces2e ship : pieces.getShips())
         {
@@ -416,6 +417,24 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
             spawnPiece(dialPiece, new Point((int) dialstartPosition.getX() + totalDialsWidth, (int) dialstartPosition.getY()), playerMap);
             totalDialsWidth += dialWidth;
 
+
+            // ======================================================
+            // Generate the Upgrades
+            // ======================================================
+            int totalUpgradeWidth = 0;
+
+            for (VassalXWSPilotPieces2e.Upgrade upgrade : ship.getUpgrades()) {
+
+                GamePiece upgradePiece = GamePieceGenerator2e.generateUpgrade(upgrade);
+                spawnPiece(upgradePiece, new Point(
+                                (int) startPosition.getX() + pilotWidth + totalUpgradeWidth + fudgePilotUpgradeFrontier,
+                                (int) startPosition.getY() + totalPilotHeight),
+                        playerMap);
+                totalUpgradeWidth += upgradePiece.boundingBox().getWidth();
+
+            }
+
+
             String listName = xwsList.getName();
             logToChat("The '" + "Base 2.0 Game" + "' game mode was used to spawn a %s point list%s loaded from %s", pieces.getSquadPoints(),
                     listName != null ? " '" + listName + "'" : "", xwsList.getXwsSource());
@@ -427,6 +446,10 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
             spawnPiece(piece, new Point(shipBaseX + halfBase, shipBaseY), playerMap);
             shipBaseX += piece.getShape().getBounds2D().getWidth() + 10.0;
         }
+
+
+
+
     }
 
     private void generateXWS(JPanel rootPanel, JTextArea entryArea, String factionString) {
@@ -490,10 +513,10 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
                                 if(((JComboBox) e).getSelectedItem().equals("Select Upgrade Type.")) break;
                                 else {
                                     if(upgradeSeenCount==0){
-                                        detectedType = Canonicalizer.getCleanedName((((JComboBox) e).getSelectedItem()).toString());
+                                        detectedType = (((JComboBox) e).getSelectedItem()).toString();
                                         upgradeSeenCount=1;
                                     }else if(upgradeSeenCount==1){
-                                        detectedUpg = Canonicalizer.getCleanedName((((JComboBox) e).getSelectedItem()).toString());
+                                        detectedUpg = (((JComboBox) e).getSelectedItem()).toString();
                                         upgradeSeenCount=2;
                                     }
                                     if(upgradeSeenCount==2){
@@ -582,7 +605,7 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
             public void itemStateChanged(ItemEvent e) {
                 upgradesComboBox.removeAllItems();
                 for(XWS2Upgrades.OneUpgrade ups : allUpgrades.getUpgrades()){
-                    if(upgradeTypesComboBox.getSelectedItem().equals(ups.getSides().get(0).getType())) upgradesComboBox.addItem(ups.getName());
+                    if(upgradeTypesComboBox.getSelectedItem().equals(ups.getSides().get(0).getType())) upgradesComboBox.addItem(ups.getXws());
                 }
             }
         });
@@ -790,7 +813,7 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
     }
 
 
-    private void validateList(XWSList2e list, final List<XWS2Pilots> allShips, final XWS2Upgrades allUpgrades) throws XWSpawnException
+    private void validateList(XWSList2e list, final List<XWS2Pilots> allShips) throws XWSpawnException
     {
         boolean error = false;
         XWSpawnException exception = new XWSpawnException();
@@ -799,31 +822,31 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
         HashMap<String,String> skippedPilots = new HashMap<String,String>();
         for (XWSList2e.XWSPilot pilot : list.getPilots())
         {
-            //savedShipIndex is a list because the pilot might be something like a TIE/ln pilot and the search must not stop at only 1 faction of that ship (e.g. empire) when the wanted pilot is of another (e.g. Captain Rex)
-            List<Integer> savedShipIndex = Lists.newArrayList();
-
             //Get the stuff from the XWS formatted json
             String pilotXWS2 = pilot.getXws();
 
             //TO USE when xwing-data2 has them
             // String pilotXWS2 = pilot.getXws2();
             //Check the unique pilot xws2 key in all ships
-            boolean signalError = true;
+            boolean signalError = true; // assume you won't find the pilot
+
+            //loop every ship
             for(XWS2Pilots shipFromData : allShips)
             {
                 if(shipFromData.getSpecificPilot(pilotXWS2, allShips) == null) continue;
                 else {
                     signalError = false; // invalidate the problem in ship finding
-                    break;
-                }
+                    }
             }
-
+//might not have found the pilot; so, signalError will remain true here
             if(signalError == true)
             {
                 error = true;
                 // skippedPilots.put(pilot.getXws(),"X");
                 skippedPilots.put(pilotXWS2,"X");
             }
+
+
         }
 
         if(error) logToChat("ERROR DETECTED");

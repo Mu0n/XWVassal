@@ -260,7 +260,7 @@ public class StemShip2e extends Decorator implements EditablePiece {
                     emb = (Embellishment) Util.getEmbellishment(newGamePiece, "Layer - Show Auxiliary Firing Arc");
                 } else if(arc.equals("Full Front Arc")) {
                     emb = (Embellishment) Util.getEmbellishment(newGamePiece, "Layer - Show Full Front Arc");
-                }
+                } else continue;
 
                     arcKey = Canonicalizer.getCleanedName(source.getShipData().getSize()) + "/" + Canonicalizer.getCleanedName(source.getPilotData().getFaction()) + "/" + arc;
 
@@ -269,6 +269,7 @@ public class StemShip2e extends Decorator implements EditablePiece {
                     {
                         emb.mySetType(newType);
                     }
+                    newType = null;
 
             }
 
