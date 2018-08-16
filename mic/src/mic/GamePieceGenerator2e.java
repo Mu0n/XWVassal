@@ -326,7 +326,7 @@ public class GamePieceGenerator2e
     {
 
         GamePiece newUpgrade = Util.newPiece(upgrade.getPieceSlot());
-        boolean isDualSided = (upgrade.getUpgradeData().getDualCard() != null);
+        boolean isDualSided = (upgrade.getUpgradeData().sides.size() == 2);
         StemUpgrade2e.UpgradeGenerateCommand myUpgradeGen = new StemUpgrade2e.UpgradeGenerateCommand(newUpgrade, upgrade, isDualSided);
 
         myUpgradeGen.execute();

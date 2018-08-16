@@ -274,7 +274,7 @@ public class VassalXWSPilotPieces2e {
     public static class Upgrade {
         private String xwsName;
         private PieceSlot pieceSlot;
-        private MasterUpgradeData.UpgradeData upgradeData;
+        private XWS2Upgrades.OneUpgrade upgradeData;
 
 
         public Upgrade(String xwsName, PieceSlot pieceSlot) {
@@ -290,11 +290,11 @@ public class VassalXWSPilotPieces2e {
             return this.pieceSlot;
         }
 
-        public MasterUpgradeData.UpgradeData getUpgradeData() {
+        public XWS2Upgrades.OneUpgrade getUpgradeData() {
             return upgradeData;
         }
 
-        public void setUpgradeData(MasterUpgradeData.UpgradeData upgradeData) {
+        public void setUpgradeData(XWS2Upgrades.OneUpgrade upgradeData) {
             this.upgradeData = upgradeData;
         }
 

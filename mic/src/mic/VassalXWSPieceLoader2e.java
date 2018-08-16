@@ -142,6 +142,32 @@ public class VassalXWSPieceLoader2e {
                 pilotPieces.setShipNumber(genericPilotsAdded.count(pilot.getXws()));
             }
 
+
+            // ==================================================
+            // Upgrades
+            // ==================================================
+            for (String upgradeType : pilot.getUpgrades().keySet())
+            {
+                for (String upgradeName : pilot.getUpgrades().get(upgradeType))
+                {
+                    String upgradeKey = getUpgradeMapKey(upgradeType, upgradeName);
+
+                    VassalXWSPilotPieces2e.Upgrade upgrade = new VassalXWSPilotPieces2e.Upgrade(upgradeName, stemUpgradeSlot);
+
+                    XWS2Upgrades.OneUpgrade newUpData = allUpgrades.getSpecificUpgrade(upgradeName, allUpgrades);
+                    upgrade.setUpgradeData(newUpData);
+
+/*
+                    if (upgrade.getUpgradeData() != null) {
+                        List<VassalXWSPilotPieces.Condition> foundConditions = getConditionsForCard(upgrade.getUpgradeData().getConditions(),stemConditionSlot);
+                        pilotPieces.getConditions().addAll(foundConditions);
+                    }
+                    */
+
+                    pilotPieces.getUpgrades().add(upgrade);
+                }
+            }
+
             pieces.getShips().add(pilotPieces);
 
         }

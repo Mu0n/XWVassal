@@ -36,6 +36,8 @@ public class VassalXWSListPieces2e {
     }
 
     public int getSquadPoints() {
+
+        /*
         if (ships.isEmpty()) {
             return 0;
         }
@@ -85,5 +87,8 @@ public class VassalXWSListPieces2e {
             }
         }
         return total;
+
+        */
+        return 0;
     }
 }

@@ -89,14 +89,16 @@ public class StemUpgrade2e extends Decorator implements EditablePiece {
         private String upgradeType = "";
         private boolean isDualSided = false;
         private String upgradeText = "";
+        private String pilotAbilityText = "";
 
         UpgradeGenerateCommand(GamePiece piece, VassalXWSPilotPieces2e.Upgrade upgrade, boolean isDualSided) {
             this.piece = piece;
             this.upgradeXWS = upgrade.getUpgradeData().getXws();
             this.upgradeName = upgrade.getUpgradeData().getName();
-            this.upgradeType = upgrade.getUpgradeData().getSlot().replaceAll(" ", "");
+            this.upgradeType = upgrade.getUpgradeData().getSides().get(0).getType();
             this.isDualSided = isDualSided;
-            this.upgradeText = upgrade.getUpgradeData().getText();
+            this.upgradeText = upgrade.getUpgradeData().getSides().get(0).getAbility();
+            this.pilotAbilityText = upgrade.getUpgradeData().getSides().get(0).getAbility();
         }
 
         // construct the Upgrade Card piece

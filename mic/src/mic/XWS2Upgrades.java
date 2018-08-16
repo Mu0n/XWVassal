@@ -35,6 +35,7 @@ public class XWS2Upgrades {
     public void add(OneUpgrade oneUp){ upgrades.add(oneUp);}
     public int getCount() { return this.upgrades.size(); }
 
+
 //more like upgrade type
 
     public static class OneUpgrade {
@@ -159,7 +160,7 @@ public class XWS2Upgrades {
         }
     }
 
-    public static XWS2Upgrades.OneUpgrade getSpecificPilot(String searchedXWS2Name, XWS2Upgrades allUpgrades){
+    public static XWS2Upgrades.OneUpgrade getSpecificUpgrade(String searchedXWS2Name, XWS2Upgrades allUpgrades){
         for(XWS2Upgrades.OneUpgrade anUp : allUpgrades.upgrades)
         {
 
@@ -169,4 +170,6 @@ public class XWS2Upgrades {
         }
         return null;
     }
+
+
 }
