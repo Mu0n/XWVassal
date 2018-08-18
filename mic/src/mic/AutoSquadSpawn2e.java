@@ -425,7 +425,15 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
             // ======================================================
             // Generate the Upgrades
             // ======================================================
-            int totalUpgradeWidth = 251*ship.getUpgrades().size();
+
+            //This is where the first upgrade starts.  Current value puts half of the upgrade under the pilot, assuming
+            // the pilot is at the far left of the screen
+
+            //int totalUpgradeWidth = 251*ship.getUpgrades().size();
+            int totalUpgradeWidth = 260;
+
+
+
 
             VassalXWSPilotPieces2e.Upgrade upgrade = new VassalXWSPilotPieces2e.Upgrade("",null);
             if(ship.getUpgrades().size()!=0) {
@@ -439,10 +447,12 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
 
                     if (upgrade == null) break;
                     GamePiece upgradePiece = GamePieceGenerator2e.generateUpgrade(upgrade);
+
                     spawnPiece(upgradePiece, new Point(
                                     (int) startPosition.getX() + pilotWidth + totalUpgradeWidth + fudgePilotUpgradeFrontier,
                                     (int) startPosition.getY() + totalPilotHeight),
                             playerMap);
+
                     totalUpgradeWidth += upgradePiece.boundingBox().width - 251;
                 }
             }
