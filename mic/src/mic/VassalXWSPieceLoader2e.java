@@ -112,10 +112,17 @@ public class VassalXWSPieceLoader2e {
 
             VassalXWSPilotPieces2e pilotPieces = new VassalXWSPilotPieces2e(barePieces);
 
-            if (pilotPieces.getPilotData() != null) {
-                List<VassalXWSPilotPieces2e.Condition> foundConditions = getConditionsForCard(pilotPieces.getPilotData().getConditions(),stemConditionSlot, allConditions);
+            for(String st : pilotData.getConditions())
+            {
+                Util.logToChat("line 117 pieceloader condition in data " + st);
+            }
+            //check if the current pilot is associated with conditions
+            if(pilotData.getConditions()!=null && !pilotData.getConditions().isEmpty())
+            {
+                List<VassalXWSPilotPieces2e.Condition> foundConditions = getConditionsForCard(pilotData.getConditions(),stemConditionSlot, allConditions);
                 pilotPieces.getConditions().addAll(foundConditions);
             }
+
 
             if (pilotCounts.count(pilot.getXws()) > 1) {
                 genericPilotsAdded.add(pilot.getXws());
@@ -138,10 +145,14 @@ public class VassalXWSPieceLoader2e {
                     upgrade.setUpgradeData(newUpData);
 
 
-                    if (upgrade.getUpgradeData() != null) {
-                        List<VassalXWSPilotPieces2e.Condition> foundConditions = getConditionsForCard(upgrade.getUpgradeData().getConditions(),stemConditionSlot, allConditions);
-                        pilotPieces.getConditions().addAll(foundConditions);
-                    }
+
+                        if(newUpData.getSides().get(0).getConditions()!=null && !newUpData.getSides().get(0).getConditions().isEmpty())
+                        {
+                            List<VassalXWSPilotPieces2e.Condition> foundConditions = getConditionsForCard(newUpData.getSides().get(0).getConditions(),stemConditionSlot, allConditions);
+                            pilotPieces.getConditions().addAll(foundConditions);
+
+                        }
+
 
 
                     pilotPieces.getUpgrades().add(upgrade);
@@ -165,21 +176,10 @@ public class VassalXWSPieceLoader2e {
            // VassalXWSPilotPieces.Condition condition = this.conditionPiecesMap.get(mapKey);
 
             XWS2Upgrades.Condition newConditionData = XWS2Upgrades.getSpecificConditionByXWS(conditionName, allConditions);
+            Util.logToChat("pieceloader2e line 168 " + newConditionData.getXws());
             VassalXWSPilotPieces2e.Condition condition = new VassalXWSPilotPieces2e.Condition(stemConditionSlot, conditionName,  newConditionData.getName());
             condition.setConditionData(newConditionData);
             conditionSlots.add(condition);
-
-            /*
-            // MrMurphM
-
-            MasterConditionData.ConditionData newConditionData = MasterConditionData.getConditionDataByName(conditionName);
-            VassalXWSPilotPieces2e.Condition condition = new VassalXWSPilotPieces2e.Condition(stemConditionSlot, conditionName,  newConditionData.getName());
-
-          //  MasterUpgradeData.UpgradeData newUpgradeData = MasterUpgradeData.getUpgradeData(conditionName);
-            condition.setConditionData(newConditionData);
-           // condition = new VassalXWSPilotPieces.Upgrade(conditionName, stemConditionSlot);
-
-            conditionSlots.add(condition);*/
         }
         return conditionSlots;
 

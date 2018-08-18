@@ -90,14 +90,11 @@ public class XWS2Upgrades {
         @JsonProperty("xws")
         private String xws;
 
-        @JsonProperty("conditions")
-        private List<String> conditions;
 
         public String getName() { return this.name;}
         public int getLimited() { return this.limited; }
         public List<side> getSides() { return this.sides; }
         public String getXws() { return this.xws; }
-        public List<String> getConditions() { return conditions; }
     }
 
     public static XWS2Upgrades.Condition getSpecificConditionByXWS(String upXWS, List<XWS2Upgrades.Condition> allConditions){
@@ -125,6 +122,9 @@ public class XWS2Upgrades {
         @JsonProperty("ability")
         private String ability;
 
+        @JsonProperty("conditions")
+        private List<String> conditions = Lists.newArrayList();
+
         @JsonProperty("slots")
         private List<String> slots = Lists.newArrayList();
 
@@ -132,6 +132,7 @@ public class XWS2Upgrades {
         public String getType() { return this.type; }
         public String getAbility() { return this.ability; }
         public List<String> getSlots(){ return slots; }
+        public List<String> getConditions() { return this.conditions; }
 
 
 

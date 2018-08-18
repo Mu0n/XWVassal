@@ -440,11 +440,8 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
                                     (int) startPosition.getX() + pilotWidth + totalUpgradeWidth + fudgePilotUpgradeFrontier,
                                     (int) startPosition.getY() + totalPilotHeight),
                             playerMap);
-                    totalUpgradeWidth -= 251;
-
+                    totalUpgradeWidth += upgradePiece.boundingBox().width - 251;
                 }
-
-
             }
 
             // ======================================================
@@ -460,7 +457,7 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
                     conditionPiece.setProperty("Upgrade Name",condition.getXwsName());
                 }*/
                 spawnPiece(conditionPiece, new Point(
-                                (int) startPosition.getX() + pilotWidth + totalUpgradeWidth + fudgePilotUpgradeFrontier,
+                                (int) startPosition.getX() + pilotWidth + totalUpgradeWidth,
                                 (int) startPosition.getY() + totalPilotHeight),
                         playerMap);
                 totalUpgradeWidth += conditionPiece.boundingBox().getWidth();
@@ -469,10 +466,9 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
                 // spawn the condition token
                 GamePiece conditionTokenPiece = GamePieceGenerator2e.generateConditionToken(condition);
                 spawnPiece(conditionTokenPiece, new Point(
-                                (int) startPosition.getX() + pilotWidth + totalUpgradeWidth + fudgePilotUpgradeFrontier,
-                                (int) startPosition.getY() + totalPilotHeight),
+                                (int) startPosition.getX() + pilotWidth + totalUpgradeWidth - conditionPiece.boundingBox().width,
+                                (int) startPosition.getY() + totalPilotHeight - conditionPiece.boundingBox().height/2 - conditionTokenPiece.boundingBox().height - 2),
                         playerMap);
-                totalUpgradeWidth += conditionTokenPiece.boundingBox().getWidth();
             } //loop to next condition
 
 
