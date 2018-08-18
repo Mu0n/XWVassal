@@ -5,7 +5,10 @@ import VASSAL.build.Widget;
 import VASSAL.build.widget.ListWidget;
 import VASSAL.build.widget.PieceSlot;
 import VASSAL.build.widget.TabWidget;
-import com.google.common.collect.*;
+import com.google.common.collect.HashMultiset;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Multiset;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -20,11 +23,18 @@ public class VassalXWSPieceLoader2e {
             "Asteroids", "TFA_Asteroids", "Debris"
     );
 
+    Map<String, VassalXWSPilotPieces> pilotPiecesMap = Maps.newHashMap();
+    Map<String, VassalXWSPilotPieces.Upgrade> upgradePiecesMap = Maps.newHashMap();
     Map<Tokens2e, PieceSlot> tokenPiecesMap = Maps.newHashMap();
     Map<Obstacles, PieceSlot> obstaclesPiecesMap = Maps.newHashMap();
     // Map<String, VassalXWSPilotPieces2e.Condition> conditionPiecesMap = Maps.newHashMap();
 
     public VassalXWSListPieces2e loadListFromXWS(XWSList2e list, List<XWS2Pilots> allPilots, XWS2Upgrades allUpgrades, List<XWS2Upgrades.Condition> allConditions) {
+
+        if (pilotPiecesMap.isEmpty() || upgradePiecesMap.isEmpty()
+                || tokenPiecesMap.isEmpty()|| obstaclesPiecesMap.isEmpty()) {
+            loadPieces();
+        }
 
         //the following object is the full structure shebang that'll get returned at the end
         VassalXWSListPieces2e pieces = new VassalXWSListPieces2e();
@@ -160,7 +170,9 @@ public class VassalXWSPieceLoader2e {
             }
 
             List<Tokens2e> tokens = Tokens2e.loadForPilot(pilotPieces);
+
             for (Tokens2e token : tokens) {
+
                 PieceSlot tokenSlot = tokenPiecesMap.get(token);
                 if (tokenSlot != null) {
                     pilotPieces.getTokens().put(token, tokenSlot);
@@ -224,6 +236,38 @@ public class VassalXWSPieceLoader2e {
         */
     }
 
+    public void loadPieces() {
+       // pilotPiecesMap = Maps.newHashMap();
+      //  upgradePiecesMap = Maps.newHashMap();
+        tokenPiecesMap = Maps.newHashMap();
+        obstaclesPiecesMap = Maps.newHashMap();
+
+        List<ListWidget> listWidgets = GameModule.getGameModule().getAllDescendantComponentsOf(ListWidget.class);
+        for (ListWidget listWidget : listWidgets) {
+            if (!(listWidget.getParent() instanceof TabWidget)) {
+                continue;
+            }
+            ListParentType parentType = ListParentType.fromTab(listWidget.getParent());
+            if (parentType == null) {
+                continue;
+            }
+            switch (parentType) {
+                case chits:
+                    loadChits(listWidget);
+                    break;
+                case upgrades:
+                    // MrMurphM - commented for now
+                   // loadUpgrades(listWidget);
+                    break;
+                case imperial:
+                case rebel:
+                case scum:
+                    //MrMurphM - commented for now
+                   // loadPilots(listWidget, parentType);
+                    break;
+            }
+        }
+    }
 
     private void loadChits(ListWidget listWidget) {
         List<ListWidget> chitLists = listWidget.getAllDescendantComponentsOf(ListWidget.class);

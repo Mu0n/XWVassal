@@ -19,7 +19,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 
 import static mic.Util.*;
@@ -484,8 +483,12 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
             // ======================================================
             // Add all of the appropriate tokens
             // ======================================================
+
+
             for (GamePiece token : ship.getTokensForDisplay()) {
+
                 PieceSlot pieceSlot = new PieceSlot(token);
+
                 if ("Target Lock".equals(pieceSlot.getConfigureName())) {//if a target lock token, place elsewhere
                     spawnPiece(token, new Point(
                                     (int) tokensStartPosition.getX() + totalTLWidth,
@@ -501,6 +504,7 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
                     // just store the illicit piece slot.
                     chargePieceSlot = pieceSlot;
                 }else {
+
                     spawnPiece(token, new Point(
                                     (int) tokensStartPosition.getX() + totalTokenWidth,
                                     (int) tokensStartPosition.getY()),
