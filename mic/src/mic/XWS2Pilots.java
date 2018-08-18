@@ -1,5 +1,6 @@
 package mic;
 
+import com.fasterxml.jackson.annotation.JacksonInject;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
@@ -34,12 +35,16 @@ public class XWS2Pilots {
     @JsonProperty("pilots")
     private List<Pilot2e> pilots = Lists.newArrayList();
 
+    @JsonProperty("actions")
+    private List<PilotAction> actions = Lists.newArrayList();
+
     public String getName() {return this.name;}
     public List<String> getDial() {return this.dial;}
     public String getSize() { return this.size;}
     public String getFaction() {return this.faction;}
     public List<Stat2e> getStats() {return this.stats;}
     public List<Pilot2e> getPilots() { return this.pilots;}
+    public List<PilotAction> getActions() { return this.actions; }
 
     public int getInitiative(){
         for(Stat2e stat : stats)
@@ -122,6 +127,22 @@ public class XWS2Pilots {
         return false;
     }
 
+    public static class PilotAction{
+        public PilotAction() { super(); }
+
+        @JsonProperty("difficulty")
+        private String difficulty;
+
+        @JsonProperty("type")
+        private String type;
+
+        @JsonProperty("linked")
+        private PilotAction linked = new PilotAction();
+
+        public String getDifficulty() { return difficulty;}
+        public String getType() { return type; }
+        public PilotAction getLinked() { return linked; }
+    }
     public static class Stat2e{
         public Stat2e() { super(); }
 

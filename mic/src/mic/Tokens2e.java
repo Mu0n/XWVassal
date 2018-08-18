@@ -106,8 +106,8 @@ public enum Tokens2e {
         List<Tokens2e> tokens = Lists.newArrayList();
         for (Tokens2e token : values()) {
             if (pilot.getShipData() != null) {
-                for (String action : pilot.getPilotData().getActions()) {
-                    if (token.actions.contains(action)) {
+                for (XWS2Pilots.PilotAction action : pilot.getShipData().getActions()) {
+                    if (token.actions.contains(action.getType()) || token.actions.contains(action.getLinked().getType())) {
                         tokens.add(token);
                     }
                 }
@@ -118,6 +118,7 @@ public enum Tokens2e {
                         tokens.add(token);
                     }
                 }
+
             }
 
             for (VassalXWSPilotPieces2e.Upgrade upgrade : pilot.getUpgrades()) {
