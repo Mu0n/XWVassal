@@ -128,13 +128,13 @@ public class XWS2Pilots {
     }
 
     public static class PilotAction{
-        public PilotAction() { super(); }
+        public PilotAction() { super();}
 
         @JsonProperty("difficulty")
-        private String difficulty;
+        private String difficulty = "";
 
         @JsonProperty("type")
-        private String type;
+        private String type = "";
 
         @JsonProperty("linked")
         private PilotAction linked = new PilotAction();
