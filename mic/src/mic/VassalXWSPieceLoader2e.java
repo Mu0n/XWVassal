@@ -159,6 +159,14 @@ public class VassalXWSPieceLoader2e {
                 }
             }
 
+            List<Tokens2e> tokens = Tokens2e.loadForPilot(pilotPieces);
+            for (Tokens2e token : tokens) {
+                PieceSlot tokenSlot = tokenPiecesMap.get(token);
+                if (tokenSlot != null) {
+                    pilotPieces.getTokens().put(token, tokenSlot);
+                }
+            }
+
             pieces.getShips().add(pilotPieces);
 
         }

@@ -374,8 +374,12 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
         int shipBaseY = 110;
         int totalDialsWidth = 0;
         int fudgePilotUpgradeFrontier = -350;
+        Point tokensStartPosition = new Point(300, 220);
+        Point tlStartPosition = new Point(300, 290);
+        int totalTokenWidth = 0;
+        int totalTLWidth = 0;
 
-
+        PieceSlot chargePieceSlot = null;
         for (VassalXWSPilotPieces2e ship : pieces.getShips()) {
 
 
@@ -476,7 +480,35 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
             String listName = xwsList.getName();
             logToChat("The '" + "Base 2.0 Game" + "' game mode was used to spawn a %s point list%s loaded from %s", pieces.getSquadPoints(),
                     listName != null ? " '" + listName + "'" : "", xwsList.getXwsSource());
-        }
+
+            // ======================================================
+            // Add all of the appropriate tokens
+            // ======================================================
+            for (GamePiece token : ship.getTokensForDisplay()) {
+                PieceSlot pieceSlot = new PieceSlot(token);
+                if ("Target Lock".equals(pieceSlot.getConfigureName())) {//if a target lock token, place elsewhere
+                    spawnPiece(token, new Point(
+                                    (int) tokensStartPosition.getX() + totalTLWidth,
+                                    (int) tlStartPosition.getY()),
+                            playerMap);
+                    totalTLWidth += token.boundingBox().getWidth();
+                }else if("2.0 Charge".equals(pieceSlot.getConfigureName()))
+                {
+                    // just store the illicit piece slot.
+                    chargePieceSlot = pieceSlot;
+                }else if("2.0 Force".equals(pieceSlot.getConfigureName()))
+                {
+                    // just store the illicit piece slot.
+                    chargePieceSlot = pieceSlot;
+                }else {
+                    spawnPiece(token, new Point(
+                                    (int) tokensStartPosition.getX() + totalTokenWidth,
+                                    (int) tokensStartPosition.getY()),
+                            playerMap);
+                    totalTokenWidth += token.boundingBox().getWidth();
+                }
+            }// loop to next token*/
+        }//loop ships
 
         int shipBaseX = (int) dialstartPosition.getX() + totalDialsWidth - 30;
         for (GamePiece piece : shipBases) {

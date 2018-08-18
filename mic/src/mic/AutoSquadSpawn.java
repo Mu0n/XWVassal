@@ -988,7 +988,7 @@ public class AutoSquadSpawn extends AbstractConfigurable {
 
 
             // ======================================================
-            //TODO Generate the Upgrades
+            // Generate the Upgrades
             // ======================================================
             for (VassalXWSPilotPieces.Upgrade upgrade : ship.getUpgrades())
             {
@@ -1062,7 +1062,7 @@ public class AutoSquadSpawn extends AbstractConfigurable {
 
 
             // ======================================================
-            //TODO Generate the Conditions
+            // Generate the Conditions
             // ======================================================
             for (VassalXWSPilotPieces.Condition condition: ship.getConditions()) {
                 GamePiece conditionPiece = GamePieceGenerator.generateCondition(condition);
