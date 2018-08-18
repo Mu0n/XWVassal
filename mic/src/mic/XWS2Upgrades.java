@@ -64,7 +64,7 @@ public class XWS2Upgrades {
         private String xws;
 
         public String getName() { return this.name; }
-        public String getAbility() { return this.name; }
+        public String getAbility() { return this.ability; }
         public String getXws() { return this.xws; }
     }
 //more like upgrade type
@@ -188,7 +188,6 @@ public class XWS2Upgrades {
 
             List<XWS2Upgrades.OneUpgrade> upgradesListRead = Lists.newArrayList();
             try {
-                Util.logToChat("full combined URL about to read an upgrade type " + guidoRootUrl + urlEnd);
                 upgradesListRead = XWS2Upgrades.loadRemoteJsonArrayOfOneUpgrades(new URL(guidoRootUrl+urlEnd));
                 //XWS2Upgrades upgradesListRead = Util.loadRemoteJson(new URL(guidoRootUrl+urlEnd), XWS2Upgrades.class);
             }catch (Exception e){
@@ -197,9 +196,7 @@ public class XWS2Upgrades {
             }
 
             try{
-                Util.logToChat("upgradesListRead size " + Integer.toString(upgradesListRead.size()));
                 for(XWS2Upgrades.OneUpgrade oneUp : upgradesListRead){
-                    Util.logToChat("reading upgrade " + oneUp.getName());
                     allUpgrades.add(oneUp);
                 }
 
@@ -219,8 +216,6 @@ public class XWS2Upgrades {
         try {
             InputStream inputStream = new BufferedInputStream(url.openStream());
             List<XWS2Upgrades.OneUpgrade> rawData = mapper.readValue(inputStream,  mapper.getTypeFactory().constructCollectionType(List.class, XWS2Upgrades.OneUpgrade.class));
-            Util.logToChat("count in rawData " + Integer.toString(rawData.size()));
-            Util.logToChat("first element in rawData " + rawData.get(0).getName());
             return rawData;
         } catch (Exception e) {
             System.out.println("Unhandled error parsing remote json: \n" + e.toString());
@@ -232,6 +227,8 @@ public class XWS2Upgrades {
         try {
             InputStream inputStream = new BufferedInputStream(url.openStream());
             List<XWS2Upgrades.Condition> rawData = mapper.readValue(inputStream,  mapper.getTypeFactory().constructCollectionType(List.class, XWS2Upgrades.Condition.class));
+            Util.logToChat("count in rawData " + Integer.toString(rawData.size()));
+            Util.logToChat("first element in rawData " + rawData.get(0).getName());
             return rawData;
         } catch (Exception e) {
             System.out.println("Unhandled error parsing remote json: \n" + e.toString());

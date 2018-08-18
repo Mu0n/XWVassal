@@ -112,10 +112,10 @@ public class VassalXWSPieceLoader2e {
 
             VassalXWSPilotPieces2e pilotPieces = new VassalXWSPilotPieces2e(barePieces);
 
-
-            //TO DO
-            //something about conditions here to copy over
-            //
+            if (pilotPieces.getPilotData() != null) {
+                List<VassalXWSPilotPieces2e.Condition> foundConditions = getConditionsForCard(pilotPieces.getPilotData().getConditions(),stemConditionSlot, allConditions);
+                pilotPieces.getConditions().addAll(foundConditions);
+            }
 
             if (pilotCounts.count(pilot.getXws()) > 1) {
                 genericPilotsAdded.add(pilot.getXws());
@@ -267,13 +267,11 @@ public class VassalXWSPieceLoader2e {
 
     private void loadPilots(ListWidget shipList, ListParentType faction, List<XWS2Pilots> allShips) {
 
-        Util.logToChat("PieceLoader2e line 293  attempting to loadPilots");
         if (faction != ListParentType.rebel && faction != ListParentType.scum && faction != ListParentType.imperial) {
             return;
         }
 
         String shipName = Canonicalizer.getCanonicalShipName(shipList.getConfigureName());
-Util.logToChat("line 300 pieceloader2e shipName " + shipName);
         PieceSlot defaultShip = null;
         Map<String, PieceSlot> altArtShips = Maps.newHashMap();
         PieceSlot dial = null;
@@ -326,16 +324,11 @@ Util.logToChat("line 300 pieceloader2e shipName " + shipName);
         //cycles through all the pilot PieceSlots of the wanted pilots List and wishes to gather the loaded pilotData from xwing-data2 for that specific ship/pilot key
         for (PieceSlot pilot : pilots) {
 
-
-            Util.logToChat("pieceloader2e line 347 pilot parse " + ((pilot==null)?"is null":"is not null"));
-
             String pilotName = Canonicalizer.getCanonicalPilotName(pilot.getConfigureName());
 
-Util.logToChat("pieceloader2e line 347 right after getting getConfigureName for a pilot");
             //get the right pilotData from the same ship, but make sure to verify it's the right faction too!
             XWS2Pilots.Pilot2e pilotData = null;
             for(XWS2Pilots xws2pilot : allShips){
-                Util.logToChat("pieceloader2e line 362 xws2.getFaction " + xws2pilot.getFaction() + " shipData.getFaction " + shipData.getFaction());
                 if(xws2pilot.getFaction()!=shipData.getFaction()) continue;
                 pilotData = XWS2Pilots.getSpecificPilot(pilot.getConfigureName(), allShips);
             }
@@ -343,7 +336,6 @@ Util.logToChat("pieceloader2e line 347 right after getting getConfigureName for 
                 Util.logToChat("couldn't find the right pilot data");
                 return;
             }
-            Util.logToChat("pieceloader2e line 349 pilotConfigName = " + pilot.getConfigureName() + " pilotName " + pilotName + " pilotData Name " + pilotData.getName());
             String mapKey = getPilotMapKey(faction.name(), shipName, pilotName);
 
             VassalXWSPilotPieces2e pilotPieces = new VassalXWSPilotPieces2e();

@@ -337,7 +337,6 @@ public class StemShip2e extends Decorator implements EditablePiece {
 
             StringBuilder sb = new StringBuilder();
             sb.append("emb2;;2;;Toggle Lock;2;;;2;;;;1;true;0;0;,");
-            Util.logToChat("newSize " + newSize + " faction " + faction);
             if(newSize.equals("small") && faction.equals("rebelalliance"))
             {
                 sb.append(rebelSmallImage);
@@ -412,7 +411,6 @@ public class StemShip2e extends Decorator implements EditablePiece {
             }
 
             sb.append(";,;true;Lock;;;false;;0;1;true;;76,130;");
-            Util.logToChat("sb " + sb);
             try{
 
                 myEmb.mySetType(sb.toString());
@@ -519,7 +517,6 @@ public class StemShip2e extends Decorator implements EditablePiece {
             if(!dualBase) {
                 // first find the base image name
                 String shipBaseImage = findShipBaseImage(xwsShipName, xwsPilot, size);
-                Util.logToChat("shipBaseImage found  " + shipBaseImage);
                // mic.Util.logToChat(xwsShipName + " is NOT dual based");
                 StringBuffer sb = new StringBuffer();
                 sb.append("emb2;Activate;2;;Ghost;2;;;2;;;;1;false;0;0;");
@@ -537,9 +534,7 @@ public class StemShip2e extends Decorator implements EditablePiece {
                 }
                 sb.append(";base1,ghost1;false;Base Ship;;;true;ULevel;1;1;true;65,130;;");
                 // now get the Layer
-                Util.logToChat("is piece null? " +((piece==null)?"yes":"no"));
                 Embellishment myEmb = (Embellishment)Util.getEmbellishment(piece,BASE_SHIP_LAYER_NAME);
-                Util.logToChat("is myEmb null? " +((myEmb==null)?"yes":"no"));
              //   mic.Util.logToChat(myEmb.myGetType());
                 myEmb.mySetType(sb.toString());
 
@@ -685,8 +680,6 @@ public class StemShip2e extends Decorator implements EditablePiece {
                 sb.append("_").append(shipImage);
             }
             sb.append(".png");
-
-            Util.logToChat("ship image I'm trying to find " + sb.toString());
 
             String shipArt = new String();
             shipArt = sb.toString();

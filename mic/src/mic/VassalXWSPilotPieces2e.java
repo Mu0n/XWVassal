@@ -168,7 +168,6 @@ public class VassalXWSPilotPieces2e {
 
     private GamePiece addPrototypeToPiece(GamePiece piece, String prototypeName)
     {
-        logToChat("Adding prototype "+prototypeName+ " to piece");
         PrototypeDefinition protoDef = PrototypesContainer.getPrototype(prototypeName);
         if(protoDef == null)
         {

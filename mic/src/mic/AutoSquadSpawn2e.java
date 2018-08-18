@@ -71,6 +71,12 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
 
         final List<String> factionsWanted = Lists.newArrayList();
 
+
+        for(XWS2Upgrades.Condition  cond : allConditions){
+            logToChat("condition " + cond.getName() + " " + cond.getAbility());
+        }
+
+
         Map playerMap = getPlayerMap(playerIndex);
         if (playerMap == null) {
             logToChat("Unexpected error, couldn't find map for player side " + playerIndex);
@@ -296,7 +302,6 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
         validateButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                logToChat("spawn line 280 - entry Area text " + entryArea.getText());
                 XWSList2e xwsList = loadListFromRawJson(entryArea.getText());
                 try{
                 validateList(xwsList, allShips);
@@ -370,12 +375,6 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
         int totalDialsWidth = 0;
         int fudgePilotUpgradeFrontier = -350;
 
-        for(VassalXWSPilotPieces2e ship : pieces.getShips())
-        {
-            logToChat("pieces manifest - ship name " + ship.getShipData().getName() + " pilot name " + ship.getPilotData().getXWS());
-            XWS2Pilots shipInQuestionFromXWD2 = XWS2Pilots.getSpecificShipFromPilotXWS2(ship.getPilotData().getXWS(),allPilots);
-            logToChat("that ship's dial's first move" + shipInQuestionFromXWD2.getDial().get(0));
-        }
 
         for (VassalXWSPilotPieces2e ship : pieces.getShips()) {
 
@@ -447,6 +446,35 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
 
 
             }
+
+            // ======================================================
+            //TODO Generate the Conditions
+            // ======================================================
+            for (VassalXWSPilotPieces2e.Condition condition: ship.getConditions()) {
+                GamePiece conditionPiece = GamePieceGenerator2e.generateCondition(condition);
+                /*
+                GamePiece conditionPiece = newPiece(condition.getPieceSlot());
+                if(condition.getPieceSlot().getConfigureName().startsWith("Stem"))
+                {
+                    // this is an unreleased condition.  Need to set the name
+                    conditionPiece.setProperty("Upgrade Name",condition.getXwsName());
+                }*/
+                spawnPiece(conditionPiece, new Point(
+                                (int) startPosition.getX() + pilotWidth + totalUpgradeWidth + fudgePilotUpgradeFrontier,
+                                (int) startPosition.getY() + totalPilotHeight),
+                        playerMap);
+                totalUpgradeWidth += conditionPiece.boundingBox().getWidth();
+
+
+                // spawn the condition token
+                GamePiece conditionTokenPiece = GamePieceGenerator2e.generateConditionToken(condition);
+                spawnPiece(conditionTokenPiece, new Point(
+                                (int) startPosition.getX() + pilotWidth + totalUpgradeWidth + fudgePilotUpgradeFrontier,
+                                (int) startPosition.getY() + totalPilotHeight),
+                        playerMap);
+                totalUpgradeWidth += conditionTokenPiece.boundingBox().getWidth();
+            } //loop to next condition
+
 
 
             String listName = xwsList.getName();
@@ -586,7 +614,6 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
     //Helper method that will populate the leftmost combobox for an upgrade - lists the types of upgrades (should be fairly stable)
     private void populateUpgradeTypes(JComboBox upgradeTypesComboBox, XWS2Upgrades allUpgrades) {
         List<String> upgradeTypesSoFar = Lists.newArrayList();
-        logToChat("populating upgrade type combo, there are " + allUpgrades.getUpgrades().size() + " elements in allUpgrades");
         for(XWS2Upgrades.OneUpgrade up : allUpgrades.getUpgrades())
         {
             for(XWS2Upgrades.side side : up.getSides())
@@ -611,8 +638,6 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
         populateUpgradeTypes(upgradeTypesComboBox, allUpgrades);
 
         final JComboBox upgradesComboBox = new JComboBox();
-
-        logToChat("number of upgrades entries " + Integer.toString(allUpgrades.getCount()));
 
         upgradeTypesComboBox.addItemListener(new ItemListener() {
             @Override
