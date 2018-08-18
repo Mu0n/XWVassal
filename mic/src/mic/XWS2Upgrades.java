@@ -36,6 +36,37 @@ public class XWS2Upgrades {
     public int getCount() { return this.upgrades.size(); }
 
 
+
+
+    public static class Conditions {
+        public Conditions() { super(); }
+        private List<Condition> conditions = Lists.newArrayList();
+
+        public List<Condition> getConditions() { return conditions; }
+
+    }
+
+    public static class Condition {
+        public Condition() { super(); }
+        public Condition(String name, String xws, String ability){
+            this.name = name;
+            this.xws = xws;
+            this.ability = ability;
+        }
+
+        @JsonProperty("name")
+        private String name;
+
+        @JsonProperty("ability")
+        private String ability;
+
+        @JsonProperty("xws")
+        private String xws;
+
+        public String getName() { return this.name; }
+        public String getAbility() { return this.name; }
+        public String getXws() { return this.xws; }
+    }
 //more like upgrade type
 
     public static class OneUpgrade {
@@ -59,10 +90,22 @@ public class XWS2Upgrades {
         @JsonProperty("xws")
         private String xws;
 
+        @JsonProperty("conditions")
+        private List<String> conditions;
+
         public String getName() { return this.name;}
         public int getLimited() { return this.limited; }
         public List<side> getSides() { return this.sides; }
         public String getXws() { return this.xws; }
+        public List<String> getConditions() { return conditions; }
+    }
+
+    public static XWS2Upgrades.Condition getSpecificConditionByXWS(String upXWS, List<XWS2Upgrades.Condition> allConditions){
+        for(XWS2Upgrades.Condition oneCond : allConditions)
+        {
+            if(oneCond.getXws().equals(upXWS)) return oneCond;
+        }
+        return null;
     }
 
     public static class side {
@@ -104,6 +147,31 @@ public class XWS2Upgrades {
 
         public List<String> getUrlEnds(){return this.urlEnds;}
     }
+
+    public static class conditionsDataSources{
+        public conditionsDataSources() { super(); }
+        public conditionsDataSources(String urlEnd){
+            this.urlEnd = urlEnd;
+        }
+        @JsonProperty("conditions")
+        String urlEnd;
+
+        public String getUrlEnd(){return this.urlEnd;}
+    }
+
+    public static List<XWS2Upgrades.Condition> loadConditionsFromRemote() {
+        conditionsDataSources whereToGetConditions = new conditionsDataSources();
+        try{
+            whereToGetConditions = Util.loadRemoteJson(remoteUrl, conditionsDataSources.class);
+        }catch(Exception e){}
+        List<XWS2Upgrades.Condition> conditionsRead = Lists.newArrayList();
+        try{
+            conditionsRead = XWS2Upgrades.loadRemoteJsonArrayOfConditions(new URL(guidoRootUrl+whereToGetConditions.getUrlEnd()));
+        }
+        catch(Exception e){}
+        return conditionsRead;
+    }
+
 
 
     public static XWS2Upgrades loadFromRemote() {
@@ -159,6 +227,18 @@ public class XWS2Upgrades {
             return null;
         }
     }
+
+    private static List<XWS2Upgrades.Condition> loadRemoteJsonArrayOfConditions(URL url) {
+        try {
+            InputStream inputStream = new BufferedInputStream(url.openStream());
+            List<XWS2Upgrades.Condition> rawData = mapper.readValue(inputStream,  mapper.getTypeFactory().constructCollectionType(List.class, XWS2Upgrades.Condition.class));
+            return rawData;
+        } catch (Exception e) {
+            System.out.println("Unhandled error parsing remote json: \n" + e.toString());
+            return null;
+        }
+    }
+
 
     public static XWS2Upgrades.OneUpgrade getSpecificUpgrade(String searchedXWS2Name, XWS2Upgrades allUpgrades){
         for(XWS2Upgrades.OneUpgrade anUp : allUpgrades.upgrades)

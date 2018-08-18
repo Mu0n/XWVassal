@@ -67,6 +67,7 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
     private void spawnForPlayer(final int playerIndex) {
         final List<XWS2Pilots> allShips = XWS2Pilots.loadFromRemote();
         final XWS2Upgrades allUpgrades = XWS2Upgrades.loadFromRemote();
+        final List<XWS2Upgrades.Condition> allConditions = XWS2Upgrades.loadConditionsFromRemote();
 
         final List<String> factionsWanted = Lists.newArrayList();
 
@@ -170,7 +171,7 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
                     JOptionPane.showMessageDialog(warnFrame, "Check at least 1 faction before opening the internal builder");
                     return;
                 }
-                internalSquadBuilder(playerIndex, factionsWanted, allShips, allUpgrades);
+                internalSquadBuilder(playerIndex, factionsWanted, allShips, allUpgrades, allConditions);
             }
         });
 
@@ -198,7 +199,7 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
 
     }
 
-    private void internalSquadBuilder(final int playerIndex, final List<String> factionsWanted, final List<XWS2Pilots> allShips, final XWS2Upgrades allUpgrades){
+    private void internalSquadBuilder(final int playerIndex, final List<String> factionsWanted, final List<XWS2Pilots> allShips, final XWS2Upgrades allUpgrades, final List<XWS2Upgrades.Condition> allConditions){
 
 
         final JFrame frame = new JFrame();
@@ -307,7 +308,7 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
                     logToChat("raw JSON list has no detected pilots in it.");
                     return;
                 }
-                DealWithXWSList(xwsList, playerIndex, allShips, allUpgrades);
+                DealWithXWSList(xwsList, playerIndex, allShips, allUpgrades, allConditions);
             }
         });
 
@@ -346,7 +347,7 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
         return null;
     }
 
-    private void DealWithXWSList(XWSList2e xwsList, int playerIndex, List<XWS2Pilots> allPilots, XWS2Upgrades allUpgrades) {
+    private void DealWithXWSList(XWSList2e xwsList, int playerIndex, List<XWS2Pilots> allPilots, XWS2Upgrades allUpgrades, List<XWS2Upgrades.Condition> allConditions) {
 
         Map playerMap = getPlayerMap(playerIndex);
         if (playerMap == null) {
@@ -359,7 +360,7 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
 
         // If the list includes a yv666 with Hound's Tooth upgrade or modified YT-1300 with escape craft, add the necessary stuff
         //xwsList = handleHoundsToothIshThings(xwsList);
-        VassalXWSListPieces2e pieces = slotLoader.loadListFromXWS(xwsList, allPilots, allUpgrades);
+        VassalXWSListPieces2e pieces = slotLoader.loadListFromXWS(xwsList, allPilots, allUpgrades, allConditions);
         List<GamePiece> shipBases = Lists.newArrayList();
 
         Point startPosition = new Point(150, 150);

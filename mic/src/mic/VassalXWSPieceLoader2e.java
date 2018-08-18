@@ -15,36 +15,16 @@ import java.util.Map;
  * Created by mujuneau on 6/8/18.
  */
 public class VassalXWSPieceLoader2e {
-    private static final String STEM_UPGRADE_SLOT_NAME = "Stem Upgrade";
-    private static Map<String, String> stemUpgradeSlotNames = ImmutableMap.<String, String>builder()
-            .put("astromechdroid","Stem2e Upgrade Astromech Droid")
-            .put("cannon","Stem2e Upgrade Cannon")
-            .put("configuration","Stem2e Upgrade Configuration")
-            .put("crew","Stem2e Upgrade Crew")
-            .put("device","Stem2e Upgrade Device")
-            .put("force","Stem2e Upgrade Force")
-            .put("gunner","Stem2e Upgrade Gunner")
-            .put("illicit","Stem2e Upgrade Illicit")
-            .put("missile","Stem2e Upgrade Missile")
-            .put("modification","Stem2e Upgrade Modification")
-            .put("system","Stem2e Upgrade System")
-            .put("talent","Stem2e Upgrade Talent")
-            .put("tech","Stem2e Upgrade Tech")
-            .put("title","Stem2e Upgrade Title")
-            .put("torpedo","Stem2e Upgrade Torpedo")
-            .put("turret","Stem2e Upgrade Turret")
-            .build();
 
     private static List<String> obstacleTabNames = Lists.newArrayList(
             "Asteroids", "TFA_Asteroids", "Debris"
     );
 
-
     Map<Tokens2e, PieceSlot> tokenPiecesMap = Maps.newHashMap();
     Map<Obstacles, PieceSlot> obstaclesPiecesMap = Maps.newHashMap();
     // Map<String, VassalXWSPilotPieces2e.Condition> conditionPiecesMap = Maps.newHashMap();
 
-    public VassalXWSListPieces2e loadListFromXWS(XWSList2e list, List<XWS2Pilots> allPilots, XWS2Upgrades allUpgrades) {
+    public VassalXWSListPieces2e loadListFromXWS(XWSList2e list, List<XWS2Pilots> allPilots, XWS2Upgrades allUpgrades, List<XWS2Upgrades.Condition> allConditions) {
 
         //the following object is the full structure shebang that'll get returned at the end
         VassalXWSListPieces2e pieces = new VassalXWSListPieces2e();
@@ -157,12 +137,12 @@ public class VassalXWSPieceLoader2e {
                     XWS2Upgrades.OneUpgrade newUpData = allUpgrades.getSpecificUpgrade(upgradeName, allUpgrades);
                     upgrade.setUpgradeData(newUpData);
 
-/*
+
                     if (upgrade.getUpgradeData() != null) {
-                        List<VassalXWSPilotPieces.Condition> foundConditions = getConditionsForCard(upgrade.getUpgradeData().getConditions(),stemConditionSlot);
+                        List<VassalXWSPilotPieces2e.Condition> foundConditions = getConditionsForCard(upgrade.getUpgradeData().getConditions(),stemConditionSlot, allConditions);
                         pilotPieces.getConditions().addAll(foundConditions);
                     }
-                    */
+
 
                     pilotPieces.getUpgrades().add(upgrade);
                 }
@@ -174,7 +154,7 @@ public class VassalXWSPieceLoader2e {
         return pieces;
     }
 
-    private List<VassalXWSPilotPieces2e.Condition> getConditionsForCard(List<String> conditions, PieceSlot stemConditionSlot)
+    private List<VassalXWSPilotPieces2e.Condition> getConditionsForCard(List<String> conditions, PieceSlot stemConditionSlot, List<XWS2Upgrades.Condition> allConditions)
     {
         List<VassalXWSPilotPieces2e.Condition> conditionSlots = Lists.newArrayList();
         for (String conditionName : conditions)
@@ -184,7 +164,14 @@ public class VassalXWSPieceLoader2e {
            // M
            // VassalXWSPilotPieces.Condition condition = this.conditionPiecesMap.get(mapKey);
 
+            XWS2Upgrades.Condition newConditionData = XWS2Upgrades.getSpecificConditionByXWS(conditionName, allConditions);
+            VassalXWSPilotPieces2e.Condition condition = new VassalXWSPilotPieces2e.Condition(stemConditionSlot, conditionName,  newConditionData.getName());
+            condition.setConditionData(newConditionData);
+            conditionSlots.add(condition);
+
+            /*
             // MrMurphM
+
             MasterConditionData.ConditionData newConditionData = MasterConditionData.getConditionDataByName(conditionName);
             VassalXWSPilotPieces2e.Condition condition = new VassalXWSPilotPieces2e.Condition(stemConditionSlot, conditionName,  newConditionData.getName());
 
@@ -192,7 +179,7 @@ public class VassalXWSPieceLoader2e {
             condition.setConditionData(newConditionData);
            // condition = new VassalXWSPilotPieces.Upgrade(conditionName, stemConditionSlot);
 
-            conditionSlots.add(condition);
+            conditionSlots.add(condition);*/
         }
         return conditionSlots;
 

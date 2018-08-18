@@ -19,22 +19,6 @@ import static mic.Util.logToChat;
  */
 public class VassalXWSPilotPieces2e {
 
-    private static Map<String, String> actionLayers = ImmutableMap.<String, String>builder()
-            .put("","1")
-            .put("Focus","2")
-            .put("Lock","3")
-            .put("Boost","4")
-            .put("Evade","5")
-            .put("Barrel Roll","6")
-            .put("Cloak","7")
-            .put("SLAM","8")
-            .put("Rotate Arc","9")
-            .put("Reinforce","10")
-            .put("Reload","11")
-            .put("Jam","12")
-            .build();
-
-
     private PieceSlot pilotCard;
     private PieceSlot dial;
     private PieceSlot movementCard;
@@ -240,7 +224,7 @@ public class VassalXWSPilotPieces2e {
         private String xws;
         private String name;
         private PieceSlot pieceSlot;
-        private MasterConditionData.ConditionData conditionData;
+        private XWS2Upgrades.Condition conditionData;
 
         public Condition(PieceSlot pieceSlot, String xws, String name)
         {
@@ -257,12 +241,12 @@ public class VassalXWSPilotPieces2e {
         {
             return this.pieceSlot;
         }
-        public MasterConditionData.ConditionData getConditionData()
+        public XWS2Upgrades.Condition getConditionData()
         {
             return this.conditionData;
         }
 
-        public void setConditionData(MasterConditionData.ConditionData conditionData)
+        public void setConditionData(XWS2Upgrades.Condition conditionData)
         {
             this.conditionData = conditionData;
         }
