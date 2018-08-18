@@ -107,7 +107,7 @@ public enum Tokens2e {
         for (Tokens2e token : values()) {
             if (pilot.getShipData() != null) {
                 for (XWS2Pilots.PilotAction action : pilot.getShipData().getActions()) {
-                    if (token.actions.contains(action.getType()) || token.actions.contains(action.getLinked().getType())) {
+                    if (token.actions.contains(action.getType())) {
                         tokens.add(token);
                     }
                 }

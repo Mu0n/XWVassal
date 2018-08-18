@@ -136,12 +136,9 @@ public class XWS2Pilots {
         @JsonProperty("type")
         private String type = "";
 
-        @JsonProperty("linked")
-        private PilotAction linked = new PilotAction();
 
         public String getDifficulty() { return difficulty;}
         public String getType() { return type; }
-        public PilotAction getLinked() { return linked; }
     }
     public static class Stat2e{
         public Stat2e() { super(); }
