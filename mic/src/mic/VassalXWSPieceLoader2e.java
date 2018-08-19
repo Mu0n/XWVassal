@@ -416,7 +416,7 @@ public class VassalXWSPieceLoader2e {
         scum("Scum & Villainy"),
         imperial("Imperial"),
         upgrades("Upgrades"),
-        chits("Chits");
+        chits("SecondEdition");
 
         private String widgetName;
 
