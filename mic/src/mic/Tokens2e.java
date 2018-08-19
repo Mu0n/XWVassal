@@ -40,7 +40,11 @@ public enum Tokens2e {
             Lists.newArrayList("r3astromech", "janors", "millenniumfalcon","coolhand"),
             Lists.newArrayList("t70xwing/redace")
     ),
-    crit,
+    crit(
+            Lists.newArrayList("Focus","Calculate"),
+            none,
+            none
+    ),
     ion2e(
             none,
             Lists.newArrayList("pulsedrayshield","leebo","feedbackarray"),
