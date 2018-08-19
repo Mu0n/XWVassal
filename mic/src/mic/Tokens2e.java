@@ -20,7 +20,7 @@ public enum Tokens2e {
             Lists.newArrayList("targetingcomputer", "firecontrolsystem"),
             none
     ),
-    stress(
+    stress2e(
             Lists.newArrayList("Focus"),
             Lists.newArrayList("zuckuss", "r3a2","elusiveness","overclockedr4","pushthelimit"),
             Lists.newArrayList("awing/tychocelchu","tiefofighter/zetaleader")
@@ -35,13 +35,13 @@ public enum Tokens2e {
             none,
             none
     ),
-    evade(
+    evade2e(
             Lists.newArrayList("Evade"),
             Lists.newArrayList("r3astromech", "janors", "millenniumfalcon","coolhand"),
             Lists.newArrayList("t70xwing/redace")
     ),
     crit,
-    ion(
+    ion2e(
             none,
             Lists.newArrayList("pulsedrayshield","leebo","feedbackarray"),
             none
@@ -68,7 +68,7 @@ public enum Tokens2e {
             none
     ),
     idtoken,
-    weaponsdisabled2e(
+    disarm2e(
             Lists.newArrayList("SLAM"),
             Lists.newArrayList("burnoutslam", "arccaster"),
             Lists.newArrayList("ewing/corranhorn", "m3ainterceptor/quinnjast")
