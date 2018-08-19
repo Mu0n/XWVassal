@@ -4,8 +4,6 @@ import VASSAL.build.AbstractConfigurable;
 import VASSAL.build.Buildable;
 import VASSAL.build.GameModule;
 import VASSAL.build.module.documentation.HelpFile;
-import VASSAL.build.module.properties.MutablePropertiesContainer;
-import VASSAL.build.module.properties.MutableProperty;
 import VASSAL.tools.ArchiveWriter;
 import VASSAL.tools.DataArchive;
 import VASSAL.tools.io.FileArchive;
@@ -90,7 +88,7 @@ public class OTAContentsChecker extends AbstractConfigurable {
     private final String[] finalColumnNames = {"Type","Name", "Variant"};
     private JTable finalTable;
     private JButton downloadButton;
-    private JFrame frame;
+    private JFrame frame, framefor2nd, framefor1st;
     private JLabel jlabel;
     private boolean downloadAll = false;
 
@@ -361,14 +359,73 @@ public class OTAContentsChecker extends AbstractConfigurable {
     /*
      * Build the contents checker window
      */
+
     private synchronized void ContentsCheckerWindow()
+    {
+
+        frame = new JFrame();
+        frame.setResizable(true);
+
+// create the panel
+        JPanel panel = new JPanel();
+        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+        JButton forFirstButton = new JButton("Content Checker for 1st edition");
+        JButton forSecondButton = new JButton("Content Checker for 2nd edition");
+
+        forFirstButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                ContentsCheckerWindowFor1st();
+            }
+        });
+
+        forSecondButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                ContentsCheckerWindowFor2nd();
+            }
+        });
+
+        panel.add(forFirstButton);
+        panel.add(forSecondButton);
+
+        frame.setPreferredSize(new Dimension(550,700));
+        frame.setTitle("Content Checker");
+        panel.setOpaque(true); // content panes must be opaque
+        frame.setContentPane(panel);
+        frame.pack();
+        frame.setVisible(true);
+        frame.toFront();
+    }
+
+    private synchronized void ContentsCheckerWindowFor2nd()
+    {
+
+
+        framefor2nd = new JFrame();
+        framefor2nd.setResizable(true);
+
+        // create the panel
+        JPanel panel = new JPanel();
+        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+
+        framefor2nd.setPreferredSize(new Dimension(550,700));
+        framefor2nd.setTitle("Content Checker");
+        panel.setOpaque(true); // content panes must be opaque
+        framefor2nd.setContentPane(panel);
+        framefor2nd.pack();
+        framefor2nd.setVisible(true);
+        framefor2nd.toFront();
+
+    }
+    private synchronized void ContentsCheckerWindowFor1st()
     {
         results = checkAllResults();
         finalTable = buildFinalTable(results);
 
-        // create the frame
-        frame = new JFrame();
-        frame.setResizable(true);
+        // create the framefor1st
+        framefor1st = new JFrame();
+        framefor1st.setResizable(true);
 
         // create the panel
         JPanel panel = new JPanel();
@@ -393,7 +450,6 @@ public class OTAContentsChecker extends AbstractConfigurable {
         allButton.setSelected(false);
         allButton.addItemListener(new ItemListener() {
             public void itemStateChanged(ItemEvent evt) {
-                //TODO
                 if (evt.getStateChange() == ItemEvent.DESELECTED)
                 {
                     downloadAll = false;
@@ -438,7 +494,7 @@ public class OTAContentsChecker extends AbstractConfigurable {
         JButton cancelButton = new JButton("Cancel");
         cancelButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
-                frame.dispose();
+                framefor1st.dispose();
             }
         });
         downloadButton.setAlignmentY(0.0F);
@@ -493,52 +549,8 @@ public class OTAContentsChecker extends AbstractConfigurable {
         panel.add(buttonSubPanel);
         panel.add(finalPane);
 
-        /* old layout
-        // add the components
-        c.gridx = 0;
-        c.gridy = 2;
-        c.gridwidth = 3;
-        panel.add(jlabel,c);
-
-        c.gridx = 0;
-        c.gridy = 3;
-        c.gridwidth = 3;
-        panel.add(finalPane,c);
-
-        c.gridx = 0;
-        c.gridy = 4;
-        c.gridwidth = 1;
-        panel.add(downloadButton,c);
-
-        c.gridx = 1;
-        c.gridy = 4;
-        c.gridwidth = 1;
-        panel.add(allButton,c);
-
-        c.gridx = 2;
-        c.gridy = 4;
-        c.gridwidth = 1;
-        panel.add(cancelButton,c);
-
-        c.gridx = 0;
-        c.gridy = 0;
-        c.gridwidth = 1;
-        panel.add(sourceExplanationLabel);
-
-        c.gridx = 1;
-        c.gridy = 0;
-        c.gridwidth = 1;
-        panel.add(aComboBox);
-
-        c.gridx = 0;
-        c.gridy = 1;
-        c.gridwidth = 2;
-        c.ipady = 40;
-        panel.add(sourceTextDescription);
-        */
-
-        panel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
-        frame.add(panel, BorderLayout.PAGE_START);
+                panel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+        framefor1st.add(panel, BorderLayout.PAGE_START);
 
         jlabel.setText("<html><body><br>Click the download button to download the following images</body></html>");
         if(finalTable.getModel().getRowCount() == 0)
@@ -550,13 +562,13 @@ public class OTAContentsChecker extends AbstractConfigurable {
             downloadButton.setEnabled(true);
         }
 
-        frame.setPreferredSize(new Dimension(550,700));
-        frame.setTitle("Content Checker");
+        framefor1st.setPreferredSize(new Dimension(550,700));
+        framefor1st.setTitle("Content Checker");
         panel.setOpaque(true); // content panes must be opaque
-        frame.setContentPane(panel);
-        frame.pack();
-        frame.setVisible(true);
-        frame.toFront();
+        framefor1st.setContentPane(panel);
+        framefor1st.pack();
+        framefor1st.setVisible(true);
+        framefor1st.toFront();
 
 
     }
@@ -703,7 +715,7 @@ public class OTAContentsChecker extends AbstractConfigurable {
             //jlabel.setText("Click the download button to download the following images");
             downloadButton.setEnabled(true);
         }
-        // frame.repaint();
+        // framefor1st.repaint();
     }
 
     private String[][] buildTableResultsFromResults(OTAContentsCheckerResults results)
