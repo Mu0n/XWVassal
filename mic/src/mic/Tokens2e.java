@@ -10,7 +10,7 @@ import static mic.Util.none;
  * Created by mjuneau on 7/8/18.
  */
 public enum Tokens2e {
-    shield(
+    shield2e(
             none,
             Lists.newArrayList("gonk"),
             none
@@ -25,12 +25,12 @@ public enum Tokens2e {
             Lists.newArrayList("zuckuss", "r3a2","elusiveness","overclockedr4","pushthelimit"),
             Lists.newArrayList("awing/tychocelchu","tiefofighter/zetaleader")
     ),
-    focus(
+    focus2e(
             Lists.newArrayList("Focus"),
             none,
             none
     ),
-    calculate(
+    calculate2e(
             Lists.newArrayList("Calculate"),
             none,
             none
@@ -47,12 +47,12 @@ public enum Tokens2e {
             none
     ),
     energy,
-    reinforce(
+    reinforce2e(
             Lists.<String>newArrayList("Reinforce"),
             none,
             none
     ),
-    charge(
+    charge2e(
             none,
             none,
             Lists.newArrayList("hwk290/roarkgarnet", "tiefofighter/epsilonace")
@@ -68,12 +68,12 @@ public enum Tokens2e {
             none
     ),
     idtoken,
-    weaponsdisabled(
+    weaponsdisabled2e(
             Lists.newArrayList("SLAM"),
             Lists.newArrayList("burnoutslam", "arccaster"),
             Lists.newArrayList("ewing/corranhorn", "m3ainterceptor/quinnjast")
     ),
-    tractorbeam(
+    tractor2e(
             none,
             Lists.newArrayList("tractorbeam", "spacetugtractorarray", "shadowcaster"),
             Lists.newArrayList("lancerclasspursuitcraft/ketsuonyo", "quadjumper/unkarplutt")
@@ -82,7 +82,7 @@ public enum Tokens2e {
     hugeshipforestats,
     hugeshipaftstats,
     oldstylereinforce,
-    jam(
+    jam2e(
             none,
             Lists.newArrayList("jammingbeam"),
             none
