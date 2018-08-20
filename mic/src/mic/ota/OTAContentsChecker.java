@@ -92,8 +92,11 @@ public class OTAContentsChecker extends AbstractConfigurable {
     private JLabel jlabel;
     private boolean downloadAll = false;
     JTabbedPane myTabbedPane = new JTabbedPane();
+    int missing1stEdContent = 0;
+    int missing2ndEdContent = 0;
 
     private boolean tictoc = false;
+    private boolean tictoc1st = false;
     Color backupColor = Color.WHITE;
     Boolean killItIfYouHaveTo = false; //kills the blinking Contents Checker button, after an update
     Boolean stopBlink1stTab = false;
@@ -102,10 +105,10 @@ public class OTAContentsChecker extends AbstractConfigurable {
     public static final String modeListURL = "https://raw.githubusercontent.com/Mu0n/XWVassal-website/master/modeList.json";
 
 
-    public void activateBlinky()
+    public void activateBlinky(final Color whichColor)
     {
         contentCheckerButton.setForeground(Color.WHITE);
-        contentCheckerButton.setBackground(Color.RED);
+        contentCheckerButton.setBackground(whichColor);
 
             final java.util.Timer timer = new Timer();
             final VASSAL.build.module.Map map = VASSAL.build.module.Map.getMapById("Map0");
@@ -128,7 +131,7 @@ public class OTAContentsChecker extends AbstractConfigurable {
                             return;
                         }
                         if(tictoc==true) {
-                            contentCheckerButton.setBackground(Color.RED);
+                            contentCheckerButton.setBackground(whichColor);
                             contentCheckerButton.setForeground(Color.WHITE);
                             tictoc=false;
                         }
@@ -145,13 +148,12 @@ public class OTAContentsChecker extends AbstractConfigurable {
 
     public void activateBlinky1stTab()
     {
-        final Component theTab =  myTabbedPane.getTabComponentAt(1);
-        theTab.setForeground(Color.WHITE);
-        theTab.setBackground(Color.RED);
+        myTabbedPane.setForegroundAt(1,Color.WHITE);
+        myTabbedPane.setBackgroundAt(1,Color.RED);
 
         final java.util.Timer timer = new Timer();
         final VASSAL.build.module.Map map = VASSAL.build.module.Map.getMapById("Map0");
-        this.tictoc = false;
+        this.tictoc1st = false;
         final AtomicInteger count = new AtomicInteger(0);
         timer.schedule(new TimerTask() {
             @Override
@@ -159,25 +161,25 @@ public class OTAContentsChecker extends AbstractConfigurable {
                 try{
                     if(stopBlink1stTab){
                         timer.cancel();
-                        theTab.setBackground(backupColor);
-                        theTab.setForeground(Color.BLACK);
+                        myTabbedPane.setBackgroundAt(1, backupColor);
+                        myTabbedPane.setForegroundAt(1,Color.BLACK);
                         return;
                     }
                     if(count.getAndIncrement() >= NBFLASHES * 2) {
                         timer.cancel();
-                        theTab.setBackground(backupColor);
-                        theTab.setForeground(Color.BLACK);
+                        myTabbedPane.setBackgroundAt(1,backupColor);
+                        myTabbedPane.setForegroundAt(1,Color.BLACK);
                         return;
                     }
-                    if(tictoc==true) {
-                        theTab.setBackground(Color.RED);
-                        theTab.setForeground(Color.WHITE);
-                        tictoc=false;
+                    if(tictoc1st==true) {
+                        myTabbedPane.setBackgroundAt(1,Color.RED);
+                        myTabbedPane.setForegroundAt(1,Color.WHITE);
+                        tictoc1st=false;
                     }
                     else{
-                        tictoc=true;
-                        theTab.setBackground(backupColor);
-                        theTab.setForeground(Color.BLACK);
+                        tictoc1st=true;
+                        myTabbedPane.setBackgroundAt(1,backupColor);
+                        myTabbedPane.setForegroundAt(1,Color.BLACK);
                     }
                 } catch (Exception e) {
                 }
@@ -199,13 +201,30 @@ public class OTAContentsChecker extends AbstractConfigurable {
             }
         });
         contentCheckerButton = b;
-        int n = countMissingContent();
-        //logToChat("missing content count: " + Integer.toString(n));
-        if(n>0) {
-            activateBlinky();
-            activateBlinky1stTab();
+
+        boolean wantToBeNotified1st = false;
+        if(!XWOTAUtils.imageExistsInModule("want1stednotifs.txt")){
+            String choice = "yes";
+            try{
+                XWOTAUtils.addImageToModule("want1stednotifs.txt",choice.getBytes());
+            }catch(Exception e){
+
+            }
+        }else{
+
         }
-        contentCheckerButton.setName("Content Checker ("+Integer.toString(n)+")new");
+
+
+        if(wantToBeNotified1st) missing1stEdContent = countMissingContent();
+
+        //logToChat("missing content count: " + Integer.toString(n));
+        if(missing1stEdContent>0) {
+            activateBlinky(Color.RED);
+        }
+        if(missing2ndEdContent>0) {
+            activateBlinky(Color.BLUE);
+        }
+        contentCheckerButton.setName("Content Checker ("+Integer.toString(missing1stEdContent)+")new");
         GameModule.getGameModule().getToolBar().add(b);
     }
 
@@ -458,7 +477,6 @@ public class OTAContentsChecker extends AbstractConfigurable {
 
         // download button
         downloadButton = new JButton("Download");
-        downloadButton.setAlignmentY(0.0F);
         downloadButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
                 downloadButton.setEnabled(false);
@@ -488,7 +506,6 @@ public class OTAContentsChecker extends AbstractConfigurable {
                 frame.dispose();
             }
         });
-        downloadButton.setAlignmentY(0.0F);
 
         final JComboBox aComboBox = new JComboBox();
         mgmr.loadData();
@@ -510,8 +527,18 @@ public class OTAContentsChecker extends AbstractConfigurable {
         //sourceTextDescription.setAlignmentX(JLabel.RIGHT_ALIGNMENT);
 
         JLabel sourceExplanationLabel = new JLabel("<html><body>The Content Checker allows you to download card images, ship dials, ship bases as new content<br>" +
-                "is previewed or released in the game. Please download this new content to ensure maximum compatibility with other players.<br><br>Select the game mode here (only the base game can acquire new content for now):</body></html>");
+                "is previewed or released in the game. Please download this new content to ensure maximum compatibility with other players.</body></html>");
 
+        JCheckBox prefChecbox1st = new JCheckBox("Checked: you will get notifications for missing 1st edition content. Unchecked: you won't.");
+        prefChecbox1st.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                logToChat("something done to pref checkbox");
+            }
+        });
+
+
+        JLabel selectExplanationLabel = new JLabel("<html><body><br><br>Select the game mode here (only the base game can acquire new content for now):</body></html>");
         aComboBox.addItemListener(new ItemListener() {
             @Override
             public void itemStateChanged(ItemEvent e) {
@@ -522,17 +549,18 @@ public class OTAContentsChecker extends AbstractConfigurable {
             }
         });
 
-        sourceExplanationLabel.setAlignmentX(Component.RIGHT_ALIGNMENT);
-        aComboBox.setAlignmentX(Component.RIGHT_ALIGNMENT);
-        sourceTextDescription.setAlignmentX(Component.RIGHT_ALIGNMENT);
-        jlabel.setAlignmentX(Component.RIGHT_ALIGNMENT);
         JPanel buttonSubPanel = new JPanel();
-        buttonSubPanel.setAlignmentX(Component.RIGHT_ALIGNMENT);
         buttonSubPanel.add(downloadButton);
         buttonSubPanel.add(allButton);
         buttonSubPanel.add(cancelButton);
 
-        panel.add(sourceExplanationLabel);
+        JPanel topPanel = new JPanel();
+        topPanel.setLayout(new BoxLayout(topPanel, BoxLayout.Y_AXIS));
+        topPanel.add(sourceExplanationLabel);
+        topPanel.add(prefChecbox1st);
+        topPanel.add(selectExplanationLabel);
+
+        panel.add(topPanel);
         panel.add(aComboBox);
         panel.add(sourceTextDescription);
         panel.add(jlabel);
@@ -540,7 +568,7 @@ public class OTAContentsChecker extends AbstractConfigurable {
         panel.add(finalPane);
 
         panel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
-        frame.add(panel, BorderLayout.PAGE_START);
+        //frame.add(panel, BorderLayout.PAGE_START);
 
         jlabel.setText("<html><body><br>Click the download button to download the following images</body></html>");
         if(finalTable.getModel().getRowCount() == 0)
@@ -556,22 +584,25 @@ public class OTAContentsChecker extends AbstractConfigurable {
         // 2nd Edition
         // =============================================================
         JPanel secondEditionMainPanel = new JPanel();
-        JLabel toggleNotifications1stEdLabel = new JLabel("Keep receiving notifications for the 1st edition?");
         JLabel sourceExplanationLabel2nd = new JLabel("<html><body>The Content Checker allows you to download card images, ship dials, ship bases as new content<br>" +
                 "is previewed or released in the game. Please download this new content to ensure maximum compatibility with other players.<br><br>Select the game mode here (only the base game can acquire new content for now):</body></html>");
 
+
         secondEditionMainPanel.add(sourceExplanationLabel2nd);
+        secondEditionMainPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+       // frame.add(secondEditionMainPanel, BorderLayout.PAGE_START);
 
 
         // =============================================================
         // Common to both editions
         // =============================================================
 
-        myTabbedPane.add("Second Edition",secondEditionMainPanel);
-        myTabbedPane.add("First Edition",panel);
+        myTabbedPane.addTab("Second Edition",secondEditionMainPanel);
+        myTabbedPane.addTab("First Edition",panel);
 
 
-        frame.setPreferredSize(new Dimension(550,700));
+
+        frame.setPreferredSize(new Dimension(800,900));
         frame.setTitle("Content Checker");
         panel.setOpaque(true); // content panes must be opaque
         frame.setContentPane(myTabbedPane);
@@ -579,6 +610,11 @@ public class OTAContentsChecker extends AbstractConfigurable {
         frame.pack();
         frame.setVisible(true);
         frame.toFront();
+
+
+
+        if(missing1stEdContent>0) activateBlinky1stTab();
+
     }
 /*
     private synchronized void ContentsCheckerWindowFor1st()

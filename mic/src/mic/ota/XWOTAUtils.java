@@ -777,7 +777,7 @@ public class XWOTAUtils {
      //   writer.save();
     }
 
-    private static void addImageToModule(String imageName,byte[] imageBytes) throws IOException
+    public static void addImageToModule(String imageName,byte[] imageBytes) throws IOException
     {
         GameModule gameModule = GameModule.getGameModule();
         DataArchive dataArchive = gameModule.getDataArchive();
@@ -787,7 +787,7 @@ public class XWOTAUtils {
         writer.save();
     }
 
-    private static void addImageToModule(String imageName,byte[] imageBytes,  ArchiveWriter writer) throws IOException
+    public static void addImageToModule(String imageName,byte[] imageBytes,  ArchiveWriter writer) throws IOException
     {
 
         writer.addImage(imageName,imageBytes);
