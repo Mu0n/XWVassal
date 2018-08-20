@@ -88,7 +88,7 @@ public class OTAContentsChecker extends AbstractConfigurable {
     private final String[] finalColumnNames = {"Type","Name", "Variant"};
     private JTable finalTable;
     private JButton downloadButton;
-    private JFrame frame, framefor2nd, framefor1st;
+    private JFrame frame;
     private JLabel jlabel;
     private boolean downloadAll = false;
 
@@ -356,6 +356,16 @@ public class OTAContentsChecker extends AbstractConfigurable {
     }
 
 
+    protected JComponent makeTextPanel(String text) {
+        JPanel panel = new JPanel(false);
+        JLabel filler = new JLabel(text);
+        filler.setHorizontalAlignment(JLabel.CENTER);
+        panel.setLayout(new GridLayout(1, 1));
+        panel.add(filler);
+        return panel;
+    }
+
+
     /*
      * Build the contents checker window
      */
@@ -366,58 +376,164 @@ public class OTAContentsChecker extends AbstractConfigurable {
         frame = new JFrame();
         frame.setResizable(true);
 
-// create the panel
+        results = checkAllResults();
+        finalTable = buildFinalTable(results);
+
+        // create the panel
         JPanel panel = new JPanel();
+
+        //previous layout
+        //panel.setLayout(new GridBagLayout());
+
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-        JButton forFirstButton = new JButton("Content Checker for 1st edition");
-        JButton forSecondButton = new JButton("Content Checker for 2nd edition");
 
-        forFirstButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                ContentsCheckerWindowFor1st();
+        //previous layout
+        //GridBagConstraints c = new GridBagConstraints();
+
+        // create the label
+        jlabel = new JLabel();
+
+
+        // add the results table
+        JScrollPane finalPane = new JScrollPane(finalTable);
+
+        // ALL checkbox
+        final JCheckBox allButton = new JCheckBox("Download all content");
+        allButton.setSelected(false);
+        allButton.addItemListener(new ItemListener() {
+            public void itemStateChanged(ItemEvent evt) {
+                if (evt.getStateChange() == ItemEvent.DESELECTED)
+                {
+                    downloadAll = false;
+                    refreshFinalTable();
+                }else if(evt.getStateChange() == ItemEvent.SELECTED)
+                {
+                    downloadAll = true;
+
+                    refreshFinalTable();
+
+                }
+
             }
         });
 
-        forSecondButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                ContentsCheckerWindowFor2nd();
+
+        // download button
+        downloadButton = new JButton("Download");
+        downloadButton.setAlignmentY(0.0F);
+        downloadButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                downloadButton.setEnabled(false);
+
+                int answer =  JOptionPane.showConfirmDialog(null, "This might take several minutes. During the download, Vassal will be unresponsive. \nDo you want to continue?", "Do you want to proceed?", JOptionPane.YES_NO_OPTION);
+
+                if(answer == JOptionPane.YES_OPTION)
+                {
+                    if("Base Game".equals(aComboBoxChoice)) downloadAll(OTA_RAW_BRANCH_URL);
+                    else {
+                        chosenURL = mgmr.getGameMode(aComboBoxChoice).getBaseDataURL();
+                        downloadAll(chosenURL);
+                    }
+                    allButton.setSelected(false);
+                    killItIfYouHaveTo = true; //gets rid of the blinky
+                }else{
+                    downloadButton.setEnabled(true);
+                }
             }
         });
 
-        panel.add(forFirstButton);
-        panel.add(forSecondButton);
+        // cancel button
+        JButton cancelButton = new JButton("Cancel");
+        cancelButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                frame.dispose();
+            }
+        });
+        downloadButton.setAlignmentY(0.0F);
+
+        final JComboBox aComboBox = new JComboBox();
+        mgmr.loadData();
+        if(mgmr!=null)
+        {
+            for(MasterGameModeRouter.GameMode o : mgmr.getGameModes()){
+                aComboBox.addItem(o.getName());
+            }
+        }
+        else
+        //if it can't access the list of sources on the web, make it base game by default
+        {
+            aComboBox.addItem("Base Game");
+        }
+        final JLabel sourceTextDescription = new JLabel("<html><body width=400><b>Description for <i>"
+                + aComboBox.getSelectedItem().toString() + "</i></b>: "
+                + mgmr.getGameMode(aComboBox.getSelectedItem().toString()).getDescription()
+                + "</body></html>");
+        //sourceTextDescription.setAlignmentX(JLabel.RIGHT_ALIGNMENT);
+
+        JLabel sourceExplanationLabel = new JLabel("<html><body>The Content Checker allows you to download card images, ship dials, ship bases as new content<br>" +
+                "is previewed or released in the game. Please download this new content to ensure maximum compatibility with other players.<br><br>Select the game mode here (only the base game can acquire new content for now):</body></html>");
+
+
+        aComboBox.addItemListener(new ItemListener() {
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+                sourceTextDescription.setText("<html><body width=400><b>Description for <i>"
+                        + aComboBox.getSelectedItem().toString() + "</i></b>: "
+                        + mgmr.getGameMode(aComboBox.getSelectedItem().toString()).getDescription()
+                        + "</body></html>");
+            }
+        });
+
+        sourceExplanationLabel.setAlignmentX(Component.RIGHT_ALIGNMENT);
+        aComboBox.setAlignmentX(Component.RIGHT_ALIGNMENT);
+        sourceTextDescription.setAlignmentX(Component.RIGHT_ALIGNMENT);
+        jlabel.setAlignmentX(Component.RIGHT_ALIGNMENT);
+        JPanel buttonSubPanel = new JPanel();
+        buttonSubPanel.setAlignmentX(Component.RIGHT_ALIGNMENT);
+        buttonSubPanel.add(downloadButton);
+        buttonSubPanel.add(allButton);
+        buttonSubPanel.add(cancelButton);
+
+        panel.add(sourceExplanationLabel);
+        panel.add(aComboBox);
+        panel.add(sourceTextDescription);
+        panel.add(jlabel);
+        panel.add(buttonSubPanel);
+        panel.add(finalPane);
+
+        panel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+        frame.add(panel, BorderLayout.PAGE_START);
+
+        jlabel.setText("<html><body><br>Click the download button to download the following images</body></html>");
+        if(finalTable.getModel().getRowCount() == 0)
+        {
+            jlabel.setText("All content is up to date");
+            downloadButton.setEnabled(false);
+        }else{
+
+            downloadButton.setEnabled(true);
+        }
+
+        JTabbedPane myTabbedPane = new JTabbedPane();
+
+
+        JComponent secondEdPane = makeTextPanel("Second Edition");
+
+        myTabbedPane.add("Second Edition",secondEdPane);
+        myTabbedPane.add("First Edition",panel);
+
+
 
         frame.setPreferredSize(new Dimension(550,700));
         frame.setTitle("Content Checker");
         panel.setOpaque(true); // content panes must be opaque
-        frame.setContentPane(panel);
+        frame.setContentPane(myTabbedPane);
+        //frame.setContentPane(panel);
         frame.pack();
         frame.setVisible(true);
         frame.toFront();
     }
-
-    private synchronized void ContentsCheckerWindowFor2nd()
-    {
-
-
-        framefor2nd = new JFrame();
-        framefor2nd.setResizable(true);
-
-        // create the panel
-        JPanel panel = new JPanel();
-        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-
-        framefor2nd.setPreferredSize(new Dimension(550,700));
-        framefor2nd.setTitle("Content Checker");
-        panel.setOpaque(true); // content panes must be opaque
-        framefor2nd.setContentPane(panel);
-        framefor2nd.pack();
-        framefor2nd.setVisible(true);
-        framefor2nd.toFront();
-
-    }
+/*
     private synchronized void ContentsCheckerWindowFor1st()
     {
         results = checkAllResults();
@@ -572,7 +688,7 @@ public class OTAContentsChecker extends AbstractConfigurable {
 
 
     }
-
+*/
 
     private void downloadAll(String branchURL)
     {
