@@ -20,6 +20,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.*;
 import java.util.Timer;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -203,14 +204,41 @@ public class OTAContentsChecker extends AbstractConfigurable {
         contentCheckerButton = b;
 
         boolean wantToBeNotified1st = false;
-        if(!XWOTAUtils.imageExistsInModule("want1stednotifs.txt")){
+        if(!XWOTAUtils.fileExistsInModule("","want1stednotifs.txt")){
             String choice = "yes";
             try{
-                XWOTAUtils.addImageToModule("want1stednotifs.txt",choice.getBytes());
+                XWOTAUtils.addFileToModule("want1stednotifs.txt",choice.getBytes());
             }catch(Exception e){
 
             }
         }else{
+            // read contents of want1stednotifs.txt
+            String wantNotifStr = null;
+            try {
+
+                InputStream inputStream = GameModule.getGameModule().getDataArchive().getInputStream("want1stednotifs.txt");
+                if (inputStream == null) {
+                    logToChat("couldn't load /want1stednotifs.txt");
+                }
+                byte[] bytes = null;
+                int val = inputStream.read(bytes);
+
+                wantNotifStr = new String(bytes);
+            } catch (Exception e) {
+                System.out.println("Unhandled error reading want1stednotifs.txt: \n" + e.toString());
+                logToChat("Unhandled error reading want1stednotifs.txt: \n" + e.toString());
+
+            }
+
+            // if 'yes', then set wantToBeNotified1st to true
+            if(wantNotifStr != null && wantNotifStr.equalsIgnoreCase("yes"))
+            {
+                wantToBeNotified1st = true;
+
+            }else{
+                wantToBeNotified1st = true;
+            }
+
 
         }
 

@@ -777,6 +777,15 @@ public class XWOTAUtils {
      //   writer.save();
     }
 
+    public static void addFileToModule(String fileName, byte[] fileBytes) throws IOException
+    {
+            GameModule gameModule = GameModule.getGameModule();
+            DataArchive dataArchive = gameModule.getDataArchive();
+            FileArchive fileArchive = dataArchive.getArchive();
+            ArchiveWriter writer = new ArchiveWriter(fileArchive);
+            addFileToModule(fileName, fileBytes,writer);
+    }
+
     public static void addImageToModule(String imageName,byte[] imageBytes) throws IOException
     {
         GameModule gameModule = GameModule.getGameModule();
@@ -812,5 +821,24 @@ public class XWOTAUtils {
 
         return found;
 
+    }
+
+    public static boolean fileExistsInModule(String path, String fileName)
+    {
+        GameModule gameModule = GameModule.getGameModule();
+        DataArchive dataArchive = gameModule.getDataArchive();
+        FileArchive fileArchive = dataArchive.getArchive();
+
+        boolean found = false;
+        try {
+
+            found = fileArchive.contains(path+"/" + fileName);
+
+        }catch(Exception e)
+        {
+            Util.logToChat("Exception searching for file in module");
+        }
+
+        return found;
     }
 }
