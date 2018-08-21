@@ -204,13 +204,12 @@ public class OTAContentsChecker extends AbstractConfigurable {
 
         boolean wantToBeNotified1st = false;
         if(!XWOTAUtils.fileExistsInModule("want1stednotifs.txt")){
-            String choice = "yes";
+            String choice = "no";
             try{
                 XWOTAUtils.addFileToModule("want1stednotifs.txt",choice.getBytes());
             }catch(Exception e){
-
             }
-            wantToBeNotified1st = true;
+            wantToBeNotified1st = false;
         }else{
             // read contents of want1stednotifs.txt
             String wantNotifStr = null;
@@ -248,10 +247,11 @@ public class OTAContentsChecker extends AbstractConfigurable {
             activateBlinky(Color.BLUE);
         }
         contentCheckerButton.setName("Content Checker ("+Integer.toString(missing1stEdContent)+")new");
+        contentCheckerButton.invalidate();
         GameModule.getGameModule().getToolBar().add(b);
     }
 
-    private boolean downloadXwingDataAndDispatcherJSONFiles()
+    private static boolean downloadXwingDataAndDispatcherJSONFiles()
     {
         boolean errorOccurredOnXWingData = false;
 
@@ -266,7 +266,6 @@ public class OTAContentsChecker extends AbstractConfigurable {
         jsonFilesToDownloadFromURL.add(OTAContentsChecker.OTA_DISPATCHER_CONDITIONS_JSON_URL);
         try {
             XWOTAUtils.downloadJSONFilesFromGitHub(jsonFilesToDownloadFromURL);
-            mic.Util.logToChat("Core XWing data updated");
         }catch(IOException e)
         {
             errorOccurredOnXWingData = true;
@@ -275,7 +274,7 @@ public class OTAContentsChecker extends AbstractConfigurable {
         return errorOccurredOnXWingData;
     }
 
-    private int justFind1MissingContent()
+    public static int justFind1MissingContent()
     {
         int missingCount = 0;
 
@@ -592,24 +591,12 @@ public class OTAContentsChecker extends AbstractConfigurable {
      * Build the contents checker window
      */
 
-    private synchronized void ContentsCheckerWindow()
+    private synchronized void ContentsCheckerWindow1stEdTab(JPanel hostPanel)
     {
-        // =============================================================
-        // Common to both editions
-        // =============================================================
-        frame = new JFrame();
-        frame.setResizable(true);
-
-        // =============================================================
-        // 1st Edition
-        // =============================================================
-
         results = checkAllResults();
         finalTable = buildFinalTable(results);
 
-        // create the panel
-        JPanel panel = new JPanel();
-        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+        hostPanel.setLayout(new BoxLayout(hostPanel, BoxLayout.Y_AXIS));
 
         // create the label
         jlabel = new JLabel();
@@ -685,37 +672,7 @@ public class OTAContentsChecker extends AbstractConfigurable {
                 + "</body></html>");
         //sourceTextDescription.setAlignmentX(JLabel.RIGHT_ALIGNMENT);
 
-        JLabel sourceExplanationLabel = new JLabel("<html><body>The Content Checker allows you to download card images, ship dials, ship bases as new content<br>" +
-                "is previewed or released in the game. Please download this new content to ensure maximum compatibility with other players.</body></html>");
 
-        JCheckBox prefChecbox1st = new JCheckBox("Checked: you will get notifications for missing 1st edition content. Unchecked: you won't.");
-        prefChecbox1st.addItemListener(new ItemListener() {
-            @Override
-            public void itemStateChanged(ItemEvent e) {
-                if(e.getStateChange() == ItemEvent.SELECTED){
-                    String wantNotifStr = "yes";
-                    try {
-                        BufferedWriter writer = new BufferedWriter(new FileWriter("want1stednotifs.txt"));
-                        writer.write(wantNotifStr);
-                        writer.close();
-                    } catch (Exception exc) {
-                        System.out.println("Unhandled error writing want1stednotifs.txt: \n" + e.toString());
-                        logToChat("Unhandled error writing want1stednotifs.txt: \n" + e.toString());
-                    }
-                } else {
-                    String wantNotifStr = "no";
-                    try {
-                        BufferedWriter writer = new BufferedWriter(new FileWriter("want1stednotifs.txt"));
-                        writer.write(wantNotifStr);
-                        writer.close();
-                    } catch (Exception exc) {
-                        System.out.println("Unhandled error writing want1stednotifs.txt: \n" + e.toString());
-                        logToChat("Unhandled error writing want1stednotifs.txt: \n" + e.toString());
-                    }
-
-                }
-            }
-        });
 
 
         JLabel selectExplanationLabel = new JLabel("<html><body><br><br>Select the game mode here (only the base game can acquire new content for now):</body></html>");
@@ -736,18 +693,16 @@ public class OTAContentsChecker extends AbstractConfigurable {
 
         JPanel topPanel = new JPanel();
         topPanel.setLayout(new BoxLayout(topPanel, BoxLayout.Y_AXIS));
-        topPanel.add(sourceExplanationLabel);
-        topPanel.add(prefChecbox1st);
         topPanel.add(selectExplanationLabel);
 
-        panel.add(topPanel);
-        panel.add(aComboBox);
-        panel.add(sourceTextDescription);
-        panel.add(jlabel);
-        panel.add(buttonSubPanel);
-        panel.add(finalPane);
+        hostPanel.add(topPanel);
+        hostPanel.add(aComboBox);
+        hostPanel.add(sourceTextDescription);
+        hostPanel.add(jlabel);
+        hostPanel.add(buttonSubPanel);
+        hostPanel.add(finalPane);
 
-        panel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+        hostPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
         //frame.add(panel, BorderLayout.PAGE_START);
 
         jlabel.setText("<html><body><br>Click the download button to download the following images</body></html>");
@@ -759,6 +714,54 @@ public class OTAContentsChecker extends AbstractConfigurable {
 
             downloadButton.setEnabled(true);
         }
+    }
+    private synchronized void ContentsCheckerWindow()
+    {
+        // =============================================================
+        // Common to both editions
+        // =============================================================
+        frame = new JFrame();
+        frame.setResizable(true);
+
+        // =============================================================
+        // 1st Edition
+        // =============================================================
+
+        final JPanel panel = new JPanel();
+        final JButton activate1stTab = new JButton("Check for missing content in 1st edition (Warning: may take minutes!)");
+        activate1stTab.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                activate1stTab.setEnabled(false);
+                ContentsCheckerWindow1stEdTab(panel);
+            }
+        });
+
+        JLabel sourceExplanationLabel = new JLabel("<html><body>The Content Checker allows you to download card images, ship dials, ship bases as new content<br>" +
+                "is previewed or released in the game. Please download this new content to ensure maximum compatibility with other players.<br><br>"+
+                "By default, the first edition content is absent from the module. Click on the button below to get it back. You only need to do this operation once<br>(per x-wing vassal module version)</body></html>");
+
+        JCheckBox prefChecbox1st = new JCheckBox("Checking this box: Notifications turned on for missing 1st edition content. Unchecking: Notifications turned off.");
+        prefChecbox1st.addItemListener(new ItemListener() {
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+                String wantNotifStr="no";
+                if(e.getStateChange() == ItemEvent.SELECTED) {
+                    wantNotifStr = "yes";
+                }
+                try {
+                    XWOTAUtils.addFileToModule("want1stednotifs.txt", wantNotifStr.getBytes());
+
+                } catch (Exception exc) {
+                    System.out.println("Unhandled error writing want1stednotifs.txt: \n" + e.toString());
+                    logToChat("Unhandled error writing want1stednotifs.txt: \n" + e.toString());
+                }
+            }
+        });
+
+        panel.add(sourceExplanationLabel);
+        panel.add(prefChecbox1st);
+        panel.add(activate1stTab);
 
         // =============================================================
         // 2nd Edition
@@ -776,9 +779,11 @@ public class OTAContentsChecker extends AbstractConfigurable {
         // =============================================================
         // Common to both editions
         // =============================================================
+        if(myTabbedPane.getTabCount()==0){
 
-        myTabbedPane.addTab("Second Edition",secondEditionMainPanel);
-        myTabbedPane.addTab("First Edition",panel);
+            myTabbedPane.addTab("Second Edition",secondEditionMainPanel);
+            myTabbedPane.addTab("First Edition",panel);
+        }
 
 
 

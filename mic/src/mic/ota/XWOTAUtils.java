@@ -767,7 +767,7 @@ public class XWOTAUtils {
         }
     }
 
-    private static void addFileToModule(String fileName,byte[] fileBytes, ArchiveWriter writer) throws IOException
+    public static void addFileToModule(String fileName,byte[] fileBytes, ArchiveWriter writer) throws IOException
     {
     //    GameModule gameModule = GameModule.getGameModule();
     //    DataArchive dataArchive = gameModule.getDataArchive();

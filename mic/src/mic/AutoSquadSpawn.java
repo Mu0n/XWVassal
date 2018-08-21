@@ -10,6 +10,8 @@ import VASSAL.command.Command;
 import VASSAL.counters.GamePiece;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import mic.ota.OTAContentsChecker;
+import mic.ota.XWOTAUtils;
 
 import javax.swing.*;
 import java.awt.*;
@@ -189,7 +191,6 @@ public class AutoSquadSpawn extends AbstractConfigurable {
         pilotCard3.setProperty("xwstext", "Zealous Recruit - Concordia Faceoff: While you defend, if the attack range is 1 and you are in the attacker's [Front Arc], change 1 result to an [Evade] result. Generic, no pilot ability: Mandalorian Fang Fighter pilots must master the Concordia Faceoff maneuver, leveraging their ships' narrow attack profile to execute deadly head-on charges.");
         spawnPiece(pilotCard3, new Point(pilotColPosX,800), theMap);
     }
-
 
     private void hackSpawnTCdemo2(Map playerMap) {
         Map theMap = playerMap;
@@ -383,7 +384,6 @@ public class AutoSquadSpawn extends AbstractConfigurable {
         GamePiece chargePiece3 = mic.Util.newPiece(chargeToken);
         spawnPiece(chargePiece3, new Point(920 - upgradeSpacing,1090), theMap);
     }
-
 
     private void hackSpawnWorldsDemo1(Map playerMap) {
         Map theMap = playerMap;
@@ -715,6 +715,9 @@ public class AutoSquadSpawn extends AbstractConfigurable {
         spawnPiece(chargePiece2, new Point(1000, 990), theMap);
     }
 
+    private void spawnForPlayerPostGate(){
+
+    }
 
     private void spawnForPlayer(int playerIndex) {
         listHasHoundsTooth = false;
@@ -731,6 +734,12 @@ public class AutoSquadSpawn extends AbstractConfigurable {
             JOptionPane.showMessageDialog(playerMap.getView(), "Cannot spawn squads for other players");
             return;
         }
+
+        //TODO check for a pref file in the module that enables the annoying popup about the content checker for 1st edition before attempting a spawn
+        //if it says yes, annoy the user with a content checker operation
+        //offer to turn off this notification
+        //otherwise proceed silently as usual
+
 
         //Panel which will include a Combo box for selecting the source of the xwing-data to use
         JPanel rootPanel = new JPanel();
