@@ -74,7 +74,7 @@ public class AnnouncementOnLog extends AbstractConfigurable {
 
         return errorOccurredOnXWingData;
     }
-
+/*
     private void downloadContent()
     {
 
@@ -329,7 +329,7 @@ public class AnnouncementOnLog extends AbstractConfigurable {
             imagesToDownload = null;
         }
     }
-
+*/
     public void addTo(Buildable parent) {
         openAnnouncementWindow();
     }
