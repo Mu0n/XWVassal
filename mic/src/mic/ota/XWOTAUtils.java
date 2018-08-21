@@ -783,8 +783,11 @@ public class XWOTAUtils {
             DataArchive dataArchive = gameModule.getDataArchive();
             FileArchive fileArchive = dataArchive.getArchive();
             ArchiveWriter writer = new ArchiveWriter(fileArchive);
-            addFileToModule(fileName, fileBytes,writer);
+            //addFileToModule(fileName, fileBytes,writer);
+            writer.addFile(fileName,fileBytes);
+            writer.save();
     }
+
 
     public static void addImageToModule(String imageName,byte[] imageBytes) throws IOException
     {
@@ -823,7 +826,7 @@ public class XWOTAUtils {
 
     }
 
-    public static boolean fileExistsInModule(String path, String fileName)
+    public static boolean fileExistsInModule(String fileName)
     {
         GameModule gameModule = GameModule.getGameModule();
         DataArchive dataArchive = gameModule.getDataArchive();
@@ -831,8 +834,7 @@ public class XWOTAUtils {
 
         boolean found = false;
         try {
-
-            found = fileArchive.contains(path+"/" + fileName);
+            found = fileArchive.contains(fileName);
 
         }catch(Exception e)
         {

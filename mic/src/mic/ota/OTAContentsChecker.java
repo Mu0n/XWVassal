@@ -19,8 +19,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.*;
 import java.util.Timer;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -204,13 +206,14 @@ public class OTAContentsChecker extends AbstractConfigurable {
         contentCheckerButton = b;
 
         boolean wantToBeNotified1st = false;
-        if(!XWOTAUtils.fileExistsInModule("","want1stednotifs.txt")){
+        if(!XWOTAUtils.fileExistsInModule("want1stednotifs.txt")){
             String choice = "yes";
             try{
                 XWOTAUtils.addFileToModule("want1stednotifs.txt",choice.getBytes());
             }catch(Exception e){
 
             }
+            wantToBeNotified1st = true;
         }else{
             // read contents of want1stednotifs.txt
             String wantNotifStr = null;
@@ -220,10 +223,16 @@ public class OTAContentsChecker extends AbstractConfigurable {
                 if (inputStream == null) {
                     logToChat("couldn't load /want1stednotifs.txt");
                 }
-                byte[] bytes = null;
-                int val = inputStream.read(bytes);
+                BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+                StringBuilder contents = new StringBuilder();
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    contents.append(line);
+                }
+                reader.close();
 
-                wantNotifStr = new String(bytes);
+                wantNotifStr = contents.toString();
+                //inputStream.close();
             } catch (Exception e) {
                 System.out.println("Unhandled error reading want1stednotifs.txt: \n" + e.toString());
                 logToChat("Unhandled error reading want1stednotifs.txt: \n" + e.toString());
@@ -234,14 +243,10 @@ public class OTAContentsChecker extends AbstractConfigurable {
             if(wantNotifStr != null && wantNotifStr.equalsIgnoreCase("yes"))
             {
                 wantToBeNotified1st = true;
-
             }else{
                 wantToBeNotified1st = true;
             }
-
-
         }
-
 
         if(wantToBeNotified1st) missing1stEdContent = countMissingContent();
 
