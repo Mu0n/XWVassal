@@ -66,7 +66,6 @@ public class AnnouncementOnLog extends AbstractConfigurable {
         jsonFilesToDownloadFromURL.add(OTAContentsChecker.OTA_DISPATCHER_CONDITIONS_JSON_URL);
         try {
             XWOTAUtils.downloadJSONFilesFromGitHub(jsonFilesToDownloadFromURL);
-            mic.Util.logToChat("Core XWing data updated");
         }catch(IOException e)
         {
             errorOccurredOnXWingData = true;

@@ -54,7 +54,6 @@ public class OTAContentsChecker extends AbstractConfigurable {
     public static final String OTA_UPGRADES_JSON_URL_2E = OTA_RAW_GITHUB_JSON_URL_2E + "upgrade_images.json";
     public static final String OTA_SHIPS_JSON_URL_2E = OTA_RAW_GITHUB_JSON_URL_2E + "ship_images.json";
     public static final String OTA_PILOTS_JSON_URL_2E = OTA_RAW_GITHUB_JSON_URL_2E + "pilot_images.json";
-    public static final String OTA_DIALHIDES_JSON_URL_2E =  OTA_RAW_GITHUB_JSON_URL_2E + "dial_images.json";
     public static final String OTA_CONDITIONS_JSON_URL_2E =  OTA_RAW_GITHUB_JSON_URL_2E + "condition_images.json";
 
 

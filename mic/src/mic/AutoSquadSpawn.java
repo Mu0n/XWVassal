@@ -735,7 +735,7 @@ public class AutoSquadSpawn extends AbstractConfigurable {
             return;
         }
 
-        //TODO check for a pref file in the module that enables the annoying popup about the content checker for 1st edition before attempting a spawn
+        //TODO check for a pref file in the module that enables the annoying pop about the content checker for 1st edition before attempting a spawn
         //if it says yes, annoy the user with a content checker operation
         //offer to turn off this notification
         //otherwise proceed silently as usual
