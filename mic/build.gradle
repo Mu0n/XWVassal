@@ -41,10 +41,7 @@ task downloadXwingData(type: de.undercouch.gradle.tasks.download.Download) {
             'https://raw.githubusercontent.com/guidokessels/xwing-data/master/data/ships.js',
             'https://raw.githubusercontent.com/guidokessels/xwing-data/master/data/upgrades.js',
             'https://raw.githubusercontent.com/guidokessels/xwing-data/master/data/conditions.js',
-			'https://raw.githubusercontent.com/Mu0n/XWVassalOTA/master/json/dispatcher_ships.json',
-			'https://raw.githubusercontent.com/Mu0n/XWVassalOTA/master/json/dispatcher_pilots.json',
-			'https://raw.githubusercontent.com/Mu0n/XWVassalOTA/master/json/dispatcher_upgrades.json',
-            'https://raw.githubusercontent.com/Mu0n/XWVassalOTA/master/json/dispatcher_conditions.json'
+            'https://raw.githubusercontent.com/guidokessels/xwing-data2/master/data/manifest.json',
     ])
     dest destDir
     doLast {
