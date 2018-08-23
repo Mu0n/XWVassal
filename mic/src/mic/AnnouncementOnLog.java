@@ -75,7 +75,9 @@ public class AnnouncementOnLog extends AbstractConfigurable {
         XWS2Pilots.pilotsDataSources whereToGetPilots = mic.Util.loadRemoteJson(XWS2Pilots.remoteUrl, XWS2Pilots.pilotsDataSources.class);
 
         for(XWS2Pilots.OneFactionGroup oSDS : whereToGetPilots.getPilots()){
-            jsonFilesToDownloadFromURL.add(XWS2Pilots.guidoRootUrl + oSDS.getShipUrlSuffixes());
+            for(String suffix : oSDS.getShipUrlSuffixes()){
+                jsonFilesToDownloadFromURL.add(XWS2Pilots.guidoRootUrl + suffix);
+            }
         }
         try {
             XWOTAUtils.downloadJSONFilesFromGitHub(jsonFilesToDownloadFromURL);
