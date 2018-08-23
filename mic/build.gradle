@@ -30,7 +30,7 @@ dependencies {
 task unpackVmod(type: Copy) {
     from zipTree(file('build/distributions/swxwmg.vmod'))
     exclude '**/*.class', 'META-INF/', 'com/google/**/*', 'com/fasterxml/**/*'
-    includeEmptyDirs = false
+    includeEmptyDirs = true
     into file('swxwmg.vmod-unpacked')
 }
 
