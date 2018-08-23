@@ -31,8 +31,7 @@ task unpackVmod(type: Copy) {
     from zipTree(file('build/distributions/swxwmg.vmod'))
     exclude '**/*.class', 'META-INF/', 'com/google/**/*', 'com/fasterxml/**/*'
     includeEmptyDirs = false
-    into "swxwmg.vmod-unpacked"
-    //into file('swxwmg.vmod-unpacked')
+    into file('swxwmg.vmod-unpacked')
 }
 
 task downloadXwingData(type: de.undercouch.gradle.tasks.download.Download) {
