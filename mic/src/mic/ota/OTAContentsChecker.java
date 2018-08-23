@@ -264,7 +264,7 @@ public class OTAContentsChecker extends AbstractConfigurable {
         jsonFilesToDownloadFromURL.add(MasterConditionData.REMOTE_URL);
         jsonFilesToDownloadFromURL.add(OTAContentsChecker.OTA_DISPATCHER_CONDITIONS_JSON_URL);
         try {
-            XWOTAUtils.downloadJSONFilesFromGitHub(jsonFilesToDownloadFromURL);
+            XWOTAUtils.downloadJSONFilesFromGitHub(jsonFilesToDownloadFromURL, false);
         }catch(IOException e)
         {
             errorOccurredOnXWingData = true;

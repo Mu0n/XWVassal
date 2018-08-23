@@ -57,7 +57,12 @@ public class AnnouncementOnLog extends AbstractConfigurable {
     {
         boolean errorOccurredOnXWingData = false;
 
+        //these will be dumped in the root of the module
         ArrayList<String> jsonFilesToDownloadFromURL = new ArrayList<String>();
+        //these have to be dumped in a /data subfolder, it will help prevent shipPilot json collisions, such as tielfighter
+        //by putting them in /data/pilots/rebelalliance/
+        ArrayList<String> jsonFilesToDownloadFromURL_2e = new ArrayList<String>();
+
         jsonFilesToDownloadFromURL.add(MasterShipData.REMOTE_URL);
         jsonFilesToDownloadFromURL.add(OTAContentsChecker.OTA_DISPATCHER_SHIPS_JSON_URL);
         jsonFilesToDownloadFromURL.add(MasterPilotData.REMOTE_URL);
@@ -76,11 +81,12 @@ public class AnnouncementOnLog extends AbstractConfigurable {
 
         for(XWS2Pilots.OneFactionGroup oSDS : whereToGetPilots.getPilots()){
             for(String suffix : oSDS.getShipUrlSuffixes()){
-                jsonFilesToDownloadFromURL.add(XWS2Pilots.guidoRootUrl + suffix);
+                jsonFilesToDownloadFromURL_2e.add(XWS2Pilots.guidoRootUrl + suffix);
             }
         }
         try {
-            XWOTAUtils.downloadJSONFilesFromGitHub(jsonFilesToDownloadFromURL);
+            XWOTAUtils.downloadJSONFilesFromGitHub(jsonFilesToDownloadFromURL, false);
+            XWOTAUtils.downloadJSONFilesFromGitHub(jsonFilesToDownloadFromURL_2e, true);
         }catch(IOException e)
         {
             errorOccurredOnXWingData = true;
