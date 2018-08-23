@@ -9,6 +9,7 @@ import VASSAL.build.module.properties.MutableProperty;
 import VASSAL.tools.ArchiveWriter;
 import VASSAL.tools.DataArchive;
 import VASSAL.tools.io.FileArchive;
+import com.google.common.collect.Lists;
 import mic.ota.*;
 
 import javax.imageio.ImageIO;
@@ -24,6 +25,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 import static mic.Util.logToChat;
 
@@ -64,6 +66,17 @@ public class AnnouncementOnLog extends AbstractConfigurable {
         jsonFilesToDownloadFromURL.add(OTAContentsChecker.OTA_DISPATCHER_UPGRADES_JSON_URL);
         jsonFilesToDownloadFromURL.add(MasterConditionData.REMOTE_URL);
         jsonFilesToDownloadFromURL.add(OTAContentsChecker.OTA_DISPATCHER_CONDITIONS_JSON_URL);
+
+
+
+        //2nd edition. check the manifest's list of files to load and get them all
+
+        //all the ShipPilots jsons
+        XWS2Pilots.pilotsDataSources whereToGetPilots = mic.Util.loadRemoteJson(XWS2Pilots.remoteUrl, XWS2Pilots.pilotsDataSources.class);
+
+        for(XWS2Pilots.OneFactionGroup oSDS : whereToGetPilots.getPilots()){
+            jsonFilesToDownloadFromURL.add(XWS2Pilots.guidoRootUrl + oSDS.getShipUrlSuffixes());
+        }
         try {
             XWOTAUtils.downloadJSONFilesFromGitHub(jsonFilesToDownloadFromURL);
         }catch(IOException e)
@@ -454,7 +467,7 @@ public class AnnouncementOnLog extends AbstractConfigurable {
             JLabel homeIcon = new JLabel();
 
             BufferedImage img = null;
-            InputStream is = dataArchive.getInputStream("images/Token_Energy_full.png");
+            InputStream is = dataArchive.getInputStream("images/Token_2e_charge.png");
             img = ImageIO.read(is);
             is.close();
             homeIcon.setIcon(new ImageIcon(img));
@@ -470,7 +483,7 @@ public class AnnouncementOnLog extends AbstractConfigurable {
             JLabel downloadIcon = new JLabel();
 
             BufferedImage img2 = null;
-            InputStream is2 = dataArchive.getInputStream("images/Token_Reinforce.png");
+            InputStream is2 = dataArchive.getInputStream("images/Token_2e_reinforce_fore.png");
             img2 = ImageIO.read(is2);
             is2.close();
             downloadIcon.setIcon(new ImageIcon(img2));
@@ -486,7 +499,7 @@ public class AnnouncementOnLog extends AbstractConfigurable {
             JLabel guideIcon = new JLabel();
 
             BufferedImage img3 = null;
-            InputStream is3 = dataArchive.getInputStream("images/Token_Focus.png");
+            InputStream is3 = dataArchive.getInputStream("images/Token_2e_focus.png");
             img3 = ImageIO.read(is3);
             is3.close();
             guideIcon.setIcon(new ImageIcon(img3));

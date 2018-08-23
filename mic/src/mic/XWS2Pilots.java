@@ -12,9 +12,9 @@ import java.util.List;
 public class XWS2Pilots {
     //private static String remoteUrl = "https://raw.githubusercontent.com/guidokessels/xwing-data2/master/data/manifest.json";
 
-    private static String remoteUrl = "https://raw.githubusercontent.com/Mu0nHub/xwing-data2/master/data/manifest.json";
+    public static String remoteUrl = "https://raw.githubusercontent.com/Mu0nHub/xwing-data2/master/data/manifest.json";
     //private static String guidoRootUrl = "https://raw.githubusercontent.com/guidokessels/xwing-data2/master/";
-    private static String guidoRootUrl = "https://raw.githubusercontent.com/Mu0nHub/xwing-data2/master/";
+    public static String guidoRootUrl = "https://raw.githubusercontent.com/Mu0nHub/xwing-data2/master/";
 
 
     @JsonProperty("name")
