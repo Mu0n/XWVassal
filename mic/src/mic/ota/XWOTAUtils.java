@@ -496,6 +496,7 @@ public class XWOTAUtils {
         DataArchive dataArchive = gameModule.getDataArchive();
         FileArchive fileArchive = dataArchive.getArchive();
         ArchiveWriter writer = new ArchiveWriter(fileArchive);
+
         String fileName = null;
 
         byte[] fileContents = null;
@@ -506,7 +507,6 @@ public class XWOTAUtils {
             fileContents = null;
             fileContents = downlodFileFromOTA(jsonFile);
             addFileToModule(fileName, fileContents, writer);
-
         }
         writer.save();
 

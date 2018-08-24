@@ -78,17 +78,26 @@ public class AnnouncementOnLog extends AbstractConfigurable {
 
         //all the ShipPilots jsons
         XWS2Pilots.pilotsDataSources whereToGetPilots = mic.Util.loadRemoteJson(XWS2Pilots.remoteUrl, XWS2Pilots.pilotsDataSources.class);
+        XWS2Upgrades.upgradesDataSources whereToGetUpgrades = mic.Util.loadRemoteJson(XWS2Upgrades.remoteUrl, XWS2Upgrades.upgradesDataSources.class);
+        XWS2Upgrades.conditionsDataSources whereToGetConditions = mic.Util.loadRemoteJson(XWS2Upgrades.remoteUrl, XWS2Upgrades.conditionsDataSources.class);
 
         for(XWS2Pilots.OneFactionGroup oSDS : whereToGetPilots.getPilots()){
             for(String suffix : oSDS.getShipUrlSuffixes()){
                 jsonFilesToDownloadFromURL_2e.add(XWS2Pilots.guidoRootUrl + suffix);
             }
         }
+        for(String suffix : whereToGetUpgrades.getUrlEnds()){
+            jsonFilesToDownloadFromURL_2e.add(XWS2Upgrades.guidoRootUrl + suffix);
+        }
+
+        jsonFilesToDownloadFromURL_2e.add(XWS2Upgrades.guidoRootUrl + whereToGetConditions.getUrlEnd());
+
         try {
             XWOTAUtils.downloadJSONFilesFromGitHub(jsonFilesToDownloadFromURL, false);
             XWOTAUtils.downloadJSONFilesFromGitHub(jsonFilesToDownloadFromURL_2e, true);
         }catch(IOException e)
         {
+            logToChat("error download and integrating the jsons");
             errorOccurredOnXWingData = true;
         }
 
