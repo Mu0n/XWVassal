@@ -17,29 +17,33 @@ public class OTAMasterPilots extends ArrayList<OTAMasterPilots.OTAPilot> {
     {
         loadedData = null;
     }
-    public Collection<OTAPilot> getAllPilots()
+    public Collection<OTAPilot> getAllPilotImagesFromOTA(int edition)
     {
         if(loadedData == null)
         {
-            loadData();
+            loadData(edition);
         }
        // Object[] actions = loadedData.values().toArray();
         return loadedData.values();
 
     }
 
-    public static OTAMasterPilots.OTAPilot getPilot(String pilotxws, String faction, String shipxws) {
+    public static OTAMasterPilots.OTAPilot getPilot(String pilotxws, String faction, String shipxws, int edition) {
         if (loadedData == null) {
-            loadData();
+            loadData(edition);
         }
         String pilotKey = faction +"_"+shipxws+"_"+pilotxws;
         return loadedData.get(pilotKey);
     }
 
-    private static void loadData() {
+    private static void loadData(int edition) {
 
         // load from
-        OTAMasterPilots data = Util.loadRemoteJson(OTAContentsChecker.OTA_PILOTS_JSON_URL, OTAMasterPilots.class);
+        OTAMasterPilots data = new OTAMasterPilots();
+        if(edition == 1) data = Util.loadRemoteJson(OTAContentsChecker.OTA_PILOTS_JSON_URL, OTAMasterPilots.class);
+        else if(edition == 2)  data = Util.loadRemoteJson(OTAContentsChecker.OTA_PILOTS_JSON_URL_2E, OTAMasterPilots.class);
+
+        Util.logToChat("in loadData of OTAMasterPilots this is the URL used " + OTAContentsChecker.OTA_PILOTS_JSON_URL_2E);
         loadedData = Maps.newHashMap();
         if (data == null) {
             Util.logToChat("Unable to load OTA pilots from the web");

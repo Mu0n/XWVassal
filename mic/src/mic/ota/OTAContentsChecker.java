@@ -21,6 +21,7 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.io.*;
 import java.util.*;
+import java.util.List;
 import java.util.Timer;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -83,7 +84,9 @@ public class OTAContentsChecker extends AbstractConfigurable {
 
     private JButton contentCheckerButton = new JButton();
     private ModuleIntegrityChecker modIntChecker = null;
+    private ModuleIntegrityChecker_2e modIntChecker_2e = null;
     private OTAContentsCheckerResults results = null;
+    private OTAContentsCheckerResults results2e = null;
     private final String[] finalColumnNames = {"Type","Name", "Variant"};
     private JTable finalTable;
     private JButton downloadButton;
@@ -93,16 +96,23 @@ public class OTAContentsChecker extends AbstractConfigurable {
     JTabbedPane myTabbedPane = new JTabbedPane();
     int missing1stEdContent = 0;
     int missing2ndEdContent = 0;
+    boolean wantToBeNotified1st = false;
 
     private boolean tictoc = false;
     private boolean tictoc1st = false;
+    private boolean tictoc2nd = false;
     Color backupColor = Color.WHITE;
     Boolean killItIfYouHaveTo = false; //kills the blinking Contents Checker button, after an update
     Boolean stopBlink1stTab = false;
+    Boolean stopBlink2ndTab = false;
     Boolean killItIfYouHaveTo1stTab = false; //kills the blinking "First Edition tab", after an update
     Boolean killItIfYouHaveTo2ndTab = false; //kills the blinking "Second Edition tab" after an update
     public static final String modeListURL = "https://raw.githubusercontent.com/Mu0n/XWVassal-website/master/modeList.json";
 
+    //for 2nd edition, keep a global variable
+    static List<XWS2Pilots> allShips;
+    static XWS2Upgrades allUpgrades;
+    static List<XWS2Upgrades.Condition> allConditions;
 
     public void activateBlinky(final Color whichColor)
     {
@@ -145,6 +155,48 @@ public class OTAContentsChecker extends AbstractConfigurable {
             }, 0,DELAYBETWEENFLASHES);
     }
 
+    public void activateBlinky2ndTab()
+    {
+        myTabbedPane.setForegroundAt(0,Color.WHITE);
+        myTabbedPane.setBackgroundAt(0,Color.BLACK);
+
+        final java.util.Timer timer = new Timer();
+        final VASSAL.build.module.Map map = VASSAL.build.module.Map.getMapById("Map0");
+        this.tictoc2nd = false;
+        final AtomicInteger count = new AtomicInteger(0);
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                try{
+                    if(stopBlink2ndTab){
+                        timer.cancel();
+                        myTabbedPane.setBackgroundAt(0, backupColor);
+                        myTabbedPane.setForegroundAt(0,Color.BLACK);
+                        return;
+                    }
+                    if(count.getAndIncrement() >= NBFLASHES * 2) {
+                        timer.cancel();
+                        myTabbedPane.setBackgroundAt(0,backupColor);
+                        myTabbedPane.setForegroundAt(0,Color.BLACK);
+                        return;
+                    }
+                    if(tictoc2nd==true) {
+                        myTabbedPane.setBackgroundAt(0,Color.BLACK);
+                        myTabbedPane.setForegroundAt(0,Color.WHITE);
+                        tictoc1st=false;
+                    }
+                    else{
+                        tictoc2nd=true;
+                        myTabbedPane.setBackgroundAt(0,backupColor);
+                        myTabbedPane.setForegroundAt(0,Color.BLACK);
+                    }
+                } catch (Exception e) {
+                }
+            }
+        }, 0,DELAYBETWEENFLASHES);
+    }
+
+
     public void activateBlinky1stTab()
     {
         myTabbedPane.setForegroundAt(1,Color.WHITE);
@@ -186,8 +238,7 @@ public class OTAContentsChecker extends AbstractConfigurable {
         }, 0,DELAYBETWEENFLASHES);
     }
 
-    public void addTo(Buildable parent)
-    {
+    public void addTo(Buildable parent) {
 
         JButton b = new JButton("Content Checker");
         b.setAlignmentY(0.0F);
@@ -201,15 +252,15 @@ public class OTAContentsChecker extends AbstractConfigurable {
         });
         contentCheckerButton = b;
 
-        boolean wantToBeNotified1st = false;
-        if(!XWOTAUtils.fileExistsInModule("want1stednotifs.txt")){
+        wantToBeNotified1st = false;
+        if (!XWOTAUtils.fileExistsInModule("want1stednotifs.txt")) {
             String choice = "no";
-            try{
-                XWOTAUtils.addFileToModule("want1stednotifs.txt",choice.getBytes());
-            }catch(Exception e){
+            try {
+                XWOTAUtils.addFileToModule("want1stednotifs.txt", choice.getBytes());
+            } catch (Exception e) {
             }
             wantToBeNotified1st = false;
-        }else{
+        } else {
             // read contents of want1stednotifs.txt
             String wantNotifStr = null;
             try {
@@ -227,7 +278,9 @@ public class OTAContentsChecker extends AbstractConfigurable {
                 reader.close();
 
                 wantNotifStr = contents.toString();
-                if(wantNotifStr.equalsIgnoreCase("yes")) wantToBeNotified1st= true;
+                if (wantNotifStr.equalsIgnoreCase("yes")) {
+                    wantToBeNotified1st = true;
+                }
                 else wantToBeNotified1st = false;
                 inputStream.close();
             } catch (Exception e) {
@@ -236,19 +289,34 @@ public class OTAContentsChecker extends AbstractConfigurable {
             }
         }
 
-        if(wantToBeNotified1st) missing1stEdContent = justFind1MissingContent();
+        allShips = XWS2Pilots.loadFromRemote();
+        allUpgrades = XWS2Upgrades.loadFromRemote();
+        allConditions = XWS2Upgrades.loadConditionsFromRemote();
+
+        if (wantToBeNotified1st) missing1stEdContent = justFind1MissingContent();
+        missing2ndEdContent = justFind1MissingContent_2e();
 
         //logToChat("missing content count: " + Integer.toString(n));
-        if(missing1stEdContent>0) {
+        if (missing1stEdContent > 0) {
             activateBlinky(Color.RED);
         }
-        if(missing2ndEdContent>0) {
-            activateBlinky(Color.BLUE);
+        if (missing2ndEdContent > 0) {
+            activateBlinky(Color.BLACK);
         }
-        contentCheckerButton.setName("Content Checker ("+Integer.toString(missing1stEdContent)+")new");
-        contentCheckerButton.invalidate();
         GameModule.getGameModule().getToolBar().add(b);
+    }
 
+
+
+    private static XWS2Pilots.pilotsDataSources parseTheManifestForShipPilots(){
+            return mic.Util.loadRemoteJson(XWS2Pilots.remoteUrl, XWS2Pilots.pilotsDataSources.class);
+    }
+    private static XWS2Upgrades.upgradesDataSources parseTheManifestForUpgrades(){
+        return mic.Util.loadRemoteJson(XWS2Upgrades.remoteUrl, XWS2Upgrades.upgradesDataSources.class);
+    }
+    private static XWS2Upgrades.conditionsDataSources parseTheManifestForConditions(){
+        return mic.Util.loadRemoteJson(XWS2Upgrades.remoteUrl, XWS2Upgrades.conditionsDataSources.class);
+    }
 
     private static boolean downloadXwingDataAndDispatcherJSONFiles_2e() {
         boolean errorOccurredOnXWingData = false;
@@ -256,22 +324,17 @@ public class OTAContentsChecker extends AbstractConfigurable {
         //by putting them in /data/pilots/rebelalliance/
         ArrayList<String> jsonFilesToDownloadFromURL_2e = new ArrayList<String>();
 
-        //2nd edition. check the manifest's list of files to load and get them all
-        //all the ShipPilots jsons
-        XWS2Pilots.pilotsDataSources whereToGetPilots = mic.Util.loadRemoteJson(XWS2Pilots.remoteUrl, XWS2Pilots.pilotsDataSources.class);
-        XWS2Upgrades.upgradesDataSources whereToGetUpgrades = mic.Util.loadRemoteJson(XWS2Upgrades.remoteUrl, XWS2Upgrades.upgradesDataSources.class);
-        XWS2Upgrades.conditionsDataSources whereToGetConditions = mic.Util.loadRemoteJson(XWS2Upgrades.remoteUrl, XWS2Upgrades.conditionsDataSources.class);
 
-        for(XWS2Pilots.OneFactionGroup oSDS : whereToGetPilots.getPilots()){
+        for(XWS2Pilots.OneFactionGroup oSDS : parseTheManifestForShipPilots().getPilots()){
             for(String suffix : oSDS.getShipUrlSuffixes()){
                 jsonFilesToDownloadFromURL_2e.add(XWS2Pilots.guidoRootUrl + suffix);
             }
         }
-        for(String suffix : whereToGetUpgrades.getUrlEnds()){
+        for(String suffix : parseTheManifestForUpgrades().getUrlEnds()){
             jsonFilesToDownloadFromURL_2e.add(XWS2Upgrades.guidoRootUrl + suffix);
         }
 
-        jsonFilesToDownloadFromURL_2e.add(XWS2Upgrades.guidoRootUrl + whereToGetConditions.getUrlEnd());
+        jsonFilesToDownloadFromURL_2e.add(XWS2Upgrades.guidoRootUrl + parseTheManifestForConditions().getUrlEnd());
 
         try {
             XWOTAUtils.downloadJSONFilesFromGitHub(jsonFilesToDownloadFromURL_2e, true);
@@ -307,16 +370,32 @@ public class OTAContentsChecker extends AbstractConfigurable {
         return errorOccurredOnXWingData;
     }
 
-    public static int justFind1MissingContent()
-    {
+
+    public static int justFind1MissingContent_2e(){
+
+        int tempCount = 0;
 
         boolean errorOccuredOnXWingData_2e = downloadXwingDataAndDispatcherJSONFiles_2e();
         if(errorOccuredOnXWingData_2e){
             mic.Util.logToChat("Unable to reach xwing-data2 server (2nd edition). No update performed");
         } else{
-
+            ModuleIntegrityChecker_2e modIntCheck_2e = new ModuleIntegrityChecker_2e();
+            // =============================================================
+            // Pilots
+            // =============================================================
+            ArrayList<OTAMasterPilots.OTAPilot> pilots = modIntCheck_2e.checkPilots(true, allShips);
+            for(OTAMasterPilots.OTAPilot pilot : pilots){
+                if(!pilot.getStatus()){
+                    tempCount++;
+                }
+            }
+            pilots = null;
         }
 
+        return tempCount;
+    }
+    public static int justFind1MissingContent()
+    {
 
         // grab xwing-data: pilots, ships, upgrades, conditions
         // dispatcher: pilots, ships, upgrades, conditions
@@ -446,9 +525,6 @@ public class OTAContentsChecker extends AbstractConfigurable {
         } else {
 
         }
-
-
-
 
         if(errorOccurredOnXWingData)
         {
@@ -627,6 +703,86 @@ public class OTAContentsChecker extends AbstractConfigurable {
      * Build the contents checker window
      */
 
+    private synchronized void ContentsCheckerWindow2ndEdTab(JPanel hostPanel) {
+        results2e = checkAllResults2e();
+        finalTable = buildFinalTable2e(results2e);
+        hostPanel.setLayout(new BoxLayout(hostPanel, BoxLayout.Y_AXIS));
+        // create the label
+        jlabel = new JLabel();
+
+        // add the results table
+        JScrollPane finalPane = new JScrollPane(finalTable);
+        // ALL checkbox
+        final JCheckBox allButton = new JCheckBox("Download all content");
+        allButton.setSelected(false);
+        allButton.addItemListener(new ItemListener() {
+            public void itemStateChanged(ItemEvent evt) {
+                if (evt.getStateChange() == ItemEvent.DESELECTED)
+                {
+                    downloadAll = false;
+                    refreshFinalTable();
+                }else if(evt.getStateChange() == ItemEvent.SELECTED)
+                {
+                    downloadAll = true;
+                    refreshFinalTable();
+                }
+            }
+        });
+
+        // download button
+        downloadButton = new JButton("Download");
+        downloadButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                downloadButton.setEnabled(false);
+
+                int answer =  JOptionPane.showConfirmDialog(null, "This might take several minutes. During the download, Vassal will be unresponsive. \nDo you want to continue?", "Do you want to proceed?", JOptionPane.YES_NO_OPTION);
+
+                if(answer == JOptionPane.YES_OPTION)
+                {
+                    downloadAll2e(OTA_RAW_BRANCH_URL_2E);
+                    allButton.setSelected(false);
+                    killItIfYouHaveTo2ndTab = true; //gets rid of the blinky
+                    stopBlink2ndTab = true; //gets rid of the tab blinky
+                }else{
+                    downloadButton.setEnabled(true);
+                }
+            }
+        });
+
+        // cancel button
+        JButton cancelButton = new JButton("Cancel");
+        cancelButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                frame.dispose();
+            }
+        });
+        JPanel buttonSubPanel = new JPanel();
+        buttonSubPanel.add(downloadButton);
+        buttonSubPanel.add(allButton);
+        buttonSubPanel.add(cancelButton);
+
+        JPanel topPanel = new JPanel();
+        topPanel.setLayout(new BoxLayout(topPanel, BoxLayout.Y_AXIS));
+
+        hostPanel.add(topPanel);
+        hostPanel.add(jlabel);
+        hostPanel.add(buttonSubPanel);
+        hostPanel.add(finalPane);
+
+        hostPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+        //frame.add(panel, BorderLayout.PAGE_START);
+
+        jlabel.setText("<html><body><br>Click the download button to download the following images</body></html>");
+        if(finalTable.getModel().getRowCount() == 0)
+        {
+            jlabel.setText("All content is up to date");
+            downloadButton.setEnabled(false);
+        }else{
+
+            downloadButton.setEnabled(true);
+        }
+    }
+
     private synchronized void ContentsCheckerWindow1stEdTab(JPanel hostPanel)
     {
         results = checkAllResults();
@@ -778,6 +934,7 @@ public class OTAContentsChecker extends AbstractConfigurable {
                 "By default, the first edition content is absent from the module. Click on the button below to get it back. You only need to do this operation once<br>(per x-wing vassal module version)</body></html>");
 
         JCheckBox prefChecbox1st = new JCheckBox("Checking this box: Notifications turned on for missing 1st edition content. Unchecking: Notifications turned off.");
+        prefChecbox1st.setSelected(wantToBeNotified1st);
         prefChecbox1st.addItemListener(new ItemListener() {
             @Override
             public void itemStateChanged(ItemEvent e) {
@@ -802,15 +959,23 @@ public class OTAContentsChecker extends AbstractConfigurable {
         // =============================================================
         // 2nd Edition
         // =============================================================
-        JPanel secondEditionMainPanel = new JPanel();
-        JLabel sourceExplanationLabel2nd = new JLabel("<html><body>The Content Checker allows you to download card images, ship dials, ship bases as new content<br>" +
-                "is previewed or released in the game. Please download this new content to ensure maximum compatibility with other players.<br><br>Select the game mode here (only the base game can acquire new content for now):</body></html>");
+        final JPanel secondEditionMainPanel = new JPanel();
+        final JLabel sourceExplanationLabel2nd = new JLabel("<html><body>The Content Checker allows you to download card images, ship dials, ship bases as new content<br>" +
+                "is previewed or released in the game. Please download this new content to ensure maximum compatibility with other players.</body></html>");
 
+        final JButton activate2ndTab = new JButton("Check for missing content in 2nd edition (Warning: may take minutes!)");
+        activate2ndTab.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                activate2ndTab.setEnabled(false);
+                ContentsCheckerWindow2ndEdTab(secondEditionMainPanel);
+            }
+        });
 
         secondEditionMainPanel.add(sourceExplanationLabel2nd);
+        secondEditionMainPanel.add(activate2ndTab);
         secondEditionMainPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
        // frame.add(secondEditionMainPanel, BorderLayout.PAGE_START);
-
 
         // =============================================================
         // Common to both editions
@@ -821,8 +986,6 @@ public class OTAContentsChecker extends AbstractConfigurable {
             myTabbedPane.addTab("First Edition",panel);
         }
 
-
-
         frame.setPreferredSize(new Dimension(800,900));
         frame.setTitle("Content Checker");
         panel.setOpaque(true); // content panes must be opaque
@@ -832,167 +995,105 @@ public class OTAContentsChecker extends AbstractConfigurable {
         frame.setVisible(true);
         frame.toFront();
 
-
-
         if(missing1stEdContent>0) activateBlinky1stTab();
+        if(missing2ndEdContent>0) activateBlinky2ndTab();
 
     }
-/*
-    private synchronized void ContentsCheckerWindowFor1st()
+
+
+    private void downloadAll2e(String branchURL)
     {
-        results = checkAllResults();
-        finalTable = buildFinalTable(results);
 
-        // create the framefor1st
-        framefor1st = new JFrame();
-        framefor1st.setResizable(true);
+        boolean needToSaveModule = false;
 
-        // create the panel
-        JPanel panel = new JPanel();
+        GameModule gameModule = GameModule.getGameModule();
+        DataArchive dataArchive = gameModule.getDataArchive();
+        FileArchive fileArchive = dataArchive.getArchive();
+        ArchiveWriter writer = new ArchiveWriter(fileArchive);
 
-        //previous layout
-        //panel.setLayout(new GridBagLayout());
-
-        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-
-        //previous layout
-        //GridBagConstraints c = new GridBagConstraints();
-
-        // create the label
-        jlabel = new JLabel();
-
-
-        // add the results table
-        JScrollPane finalPane = new JScrollPane(finalTable);
-
-        // ALL checkbox
-        final JCheckBox allButton = new JCheckBox("Download all content");
-        allButton.setSelected(false);
-        allButton.addItemListener(new ItemListener() {
-            public void itemStateChanged(ItemEvent evt) {
-                if (evt.getStateChange() == ItemEvent.DESELECTED)
-                {
-                    downloadAll = false;
-                    refreshFinalTable();
-                }else if(evt.getStateChange() == ItemEvent.SELECTED)
-                {
-                    downloadAll = true;
-
-                    refreshFinalTable();
-
-                }
-
-            }
-        });
-
-
-        // download button
-        downloadButton = new JButton("Download");
-        downloadButton.setAlignmentY(0.0F);
-        downloadButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
-                downloadButton.setEnabled(false);
-
-                int answer =  JOptionPane.showConfirmDialog(null, "This might take several minutes. During the download, Vassal will be unresponsive. \nDo you want to continue?", "Do you want to proceed?", JOptionPane.YES_NO_OPTION);
-
-                if(answer == JOptionPane.YES_OPTION)
-                {
-                    if("Base Game".equals(aComboBoxChoice)) downloadAll(OTA_RAW_BRANCH_URL);
-                    else {
-                        chosenURL = mgmr.getGameMode(aComboBoxChoice).getBaseDataURL();
-                        downloadAll(chosenURL);
-                    }
-                    allButton.setSelected(false);
-                    killItIfYouHaveTo = true; //gets rid of the blinky
-                }else{
-                    downloadButton.setEnabled(true);
-                }
-            }
-        });
-
-        // cancel button
-        JButton cancelButton = new JButton("Cancel");
-        cancelButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
-                framefor1st.dispose();
-            }
-        });
-        downloadButton.setAlignmentY(0.0F);
-
-        final JComboBox aComboBox = new JComboBox();
-        mgmr.loadData();
-        if(mgmr!=null)
-        {
-            for(MasterGameModeRouter.GameMode o : mgmr.getGameModes()){
-                aComboBox.addItem(o.getName());
-            }
-        }
-        else
-        //if it can't access the list of sources on the web, make it base game by default
-        {
-            aComboBox.addItem("Base Game");
-        }
-        final JLabel sourceTextDescription = new JLabel("<html><body width=400><b>Description for <i>"
-                + aComboBox.getSelectedItem().toString() + "</i></b>: "
-                + mgmr.getGameMode(aComboBox.getSelectedItem().toString()).getDescription()
-                + "</body></html>");
-        //sourceTextDescription.setAlignmentX(JLabel.RIGHT_ALIGNMENT);
-
-        JLabel sourceExplanationLabel = new JLabel("<html><body>The Content Checker allows you to download card images, ship dials, ship bases as new content<br>" +
-                "is previewed or released in the game. Please download this new content to ensure maximum compatibility with other players.<br><br>Select the game mode here (only the base game can acquire new content for now):</body></html>");
-
-
-        aComboBox.addItemListener(new ItemListener() {
-            @Override
-            public void itemStateChanged(ItemEvent e) {
-                sourceTextDescription.setText("<html><body width=400><b>Description for <i>"
-                        + aComboBox.getSelectedItem().toString() + "</i></b>: "
-                        + mgmr.getGameMode(aComboBox.getSelectedItem().toString()).getDescription()
-                        + "</body></html>");
-            }
-        });
-
-        sourceExplanationLabel.setAlignmentX(Component.RIGHT_ALIGNMENT);
-        aComboBox.setAlignmentX(Component.RIGHT_ALIGNMENT);
-        sourceTextDescription.setAlignmentX(Component.RIGHT_ALIGNMENT);
-        jlabel.setAlignmentX(Component.RIGHT_ALIGNMENT);
-        JPanel buttonSubPanel = new JPanel();
-        buttonSubPanel.setAlignmentX(Component.RIGHT_ALIGNMENT);
-        buttonSubPanel.add(downloadButton);
-        buttonSubPanel.add(allButton);
-        buttonSubPanel.add(cancelButton);
-
-        panel.add(sourceExplanationLabel);
-        panel.add(aComboBox);
-        panel.add(sourceTextDescription);
-        panel.add(jlabel);
-        panel.add(buttonSubPanel);
-        panel.add(finalPane);
-
-                panel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
-        framefor1st.add(panel, BorderLayout.PAGE_START);
-
-        jlabel.setText("<html><body><br>Click the download button to download the following images</body></html>");
-        if(finalTable.getModel().getRowCount() == 0)
-        {
-            jlabel.setText("All content is up to date");
-            downloadButton.setEnabled(false);
-        }else{
-
-            downloadButton.setEnabled(true);
+        // download pilots
+        if(results2e.getMissingPilots().size() > 0) {
+            XWOTAUtils.downloadImagesFromOTA("pilots", results2e.getMissingPilotImages(),writer, branchURL);
+            needToSaveModule = true;
         }
 
-        framefor1st.setPreferredSize(new Dimension(550,700));
-        framefor1st.setTitle("Content Checker");
-        panel.setOpaque(true); // content panes must be opaque
-        framefor1st.setContentPane(panel);
-        framefor1st.pack();
-        framefor1st.setVisible(true);
-        framefor1st.toFront();
+        // download ships
+        if(results2e.getMissingShips().size() > 0) {
+            XWOTAUtils.downloadImagesFromOTA("ships", results2e.getMissingShipImages(),writer, branchURL);
+            needToSaveModule = true;
+        }
+
+        // download Upgrades
+        if(results2e.getMissingUpgrades().size() > 0) {
+            XWOTAUtils.downloadImagesFromOTA("upgrades", results2e.getMissingUpgradeImages(),writer, branchURL);
+            needToSaveModule = true;
+        }
+
+        // download Conditions
+        if(results2e.getMissingConditions().size() > 0) {
+            XWOTAUtils.downloadImagesFromOTA("conditions", results2e.getMissingConditionImages(),writer,branchURL);
+            needToSaveModule = true;
+        }
+
+        if(needToSaveModule)
+        {
+            try {
+                writer.save();
+                needToSaveModule = false;
+            } catch (IOException e) {
+                logToChat("Exception occurred saving module");
+            }
+        }
+
+/*
+        // generate dial masks
+        Iterator<OTADialMask> dialMaskIterator = results.getMissingDialMasks().iterator();
+        OTADialMask dialMask = null;
+        while(dialMaskIterator.hasNext())
+        {
+            dialMask = dialMaskIterator.next();
+
+            XWOTAUtils.buildDialMaskImages(dialMask.getFaction(),dialMask.getShipXws(),dialMask.getDialHideImageName(),dialMask.getDialMaskImageName(),writer);
+            needToSaveModule = true;
+        }
+
+        // generate ship bases
+        Iterator<OTAShipBase> shipBaseIterator = results.getMissingShipBases().iterator();
+        OTAShipBase shipBase = null;
+        while(shipBaseIterator.hasNext())
+        {
+            shipBase = shipBaseIterator.next();
+
+            MasterShipData.ShipData shipData = MasterShipData.getShipData(shipBase.getShipXws());
+            java.util.List<String> arcs = shipData.getFiringArcs();
+
+            java.util.List<String> actions = shipData.getActions();
+
+            //TODO implement huge ships this
+            if(!shipData.getSize().equals("huge")) {
+
+                XWOTAUtils.buildBaseShipImage(shipBase.getFaction(), shipBase.getShipXws(), arcs, actions, shipData.getSize(),shipBase.getIdentifier(),shipBase.getshipImageName(), writer);
+                needToSaveModule = true;
+            }
+
+        }
+*/
+        if(needToSaveModule) {
+            try {
+                writer.save();
+            } catch (IOException e) {
+                logToChat("Exception occurred saving module");
+            }
+
+            // refresh the table
+            refreshFinalTable();
+
+        }
+
 
 
     }
-*/
+
 
     private void downloadAll(String branchURL)
     {
@@ -1138,6 +1239,125 @@ public class OTAContentsChecker extends AbstractConfigurable {
         // framefor1st.repaint();
     }
 
+    private String[][] buildTableResultsFromResults2e(OTAContentsCheckerResults results)
+    {
+        ArrayList<String[]> tableResults = new ArrayList<String[]>();
+        String[] tableRow = null;
+
+        /*
+        //ships
+        OTAMasterShips.OTAShip ship = null;
+        for(int i = 0; i<results.getMissingShips().size(); i++)
+        {
+            ship = results.getMissingShips().get(i);
+            tableRow = new String[3];
+            tableRow[0] = "Ship";
+            tableRow[1] = MasterShipData.getShipData(ship.getXws()).getName();
+
+            if(ship.getIdentifier().equalsIgnoreCase("Standard"))
+            {
+                tableRow[2] = "";
+            }else {
+                tableRow[2] = ship.getIdentifier();
+            }
+            tableResults.add(tableRow);
+        }
+
+        // bases
+        OTAShipBase shipBase = null;
+        for(int i = 0; i<results.getMissingShipBases().size();i++)
+        {
+            shipBase = results.getMissingShipBases().get(i);
+            tableRow = new String[3];
+            tableRow[0] = "Ship Base";
+            tableRow[1] = MasterShipData.getShipData(shipBase.getShipXws()).getName();
+            if(shipBase.getIdentifier().equalsIgnoreCase("Standard")) {
+                tableRow[2] = fullFactionNames.get(shipBase.getFaction());
+            }else{
+                tableRow[2] = fullFactionNames.get(shipBase.getFaction()) + shipBase.getIdentifier();
+            }
+
+            tableResults.add(tableRow);
+        }
+
+        // dial hides
+        OTAMasterDialHides.OTADialHide dialHide = null;
+        for(int i=0;i<results.getMissingDialHides().size();i++)
+        {
+            dialHide = results.getMissingDialHides().get(i);
+            tableRow = new String[3];
+            tableRow[0] = "Dial Hide";
+            tableRow[1] = MasterShipData.getShipData(dialHide.getXws()).getName();
+            tableRow[2] = "";
+            tableResults.add(tableRow);
+        }
+
+        // dial masks
+        OTADialMask dialMask = null;
+        for(int i=0;i<results.getMissingDialMasks().size();i++)
+        {
+            dialMask = results.getMissingDialMasks().get(i);
+            tableRow = new String[3];
+            tableRow[0] = "Dial Mask";
+            tableRow[1] = MasterShipData.getShipData(dialMask.getShipXws()).getName();
+            tableRow[2] = fullFactionNames.get(dialMask.getFaction());
+            tableResults.add(tableRow);
+        }
+*/
+        // pilots
+        OTAMasterPilots.OTAPilot pilot = null;
+        for(int i=0;i<results.getMissingPilots().size();i++)
+        {
+            pilot = results.getMissingPilots().get(i);
+            tableRow = new String[3];
+            tableRow[0] = "Pilot";
+            tableRow[1] = (XWS2Pilots.getSpecificPilot(pilot.getPilotXws(), allShips)).getName();
+            tableRow[2] = fullFactionNames.get(pilot.getFaction());
+            tableResults.add(tableRow);
+        }
+/*
+        // upgrades
+        OTAMasterUpgrades.OTAUpgrade upgrade = null;
+        for(int i=0;i<results.getMissingUpgrades().size();i++)
+        {
+            upgrade = results.getMissingUpgrades().get(i);
+            tableRow = new String[3];
+            tableRow[0] = "Upgrade";
+
+            if(MasterUpgradeData.getUpgradeData(upgrade.getXws()) != null)
+            {
+                tableRow[1] = MasterUpgradeData.getUpgradeData(upgrade.getXws()).getName();
+            }else{
+                tableRow[1] = upgrade.getSlot()+" " +upgrade.getXws();
+            }
+
+
+            tableRow[2] = "";
+            tableResults.add(tableRow);
+        }
+
+        // Conditions/Tokens
+        OTAMasterConditions.OTACondition condition = null;
+        for(int i=0;i<results.getMissingConditions().size();i++)
+        {
+            condition = results.getMissingConditions().get(i);
+            tableRow = new String[3];
+            tableRow[0] = "Condition";
+            tableRow[1] = MasterConditionData.getConditionData(condition.getXws()).getName();
+            tableRow[2] = "Card";
+            tableResults.add(tableRow);
+
+            tableRow = new String[3];
+            tableRow[0] = "Condition";
+            tableRow[1] = MasterConditionData.getConditionData(condition.getXws()).getName();
+            tableRow[2] = "Token";
+            tableResults.add(tableRow);
+        }
+*/
+        // convert the arrayList to an array
+        String[][] convertedTableResults = convertTableArrayListToArray(tableResults);
+        return convertedTableResults;
+    }
     private String[][] buildTableResultsFromResults(OTAContentsCheckerResults results)
     {
         ArrayList<String[]> tableResults = new ArrayList<String[]>();
@@ -1269,7 +1489,35 @@ public class OTAContentsChecker extends AbstractConfigurable {
         return convertedTableResults;
     }
 
+    private JTable buildFinalTable2e(OTAContentsCheckerResults results)
+    {
+        //{"Type","Name", "Variant"};
 
+        String[][] convertedTableResults = buildTableResultsFromResults2e(results);
+
+        // build the swing table
+        finalTable = new JTable(convertedTableResults,finalColumnNames);
+        DefaultTableModel model = new DefaultTableModel(convertedTableResults.length, finalColumnNames.length);
+        model.setNumRows(convertedTableResults.length);
+        model.setDataVector(convertedTableResults,finalColumnNames);
+
+        finalTable.setModel(model);
+        finalTable.getColumnModel().getColumn(0).setPreferredWidth(75);;
+        finalTable.getColumnModel().getColumn(1).setPreferredWidth(150);
+        finalTable.getColumnModel().getColumn(2).setPreferredWidth(150);
+
+        TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(finalTable.getModel());
+        ArrayList<RowSorter.SortKey> sortKeys = new ArrayList<RowSorter.SortKey>(25);
+        sortKeys.add(new RowSorter.SortKey(0, SortOrder.ASCENDING));
+        sortKeys.add(new RowSorter.SortKey(1, SortOrder.ASCENDING));
+        sortKeys.add(new RowSorter.SortKey(2, SortOrder.ASCENDING));
+        sorter.setSortKeys(sortKeys);
+        finalTable.setRowSorter(sorter);
+
+        finalTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+        return finalTable;
+
+    }
 
     private JTable buildFinalTable(OTAContentsCheckerResults results)
     {
@@ -1296,11 +1544,8 @@ public class OTAContentsChecker extends AbstractConfigurable {
         sorter.setSortKeys(sortKeys);
         finalTable.setRowSorter(sorter);
 
-
-
         finalTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
         return finalTable;
-
 
     }
 
@@ -1321,7 +1566,50 @@ public class OTAContentsChecker extends AbstractConfigurable {
 
 
 
+    private OTAContentsCheckerResults checkAllResults2e() {
+        results2e = new OTAContentsCheckerResults();
 
+        // perform all checks
+        modIntChecker_2e = new ModuleIntegrityChecker_2e();
+
+
+
+        results2e.setPilotResults(modIntChecker_2e.checkPilots(false, allShips));
+
+
+        results2e.setMissingShips(new ArrayList<OTAMasterShips.OTAShip>());
+        results2e.setMissingActions(new ArrayList<OTAMasterActions.OTAAction>());
+        results2e.setMissingShipBases(new ArrayList<OTAShipBase>());
+        results2e.setMissingUpgrades(new ArrayList<OTAMasterUpgrades.OTAUpgrade>());
+        results2e.setMissingConditions(new ArrayList<OTAMasterConditions.OTACondition>());
+        results2e.setMissingDialHides(new ArrayList<OTAMasterDialHides.OTADialHide>());
+        results2e.setMissingDialMasks(new ArrayList<OTADialMask>());
+        /*
+        results2e.setShipResults(modIntChecker_2e.checkShips(false));
+        results2e.setActionResults(modIntChecker_2e.checkActions(false));
+        results2e.setShipBaseResults(modIntChecker_2e.checkShipBases(false));
+        results2e.setUpgradeResults(modIntChecker_2e.checkUpgrades(false));
+        results2e.setConditionResults(modIntChecker_2e.checkConditions(false));
+        results.setDialHideResults(modIntChecker_2e.checkDialHides(false));
+        results.setDialMaskResults(modIntChecker_2e.checkDialMasks(false));
+        */
+
+
+        // determine which images are missing
+        results2e.setMissingPilots(findMissingPilots(results2e.getPilotResults()));
+
+        /*
+        results.setMissingShips(findMissingShips(results.getShipResults()));
+        results.setMissingActions(findMissingActions(results.getActionResults()));
+        results.setMissingShipBases(findMissingShipBases(results.getShipBaseResults()));
+        results.setMissingUpgrades(findMissingUpgrades(results.getUpgradeResults()));
+        results.setMissingConditions(findMissingConditions(results.getConditionResults()));
+        results.setMissingDialHides(findMissingDialHides(results.getDialHideResults()));
+        results.setMissingDialMasks(findMissingDialMasks(results.getDialMaskResults()));
+*/
+
+        return results2e;
+    }
     private OTAContentsCheckerResults checkAllResults()
     {
         results = new OTAContentsCheckerResults();

@@ -114,29 +114,37 @@ public class ModuleIntegrityChecker_2e {
 
 
 
-public ArrayList<OTAMasterPilots.OTAPilot> checkPilots(boolean onlyDetectOne)
+public ArrayList<OTAMasterPilots.OTAPilot> checkPilots(boolean onlyDetectOne, List<XWS2Pilots> allShips)
 {
     // get list of pilots from OTAMasterPilots
     OTAMasterPilots omp = new OTAMasterPilots();
     omp.flushData();
-    Collection<OTAMasterPilots.OTAPilot> pilots = omp.getAllPilots();
+    Collection<OTAMasterPilots.OTAPilot> pilots = omp.getAllPilotImagesFromOTA(2);
 
-    ArrayList<OTAMasterPilots.OTAPilot> pilotList = new ArrayList<OTAMasterPilots.OTAPilot>();
+    ArrayList<OTAMasterPilots.OTAPilot> pilotListToReturn = new ArrayList<OTAMasterPilots.OTAPilot>();
     Iterator<OTAMasterPilots.OTAPilot> i = pilots.iterator();
 
     while(i.hasNext())
     {
+
         OTAMasterPilots.OTAPilot pilot = (OTAMasterPilots.OTAPilot)i.next();
 
-        if(MasterPilotData.getPilotData(pilot.getShipXws(),pilot.getPilotXws(),pilot.getFaction()) != null) {
+        /*
+        Util.logToChat("in modintCheck2e iterating through pilots, checking this entry " + pilot.getImage());
+        Util.logToChat("found the pilot in xwing-data2? " + XWS2Pilots.getSpecificPilot(pilot.getPilotXws(), allShips));
+        Util.logToChat("status " + pilot.getStatus());
+        Util.logToChat("image exists in OTA " + XWOTAUtils.imageExistsInOTA("pilots",pilot.getImage(), OTAContentsChecker.OTA_RAW_BRANCH_URL_2E));
+*/
+
+        if(XWS2Pilots.getSpecificPilot(pilot.getPilotXws(), allShips)!=null) {
             pilot.setStatus(XWOTAUtils.imageExistsInModule(pilot.getImage()));
-            if(pilot.getStatus() || (!pilot.getStatus()  && XWOTAUtils.imageExistsInOTA("pilots",pilot.getImage(), OTAContentsChecker.OTA_RAW_BRANCH_URL))) {
-                pilotList.add(pilot);
-                if(onlyDetectOne) return pilotList;
+            if(pilot.getStatus() || (!pilot.getStatus()  && XWOTAUtils.imageExistsInOTA("pilots",pilot.getImage(), OTAContentsChecker.OTA_RAW_BRANCH_URL_2E))) {
+                pilotListToReturn.add(pilot);
+                if(onlyDetectOne) return pilotListToReturn;
             }
         }
     }
-    return pilotList;
+    return pilotListToReturn;
 }
 
     public ArrayList<OTAMasterShips.OTAShip> checkShips(boolean onlyDetectOne)

@@ -150,7 +150,7 @@ public ArrayList<OTAMasterPilots.OTAPilot> checkPilots(boolean onlyDetectOne)
     // get list of pilots from OTAMasterPilots
     OTAMasterPilots omp = new OTAMasterPilots();
     omp.flushData();
-    Collection<OTAMasterPilots.OTAPilot> pilots = omp.getAllPilots();
+    Collection<OTAMasterPilots.OTAPilot> pilots = omp.getAllPilotImagesFromOTA(1);
 
     ArrayList<OTAMasterPilots.OTAPilot> pilotList = new ArrayList<OTAMasterPilots.OTAPilot>();
     Iterator<OTAMasterPilots.OTAPilot> i = pilots.iterator();
