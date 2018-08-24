@@ -90,6 +90,7 @@ public class OTAContentsChecker extends AbstractConfigurable {
     private final String[] finalColumnNames = {"Type","Name", "Variant"};
     private JTable finalTable;
     private JButton downloadButton;
+    private JButton downloadButton2e;
     private JFrame frame;
     private JLabel jlabel;
     private boolean downloadAll = false;
@@ -127,7 +128,7 @@ public class OTAContentsChecker extends AbstractConfigurable {
                 @Override
                 public void run() {
                     try{
-                        if(killItIfYouHaveTo){
+                        if(killItIfYouHaveTo || killItIfYouHaveTo2ndTab){
                             timer.cancel();
                             contentCheckerButton.setBackground(backupColor);
                             contentCheckerButton.setForeground(Color.BLACK);
@@ -720,20 +721,20 @@ public class OTAContentsChecker extends AbstractConfigurable {
                 if (evt.getStateChange() == ItemEvent.DESELECTED)
                 {
                     downloadAll = false;
-                    refreshFinalTable();
+                    refreshFinalTable2e();
                 }else if(evt.getStateChange() == ItemEvent.SELECTED)
                 {
                     downloadAll = true;
-                    refreshFinalTable();
+                    refreshFinalTable2e();
                 }
             }
         });
 
         // download button
-        downloadButton = new JButton("Download");
-        downloadButton.addActionListener(new ActionListener() {
+        downloadButton2e = new JButton("Download");
+        downloadButton2e.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
-                downloadButton.setEnabled(false);
+                downloadButton2e.setEnabled(false);
 
                 int answer =  JOptionPane.showConfirmDialog(null, "This might take several minutes. During the download, Vassal will be unresponsive. \nDo you want to continue?", "Do you want to proceed?", JOptionPane.YES_NO_OPTION);
 
@@ -744,7 +745,7 @@ public class OTAContentsChecker extends AbstractConfigurable {
                     killItIfYouHaveTo2ndTab = true; //gets rid of the blinky
                     stopBlink2ndTab = true; //gets rid of the tab blinky
                 }else{
-                    downloadButton.setEnabled(true);
+                    downloadButton2e.setEnabled(true);
                 }
             }
         });
@@ -757,7 +758,7 @@ public class OTAContentsChecker extends AbstractConfigurable {
             }
         });
         JPanel buttonSubPanel = new JPanel();
-        buttonSubPanel.add(downloadButton);
+        buttonSubPanel.add(downloadButton2e);
         buttonSubPanel.add(allButton);
         buttonSubPanel.add(cancelButton);
 
@@ -776,10 +777,10 @@ public class OTAContentsChecker extends AbstractConfigurable {
         if(finalTable.getModel().getRowCount() == 0)
         {
             jlabel.setText("All content is up to date");
-            downloadButton.setEnabled(false);
+            downloadButton2e.setEnabled(false);
         }else{
 
-            downloadButton.setEnabled(true);
+            downloadButton2e.setEnabled(true);
         }
     }
 
@@ -1086,7 +1087,7 @@ public class OTAContentsChecker extends AbstractConfigurable {
             }
 
             // refresh the table
-            refreshFinalTable();
+            refreshFinalTable2e();
 
         }
 
@@ -1199,6 +1200,46 @@ public class OTAContentsChecker extends AbstractConfigurable {
 
 
     }
+
+    private void refreshFinalTable2e()
+    {
+        results2e = checkAllResults2e();
+        String[][] convertedTableResults = buildTableResultsFromResults2e(results2e);
+
+
+        DefaultTableModel model = (DefaultTableModel) finalTable.getModel();
+        model.setNumRows(convertedTableResults.length);
+        model.setDataVector(convertedTableResults,finalColumnNames);
+        finalTable.getColumnModel().getColumn(0).setPreferredWidth(75);;
+        finalTable.getColumnModel().getColumn(1).setPreferredWidth(150);
+        finalTable.getColumnModel().getColumn(2).setPreferredWidth(150);
+
+
+        TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(finalTable.getModel());
+        ArrayList<RowSorter.SortKey> sortKeys = new ArrayList<RowSorter.SortKey>(25);
+        sortKeys.add(new RowSorter.SortKey(0, SortOrder.ASCENDING));
+        sortKeys.add(new RowSorter.SortKey(1, SortOrder.ASCENDING));
+        sortKeys.add(new RowSorter.SortKey(2, SortOrder.ASCENDING));
+        sorter.setSortKeys(sortKeys);
+        finalTable.setRowSorter(sorter);
+
+
+        model.fireTableDataChanged();
+
+
+        if(finalTable.getModel().getRowCount() == 0)
+        {
+            jlabel.setText("Your content is up to date");
+            downloadButton2e.setEnabled(false);
+
+
+        }else{
+            //jlabel.setText("Click the download button to download the following images");
+            downloadButton2e.setEnabled(true);
+        }
+        // framefor1st.repaint();
+    }
+
 
     private void refreshFinalTable()
     {

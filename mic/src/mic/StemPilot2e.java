@@ -160,7 +160,7 @@ public class StemPilot2e extends Decorator implements EditablePiece {
         // construct the Pilot Card piece
         protected void executeCommand()
         {
-            String pilotCardImage = "Pilot2e_"+pilotXWSencoding+".jpg";
+            String pilotCardImage = "P2e_"+pilotXWSencoding+".jpg";
             // check to see that the pilot card image exists in the module.
             // if it doesn't then use a WIP image
             boolean useWipImage = false;
