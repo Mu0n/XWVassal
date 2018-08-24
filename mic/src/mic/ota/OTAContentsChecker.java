@@ -248,13 +248,46 @@ public class OTAContentsChecker extends AbstractConfigurable {
         contentCheckerButton.setName("Content Checker ("+Integer.toString(missing1stEdContent)+")new");
         contentCheckerButton.invalidate();
         GameModule.getGameModule().getToolBar().add(b);
-    }
 
+
+    private static boolean downloadXwingDataAndDispatcherJSONFiles_2e() {
+        boolean errorOccurredOnXWingData = false;
+        //these have to be dumped in a /data subfolder, it will help prevent shipPilot json collisions, such as tielfighter
+        //by putting them in /data/pilots/rebelalliance/
+        ArrayList<String> jsonFilesToDownloadFromURL_2e = new ArrayList<String>();
+
+        //2nd edition. check the manifest's list of files to load and get them all
+        //all the ShipPilots jsons
+        XWS2Pilots.pilotsDataSources whereToGetPilots = mic.Util.loadRemoteJson(XWS2Pilots.remoteUrl, XWS2Pilots.pilotsDataSources.class);
+        XWS2Upgrades.upgradesDataSources whereToGetUpgrades = mic.Util.loadRemoteJson(XWS2Upgrades.remoteUrl, XWS2Upgrades.upgradesDataSources.class);
+        XWS2Upgrades.conditionsDataSources whereToGetConditions = mic.Util.loadRemoteJson(XWS2Upgrades.remoteUrl, XWS2Upgrades.conditionsDataSources.class);
+
+        for(XWS2Pilots.OneFactionGroup oSDS : whereToGetPilots.getPilots()){
+            for(String suffix : oSDS.getShipUrlSuffixes()){
+                jsonFilesToDownloadFromURL_2e.add(XWS2Pilots.guidoRootUrl + suffix);
+            }
+        }
+        for(String suffix : whereToGetUpgrades.getUrlEnds()){
+            jsonFilesToDownloadFromURL_2e.add(XWS2Upgrades.guidoRootUrl + suffix);
+        }
+
+        jsonFilesToDownloadFromURL_2e.add(XWS2Upgrades.guidoRootUrl + whereToGetConditions.getUrlEnd());
+
+        try {
+            XWOTAUtils.downloadJSONFilesFromGitHub(jsonFilesToDownloadFromURL_2e, true);
+        }catch(IOException e)
+        {
+            logToChat("error download and integrating the jsons");
+            errorOccurredOnXWingData = true;
+        }
+        return errorOccurredOnXWingData;
+    }
     private static boolean downloadXwingDataAndDispatcherJSONFiles()
     {
         boolean errorOccurredOnXWingData = false;
-
+        //these will be dumped in the root of the module
         ArrayList<String> jsonFilesToDownloadFromURL = new ArrayList<String>();
+
         jsonFilesToDownloadFromURL.add(MasterShipData.REMOTE_URL);
         jsonFilesToDownloadFromURL.add(OTAContentsChecker.OTA_DISPATCHER_SHIPS_JSON_URL);
         jsonFilesToDownloadFromURL.add(MasterPilotData.REMOTE_URL);
@@ -263,19 +296,27 @@ public class OTAContentsChecker extends AbstractConfigurable {
         jsonFilesToDownloadFromURL.add(OTAContentsChecker.OTA_DISPATCHER_UPGRADES_JSON_URL);
         jsonFilesToDownloadFromURL.add(MasterConditionData.REMOTE_URL);
         jsonFilesToDownloadFromURL.add(OTAContentsChecker.OTA_DISPATCHER_CONDITIONS_JSON_URL);
+
         try {
             XWOTAUtils.downloadJSONFilesFromGitHub(jsonFilesToDownloadFromURL, false);
         }catch(IOException e)
         {
+            logToChat("error download and integrating the jsons");
             errorOccurredOnXWingData = true;
         }
-
         return errorOccurredOnXWingData;
     }
 
     public static int justFind1MissingContent()
     {
-        int missingCount = 0;
+
+        boolean errorOccuredOnXWingData_2e = downloadXwingDataAndDispatcherJSONFiles_2e();
+        if(errorOccuredOnXWingData_2e){
+            mic.Util.logToChat("Unable to reach xwing-data2 server (2nd edition). No update performed");
+        } else{
+
+        }
+
 
         // grab xwing-data: pilots, ships, upgrades, conditions
         // dispatcher: pilots, ships, upgrades, conditions
@@ -284,13 +325,8 @@ public class OTAContentsChecker extends AbstractConfigurable {
 
         if(errorOccurredOnXWingData)
         {
-            mic.Util.logToChat("Unable to reach XWing-Data server. No update performed");
+            mic.Util.logToChat("Unable to reach xwing-data1 server (1st edition). No update performed");
         }else {
-
-            // check OTA for updates
-            ArrayList<OTAImage> imagesToDownload = new ArrayList<OTAImage>();
-
-            OTAImage imageToDownload = null;
             ModuleIntegrityChecker modIntCheck = new ModuleIntegrityChecker();
 
             // =============================================================
@@ -299,7 +335,6 @@ public class OTAContentsChecker extends AbstractConfigurable {
             ArrayList<OTAMasterPilots.OTAPilot> pilots = modIntCheck.checkPilots(true);
             for (OTAMasterPilots.OTAPilot pilot : pilots) {
                 if (!pilot.getStatus()) {
-                    missingCount++;
                     return 1;
                 }
             }
@@ -310,7 +345,6 @@ public class OTAContentsChecker extends AbstractConfigurable {
             ArrayList<OTAMasterActions.OTAAction> actions = modIntCheck.checkActions(true);
             for (OTAMasterActions.OTAAction action : actions) {
                 if (!action.getStatus()) {
-                    missingCount++;
                     return 1;
                 }
             }
@@ -325,7 +359,6 @@ public class OTAContentsChecker extends AbstractConfigurable {
             ArrayList<OTAMasterShips.OTAShip> ships = modIntCheck.checkShips(true);
             for (OTAMasterShips.OTAShip ship : ships) {
                 if (!ship.getStatus()) {
-                    missingCount++;
                     return 1;
                 }
             }
@@ -337,7 +370,6 @@ public class OTAContentsChecker extends AbstractConfigurable {
             ArrayList<OTAMasterUpgrades.OTAUpgrade> upgrades = modIntCheck.checkUpgrades(true);
             for (OTAMasterUpgrades.OTAUpgrade upgrade : upgrades) {
                 if (!upgrade.getStatus()) {
-                    missingCount++;
                     return 1;
                 }
             }
@@ -349,12 +381,10 @@ public class OTAContentsChecker extends AbstractConfigurable {
             ArrayList<OTAMasterConditions.OTACondition> conditions = modIntCheck.checkConditions(true);
             for (OTAMasterConditions.OTACondition condition : conditions) {
                 if (!condition.getStatus()) {
-                    missingCount++;
                     return 1;
                 }
 
                 if (!condition.getTokenStatus()) {
-                    missingCount++;
                     return 1;
                 }
             }
@@ -366,7 +396,6 @@ public class OTAContentsChecker extends AbstractConfigurable {
             ArrayList<OTAMasterDialHides.OTADialHide> dialHides = modIntCheck.checkDialHides(true);
             for (OTAMasterDialHides.OTADialHide dialHide : dialHides) {
                 if (!dialHide.getStatus()) {
-                    missingCount++;
                     return 1;
                 }
             }
@@ -382,7 +411,6 @@ public class OTAContentsChecker extends AbstractConfigurable {
             while (dialMaskIterator.hasNext()) {
                 missingDialMask = dialMaskIterator.next();
                 if (!missingDialMask.getStatus()) {
-                    missingCount++;
                     return 1;
                 }
             }
@@ -396,7 +424,6 @@ public class OTAContentsChecker extends AbstractConfigurable {
             while (shipBaseIterator.hasNext()) {
                 missingShipBase = shipBaseIterator.next();
                 if (!missingShipBase.getStatus()) {
-                    missingCount++;
                     return 1;
                 }
             }
@@ -412,10 +439,20 @@ public class OTAContentsChecker extends AbstractConfigurable {
         // dispatcher: pilots, ships, upgrades, conditions
         // and save to the module
         boolean errorOccurredOnXWingData = downloadXwingDataAndDispatcherJSONFiles();
+        boolean errorOccuredOnXWingData_2e = downloadXwingDataAndDispatcherJSONFiles_2e();
+
+        if(errorOccuredOnXWingData_2e){
+            logToChat("Unable to reach xwing-data2 server (2nd edition). No update performed");
+        } else {
+
+        }
+
+
+
 
         if(errorOccurredOnXWingData)
         {
-            mic.Util.logToChat("Unable to reach XWing-Data server. No update performed");
+            mic.Util.logToChat("Unable to reach xwing-data server (1st edition). No update performed");
         }else {
 
             // check OTA for updates

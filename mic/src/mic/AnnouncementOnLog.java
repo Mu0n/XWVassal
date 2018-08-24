@@ -53,56 +53,6 @@ public class AnnouncementOnLog extends AbstractConfigurable {
 
     }
 
-    private boolean downloadXwingDataAndDispatcherJSONFiles()
-    {
-        boolean errorOccurredOnXWingData = false;
-
-        //these will be dumped in the root of the module
-        ArrayList<String> jsonFilesToDownloadFromURL = new ArrayList<String>();
-        //these have to be dumped in a /data subfolder, it will help prevent shipPilot json collisions, such as tielfighter
-        //by putting them in /data/pilots/rebelalliance/
-        ArrayList<String> jsonFilesToDownloadFromURL_2e = new ArrayList<String>();
-
-        jsonFilesToDownloadFromURL.add(MasterShipData.REMOTE_URL);
-        jsonFilesToDownloadFromURL.add(OTAContentsChecker.OTA_DISPATCHER_SHIPS_JSON_URL);
-        jsonFilesToDownloadFromURL.add(MasterPilotData.REMOTE_URL);
-        jsonFilesToDownloadFromURL.add(OTAContentsChecker.OTA_PILOTS_JSON_URL);
-        jsonFilesToDownloadFromURL.add(MasterUpgradeData.REMOTE_URL);
-        jsonFilesToDownloadFromURL.add(OTAContentsChecker.OTA_DISPATCHER_UPGRADES_JSON_URL);
-        jsonFilesToDownloadFromURL.add(MasterConditionData.REMOTE_URL);
-        jsonFilesToDownloadFromURL.add(OTAContentsChecker.OTA_DISPATCHER_CONDITIONS_JSON_URL);
-
-
-
-        //2nd edition. check the manifest's list of files to load and get them all
-
-        //all the ShipPilots jsons
-        XWS2Pilots.pilotsDataSources whereToGetPilots = mic.Util.loadRemoteJson(XWS2Pilots.remoteUrl, XWS2Pilots.pilotsDataSources.class);
-        XWS2Upgrades.upgradesDataSources whereToGetUpgrades = mic.Util.loadRemoteJson(XWS2Upgrades.remoteUrl, XWS2Upgrades.upgradesDataSources.class);
-        XWS2Upgrades.conditionsDataSources whereToGetConditions = mic.Util.loadRemoteJson(XWS2Upgrades.remoteUrl, XWS2Upgrades.conditionsDataSources.class);
-
-        for(XWS2Pilots.OneFactionGroup oSDS : whereToGetPilots.getPilots()){
-            for(String suffix : oSDS.getShipUrlSuffixes()){
-                jsonFilesToDownloadFromURL_2e.add(XWS2Pilots.guidoRootUrl + suffix);
-            }
-        }
-        for(String suffix : whereToGetUpgrades.getUrlEnds()){
-            jsonFilesToDownloadFromURL_2e.add(XWS2Upgrades.guidoRootUrl + suffix);
-        }
-
-        jsonFilesToDownloadFromURL_2e.add(XWS2Upgrades.guidoRootUrl + whereToGetConditions.getUrlEnd());
-
-        try {
-            XWOTAUtils.downloadJSONFilesFromGitHub(jsonFilesToDownloadFromURL, false);
-            XWOTAUtils.downloadJSONFilesFromGitHub(jsonFilesToDownloadFromURL_2e, true);
-        }catch(IOException e)
-        {
-            logToChat("error download and integrating the jsons");
-            errorOccurredOnXWingData = true;
-        }
-
-        return errorOccurredOnXWingData;
-    }
 /*
     private void downloadContent()
     {
@@ -549,9 +499,8 @@ public class AnnouncementOnLog extends AbstractConfigurable {
             frame.dispose();
 
             if(answer==0) {
-                downloadXwingDataAndDispatcherJSONFiles();
+                //the jsons used to be downloaded here and kept in local copies, but the addTo method of the Content Checker is doing that now
             }else{
-                downloadXwingDataAndDispatcherJSONFiles();
             }
 
             /*
