@@ -145,8 +145,9 @@ public class StemPilot2e extends Decorator implements EditablePiece {
 
             if(ship.getShipNumber()!=null) shipNumber = ship.getShipNumber();
             String factionXWS = Canonicalizer.getCanonicalFactionName(faction);
+            String shipXWS = Canonicalizer.getCanonicalShipName(shipName);
 
-            pilotXWSencoding = factionXWS+"_"+pilotXWS2+"_"+ship.getPilotData().getXWS();
+            pilotXWSencoding = factionXWS+"_"+shipXWS+"_"+ship.getPilotData().getXWS();
 
             this.piece = piece;
 
