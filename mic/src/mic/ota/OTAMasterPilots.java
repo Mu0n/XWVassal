@@ -43,7 +43,6 @@ public class OTAMasterPilots extends ArrayList<OTAMasterPilots.OTAPilot> {
         if(edition == 1) data = Util.loadRemoteJson(OTAContentsChecker.OTA_PILOTS_JSON_URL, OTAMasterPilots.class);
         else if(edition == 2)  data = Util.loadRemoteJson(OTAContentsChecker.OTA_PILOTS_JSON_URL_2E, OTAMasterPilots.class);
 
-        Util.logToChat("in loadData of OTAMasterPilots this is the URL used " + OTAContentsChecker.OTA_PILOTS_JSON_URL_2E);
         loadedData = Maps.newHashMap();
         if (data == null) {
             Util.logToChat("Unable to load OTA pilots from the web");

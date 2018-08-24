@@ -127,6 +127,8 @@ public class XWS2Pilots {
         return false;
     }
 
+
+
     public static class PilotAction{
         public PilotAction() { super();}
 
@@ -350,6 +352,15 @@ public class XWS2Pilots {
 
         }
         return allPilots;
+    }
+
+    public static XWS2Pilots getSpecificShipFromShipXWS(String  searchedXWS2Name, List<XWS2Pilots> allShips) {
+        for(XWS2Pilots aShip : allShips){
+            if(Canonicalizer.getCleanedName(aShip.getName()).equals(searchedXWS2Name)){
+                return aShip;
+            }
+        }
+        return null;
     }
 
 

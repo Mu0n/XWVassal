@@ -391,6 +391,18 @@ public class OTAContentsChecker extends AbstractConfigurable {
                 }
             }
             pilots = null;
+
+            // =============================================================
+            // Ships
+            // =============================================================
+            ArrayList<OTAMasterShips.OTAShip> ships = modIntCheck_2e.checkShips(true, allShips);
+            for (OTAMasterShips.OTAShip ship : ships) {
+                if (!ship.getStatus()) {
+                    return 1;
+                }
+            }
+            ships = null;
+
         }
 
         return tempCount;
@@ -511,195 +523,6 @@ public class OTAContentsChecker extends AbstractConfigurable {
         return 0;
     }
 
-    private int countMissingContent()
-    {
-        int missingCount = 0;
-
-        // grab xwing-data: pilots, ships, upgrades, conditions
-        // dispatcher: pilots, ships, upgrades, conditions
-        // and save to the module
-        boolean errorOccurredOnXWingData = downloadXwingDataAndDispatcherJSONFiles();
-        boolean errorOccuredOnXWingData_2e = downloadXwingDataAndDispatcherJSONFiles_2e();
-
-        if(errorOccuredOnXWingData_2e){
-            logToChat("Unable to reach xwing-data2 server (2nd edition). No update performed");
-        } else {
-
-        }
-
-        if(errorOccurredOnXWingData)
-        {
-            mic.Util.logToChat("Unable to reach xwing-data server (1st edition). No update performed");
-        }else {
-
-            // check OTA for updates
-            ArrayList<OTAImage> imagesToDownload = new ArrayList<OTAImage>();
-
-            OTAImage imageToDownload = null;
-            ModuleIntegrityChecker modIntCheck = new ModuleIntegrityChecker();
-
-            // =============================================================
-            // Pilots
-            // =============================================================
-            ArrayList<OTAMasterPilots.OTAPilot> pilots = modIntCheck.checkPilots(false);
-            for (OTAMasterPilots.OTAPilot pilot : pilots) {
-                if (!pilot.getStatus()) {
-                    missingCount++;
-                }
-            }
-            pilots = null;
-
-            // =============================================================
-            // Actions
-            // =============================================================
-            ArrayList<OTAMasterActions.OTAAction> actions = modIntCheck.checkActions(true);
-            for (OTAMasterActions.OTAAction action : actions) {
-                if (!action.getStatus()) {
-                    missingCount++;
-                }
-            }
-            actions = null;
-            //logToChat("after pilots, missingCount = " + Integer.toString(missingCount));
-
-            // =============================================================
-            // Ships
-            // =============================================================
-            ArrayList<OTAMasterShips.OTAShip> ships = modIntCheck.checkShips(false);
-            for (OTAMasterShips.OTAShip ship : ships) {
-                if (!ship.getStatus()) {
-                    missingCount++;
-                }
-            }
-            ships = null;
-
-            // =============================================================
-            // Upgrades
-            // =============================================================
-            ArrayList<OTAMasterUpgrades.OTAUpgrade> upgrades = modIntCheck.checkUpgrades(false);
-            for (OTAMasterUpgrades.OTAUpgrade upgrade : upgrades) {
-                if (!upgrade.getStatus()) {
-                    missingCount++;
-                }
-            }
-            upgrades = null;
-
-            // =============================================================
-            // Conditions
-            // =============================================================
-            ArrayList<OTAMasterConditions.OTACondition> conditions = modIntCheck.checkConditions(false);
-            for (OTAMasterConditions.OTACondition condition : conditions) {
-                if (!condition.getStatus()) {
-                    missingCount++;
-                }
-
-                if (!condition.getTokenStatus()) {
-                    missingCount++;
-                }
-            }
-            conditions = null;
-
-            // =============================================================
-            // Dial Hides
-            // =============================================================
-            ArrayList<OTAMasterDialHides.OTADialHide> dialHides = modIntCheck.checkDialHides(false);
-            for (OTAMasterDialHides.OTADialHide dialHide : dialHides) {
-                if (!dialHide.getStatus()) {
-                    missingCount++;
-                }
-            }
-            dialHides = null;
-
-            // =============================================================
-            // Check Dial Masks
-            // =============================================================
-            ArrayList<OTADialMask> dialMasksToGenerate = new ArrayList<OTADialMask>();
-            ArrayList<OTADialMask> dialMaskResults = modIntCheck.checkDialMasks(false);
-            Iterator<OTADialMask> dialMaskIterator = dialMaskResults.iterator();
-            OTADialMask missingDialMask = null;
-            while (dialMaskIterator.hasNext()) {
-                missingDialMask = dialMaskIterator.next();
-                if (!missingDialMask.getStatus()) {
-                    missingCount++;
-                }
-            }
-
-            // =============================================================
-            // Check Ship Bases
-            // =============================================================
-            ArrayList<OTAShipBase> shipBasesToGenerate = new ArrayList<OTAShipBase>();
-            ArrayList<OTAShipBase> shipBaseResults = modIntCheck.checkShipBases(false);
-            Iterator<OTAShipBase> shipBaseIterator = shipBaseResults.iterator();
-            OTAShipBase missingShipBase = null;
-            while (shipBaseIterator.hasNext()) {
-                missingShipBase = shipBaseIterator.next();
-                if (!missingShipBase.getStatus()) {
-                    missingCount++;
-                }
-            }
-
-            // TODO great time for a progress bar here
-
-
-            // =============================================================
-            // Download the missing images
-            // =============================================================
-            XWOTAUtils.downloadAndSaveImagesFromOTA(imagesToDownload, OTAContentsChecker.OTA_RAW_BRANCH_URL);
-
-            // =============================================================
-            // Generate the missing Dial Masks
-            // =============================================================
-            OTADialMask dialMask = null;
-            GameModule gameModule = GameModule.getGameModule();
-            DataArchive dataArchive = gameModule.getDataArchive();
-            FileArchive fileArchive = dataArchive.getArchive();
-            ArchiveWriter writer = new ArchiveWriter(fileArchive);
-            dialMaskIterator = dialMasksToGenerate.iterator();
-            while (dialMaskIterator.hasNext()) {
-                dialMask = dialMaskIterator.next();
-                if (!dialMask.getStatus()) {
-                    missingCount++;
-                }
-            }
-            //        try {
-            //           writer.save();
-            //       } catch (IOException e) {
-            //           mic.Util.logToChat("Exception occurred saving module");
-            //       }
-            dialMaskResults = null;
-
-            dialMasksToGenerate = null;
-
-
-            // =============================================================
-            // Generate the missing ship bases
-            // =============================================================
-            OTAShipBase shipBase = null;
-            //         GameModule gameModule = GameModule.getGameModule();
-            //       DataArchive dataArchive = gameModule.getDataArchive();
-            //       FileArchive fileArchive = dataArchive.getArchive();
-            //        ArchiveWriter writer = new ArchiveWriter(fileArchive);
-            shipBaseIterator = shipBasesToGenerate.iterator();
-            while (shipBaseIterator.hasNext()) {
-                shipBase = shipBaseIterator.next();
-                if (!shipBase.getStatus()) {
-                    missingCount++;
-                }
-            }
-
-            // now save the module
-            try {
-                writer.save();
-            } catch (IOException e) {
-                mic.Util.logToChat("Exception occurred saving module");
-            }
-            shipBaseResults = null;
-
-            shipBasesToGenerate = null;
-        }
-        return missingCount;
-    }
-
-
     /*
      * Build the contents checker window
      */
@@ -744,6 +567,7 @@ public class OTAContentsChecker extends AbstractConfigurable {
                     allButton.setSelected(false);
                     killItIfYouHaveTo2ndTab = true; //gets rid of the blinky
                     stopBlink2ndTab = true; //gets rid of the tab blinky
+                    refreshFinalTable2e();
                 }else{
                     downloadButton2e.setEnabled(true);
                 }
@@ -832,6 +656,7 @@ public class OTAContentsChecker extends AbstractConfigurable {
                     allButton.setSelected(false);
                     killItIfYouHaveTo = true; //gets rid of the blinky
                     stopBlink1stTab = true; //gets rid of the tab blinky
+                    refreshFinalTable();
                 }else{
                     downloadButton.setEnabled(true);
                 }
@@ -1002,6 +827,7 @@ public class OTAContentsChecker extends AbstractConfigurable {
     }
 
 
+    //Download the missing content from the built CheckResults list (can be every content if the checkbox downloadAll was selected
     private void downloadAll2e(String branchURL)
     {
 
@@ -1085,17 +911,11 @@ public class OTAContentsChecker extends AbstractConfigurable {
             } catch (IOException e) {
                 logToChat("Exception occurred saving module");
             }
-
-            // refresh the table
-            refreshFinalTable2e();
-
         }
 
 
 
     }
-
-
     private void downloadAll(String branchURL)
     {
 
@@ -1191,16 +1011,10 @@ public class OTAContentsChecker extends AbstractConfigurable {
             } catch (IOException e) {
                 logToChat("Exception occurred saving module");
             }
-
-            // refresh the table
-            refreshFinalTable();
-
         }
-
-
-
     }
 
+    //refresh the table results for the benefit of the user
     private void refreshFinalTable2e()
     {
         results2e = checkAllResults2e();
@@ -1239,8 +1053,6 @@ public class OTAContentsChecker extends AbstractConfigurable {
         }
         // framefor1st.repaint();
     }
-
-
     private void refreshFinalTable()
     {
         results = checkAllResults();
@@ -1559,7 +1371,6 @@ public class OTAContentsChecker extends AbstractConfigurable {
         return finalTable;
 
     }
-
     private JTable buildFinalTable(OTAContentsCheckerResults results)
     {
         //{"Type","Name", "Variant"};
@@ -1590,7 +1401,6 @@ public class OTAContentsChecker extends AbstractConfigurable {
 
     }
 
-
     private String[][] convertTableArrayListToArray(ArrayList<String[]> tableResults)
     {
         // convert the ArrayList<String[]> to a String[][]
@@ -1613,18 +1423,10 @@ public class OTAContentsChecker extends AbstractConfigurable {
         // perform all checks
         modIntChecker_2e = new ModuleIntegrityChecker_2e();
 
-
-
         results2e.setPilotResults(modIntChecker_2e.checkPilots(false, allShips));
+        results2e.setShipResults(modIntChecker_2e.checkShips(false, allShips));
 
 
-        results2e.setMissingShips(new ArrayList<OTAMasterShips.OTAShip>());
-        results2e.setMissingActions(new ArrayList<OTAMasterActions.OTAAction>());
-        results2e.setMissingShipBases(new ArrayList<OTAShipBase>());
-        results2e.setMissingUpgrades(new ArrayList<OTAMasterUpgrades.OTAUpgrade>());
-        results2e.setMissingConditions(new ArrayList<OTAMasterConditions.OTACondition>());
-        results2e.setMissingDialHides(new ArrayList<OTAMasterDialHides.OTADialHide>());
-        results2e.setMissingDialMasks(new ArrayList<OTADialMask>());
         /*
         results2e.setShipResults(modIntChecker_2e.checkShips(false));
         results2e.setActionResults(modIntChecker_2e.checkActions(false));
@@ -1638,9 +1440,18 @@ public class OTAContentsChecker extends AbstractConfigurable {
 
         // determine which images are missing
         results2e.setMissingPilots(findMissingPilots(results2e.getPilotResults()));
+        results2e.setMissingShips(findMissingShips(results2e.getShipResults()));
 
+
+        results2e.setMissingShips(new ArrayList<OTAMasterShips.OTAShip>());
+        results2e.setMissingActions(new ArrayList<OTAMasterActions.OTAAction>());
+        results2e.setMissingShipBases(new ArrayList<OTAShipBase>());
+        results2e.setMissingUpgrades(new ArrayList<OTAMasterUpgrades.OTAUpgrade>());
+        results2e.setMissingConditions(new ArrayList<OTAMasterConditions.OTACondition>());
+        results2e.setMissingDialHides(new ArrayList<OTAMasterDialHides.OTADialHide>());
+        results2e.setMissingDialMasks(new ArrayList<OTADialMask>());
         /*
-        results.setMissingShips(findMissingShips(results.getShipResults()));
+
         results.setMissingActions(findMissingActions(results.getActionResults()));
         results.setMissingShipBases(findMissingShipBases(results.getShipBaseResults()));
         results.setMissingUpgrades(findMissingUpgrades(results.getUpgradeResults()));

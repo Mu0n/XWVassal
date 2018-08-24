@@ -175,7 +175,7 @@ public ArrayList<OTAMasterPilots.OTAPilot> checkPilots(boolean onlyDetectOne)
         // get list of ships from OTAMasterShips
         OTAMasterShips oms = new OTAMasterShips();
         oms.flushData();
-        Collection<OTAMasterShips.OTAShip> ships = oms.getAllShips();
+        Collection<OTAMasterShips.OTAShip> ships = oms.getAllShips(1);
 
 
         ArrayList<OTAMasterShips.OTAShip> shipList = new ArrayList<OTAMasterShips.OTAShip>();
@@ -204,7 +204,7 @@ public ArrayList<OTAMasterPilots.OTAPilot> checkPilots(boolean onlyDetectOne)
     {
         OTAMasterShips oms = new OTAMasterShips();
         oms.flushData();
-        Collection<OTAMasterShips.OTAShip> ships = oms.getAllShips();
+        Collection<OTAMasterShips.OTAShip> ships = oms.getAllShips(1);
 
           MasterShipData msd = new MasterShipData();
           msd.loadData();

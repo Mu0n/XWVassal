@@ -147,13 +147,14 @@ public ArrayList<OTAMasterPilots.OTAPilot> checkPilots(boolean onlyDetectOne, Li
     return pilotListToReturn;
 }
 
-    public ArrayList<OTAMasterShips.OTAShip> checkShips(boolean onlyDetectOne)
+    public ArrayList<OTAMasterShips.OTAShip> checkShips(boolean onlyDetectOne, List<XWS2Pilots> allShips)
     {
         // get list of ships from OTAMasterShips
         OTAMasterShips oms = new OTAMasterShips();
         oms.flushData();
-        Collection<OTAMasterShips.OTAShip> ships = oms.getAllShips();
+        Collection<OTAMasterShips.OTAShip> ships = oms.getAllShips(2);
 
+        Util.logToChat("in modintcheck2  this is the number of ship images detected " + ships.size());
 
         ArrayList<OTAMasterShips.OTAShip> shipList = new ArrayList<OTAMasterShips.OTAShip>();
         Iterator<OTAMasterShips.OTAShip> i = ships.iterator();
@@ -161,12 +162,20 @@ public ArrayList<OTAMasterPilots.OTAPilot> checkPilots(boolean onlyDetectOne, Li
         while(i.hasNext())
         {
             OTAMasterShips.OTAShip ship = (OTAMasterShips.OTAShip)i.next();
-            if(MasterShipData.getShipData(ship.getXws()) != null)
+
+
+            Util.logToChat("in modintCheck2e iterating through pilots, checking this entry " + ship.getImage());
+            Util.logToChat("found the pilot in xwing-data2? " + XWS2Pilots.getSpecificShipFromShipXWS(ship.getXws(), allShips));
+            Util.logToChat("status " + ship.getStatus());
+            Util.logToChat("image exists in OTA " + XWOTAUtils.imageExistsInOTA("pilots",ship.getImage(), OTAContentsChecker.OTA_RAW_BRANCH_URL_2E));
+
+
+            if(XWS2Pilots.getSpecificShipFromShipXWS(ship.getXws(), allShips)!=null)
             {
                 ship.setStatus(XWOTAUtils.imageExistsInModule(ship.getImage()));
                 boolean exists = XWOTAUtils.imageExistsInModule(ship.getImage());
 
-                if(exists || (!exists && XWOTAUtils.imageExistsInOTA("ships",ship.getImage(), OTAContentsChecker.OTA_RAW_BRANCH_URL))) {
+                if(exists || (!exists && XWOTAUtils.imageExistsInOTA("ships",ship.getImage(), OTAContentsChecker.OTA_RAW_BRANCH_URL_2E))) {
                     shipList.add(ship);
                     if(onlyDetectOne) return shipList;
                 }
@@ -181,7 +190,7 @@ public ArrayList<OTAMasterPilots.OTAPilot> checkPilots(boolean onlyDetectOne, Li
     {
         OTAMasterShips oms = new OTAMasterShips();
         oms.flushData();
-        Collection<OTAMasterShips.OTAShip> ships = oms.getAllShips();
+        Collection<OTAMasterShips.OTAShip> ships = oms.getAllShips(2);
 
           MasterShipData msd = new MasterShipData();
           msd.loadData();

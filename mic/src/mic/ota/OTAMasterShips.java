@@ -19,29 +19,33 @@ public class OTAMasterShips extends ArrayList<OTAMasterShips.OTAShip> {
     {
         loadedData = null;
     }
-    public Collection<OTAShip> getAllShips()
+    public Collection<OTAShip> getAllShips(int edition)
     {
         if(loadedData == null)
         {
-            loadData();
+            loadData(edition);
         }
        // Object[] actions = loadedData.values().toArray();
         return loadedData.values();
 
     }
 
-    public static OTAMasterShips.OTAShip getShip(String shipxws, String identifier) {
+    public static OTAMasterShips.OTAShip getShip(String shipxws, String identifier, int edition) {
         if (loadedData == null) {
-            loadData();
+            loadData(edition);
         }
         String shipKey = shipxws+"_"+identifier;
         return loadedData.get(shipKey);
     }
 
-    private static void loadData() {
+    private static void loadData(int edition) {
 
         // load from
-        OTAMasterShips data = Util.loadRemoteJson(OTAContentsChecker.OTA_SHIPS_JSON_URL, OTAMasterShips.class);
+        OTAMasterShips data = new OTAMasterShips();
+        if(edition == 1) Util.loadRemoteJson(OTAContentsChecker.OTA_SHIPS_JSON_URL, OTAMasterShips.class);
+        else if(edition == 2) Util.loadRemoteJson(OTAContentsChecker.OTA_SHIPS_JSON_URL_2E, OTAMasterShips.class);
+
+        if(edition == 2) Util.logToChat("this is the URL probed for ship images " + OTAContentsChecker.OTA_SHIPS_JSON_URL_2E);
         loadedData = Maps.newHashMap();
         if (data == null) {
             Util.logToChat("Unable to load OTA pilots from the web");
