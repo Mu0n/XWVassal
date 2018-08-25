@@ -403,6 +403,16 @@ public class OTAContentsChecker extends AbstractConfigurable {
             }
             ships = null;
 
+            // =============================================================
+            // Upgrades
+            // =============================================================
+            ArrayList<OTAMasterUpgrades.OTAUpgrade> upgrades = modIntCheck_2e.checkUpgrades(true, allUpgrades);
+            for (OTAMasterUpgrades.OTAUpgrade upgrade : upgrades) {
+                if (!upgrade.getStatus()) {
+                    return 1;
+                }
+            }
+            upgrades = null;
         }
 
         return tempCount;
@@ -1097,7 +1107,7 @@ public class OTAContentsChecker extends AbstractConfigurable {
         ArrayList<String[]> tableResults = new ArrayList<String[]>();
         String[] tableRow = null;
 
-        /*
+
         //ships
         OTAMasterShips.OTAShip ship = null;
         for(int i = 0; i<results.getMissingShips().size(); i++)
@@ -1105,7 +1115,7 @@ public class OTAContentsChecker extends AbstractConfigurable {
             ship = results.getMissingShips().get(i);
             tableRow = new String[3];
             tableRow[0] = "Ship";
-            tableRow[1] = MasterShipData.getShipData(ship.getXws()).getName();
+            tableRow[1] = XWS2Pilots.getSpecificShipFromShipXWS(ship.getXws(), allShips).getName();
 
             if(ship.getIdentifier().equalsIgnoreCase("Standard"))
             {
@@ -1115,7 +1125,7 @@ public class OTAContentsChecker extends AbstractConfigurable {
             }
             tableResults.add(tableRow);
         }
-
+ /*
         // bases
         OTAShipBase shipBase = null;
         for(int i = 0; i<results.getMissingShipBases().size();i++)
@@ -1168,18 +1178,23 @@ public class OTAContentsChecker extends AbstractConfigurable {
             tableRow[2] = fullFactionNames.get(pilot.getFaction());
             tableResults.add(tableRow);
         }
-/*
+
         // upgrades
         OTAMasterUpgrades.OTAUpgrade upgrade = null;
+
+        logToChat("table populating upgrade name " + results.getMissingUpgrades().size());
+
         for(int i=0;i<results.getMissingUpgrades().size();i++)
         {
             upgrade = results.getMissingUpgrades().get(i);
             tableRow = new String[3];
             tableRow[0] = "Upgrade";
 
-            if(MasterUpgradeData.getUpgradeData(upgrade.getXws()) != null)
+            XWS2Upgrades.OneUpgrade detectedUpgrade = XWS2Upgrades.getSpecificUpgrade(upgrade.getXws(), allUpgrades);
+            logToChat("table populating upgrade name " + detectedUpgrade.getName());
+            if(detectedUpgrade != null)
             {
-                tableRow[1] = MasterUpgradeData.getUpgradeData(upgrade.getXws()).getName();
+                tableRow[1] = detectedUpgrade.getName();
             }else{
                 tableRow[1] = upgrade.getSlot()+" " +upgrade.getXws();
             }
@@ -1188,7 +1203,7 @@ public class OTAContentsChecker extends AbstractConfigurable {
             tableRow[2] = "";
             tableResults.add(tableRow);
         }
-
+/*
         // Conditions/Tokens
         OTAMasterConditions.OTACondition condition = null;
         for(int i=0;i<results.getMissingConditions().size();i++)
@@ -1425,36 +1440,35 @@ public class OTAContentsChecker extends AbstractConfigurable {
 
         results2e.setPilotResults(modIntChecker_2e.checkPilots(false, allShips));
         results2e.setShipResults(modIntChecker_2e.checkShips(false, allShips));
-
+        results2e.setUpgradeResults(modIntChecker_2e.checkUpgrades(false, allUpgrades));
 
         /*
         results2e.setShipResults(modIntChecker_2e.checkShips(false));
         results2e.setActionResults(modIntChecker_2e.checkActions(false));
         results2e.setShipBaseResults(modIntChecker_2e.checkShipBases(false));
-        results2e.setUpgradeResults(modIntChecker_2e.checkUpgrades(false));
         results2e.setConditionResults(modIntChecker_2e.checkConditions(false));
         results.setDialHideResults(modIntChecker_2e.checkDialHides(false));
         results.setDialMaskResults(modIntChecker_2e.checkDialMasks(false));
         */
 
 
-        // determine which images are missing
-        results2e.setMissingPilots(findMissingPilots(results2e.getPilotResults()));
-        results2e.setMissingShips(findMissingShips(results2e.getShipResults()));
-
-
-        results2e.setMissingShips(new ArrayList<OTAMasterShips.OTAShip>());
         results2e.setMissingActions(new ArrayList<OTAMasterActions.OTAAction>());
         results2e.setMissingShipBases(new ArrayList<OTAShipBase>());
-        results2e.setMissingUpgrades(new ArrayList<OTAMasterUpgrades.OTAUpgrade>());
         results2e.setMissingConditions(new ArrayList<OTAMasterConditions.OTACondition>());
         results2e.setMissingDialHides(new ArrayList<OTAMasterDialHides.OTADialHide>());
         results2e.setMissingDialMasks(new ArrayList<OTADialMask>());
+
+
+        // determine which images are missing
+        results2e.setMissingPilots(findMissingPilots(results2e.getPilotResults()));
+        results2e.setMissingShips(findMissingShips(results2e.getShipResults()));
+        results2e.setMissingUpgrades(findMissingUpgrades(results2e.getUpgradeResults()));
+
+        logToChat("check all stuff ups " + findMissingUpgrades(results2e.getUpgradeResults()).size());
         /*
 
         results.setMissingActions(findMissingActions(results.getActionResults()));
         results.setMissingShipBases(findMissingShipBases(results.getShipBaseResults()));
-        results.setMissingUpgrades(findMissingUpgrades(results.getUpgradeResults()));
         results.setMissingConditions(findMissingConditions(results.getConditionResults()));
         results.setMissingDialHides(findMissingDialHides(results.getDialHideResults()));
         results.setMissingDialMasks(findMissingDialMasks(results.getDialMaskResults()));

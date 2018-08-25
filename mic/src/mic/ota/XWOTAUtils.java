@@ -751,6 +751,7 @@ public class XWOTAUtils {
 
         String url = branchURL + fileType + "/" + fileName;
 
+        Util.logToChat("image URL to detect " + url.toString());
         HttpURLConnection httpUrlConn;
         try {
             httpUrlConn = (HttpURLConnection) new URL(url).openConnection();

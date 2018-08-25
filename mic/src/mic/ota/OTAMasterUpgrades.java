@@ -19,21 +19,23 @@ public class OTAMasterUpgrades  extends ArrayList<OTAMasterUpgrades.OTAUpgrade> 
         loadedData = null;
     }
 
-    public Collection<OTAMasterUpgrades.OTAUpgrade> getAllUpgrades()
+    public Collection<OTAMasterUpgrades.OTAUpgrade> getAllUpgrades(int edition)
     {
         if(loadedData == null)
         {
-            loadData();
+            loadData(edition);
         }
 
         return loadedData.values();
 
     }
 
-    private static void loadData() {
+    private static void loadData(int edition) {
 
         // load from
-        OTAMasterUpgrades data = Util.loadRemoteJson(OTAContentsChecker.OTA_UPGRADES_JSON_URL, OTAMasterUpgrades.class);
+        OTAMasterUpgrades data = new OTAMasterUpgrades();
+        if(edition == 1) data = Util.loadRemoteJson(OTAContentsChecker.OTA_UPGRADES_JSON_URL, OTAMasterUpgrades.class);
+        else if(edition == 2) data = Util.loadRemoteJson(OTAContentsChecker.OTA_UPGRADES_JSON_URL_2E, OTAMasterUpgrades.class);
         loadedData = Maps.newHashMap();
         if (data == null) {
             Util.logToChat("Unable to load OTA upgrades from the web");

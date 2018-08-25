@@ -19,12 +19,12 @@ import java.util.List;
 public class ModuleIntegrityChecker_2e {
     public String testString = "";
 
-    public ArrayList<OTAMasterUpgrades.OTAUpgrade> checkUpgrades(boolean onlyDetectOne)
+    public ArrayList<OTAMasterUpgrades.OTAUpgrade> checkUpgrades(boolean onlyDetectOne, XWS2Upgrades allUpgrades)
     {
         // get list of upgrades from OTAMasterUpgrades
         OTAMasterUpgrades omu = new OTAMasterUpgrades();
         omu.flushData();
-        Collection<OTAMasterUpgrades.OTAUpgrade> upgrades = omu.getAllUpgrades();
+        Collection<OTAMasterUpgrades.OTAUpgrade> upgrades = omu.getAllUpgrades(2);
 
 
         ArrayList<OTAMasterUpgrades.OTAUpgrade> upgradeList = new ArrayList<OTAMasterUpgrades.OTAUpgrade>();
@@ -34,10 +34,18 @@ public class ModuleIntegrityChecker_2e {
         while(i.hasNext())
         {
             upgrade = (OTAMasterUpgrades.OTAUpgrade)i.next();
-            //if(MasterUpgradeData.getUpgradeData(upgrade.getXws()) != null && XWOTAUtils.imageExistsInOTA("upgrade",upgrade.getImage())) {
-            if(MasterUpgradeData.getUpgradeData(upgrade.getXws()) != null) {
+
+
+            Util.logToChat("in modintCheck2e iterating through upgrades, checking this entry " + upgrade.getImage());
+            Util.logToChat("found the upgrade in xwing-data2? " + XWS2Upgrades.getSpecificUpgrade(upgrade.getXws(), allUpgrades));
+            Util.logToChat("status " + upgrade.getStatus());
+            Util.logToChat("image exists in OTA " + XWOTAUtils.imageExistsInOTA("upgrades",upgrade.getImage(), OTAContentsChecker.OTA_RAW_BRANCH_URL_2E));
+
+
+
+            if(XWS2Upgrades.getSpecificUpgrade(upgrade.getXws(), allUpgrades) != null) {
                 upgrade.setStatus(XWOTAUtils.imageExistsInModule(upgrade.getImage()));
-                if(upgrade.getStatus() || (!upgrade.getStatus() && XWOTAUtils.imageExistsInOTA("upgrades",upgrade.getImage(),OTAContentsChecker.OTA_RAW_BRANCH_URL))) {
+                if(upgrade.getStatus() || (!upgrade.getStatus() && XWOTAUtils.imageExistsInOTA("upgrades",upgrade.getImage(),OTAContentsChecker.OTA_RAW_BRANCH_URL_2E))) {
                     upgradeList.add(upgrade);
                     if(onlyDetectOne) return upgradeList;
                 }
@@ -162,13 +170,6 @@ public ArrayList<OTAMasterPilots.OTAPilot> checkPilots(boolean onlyDetectOne, Li
         while(i.hasNext())
         {
             OTAMasterShips.OTAShip ship = (OTAMasterShips.OTAShip)i.next();
-
-
-            Util.logToChat("in modintCheck2e iterating through pilots, checking this entry " + ship.getImage());
-            Util.logToChat("found the pilot in xwing-data2? " + XWS2Pilots.getSpecificShipFromShipXWS(ship.getXws(), allShips));
-            Util.logToChat("status " + ship.getStatus());
-            Util.logToChat("image exists in OTA " + XWOTAUtils.imageExistsInOTA("pilots",ship.getImage(), OTAContentsChecker.OTA_RAW_BRANCH_URL_2E));
-
 
             if(XWS2Pilots.getSpecificShipFromShipXWS(ship.getXws(), allShips)!=null)
             {

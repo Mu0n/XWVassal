@@ -55,7 +55,7 @@ public class ModuleIntegrityChecker {
         // get list of upgrades from OTAMasterUpgrades
         OTAMasterUpgrades omu = new OTAMasterUpgrades();
         omu.flushData();
-        Collection<OTAMasterUpgrades.OTAUpgrade> upgrades = omu.getAllUpgrades();
+        Collection<OTAMasterUpgrades.OTAUpgrade> upgrades = omu.getAllUpgrades(1);
 
 
         ArrayList<OTAMasterUpgrades.OTAUpgrade> upgradeList = new ArrayList<OTAMasterUpgrades.OTAUpgrade>();

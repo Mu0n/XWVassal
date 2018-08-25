@@ -42,10 +42,9 @@ public class OTAMasterShips extends ArrayList<OTAMasterShips.OTAShip> {
 
         // load from
         OTAMasterShips data = new OTAMasterShips();
-        if(edition == 1) Util.loadRemoteJson(OTAContentsChecker.OTA_SHIPS_JSON_URL, OTAMasterShips.class);
-        else if(edition == 2) Util.loadRemoteJson(OTAContentsChecker.OTA_SHIPS_JSON_URL_2E, OTAMasterShips.class);
+        if(edition == 1) data = Util.loadRemoteJson(OTAContentsChecker.OTA_SHIPS_JSON_URL, OTAMasterShips.class);
+        else if(edition == 2) data = Util.loadRemoteJson(OTAContentsChecker.OTA_SHIPS_JSON_URL_2E, OTAMasterShips.class);
 
-        if(edition == 2) Util.logToChat("this is the URL probed for ship images " + OTAContentsChecker.OTA_SHIPS_JSON_URL_2E);
         loadedData = Maps.newHashMap();
         if (data == null) {
             Util.logToChat("Unable to load OTA pilots from the web");
