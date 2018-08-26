@@ -68,6 +68,28 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
         final XWS2Upgrades allUpgrades = XWS2Upgrades.loadFromRemote();
         final List<XWS2Upgrades.Condition> allConditions = XWS2Upgrades.loadConditionsFromRemote();
 
+
+        logToChat("*** -- ship_images.json");
+        logToChat("[");
+        for(XWS2Pilots ship : allShips){
+            for(XWS2Pilots.Pilot2e pilot : ship.getPilots()){
+                String shipStr = Canonicalizer.getCleanedName(XWS2Pilots.getSpecificShipFromPilotXWS2(pilot.getXWS(),allShips).getName());
+                String pilotStr = pilot.getXWS();
+                String factionStr = Canonicalizer.getCleanedName(XWS2Pilots.getSpecificShipFromPilotXWS2(pilot.getXWS(),allShips).getFaction());
+                String imageStr = "P2e_" + factionStr + "_" + shipStr + "_" + pilotStr + ".jpg";
+                logToChat("{");
+                logToChat("\"shipxws\":\""+shipStr+"\",");
+                logToChat("\"pilotxws\":\""+pilotStr+"\",");
+                logToChat("\"faction\":\""+factionStr+"\",");
+                logToChat("\"image\":\""+imageStr+"\"");
+                if(allShips.indexOf(pilot) == (allShips.size()-1) &&
+                        ship.getPilots().indexOf(pilot) == (ship.getPilots().size()-1)) logToChat("}");
+                else logToChat("},");
+            }
+        }
+        logToChat("]");
+        logToChat("*** -- ship_images.json end");
+
         final List<String> factionsWanted = Lists.newArrayList();
 
 
