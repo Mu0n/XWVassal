@@ -106,7 +106,7 @@ public class StemUpgrade2e extends Decorator implements EditablePiece {
 
             // get the upgrade front image
             // String frontImage = "Upgrade_" + upgradeType + "_" + upgradeXWS + ".jpg";
-            String frontImage = "Stem2e_Upgrade_WIP.jpg";
+            String frontImage = "U2e_" + upgradeXWS + ".jpg";
             // check to see that the upgrade card image exists in the module.
             // if it doesn't then use a WIP image
             boolean useWipImage = false;

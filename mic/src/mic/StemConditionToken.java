@@ -95,7 +95,7 @@ public class StemConditionToken extends Decorator implements EditablePiece {
         protected void executeCommand() {
 
             // get the upgrade front image
-            String image = "ConditionToken_" + conditionXWS + ".png";
+            String image = "CT2e_" + conditionXWS + ".png";
             // check to see that the condition token image exists in the module.
             // if it doesn't then use a WIP image
 

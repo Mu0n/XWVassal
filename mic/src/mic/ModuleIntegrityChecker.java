@@ -84,7 +84,7 @@ public class ModuleIntegrityChecker {
         // get list of conditions from OTAMasterUpgrades
         OTAMasterConditions omc = new OTAMasterConditions();
         omc.flushData();
-        Collection<OTAMasterConditions.OTACondition> conditions = omc.getAllConditions();
+        Collection<OTAMasterConditions.OTACondition> conditions = omc.getAllConditions(1);
 
 
         ArrayList<OTAMasterConditions.OTACondition> conditionList = new ArrayList<OTAMasterConditions.OTACondition>();

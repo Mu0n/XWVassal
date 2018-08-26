@@ -97,11 +97,8 @@ public class StemCondition extends Decorator implements EditablePiece {
         // construct the Condition Card piece
         protected void executeCommand() {
 
-
-
-
             // get the upgrade front image
-            String frontImage = "Condition_" + conditionXWS + ".jpg";
+            String frontImage = "C2e_" + conditionXWS + ".jpg";
 
             // check to see that the condition card image exists in the module.
             // if it doesn't then use a WIP image

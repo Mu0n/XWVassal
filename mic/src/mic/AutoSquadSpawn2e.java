@@ -386,9 +386,7 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
             // Generate the ship base pieces
             // ======================================================
             GamePiece shipPiece = GamePieceGenerator2e.generateShip(ship);
-
             shipBases.add(shipPiece);
-
 
             // ======================================================
             // Generate the Pilot Pieces
@@ -432,9 +430,6 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
             //int totalUpgradeWidth = 251*ship.getUpgrades().size();
             int totalUpgradeWidth = 260;
 
-
-
-
             VassalXWSPilotPieces2e.Upgrade upgrade = new VassalXWSPilotPieces2e.Upgrade("",null);
             if(ship.getUpgrades().size()!=0) {
                 for (int i = ship.getUpgrades().size() - 1; i > -1; i--) {
@@ -458,7 +453,7 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
             }
 
             // ======================================================
-            //TODO Generate the Conditions
+            //Generate the Conditions
             // ======================================================
             for (VassalXWSPilotPieces2e.Condition condition: ship.getConditions()) {
                 GamePiece conditionPiece = GamePieceGenerator2e.generateCondition(condition);
@@ -493,7 +488,6 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
             // ======================================================
             // Add all of the appropriate tokens
             // ======================================================
-
 
             for (GamePiece token : ship.getTokensForDisplay()) {
 

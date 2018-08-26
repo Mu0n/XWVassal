@@ -19,21 +19,23 @@ public class OTAMasterConditions extends ArrayList<OTAMasterConditions.OTACondit
     {
         loadedData = null;
     }
-    public Collection<OTAMasterConditions.OTACondition> getAllConditions()
+    public Collection<OTAMasterConditions.OTACondition> getAllConditions(int edition)
     {
         if(loadedData == null)
         {
-            loadData();
+            loadData(edition);
         }
 
         return loadedData.values();
 
     }
 
-    private static void loadData() {
+    private static void loadData(int edition) {
 
         // load from
-        OTAMasterConditions data = Util.loadRemoteJson(OTAContentsChecker.OTA_CONDITIONS_JSON_URL, OTAMasterConditions.class);
+        OTAMasterConditions data = new OTAMasterConditions();
+        if(edition == 1) data = Util.loadRemoteJson(OTAContentsChecker.OTA_CONDITIONS_JSON_URL, OTAMasterConditions.class);
+        else if(edition == 2) data = Util.loadRemoteJson(OTAContentsChecker.OTA_CONDITIONS_JSON_URL_2E, OTAMasterConditions.class);
         loadedData = Maps.newHashMap();
         if (data == null) {
             Util.logToChat("Unable to load OTA conditions from the web");
@@ -51,10 +53,8 @@ public class OTAMasterConditions extends ArrayList<OTAMasterConditions.OTACondit
 
     public static class OTACondition {
 
-
         @JsonProperty("xws")
         private String xws;
-
 
         @JsonProperty("image")
         private String image;
@@ -63,7 +63,6 @@ public class OTAMasterConditions extends ArrayList<OTAMasterConditions.OTACondit
         private String tokenImage;
 
         private boolean status;
-
         private boolean tokenStatus;
 
         public String getXws() {

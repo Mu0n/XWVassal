@@ -154,11 +154,8 @@ public class GamePieceGenerator2e
         if (ship.getShipData().getName() != null) {
             piece.setProperty("Pilot Name", getDisplayPilotName(ship, ship.getShipNumber()));
         }
-
         return piece;
     }
-
-
 
     private static boolean containsSingleTurret(VassalXWSPilotPieces2e ship){
         boolean foundSingleTurret = false;
@@ -231,7 +228,6 @@ public class GamePieceGenerator2e
 
     private static PieceSlot getPieceSlotByName(String name)
     {
-
         List<PieceSlot> pieceSlots = GameModule.getGameModule().getAllDescendantComponentsOf(PieceSlot.class);
         PieceSlot targetPieceSlot = null;
         boolean found = false;

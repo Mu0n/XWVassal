@@ -35,14 +35,6 @@ public class ModuleIntegrityChecker_2e {
         {
             upgrade = (OTAMasterUpgrades.OTAUpgrade)i.next();
 
-
-            Util.logToChat("in modintCheck2e iterating through upgrades, checking this entry " + upgrade.getImage());
-            Util.logToChat("found the upgrade in xwing-data2? " + XWS2Upgrades.getSpecificUpgrade(upgrade.getXws(), allUpgrades));
-            Util.logToChat("status " + upgrade.getStatus());
-            Util.logToChat("image exists in OTA " + XWOTAUtils.imageExistsInOTA("upgrades",upgrade.getImage(), OTAContentsChecker.OTA_RAW_BRANCH_URL_2E));
-
-
-
             if(XWS2Upgrades.getSpecificUpgrade(upgrade.getXws(), allUpgrades) != null) {
                 upgrade.setStatus(XWOTAUtils.imageExistsInModule(upgrade.getImage()));
                 if(upgrade.getStatus() || (!upgrade.getStatus() && XWOTAUtils.imageExistsInOTA("upgrades",upgrade.getImage(),OTAContentsChecker.OTA_RAW_BRANCH_URL_2E))) {
@@ -50,19 +42,16 @@ public class ModuleIntegrityChecker_2e {
                     if(onlyDetectOne) return upgradeList;
                 }
             }
-
         }
-
         return upgradeList;
     }
 
-    public ArrayList<OTAMasterConditions.OTACondition> checkConditions(boolean onlyDetectOne)
+    public ArrayList<OTAMasterConditions.OTACondition> checkConditions(boolean onlyDetectOne, List<XWS2Upgrades.Condition> allConditions)
     {
         // get list of conditions from OTAMasterUpgrades
         OTAMasterConditions omc = new OTAMasterConditions();
         omc.flushData();
-        Collection<OTAMasterConditions.OTACondition> conditions = omc.getAllConditions();
-
+        Collection<OTAMasterConditions.OTACondition> conditions = omc.getAllConditions(2);
 
         ArrayList<OTAMasterConditions.OTACondition> conditionList = new ArrayList<OTAMasterConditions.OTACondition>();
         Iterator<OTAMasterConditions.OTACondition> i = conditions.iterator();
@@ -72,15 +61,23 @@ public class ModuleIntegrityChecker_2e {
         {
             condition = (OTAMasterConditions.OTACondition)i.next();
 
-            if(MasterConditionData.getConditionData(condition.getXws()) != null ) {
-                condition.setStatus(XWOTAUtils.imageExistsInModule(condition.getImage()));
-                condition.setTokenStatus(XWOTAUtils.imageExistsInModule(condition.getTokenImage()));
-                if(((condition.getStatus() && condition.getTokenStatus()) || (!condition.getStatus() || !condition.getTokenStatus()) && (XWOTAUtils.imageExistsInOTA("conditions",condition.getImage(),OTAContentsChecker.OTA_RAW_BRANCH_URL)&& XWOTAUtils.imageExistsInOTA("conditions",condition.getTokenImage(), OTAContentsChecker.OTA_RAW_BRANCH_URL)))) {
-                    conditionList.add(condition);
-                    if(onlyDetectOne) return conditionList;
+            Util.logToChat("in modintCheck2e iterating through conditions, checking this entry " + condition.getImage());
+            Util.logToChat("found the upgrade in xwing-data2? " + XWS2Upgrades.getSpecificConditionByXWS(condition.getXws(), allConditions));
+            Util.logToChat("status " + condition.getStatus());
+            Util.logToChat("image exists in OTA " + XWOTAUtils.imageExistsInOTA("conditions",condition.getImage(), OTAContentsChecker.OTA_RAW_BRANCH_URL_2E));
+
+            if(XWS2Upgrades.getSpecificConditionByXWS(condition.getXws(), allConditions) != null)
+            {
+                             condition.setStatus(XWOTAUtils.imageExistsInModule(condition.getImage()));
+                             condition.setTokenStatus(XWOTAUtils.imageExistsInModule(condition.getTokenImage()));
+                if(((condition.getStatus() && condition.getTokenStatus()) || (!condition.getStatus() || !condition.getTokenStatus()) &&
+                        (XWOTAUtils.imageExistsInOTA("conditions",condition.getImage(),OTAContentsChecker.OTA_RAW_BRANCH_URL_2E)&&
+                                XWOTAUtils.imageExistsInOTA("conditions",condition.getTokenImage(), OTAContentsChecker.OTA_RAW_BRANCH_URL_2E))))
+                {
+                                        conditionList.add(condition);
+                                        if(onlyDetectOne) return conditionList;
                 }
             }
-
         }
 
         return conditionList;
@@ -134,15 +131,7 @@ public ArrayList<OTAMasterPilots.OTAPilot> checkPilots(boolean onlyDetectOne, Li
 
     while(i.hasNext())
     {
-
         OTAMasterPilots.OTAPilot pilot = (OTAMasterPilots.OTAPilot)i.next();
-
-        /*
-        Util.logToChat("in modintCheck2e iterating through pilots, checking this entry " + pilot.getImage());
-        Util.logToChat("found the pilot in xwing-data2? " + XWS2Pilots.getSpecificPilot(pilot.getPilotXws(), allShips));
-        Util.logToChat("status " + pilot.getStatus());
-        Util.logToChat("image exists in OTA " + XWOTAUtils.imageExistsInOTA("pilots",pilot.getImage(), OTAContentsChecker.OTA_RAW_BRANCH_URL_2E));
-*/
 
         if(XWS2Pilots.getSpecificPilot(pilot.getPilotXws(), allShips)!=null) {
             pilot.setStatus(XWOTAUtils.imageExistsInModule(pilot.getImage()));
@@ -155,14 +144,12 @@ public ArrayList<OTAMasterPilots.OTAPilot> checkPilots(boolean onlyDetectOne, Li
     return pilotListToReturn;
 }
 
-    public ArrayList<OTAMasterShips.OTAShip> checkShips(boolean onlyDetectOne, List<XWS2Pilots> allShips)
+public ArrayList<OTAMasterShips.OTAShip> checkShips(boolean onlyDetectOne, List<XWS2Pilots> allShips)
     {
         // get list of ships from OTAMasterShips
         OTAMasterShips oms = new OTAMasterShips();
         oms.flushData();
         Collection<OTAMasterShips.OTAShip> ships = oms.getAllShips(2);
-
-        Util.logToChat("in modintcheck2  this is the number of ship images detected " + ships.size());
 
         ArrayList<OTAMasterShips.OTAShip> shipList = new ArrayList<OTAMasterShips.OTAShip>();
         Iterator<OTAMasterShips.OTAShip> i = ships.iterator();
@@ -182,19 +169,14 @@ public ArrayList<OTAMasterPilots.OTAPilot> checkPilots(boolean onlyDetectOne, Li
                 }
             }
         }
-
         return shipList;
-
     }
 
-    public ArrayList<OTAShipBase> checkShipBases(boolean onlyDetectOne)
+public ArrayList<OTAShipBase> checkShipBases(boolean onlyDetectOne, List<XWS2Pilots> allShips)
     {
         OTAMasterShips oms = new OTAMasterShips();
         oms.flushData();
         Collection<OTAMasterShips.OTAShip> ships = oms.getAllShips(2);
-
-          MasterShipData msd = new MasterShipData();
-          msd.loadData();
 
         ArrayList<OTAShipBase> shipList = new ArrayList<OTAShipBase>();
         Iterator<OTAMasterShips.OTAShip> i1 = ships.iterator();
@@ -203,7 +185,7 @@ public ArrayList<OTAMasterPilots.OTAPilot> checkPilots(boolean onlyDetectOne, Li
         {
             OTAMasterShips.OTAShip ship = (OTAMasterShips.OTAShip)i1.next();
 
-            if(MasterShipData.getShipData(ship.getXws()) != null)
+            if(XWS2Pilots.getSpecificShipFromShipXWS(ship.getXws(), allShips) != null)
             {
                 // check to see which factions to generate this ship base for
                 List<String> factions = ship.getFactions();
@@ -212,32 +194,25 @@ public ArrayList<OTAMasterPilots.OTAPilot> checkPilots(boolean onlyDetectOne, Li
                 while (i2.hasNext()) {
 
                     String factionName = i2.next();
-
                     String shipBaseImageName = XWOTAUtils.buildShipBaseImageName(factionName, ship.getXws(), ship.getIdentifier());
-
 
                     OTAShipBase shipBase = new OTAShipBase();
                     shipBase.setFaction(factionName);
                     shipBase.setIdentifier(ship.getIdentifier());
                     shipBase.setShipBaseImageName(shipBaseImageName);
                     shipBase.setshipImageName(ship.getImage());
-                    shipBase.setShipName(msd.getShipData(ship.getXws()).getName());
+                    shipBase.setShipName(XWS2Pilots.getSpecificShipFromShipXWS(ship.getXws(), allShips).getName());
                     shipBase.setShipXws(ship.getXws());
                     shipBase.setStatus(XWOTAUtils.imageExistsInModule(shipBaseImageName));
 
-                    if(shipBase.getStatus() || (!shipBase.getStatus() && XWOTAUtils.imageExistsInOTA("ships",ship.getImage(), OTAContentsChecker.OTA_RAW_BRANCH_URL))) {
+                    if(shipBase.getStatus() || (!shipBase.getStatus() && XWOTAUtils.imageExistsInOTA("ships",ship.getImage(), OTAContentsChecker.OTA_RAW_BRANCH_URL_2E))) {
                         shipList.add(shipBase);
                         if(onlyDetectOne) return shipList;
                     }
-
                 }
             }
-
-
         }
-
         return shipList;
-
     }
 
     public ArrayList<OTADialMask> checkDialMasks(boolean onlyDetectOne)

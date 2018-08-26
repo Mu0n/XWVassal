@@ -953,9 +953,7 @@ public class AutoSquadSpawn extends AbstractConfigurable {
             // Generate the ship base pieces
             // ======================================================
             GamePiece shipPiece = GamePieceGenerator.generateShip(ship);
-
             shipBases.add(shipPiece);
-
 
             // ======================================================
             // Generate the Pilot Pieces

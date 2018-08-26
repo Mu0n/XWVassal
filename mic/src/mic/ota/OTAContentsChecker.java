@@ -155,7 +155,6 @@ public class OTAContentsChecker extends AbstractConfigurable {
                 }
             }, 0,DELAYBETWEENFLASHES);
     }
-
     public void activateBlinky2ndTab()
     {
         myTabbedPane.setForegroundAt(0,Color.WHITE);
@@ -196,8 +195,6 @@ public class OTAContentsChecker extends AbstractConfigurable {
             }
         }, 0,DELAYBETWEENFLASHES);
     }
-
-
     public void activateBlinky1stTab()
     {
         myTabbedPane.setForegroundAt(1,Color.WHITE);
@@ -238,7 +235,6 @@ public class OTAContentsChecker extends AbstractConfigurable {
             }
         }, 0,DELAYBETWEENFLASHES);
     }
-
     public void addTo(Buildable parent) {
 
         JButton b = new JButton("Content Checker");
@@ -306,8 +302,6 @@ public class OTAContentsChecker extends AbstractConfigurable {
         }
         GameModule.getGameModule().getToolBar().add(b);
     }
-
-
 
     private static XWS2Pilots.pilotsDataSources parseTheManifestForShipPilots(){
             return mic.Util.loadRemoteJson(XWS2Pilots.remoteUrl, XWS2Pilots.pilotsDataSources.class);
@@ -413,6 +407,35 @@ public class OTAContentsChecker extends AbstractConfigurable {
                 }
             }
             upgrades = null;
+
+
+            // =============================================================
+            // Conditions
+            // =============================================================
+            ArrayList<OTAMasterConditions.OTACondition> conditions = modIntCheck_2e.checkConditions(true, allConditions);
+            for (OTAMasterConditions.OTACondition condition : conditions) {
+                if (!condition.getStatus()) {
+                    return 1;
+                }
+
+                if (!condition.getTokenStatus()) {
+                    return 1;
+                }
+            }
+
+            // =============================================================
+            // Check Ship Bases
+            // =============================================================
+            ArrayList<OTAShipBase> shipBaseResults = modIntCheck_2e.checkShipBases(true, allShips);
+            Iterator<OTAShipBase> shipBaseIterator = shipBaseResults.iterator();
+            OTAShipBase missingShipBase = null;
+            while (shipBaseIterator.hasNext()) {
+                missingShipBase = shipBaseIterator.next();
+                if (!missingShipBase.getStatus()) {
+                    return 1;
+                }
+            }
+            conditions = null;
         }
 
         return tempCount;
@@ -617,7 +640,6 @@ public class OTAContentsChecker extends AbstractConfigurable {
             downloadButton2e.setEnabled(true);
         }
     }
-
     private synchronized void ContentsCheckerWindow1stEdTab(JPanel hostPanel)
     {
         results = checkAllResults();
@@ -836,7 +858,6 @@ public class OTAContentsChecker extends AbstractConfigurable {
 
     }
 
-
     //Download the missing content from the built CheckResults list (can be every content if the checkbox downloadAll was selected
     private void downloadAll2e(String branchURL)
     {
@@ -1030,14 +1051,12 @@ public class OTAContentsChecker extends AbstractConfigurable {
         results2e = checkAllResults2e();
         String[][] convertedTableResults = buildTableResultsFromResults2e(results2e);
 
-
         DefaultTableModel model = (DefaultTableModel) finalTable.getModel();
         model.setNumRows(convertedTableResults.length);
         model.setDataVector(convertedTableResults,finalColumnNames);
         finalTable.getColumnModel().getColumn(0).setPreferredWidth(75);;
         finalTable.getColumnModel().getColumn(1).setPreferredWidth(150);
         finalTable.getColumnModel().getColumn(2).setPreferredWidth(150);
-
 
         TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(finalTable.getModel());
         ArrayList<RowSorter.SortKey> sortKeys = new ArrayList<RowSorter.SortKey>(25);
@@ -1047,16 +1066,12 @@ public class OTAContentsChecker extends AbstractConfigurable {
         sorter.setSortKeys(sortKeys);
         finalTable.setRowSorter(sorter);
 
-
         model.fireTableDataChanged();
-
 
         if(finalTable.getModel().getRowCount() == 0)
         {
             jlabel.setText("Your content is up to date");
             downloadButton2e.setEnabled(false);
-
-
         }else{
             //jlabel.setText("Click the download button to download the following images");
             downloadButton2e.setEnabled(true);
@@ -1125,7 +1140,7 @@ public class OTAContentsChecker extends AbstractConfigurable {
             }
             tableResults.add(tableRow);
         }
- /*
+
         // bases
         OTAShipBase shipBase = null;
         for(int i = 0; i<results.getMissingShipBases().size();i++)
@@ -1133,16 +1148,16 @@ public class OTAContentsChecker extends AbstractConfigurable {
             shipBase = results.getMissingShipBases().get(i);
             tableRow = new String[3];
             tableRow[0] = "Ship Base";
-            tableRow[1] = MasterShipData.getShipData(shipBase.getShipXws()).getName();
+            tableRow[1] = XWS2Pilots.getSpecificShipFromShipXWS(shipBase.getShipXws(), allShips).getName();
             if(shipBase.getIdentifier().equalsIgnoreCase("Standard")) {
                 tableRow[2] = fullFactionNames.get(shipBase.getFaction());
             }else{
                 tableRow[2] = fullFactionNames.get(shipBase.getFaction()) + shipBase.getIdentifier();
             }
-
             tableResults.add(tableRow);
         }
 
+ /*
         // dial hides
         OTAMasterDialHides.OTADialHide dialHide = null;
         for(int i=0;i<results.getMissingDialHides().size();i++)
@@ -1203,7 +1218,7 @@ public class OTAContentsChecker extends AbstractConfigurable {
             tableRow[2] = "";
             tableResults.add(tableRow);
         }
-/*
+
         // Conditions/Tokens
         OTAMasterConditions.OTACondition condition = null;
         for(int i=0;i<results.getMissingConditions().size();i++)
@@ -1211,17 +1226,17 @@ public class OTAContentsChecker extends AbstractConfigurable {
             condition = results.getMissingConditions().get(i);
             tableRow = new String[3];
             tableRow[0] = "Condition";
-            tableRow[1] = MasterConditionData.getConditionData(condition.getXws()).getName();
+            tableRow[1] = XWS2Upgrades.getSpecificConditionByXWS(condition.getXws(), allConditions).getName();
             tableRow[2] = "Card";
             tableResults.add(tableRow);
 
             tableRow = new String[3];
             tableRow[0] = "Condition";
-            tableRow[1] = MasterConditionData.getConditionData(condition.getXws()).getName();
+            tableRow[1] = XWS2Upgrades.getSpecificConditionByXWS(condition.getXws(), allConditions).getName();
             tableRow[2] = "Token";
             tableResults.add(tableRow);
         }
-*/
+
         // convert the arrayList to an array
         String[][] convertedTableResults = convertTableArrayListToArray(tableResults);
         return convertedTableResults;
@@ -1429,9 +1444,6 @@ public class OTAContentsChecker extends AbstractConfigurable {
         return convertedTableResults;
     }
 
-
-
-
     private OTAContentsCheckerResults checkAllResults2e() {
         results2e = new OTAContentsCheckerResults();
 
@@ -1441,39 +1453,31 @@ public class OTAContentsChecker extends AbstractConfigurable {
         results2e.setPilotResults(modIntChecker_2e.checkPilots(false, allShips));
         results2e.setShipResults(modIntChecker_2e.checkShips(false, allShips));
         results2e.setUpgradeResults(modIntChecker_2e.checkUpgrades(false, allUpgrades));
-
+        results2e.setConditionResults(modIntChecker_2e.checkConditions(false, allConditions));
+        results2e.setShipBaseResults(modIntChecker_2e.checkShipBases(false, allShips));
         /*
-        results2e.setShipResults(modIntChecker_2e.checkShips(false));
         results2e.setActionResults(modIntChecker_2e.checkActions(false));
-        results2e.setShipBaseResults(modIntChecker_2e.checkShipBases(false));
-        results2e.setConditionResults(modIntChecker_2e.checkConditions(false));
         results.setDialHideResults(modIntChecker_2e.checkDialHides(false));
         results.setDialMaskResults(modIntChecker_2e.checkDialMasks(false));
         */
 
-
         results2e.setMissingActions(new ArrayList<OTAMasterActions.OTAAction>());
-        results2e.setMissingShipBases(new ArrayList<OTAShipBase>());
-        results2e.setMissingConditions(new ArrayList<OTAMasterConditions.OTACondition>());
         results2e.setMissingDialHides(new ArrayList<OTAMasterDialHides.OTADialHide>());
         results2e.setMissingDialMasks(new ArrayList<OTADialMask>());
-
 
         // determine which images are missing
         results2e.setMissingPilots(findMissingPilots(results2e.getPilotResults()));
         results2e.setMissingShips(findMissingShips(results2e.getShipResults()));
         results2e.setMissingUpgrades(findMissingUpgrades(results2e.getUpgradeResults()));
+        results2e.setMissingConditions(findMissingConditions(results2e.getConditionResults()));
+        results2e.setMissingShipBases(findMissingShipBases(results2e.getShipBaseResults()));
 
-        logToChat("check all stuff ups " + findMissingUpgrades(results2e.getUpgradeResults()).size());
-        /*
-
+/*
         results.setMissingActions(findMissingActions(results.getActionResults()));
-        results.setMissingShipBases(findMissingShipBases(results.getShipBaseResults()));
         results.setMissingConditions(findMissingConditions(results.getConditionResults()));
         results.setMissingDialHides(findMissingDialHides(results.getDialHideResults()));
         results.setMissingDialMasks(findMissingDialMasks(results.getDialMaskResults()));
 */
-
         return results2e;
     }
     private OTAContentsCheckerResults checkAllResults()
