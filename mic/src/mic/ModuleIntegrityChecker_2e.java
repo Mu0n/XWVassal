@@ -194,7 +194,7 @@ public ArrayList<OTAShipBase> checkShipBases(boolean onlyDetectOne, List<XWS2Pil
                 while (i2.hasNext()) {
 
                     String factionName = i2.next();
-                    String shipBaseImageName = XWOTAUtils.buildShipBaseImageName(factionName, ship.getXws(), ship.getIdentifier());
+                    String shipBaseImageName = XWOTAUtils.buildShipBaseImageName(factionName, ship.getXws(), ship.getIdentifier(), 2);
 
                     OTAShipBase shipBase = new OTAShipBase();
                     shipBase.setFaction(factionName);

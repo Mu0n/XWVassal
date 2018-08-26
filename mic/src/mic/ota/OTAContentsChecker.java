@@ -902,7 +902,6 @@ public class OTAContentsChecker extends AbstractConfigurable {
                 logToChat("Exception occurred saving module");
             }
         }
-
 /*
         // generate dial masks
         Iterator<OTADialMask> dialMaskIterator = results.getMissingDialMasks().iterator();
@@ -914,28 +913,26 @@ public class OTAContentsChecker extends AbstractConfigurable {
             XWOTAUtils.buildDialMaskImages(dialMask.getFaction(),dialMask.getShipXws(),dialMask.getDialHideImageName(),dialMask.getDialMaskImageName(),writer);
             needToSaveModule = true;
         }
-
+*/
         // generate ship bases
-        Iterator<OTAShipBase> shipBaseIterator = results.getMissingShipBases().iterator();
+        Iterator<OTAShipBase> shipBaseIterator = results2e.getMissingShipBases().iterator();
         OTAShipBase shipBase = null;
         while(shipBaseIterator.hasNext())
         {
             shipBase = shipBaseIterator.next();
-
-            MasterShipData.ShipData shipData = MasterShipData.getShipData(shipBase.getShipXws());
-            java.util.List<String> arcs = shipData.getFiringArcs();
-
-            java.util.List<String> actions = shipData.getActions();
+            XWS2Pilots shipData = XWS2Pilots.getSpecificShipFromShipXWS(shipBase.getShipXws(), allShips);
 
             //TODO implement huge ships this
             if(!shipData.getSize().equals("huge")) {
+                logToChat("OTACOntentChecker attempting to build a ship base image");
 
-                XWOTAUtils.buildBaseShipImage(shipBase.getFaction(), shipBase.getShipXws(), arcs, actions, shipData.getSize(),shipBase.getIdentifier(),shipBase.getshipImageName(), writer);
+                XWOTAUtils.buildBaseShipImage2e(shipBase.getFaction(), shipBase.getShipXws(),
+                        Canonicalizer.getCleanedName(shipData.getSize()),
+                        shipBase.getIdentifier(),shipBase.getshipImageName(), writer);
                 needToSaveModule = true;
             }
-
         }
-*/
+
         if(needToSaveModule) {
             try {
                 writer.save();
@@ -943,9 +940,6 @@ public class OTAContentsChecker extends AbstractConfigurable {
                 logToChat("Exception occurred saving module");
             }
         }
-
-
-
     }
     private void downloadAll(String branchURL)
     {

@@ -21,7 +21,7 @@ public class StemShip2e extends Decorator implements EditablePiece {
 
     private static final String BASE_SHIP_LAYER_NAME = "Layer - Base Ship";
     private static final String TOGGLE_BASE_TRIGGER_ACTION_NAME = "Trigger Action   - Toggle Ship Base";
-    private static final String SHIP_BASE_IMAGE_PREFIX = "Ship_2e_Base";
+    private static final String SHIP_BASE_IMAGE_PREFIX = "SB_2e";
 
     private static Map<String, String> firingArcTypes = ImmutableMap.<String, String>builder()
             // Front Arc

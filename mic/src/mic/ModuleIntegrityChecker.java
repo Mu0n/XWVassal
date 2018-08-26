@@ -226,7 +226,7 @@ public ArrayList<OTAMasterPilots.OTAPilot> checkPilots(boolean onlyDetectOne)
 
                     String factionName = i2.next();
 
-                    String shipBaseImageName = XWOTAUtils.buildShipBaseImageName(factionName, ship.getXws(), ship.getIdentifier());
+                    String shipBaseImageName = XWOTAUtils.buildShipBaseImageName(factionName, ship.getXws(), ship.getIdentifier(), 1);
 
 
                     OTAShipBase shipBase = new OTAShipBase();

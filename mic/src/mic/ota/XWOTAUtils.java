@@ -95,6 +95,23 @@ public class XWOTAUtils {
         return arcImagePrefixSB.toString();
     }
 
+    public static void buildBaseShipImage2e(String faction, String shipXWS, String size, String identifier, String shipImageName, ArchiveWriter writer)
+    {
+        GameModule gameModule = GameModule.getGameModule();
+        DataArchive dataArchive = gameModule.getDataArchive();
+
+        try {
+            BufferedImage newBaseImage = buildShipBase2e(size, dataArchive);
+            newBaseImage = addShipToBaseShipImage(shipXWS, newBaseImage, dataArchive, shipImageName);
+            saveBaseShipImageToModule(faction, shipXWS, identifier, newBaseImage, writer, 2);
+        }catch(IOException e)
+        {
+            Util.logToChat("Exception occurred generating base ship image for "+shipXWS);
+        }
+
+
+    }
+
     public static void buildBaseShipImage(String faction, String shipXWS, List<String> arcs, List<String> actions, String size, String identifier, String shipImageName, ArchiveWriter writer)
     {
         GameModule gameModule = GameModule.getGameModule();
@@ -115,7 +132,7 @@ public class XWOTAUtils {
             newBaseImage = addActionsToBaseShipImage(actions, size, newBaseImage, dataArchive);
 
             // save the newly created base image to the module
-            saveBaseShipImageToModule(faction, shipXWS, identifier, newBaseImage, writer);
+            saveBaseShipImageToModule(faction, shipXWS, identifier, newBaseImage, writer, 1);
 
 
         }catch(IOException e)
@@ -176,9 +193,9 @@ public class XWOTAUtils {
     }
 
 
-    private static void saveBaseShipImageToModule(String faction, String shipXWS, String identifier, BufferedImage baseImage, ArchiveWriter writer)
+    private static void saveBaseShipImageToModule(String faction, String shipXWS, String identifier, BufferedImage baseImage, ArchiveWriter writer, int edition)
     {
-        String targetBaseImageName = buildShipBaseImageName(faction,shipXWS,identifier);
+        String targetBaseImageName = buildShipBaseImageName(faction,shipXWS,identifier, edition);
 
         File tempFile = null;
         try {
@@ -278,6 +295,35 @@ public class XWOTAUtils {
         {
 
         }
+    }
+
+    private static BufferedImage buildShipBase2e(String size, DataArchive dataArchive) throws IOException
+    {
+        final String smallBlackBase = "Ship2e_generic_small.png";
+        final String mediumBlackBase = "Ship2e_generic_medium.png";
+        final String largeBlackBase = "Ship2e_generic_large.png";
+        String cardboardBaseImageName = null;
+
+        // determine which background to use (size)
+        if(size.equals("small"))
+        {
+            cardboardBaseImageName = smallBlackBase;
+        }else if(size.equals("medium"))
+        {
+            cardboardBaseImageName = mediumBlackBase;
+        }else if(size.equals("large"))
+        {
+            cardboardBaseImageName = largeBlackBase;
+        }else if(size.equals("huge"))
+        {
+            //TODO replace eventually one day...huge is cut off from downloadall2e anyway in contentchecker
+            cardboardBaseImageName = largeBlackBase;
+        }
+        InputStream is = dataArchive.getInputStream("images/"+cardboardBaseImageName);
+        Util.logToChat("input stream " + "images/"+cardboardBaseImageName);
+        BufferedImage image = ImageUtils.getImage(cardboardBaseImageName,is);
+
+        return image;
     }
 
     private static BufferedImage buildShipBase(String size, DataArchive dataArchive) throws IOException
@@ -443,14 +489,15 @@ public class XWOTAUtils {
         return sortedActions;
     }
 
-    public static String buildShipBaseImageName(String faction, String shipXWS, String identifier)
+    public static String buildShipBaseImageName(String faction, String shipXWS, String identifier, int edition)
     {
 
         //Ship_Base_<faction lowercase no spaces>_<shipXWS>.png
 
         StringBuilder shipBaseImageSB = new StringBuilder();
 
-        shipBaseImageSB.append("Ship_Base_");
+        if(edition == 1) shipBaseImageSB.append("Ship_Base_");
+        else if(edition == 2) shipBaseImageSB.append("SB_2e_");
 
         // find the faction
         shipBaseImageSB.append(faction);
