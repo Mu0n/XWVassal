@@ -68,9 +68,10 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
         final XWS2Upgrades allUpgrades = XWS2Upgrades.loadFromRemote();
         final List<XWS2Upgrades.Condition> allConditions = XWS2Upgrades.loadConditionsFromRemote();
 
-
-        logToChat("*** -- ship_images.json");
+/*
+        logToChat("*** -- pilot_images.json");
         logToChat("[");
+        int i=0, j=0;
         for(XWS2Pilots ship : allShips){
             for(XWS2Pilots.Pilot2e pilot : ship.getPilots()){
                 String shipStr = Canonicalizer.getCleanedName(XWS2Pilots.getSpecificShipFromPilotXWS2(pilot.getXWS(),allShips).getName());
@@ -82,14 +83,100 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
                 logToChat("\"pilotxws\":\""+pilotStr+"\",");
                 logToChat("\"faction\":\""+factionStr+"\",");
                 logToChat("\"image\":\""+imageStr+"\"");
-                if(allShips.indexOf(pilot) == (allShips.size()-1) &&
-                        ship.getPilots().indexOf(pilot) == (ship.getPilots().size()-1)) logToChat("}");
+                if(i == (allShips.size()-1) && j == (ship.getPilots().size()-1)) logToChat("}");
                 else logToChat("},");
+                j++;
             }
+            i++;
+            j=0;
+        }
+        logToChat("]");
+        logToChat("*** -- pilot_images.json end");
+
+
+        logToChat("*** -- ship_images.json");
+        logToChat("[");
+        i=0;
+        List<String> processedShipXWS = Lists.newArrayList();
+        HashMap<String, List<String>> shipFactionMap = new HashMap<String, List<String>>();
+        for(XWS2Pilots ship : allShips) {
+            //checks if this ship already has an entry in the shipFaction map, if so, add the faction in the value of the map
+            if (shipFactionMap.containsKey(Canonicalizer.getCleanedName(ship.getName()))) {
+                List<String> tempFactionsToAppend = shipFactionMap.get(Canonicalizer.getCleanedName(ship.getName()));
+                tempFactionsToAppend.add(Canonicalizer.getCleanedName(ship.getFaction()));
+                shipFactionMap.put(Canonicalizer.getCleanedName(ship.getName()), tempFactionsToAppend);
+            } else {
+                List<String> tempFactionsToAppend = Lists.newArrayList();
+                tempFactionsToAppend.add(Canonicalizer.getCleanedName(ship.getFaction()));
+                shipFactionMap.put(Canonicalizer.getCleanedName(ship.getName()), tempFactionsToAppend);
+            }
+        }
+        for(String shipXWS : shipFactionMap.keySet())
+        {
+            String imageStr = "S2e_"+shipXWS+".png";
+            String factionsStr = "";
+            int k=0;
+            for(String faction : shipFactionMap.get(shipXWS))
+            {
+                factionsStr += faction;
+                if(k != shipFactionMap.get(shipXWS).size()-1) factionsStr += "\",\"";
+                k++;
+            }
+            logToChat("{");
+            logToChat("\"xws\":\""+shipXWS+"\",");
+            logToChat("\"image\":\""+imageStr+"\",");
+            logToChat("\"identifier\": \"standard\",");
+            logToChat("\"faction\":[\""+factionsStr+"\"]");
+            if(i == (shipFactionMap.keySet().size()-1)) logToChat("}");
+            else logToChat("},");
+            i++;
         }
         logToChat("]");
         logToChat("*** -- ship_images.json end");
+*/
 
+/*
+        logToChat("*** -- upgrade_images.json");
+        logToChat("[");
+        int i=0;
+        for(XWS2Upgrades.OneUpgrade upgrade : allUpgrades.getUpgrades()) {
+            String slotStr = upgrade.getSides().get(0).getType();
+            String upgradeStr = upgrade.getXws();
+            String imageStr = "U2e_" + upgradeStr + ".jpg";
+
+            logToChat("{");
+            logToChat("\"slot\":\"" + slotStr + "\",");
+            logToChat("\"xws\":\""+upgradeStr+"\",");
+            logToChat("\"image\":\""+imageStr+"\"");
+            if(i == allUpgrades.getUpgrades().size()-1) logToChat("}");
+            else logToChat("},");
+            i++;
+        }
+        logToChat("]");
+        logToChat("*** -- upgrade_images.json end");
+
+
+        logToChat("*** -- condition_images.json");
+        logToChat("[");
+        i=0;
+        for(XWS2Upgrades.Condition condition : allConditions) {
+
+            String xwsStr = condition.getXws();
+            String imageStr = "C2e_" + xwsStr + ".jpg";
+            String tokenStr = "CT2e_" + xwsStr + ".png";
+
+            logToChat("{");
+            logToChat("\"image\":\"" + imageStr + "\",");
+            logToChat("\"tokenimage\":\""+tokenStr+"\",");
+            logToChat("\"xws\":\""+xwsStr+"\"");
+            if(i == allConditions.size()-1) logToChat("}");
+            else logToChat("},");
+            i++;
+        }
+
+        logToChat("]");
+        logToChat("*** -- condition_images.json end");
+*/
         final List<String> factionsWanted = Lists.newArrayList();
 
 
