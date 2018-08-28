@@ -292,7 +292,6 @@ public class OTAContentsChecker extends AbstractConfigurable {
 
         if (wantToBeNotified1st) missing1stEdContent = justFind1MissingContent();
         missing2ndEdContent = justFind1MissingContent_2e();
-        logToChat("OTAContentChecker line 295 2e missing count " + missing2ndEdContent);
         if (missing1stEdContent > 0) {
             activateBlinky(Color.RED);
         }
