@@ -450,17 +450,10 @@ public class StemShip extends Decorator implements EditablePiece {
 
         }*/
 
-        private GamePiece buildShipBaseLayer(GamePiece piece, String faction, String xwsShipName, String xwsPilot, String size, boolean dualBase, String dualBaseMenuText, String base1ReportIdentifier, String base2ReportIdentifier)
+        private GamePiece buildShipBaseLayer(GamePiece piece, String faction, String xwsShipName, String xwsPilot, String size,
+                                             boolean dualBase, String dualBaseMenuText,
+                                             String base1ReportIdentifier, String base2ReportIdentifier)
         {
-
-
-
-        //    boolean dualArt = false;
-         //   if(shipBaseImage[1] != null && !shipBaseImage[1].equals(""))
-        //    {
-        //        dualArt = true;
-         //   }
-
             //  overwrite the layer with a new state
             if(!dualBase) {
                 // first find the base image name
