@@ -189,7 +189,7 @@ public ArrayList<OTAMasterPilots.OTAPilot> checkPilots(boolean onlyDetectOne)
                 ship.setStatus(XWOTAUtils.imageExistsInModule(ship.getImage()));
                 boolean exists = XWOTAUtils.imageExistsInModule(ship.getImage());
 
-                if(exists || (!exists && XWOTAUtils.imageExistsInOTA("ships",ship.getImage(), OTAContentsChecker.OTA_RAW_BRANCH_URL))) {
+                if(!exists && XWOTAUtils.imageExistsInOTA("ships",ship.getImage(), OTAContentsChecker.OTA_RAW_BRANCH_URL)) {
                     shipList.add(ship);
                     if(onlyDetectOne) return shipList;
                 }
