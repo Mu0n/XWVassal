@@ -320,7 +320,6 @@ public class XWOTAUtils {
             cardboardBaseImageName = largeBlackBase;
         }
         InputStream is = dataArchive.getInputStream("images/"+cardboardBaseImageName);
-        Util.logToChat("input stream " + "images/"+cardboardBaseImageName);
         BufferedImage image = ImageUtils.getImage(cardboardBaseImageName,is);
 
         return image;
@@ -768,7 +767,6 @@ public class XWOTAUtils {
 
     private static byte[] downloadFileFromOTA(String fileType, String fileName, String branchURL) throws IOException
     {
-        // Util.logToChat("Downloading image: "+fileName);
         URL OTAImageURL = null;
         //String url = "https://raw.githubusercontent.com/Mu0n/XWVassalOTA/master/" + fileType + "/" + fileName;
         String url = branchURL + fileType + "/" + fileName;
@@ -798,7 +796,6 @@ public class XWOTAUtils {
 
         String url = branchURL + fileType + "/" + fileName;
 
-        Util.logToChat("image URL to detect " + url.toString());
         HttpURLConnection httpUrlConn;
         try {
             httpUrlConn = (HttpURLConnection) new URL(url).openConnection();

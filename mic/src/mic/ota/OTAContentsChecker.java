@@ -293,7 +293,6 @@ public class OTAContentsChecker extends AbstractConfigurable {
         if (wantToBeNotified1st) missing1stEdContent = justFind1MissingContent();
         missing2ndEdContent = justFind1MissingContent_2e();
 
-        //logToChat("missing content count: " + Integer.toString(n));
         if (missing1stEdContent > 0) {
             activateBlinky(Color.RED);
         }
@@ -475,8 +474,6 @@ public class OTAContentsChecker extends AbstractConfigurable {
             }
             actions = null;
 
-
-            //logToChat("after pilots, missingCount = " + Integer.toString(missingCount));
 
             // =============================================================
             // Ships
@@ -924,7 +921,6 @@ public class OTAContentsChecker extends AbstractConfigurable {
 
             //TODO implement huge ships this
             if(!shipData.getSize().equals("huge")) {
-                logToChat("OTACOntentChecker attempting to build a ship base image");
 
                 XWOTAUtils.buildBaseShipImage2e(shipBase.getFaction(), shipBase.getShipXws(),
                         Canonicalizer.getCleanedName(shipData.getSize()),
@@ -1191,7 +1187,6 @@ public class OTAContentsChecker extends AbstractConfigurable {
         // upgrades
         OTAMasterUpgrades.OTAUpgrade upgrade = null;
 
-        logToChat("table populating upgrade name " + results.getMissingUpgrades().size());
 
         for(int i=0;i<results.getMissingUpgrades().size();i++)
         {
@@ -1200,7 +1195,6 @@ public class OTAContentsChecker extends AbstractConfigurable {
             tableRow[0] = "Upgrade";
 
             XWS2Upgrades.OneUpgrade detectedUpgrade = XWS2Upgrades.getSpecificUpgrade(upgrade.getXws(), allUpgrades);
-            logToChat("table populating upgrade name " + detectedUpgrade.getName());
             if(detectedUpgrade != null)
             {
                 tableRow[1] = detectedUpgrade.getName();

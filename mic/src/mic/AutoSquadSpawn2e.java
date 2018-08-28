@@ -179,12 +179,6 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
 */
         final List<String> factionsWanted = Lists.newArrayList();
 
-
-        for(XWS2Upgrades.Condition  cond : allConditions){
-            logToChat("condition " + cond.getName() + " " + cond.getAbility());
-        }
-
-
         Map playerMap = getPlayerMap(playerIndex);
         if (playerMap == null) {
             logToChat("Unexpected error, couldn't find map for player side " + playerIndex);

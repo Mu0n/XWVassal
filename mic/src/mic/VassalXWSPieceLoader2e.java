@@ -122,10 +122,6 @@ public class VassalXWSPieceLoader2e {
 
             VassalXWSPilotPieces2e pilotPieces = new VassalXWSPilotPieces2e(barePieces);
 
-            for(String st : pilotData.getConditions())
-            {
-                Util.logToChat("line 117 pieceloader condition in data " + st);
-            }
             //check if the current pilot is associated with conditions
             if(pilotData.getConditions()!=null && !pilotData.getConditions().isEmpty())
             {

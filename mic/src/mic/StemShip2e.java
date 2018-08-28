@@ -479,22 +479,29 @@ public class StemShip2e extends Decorator implements EditablePiece {
                 String baseImage1 = sb.toString() + source.getShipData().getBaseImage1Identifier()+".png";
                 String baseImage2 = sb.toString() + source.getShipData().getBaseImage2Identifier()+".png";
 
+                Util.logToChat("size is '" +size+"'");
                 // build image name from identifier
                 sb = new StringBuffer();
                 //emb2;Activate;2;;;2;;;2;;;;1;false;0;0;Ship_generic_large.png,Ship_Big_SeeThrough.png,Ship_generic_large.png,Ship_Big_SeeThrough.png;base1,ghost1,base2,ghost2;false;Base Ship;;;true;ULevel;1;1;true;65,130;;
                 sb.append("emb2;Activate;2;;;2;;;2;;;;1;false;0;0;");
                 sb.append(baseImage1);
-                if(size.equals("small")) {
+                if(size.equals("Small")) {
                     sb.append(",Ship_Small_SeeThrough.png,");
 
-                }else if(size.equals("large")) {
+                }else if(size.equals("Medium")) {
+                    sb.append(",Ship_Medium_SeeThrough.png,");
+                }
+                else if(size.equals("Large")) {
                     sb.append(",Ship_Big_SeeThrough.png,");
                 }
                 sb.append(baseImage2);
-                if(size.equals("small")) {
+                if(size.equals("Small")) {
                     sb.append(",Ship_Small_SeeThrough.png");
 
-                }else if(size.equals("large")) {
+                }else if(size.equals("Medium")) {
+                    sb.append(",Ship_Medium_SeeThrough.png,");
+                }
+                else if(size.equals("Large")) {
                     sb.append(",Ship_Big_SeeThrough.png");
                 }
               //  sb.append(";base1,ghost1,base2,ghost2;false;Base Ship;;;true;ULevel;1;1;true;65,130;;");
@@ -540,12 +547,12 @@ public class StemShip2e extends Decorator implements EditablePiece {
             boolean dualArt = false;
             String dualBase = null;
             // now check for alt art
-            String shipImage = AltArtShipPicker.getNewAltArtShip(xwsPilot, xwsShipName, this.faction);
+            String shipImageSuffix = AltArtShipPicker.getNewAltArtShip(xwsPilot, xwsShipName, this.faction);
 
             // if there's a blank string in shipImage[0], then it's a standard art
             // if there's a string in shipImage[1], then it's a dual base ship
             // otherwise, use the shipImage[0]
-            if(shipImage == null || shipImage.equals(""))
+            if(shipImageSuffix == null || shipImageSuffix.equals(""))
             {
                 // standard art
                 sb.append("_standard");
@@ -556,7 +563,7 @@ public class StemShip2e extends Decorator implements EditablePiece {
           //      sb.append("_").append(shipImage[0]);
           //      dualBase = sb.toString();
             }else{
-                sb.append("_").append(shipImage);
+                sb.append("_").append(shipImageSuffix);
             }
             sb.append(".png");
 

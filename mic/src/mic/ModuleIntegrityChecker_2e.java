@@ -61,11 +61,12 @@ public class ModuleIntegrityChecker_2e {
         {
             condition = (OTAMasterConditions.OTACondition)i.next();
 
+            /*
             Util.logToChat("in modintCheck2e iterating through conditions, checking this entry " + condition.getImage());
             Util.logToChat("found the upgrade in xwing-data2? " + XWS2Upgrades.getSpecificConditionByXWS(condition.getXws(), allConditions));
             Util.logToChat("status " + condition.getStatus());
             Util.logToChat("image exists in OTA " + XWOTAUtils.imageExistsInOTA("conditions",condition.getImage(), OTAContentsChecker.OTA_RAW_BRANCH_URL_2E));
-
+*/
             if(XWS2Upgrades.getSpecificConditionByXWS(condition.getXws(), allConditions) != null)
             {
                              condition.setStatus(XWOTAUtils.imageExistsInModule(condition.getImage()));
