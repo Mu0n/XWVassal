@@ -162,6 +162,10 @@ public ArrayList<OTAMasterShips.OTAShip> checkShips(boolean onlyDetectOne, List<
             if(XWS2Pilots.getSpecificShipFromShipXWS(ship.getXws(), allShips)!=null)
             {
                 ship.setStatus(XWOTAUtils.imageExistsInModule(ship.getImage()));
+
+
+                Util.logToChat("ModInt2 line 167 ship: " + ship.getXws() + " and status " + ship.getStatus());
+
                 boolean exists = XWOTAUtils.imageExistsInModule(ship.getImage());
 
                 if(exists || (!exists && XWOTAUtils.imageExistsInOTA("ships",ship.getImage(), OTAContentsChecker.OTA_RAW_BRANCH_URL_2E))) {

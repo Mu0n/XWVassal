@@ -45,6 +45,8 @@ public class OTAMasterShips extends ArrayList<OTAMasterShips.OTAShip> {
         if(edition == 1) data = Util.loadRemoteJson(OTAContentsChecker.OTA_SHIPS_JSON_URL, OTAMasterShips.class);
         else if(edition == 2) data = Util.loadRemoteJson(OTAContentsChecker.OTA_SHIPS_JSON_URL_2E, OTAMasterShips.class);
 
+        Util.logToChat("OTAMasterShips  line48 count ship_images.json entries " + data.size());
+
         loadedData = Maps.newHashMap();
         if (data == null) {
             Util.logToChat("Unable to load OTA pilots from the web");
