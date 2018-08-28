@@ -192,7 +192,6 @@ public class XWS2Upgrades {
                 upgradesListRead = XWS2Upgrades.loadRemoteJsonArrayOfOneUpgrades(new URL(guidoRootUrl+urlEnd));
                 //XWS2Upgrades upgradesListRead = Util.loadRemoteJson(new URL(guidoRootUrl+urlEnd), XWS2Upgrades.class);
             }catch (Exception e){
-                Util.logToChat(e.getMessage() + " on loading a single urlEnd " + urlEnd);
                 continue;
             }
 
@@ -202,7 +201,6 @@ public class XWS2Upgrades {
                 }
 
             }catch (Exception e){
-                Util.logToChat(e.getMessage() + " on upgrade type at " + urlEnd);
                 continue;
             }
         }
@@ -228,8 +226,6 @@ public class XWS2Upgrades {
         try {
             InputStream inputStream = new BufferedInputStream(url.openStream());
             List<XWS2Upgrades.Condition> rawData = mapper.readValue(inputStream,  mapper.getTypeFactory().constructCollectionType(List.class, XWS2Upgrades.Condition.class));
-            Util.logToChat("count in rawData " + Integer.toString(rawData.size()));
-            Util.logToChat("first element in rawData " + rawData.get(0).getName());
             return rawData;
         } catch (Exception e) {
             System.out.println("Unhandled error parsing remote json: \n" + e.toString());

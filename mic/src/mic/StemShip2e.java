@@ -197,38 +197,29 @@ public class StemShip2e extends Decorator implements EditablePiece {
         String size = "";
         String xwsPilot = "";
         boolean needsBombCapability;
-        boolean dualBase;
         String dualBaseToggleMenuText;
-        String base1ReportIdentifier;
-        String base2ReportIdentifier;
         VassalXWSPilotPieces2e source;
 
-        ShipGenerateCommand(VassalXWSPilotPieces2e source, String shipXws,   GamePiece piece, String faction, String xwsPilot,
-                            boolean needsBombCapability, Boolean hasDualBase,
-                            String dualBaseToggleMenuText, String base1ReportIdentifier, String base2ReportIdentifier) {
+        ShipGenerateCommand(VassalXWSPilotPieces2e source, GamePiece piece) {
         //ShipGenerateCommand(String shipXws,   GamePiece piece, String faction, String xwsPilot) {
 
             // fetch the maneuver array of arrays according to the xws name passed on from autospawn or other means
-            xwsShipName = Canonicalizer.getCleanedName(shipXws);
-            this.faction = Canonicalizer.getCleanedName(faction);
+            xwsShipName = Canonicalizer.getCleanedName(source.getShipData().getName());
+            this.faction = Canonicalizer.getCleanedName(source.getShipData().getFaction());
             shipName = source.getShipData().getName();
             this.piece = piece;
-            this.xwsPilot = xwsPilot;
+            this.xwsPilot = source.getPilotData().getXWS();
             this.size = source.getShipData().getSize();
-            this.needsBombCapability = needsBombCapability;
+
+            //TODO later make it reliable to detect bomb capability, possibly parsing upgrade cards?
+            this.needsBombCapability = true;
             this.source = source;
-
-            this.dualBase = hasDualBase == null ? false : hasDualBase.booleanValue();
-            this.dualBaseToggleMenuText = dualBaseToggleMenuText;
-            this.base1ReportIdentifier = base1ReportIdentifier;
-            this.base2ReportIdentifier = base2ReportIdentifier;
-
         }
 
         protected void executeCommand()
         {
             // find the appropriate baseImage
-            piece = buildShipBaseLayer(piece,faction,xwsShipName,xwsPilot, size, dualBase, dualBaseToggleMenuText, base1ReportIdentifier,base2ReportIdentifier);
+            piece = buildShipBaseLayer(piece);
 
             // Add the Target Lock capability
            piece = addTargetLock(piece,faction,size);
@@ -361,7 +352,6 @@ public class StemShip2e extends Decorator implements EditablePiece {
             }
 
 
-
             else if(newSize.equals("medium") && faction.equals("rebelalliance"))
             {
                 sb.append(rebelMediumImage);
@@ -384,7 +374,6 @@ public class StemShip2e extends Decorator implements EditablePiece {
             {
                 sb.append(cisMediumImage);
             }
-
 
 
             else if(newSize.equals("large") && faction.equals("rebelalliance"))
@@ -445,76 +434,14 @@ public class StemShip2e extends Decorator implements EditablePiece {
                 frontalPlaceMarker.mySetType(frontalLargeBombSpawnerType);
             }
 
-
             return piece;
         }
 
-        private GamePiece buildSideActions(GamePiece piece, String size)
+
+        private GamePiece buildShipBaseLayer(GamePiece piece)
         {
-            String action1 = "";
-            String action2 = "";
-            String action3 = "";
-            //large
-            if(size.equals("large"))
-            {
-                action3 = "emb2;;2;;Cycle 3rd Action;2;;;2;;Clear 3rd Action;90,195;1;false;128;30;,Action-Focus.png,Action-Evade.png,Action-Barrel_Roll.png,Action-Boost.png,Action-Elite.png,Action-Crew.png,Action-Bomb.png,Action-Reinforce.png,Action-Coordinate.png,Action-Illicit.png,Action-Rotate_Arc.png,Action-SLAM.png,Action-Cloak.png,Action-Reload.png,Action-Target_Lock.png,Action-Mech.png;,,,,,,,,,,,,,,,,;true;Actions_Side1;;;false;;1;1;true;;65,195;";
-                action2 = "emb2;;2;;Cycle 2nd Action;2;;;2;;Clear 2nd Action;90,130;1;false;128;0;,Action-Focus.png,Action-Evade.png,Action-Barrel_Roll.png,Action-Boost.png,Action-Elite.png,Action-Crew.png,Action-Bomb.png,Action-Reinforce.png,Action-Coordinate.png,Action-Illicit.png,Action-Rotate_Arc.png,Action-SLAM.png,Action-Cloak.png,Action-Reload.png,Action-Target_Lock.png,Action-Mech.png;,,,,,,,,,,,,,,,,;true;Actions_Side2;;;false;;1;1;true;;65,130;";
-                action1 = "emb2;;2;;Cycle 1st Action;2;;;2;;Clear 1st Action;90,65;1;false;128;-30;,Action-Focus.png,Action-Evade.png,Action-Barrel_Roll.png,Action-Boost.png,Action-Elite.png,Action-Crew.png,Action-Bomb.png,Action-Reinforce.png,Action-Coordinate.png,Action-Illicit.png,Action-Rotate_Arc.png,Action-SLAM.png,Action-Cloak.png,Action-Reload.png,Action-Target_Lock.png,Action-Mech.png;,,,,,,,,,,,,,,,,;true;Actions_Side3;;;false;;1;1;true;;65,65;";
-            }else if(size.equals("small"))
-            {
-                action3 = "emb2;;2;;Cycle 3rd Action;2;;;2;;Clear 3rd Action;90,195;1;false;70;30;,Action-Focus.png,Action-Evade.png,Action-Barrel_Roll.png,Action-Boost.png,Action-Elite.png,Action-Crew.png,Action-Bomb.png,Action-Reinforce.png,Action-Coordinate.png,Action-Illicit.png,Action-Rotate_Arc.png,Action-SLAM.png,Action-Cloak.png,Action-Reload.png,Action-Target_Lock.png,Action-Mech.png;,,,,,,,,,,,,,,,,;true;Actions_Side1;;;false;;1;1;true;;65,195;";
-                action2 = "emb2;;2;;Cycle 2nd Action;2;;;2;;Clear 2nd Action;90,130;1;false;70;0;,Action-Focus.png,Action-Evade.png,Action-Barrel_Roll.png,Action-Boost.png,Action-Elite.png,Action-Crew.png,Action-Bomb.png,Action-Reinforce.png,Action-Coordinate.png,Action-Illicit.png,Action-Rotate_Arc.png,Action-SLAM.png,Action-Cloak.png,Action-Reload.png,Action-Target_Lock.png,Action-Mech.png;,,,,,,,,,,,,,,,,;true;Actions_Side2;;;false;;1;1;true;;65,130;";
-                action1 = "emb2;;2;;Cycle 1st Action;2;;;2;;Clear 1st Action;90,65;1;false;70;-30;,Action-Focus.png,Action-Evade.png,Action-Barrel_Roll.png,Action-Boost.png,Action-Elite.png,Action-Crew.png,Action-Bomb.png,Action-Reinforce.png,Action-Coordinate.png,Action-Illicit.png,Action-Rotate_Arc.png,Action-SLAM.png,Action-Cloak.png,Action-Reload.png,Action-Target_Lock.png,Action-Mech.png;,,,,,,,,,,,,,,,,;true;Actions_Side3;;;false;;1;1;true;;65,65;";
-            }
-            //small
-
-            Embellishment actionEmb = new Embellishment();
-            actionEmb.mySetType(action3);
-            actionEmb.setInner(piece);
-
-            piece = actionEmb;
-
-            actionEmb = new Embellishment();
-            actionEmb.mySetType(action2);
-            actionEmb.setInner(piece);
-
-            piece = actionEmb;
-
-            actionEmb = new Embellishment();
-            actionEmb.mySetType(action1);
-            actionEmb.setInner(piece);
-
-            piece = actionEmb;
-
-            /*
-            //3rd 128,30
-            emb2;;2;;Cycle 3rd Action;2;;;2;;Clear 3rd Action;90,195;1;false;128;30;,Action-Focus.png,Action-Evade.png,Action-Barrel_Roll.png,Action-Boost.png,Action-Elite.png,Action-Crew.png,Action-Bomb.png,Action-Reinforce.png,Action-Coordinate.png,Action-Illicit.png,Action-Rotate_Arc.png,Action-SLAM.png,Action-Cloak.png,Action-Reload.png,Action-Target_Lock.png,Action-Mech.png;,,,,,,,,,,,,,,,,;true;Actions_Side1;;;false;;1;1;true;;65,195;
-
-            //2nd 128,0
-            emb2;;2;;Cycle 2nd Action;2;;;2;;Clear 2nd Action;90,130;1;false;128;0;,Action-Focus.png,Action-Evade.png,Action-Barrel_Roll.png,Action-Boost.png,Action-Elite.png,Action-Crew.png,Action-Bomb.png,Action-Reinforce.png,Action-Coordinate.png,Action-Illicit.png,Action-Rotate_Arc.png,Action-SLAM.png,Action-Cloak.png,Action-Reload.png,Action-Target_Lock.png,Action-Mech.png;,,,,,,,,,,,,,,,,;true;Actions_Side2;;;false;;1;1;true;;65,130;
-
-            //1st 128,-30
-            emb2;;2;;Cycle 1st Action;2;;;2;;Clear 1st Action;90,65;1;false;128;-30;,Action-Focus.png,Action-Evade.png,Action-Barrel_Roll.png,Action-Boost.png,Action-Elite.png,Action-Crew.png,Action-Bomb.png,Action-Reinforce.png,Action-Coordinate.png,Action-Illicit.png,Action-Rotate_Arc.png,Action-SLAM.png,Action-Cloak.png,Action-Reload.png,Action-Target_Lock.png,Action-Mech.png;,,,,,,,,,,,,,,,,;true;Actions_Side3;;;false;;1;1;true;;65,65;
-*/
-            return piece;
-        }
-
-        private GamePiece buildShipBaseLayer(GamePiece piece, String faction,
-                                             String xwsShipName, String xwsPilot,
-                                             String size, boolean dualBase, String dualBaseMenuText,
-                                             String base1ReportIdentifier, String base2ReportIdentifier)
-        {
-
-
-
-        //    boolean dualArt = false;
-         //   if(shipBaseImage[1] != null && !shipBaseImage[1].equals(""))
-        //    {
-        //        dualArt = true;
-         //   }
-
             //  overwrite the layer with a new state
-            if(!dualBase) {
+            if(!source.getShipData().hasDualBase()) {
                 // first find the base image name
                 String shipBaseImage = findShipBaseImage(xwsShipName, xwsPilot, size);
                // mic.Util.logToChat(xwsShipName + " is NOT dual based");
@@ -540,17 +467,7 @@ public class StemShip2e extends Decorator implements EditablePiece {
 
 
             }else{
-           //     mic.Util.logToChat(xwsShipName + " is dual based");
-
-
                 // this is a dual based ship
-
-                MasterShipData.ShipData shipData = MasterShipData.getShipData(xwsShipName);
-
-                // get the 2 base images
-                String baseImage1Identifier = shipData.getBaseImage1Identifier();
-                String baseImage2Identifier = shipData.getBaseImage2Identifier();
-
                 StringBuffer sb = new StringBuffer();
                 sb.append(SHIP_BASE_IMAGE_PREFIX);
                 sb.append("_");
@@ -559,12 +476,10 @@ public class StemShip2e extends Decorator implements EditablePiece {
                 sb.append(xwsShipName);
                 sb.append("_");
 
-                String baseImage1 = sb.toString() + baseImage1Identifier+".png";
-                String baseImage2 = sb.toString() + baseImage2Identifier+".png";
-
+                String baseImage1 = sb.toString() + source.getShipData().getBaseImage1Identifier()+".png";
+                String baseImage2 = sb.toString() + source.getShipData().getBaseImage2Identifier()+".png";
 
                 // build image name from identifier
-
                 sb = new StringBuffer();
                 //emb2;Activate;2;;;2;;;2;;;;1;false;0;0;Ship_generic_large.png,Ship_Big_SeeThrough.png,Ship_generic_large.png,Ship_Big_SeeThrough.png;base1,ghost1,base2,ghost2;false;Base Ship;;;true;ULevel;1;1;true;65,130;;
                 sb.append("emb2;Activate;2;;;2;;;2;;;;1;false;0;0;");
@@ -585,64 +500,28 @@ public class StemShip2e extends Decorator implements EditablePiece {
               //  sb.append(";base1,ghost1,base2,ghost2;false;Base Ship;;;true;ULevel;1;1;true;65,130;;");
 
                 sb.append(";");
-                sb.append(base1ReportIdentifier);
+                sb.append(source.getShipData().getBaseReport1Identifier());
                 sb.append(",ghost1,");
-                sb.append(base2ReportIdentifier);
+                sb.append(source.getShipData().getBaseReport2Identifier());
                 sb.append(",ghost2;false;Base Ship;;;true;ULevel;1;1;true;65,130;;");
                 Embellishment myEmb = (Embellishment)Util.getEmbellishment(piece,BASE_SHIP_LAYER_NAME);
 
                 myEmb.mySetType(sb.toString());
 
-
                 // now set the trigger action
 
                 sb = new StringBuffer();
                 sb.append("macro;Toggle Ship Base;");
-                sb.append(dualBaseMenuText);
+                sb.append(source.getShipData().getDualBaseToggleMenuText());
 
                 //total hack to make x-wing sfoils work with pivotatk instead of pivot like is used in U-Wings
                 String pivotTypeString = "dopivot";
-                if(size.equals("small") && "standard".equals(baseImage1Identifier))  pivotTypeString ="dopivotatk";
+                if(size.equals("small") && "standard".equals(source.getShipData().getBaseReport1Identifier()))  pivotTypeString ="dopivotatk";
 
                 sb.append(";85,520;{ULevel==1 || ULevel==3};;63743\\,0\\,"+pivotTypeString+";false;;;counted;;;;false;;1;1");
                 TriggerAction trig = (TriggerAction)Util.getTriggerAction(piece,TOGGLE_BASE_TRIGGER_ACTION_NAME);
 
                 trig.mySetType(sb.toString());
-
-                /*
-                // this is dual based
-                StringBuffer sb = new StringBuffer();
-                sb.append("emb2;Activate;2;;Ghost;2;;;2;;;;1;false;0;0;");
-                sb.append(shipBaseImage[0]);
-                if(size.equals("small")) {
-                    sb.append(",Ship_Small_SeeThrough.png,");
-                }else if(size.equals("large"))
-                {
-                    sb.append(",Ship_Big_SeeThrough.png,");
-                }
-                sb.append(shipBaseImage[1]);
-
-                if(size.equals("small")) {
-                    sb.append(",Ship_Small_SeeThrough.png;");
-                }else if(size.equals("large"))
-                {
-                    sb.append(",Ship_Big_SeeThrough.png;");
-                }
-                sb.append("Attack,Ghost1,Landing,Ghost2;false;Base Ship;;;true;ULevel;1;1;true;65,130;71,130;");
-
-                // now get the Layer
-                Embellishment myEmb = (Embellishment)Util.getEmbellishment(piece,BASE_SHIP_LAYER_NAME);
-                myEmb.mySetType(sb.toString());
-
-
-                //emb2;Activate;2;;Ghost;2;;;2;;;;1;false;0;0;Ship-U-Wing_Atk.png,Ship_Big_SeeThrough.png,
-                // Ship-U-Wing_Lan.png
-                // ,Ship_Big_SeeThrough.png;Attack,Ghost1,Landing,Ghost2;false;Base Ship;;;true;ULevel;1;1;true;65,130;71,130;
-
-
-                //Embellishment myEmb = (Embellishment)Util.getEmbellishment(piece,BASE_SHIP_LAYER_NAME);
-               // Util.logToChat(myEmb.myGetType());
-*/
             }
 
             return piece;

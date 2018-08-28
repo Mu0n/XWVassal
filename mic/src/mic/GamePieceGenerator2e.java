@@ -68,10 +68,7 @@ public class GamePieceGenerator2e
         boolean needsBombCapability, Boolean hasDualBase,
             String dualBaseToggleMenuText, String base1ReportIdentifier, String base2ReportIdentifier) {
         */
-        StemShip2e.ShipGenerateCommand myShipGen = new StemShip2e.ShipGenerateCommand(
-                ship, ship.getShipData().getName(),
-                newShip, ship.getShipData().getFaction(), ship.getPilotData().getXWS(),true,
-                false, "","","");
+        StemShip2e.ShipGenerateCommand myShipGen = new StemShip2e.ShipGenerateCommand(ship, newShip);
         myShipGen.execute();
 
         // add the stats to the piece

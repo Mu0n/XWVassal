@@ -1,11 +1,15 @@
 package mic;
 
-import com.fasterxml.jackson.annotation.JacksonInject;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
+import mic.ota.OTAContentsChecker;
 
+import java.io.BufferedInputStream;
+import java.io.InputStream;
+import java.net.URL;
 import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -36,6 +40,63 @@ public class XWS2Pilots {
 
     @JsonProperty("actions")
     private List<PilotAction> actions = Lists.newArrayList();
+
+    @JsonProperty("xws")
+    private String xws;
+    @JsonProperty("has_dual_base")
+    private Boolean hasDualBase = false;
+    @JsonProperty("dual_base_toggle_menu_text")
+    private String dualBaseToggleMenuText;
+    @JsonProperty("dual_base_image_1_identifier")
+    private String baseImage1Identifier;
+    @JsonProperty("dual_base_image_2_identifier")
+    private String baseImage2Identifier;
+    @JsonProperty("dual_base_report_1_identifier")
+    private String baseReport1Identifier;
+    @JsonProperty("dual_base_report_2_identifier")
+    private String baseReport2Identifier;
+
+    public String getShipXWS() { return this.xws; }
+    public Boolean hasDualBase() { return this.hasDualBase; }
+    private void setDualBase(Boolean hasDualBase)
+    {
+        this.hasDualBase = hasDualBase;
+    }
+
+    public String getDualBaseToggleMenuText()
+    {
+        return this.dualBaseToggleMenuText;
+    }
+    private void setDualBaseToggleMenuText(String dualBaseToggleMenuText){ this.dualBaseToggleMenuText = dualBaseToggleMenuText; }
+
+    public String getBaseImage1Identifier()
+    {
+        return baseImage1Identifier;
+    }
+    public void setBaseImage1(String baseImage1Identifier)
+    {
+        this.baseImage1Identifier = baseImage1Identifier;
+    }
+    public String getBaseImage2Identifier()
+    {
+        return baseImage2Identifier;
+    }
+    public void setBaseImage2(String baseImage2Identifier)
+    {
+        this.baseImage2Identifier = baseImage2Identifier;
+    }
+
+    public String getBaseReport1Identifier()
+    {
+        return baseReport1Identifier;
+    }
+    public void setBaseReport1Identifier(String baseReport1Identifier){ this.baseReport1Identifier = baseReport1Identifier; }
+    public String getBaseReport2Identifier()
+    {
+        return baseReport2Identifier;
+    }
+    public void setBaseReport2Identifier(String baseReport2Identifier){ this.baseReport2Identifier = baseReport2Identifier; }
+
 
     public String getName() {return this.name;}
     public List<String> getDial() {return this.dial;}
@@ -327,16 +388,39 @@ public class XWS2Pilots {
         public List<String> getShipUrlSuffixes() { return suffixes; }
     }
 
+    public static XWS2Pilots ShipXWSFoundInDualBaseList(List<XWS2Pilots> theList, String xwsCheck){
+        for(XWS2Pilots ship : theList){
+            if(ship.getShipXWS().equals(xwsCheck)) return ship;
+        }
+        return null;
+    }
 
     public static List<XWS2Pilots> loadFromRemote() {
         pilotsDataSources whereToGetPilots = Util.loadRemoteJson(remoteUrl, pilotsDataSources.class);
+        List<XWS2Pilots> dualBaseXWS2Ships = Lists.newArrayList();
+        try {
+            dualBaseXWS2Ships = loadRemoteJsonArrayOfXWS2Pilots(new URL(OTAContentsChecker.OTA_DISPATCHER_SHIPS_JSON_URL_2E));
+        } catch (Exception e) {
+        }
 
-        List<XWS2Pilots> allPilots = Lists.newArrayList();
+    List<XWS2Pilots> allPilots = Lists.newArrayList();
         for(OneFactionGroup oSDS : whereToGetPilots.getPilots()){
             for(String suffix : oSDS.getShipUrlSuffixes())
             {
                 try {
+                    //Dual Base detection
+                    //dualBaseXWSShips is an extra XWS2Pilot list that's loaded using a subset of JsonProperties right here, against a dispatcher_ships.json
+                    //if both dualBaseXWSShip's xws and the cleaned getName of pilottoAdd matches, then copy over the dual based information
                     XWS2Pilots pilotsToAdd = Util.loadRemoteJson(guidoRootUrl + suffix, XWS2Pilots.class);
+                    XWS2Pilots dualBasedInfoFound = ShipXWSFoundInDualBaseList(dualBaseXWS2Ships, Canonicalizer.getCleanedName(pilotsToAdd.getName()));
+                    if(dualBasedInfoFound !=null ) {
+                        pilotsToAdd.setBaseImage1(dualBasedInfoFound.getBaseImage1Identifier());
+                        pilotsToAdd.setBaseImage2(dualBasedInfoFound.getBaseImage2Identifier());
+                        pilotsToAdd.setBaseReport1Identifier(dualBasedInfoFound.getBaseReport1Identifier());
+                        pilotsToAdd.setBaseReport2Identifier(dualBasedInfoFound.getBaseReport2Identifier());
+                        pilotsToAdd.setDualBase(dualBasedInfoFound.hasDualBase());
+                        pilotsToAdd.setDualBaseToggleMenuText(dualBasedInfoFound.getDualBaseToggleMenuText());
+                    }
                     //adding faction to every pilot
                     for(XWS2Pilots.Pilot2e p : pilotsToAdd.getPilots()){
                      p.setFaction(pilotsToAdd.getFaction());
@@ -352,6 +436,19 @@ public class XWS2Pilots {
         }
         return allPilots;
     }
+    public static List<XWS2Pilots> loadRemoteJsonArrayOfXWS2Pilots(URL url) {
+        try {
+            InputStream inputStream = new BufferedInputStream(url.openStream());
+            List<XWS2Pilots> rawData = mapper.readValue(inputStream,  mapper.getTypeFactory().constructCollectionType(List.class, XWS2Pilots.class));
+            return rawData;
+        } catch (Exception e) {
+            System.out.println("Unhandled error parsing remote json: \n" + e.toString());
+            return null;
+        }
+    }
+
+    private static ObjectMapper mapper = new ObjectMapper()
+            .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
     public static XWS2Pilots getSpecificShipFromShipXWS(String  searchedXWS2Name, List<XWS2Pilots> allShips) {
         for(XWS2Pilots aShip : allShips){
