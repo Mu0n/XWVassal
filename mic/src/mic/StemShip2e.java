@@ -5,6 +5,8 @@ import VASSAL.command.Command;
 import VASSAL.command.CommandEncoder;
 import VASSAL.counters.*;
 import com.google.common.collect.ImmutableMap;
+import mic.ota.OTAContentsChecker;
+import mic.ota.OTAMasterShips;
 import mic.ota.XWOTAUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -547,7 +549,18 @@ public class StemShip2e extends Decorator implements EditablePiece {
             boolean dualArt = false;
             String dualBase = null;
             // now check for alt art
-            String shipImageSuffix = AltArtShipPicker2e.getNewAltArtShip(xwsPilot, xwsShipName, this.faction);
+            String shipImageSuffix = "";
+            OTAMasterShips data = Util.loadRemoteJson(OTAContentsChecker.OTA_SHIPS_JSON_URL_2E, OTAMasterShips.class);
+            for(Map.Entry<String, OTAMasterShips.OTAShip> entry : data.getLoadedData().entrySet()){
+                Util.logToChat("stempship2 line 555 ota entry xws " + entry.getValue().getXws() + " compared to " +xwsShipName);
+                Util.logToChat("stempship2 line 555 ota entry identifier " + entry.getValue().getIdentifier());
+                if(entry.getValue().getXws().equals(xwsShipName) && !entry.getValue().getIdentifier().equals("standard"))
+                {
+                    shipImageSuffix = "_" + entry.getValue().getIdentifier();
+                }
+            }
+
+            //shipxws+"_"+identifier
 
             // if there's a blank string in shipImage[0], then it's a standard art
             // if there's a string in shipImage[1], then it's a dual base ship

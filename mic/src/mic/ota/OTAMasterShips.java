@@ -29,6 +29,7 @@ public class OTAMasterShips extends ArrayList<OTAMasterShips.OTAShip> {
         return loadedData.values();
 
     }
+    public static Map<String, OTAMasterShips.OTAShip> getLoadedData(){return loadedData; }
 
     public static OTAMasterShips.OTAShip getShip(String shipxws, String identifier, int edition) {
         if (loadedData == null) {
