@@ -547,7 +547,7 @@ public class StemShip2e extends Decorator implements EditablePiece {
             boolean dualArt = false;
             String dualBase = null;
             // now check for alt art
-            String shipImageSuffix = AltArtShipPicker.getNewAltArtShip(xwsPilot, xwsShipName, this.faction);
+            String shipImageSuffix = AltArtShipPicker2e.getNewAltArtShip(xwsPilot, xwsShipName, this.faction);
 
             // if there's a blank string in shipImage[0], then it's a standard art
             // if there's a string in shipImage[1], then it's a dual base ship
