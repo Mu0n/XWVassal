@@ -481,7 +481,6 @@ public class StemShip2e extends Decorator implements EditablePiece {
                 String baseImage1 = sb.toString() + source.getShipData().getBaseImage1Identifier()+".png";
                 String baseImage2 = sb.toString() + source.getShipData().getBaseImage2Identifier()+".png";
 
-                Util.logToChat("size is '" +size+"'");
                 // build image name from identifier
                 sb = new StringBuffer();
                 //emb2;Activate;2;;;2;;;2;;;;1;false;0;0;Ship_generic_large.png,Ship_Big_SeeThrough.png,Ship_generic_large.png,Ship_Big_SeeThrough.png;base1,ghost1,base2,ghost2;false;Base Ship;;;true;ULevel;1;1;true;65,130;;
@@ -609,40 +608,6 @@ public class StemShip2e extends Decorator implements EditablePiece {
 
             return shipArt;
         }
-
-/*
-        private GamePiece buildCardboardFiringArcs(GamePiece piece,String faction, List<String> arcList, String size)
-        {
-
-
-            String arcImage = "";
-            for(String arc : arcList)
-            {
-                // look up the image for the arc
-
-                arcImage = XWImageUtils.buildFiringArcImageName(size,faction,arc);
-
-
-                // build the arc string
-                StringBuilder sb = new StringBuilder();
-                sb.append("emb2;Activate;2;;;2;;;2;;;;1;false;0;0;");
-                sb.append(arcImage);
-                sb.append(";;false;Arc_");
-                sb.append(arc); // add arc name to name of Emb
-                sb.append(";;;false;;1;1;true;65,130;;");
-
-                // add the arc
-                Embellishment arcEmb = new Embellishment();
-                arcEmb.mySetType(sb.toString());
-                arcEmb.setInner(piece);
-
-                // the embellishment is now the outer piece
-                piece = arcEmb;
-
-            }
-            return piece;
-
-        }*/
 
 
         protected Command myUndoCommand() {
