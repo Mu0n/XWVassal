@@ -552,8 +552,6 @@ public class StemShip2e extends Decorator implements EditablePiece {
             String shipImageSuffix = "";
             OTAMasterShips data = Util.loadRemoteJson(OTAContentsChecker.OTA_SHIPS_JSON_URL_2E, OTAMasterShips.class);
             for(Map.Entry<String, OTAMasterShips.OTAShip> entry : data.getLoadedData().entrySet()){
-                Util.logToChat("stempship2 line 555 ota entry xws " + entry.getValue().getXws() + " compared to " +xwsShipName);
-                Util.logToChat("stempship2 line 555 ota entry identifier " + entry.getValue().getIdentifier());
                 if(entry.getValue().getXws().equals(xwsShipName) && !entry.getValue().getIdentifier().equals("standard"))
                 {
                     shipImageSuffix = "_" + entry.getValue().getIdentifier();
