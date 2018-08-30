@@ -5,6 +5,7 @@ import VASSAL.command.Command;
 import VASSAL.command.CommandEncoder;
 import VASSAL.counters.*;
 import com.google.common.collect.ImmutableMap;
+import com.sun.org.apache.xml.internal.security.c14n.implementations.Canonicalizer11_OmitComments;
 import mic.ota.OTAContentsChecker;
 import mic.ota.OTAMasterShips;
 import mic.ota.XWOTAUtils;
@@ -594,9 +595,9 @@ public class StemShip2e extends Decorator implements EditablePiece {
 
                 // build the name
                 sb = new StringBuffer();
-                sb.append(SHIP_BASE_IMAGE_PREFIX)
+                sb.append(SHIP_BASE_IMAGE_PREFIX);
                 sb.append("_wip_");
-                sb.append(size);
+                sb.append(Canonicalizer.getCleanedName(size));
                 sb.append(".png");
 
                 shipArt = sb.toString();
