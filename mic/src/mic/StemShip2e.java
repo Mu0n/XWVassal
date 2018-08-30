@@ -5,7 +5,6 @@ import VASSAL.command.Command;
 import VASSAL.command.CommandEncoder;
 import VASSAL.counters.*;
 import com.google.common.collect.ImmutableMap;
-import com.sun.org.apache.xml.internal.security.c14n.implementations.Canonicalizer11_OmitComments;
 import mic.ota.OTAContentsChecker;
 import mic.ota.OTAMasterShips;
 import mic.ota.XWOTAUtils;
@@ -207,8 +206,8 @@ public class StemShip2e extends Decorator implements EditablePiece {
         //ShipGenerateCommand(String shipXws,   GamePiece piece, String faction, String xwsPilot) {
 
             // fetch the maneuver array of arrays according to the xws name passed on from autospawn or other means
-            xwsShipName = Canonicalizer.getCleanedName(source.getShipData().getName());
-            this.faction = Canonicalizer.getCleanedName(source.getShipData().getFaction());
+            xwsShipName = mic.Canonicalizer.getCleanedName(source.getShipData().getName());
+            this.faction = mic.Canonicalizer.getCleanedName(source.getShipData().getFaction());
             shipName = source.getShipData().getName();
             this.piece = piece;
             this.xwsPilot = source.getPilotData().getXWS();
@@ -256,7 +255,7 @@ public class StemShip2e extends Decorator implements EditablePiece {
                     emb = (Embellishment) Util.getEmbellishment(newGamePiece, "Layer - Show Full Front Arc");
                 } else continue;
 
-                    arcKey = Canonicalizer.getCleanedName(source.getShipData().getSize()) + "/" + Canonicalizer.getCleanedName(source.getPilotData().getFaction()) + "/" + arc;
+                    arcKey = mic.Canonicalizer.getCleanedName(source.getShipData().getSize()) + "/" + mic.Canonicalizer.getCleanedName(source.getPilotData().getFaction()) + "/" + arc;
 
                     newType = firingArcTypes.get(arcKey);
                     if(newType != null && !newType.isEmpty())
@@ -281,8 +280,8 @@ public class StemShip2e extends Decorator implements EditablePiece {
             //add bullseye for all
             emb = (Embellishment) Util.getEmbellishment(newGamePiece, "Layer - Show Bullseye Arc");
             arc = "Bullseye";
-            arcKey = Canonicalizer.getCleanedName(source.getShipData().getSize()) + "/"
-                    + Canonicalizer.getCleanedName(source.getPilotData().getFaction()) + "/" + arc;
+            arcKey = mic.Canonicalizer.getCleanedName(source.getShipData().getSize()) + "/"
+                    + mic.Canonicalizer.getCleanedName(source.getPilotData().getFaction()) + "/" + arc;
             newType = firingArcTypes.get(arcKey);
             if(newType != null && !newType.isEmpty())
             {
@@ -327,7 +326,7 @@ public class StemShip2e extends Decorator implements EditablePiece {
 
             Embellishment myEmb = (Embellishment)Util.getEmbellishment(newGamePiece,targetLockLayerName);
 
-            newSize = Canonicalizer.getCleanedName(newSize);
+            newSize = mic.Canonicalizer.getCleanedName(newSize);
 
             StringBuilder sb = new StringBuilder();
             sb.append("emb2;;2;;Toggle Lock;2;;;2;;;;1;true;0;0;,");
@@ -474,7 +473,7 @@ public class StemShip2e extends Decorator implements EditablePiece {
                 StringBuffer sb = new StringBuffer();
                 sb.append(SHIP_BASE_IMAGE_PREFIX);
                 sb.append("_");
-                sb.append(XWOTAUtils.simplifyFactionName(faction));
+                sb.append(mic.Canonicalizer.getCleanedName(faction));
                 sb.append("_");
                 sb.append(xwsShipName);
                 sb.append("_");
@@ -574,10 +573,11 @@ public class StemShip2e extends Decorator implements EditablePiece {
           //      sb.append("_").append(shipImage[0]);
           //      dualBase = sb.toString();
             }else{
-                sb.append("_").append(shipImageSuffix);
+                sb.append(shipImageSuffix);
             }
             sb.append(".png");
 
+            Util.logToChat("stempship2e lin 580 ship base gfx attempt to find " + sb);
             String shipArt = new String();
             shipArt = sb.toString();
         //    mic.Util.logToChat(shipArt);
@@ -595,9 +595,8 @@ public class StemShip2e extends Decorator implements EditablePiece {
 
                 // build the name
                 sb = new StringBuffer();
-                sb.append(SHIP_BASE_IMAGE_PREFIX);
-                sb.append("_wip_");
-                sb.append(Canonicalizer.getCleanedName(size));
+                sb.append("Ship2e_wip_");
+                sb.append(mic.Canonicalizer.getCleanedName(size));
                 sb.append(".png");
 
                 shipArt = sb.toString();
