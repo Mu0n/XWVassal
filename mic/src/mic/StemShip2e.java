@@ -594,8 +594,7 @@ public class StemShip2e extends Decorator implements EditablePiece {
 
                 // build the name
                 sb = new StringBuffer();
-                sb.append(SHIP_BASE_IMAGE_PREFIX).append("_");
-                sb.append(this.faction);
+                sb.append(SHIP_BASE_IMAGE_PREFIX)
                 sb.append("_wip_");
                 sb.append(size);
                 sb.append(".png");
