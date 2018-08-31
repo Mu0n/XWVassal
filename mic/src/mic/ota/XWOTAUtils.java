@@ -18,6 +18,9 @@ import java.util.Iterator;
 import java.util.List;
 
 public class XWOTAUtils {
+
+    private static final String SHIP_BASE_ARC_IMAGE_PREFIX = "SBA_";
+
     private static String[] actionOrder = {
             "cloak",
             "rotatearc",
@@ -102,7 +105,8 @@ public class XWOTAUtils {
 
         try {
             BufferedImage newBaseImage = buildShipBase2e(size, dataArchive);
-            newBaseImage = addShipToBaseShipImage(shipXWS, newBaseImage, dataArchive, shipImageName);
+            String arcImageName = findArcImageName(size, faction);
+            newBaseImage = addShipToBaseShipImage2e(shipXWS, newBaseImage, dataArchive, shipImageName, arcImageName);
             saveBaseShipImageToModule(faction, shipXWS, identifier, newBaseImage, writer, 2);
         }catch(IOException e)
         {
@@ -110,6 +114,12 @@ public class XWOTAUtils {
         }
 
 
+    }
+
+    private static String findArcImageName(String size, String faction) {
+        String sb = "";
+        sb+=SHIP_BASE_ARC_IMAGE_PREFIX + "_" + faction + "_" + size + ".png";
+        return sb;
     }
 
     public static void buildBaseShipImage(String faction, String shipXWS, List<String> arcs, List<String> actions, String size, String identifier, String shipImageName, ArchiveWriter writer)
@@ -392,12 +402,32 @@ public class XWOTAUtils {
 
     }
 
+    /*
+
+    SHIP_BASE_ARC_IMAGE_PREFIX
+     */
     private static BufferedImage addShipToBaseShipImage(String shipXWS, BufferedImage baseImage, DataArchive dataArchive, String shipImageName) throws IOException
     {
         InputStream is = dataArchive.getInputStream("images/" + shipImageName);
         BufferedImage shipImage = ImageUtils.getImage(shipImageName, is);
         Graphics g = baseImage.getGraphics();
         g.drawImage(shipImage, 0, 0, null);
+        return baseImage;
+
+    }
+
+    private static BufferedImage addShipToBaseShipImage2e(String shipXWS, BufferedImage baseImage, DataArchive dataArchive, String shipImageName, String arcImageName) throws IOException
+    {
+        InputStream is = dataArchive.getInputStream("images/" + shipImageName);
+        InputStream is2 = dataArchive.getInputStream("images/" + arcImageName);
+
+        BufferedImage shipImage = ImageUtils.getImage(shipImageName, is);
+        BufferedImage arcImage = ImageUtils.getImage(arcImageName, is2);
+
+        Graphics g = baseImage.getGraphics();
+        g.drawImage(shipImage, 0, 0, null);
+        g.drawImage(arcImage, 0, 0, null);
+
         return baseImage;
 
     }
