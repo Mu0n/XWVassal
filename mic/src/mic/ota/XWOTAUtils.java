@@ -105,8 +105,17 @@ public class XWOTAUtils {
 
         try {
             BufferedImage newBaseImage = buildShipBase2e(size, dataArchive);
+
+            //add the faction-decided arc color
             String arcImageName = findArcImageName(size, faction);
-            newBaseImage = addShipToBaseShipImage2e(shipXWS, newBaseImage, dataArchive, shipImageName, arcImageName);
+            newBaseImage = addShipToBaseShipImage2e(shipXWS, newBaseImage, dataArchive, arcImageName);
+            newBaseImage = addShipToBaseShipImage2e(shipXWS, newBaseImage, dataArchive, arcImageName);
+
+
+            //add the ship gfx of the ship
+            newBaseImage = addShipToBaseShipImage2e(shipXWS, newBaseImage, dataArchive, shipImageName);
+
+
             saveBaseShipImageToModule(faction, shipXWS, identifier, newBaseImage, writer, 2);
         }catch(IOException e)
         {
@@ -118,7 +127,7 @@ public class XWOTAUtils {
 
     private static String findArcImageName(String size, String faction) {
         String sb = "";
-        sb+=SHIP_BASE_ARC_IMAGE_PREFIX + "_" + faction + "_" + size + ".png";
+        sb+=SHIP_BASE_ARC_IMAGE_PREFIX + faction + "_" + size + ".png";
         return sb;
     }
 
@@ -402,10 +411,6 @@ public class XWOTAUtils {
 
     }
 
-    /*
-
-    SHIP_BASE_ARC_IMAGE_PREFIX
-     */
     private static BufferedImage addShipToBaseShipImage(String shipXWS, BufferedImage baseImage, DataArchive dataArchive, String shipImageName) throws IOException
     {
         InputStream is = dataArchive.getInputStream("images/" + shipImageName);
@@ -416,17 +421,14 @@ public class XWOTAUtils {
 
     }
 
-    private static BufferedImage addShipToBaseShipImage2e(String shipXWS, BufferedImage baseImage, DataArchive dataArchive, String shipImageName, String arcImageName) throws IOException
+    private static BufferedImage addShipToBaseShipImage2e(String shipXWS, BufferedImage baseImage, DataArchive dataArchive, String imageName) throws IOException
     {
-        InputStream is = dataArchive.getInputStream("images/" + shipImageName);
-        InputStream is2 = dataArchive.getInputStream("images/" + arcImageName);
+        InputStream is = dataArchive.getInputStream("images/" + imageName);
 
-        BufferedImage shipImage = ImageUtils.getImage(shipImageName, is);
-        BufferedImage arcImage = ImageUtils.getImage(arcImageName, is2);
+        BufferedImage imageToAdd = ImageUtils.getImage(imageName, is);
 
         Graphics g = baseImage.getGraphics();
-        g.drawImage(shipImage, 0, 0, null);
-        g.drawImage(arcImage, 0, 0, null);
+        g.drawImage(imageToAdd, 0, 0, null);
 
         return baseImage;
 
