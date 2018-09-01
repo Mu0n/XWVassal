@@ -529,7 +529,7 @@ public class StemShip2e extends Decorator implements EditablePiece {
                 sb.append(";85,520;{ULevel==1 || ULevel==3};;63743\\,0\\,"+pivotTypeString+";false;;;counted;;;;false;;1;1");
                 TriggerAction trig = (TriggerAction)Util.getTriggerAction(piece,TOGGLE_BASE_TRIGGER_ACTION_NAME);
 
-                trig.mySetType(sb.toString());
+                if(trig!=null) trig.mySetType(sb.toString());
             }
 
             return piece;

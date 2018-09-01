@@ -159,7 +159,12 @@ public class GamePieceGenerator2e
         for(XWS2Pilots.Stat2e stat : ship.getShipData().getStats()){
             if(stat.getArc().equals("Single Turret Arc")) foundSingleTurret = true;
         }
-        //TODO add code for single turret granted from upgrade card
+        for(VassalXWSPilotPieces2e.Upgrade upgrade : ship.getUpgrades())
+        {
+            if(upgrade.getUpgradeData().sides.get(0).getAttack() != null)
+                if(upgrade.getUpgradeData().sides.get(0).getAttack().getArc().equals("Single Turret Arc"))
+                    return true;
+        }
         return foundSingleTurret;
     }
     private static boolean containsDoubleTurret(VassalXWSPilotPieces2e ship) {
@@ -167,7 +172,12 @@ public class GamePieceGenerator2e
         for(XWS2Pilots.Stat2e stat : ship.getShipData().getStats()){
             if(stat.getArc().equals("Double Turret Arc")) foundDoubleTurret = true;
         }
-        //TODO add code for single turret granted from upgrade card
+        for(VassalXWSPilotPieces2e.Upgrade upgrade : ship.getUpgrades())
+        {
+            if(upgrade.getUpgradeData().sides.get(0).getAttack() != null)
+                if(upgrade.getUpgradeData().sides.get(0).getAttack().getArc().equals("Double Turret Arc"))
+                    return true;
+        }
         return foundDoubleTurret;
     }
 

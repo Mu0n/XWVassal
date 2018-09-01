@@ -1,5 +1,6 @@
 package mic;
 
+import com.fasterxml.jackson.annotation.JacksonInject;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
@@ -128,16 +129,60 @@ public class XWS2Upgrades {
         @JsonProperty("slots")
         private List<String> slots = Lists.newArrayList();
 
+        @JsonProperty("attack")
+        private Attack attack;
+
+        @JsonProperty("actions")
+        private List<Action> actions = Lists.newArrayList();
+
         public String getTitle() { return this.title; }
         public String getType() { return this.type; }
         public String getAbility() { return this.ability; }
         public List<String> getSlots(){ return slots; }
         public List<String> getConditions() { return this.conditions; }
-
-
-
+        public Attack getAttack() { return attack; }
+        public List<Action> getActions() { return actions; }
     }
 
+    public static class Action{
+        public Action() { super(); }
+
+        @JsonProperty("type")
+        private String type;
+
+        @JsonProperty("difficulty")
+        private String difficulty;
+
+        public String getType() { return type; }
+        public String getDifficulty() { return difficulty; }
+    }
+    public static class Attack{
+        public Attack() { super(); }
+        public Attack(String arc, int value, int minRange, int maxRange){
+            this.arc = arc;
+            this.value = value;
+            this.minRange = minRange;
+            this.maxRange = maxRange;
+        }
+
+        @JsonProperty("arc")
+        private String arc;
+
+        @JsonProperty("value")
+        private int value;
+
+        @JsonProperty("minRange")
+        private int minRange;
+
+        @JsonProperty("maxRange")
+        private int maxRange;
+
+        public String getArc() { return arc; }
+        public int getValue() { return value; }
+        public int getMinRange() { return minRange; }
+        public int getMaxRange() { return maxRange; }
+
+    }
     public static class upgradesDataSources{
         public upgradesDataSources() { super(); }
         public upgradesDataSources(List<String> urlEnd){
