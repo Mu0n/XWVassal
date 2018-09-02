@@ -9,6 +9,7 @@ import VASSAL.build.module.properties.MutableProperty;
 import VASSAL.tools.ArchiveWriter;
 import VASSAL.tools.DataArchive;
 import VASSAL.tools.io.FileArchive;
+import com.google.common.collect.Lists;
 import mic.ota.*;
 
 import javax.imageio.ImageIO;
@@ -24,6 +25,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 import static mic.Util.logToChat;
 
@@ -51,30 +53,7 @@ public class AnnouncementOnLog extends AbstractConfigurable {
 
     }
 
-    private boolean downloadXwingDataAndDispatcherJSONFiles()
-    {
-        boolean errorOccurredOnXWingData = false;
-
-        ArrayList<String> jsonFilesToDownloadFromURL = new ArrayList<String>();
-        jsonFilesToDownloadFromURL.add(MasterShipData.REMOTE_URL);
-        jsonFilesToDownloadFromURL.add(OTAContentsChecker.OTA_DISPATCHER_SHIPS_JSON_URL);
-        jsonFilesToDownloadFromURL.add(MasterPilotData.REMOTE_URL);
-        jsonFilesToDownloadFromURL.add(OTAContentsChecker.OTA_PILOTS_JSON_URL);
-        jsonFilesToDownloadFromURL.add(MasterUpgradeData.REMOTE_URL);
-        jsonFilesToDownloadFromURL.add(OTAContentsChecker.OTA_DISPATCHER_UPGRADES_JSON_URL);
-        jsonFilesToDownloadFromURL.add(MasterConditionData.REMOTE_URL);
-        jsonFilesToDownloadFromURL.add(OTAContentsChecker.OTA_DISPATCHER_CONDITIONS_JSON_URL);
-        try {
-            XWOTAUtils.downloadJSONFilesFromGitHub(jsonFilesToDownloadFromURL);
-            mic.Util.logToChat("Core XWing data updated");
-        }catch(IOException e)
-        {
-            errorOccurredOnXWingData = true;
-        }
-
-        return errorOccurredOnXWingData;
-    }
-
+/*
     private void downloadContent()
     {
 
@@ -329,7 +308,7 @@ public class AnnouncementOnLog extends AbstractConfigurable {
             imagesToDownload = null;
         }
     }
-
+*/
     public void addTo(Buildable parent) {
         openAnnouncementWindow();
     }
@@ -455,7 +434,7 @@ public class AnnouncementOnLog extends AbstractConfigurable {
             JLabel homeIcon = new JLabel();
 
             BufferedImage img = null;
-            InputStream is = dataArchive.getInputStream("images/Token_Energy_full.png");
+            InputStream is = dataArchive.getInputStream("images/Token_2e_charge.png");
             img = ImageIO.read(is);
             is.close();
             homeIcon.setIcon(new ImageIcon(img));
@@ -471,7 +450,7 @@ public class AnnouncementOnLog extends AbstractConfigurable {
             JLabel downloadIcon = new JLabel();
 
             BufferedImage img2 = null;
-            InputStream is2 = dataArchive.getInputStream("images/Token_Reinforce.png");
+            InputStream is2 = dataArchive.getInputStream("images/Token_2e_reinforce_fore.png");
             img2 = ImageIO.read(is2);
             is2.close();
             downloadIcon.setIcon(new ImageIcon(img2));
@@ -487,7 +466,7 @@ public class AnnouncementOnLog extends AbstractConfigurable {
             JLabel guideIcon = new JLabel();
 
             BufferedImage img3 = null;
-            InputStream is3 = dataArchive.getInputStream("images/Token_Focus.png");
+            InputStream is3 = dataArchive.getInputStream("images/Token_2e_focus.png");
             img3 = ImageIO.read(is3);
             is3.close();
             guideIcon.setIcon(new ImageIcon(img3));
@@ -520,9 +499,8 @@ public class AnnouncementOnLog extends AbstractConfigurable {
             frame.dispose();
 
             if(answer==0) {
-                downloadXwingDataAndDispatcherJSONFiles();
+                //the jsons used to be downloaded here and kept in local copies, but the addTo method of the Content Checker is doing that now
             }else{
-                downloadXwingDataAndDispatcherJSONFiles();
             }
 
             /*

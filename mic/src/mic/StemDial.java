@@ -460,9 +460,7 @@ public class StemDial extends Decorator implements EditablePiece {
 
         private void buildDialMask(GamePiece piece, String xwsShipName, String faction)
         {
-            final String wipResistanceMask = "Dial_Back_Rebel_WIP.png";
             final String wipRebelMask = "Dial_Back_Rebel_WIP.png";
-            final String wipFirstOrderMask = "Dial_Back_Empire_WIP.pngg";
             final String wipEmpireMask = "Dial_Back_Empire_WIP.png";
             final String wipScumMask = "Dial_Back_Scum_WIP.png";
 
@@ -487,16 +485,10 @@ public class StemDial extends Decorator implements EditablePiece {
             // if we don't have the image (unreleased ship), use a WIP image
             if(!XWOTAUtils.imageExistsInModule(dialMaskImageName))
             {
-                if(faction.equalsIgnoreCase("Resistance"))
-                {
-                    dialMaskImageName = wipResistanceMask;
-                }else if(faction.equalsIgnoreCase("Rebel Alliance"))
+                if(faction.equalsIgnoreCase("Resistance") || faction.equalsIgnoreCase("Rebel Alliance"))
                 {
                     dialMaskImageName = wipRebelMask;
-                }else if(faction.equalsIgnoreCase("First Order"))
-                {
-                    dialMaskImageName = wipFirstOrderMask;
-                }else if(faction.equalsIgnoreCase("Galactic Empire"))
+                }else if(faction.equalsIgnoreCase("First Order") || faction.equalsIgnoreCase("Galactic Empire"))
                 {
                     dialMaskImageName = wipEmpireMask;
                 }else if(faction.equalsIgnoreCase("Scum and Villainy"))

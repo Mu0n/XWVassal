@@ -74,7 +74,6 @@ enum RepoManeuver {
     BR1_Right_ABAP_Large("BR Right as Backward as Possible", "524", 0.0f, 141.25f, 56.5f, 0.0f, 283.0f, 113.0f),
 
     //Section for 2.0 style barrel roll. AFAP and ABAP will be limited by the back and front edges and will spawn the template for habit building
-//TO DO - adjust mid BR which will also spawn the ship's final position. do the routing at the keystroke analysis level - use this or that map or map2e
     BR1_Left_AFAP_2E("BR Left as Forward as Possible", "524", -90.0f, -113.0f, 0.0f, 0.0f, -226.0f, -28.25f),
     BR1_Left_2E("BR Left", "524", -90.0f, -113.0f, 0.0f, 0.0f, -226.0f, 0.0f),
     BR1_Left_ABAP_2E("BR Left as Backward as Possible", "524", -90.0f, -113.0f, 0.0f, 0.0f, -226.0f, 28.25f),
@@ -91,21 +90,21 @@ enum RepoManeuver {
     BR2_Right_2E("BR2 Right", "525", -90.0f, 169.5f, 0.0f, 0.0f, 339.0f, 0.0f),
     BR2_Right_ABAP_2E("BR2 Right as Backward as Possible", "525", -90.0f, 169.5f, 0.0f, 0.0f, 339.0f, 28.25f),
     //medium normal BR
-    BR1_Left_AFAP_Medium_2E("BR Left as Forward as Possible", "524", 0.0f, -113.75f, 0.0f, 0.0f, -227.5f, -29.0f),
+    BR1_Left_AFAP_Medium_2E("BR Left as Forward as Possible", "524", 0.0f, -113.75f, 0.0f, 0.0f, -227.5f, -56.5f),
     BR1_Left_Medium_2E("BR Left", "524", 0.0f, -113.75f, 0.0f, 0.0f, -227.5f, 0.0f),
-    BR1_Left_ABAP_Medium_2E("BR Left as Backward as Possible", "524", 0.0f, -113.75f, 0.0f, 0.0f, -227.5f, 29.0f),
+    BR1_Left_ABAP_Medium_2E("BR Left as Backward as Possible", "524", 0.0f, -113.75f, 0.0f, 0.0f, -227.5f, 56.5f),
 
-    BR1_Right_AFAP_Medium_2E("BR Right as Forward as Possible", "524", 0.0f, 113.75f, 0.0f, 0.0f, 227.5f, -29.0f),
+    BR1_Right_AFAP_Medium_2E("BR Right as Forward as Possible", "524", 0.0f, 113.75f, 0.0f, 0.0f, 227.5f, -56.5f),
     BR1_Right_Medium_2E("BR Right", "524", 0.0f, 113.75f, 0.0f, 0.0f, 227.5f, 0.0f),
-    BR1_Right_ABAP_Medium_2E("BR Right as Backward as Possible", "524", 0.0f, 113.75f, 0.0f, 0.0f, 227.5f, 29.0f),
+    BR1_Right_ABAP_Medium_2E("BR Right as Backward as Possible", "524", 0.0f, 113.75f, 0.0f, 0.0f, 227.5f, 56.5f),
     //medium decloak using a standard long barrel roll 1
-    BRD_Left_AFAP_Medium_2E("Decloak Left as Forward as Possible", "524",-90.0f, -142.0f, 0.0f, 0.0f, -284.0f, -57.25f),
+    BRD_Left_AFAP_Medium_2E("Decloak Left as Forward as Possible", "524",0.0f, -113.75f, 0.0f, 0.0f, -227.5f, -56.5f),
     BRD_Left_Medium_2E("Decloak Left", "524", -90.0f, -142.0f, 0.0f, 0.0f, -284.0f, 0.0f),
-    BRD_Left_ABAP_Medium_2E("Decloak Left as Backward as Possible", "524", -90.0f, -142.0f, 0.0f, 0.0f, -284.0f, 57.25f),
+    BRD_Left_ABAP_Medium_2E("Decloak Left as Backward as Possible", "524", 0.0f, -113.75f, 0.0f, 0.0f, -227.5f, 56.5f),
 
-    BRD_Right_AFAP_Medium_2E("Decloak Right as Forward as Possible", "524", -90.0f, 142.0f, 0.0f, 0.0f, 284.0f, -57.25f),
+    BRD_Right_AFAP_Medium_2E("Decloak Right as Forward as Possible", "524", 0.0f, 113.75f, 0.0f, 0.0f, 227.5f, -56.5f),
     BRD_Right_Medium_2E("Decloak Right", "524", -90.0f, 142.0f, 0.0f, 0.0f, 284.0f, 0.0f),
-    BRD_Right_ABAP_Medium_2E("Decloak Right as Backward as Possible", "524", -90.0f, 142.0f, 0.0f, 0.0f, 284.0f, 57.25f),
+    BRD_Right_ABAP_Medium_2E("Decloak Right as Backward as Possible", "524", 0.0f, 113.75f, 0.0f, 0.0f, 227.5f, 56.5f),
     //large normal BR
     BR1_Left_AFAP_Large_2E("BR Left as Forward as Possible", "524", 0.0f, -141.25f, 0.0f, 0.0f, -283.0f, -56.5f),
     BR1_Left_Large_2E("BR Left as Forward as Possible", "524", 0.0f, -141.25f, 0.0f, 0.0f, -283.0f, 0.0f),
@@ -115,13 +114,13 @@ enum RepoManeuver {
     BR1_Right_Large_2E("BR Right", "524", 0.0f, 141.25f, 0.0f, 0.0f, 283.0f, 0.0f),
     BR1_Right_ABAP_Large_2E("BR Right as Backward as Possible", "524", 0.0f, 141.25f, 0.0f, 0.0f, 283.0f, 56.5f),
     //large decloak using a standard long barrel roll 1
-    BRD_Left_AFAP_Large_2E("BR Left as Forward as Possible", "524", -90.0f, -169.5f, 0.0f, 0.0f, -339.0f, -84.75f),
+    BRD_Left_AFAP_Large_2E("BR Left as Forward as Possible", "524", 0.0f, -141.25f, 0.0f, 0.0f, -283.0f, -56.5f),
     BRD_Left_Large_2E("BR Left as Forward as Possible", "524", -90.0f, -169.5f, 0.0f, 0.0f, -339.0f, 0.0f),
-    BRD_Left_ABAP_Large_2E("BR Left as Backward as Possible", "524", -90.0f, -169.5f, 0.0f, 0.0f, -339.0f, 84.75f),
+    BRD_Left_ABAP_Large_2E("BR Left as Backward as Possible", "524", 0.0f, -141.25f, 0.0f, 0.0f, -283.0f, 56.5f),
 
-    BRD_Right_AFAP_Large_2E("BR Right as Forward as Possible", "524", -90.0f, 169.5f, 0.0f, 0.0f, 339.0f, -84.75f),
+    BRD_Right_AFAP_Large_2E("BR Right as Forward as Possible", "524", 0.0f, 141.25f, 0.0f, 0.0f, 283.0f, -56.5f),
     BRD_Right_Large_2E("BR Right", "524", -90.0f, 169.5f, 0.0f, 0.0f, 339.0f, 0.0f),
-    BRD_Right_ABAP_Large_2E("BR Right as Backward as Possible", "524", -90.0f, 169.5f, 0.0f, 0.0f, 339.0f, 84.75f)
+    BRD_Right_ABAP_Large_2E("BR Right as Backward as Possible", "524", 0.0f, 141.25f, 0.0f, 0.0f, 283.0f, 56.5f)
     ;
 
     private final String repoName;
@@ -645,7 +644,7 @@ public class ShipReposition extends Decorator implements EditablePiece {
             if(repoCommand == null) return piece.keyEvent(stroke);
             else{
                 result.append(repoCommand);
-                result.append(piece.keyEvent(stroke));
+                //result.append(piece.keyEvent(stroke));
                 if(this.previousCollisionVisualization != null &&  this.previousCollisionVisualization.getShapes().size() > 0){
                     result.append(previousCollisionVisualization);
                     previousCollisionVisualization.execute();

@@ -34,7 +34,7 @@ public class VassalXWSPieceLoader {
             .build();
 
     private static List<String> obstacleTabNames = Lists.newArrayList(
-            "Asteroids", "New Asteroids", "Debris"
+            "Asteroids", "TFA_Asteroids", "Debris"
     );
 
     Map<String, VassalXWSPilotPieces> pilotPiecesMap = Maps.newHashMap();
@@ -77,7 +77,6 @@ public class VassalXWSPieceLoader {
             // get the pilot card slot
             PieceSlot stemPilotSlot = null;
 
-
             // add the stem ship
             PieceSlot smallShipSlot = null;
             PieceSlot largeShipSlot = null;
@@ -118,7 +117,6 @@ public class VassalXWSPieceLoader {
                     stemConditionTokenSlot = pieceSlot;
                     continue;
                 }
-
             }
 
             // fill in the pilot cards

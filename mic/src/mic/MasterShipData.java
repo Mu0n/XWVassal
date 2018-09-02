@@ -52,11 +52,6 @@ public class MasterShipData extends ArrayList<MasterShipData.ShipData> {
         return loadedData.get(shipXwsId);
     }
 
-    protected static void loadData2() {
-// load data from xwing-data
-        loadFromXwingData2();
-    }
-
         protected static void loadData() {
 
         // load data from xwing-data
@@ -168,19 +163,6 @@ public class MasterShipData extends ArrayList<MasterShipData.ShipData> {
         mergedShip.setBaseReport2Identifier(mergeProperties(baseShip.getBaseReport2Identifier(),overrideShip.getBaseReport2Identifier()));
         return mergedShip;
     }
-    private static void loadFromXwingData2() {
-        // load from xwing-data
-        MasterShipData data = Util.loadRemoteJson(REMOTE_URL, MasterShipData.class);
-        if (data == null) {
-            // Util.logToChat("Unable to load xwing-data for ships from the web, falling back to local copy");
-            data = Util.loadClasspathJson("ships2.json", MasterShipData.class);
-        }
-
-        loadedData = Maps.newHashMap();
-        for(ShipData ship : data) {
-            loadedData.put(ship.getXws(), ship);
-        }
-    }
 
     private static void loadFromXwingData()
     {
@@ -283,44 +265,73 @@ public class MasterShipData extends ArrayList<MasterShipData.ShipData> {
         @JsonProperty("size")
         private String size;
 
+
         @JsonProperty("has_dual_base")
         private Boolean hasDualBase;
-
         @JsonProperty("dual_base_toggle_menu_text")
         private String dualBaseToggleMenuText;
-
-
         @JsonProperty("dual_base_image_1_identifier")
         private String baseImage1Identifier;
-
         @JsonProperty("dual_base_image_2_identifier")
         private String baseImage2Identifier;
-
         @JsonProperty("dual_base_report_1_identifier")
         private String baseReport1Identifier;
-
         @JsonProperty("dual_base_report_2_identifier")
         private String baseReport2Identifier;
+
+        public Boolean hasDualBase() { return this.hasDualBase; }
+        private void setDualBase(Boolean hasDualBase)
+        {
+            this.hasDualBase = hasDualBase;
+        }
+
+        public String getDualBaseToggleMenuText()
+        {
+            return this.dualBaseToggleMenuText;
+        }
+        private void setDualBaseToggleMenuText(String dualBaseToggleMenuText){ this.dualBaseToggleMenuText = dualBaseToggleMenuText; }
 
         public String getBaseImage1Identifier()
         {
             return baseImage1Identifier;
         }
-
-        public String getBaseImage2Identifier()
-        {
-            return baseImage2Identifier;
-        }
-
         public void setBaseImage1(String baseImage1Identifier)
         {
             this.baseImage1Identifier = baseImage1Identifier;
         }
-
+        public String getBaseImage2Identifier()
+        {
+            return baseImage2Identifier;
+        }
         public void setBaseImage2(String baseImage2Identifier)
         {
             this.baseImage2Identifier = baseImage2Identifier;
         }
+
+        public String getBaseReport1Identifier()
+        {
+            return baseReport1Identifier;
+        }
+        public void setBaseReport1Identifier(String baseReport1Identifier){ this.baseReport1Identifier = baseReport1Identifier; }
+        public String getBaseReport2Identifier()
+        {
+            return baseReport2Identifier;
+        }
+        public void setBaseReport2Identifier(String baseReport2Identifier){ this.baseReport2Identifier = baseReport2Identifier; }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
         public String getName() {
             return name;
@@ -456,45 +467,7 @@ public class MasterShipData extends ArrayList<MasterShipData.ShipData> {
             return "huge".equals(this.size);
         }
 
-        public Boolean hasDualBase()
-        {
-            return this.hasDualBase;
-        }
 
-        private void setDualBase(Boolean hasDualBase)
-        {
-            this.hasDualBase = hasDualBase;
-        }
-
-        public String getDualBaseToggleMenuText()
-        {
-            return this.dualBaseToggleMenuText;
-        }
-
-        private void setDualBaseToggleMenuText(String dualBaseToggleMenuText)
-        {
-            this.dualBaseToggleMenuText = dualBaseToggleMenuText;
-        }
-
-        public String getBaseReport1Identifier()
-        {
-            return baseReport1Identifier;
-        }
-
-        public void setBaseReport1Identifier(String baseReport1Identifier)
-        {
-            this.baseReport1Identifier = baseReport1Identifier;
-        }
-
-        public String getBaseReport2Identifier()
-        {
-            return baseReport2Identifier;
-        }
-
-        public void setBaseReport2Identifier(String baseReport2Identifier)
-        {
-            this.baseReport2Identifier = baseReport2Identifier;
-        }
 
     }
 }

@@ -18,6 +18,9 @@ import java.util.Iterator;
 import java.util.List;
 
 public class XWOTAUtils {
+
+    private static final String SHIP_BASE_ARC_IMAGE_PREFIX = "SBA_";
+
     private static String[] actionOrder = {
             "cloak",
             "rotatearc",
@@ -95,6 +98,39 @@ public class XWOTAUtils {
         return arcImagePrefixSB.toString();
     }
 
+    public static void buildBaseShipImage2e(String faction, String shipXWS, String size, String identifier, String shipImageName, ArchiveWriter writer)
+    {
+        GameModule gameModule = GameModule.getGameModule();
+        DataArchive dataArchive = gameModule.getDataArchive();
+
+        try {
+            BufferedImage newBaseImage = buildShipBase2e(size, dataArchive);
+
+            //add the faction-decided arc color
+            String arcImageName = findArcImageName(size, faction);
+            newBaseImage = addShipToBaseShipImage2e(shipXWS, newBaseImage, dataArchive, arcImageName);
+            newBaseImage = addShipToBaseShipImage2e(shipXWS, newBaseImage, dataArchive, arcImageName);
+
+
+            //add the ship gfx of the ship
+            newBaseImage = addShipToBaseShipImage2e(shipXWS, newBaseImage, dataArchive, shipImageName);
+
+
+            saveBaseShipImageToModule(faction, shipXWS, identifier, newBaseImage, writer, 2);
+        }catch(IOException e)
+        {
+            Util.logToChat("Exception occurred generating base ship image for "+shipXWS);
+        }
+
+
+    }
+
+    private static String findArcImageName(String size, String faction) {
+        String sb = "";
+        sb+=SHIP_BASE_ARC_IMAGE_PREFIX + faction + "_" + size + ".png";
+        return sb;
+    }
+
     public static void buildBaseShipImage(String faction, String shipXWS, List<String> arcs, List<String> actions, String size, String identifier, String shipImageName, ArchiveWriter writer)
     {
         GameModule gameModule = GameModule.getGameModule();
@@ -115,7 +151,7 @@ public class XWOTAUtils {
             newBaseImage = addActionsToBaseShipImage(actions, size, newBaseImage, dataArchive);
 
             // save the newly created base image to the module
-            saveBaseShipImageToModule(faction, shipXWS, identifier, newBaseImage, writer);
+            saveBaseShipImageToModule(faction, shipXWS, identifier, newBaseImage, writer, 1);
 
 
         }catch(IOException e)
@@ -176,9 +212,9 @@ public class XWOTAUtils {
     }
 
 
-    private static void saveBaseShipImageToModule(String faction, String shipXWS, String identifier, BufferedImage baseImage, ArchiveWriter writer)
+    private static void saveBaseShipImageToModule(String faction, String shipXWS, String identifier, BufferedImage baseImage, ArchiveWriter writer, int edition)
     {
-        String targetBaseImageName = buildShipBaseImageName(faction,shipXWS,identifier);
+        String targetBaseImageName = buildShipBaseImageName(faction,shipXWS,identifier, edition);
 
         File tempFile = null;
         try {
@@ -280,6 +316,34 @@ public class XWOTAUtils {
         }
     }
 
+    private static BufferedImage buildShipBase2e(String size, DataArchive dataArchive) throws IOException
+    {
+        final String smallBlackBase = "Ship2e_generic_small.png";
+        final String mediumBlackBase = "Ship2e_generic_medium.png";
+        final String largeBlackBase = "Ship2e_generic_large.png";
+        String cardboardBaseImageName = null;
+
+        // determine which background to use (size)
+        if(size.equals("small"))
+        {
+            cardboardBaseImageName = smallBlackBase;
+        }else if(size.equals("medium"))
+        {
+            cardboardBaseImageName = mediumBlackBase;
+        }else if(size.equals("large"))
+        {
+            cardboardBaseImageName = largeBlackBase;
+        }else if(size.equals("huge"))
+        {
+            //TODO replace eventually one day...huge is cut off from downloadall2e anyway in contentchecker
+            cardboardBaseImageName = largeBlackBase;
+        }
+        InputStream is = dataArchive.getInputStream("images/"+cardboardBaseImageName);
+        BufferedImage image = ImageUtils.getImage(cardboardBaseImageName,is);
+
+        return image;
+    }
+
     private static BufferedImage buildShipBase(String size, DataArchive dataArchive) throws IOException
     {
 
@@ -353,6 +417,19 @@ public class XWOTAUtils {
         BufferedImage shipImage = ImageUtils.getImage(shipImageName, is);
         Graphics g = baseImage.getGraphics();
         g.drawImage(shipImage, 0, 0, null);
+        return baseImage;
+
+    }
+
+    private static BufferedImage addShipToBaseShipImage2e(String shipXWS, BufferedImage baseImage, DataArchive dataArchive, String imageName) throws IOException
+    {
+        InputStream is = dataArchive.getInputStream("images/" + imageName);
+
+        BufferedImage imageToAdd = ImageUtils.getImage(imageName, is);
+
+        Graphics g = baseImage.getGraphics();
+        g.drawImage(imageToAdd, 0, 0, null);
+
         return baseImage;
 
     }
@@ -443,14 +520,15 @@ public class XWOTAUtils {
         return sortedActions;
     }
 
-    public static String buildShipBaseImageName(String faction, String shipXWS, String identifier)
+    public static String buildShipBaseImageName(String faction, String shipXWS, String identifier, int edition)
     {
 
         //Ship_Base_<faction lowercase no spaces>_<shipXWS>.png
 
         StringBuilder shipBaseImageSB = new StringBuilder();
 
-        shipBaseImageSB.append("Ship_Base_");
+        if(edition == 1) shipBaseImageSB.append("Ship_Base_");
+        else if(edition == 2) shipBaseImageSB.append("SB_2e_");
 
         // find the faction
         shipBaseImageSB.append(faction);
@@ -490,22 +568,23 @@ public class XWOTAUtils {
         return shipBaseImageSB.toString();
     }
 
-    public static void downloadJSONFilesFromGitHub(ArrayList<String> jsonFiles) throws IOException
+    public static void downloadJSONFilesFromGitHub(ArrayList<String> jsonFiles, boolean keepPrefix) throws IOException
     {
         GameModule gameModule = GameModule.getGameModule();
         DataArchive dataArchive = gameModule.getDataArchive();
         FileArchive fileArchive = dataArchive.getArchive();
         ArchiveWriter writer = new ArchiveWriter(fileArchive);
+
         String fileName = null;
 
         byte[] fileContents = null;
         for (String jsonFile : jsonFiles)
         {
-            fileName = jsonFile.substring(jsonFile.lastIndexOf("/")+1,jsonFile.length());
+            if(keepPrefix == false) fileName = jsonFile.substring(jsonFile.lastIndexOf("/")+1,jsonFile.length());
+            else fileName = jsonFile.substring(jsonFile.lastIndexOf("/data/"),jsonFile.length());
             fileContents = null;
             fileContents = downlodFileFromOTA(jsonFile);
             addFileToModule(fileName, fileContents, writer);
-
         }
         writer.save();
 
@@ -720,7 +799,6 @@ public class XWOTAUtils {
 
     private static byte[] downloadFileFromOTA(String fileType, String fileName, String branchURL) throws IOException
     {
-        // Util.logToChat("Downloading image: "+fileName);
         URL OTAImageURL = null;
         //String url = "https://raw.githubusercontent.com/Mu0n/XWVassalOTA/master/" + fileType + "/" + fileName;
         String url = branchURL + fileType + "/" + fileName;
@@ -767,7 +845,7 @@ public class XWOTAUtils {
         }
     }
 
-    private static void addFileToModule(String fileName,byte[] fileBytes, ArchiveWriter writer) throws IOException
+    public static void addFileToModule(String fileName,byte[] fileBytes, ArchiveWriter writer) throws IOException
     {
     //    GameModule gameModule = GameModule.getGameModule();
     //    DataArchive dataArchive = gameModule.getDataArchive();
@@ -777,7 +855,20 @@ public class XWOTAUtils {
      //   writer.save();
     }
 
-    private static void addImageToModule(String imageName,byte[] imageBytes) throws IOException
+
+    public static void addFileToModule(String fileName, byte[] fileBytes) throws IOException
+    {
+            GameModule gameModule = GameModule.getGameModule();
+            DataArchive dataArchive = gameModule.getDataArchive();
+            FileArchive fileArchive = dataArchive.getArchive();
+            ArchiveWriter writer = new ArchiveWriter(fileArchive);
+            //addFileToModule(fileName, fileBytes,writer);
+            writer.addFile(fileName,fileBytes);
+            writer.save();
+    }
+
+
+    public static void addImageToModule(String imageName,byte[] imageBytes) throws IOException
     {
         GameModule gameModule = GameModule.getGameModule();
         DataArchive dataArchive = gameModule.getDataArchive();
@@ -787,7 +878,7 @@ public class XWOTAUtils {
         writer.save();
     }
 
-    private static void addImageToModule(String imageName,byte[] imageBytes,  ArchiveWriter writer) throws IOException
+    public static void addImageToModule(String imageName,byte[] imageBytes,  ArchiveWriter writer) throws IOException
     {
 
         writer.addImage(imageName,imageBytes);
@@ -812,5 +903,23 @@ public class XWOTAUtils {
 
         return found;
 
+    }
+
+    public static boolean fileExistsInModule(String fileName)
+    {
+        GameModule gameModule = GameModule.getGameModule();
+        DataArchive dataArchive = gameModule.getDataArchive();
+        FileArchive fileArchive = dataArchive.getArchive();
+
+        boolean found = false;
+        try {
+            found = fileArchive.contains(fileName);
+
+        }catch(Exception e)
+        {
+            Util.logToChat("Exception searching for file in module");
+        }
+
+        return found;
     }
 }

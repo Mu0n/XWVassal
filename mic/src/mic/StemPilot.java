@@ -118,8 +118,8 @@ public class StemPilot extends Decorator implements EditablePiece {
     public static class PilotGenerateCommand extends Command {
 
         GamePiece piece;
-//        static String xwsPilotName = "";
- //       String shipName;
+        //        static String xwsPilotName = "";
+        //       String shipName;
         static String faction = "";
         static String pilotName = "";
         String shipXWS = "";
@@ -384,10 +384,5 @@ public class StemPilot extends Decorator implements EditablePiece {
         }
 
     }
-
-
-
-
 }
-
 

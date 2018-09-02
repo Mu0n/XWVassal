@@ -6,6 +6,7 @@ public class XWSpawnException extends Exception {
 
     private ArrayList<String> messages;
     private XWSList newList;
+    private XWSList2e newList2e;
 
     public XWSpawnException ()
     {
@@ -33,9 +34,17 @@ public class XWSpawnException extends Exception {
         this.newList = newList;
     }
 
+    public void setNewList2e(XWSList2e newList2e)
+    {
+        this.newList2e = newList2e;
+    }
+
     public XWSList getNewList()
     {
         return newList;
     }
-
+    public XWSList getNewList2e()
+    {
+        return newList;
+    }
 }

@@ -50,12 +50,12 @@ public class ModuleIntegrityChecker {
     }
     */
 
-    public ArrayList<OTAMasterUpgrades.OTAUpgrade> checkUpgrades()
+    public ArrayList<OTAMasterUpgrades.OTAUpgrade> checkUpgrades(boolean onlyDetectOne)
     {
         // get list of upgrades from OTAMasterUpgrades
         OTAMasterUpgrades omu = new OTAMasterUpgrades();
         omu.flushData();
-        Collection<OTAMasterUpgrades.OTAUpgrade> upgrades = omu.getAllUpgrades();
+        Collection<OTAMasterUpgrades.OTAUpgrade> upgrades = omu.getAllUpgrades(1);
 
 
         ArrayList<OTAMasterUpgrades.OTAUpgrade> upgradeList = new ArrayList<OTAMasterUpgrades.OTAUpgrade>();
@@ -70,6 +70,7 @@ public class ModuleIntegrityChecker {
                 upgrade.setStatus(XWOTAUtils.imageExistsInModule(upgrade.getImage()));
                 if(upgrade.getStatus() || (!upgrade.getStatus() && XWOTAUtils.imageExistsInOTA("upgrades",upgrade.getImage(),OTAContentsChecker.OTA_RAW_BRANCH_URL))) {
                     upgradeList.add(upgrade);
+                    if(onlyDetectOne) return upgradeList;
                 }
             }
 
@@ -78,12 +79,12 @@ public class ModuleIntegrityChecker {
         return upgradeList;
     }
 
-    public ArrayList<OTAMasterConditions.OTACondition> checkConditions()
+    public ArrayList<OTAMasterConditions.OTACondition> checkConditions(boolean onlyDetectOne)
     {
         // get list of conditions from OTAMasterUpgrades
         OTAMasterConditions omc = new OTAMasterConditions();
         omc.flushData();
-        Collection<OTAMasterConditions.OTACondition> conditions = omc.getAllConditions();
+        Collection<OTAMasterConditions.OTACondition> conditions = omc.getAllConditions(1);
 
 
         ArrayList<OTAMasterConditions.OTACondition> conditionList = new ArrayList<OTAMasterConditions.OTACondition>();
@@ -99,6 +100,7 @@ public class ModuleIntegrityChecker {
                 condition.setTokenStatus(XWOTAUtils.imageExistsInModule(condition.getTokenImage()));
                 if(((condition.getStatus() && condition.getTokenStatus()) || (!condition.getStatus() || !condition.getTokenStatus()) && (XWOTAUtils.imageExistsInOTA("conditions",condition.getImage(),OTAContentsChecker.OTA_RAW_BRANCH_URL)&& XWOTAUtils.imageExistsInOTA("conditions",condition.getTokenImage(), OTAContentsChecker.OTA_RAW_BRANCH_URL)))) {
                     conditionList.add(condition);
+                    if(onlyDetectOne) return conditionList;
                 }
             }
 
@@ -107,7 +109,7 @@ public class ModuleIntegrityChecker {
         return conditionList;
     }
 
-    public ArrayList<OTAMasterDialHides.OTADialHide> checkDialHides()
+    public ArrayList<OTAMasterDialHides.OTADialHide> checkDialHides(boolean onlyDetectOne)
     {
 
         OTAMasterDialHides omdh = new OTAMasterDialHides();
@@ -132,6 +134,7 @@ public class ModuleIntegrityChecker {
                 if(dialHide.getStatus() || (!dialHide.getStatus() && XWOTAUtils.imageExistsInOTA("dial",dialHide.getImage(), OTAContentsChecker.OTA_RAW_BRANCH_URL)))
                 {
                     dialHideList.add(dialHide);
+                    if(onlyDetectOne) return dialHideList;
                 }
 
             }
@@ -142,13 +145,12 @@ public class ModuleIntegrityChecker {
 
 
 
-public ArrayList<OTAMasterPilots.OTAPilot> checkPilots()
+public ArrayList<OTAMasterPilots.OTAPilot> checkPilots(boolean onlyDetectOne)
 {
     // get list of pilots from OTAMasterPilots
     OTAMasterPilots omp = new OTAMasterPilots();
     omp.flushData();
-    Collection<OTAMasterPilots.OTAPilot> pilots = omp.getAllPilots();
-
+    Collection<OTAMasterPilots.OTAPilot> pilots = omp.getAllPilotImagesFromOTA(1);
 
     ArrayList<OTAMasterPilots.OTAPilot> pilotList = new ArrayList<OTAMasterPilots.OTAPilot>();
     Iterator<OTAMasterPilots.OTAPilot> i = pilots.iterator();
@@ -161,20 +163,19 @@ public ArrayList<OTAMasterPilots.OTAPilot> checkPilots()
             pilot.setStatus(XWOTAUtils.imageExistsInModule(pilot.getImage()));
             if(pilot.getStatus() || (!pilot.getStatus()  && XWOTAUtils.imageExistsInOTA("pilots",pilot.getImage(), OTAContentsChecker.OTA_RAW_BRANCH_URL))) {
                 pilotList.add(pilot);
+                if(onlyDetectOne) return pilotList;
             }
         }
-
     }
-
     return pilotList;
 }
 
-    public ArrayList<OTAMasterShips.OTAShip> checkShips()
+    public ArrayList<OTAMasterShips.OTAShip> checkShips(boolean onlyDetectOne)
     {
         // get list of ships from OTAMasterShips
         OTAMasterShips oms = new OTAMasterShips();
         oms.flushData();
-        Collection<OTAMasterShips.OTAShip> ships = oms.getAllShips();
+        Collection<OTAMasterShips.OTAShip> ships = oms.getAllShips(1);
 
 
         ArrayList<OTAMasterShips.OTAShip> shipList = new ArrayList<OTAMasterShips.OTAShip>();
@@ -188,8 +189,9 @@ public ArrayList<OTAMasterPilots.OTAPilot> checkPilots()
                 ship.setStatus(XWOTAUtils.imageExistsInModule(ship.getImage()));
                 boolean exists = XWOTAUtils.imageExistsInModule(ship.getImage());
 
-                if(exists || (!exists && XWOTAUtils.imageExistsInOTA("ships",ship.getImage(), OTAContentsChecker.OTA_RAW_BRANCH_URL))) {
+                if(!exists && XWOTAUtils.imageExistsInOTA("ships",ship.getImage(), OTAContentsChecker.OTA_RAW_BRANCH_URL)) {
                     shipList.add(ship);
+                    if(onlyDetectOne) return shipList;
                 }
             }
         }
@@ -198,11 +200,11 @@ public ArrayList<OTAMasterPilots.OTAPilot> checkPilots()
 
     }
 
-    public ArrayList<OTAShipBase> checkShipBases()
+    public ArrayList<OTAShipBase> checkShipBases(boolean onlyDetectOne)
     {
         OTAMasterShips oms = new OTAMasterShips();
         oms.flushData();
-        Collection<OTAMasterShips.OTAShip> ships = oms.getAllShips();
+        Collection<OTAMasterShips.OTAShip> ships = oms.getAllShips(1);
 
           MasterShipData msd = new MasterShipData();
           msd.loadData();
@@ -224,7 +226,7 @@ public ArrayList<OTAMasterPilots.OTAPilot> checkPilots()
 
                     String factionName = i2.next();
 
-                    String shipBaseImageName = XWOTAUtils.buildShipBaseImageName(factionName, ship.getXws(), ship.getIdentifier());
+                    String shipBaseImageName = XWOTAUtils.buildShipBaseImageName(factionName, ship.getXws(), ship.getIdentifier(), 1);
 
 
                     OTAShipBase shipBase = new OTAShipBase();
@@ -238,6 +240,7 @@ public ArrayList<OTAMasterPilots.OTAPilot> checkPilots()
 
                     if(shipBase.getStatus() || (!shipBase.getStatus() && XWOTAUtils.imageExistsInOTA("ships",ship.getImage(), OTAContentsChecker.OTA_RAW_BRANCH_URL))) {
                         shipList.add(shipBase);
+                        if(onlyDetectOne) return shipList;
                     }
 
                 }
@@ -250,7 +253,7 @@ public ArrayList<OTAMasterPilots.OTAPilot> checkPilots()
 
     }
 
-    public ArrayList<OTADialMask> checkDialMasks()
+    public ArrayList<OTADialMask> checkDialMasks(boolean onlyDetectOne)
     {
         OTAMasterDialHides omdh = new OTAMasterDialHides();
         omdh.flushData();
@@ -291,6 +294,7 @@ public ArrayList<OTAMasterPilots.OTAPilot> checkPilots()
 
                     if(dialMask.getStatus() || (!dialMask.getStatus() &&  XWOTAUtils.imageExistsInOTA("dial",dialHide.getImage(), OTAContentsChecker.OTA_RAW_BRANCH_URL))) {
                         dialMaskList.add(dialMask);
+                        if(onlyDetectOne) return dialMaskList;
                     }
 
 
@@ -304,7 +308,7 @@ public ArrayList<OTAMasterPilots.OTAPilot> checkPilots()
 
     }
 
-    public ArrayList<OTAMasterActions.OTAAction> checkActions()
+    public ArrayList<OTAMasterActions.OTAAction> checkActions(boolean onlyDetectOne)
     {
 
         boolean addToList = false;
@@ -324,6 +328,7 @@ public ArrayList<OTAMasterPilots.OTAPilot> checkPilots()
 
             if(action.getStatus() || (!action.getStatus() && XWOTAUtils.imageExistsInOTA("actions",action.getImage(), OTAContentsChecker.OTA_RAW_BRANCH_URL))){
                 actionList.add(action);
+                if(onlyDetectOne) return actionList;
             }
 
 
