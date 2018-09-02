@@ -111,7 +111,7 @@ public class StemUpgrade2e extends Decorator implements EditablePiece {
             // if it doesn't then use a WIP image
             boolean useWipImage = false;
             if (!XWOTAUtils.imageExistsInModule(frontImage)) {
-                frontImage = "Stem_Upgrade_"+upgradeType+".png";
+                frontImage = "Stem2e_Upgrade_WIP.jpg";
                 useWipImage = true;
 
                 // if the slot specific wip image doesn't exist, use the generic upgrade wip image
@@ -124,10 +124,10 @@ public class StemUpgrade2e extends Decorator implements EditablePiece {
             // Check to see if the card is dual sided
             if(isDualSided)
             {
-                backImage = "Upgrade_" + upgradeType + "_" + upgradeXWS + "_back.jpg";
+                backImage = "Stem2e_Upgrade_WIP.jpg";
             }else {
                 // get the slot specific back image
-                backImage = "Upgrade_" + upgradeType + "_back.jpg";
+                backImage = "Stem2e_Upgrade_WIP.jpg";
             }
 
             // if the slot specific back image doesn't exist, use the generic upgrade wip back image

@@ -480,9 +480,12 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
         Point tlStartPosition = new Point(300, 290);
         int totalTokenWidth = 0;
         int totalTLWidth = 0;
+        int lastUpgradeFudge = 30;
 
         PieceSlot chargePieceSlot = null;
         PieceSlot forceChargePieceSlot = null;
+        List<Point> chargeLocations = Lists.newArrayList(); // list of coordinates to place charge tokens
+        List<Point> forceChargeLocations = Lists.newArrayList(); // list of coordinates to place force charge tokens
 
         // get the charge and force charge token slots
         List<PieceSlot> allSlots = GameModule.getGameModule().getAllDescendantComponentsOf(PieceSlot.class);
@@ -563,19 +566,17 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
                     if (upgrade == null) break;
                     GamePiece upgradePiece = GamePieceGenerator2e.generateUpgrade(upgrade);
 
-                    spawnPiece(upgradePiece, new Point(
-                                    (int) startPosition.getX() + pilotWidth + totalUpgradeWidth + fudgePilotUpgradeFrontier,
-                                    (int) startPosition.getY() + totalPilotHeight),
-                            playerMap);
+                    int placeUpgradeX = (int) startPosition.getX() + pilotWidth + totalUpgradeWidth + fudgePilotUpgradeFrontier + lastUpgradeFudge;
+                    int placeUpgradeY = (int) startPosition.getY() + totalPilotHeight - i*10)
+                    spawnPiece(upgradePiece, new Point(placeUpgradeX, placeUpgradeY), playerMap);
                     XWS2Upgrades.Charge testIfHasCharge = upgrade.getUpgradeData().getSides().get(0).getCharges();
                     if (testIfHasCharge != null)
                     {
-                        GamePiece chargePiece = newPiece(chargePieceSlot);
                         for(int chargeIncr = 0; chargeIncr < upgrade.getUpgradeData().getSides().get(0).getCharges().getValue(); chargeIncr++){
-                            spawnPiece(chargePiece, new Point(
-                                            (int) startPosition.getX() + pilotWidth + totalUpgradeWidth + fudgePilotUpgradeFrontier + i*chargePiece.getShape().getBounds().width,
-                                            (int) startPosition.getY() + totalPilotHeight),
-                                    playerMap);
+                            chargeLocations.add(new Point(
+                                    placeUpgradeX + (i+1)*upgradePiece.getShape().getBounds().width,
+                                    placeUpgradeY - upgradePiece.getShape().getBounds().height/2
+                            ));
                         }
                     }
 
@@ -613,7 +614,7 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
 
 
             String listName = xwsList.getName();
-            logToChat("The '" + "Base 2.0 Game" + "' game mode was used to spawn a %s point list%s loaded from %s", pieces.getSquadPoints(),
+            logToChat("The '" + "Base 2.0 Game" + "' game mode was used to spawn a list%s loaded from %s",
                     listName != null ? " '" + listName + "'" : "", xwsList.getXwsSource());
 
             // ======================================================
@@ -630,11 +631,15 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
                                     (int) tlStartPosition.getY()),
                             playerMap);
                     totalTLWidth += token.boundingBox().getWidth();
-                }else if("2.0 Charge".equals(pieceSlot.getConfigureName()))
+                }else if("Charge2e".equals(pieceSlot.getConfigureName()))
                 {
-                    // just store the illicit piece slot.
                     chargePieceSlot = pieceSlot;
-                }else if("2.0 Force".equals(pieceSlot.getConfigureName()))
+                    for(Point p: chargeLocations){
+                        GamePiece chargePiece = newPiece(chargePieceSlot);
+                        spawnPiece(chargePiece, p, playerMap);
+
+                    }
+                }else if(("Force2e").equals(pieceSlot.getConfigureName()))
                 {
                     // just store the illicit piece slot.
                     chargePieceSlot = pieceSlot;
