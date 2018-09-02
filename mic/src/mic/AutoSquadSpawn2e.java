@@ -482,6 +482,23 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
         int totalTLWidth = 0;
 
         PieceSlot chargePieceSlot = null;
+        PieceSlot forceChargePieceSlot = null;
+
+        // get the charge and force charge token slots
+        List<PieceSlot> allSlots = GameModule.getGameModule().getAllDescendantComponentsOf(PieceSlot.class);
+
+        for(PieceSlot pieceSlot : allSlots )
+        {
+            String slotName = pieceSlot.getConfigureName();
+            if(slotName.equals("Charge2e") && chargePieceSlot == null){
+                chargePieceSlot = pieceSlot;
+                continue;
+            }
+            if(slotName.equals("Force2e") && forceChargePieceSlot == null){
+                forceChargePieceSlot = pieceSlot;
+                continue;
+            }
+        }
         for (VassalXWSPilotPieces2e ship : pieces.getShips()) {
 
 
@@ -550,6 +567,17 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
                                     (int) startPosition.getX() + pilotWidth + totalUpgradeWidth + fudgePilotUpgradeFrontier,
                                     (int) startPosition.getY() + totalPilotHeight),
                             playerMap);
+                    XWS2Upgrades.Charge testIfHasCharge = upgrade.getUpgradeData().getSides().get(0).getCharges();
+                    if (testIfHasCharge != null)
+                    {
+                        GamePiece chargePiece = newPiece(chargePieceSlot);
+                        for(int chargeIncr = 0; chargeIncr < upgrade.getUpgradeData().getSides().get(0).getCharges().getValue(); chargeIncr++){
+                            spawnPiece(chargePiece, new Point(
+                                            (int) startPosition.getX() + pilotWidth + totalUpgradeWidth + fudgePilotUpgradeFrontier + i*chargePiece.getShape().getBounds().width,
+                                            (int) startPosition.getY() + totalPilotHeight),
+                                    playerMap);
+                        }
+                    }
 
                     totalUpgradeWidth += upgradePiece.boundingBox().width - 251;
                 }

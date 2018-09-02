@@ -135,6 +135,9 @@ public class XWS2Upgrades {
         @JsonProperty("actions")
         private List<Action> actions = Lists.newArrayList();
 
+        @JsonProperty("charges")
+        private Charge charges;
+
         public String getTitle() { return this.title; }
         public String getType() { return this.type; }
         public String getAbility() { return this.ability; }
@@ -142,6 +145,21 @@ public class XWS2Upgrades {
         public List<String> getConditions() { return this.conditions; }
         public Attack getAttack() { return attack; }
         public List<Action> getActions() { return actions; }
+        public Charge getCharges() { return charges; }
+    }
+
+    public static class Charge {
+        public Charge() { super(); }
+
+        @JsonProperty("value")
+        private int value;
+
+        @JsonProperty("recovers")
+        private int recovers;
+
+        public int getValue() { return value; }
+        public int getRecovers() { return recovers; }
+
     }
 
     public static class Action{
