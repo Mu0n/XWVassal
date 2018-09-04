@@ -35,9 +35,13 @@ public class ModuleIntegrityChecker_2e {
         {
             upgrade = (OTAMasterUpgrades.OTAUpgrade)i.next();
 
+
             if(XWS2Upgrades.getSpecificUpgrade(upgrade.getXws(), allUpgrades) != null) {
-                upgrade.setStatus(XWOTAUtils.imageExistsInModule(upgrade.getImage()));
-                if(upgrade.getStatus() || (!upgrade.getStatus() && XWOTAUtils.imageExistsInOTA("upgrades",upgrade.getImage(),OTAContentsChecker.OTA_RAW_BRANCH_URL_2E))) {
+
+                boolean exists = XWOTAUtils.imageExistsInModule(upgrade.getImage());
+                upgrade.setStatus(exists);
+
+                if(exists && XWOTAUtils.imageExistsInOTA("upgrades",upgrade.getImage(),OTAContentsChecker.OTA_RAW_BRANCH_URL_2E)) {
                     upgradeList.add(upgrade);
                     if(onlyDetectOne) return upgradeList;
                 }
@@ -69,10 +73,14 @@ public class ModuleIntegrityChecker_2e {
 */
             if(XWS2Upgrades.getSpecificConditionByXWS(condition.getXws(), allConditions) != null)
             {
-                             condition.setStatus(XWOTAUtils.imageExistsInModule(condition.getImage()));
-                             condition.setTokenStatus(XWOTAUtils.imageExistsInModule(condition.getTokenImage()));
-                if(((condition.getStatus() && condition.getTokenStatus()) || (!condition.getStatus() || !condition.getTokenStatus()) &&
-                        (XWOTAUtils.imageExistsInOTA("conditions",condition.getImage(),OTAContentsChecker.OTA_RAW_BRANCH_URL_2E)&&
+                boolean conditionExists = XWOTAUtils.imageExistsInModule(condition.getImage());
+                boolean conditionTokenExists = XWOTAUtils.imageExistsInModule(condition.getTokenImage());
+
+                condition.setStatus(conditionExists);
+                condition.setTokenStatus(conditionTokenExists);
+
+                if(((!conditionExists && !conditionTokenExists) &&
+                        (XWOTAUtils.imageExistsInOTA("conditions",condition.getImage(),OTAContentsChecker.OTA_RAW_BRANCH_URL_2E) &&
                                 XWOTAUtils.imageExistsInOTA("conditions",condition.getTokenImage(), OTAContentsChecker.OTA_RAW_BRANCH_URL_2E))))
                 {
                                         conditionList.add(condition);
@@ -135,12 +143,16 @@ public ArrayList<OTAMasterPilots.OTAPilot> checkPilots(boolean onlyDetectOne, Li
         OTAMasterPilots.OTAPilot pilot = (OTAMasterPilots.OTAPilot)i.next();
 
         if(XWS2Pilots.getSpecificPilot(pilot.getPilotXws(), allShips)!=null) {
-            pilot.setStatus(XWOTAUtils.imageExistsInModule(pilot.getImage()));
-            if(pilot.getStatus() || (!pilot.getStatus()  && XWOTAUtils.imageExistsInOTA("pilots",pilot.getImage(), OTAContentsChecker.OTA_RAW_BRANCH_URL_2E))) {
+
+            boolean exists = XWOTAUtils.imageExistsInModule(pilot.getImage());
+            pilot.setStatus(exists);
+
+            if(!exists && XWOTAUtils.imageExistsInOTA("pilots",pilot.getImage(), OTAContentsChecker.OTA_RAW_BRANCH_URL_2E)) {
                 pilotListToReturn.add(pilot);
                 if(onlyDetectOne) return pilotListToReturn;
             }
         }
+        else {} //this is the case where an entry exists in OTA's pilot_images.json but has no presence in Guido's xwd2
     }
     return pilotListToReturn;
 }

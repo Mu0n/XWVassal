@@ -14,10 +14,10 @@ import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class XWS2Pilots {
-    //public static String remoteUrl = "https://raw.githubusercontent.com/guidokessels/xwing-data2/master/data/manifest.json";
-    public static String remoteUrl = "https://raw.githubusercontent.com/Mu0nHub/xwing-data2/master/data/manifest.json";
-    //public static String guidoRootUrl = "https://raw.githubusercontent.com/guidokessels/xwing-data2/master/";
-    public static String guidoRootUrl = "https://raw.githubusercontent.com/Mu0nHub/xwing-data2/master/";
+    public static String remoteUrl = "https://raw.githubusercontent.com/guidokessels/xwing-data2/master/data/manifest.json";
+    //public static String remoteUrl = "https://raw.githubusercontent.com/Mu0nHub/xwing-data2/master/data/manifest.json";
+    public static String guidoRootUrl = "https://raw.githubusercontent.com/guidokessels/xwing-data2/master/";
+    //public static String guidoRootUrl = "https://raw.githubusercontent.com/Mu0nHub/xwing-data2/master/";
 
 
     @JsonProperty("name")
@@ -285,6 +285,11 @@ public class XWS2Pilots {
 
         @JsonProperty("shipAbility")
         private ShipAbility shipAbility = new ShipAbility();
+
+        @JsonProperty("image")
+        private String image;
+
+        public String getImage() { return image; }
 
         public String getName(){return this.name;}
         public String getCaption() {return this.caption;}

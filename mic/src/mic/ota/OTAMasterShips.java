@@ -48,6 +48,7 @@ public class OTAMasterShips extends ArrayList<OTAMasterShips.OTAShip> {
             data = Util.loadRemoteJson(OTAContentsChecker.OTA_SHIPS_JSON_URL_2E, OTAMasterShips.class);
         }
 
+        Util.logToChat("OTAMasterShips line 51 data is " + (data==null?"null":"not null"));
 
         loadedData = Maps.newHashMap();
         if (data == null) {

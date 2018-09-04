@@ -387,11 +387,12 @@ public class AnnouncementOnLog extends AbstractConfigurable {
             + "Do you want to proceed?<br>"
                         + "You can choose to skip for now and perform this step by clicking on Contents Checker later.<br></html>";
 */
-            JLabel versionLabel = new JLabel(msg);
-            JLabel versionLabel2 = new JLabel("You currently have version " + userVersion + " of the X-Wing Vassal module.");
+            JLabel versionLabel = new JLabel("You currently have version " + userVersion + " of the X-Wing Vassal module.");
+            versionLabel.setFont(new Font("Serif", Font.PLAIN, 20));
+            JLabel versionLabel2 = new JLabel(msg);
             JLabel versionLabel3 = new JLabel("The latest version available for download is " + line);
             JLabel checkLabel = new JLabel("The module is about to check for additional content.");
-            JLabel checkLabel2 = new JLabel("The Content Checker button will flash red if it finds any.");
+            JLabel checkLabel2 = new JLabel("The Content Checker button will flash black if it finds any.");
             JLabel checkLabel3 = new JLabel("Click on it to download the missing components.");
             SwingLink mainDownloadLink = new SwingLink("X-Wing Vassal download page", vassalDownloadURL);
             SwingLink altDownloadLink = new SwingLink("Alt download page on github", githubDownloadURL);
@@ -434,7 +435,7 @@ public class AnnouncementOnLog extends AbstractConfigurable {
             JLabel homeIcon = new JLabel();
 
             BufferedImage img = null;
-            InputStream is = dataArchive.getInputStream("images/Token_2e_charge.png");
+            InputStream is = dataArchive.getInputStream("images/Token_2e_force.png");
             img = ImageIO.read(is);
             is.close();
             homeIcon.setIcon(new ImageIcon(img));
