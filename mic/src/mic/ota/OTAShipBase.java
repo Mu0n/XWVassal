@@ -8,6 +8,7 @@ public class OTAShipBase {
     private String shipBaseImageName;
     private String shipImageName;
     private boolean status;
+    private boolean statusOTA;
 
     public OTAShipBase()
     {
@@ -71,4 +72,8 @@ public class OTAShipBase {
     {
         return this.status;
     }
+    //refers to the ship Gfx present in OTA, but the shipbase is affected, so...
+    public boolean getStatusOTA() { return this.statusOTA; }
+
+    public void setStatusOTA(boolean existsInOTA) { this.statusOTA = existsInOTA; }
 }

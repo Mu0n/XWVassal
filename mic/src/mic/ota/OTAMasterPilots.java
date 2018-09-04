@@ -73,6 +73,7 @@ public class OTAMasterPilots extends ArrayList<OTAMasterPilots.OTAPilot> {
         private String image;
 
         private boolean status;
+        private boolean statusOTA;
 
         public String getShipXws() {
             return shipxws;
@@ -88,10 +89,10 @@ public class OTAMasterPilots extends ArrayList<OTAMasterPilots.OTAPilot> {
         {
             return faction;
         }
-        public boolean getStatus()
-        {
-            return status;
-        }
+
+        public boolean getStatus() { return status; }
+        public boolean getStatusOTA() { return this.statusOTA; }
+
         public void setShipXws(String shipxws) {
              this.shipxws = shipxws;
         }
@@ -109,6 +110,10 @@ public class OTAMasterPilots extends ArrayList<OTAMasterPilots.OTAPilot> {
         public void setStatus(boolean status)
         {
             this.status = status;
+        }
+
+        public void setStatusOTA(boolean existsInOTA) {
+            this.statusOTA = existsInOTA;
         }
     }
 }

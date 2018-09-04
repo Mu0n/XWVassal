@@ -79,6 +79,8 @@ public class OTAMasterShips extends ArrayList<OTAMasterShips.OTAShip> {
         private List<String> factions = Lists.newArrayList();
 
         private boolean status;
+        private boolean statusOTA;
+
 
         public String getXws() {
             return xws;
@@ -98,6 +100,11 @@ public class OTAMasterShips extends ArrayList<OTAMasterShips.OTAShip> {
         public boolean getStatus()
         {
             return status;
+        }
+        public boolean getStatusOTA() { return statusOTA; }
+
+        public void setStatusOTA(boolean existsOTA) {
+            this.statusOTA = existsOTA;
         }
     }
 }

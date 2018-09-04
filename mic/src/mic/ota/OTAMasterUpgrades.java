@@ -64,6 +64,7 @@ public class OTAMasterUpgrades  extends ArrayList<OTAMasterUpgrades.OTAUpgrade> 
         private String image;
 
         private boolean status;
+        private boolean statusOTA;
 
         public String getXws() {
             return xws;
@@ -80,6 +81,8 @@ public class OTAMasterUpgrades  extends ArrayList<OTAMasterUpgrades.OTAUpgrade> 
         {
             return status;
         }
+        public boolean getStatusOTA() { return statusOTA; }
+
         public void setXws(String xws) {
             this.xws = xws;
         }
@@ -94,6 +97,9 @@ public class OTAMasterUpgrades  extends ArrayList<OTAMasterUpgrades.OTAUpgrade> 
         public void setStatus(boolean status)
         {
             this.status = status;
+        }
+        public void setStatusOTA(boolean statusOTA){
+            this.statusOTA = statusOTA;
         }
     }
 }

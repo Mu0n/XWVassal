@@ -380,7 +380,7 @@ public class OTAContentsChecker extends AbstractConfigurable {
             ArrayList<OTAMasterPilots.OTAPilot> pilots = modIntCheck_2e.checkPilots(true, allShips);
             logToChat("OTAContentChecker line 380 this is count of pilot cards missing " + pilots.size());
             for(OTAMasterPilots.OTAPilot pilot : pilots){
-                if(!pilot.getStatus()){
+                if(!pilot.getStatusOTA()){
                     return 1;
                 }
             }
@@ -391,7 +391,7 @@ public class OTAContentsChecker extends AbstractConfigurable {
             // =============================================================
             ArrayList<OTAMasterShips.OTAShip> ships = modIntCheck_2e.checkShips(true, allShips);
             for (OTAMasterShips.OTAShip ship : ships) {
-                if (!ship.getStatus()) {
+                if (!ship.getStatusOTA()) {
                     return 1;
                 }
             }
@@ -402,7 +402,7 @@ public class OTAContentsChecker extends AbstractConfigurable {
             // =============================================================
             ArrayList<OTAMasterUpgrades.OTAUpgrade> upgrades = modIntCheck_2e.checkUpgrades(true, allUpgrades);
             for (OTAMasterUpgrades.OTAUpgrade upgrade : upgrades) {
-                if (!upgrade.getStatus()) {
+                if (!upgrade.getStatusOTA()) {
                     return 1;
                 }
             }
@@ -431,7 +431,7 @@ public class OTAContentsChecker extends AbstractConfigurable {
             OTAShipBase missingShipBase = null;
             while (shipBaseIterator.hasNext()) {
                 missingShipBase = shipBaseIterator.next();
-                if (!missingShipBase.getStatus()) {
+                if (!missingShipBase.getStatusOTA()) {
                     return 1;
                 }
             }

@@ -40,10 +40,18 @@ public class ModuleIntegrityChecker_2e {
 
                 boolean exists = XWOTAUtils.imageExistsInModule(upgrade.getImage());
                 upgrade.setStatus(exists);
+                boolean existsInOTA = XWOTAUtils.imageExistsInOTA("upgrades",upgrade.getImage(),OTAContentsChecker.OTA_RAW_BRANCH_URL_2E);
+                upgrade.setStatusOTA(existsInOTA);
 
-                if(exists && XWOTAUtils.imageExistsInOTA("upgrades",upgrade.getImage(),OTAContentsChecker.OTA_RAW_BRANCH_URL_2E)) {
+                // either you have it already, or can get it. If you don't have it and can't get it, then fuggedaboutit
+                boolean gonnaDL = false;
+                if(exists == false && existsInOTA) gonnaDL = true;
+
+                if(exists || gonnaDL) {
                     upgradeList.add(upgrade);
-                    if(onlyDetectOne) return upgradeList;
+
+                    //speeds up the parsing right away if at least 1 object is detected as needing a download
+                    if(onlyDetectOne && gonnaDL) return upgradeList;
                 }
             }
         }
@@ -79,9 +87,12 @@ public class ModuleIntegrityChecker_2e {
                 condition.setStatus(conditionExists);
                 condition.setTokenStatus(conditionTokenExists);
 
-                if(((!conditionExists && !conditionTokenExists) &&
-                        (XWOTAUtils.imageExistsInOTA("conditions",condition.getImage(),OTAContentsChecker.OTA_RAW_BRANCH_URL_2E) &&
-                                XWOTAUtils.imageExistsInOTA("conditions",condition.getTokenImage(), OTAContentsChecker.OTA_RAW_BRANCH_URL_2E))))
+
+// either you have it already, or can get it. If you don't have it and can't get it, then fuggedaboutit
+                if(
+                        (conditionExists ||  (!conditionExists && XWOTAUtils.imageExistsInOTA("conditions",condition.getImage(),OTAContentsChecker.OTA_RAW_BRANCH_URL_2E))) ||
+                        (conditionTokenExists || (!conditionTokenExists && XWOTAUtils.imageExistsInOTA("conditions", condition.getTokenImage(), OTAContentsChecker.OTA_RAW_BRANCH_URL_2E)))
+                )
                 {
                                         conditionList.add(condition);
                                         if(onlyDetectOne) return conditionList;
@@ -146,13 +157,18 @@ public ArrayList<OTAMasterPilots.OTAPilot> checkPilots(boolean onlyDetectOne, Li
 
             boolean exists = XWOTAUtils.imageExistsInModule(pilot.getImage());
             pilot.setStatus(exists);
+            boolean existsInOTA = XWOTAUtils.imageExistsInOTA("pilots",pilot.getImage(), OTAContentsChecker.OTA_RAW_BRANCH_URL_2E);
+            pilot.setStatusOTA(existsInOTA);
 
-            if(!exists && XWOTAUtils.imageExistsInOTA("pilots",pilot.getImage(), OTAContentsChecker.OTA_RAW_BRANCH_URL_2E)) {
+            // either you have it already, or can get it. If you don't have it and can't get it, then fuggedaboutit
+            boolean gonnaDL = false;
+            if(exists == false && existsInOTA) gonnaDL = true;
+
+            if(exists || gonnaDL) {
                 pilotListToReturn.add(pilot);
-                if(onlyDetectOne) return pilotListToReturn;
+                if(onlyDetectOne && gonnaDL) return pilotListToReturn;
             }
         }
-        else {} //this is the case where an entry exists in OTA's pilot_images.json but has no presence in Guido's xwd2
     }
     return pilotListToReturn;
 }
@@ -175,11 +191,17 @@ public ArrayList<OTAMasterShips.OTAShip> checkShips(boolean onlyDetectOne, List<
             {
 
                 boolean exists = XWOTAUtils.imageExistsInModule(ship.getImage());
-
                 ship.setStatus(exists);
-                if(!exists && XWOTAUtils.imageExistsInOTA("ships",ship.getImage(), OTAContentsChecker.OTA_RAW_BRANCH_URL_2E)) {
+                boolean existsInOTA = XWOTAUtils.imageExistsInOTA("ships",ship.getImage(), OTAContentsChecker.OTA_RAW_BRANCH_URL_2E);
+                ship.setStatusOTA(existsInOTA);
+
+                // either you have it already, or can get it. If you don't have it and can't get it, then fuggedaboutit
+                boolean gonnaDL = false;
+                if(exists == false && existsInOTA) gonnaDL = true;
+
+                if(exists || gonnaDL) {
                     shipList.add(ship);
-                    if(onlyDetectOne) return shipList;
+                    if(onlyDetectOne && gonnaDL) return shipList;
                 }
             }
         }
@@ -217,11 +239,19 @@ public ArrayList<OTAShipBase> checkShipBases(boolean onlyDetectOne, List<XWS2Pil
                     shipBase.setshipImageName(ship.getImage());
                     shipBase.setShipName(XWS2Pilots.getSpecificShipFromShipXWS(ship.getXws(), allShips).getName());
                     shipBase.setShipXws(ship.getXws());
-                    shipBase.setStatus(XWOTAUtils.imageExistsInModule(shipBaseImageName));
+                    boolean exists = XWOTAUtils.imageExistsInModule(shipBaseImageName);
+                    shipBase.setStatus(exists);
+                    boolean existsInOTA = XWOTAUtils.imageExistsInOTA("ships",ship.getImage(), OTAContentsChecker.OTA_RAW_BRANCH_URL_2E);
+                    shipBase.setStatusOTA(existsInOTA);
 
-                    if(shipBase.getStatus() || (!shipBase.getStatus() && XWOTAUtils.imageExistsInOTA("ships",ship.getImage(), OTAContentsChecker.OTA_RAW_BRANCH_URL_2E))) {
+                    // either you have it already, or can get it. If you don't have it and can't get it, then fuggedaboutit
+                    //the ship base can't exist in OTA, instead, we check the isolated ship gfx a few lines above
+                    boolean gonnaDL = false;
+                    if(exists == false && existsInOTA) gonnaDL = true;
+
+                    if(exists || gonnaDL) {
                         shipList.add(shipBase);
-                        if(onlyDetectOne) return shipList;
+                        if(onlyDetectOne && gonnaDL) return shipList;
                     }
                 }
             }
