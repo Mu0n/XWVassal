@@ -378,8 +378,9 @@ public class OTAContentsChecker extends AbstractConfigurable {
             // Pilots
             // =============================================================
             ArrayList<OTAMasterPilots.OTAPilot> pilots = modIntCheck_2e.checkPilots(true, allShips);
-            logToChat("OTAContentChecker line 380 this is count of pilot cards missing " + pilots.size());
+            logToChat("OTAContentChecker line 380 this is count of pilot cards in the list " + pilots.size());
             for(OTAMasterPilots.OTAPilot pilot : pilots){
+                logToChat("OTAContentChecker line 383 pilot in the list " + pilot.getPilotXws());
                 if(!pilot.getStatus() && pilot.getStatusOTA()){
                     return 1;
                 }
