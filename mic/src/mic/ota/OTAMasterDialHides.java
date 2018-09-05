@@ -67,6 +67,7 @@ public class OTAMasterDialHides  extends ArrayList<OTAMasterDialHides.OTADialHid
         private List<String> factions = Lists.newArrayList();
 
         private boolean status;
+        private boolean statusOTA;
 
         public String getXws() {
             return xws;
@@ -88,8 +89,14 @@ public class OTAMasterDialHides  extends ArrayList<OTAMasterDialHides.OTADialHid
         {
             this.status = status;
         }
+        public boolean getStatusOTA() { return this.statusOTA; }
+
         public List<String> getFactions() {
             return this.factions;
+        }
+
+        public void setStatusOTA(boolean statusOTA) {
+            this.statusOTA = statusOTA;
         }
     }
 

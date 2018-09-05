@@ -380,7 +380,7 @@ public class OTAContentsChecker extends AbstractConfigurable {
             ArrayList<OTAMasterPilots.OTAPilot> pilots = modIntCheck_2e.checkPilots(true, allShips);
             logToChat("OTAContentChecker line 380 this is count of pilot cards missing " + pilots.size());
             for(OTAMasterPilots.OTAPilot pilot : pilots){
-                if(!pilot.getStatusOTA()){
+                if(!pilot.getStatus() && pilot.getStatusOTA()){
                     return 1;
                 }
             }
@@ -391,7 +391,7 @@ public class OTAContentsChecker extends AbstractConfigurable {
             // =============================================================
             ArrayList<OTAMasterShips.OTAShip> ships = modIntCheck_2e.checkShips(true, allShips);
             for (OTAMasterShips.OTAShip ship : ships) {
-                if (!ship.getStatusOTA()) {
+                if (!ship.getStatus() && ship.getStatusOTA()) {
                     return 1;
                 }
             }
@@ -402,7 +402,7 @@ public class OTAContentsChecker extends AbstractConfigurable {
             // =============================================================
             ArrayList<OTAMasterUpgrades.OTAUpgrade> upgrades = modIntCheck_2e.checkUpgrades(true, allUpgrades);
             for (OTAMasterUpgrades.OTAUpgrade upgrade : upgrades) {
-                if (!upgrade.getStatusOTA()) {
+                if (!upgrade.getStatus() && upgrade.getStatusOTA()) {
                     return 1;
                 }
             }
@@ -414,11 +414,11 @@ public class OTAContentsChecker extends AbstractConfigurable {
             // =============================================================
             ArrayList<OTAMasterConditions.OTACondition> conditions = modIntCheck_2e.checkConditions(true, allConditions);
             for (OTAMasterConditions.OTACondition condition : conditions) {
-                if (!condition.getStatus()) {
+                if (!condition.getStatus() && condition.getStatusOTA()) {
                     return 1;
                 }
 
-                if (!condition.getTokenStatus()) {
+                if (!condition.getTokenStatus() && condition.getTokenStatusOTA()) {
                     return 1;
                 }
             }
@@ -431,7 +431,7 @@ public class OTAContentsChecker extends AbstractConfigurable {
             OTAShipBase missingShipBase = null;
             while (shipBaseIterator.hasNext()) {
                 missingShipBase = shipBaseIterator.next();
-                if (!missingShipBase.getStatusOTA()) {
+                if (!missingShipBase.getStatus() && missingShipBase.getStatusOTA()) {
                     return 1;
                 }
             }
@@ -459,7 +459,7 @@ public class OTAContentsChecker extends AbstractConfigurable {
             // =============================================================
             ArrayList<OTAMasterPilots.OTAPilot> pilots = modIntCheck.checkPilots(true);
             for (OTAMasterPilots.OTAPilot pilot : pilots) {
-                if (!pilot.getStatus()) {
+                if (!pilot.getStatus() && pilot.getStatusOTA()) {
                     return 1;
                 }
             }
@@ -469,7 +469,7 @@ public class OTAContentsChecker extends AbstractConfigurable {
             // =============================================================
             ArrayList<OTAMasterActions.OTAAction> actions = modIntCheck.checkActions(true);
             for (OTAMasterActions.OTAAction action : actions) {
-                if (!action.getStatus()) {
+                if (!action.getStatus() && action.getStatusOTA()) {
                     return 1;
                 }
             }
@@ -481,7 +481,7 @@ public class OTAContentsChecker extends AbstractConfigurable {
             // =============================================================
             ArrayList<OTAMasterShips.OTAShip> ships = modIntCheck.checkShips(true);
             for (OTAMasterShips.OTAShip ship : ships) {
-                if (!ship.getStatus()) {
+                if (!ship.getStatus() && ship.getStatusOTA()) {
                     return 1;
                 }
             }
@@ -492,7 +492,7 @@ public class OTAContentsChecker extends AbstractConfigurable {
             // =============================================================
             ArrayList<OTAMasterUpgrades.OTAUpgrade> upgrades = modIntCheck.checkUpgrades(true);
             for (OTAMasterUpgrades.OTAUpgrade upgrade : upgrades) {
-                if (!upgrade.getStatus()) {
+                if (!upgrade.getStatus() && upgrade.getStatusOTA()) {
                     return 1;
                 }
             }
@@ -503,11 +503,11 @@ public class OTAContentsChecker extends AbstractConfigurable {
             // =============================================================
             ArrayList<OTAMasterConditions.OTACondition> conditions = modIntCheck.checkConditions(true);
             for (OTAMasterConditions.OTACondition condition : conditions) {
-                if (!condition.getStatus()) {
+                if (!condition.getStatus() && condition.getStatusOTA()) {
                     return 1;
                 }
 
-                if (!condition.getTokenStatus()) {
+                if (!condition.getTokenStatus() && condition.getTokenStatusOTA()) {
                     return 1;
                 }
             }
@@ -518,7 +518,7 @@ public class OTAContentsChecker extends AbstractConfigurable {
             // =============================================================
             ArrayList<OTAMasterDialHides.OTADialHide> dialHides = modIntCheck.checkDialHides(true);
             for (OTAMasterDialHides.OTADialHide dialHide : dialHides) {
-                if (!dialHide.getStatus()) {
+                if (!dialHide.getStatus() && dialHide.getStatusOTA()) {
                     return 1;
                 }
             }
@@ -533,7 +533,7 @@ public class OTAContentsChecker extends AbstractConfigurable {
             OTADialMask missingDialMask = null;
             while (dialMaskIterator.hasNext()) {
                 missingDialMask = dialMaskIterator.next();
-                if (!missingDialMask.getStatus()) {
+                if (!missingDialMask.getStatus() && missingDialMask.getStatusOTA()) {
                     return 1;
                 }
             }
@@ -546,7 +546,7 @@ public class OTAContentsChecker extends AbstractConfigurable {
             OTAShipBase missingShipBase = null;
             while (shipBaseIterator.hasNext()) {
                 missingShipBase = shipBaseIterator.next();
-                if (!missingShipBase.getStatus()) {
+                if (!missingShipBase.getStatus() && missingShipBase.getStatusOTA()) {
                     return 1;
                 }
             }

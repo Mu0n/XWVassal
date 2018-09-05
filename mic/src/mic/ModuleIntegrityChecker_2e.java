@@ -87,15 +87,22 @@ public class ModuleIntegrityChecker_2e {
                 condition.setStatus(conditionExists);
                 condition.setTokenStatus(conditionTokenExists);
 
+                boolean conditionExistsInOTA = XWOTAUtils.imageExistsInOTA("conditions",condition.getImage(),OTAContentsChecker.OTA_RAW_BRANCH_URL_2E);
+                condition.setStatusOTA(conditionExistsInOTA);
+                boolean conditionTokenExistsInOTA = XWOTAUtils.imageExistsInOTA("conditions", condition.getTokenImage(), OTAContentsChecker.OTA_RAW_BRANCH_URL_2E);
+                condition.setTokenStatusOTA(conditionTokenExists);
 
-// either you have it already, or can get it. If you don't have it and can't get it, then fuggedaboutit
+                // either you have it already, or can get it. If you don't have it and can't get it, then fuggedaboutit
+                boolean gonnaDL = false;
+                if((conditionExists == false && conditionExistsInOTA) || (conditionTokenExists == false && conditionTokenExistsInOTA)) gonnaDL = true;
+
                 if(
-                        (conditionExists ||  (!conditionExists && XWOTAUtils.imageExistsInOTA("conditions",condition.getImage(),OTAContentsChecker.OTA_RAW_BRANCH_URL_2E))) ||
-                        (conditionTokenExists || (!conditionTokenExists && XWOTAUtils.imageExistsInOTA("conditions", condition.getTokenImage(), OTAContentsChecker.OTA_RAW_BRANCH_URL_2E)))
+                        (conditionExists ||  (!conditionExists && conditionExistsInOTA)) ||
+                        (conditionTokenExists || (!conditionTokenExists && conditionTokenExistsInOTA))
                 )
                 {
                                         conditionList.add(condition);
-                                        if(onlyDetectOne) return conditionList;
+                                        if(onlyDetectOne && gonnaDL) return conditionList;
                 }
             }
         }
