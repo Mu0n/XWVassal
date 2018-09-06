@@ -172,7 +172,9 @@ public class ModuleIntegrityChecker_2e {
                     //found an entry in the OTA
                     if(otaPilot.getPilotXws().equals(xwd2pilot.getXWS()))
                     {
-                        existsInOTA = true;
+
+                        existsInOTA = XWOTAUtils.imageExistsInOTA("pilots",otaPilot.getImage(), OTAContentsChecker.OTA_RAW_BRANCH_URL_2E);
+
                         otaPilot.setStatusOTA(existsInOTA); //oh well, found it, change that status to true
 
                         //exit gracefully with the first otaPilot that has existsLocally = false and existsInOTA = true;

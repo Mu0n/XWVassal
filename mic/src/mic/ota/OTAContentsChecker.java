@@ -1452,6 +1452,7 @@ public class OTAContentsChecker extends AbstractConfigurable {
         results.setDialMaskResults(modIntChecker_2e.checkDialMasks(false));
         */
 
+        //These 3 are unused so they get empty ArrayLists.
         results2e.setMissingActions(new ArrayList<OTAMasterActions.OTAAction>());
         results2e.setMissingDialHides(new ArrayList<OTAMasterDialHides.OTADialHide>());
         results2e.setMissingDialMasks(new ArrayList<OTADialMask>());
@@ -1509,7 +1510,7 @@ public class OTAContentsChecker extends AbstractConfigurable {
         while(pilotIterator.hasNext())
         {
             pilot = pilotIterator.next();
-            if(!pilot.getStatus() || downloadAll)
+            if((!pilot.getStatus() && pilot.getStatusOTA()) || downloadAll)
             {
                 missing.add(pilot);
             }
