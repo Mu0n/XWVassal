@@ -57,6 +57,14 @@ public class OTAMasterPilots extends ArrayList<OTAMasterPilots.OTAPilot> {
 
     }
 
+    public static OTAPilot getSpecificOTAPilot(String pilotXWS){
+        for(OTAPilot aPilot : loadedData.values()){
+            if(aPilot.getPilotXws().equals(pilotXWS)) return aPilot;
+        }
+        return null;
+    }
+
+
     public static class OTAPilot  {
 
 

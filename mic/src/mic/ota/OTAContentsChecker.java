@@ -1526,7 +1526,7 @@ public class OTAContentsChecker extends AbstractConfigurable {
         while(upgradeIterator.hasNext())
         {
             upgrade = upgradeIterator.next();
-            if(!upgrade.getStatus() || downloadAll)
+            if((!upgrade.getStatus() && upgrade.getStatusOTA()) || downloadAll)
             {
                 missing.add(upgrade);
             }
