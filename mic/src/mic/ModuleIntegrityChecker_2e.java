@@ -145,7 +145,56 @@ public class ModuleIntegrityChecker_2e {
     }
 
 
+    public ArrayList<OTAMasterPilots.OTAPilot> checkPilots(boolean onlyDetectOne, List<XWS2Pilots> allShips)
+    {
+        // get list of pilots from OTAMasterPilots
+        OTAMasterPilots omp = new OTAMasterPilots();
+        omp.flushData();
+        Collection<OTAMasterPilots.OTAPilot> OTAPilots = omp.getAllPilotImagesFromOTA(2);
+        ArrayList<OTAMasterPilots.OTAPilot> pilotListToReturn = new ArrayList<OTAMasterPilots.OTAPilot>();
 
+        for(XWS2Pilots xwd2ship : allShips)
+        {
+            for(XWS2Pilots.Pilot2e xwd2pilot : xwd2ship.getPilots())
+            {
+                boolean existsLocally = XWOTAUtils.imageExistsInModule(xwd2pilot.getXWS());
+                //if it exists locally, do nothing, all is good, go to the next one if you want to fast track detect1missing
+                if(existsLocally && onlyDetectOne) continue;
+
+                //detectonlyone: if it doesn't exist locally, then, check if you can get it from the OTA
+                //general check: might exist or not locally
+                boolean existsInOTA = false;
+                for(OTAMasterPilots.OTAPilot otaPilot : OTAPilots)
+                {
+                    otaPilot.setStatus(existsLocally);
+                    otaPilot.setStatusOTA(existsInOTA); //assume you won't find it
+
+                    //found an entry in the OTA
+                    if(otaPilot.getPilotXws().equals(xwd2pilot.getXWS()))
+                    {
+                        existsInOTA = true;
+                        otaPilot.setStatusOTA(existsInOTA); //oh well, found it, change that status to true
+
+                        //exit gracefully with the first otaPilot that has existsLocally = false and existsInOTA = true;
+                        if(onlyDetectOne)
+                        {
+                            Util.logToChat("modintcheck2 line 181 pilot: " + otaPilot.getPilotXws() + " local? " + existsLocally + " OTA2? " + existsInOTA);
+                            pilotListToReturn.add(otaPilot);
+                            return pilotListToReturn;
+                        }
+                        else{
+                            pilotListToReturn.add(otaPilot); //general check, add the otaPilot to the list to return, whatever its status
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        return pilotListToReturn;
+    }
+
+
+/*
 public ArrayList<OTAMasterPilots.OTAPilot> checkPilots(boolean onlyDetectOne, List<XWS2Pilots> allShips)
 {
     // get list of pilots from OTAMasterPilots
@@ -180,7 +229,7 @@ public ArrayList<OTAMasterPilots.OTAPilot> checkPilots(boolean onlyDetectOne, Li
     }
     return pilotListToReturn;
 }
-
+*/
 public ArrayList<OTAMasterShips.OTAShip> checkShips(boolean onlyDetectOne, List<XWS2Pilots> allShips)
     {
         // get list of ships from OTAMasterShips

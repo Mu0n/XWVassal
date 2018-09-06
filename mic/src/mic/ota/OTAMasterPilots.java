@@ -72,8 +72,8 @@ public class OTAMasterPilots extends ArrayList<OTAMasterPilots.OTAPilot> {
         @JsonProperty("image")
         private String image;
 
-        private boolean status;
-        private boolean statusOTA;
+        private boolean status = false;
+        private boolean statusOTA = false;
 
         public String getShipXws() {
             return shipxws;
