@@ -172,6 +172,7 @@ public ArrayList<OTAMasterPilots.OTAPilot> checkPilots(boolean onlyDetectOne, Li
             if(exists == false && existsInOTA) gonnaDL = true;
 
             if(exists || gonnaDL) {
+                Util.logToChat("modintcheck2 line 175 pilot: " + pilot.getPilotXws() + " local? " + exists + " OTA2? " + existsInOTA + " gonnaDL? " + gonnaDL);
                 pilotListToReturn.add(pilot);
                 if(onlyDetectOne && gonnaDL) return pilotListToReturn;
             }

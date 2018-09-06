@@ -381,6 +381,7 @@ public class OTAContentsChecker extends AbstractConfigurable {
             logToChat("OTAContentChecker line 380 this is count of pilot cards in the list " + pilots.size());
             for(OTAMasterPilots.OTAPilot pilot : pilots){
                 logToChat("OTAContentChecker line 383 pilot in the list " + pilot.getPilotXws());
+                logToChat("OTAContentChecker line 384 local? " + (pilot.getStatus()) + " OTA? " + (pilot.getStatusOTA()));
                 if(!pilot.getStatus() && pilot.getStatusOTA()){
                     return 1;
                 }
