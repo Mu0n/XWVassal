@@ -1542,7 +1542,7 @@ public class OTAContentsChecker extends AbstractConfigurable {
         while(conditionIterator.hasNext())
         {
             condition = conditionIterator.next();
-            if(!condition.getStatus() || !condition.getTokenStatus() || downloadAll)
+            if((!condition.getStatus() && condition.getStatusOTA()) || (!condition.getTokenStatus() && condition.getTokenStatusOTA()) || downloadAll)
             {
                 missing.add(condition);
             }
@@ -1559,7 +1559,7 @@ public class OTAContentsChecker extends AbstractConfigurable {
         while(shipIterator.hasNext())
         {
             ship = shipIterator.next();
-            if(!ship.getStatus() || downloadAll)
+            if((!ship.getStatus() && ship.getStatusOTA()) || downloadAll)
             {
                 missing.add(ship);
             }
@@ -1622,7 +1622,7 @@ public class OTAContentsChecker extends AbstractConfigurable {
         while(shipBaseIterator.hasNext())
         {
             OTAShipBase shipBase = shipBaseIterator.next();
-            if(!shipBase.getStatus() || downloadAll)
+            if((!shipBase.getStatus() && shipBase.getStatusOTA()) || downloadAll)
             {
                 missing.add(shipBase);
 

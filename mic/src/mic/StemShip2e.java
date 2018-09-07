@@ -545,15 +545,18 @@ public class StemShip2e extends Decorator implements EditablePiece {
             sb.append("_");
             sb.append(xwsShipName);
 
+
             boolean dualArt = false;
             String dualBase = null;
             // now check for alt art
             String shipImageSuffix = "";
             OTAMasterShips data = Util.loadRemoteJson(OTAContentsChecker.OTA_SHIPS_JSON_URL_2E, OTAMasterShips.class);
+            /*
             Util.logToChat("stempship2e line 553 data is " + (data==null?"null":"not null"));
             Util.logToChat("stempship2e line 554 getLoadedData is " + (data.getLoadedData()==null?"null":"not null"));
             Util.logToChat("stempship2e line 554 entrySet is " + (data.getLoadedData().entrySet()==null?"null":"not null"));
-            for(Map.Entry<String, OTAMasterShips.OTAShip> entry : data.getLoadedData().entrySet()){
+            */
+            for(Map.Entry<String, OTAMasterShips.OTAShip> entry : data.getLoadedData(2).entrySet()){
                 if(entry.getValue().getXws().equals(xwsShipName) && entry.getValue().getIdentifier().equals(xwsPilot))
                 {
                     shipImageSuffix = "_" + entry.getValue().getIdentifier();
