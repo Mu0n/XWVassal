@@ -230,6 +230,7 @@ public class StemShip2e extends Decorator implements EditablePiece {
             piece = addFiringArcs(piece);
 
             if(this.needsBombCapability) {
+                Util.logToChat("stemship2e line 233 needs bomb? " + this.needsBombCapability);
                 piece = addBombCapability(piece,size);
             }
 
@@ -414,10 +415,12 @@ public class StemShip2e extends Decorator implements EditablePiece {
 
         private GamePiece addBombCapability(GamePiece piece, String size)
         {
-            String normalSmallBombSpanwerType = "placemark;Place Bomb Spawner;66,130;VASSAL.build.module.PieceWindow/VASSAL.build.widget.TabWidget/VASSAL.build.widget.TabWidget:Chits/VASSAL.build.widget.ListWidget:Bombs/VASSAL.build.widget.PieceSlot:Bomb Spawner;null;0;-338;true;;Place Bomb Spawner;12376;0;false";
-            String normalLargeBombSpawnerType = "placemark;Place Bomb Spawner;66,130;VASSAL.build.module.PieceWindow/VASSAL.build.widget.TabWidget/VASSAL.build.widget.TabWidget:Chits/VASSAL.build.widget.ListWidget:Bombs/VASSAL.build.widget.PieceSlot:Bomb Spawner;null;0;-396;true;;Place Bomb Spawner;12407;0;false";
-            String frontalSmallBombSpawnerType = "placemark;Place Frontal Bomb Spawner;66,195;VASSAL.build.module.PieceWindow/VASSAL.build.widget.TabWidget/VASSAL.build.widget.TabWidget:Chits/VASSAL.build.widget.ListWidget:Bombs/VASSAL.build.widget.PieceSlot:Bomb Spawner;null;0;339;true;63743,0,rotate180;Place Frontal Bomb Spawner;12378;0;false";
-            String frontalLargeBombSpawnerType = "placemark;Place Frontal Bomb Spawner;66,195;VASSAL.build.module.PieceWindow/VASSAL.build.widget.TabWidget/VASSAL.build.widget.TabWidget:Chits/VASSAL.build.widget.ListWidget:Bombs/VASSAL.build.widget.PieceSlot:Bomb Spawner;null;0;394;true;63743,0,rotate180;Place Frontal Bomb Spawner;12408;0;false";
+            String normalSmallBombSpanwerType = "placemark;;;VASSAL.build.module.PieceWindow\\/VASSAL.build.widget.TabWidget\\/VASSAL.build.widget.TabWidget:Chits\\/VASSAL.build.widget.ListWidget:Bombs\\/VASSAL.build.widget.PieceSlot:Bomb Spawner;null;0;-338;true;;Place Bomb Spawner;12875;0;false\\\\\\\\\\\\\\\\\\";
+            String normalMediumBombSpawnerType = "placemark;;;VASSAL.build.module.PieceWindow\\/VASSAL.build.widget.TabWidget\\/VASSAL.build.widget.TabWidget:Chits\\/VASSAL.build.widget.ListWidget:Bombs\\/VASSAL.build.widget.PieceSlot:Bomb Spawner;null;0;-338;true;;Place Bomb Spawner;12885;0;false\\\\\\\\\\\\\\\\\\";
+            String normalLargeBombSpawnerType = "placemark;;;VASSAL.build.module.PieceWindow\\/VASSAL.build.widget.TabWidget\\/VASSAL.build.widget.TabWidget:Chits\\/VASSAL.build.widget.ListWidget:Bombs\\/VASSAL.build.widget.PieceSlot:Bomb Spawner;null;0;-396;true;;Place Bomb Spawner;12417;0;false\\\\\\\\\\\\\\\\\\\\\\";
+            String frontalSmallBombSpawnerType = "placemark;;;VASSAL.build.module.PieceWindow\\/VASSAL.build.widget.TabWidget\\/VASSAL.build.widget.TabWidget:Chits\\/VASSAL.build.widget.ListWidget:Bombs\\/VASSAL.build.widget.PieceSlot:Bomb Spawner;null;0;339;true;63743,0,rotate180;Place Frontal Bomb Spawner;12874;0;false\\\\\\\\\\\\\\\\";
+            String frontalMediumBombSpawnerType = "placemark;;;VASSAL.build.module.PieceWindow\\/VASSAL.build.widget.TabWidget\\/VASSAL.build.widget.TabWidget:Chits\\/VASSAL.build.widget.ListWidget:Bombs\\/VASSAL.build.widget.PieceSlot:Bomb Spawner;null;0;339;true;63743,0,rotate180;Place Frontal Bomb Spawner;12884;0;false\\\\\\\\\\\\\\\\";
+            String frontalLargeBombSpawnerType = "placemark;;;VASSAL.build.module.PieceWindow\\/VASSAL.build.widget.TabWidget\\/VASSAL.build.widget.TabWidget:Chits\\/VASSAL.build.widget.ListWidget:Bombs\\/VASSAL.build.widget.PieceSlot:Bomb Spawner;null;0;339;true;63743,0,rotate180;Place Frontal Bomb Spawner;12887;0;false\\\\\\\\\\\\\\\\";
 
             // get the Embellishments
 
@@ -425,12 +428,19 @@ public class StemShip2e extends Decorator implements EditablePiece {
             PlaceMarker frontalPlaceMarker = (PlaceMarker)Util.getPlaceMarkerTrait(piece,"Place Marker - Place Frontal Bomb Spawner");
 
             // inject the type into the
-            if(size.equals("small"))
+            if(Canonicalizer.getCleanedName(size).equals("small"))
             {
                 normalPlaceMarker.mySetType(normalSmallBombSpanwerType);
                 frontalPlaceMarker.mySetType(frontalSmallBombSpawnerType);
 
-            }else if(size.equals("large"))
+            }
+            else if(Canonicalizer.getCleanedName(size).equals("medium"))
+            {
+                normalPlaceMarker.mySetType(normalMediumBombSpawnerType);
+                frontalPlaceMarker.mySetType(frontalMediumBombSpawnerType);
+
+            }
+            else if(Canonicalizer.getCleanedName(size).equals("large"))
             {
                 normalPlaceMarker.mySetType(normalLargeBombSpawnerType);
                 frontalPlaceMarker.mySetType(frontalLargeBombSpawnerType);
