@@ -229,10 +229,6 @@ public class StemShip2e extends Decorator implements EditablePiece {
             // add the firing arcs needed
             piece = addFiringArcs(piece);
 
-            if(this.needsBombCapability) {
-                Util.logToChat("stemship2e line 233 needs bomb? " + this.needsBombCapability);
-                piece = addBombCapability(piece,size);
-            }
 
         }
 
@@ -412,7 +408,7 @@ public class StemShip2e extends Decorator implements EditablePiece {
 
             return newGamePiece;
         }
-
+/*
         private GamePiece addBombCapability(GamePiece piece, String size)
         {
             String normalSmallBombSpanwerType = "placemark;;;VASSAL.build.module.PieceWindow\\/VASSAL.build.widget.TabWidget\\/VASSAL.build.widget.TabWidget:Chits\\/VASSAL.build.widget.ListWidget:Bombs\\/VASSAL.build.widget.PieceSlot:Bomb Spawner;null;0;-338;true;;Place Bomb Spawner;12875;0;false\\\\\\\\\\\\\\\\\\";
@@ -447,8 +443,9 @@ public class StemShip2e extends Decorator implements EditablePiece {
             }
 
             return piece;
-        }
 
+        }
+*/
 
         private GamePiece buildShipBaseLayer(GamePiece piece)
         {
