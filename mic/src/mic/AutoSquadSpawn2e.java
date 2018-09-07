@@ -506,13 +506,23 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
                 continue;
             }
         }
+
+
+
         for (VassalXWSPilotPieces2e ship : pieces.getShips()) {
+
+            //figure out how many extra force charges a ship must have
+            int extraForceFromUpgrade = 0;
+            for(VassalXWSPilotPieces2e.Upgrade up : ship.getUpgrades()){
+                extraForceFromUpgrade += up.getUpgradeData().sides.get(0).getForce().getValue();
+            }
+
 
 
             // ======================================================
             // Generate the ship base pieces
             // ======================================================
-            GamePiece shipPiece = GamePieceGenerator2e.generateShip(ship);
+            GamePiece shipPiece = GamePieceGenerator2e.generateShip(ship, extraForceFromUpgrade);
             shipBases.add(shipPiece);
 
             // ======================================================

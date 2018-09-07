@@ -32,7 +32,7 @@ public class GamePieceGenerator2e
     private static final String SHIP_BASE_SIZE_LARGE = "Large";
 
     // generate a ship GamePiece
-    public static GamePiece generateShip(VassalXWSPilotPieces2e ship)
+    public static GamePiece generateShip(VassalXWSPilotPieces2e ship, int extraForceFromUpgrades)
     {
                 // generate the piece from the stem ships
         GamePiece newShip = null;
@@ -72,17 +72,17 @@ public class GamePieceGenerator2e
         myShipGen.execute();
 
         // add the stats to the piece
-        newShip = setShipProperties(newShip,ship);
+        newShip = setShipProperties(newShip,ship, extraForceFromUpgrades);
         return newShip;
     }
 
-    public static GamePiece setShipProperties(GamePiece piece,VassalXWSPilotPieces2e ship ) {
+    public static GamePiece setShipProperties(GamePiece piece,VassalXWSPilotPieces2e ship, int extraForceFromUpgrades) {
         //GamePiece piece = Util.newPiece(this.ship);
         int initiativeModifier = 0;
         int chargeModifier = 0;
         int shieldsModifier = 0;
         int hullModifier = 0;
-        int forceModifier = 0;
+        int forceModifier = extraForceFromUpgrades;
 /*
         for (VassalXWSPilotPieces2e.Upgrade upgrade : upgrades) {
 
