@@ -590,7 +590,6 @@ public class StemShip2e extends Decorator implements EditablePiece {
             }
             sb.append(".png");
 
-            Util.logToChat("stempship2e lin 580 ship base gfx attempt to find " + sb);
             String shipArt = new String();
             shipArt = sb.toString();
         //    mic.Util.logToChat(shipArt);
