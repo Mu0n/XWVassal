@@ -469,15 +469,16 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
         List<GamePiece> shipBases = Lists.newArrayList();
 
         //reference constant positions or displacements
-        Point pilotStartPosition = new Point(150, 150);
+        Point pilotStartPosition = new Point(150, 659);
         Point dialstartPosition = new Point(300, 100);
         Point tlStartPosition = new Point(300, 290);
-        Point configStatPosition = new Point(150, 200);
+        Point configStatPosition = new Point(200, 220);
         Point tokensStartPosition = new Point(300, 220);
-        int optDisplacePerConfig = 200;
+        int optDisplacePerConfig = 250;
         int upgradeYDisplace = 10;
+        int upgradeComeBackLeft = 170;
 
-        int lastUpgradeFudge = 30;
+        int lastUpgradeFudge = 50;
         int shipBaseY = 110;
 
         //track keepers
@@ -488,8 +489,7 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
 
         //receptors of relative coordinates; refreshed at any time a cluster of those is needed
         List<Point> chargeLocations = Lists.newArrayList(); // list of coordinates to place charge tokens above their pilot or upgrade; if both charge and force are present, gotta play nice together
-        List<Point> configurationLocations = Lists.newArrayList();
-        List<Point> nonConfigLocations = Lists.newArrayList();
+        List<Point> forceChargeLocations = Lists.newArrayList(); // ditto for force charges
 
         // get the charge and force charge token slots
         PieceSlot chargePieceSlot = null;
@@ -549,12 +549,21 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
 
             int pilotWidth = (int) pilotPiece.boundingBox().getWidth();
             int pilotHeight = (int) pilotPiece.boundingBox().getHeight();
-            totalPilotHeight += pilotHeight;
-            spawnPiece(pilotPiece, new Point(
-                            (int) pilotStartPosition.getX()+howManyConfigUpgradeCards*optDisplacePerConfig,
-                            (int) pilotStartPosition.getY() + totalPilotHeight),
-                    playerMap);
 
+            int pilotPosX = (int) pilotStartPosition.getX()+howManyConfigUpgradeCards*optDisplacePerConfig;
+            int pilotPosY = (int) pilotStartPosition.getY() + totalPilotHeight;
+            spawnPiece(pilotPiece, new Point(pilotPosX,pilotPosY),playerMap);
+
+            totalPilotHeight += pilotHeight + 50;
+
+            if (ship.getPilotData().getForceData().getValue() > 0) {
+                int force = ship.getPilotData().getForceData().getValue();
+                for(int k = 0; k < force + extraForceFromUpgrade; k++) {
+                    GamePiece forcePiece = newPiece(forceChargePieceSlot);
+                    spawnPiece(forcePiece, new Point(pilotPosX + - (int)(pilotPiece.boundingBox().width/2.0) + (int)(forcePiece.boundingBox().width/2.0) + k * forcePiece.boundingBox().width,
+                            pilotPosY - (int) pilotPiece.boundingBox().height/2), playerMap);
+                }
+            }
 
             // ======================================================
             // Generate the Dial
@@ -587,30 +596,43 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
 
             VassalXWSPilotPieces2e.Upgrade upgrade = new VassalXWSPilotPieces2e.Upgrade("",null);
             if(ship.getUpgrades().size()!=0) {
-                //find configuration card locations
-                for(int i = 0; i < howManyConfigUpgradeCards; i++) {
-
-                    try {
-                        upgrade = ship.getUpgrades().get(i);
-                    } catch (Exception e) {
-                    }
-
-                    if (upgrade == null) break;
-                    GamePiece upgradePiece = GamePieceGenerator2e.generateUpgrade(upgrade);
+                //do configuration cards
 
 
                     //find the config cards among the upgrade cards
+                    int configsDoneSoFar = 0;
                     for (int j = 0; j < howManyConfigUpgradeCards + countHowManyNonConfigurationUpgrades; j++) {
+
+                        try {
+                            upgrade = ship.getUpgrades().get(j);
+                        } catch (Exception e) {
+                        }
+
+                        if (upgrade == null) break;
+                        GamePiece upgradePiece = GamePieceGenerator2e.generateUpgrade(upgrade);
+
                         if (upgrade.getUpgradeData().sides.get(0).getType().equals("Configuration")) {
-                            int placeUpgradeX = configStatPosition.x + j * optDisplacePerConfig;
-                            int placeUpgradeY = configStatPosition.y + j*upgradeYDisplace + totalPilotHeight;
+
+                            int placeUpgradeX = configStatPosition.x + configsDoneSoFar * optDisplacePerConfig;
+                            int placeUpgradeY = configStatPosition.y + configsDoneSoFar * upgradeYDisplace + totalPilotHeight;
                             spawnPiece(upgradePiece, new Point(placeUpgradeX, placeUpgradeY), playerMap);
+                            XWS2Upgrades.Charge testIfHasCharge = upgrade.getUpgradeData().getSides().get(0).getCharges();
+                            if (testIfHasCharge != null)
+                            {
+                                for(int chargeIncr = 0; chargeIncr < upgrade.getUpgradeData().getSides().get(0).getCharges().getValue(); chargeIncr++){
+                                    chargeLocations.add(new Point(
+                                            placeUpgradeX + chargeIncr * 60,
+                                            placeUpgradeY - upgradePiece.getShape().getBounds().height/2 - 10
+                                    ));
+                                }
+                            }
+                            configsDoneSoFar++;
                         }
                     }
-                }
+
 
                 //do non-configuration cards
-                for (int i = countHowManyNonConfigurationUpgrades; i > -1; i--) {
+                for (int i = ship.getUpgrades().size()-1; i > -1; i--) {
                     //for (VassalXWSPilotPieces2e.Upgrade upgrade : ship.getUpgrades()) {
 
                     try {
@@ -619,23 +641,26 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
                     }
 
                     if (upgrade == null) break;
+                    if(upgrade.getUpgradeData().sides.get(0).getType().equals("Configuration")) continue;
                     GamePiece upgradePiece = GamePieceGenerator2e.generateUpgrade(upgrade);
 
-                    int placeUpgradeX = (int) pilotStartPosition.getX() + pilotWidth + totalUpgradeWidth + lastUpgradeFudge;
-                    int placeUpgradeY = (int) pilotStartPosition.getY() + totalPilotHeight - i*upgradeYDisplace;
+                    totalUpgradeWidth = i * (upgradePiece.boundingBox().width - upgradeComeBackLeft);
+
+                    int placeUpgradeX = (int) pilotStartPosition.getX() + pilotWidth + totalUpgradeWidth - upgradeComeBackLeft + lastUpgradeFudge;
+                    int placeUpgradeY = (int) configStatPosition.getY() + totalPilotHeight + i*upgradeYDisplace;
                     spawnPiece(upgradePiece, new Point(placeUpgradeX, placeUpgradeY), playerMap);
                     XWS2Upgrades.Charge testIfHasCharge = upgrade.getUpgradeData().getSides().get(0).getCharges();
                     if (testIfHasCharge != null)
                     {
                         for(int chargeIncr = 0; chargeIncr < upgrade.getUpgradeData().getSides().get(0).getCharges().getValue(); chargeIncr++){
                             chargeLocations.add(new Point(
-                                    placeUpgradeX + (i+1)*upgradePiece.getShape().getBounds().width,
-                                    placeUpgradeY - upgradePiece.getShape().getBounds().height/2
+                                    placeUpgradeX + chargeIncr * 60,
+                                    placeUpgradeY - upgradePiece.getShape().getBounds().height/2 - 10
                             ));
                         }
                     }
 
-                    totalUpgradeWidth += upgradePiece.boundingBox().width - 251;
+                    totalUpgradeWidth -= (upgradePiece.boundingBox().width - upgradeComeBackLeft);
                 }
             }
 
@@ -676,27 +701,22 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
             // Add all of the appropriate tokens
             // ======================================================
 
+            //do charges
+            for(Point p: chargeLocations){
+                GamePiece chargePiece = newPiece(chargePieceSlot);
+                spawnPiece(chargePiece, p, playerMap);
+            }
+
             for (GamePiece token : ship.getTokensForDisplay()) {
 
                 PieceSlot pieceSlot = new PieceSlot(token);
 
-                if ("Target Lock".equals(pieceSlot.getConfigureName())) {//if a target lock token, place elsewhere
+                if ("Lock".equals(pieceSlot.getConfigureName())) {//if a target lock token, place elsewhere
                     spawnPiece(token, new Point(
                                     (int) tokensStartPosition.getX() + totalTLWidth,
                                     (int) tlStartPosition.getY()),
                             playerMap);
                     totalTLWidth += token.boundingBox().getWidth();
-                }else if("Charge2e".equals(pieceSlot.getConfigureName()))
-                {
-                    chargePieceSlot = pieceSlot;
-                    for(Point p: chargeLocations){
-                        GamePiece chargePiece = newPiece(chargePieceSlot);
-                        spawnPiece(chargePiece, p, playerMap);
-
-                    }
-                }else if(("Force2e").equals(pieceSlot.getConfigureName()))
-                {
-                    chargePieceSlot = pieceSlot;
                 }else {
 
                     spawnPiece(token, new Point(

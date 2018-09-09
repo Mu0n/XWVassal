@@ -124,7 +124,7 @@ public class StemUpgrade2e extends Decorator implements EditablePiece {
             // Check to see if the card is dual sided
             if(isDualSided)
             {
-                backImage = "Stem2e_Upgrade_WIP.jpg";
+                backImage = "U2e_" + upgradeXWS + "_back.jpg";
             }else {
                 // get the slot specific back image
                 backImage = "Stem2e_Upgrade_WIP.jpg";

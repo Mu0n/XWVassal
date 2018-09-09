@@ -16,7 +16,7 @@ public enum Tokens2e {
             none
     ),
     lock(
-            Lists.newArrayList("Target Lock"),
+            Lists.newArrayList("Lock"),
             Lists.newArrayList("targetingcomputer", "firecontrolsystem"),
             none
     ),
@@ -68,7 +68,7 @@ public enum Tokens2e {
     ),
     idtoken,
     disarm2e(
-            Lists.newArrayList("SLAM"),
+            Lists.newArrayList("SLAM", "Reload"),
             Lists.newArrayList("burnoutslam", "arccaster"),
             Lists.newArrayList("ewing/corranhorn", "m3ainterceptor/quinnjast")
     ),
