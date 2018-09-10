@@ -295,7 +295,6 @@ public class OTAContentsChecker extends AbstractConfigurable {
         if (missing1stEdContent > 0) {
             activateBlinky(Color.RED);
         }
-        logToChat("OTACheck line 298 missing 2nd ed " + missing2ndEdContent);
         if (missing2ndEdContent > 0) {
             activateBlinky(Color.BLACK);
         }
@@ -378,10 +377,7 @@ public class OTAContentsChecker extends AbstractConfigurable {
             // Pilots
             // =============================================================
             ArrayList<OTAMasterPilots.OTAPilot> pilots = modIntCheck_2e.checkPilots(true, allShips);
-            logToChat("OTAContentChecker line 380 this is count of pilot cards in the list " + pilots.size());
             for(OTAMasterPilots.OTAPilot pilot : pilots){
-                logToChat("OTAContentChecker line 383 pilot in the list " + pilot.getPilotXws());
-                logToChat("OTAContentChecker line 384 local? " + (pilot.getStatus()) + " OTA? " + (pilot.getStatusOTA()));
                 if(!pilot.getStatus() && pilot.getStatusOTA()){
                     return 1;
                 }

@@ -22,8 +22,8 @@ public enum Tokens2e {
     ),
     stress2e(
             Lists.newArrayList("Focus"),
-            Lists.newArrayList("zuckuss", "r3a2","elusiveness","overclockedr4","pushthelimit"),
-            Lists.newArrayList("awing/tychocelchu","tiefofighter/zetaleader")
+            Lists.newArrayList("zuckuss", "r3a2","elusiveness","overclockedr4"),
+            Lists.newArrayList("tychocelchu","zetaleader")
     ),
     focus2e(
             Lists.newArrayList("Focus"),
@@ -38,7 +38,7 @@ public enum Tokens2e {
     evade2e(
             Lists.newArrayList("Evade"),
             Lists.newArrayList("r3astromech", "janors", "millenniumfalcon","coolhand"),
-            Lists.newArrayList("t70xwing/redace")
+            Lists.newArrayList("redace")
     ),
     ion2e(
             none,
@@ -51,16 +51,6 @@ public enum Tokens2e {
             none,
             none
     ),
-    charge2e(
-            none,
-            none,
-            Lists.newArrayList("hwk290/roarkgarnet", "tiefofighter/epsilonace")
-    ),
-    force(
-            none,
-            Lists.newArrayList("jabbathehutt"),
-            none
-            ),
     cloak(
             Lists.newArrayList("Cloak"),
             Lists.newArrayList("cloakingdevice"),
@@ -70,12 +60,12 @@ public enum Tokens2e {
     disarm2e(
             Lists.newArrayList("SLAM", "Reload"),
             Lists.newArrayList("burnoutslam", "arccaster"),
-            Lists.newArrayList("ewing/corranhorn", "m3ainterceptor/quinnjast")
+            Lists.newArrayList("corranhorn", "quinnjast")
     ),
     tractor2e(
             none,
             Lists.newArrayList("tractorbeam", "spacetugtractorarray", "shadowcaster"),
-            Lists.newArrayList("lancerclasspursuitcraft/ketsuonyo", "quadjumper/unkarplutt")
+            Lists.newArrayList("lancerclasspursuitcraft/ketsuonyo", "unkarplutt")
     ),
     hull,
     hugeshipforestats,
