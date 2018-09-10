@@ -294,6 +294,38 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
         builderPanel.add(cisCheck);
         builderPanel.add(builderButton);
 
+        final JTextArea entryArea = new JTextArea("Enter a valid XWS squad here.");
+        entryArea.setPreferredSize(new Dimension(850,150));
+        entryArea.setMaximumSize(new Dimension(850,150));
+        entryArea.setLineWrap(true);
+        entryArea.setAutoscrolls(true);
+
+        JLabel method1Label = new JLabel("Method 1 for spawning a list - paste your XWS formatted squad prepared in a community squad builder, in this box:");
+        JButton xwsSpawnButton = new JButton("Spawn Squad from XWS");
+        xwsSpawnButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                XWSList2e xwsList = loadListFromRawJson(entryArea.getText());
+                try{
+                    validateList(xwsList, allShips);
+                } catch (Exception exc) {
+                    logToChat("Unable to load raw JSON list '%s': %s", entryArea.getText(), exc.toString());
+                    return;
+                }
+                if (xwsList == null || xwsList.getPilots() == null || xwsList.getPilots().size() == 0) {
+                    logToChat("raw JSON list has no detected pilots in it.");
+                    return;
+                }
+                DealWithXWSList(xwsList, playerIndex, allShips, allUpgrades, allConditions);
+                frame.dispose();
+            }
+        });
+        JLabel method2Label = new JLabel("Method 2 for spawning a list - use the internal squad builder (allows illegal, cross-faction lists if needed)");
+
+
+        rootPanel.add(method1Label);
+        rootPanel.add(entryArea);
+        rootPanel.add(xwsSpawnButton);
+        rootPanel.add(method2Label);
         rootPanel.add(builderPanel);
 
         frame.add(rootPanel);
@@ -416,6 +448,7 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
                     return;
                 }
                 DealWithXWSList(xwsList, playerIndex, allShips, allUpgrades, allConditions);
+                frame.dispose();
             }
         });
 
