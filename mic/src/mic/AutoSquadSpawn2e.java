@@ -18,6 +18,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
 
@@ -194,19 +195,10 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
         final JFrame frame = new JFrame();
         final JPanel rootPanel = new JPanel();
         rootPanel.setLayout(new BoxLayout(rootPanel, BoxLayout.Y_AXIS));
-        JPanel sourceInfoPanel = new JPanel();
-        sourceInfoPanel.setLayout(new BoxLayout(sourceInfoPanel, BoxLayout.Y_AXIS));
-        sourceInfoPanel.setAlignmentX(JPanel.RIGHT_ALIGNMENT);
-        JLabel sourceExplanationLabel = new JLabel("This is a rough preliminary version of the 2nd edition squad autospawn window.");
-
-        sourceInfoPanel.add(sourceExplanationLabel);
-
-        rootPanel.add(sourceInfoPanel);
-        rootPanel.add(Box.createRigidArea(new Dimension(0,8)));
-        rootPanel.add(new JSeparator());
-        rootPanel.add(Box.createRigidArea(new Dimension(0,8)));
+        rootPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
 
         final JCheckBox empireCheck = new JCheckBox("Empire");
+        empireCheck.setAlignmentX(Component.LEFT_ALIGNMENT);
         empireCheck.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -216,6 +208,7 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
         });
 
         final JCheckBox allianceCheck = new JCheckBox("Alliance");
+        allianceCheck.setAlignmentX(Component.LEFT_ALIGNMENT);
         allianceCheck.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -225,6 +218,7 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
         });
 
         final JCheckBox scumCheck = new JCheckBox("Scum and Villainy");
+        scumCheck.setAlignmentX(Component.LEFT_ALIGNMENT);
         scumCheck.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -234,6 +228,7 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
         });
 
         final JCheckBox firstorderCheck = new JCheckBox("First Order");
+        firstorderCheck.setAlignmentX(Component.LEFT_ALIGNMENT);
         firstorderCheck.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -243,6 +238,7 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
         });
 
         final JCheckBox resistanceCheck = new JCheckBox("Resistance");
+        resistanceCheck.setAlignmentX(Component.LEFT_ALIGNMENT);
         resistanceCheck.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -251,6 +247,7 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
             }
         });
         final JCheckBox republicCheck = new JCheckBox("Galactic Republic");
+        republicCheck.setAlignmentX(Component.LEFT_ALIGNMENT);
         republicCheck.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -260,6 +257,7 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
         });
 
         final JCheckBox cisCheck = new JCheckBox("CIS");
+        cisCheck.setAlignmentX(Component.LEFT_ALIGNMENT);
         cisCheck.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -271,6 +269,7 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
 
 
         JButton builderButton = new JButton("Internal Squad Builder");
+        builderButton.setAlignmentX(Component.LEFT_ALIGNMENT);
         builderButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -284,6 +283,7 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
         });
 
         JPanel builderPanel = new JPanel();
+        builderPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
         builderPanel.setLayout(new BoxLayout(builderPanel,BoxLayout.X_AXIS));
         builderPanel.add(empireCheck);
         builderPanel.add(allianceCheck);
@@ -295,13 +295,27 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
         builderPanel.add(builderButton);
 
         final JTextArea entryArea = new JTextArea("Enter a valid XWS squad here.");
+        entryArea.setAlignmentX(Component.LEFT_ALIGNMENT);
+
         entryArea.setPreferredSize(new Dimension(850,150));
         entryArea.setMaximumSize(new Dimension(850,150));
         entryArea.setLineWrap(true);
         entryArea.setAutoscrolls(true);
 
-        JLabel method1Label = new JLabel("Method 1 for spawning a list - paste your XWS formatted squad prepared in a community squad builder, in this box:");
+        JLabel method1Label = new JLabel("Method 1 for spawning a list - click on a suggested web builder, export to XWS and paste it here:");
+        method1Label.setFont(new Font("Dialog", Font.PLAIN, 18));
+        JButton clearTextAreaButton = new JButton("Clear");
+        clearTextAreaButton.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        clearTextAreaButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                entryArea.setText("");
+                entryArea.invalidate();
+            }
+        });
         JButton xwsSpawnButton = new JButton("Spawn Squad from XWS");
+        xwsSpawnButton.setAlignmentX(Component.LEFT_ALIGNMENT);
+
         xwsSpawnButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 XWSList2e xwsList = loadListFromRawJson(entryArea.getText());
@@ -320,13 +334,62 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
             }
         });
         JLabel method2Label = new JLabel("Method 2 for spawning a list - use the internal squad builder (allows illegal, cross-faction lists if needed)");
+        method2Label.setFont(new Font("Dialog", Font.PLAIN, 18));
+        method2Label.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        JPanel method1ButtonsPanel = new JPanel();
+        method1ButtonsPanel.setLayout(new BoxLayout(method1ButtonsPanel, BoxLayout.X_AXIS));
+        method1ButtonsPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        method1ButtonsPanel.add(clearTextAreaButton);
+        method1ButtonsPanel.add(xwsSpawnButton);
 
 
-        rootPanel.add(method1Label);
-        rootPanel.add(entryArea);
-        rootPanel.add(xwsSpawnButton);
-        rootPanel.add(method2Label);
-        rootPanel.add(builderPanel);
+        JPanel method1LinksPanel = new JPanel();
+        method1LinksPanel.setLayout(new BoxLayout(method1LinksPanel, BoxLayout.Y_AXIS));
+        method1LinksPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        Suggested2eBuilders suggestions = new Suggested2eBuilders();
+        suggestions.loadData();
+        for(Suggested2eBuilders.Builder builder : suggestions.getSuggestions()){
+            try{
+                JLabel linkDescLabel = new JLabel("       " + builder.getDescription());
+                linkDescLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+                SwingLink newLink = new SwingLink(builder.getName(),builder.getURL());
+                newLink.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+                method1LinksPanel.add(newLink);
+                method1LinksPanel.add(linkDescLabel);
+
+            }catch (Exception e){
+                logToChat("spawn2e line 362 can't make the swing link");
+            }
+        }
+
+
+        JPanel method1Panel = new JPanel();
+        method1Panel.setLayout(new BoxLayout(method1Panel, BoxLayout.Y_AXIS));
+        method1Panel.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        method1Panel.add(method1Label);
+        method1Panel.add(method1LinksPanel);
+        method1Panel.add(entryArea);
+        method1Panel.add(method1ButtonsPanel);
+
+
+        JPanel method2Panel = new JPanel();
+        method2Panel.setLayout(new BoxLayout(method2Panel, BoxLayout.Y_AXIS));
+        method2Panel.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        method2Panel.add(method2Label);
+        method2Panel.add(builderPanel);
+
+        rootPanel.add(method1Panel);
+        rootPanel.add(Box.createRigidArea(new Dimension(0,8)));
+        rootPanel.add(new JSeparator());
+        rootPanel.add(Box.createRigidArea(new Dimension(0,8)));
+        rootPanel.add(method2Panel);
 
         frame.add(rootPanel);
         frame.setSize(900,500);
