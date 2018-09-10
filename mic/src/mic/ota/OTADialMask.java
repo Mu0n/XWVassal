@@ -7,6 +7,7 @@ public class OTADialMask {
     private String dialHideImageName;
     private String dialMaskImageName;
     private boolean status;
+    private boolean statusOTA;
 
     public OTADialMask()
     {
@@ -61,5 +62,13 @@ public class OTADialMask {
     public boolean getStatus()
     {
         return this.status;
+    }
+    public boolean getStatusOTA()
+    {
+        return this.statusOTA;
+    }
+
+    public void setStatusOTA(boolean statusOTA) {
+        this.statusOTA = statusOTA;
     }
 }

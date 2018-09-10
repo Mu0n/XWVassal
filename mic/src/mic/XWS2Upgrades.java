@@ -21,11 +21,11 @@ import java.util.List;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class XWS2Upgrades {
 
-    //private static String remoteUrl = "https://raw.githubusercontent.com/guidokessels/xwing-data2/master/data/manifest.json";
-    public static String remoteUrl = "https://raw.githubusercontent.com/Mu0nHub/xwing-data2/master/data/manifest.json";
+    public static String remoteUrl = "https://raw.githubusercontent.com/guidokessels/xwing-data2/master/data/manifest.json";
+    //public static String remoteUrl = "https://raw.githubusercontent.com/Mu0nHub/xwing-data2/master/data/manifest.json";
     //private static String guidoRootUrl = "https://raw.githubusercontent.com/guidokessels/xwing-data2/master/";
-   // private static String guidoRootUrl = "https://raw.githubusercontent.com/guidokessels/xwing-data2/master/";
-    public static String guidoRootUrl = "https://raw.githubusercontent.com/Mu0nHub/xwing-data2/master/";
+    public static String guidoRootUrl = "https://raw.githubusercontent.com/guidokessels/xwing-data2/master/";
+    //public static String guidoRootUrl = "https://raw.githubusercontent.com/Mu0nHub/xwing-data2/master/";
 
     @JsonUnwrapped
     private List<OneUpgrade> upgrades = Lists.newArrayList();
@@ -138,6 +138,9 @@ public class XWS2Upgrades {
         @JsonProperty("charges")
         private Charge charges;
 
+        @JsonProperty("force")
+        private Force force;
+
         public String getTitle() { return this.title; }
         public String getType() { return this.type; }
         public String getAbility() { return this.ability; }
@@ -146,6 +149,21 @@ public class XWS2Upgrades {
         public Attack getAttack() { return attack; }
         public List<Action> getActions() { return actions; }
         public Charge getCharges() { return charges; }
+        public Force getForce() { return force; }
+    }
+
+    public static class Force {
+        public Force() { super(); }
+
+        @JsonProperty("value")
+        private int value = 0;
+
+        @JsonProperty("recovers")
+        private int recovers = 0;
+
+        public int getValue() { return value; }
+
+        public int getRecovers() { return recovers; }
     }
 
     public static class Charge {

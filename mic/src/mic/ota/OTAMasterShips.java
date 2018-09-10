@@ -29,7 +29,12 @@ public class OTAMasterShips extends ArrayList<OTAMasterShips.OTAShip> {
         return loadedData.values();
 
     }
-    public static Map<String, OTAMasterShips.OTAShip> getLoadedData(){return loadedData; }
+    public static Map<String, OTAMasterShips.OTAShip> getLoadedData(int edition){
+        if(loadedData == null)
+        {
+            loadData(edition);
+        }
+        return loadedData; }
 
     public static OTAMasterShips.OTAShip getShip(String shipxws, String identifier, int edition) {
         if (loadedData == null) {
@@ -48,6 +53,7 @@ public class OTAMasterShips extends ArrayList<OTAMasterShips.OTAShip> {
             data = Util.loadRemoteJson(OTAContentsChecker.OTA_SHIPS_JSON_URL_2E, OTAMasterShips.class);
         }
 
+        Util.logToChat("OTAMasterShips line 51 data is " + (data==null?"null":"not null"));
 
         loadedData = Maps.newHashMap();
         if (data == null) {
@@ -78,6 +84,8 @@ public class OTAMasterShips extends ArrayList<OTAMasterShips.OTAShip> {
         private List<String> factions = Lists.newArrayList();
 
         private boolean status;
+        private boolean statusOTA;
+
 
         public String getXws() {
             return xws;
@@ -97,6 +105,11 @@ public class OTAMasterShips extends ArrayList<OTAMasterShips.OTAShip> {
         public boolean getStatus()
         {
             return status;
+        }
+        public boolean getStatusOTA() { return statusOTA; }
+
+        public void setStatusOTA(boolean existsOTA) {
+            this.statusOTA = existsOTA;
         }
     }
 }

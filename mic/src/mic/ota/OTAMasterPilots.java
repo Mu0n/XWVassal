@@ -57,6 +57,14 @@ public class OTAMasterPilots extends ArrayList<OTAMasterPilots.OTAPilot> {
 
     }
 
+    public static OTAPilot getSpecificOTAPilot(String pilotXWS){
+        for(OTAPilot aPilot : loadedData.values()){
+            if(aPilot.getPilotXws().equals(pilotXWS)) return aPilot;
+        }
+        return null;
+    }
+
+
     public static class OTAPilot  {
 
 
@@ -72,7 +80,8 @@ public class OTAMasterPilots extends ArrayList<OTAMasterPilots.OTAPilot> {
         @JsonProperty("image")
         private String image;
 
-        private boolean status;
+        private boolean status = false;
+        private boolean statusOTA = false;
 
         public String getShipXws() {
             return shipxws;
@@ -88,10 +97,10 @@ public class OTAMasterPilots extends ArrayList<OTAMasterPilots.OTAPilot> {
         {
             return faction;
         }
-        public boolean getStatus()
-        {
-            return status;
-        }
+
+        public boolean getStatus() { return status; }
+        public boolean getStatusOTA() { return this.statusOTA; }
+
         public void setShipXws(String shipxws) {
              this.shipxws = shipxws;
         }
@@ -109,6 +118,10 @@ public class OTAMasterPilots extends ArrayList<OTAMasterPilots.OTAPilot> {
         public void setStatus(boolean status)
         {
             this.status = status;
+        }
+
+        public void setStatusOTA(boolean existsInOTA) {
+            this.statusOTA = existsInOTA;
         }
     }
 }

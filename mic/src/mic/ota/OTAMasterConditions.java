@@ -65,6 +65,9 @@ public class OTAMasterConditions extends ArrayList<OTAMasterConditions.OTACondit
         private boolean status;
         private boolean tokenStatus;
 
+        private boolean statusOTA;
+        private boolean statusTokenOTA;
+
         public String getXws() {
             return xws;
         }
@@ -81,8 +84,15 @@ public class OTAMasterConditions extends ArrayList<OTAMasterConditions.OTACondit
         {
             return status;
         }
-
+        public boolean getStatusOTA()
+        {
+            return status;
+        }
         public boolean getTokenStatus()
+        {
+            return tokenStatus;
+        }
+        public boolean getTokenStatusOTA()
         {
             return tokenStatus;
         }
@@ -105,6 +115,14 @@ public class OTAMasterConditions extends ArrayList<OTAMasterConditions.OTACondit
         public void setTokenStatus(boolean tokenStatus)
         {
             this.tokenStatus = tokenStatus;
+        }
+
+        public void setStatusOTA(boolean statusOTA) {
+            this.statusOTA = statusOTA;
+        }
+
+        public void setTokenStatusOTA(boolean tokenStatusOTA) {
+            this.statusTokenOTA = tokenStatusOTA;
         }
     }
 }

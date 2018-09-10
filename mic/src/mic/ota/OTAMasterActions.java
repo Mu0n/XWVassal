@@ -64,6 +64,7 @@ public class OTAMasterActions extends ArrayList<OTAMasterActions.OTAAction> {
         private String image;
 
         private boolean status;
+        private boolean statusOTA;
 
         public void setStatus(boolean status)
         {
@@ -74,6 +75,7 @@ public class OTAMasterActions extends ArrayList<OTAMasterActions.OTAAction> {
         {
             return status;
         }
+        public boolean getStatusOTA() { return statusOTA; }
         public String getName() {
             return name;
         }
@@ -82,5 +84,8 @@ public class OTAMasterActions extends ArrayList<OTAMasterActions.OTAAction> {
         }
 
 
+        public void setStatusOTA(boolean statusOTA) {
+            this.statusOTA = statusOTA;
+        }
     }
 }
