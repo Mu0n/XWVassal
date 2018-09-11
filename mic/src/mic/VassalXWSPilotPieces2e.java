@@ -29,7 +29,7 @@ public class VassalXWSPilotPieces2e {
     private XWS2Pilots shipData;
     private XWS2Pilots.Pilot2e pilotData;
     private Integer shipNumber = null;
-    private Map<Tokens2e, PieceSlot> tokens = Maps.newHashMap();
+    private Map<String, PieceSlot> tokens = Maps.newHashMap();
     private PieceSlot ship;
 
     public VassalXWSPilotPieces2e() {
@@ -88,15 +88,15 @@ public class VassalXWSPilotPieces2e {
         return upgrades;
     }
 
-    public Map<Tokens2e, PieceSlot> getTokens() {
+    public Map<String, PieceSlot> getTokens() {
         return tokens;
     }
 
     public List<GamePiece> getTokensForDisplay() {
         List<GamePiece> tokenPieces = Lists.newArrayList();
-        for (Tokens2e token : tokens.keySet()) {
+        for (String token : tokens.keySet()) {
             GamePiece piece = Util.newPiece(tokens.get(token));
-            if (token == Tokens2e.lock && pilotData != null) {
+            if (token.equals("Lock") && pilotData != null) {
                 piece.setProperty("ID", getDisplayPilotName());
             }
             tokenPieces.add(piece);
