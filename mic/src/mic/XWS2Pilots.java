@@ -280,8 +280,8 @@ public class XWS2Pilots {
         @JsonProperty("conditions")
         private List<String> conditions = Lists.newArrayList();
 
-        @JsonProperty("actions")
-        private List<String> actions = Lists.newArrayList();
+        @JsonProperty("shipActions")
+        private List<PilotAction> shipActions = Lists.newArrayList();
 
         @JsonProperty("shipAbility")
         private ShipAbility shipAbility = new ShipAbility();
@@ -298,7 +298,7 @@ public class XWS2Pilots {
         public String getAbility() { return this.ability; }
         public String getXWS() { return this.xws; }
         public List<String> getConditions() { return this.conditions; }
-        public List<String> getActions() { return this.actions; }
+        public List<PilotAction> getShipActions() { return this.shipActions; }
         public ShipAbility getShipAbility() { return this.shipAbility; }
         public ForceData getForceData() { return this.forceData;}
         public ChargeData getChargeData() { return this.chargeData;}

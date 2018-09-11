@@ -32,8 +32,8 @@ public enum Tokens2e {
     ),
     calculate2e(
             Lists.newArrayList("Calculate"),
-            none,
-            none
+            Lists.newArrayList("000","ig88d","c3po"),
+            Lists.newArrayList("aggressorassaultfighter","")
     ),
     evade2e(
             Lists.newArrayList("Evade"),
@@ -95,7 +95,16 @@ public enum Tokens2e {
         List<Tokens2e> tokens = Lists.newArrayList();
         for (Tokens2e token : values()) {
             if (pilot.getShipData() != null) {
-                for (XWS2Pilots.PilotAction action : pilot.getShipData().getActions()) {
+                boolean passThroughShipActions = false;
+                if(pilot.getPilotData().getShipActions().size() > 0)
+                    for(XWS2Pilots.PilotAction shipAction : pilot.getPilotData().getShipActions()){
+                        if (token.actions.contains(shipAction.getType())) {
+                            tokens.add(token);
+                        }
+                        passThroughShipActions = true;
+                }
+                if(passThroughShipActions == false)
+                    for (XWS2Pilots.PilotAction action : pilot.getShipData().getActions()) {
                     if (token.actions.contains(action.getType())) {
                         tokens.add(token);
                     }
