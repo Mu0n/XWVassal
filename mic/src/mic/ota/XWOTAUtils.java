@@ -869,7 +869,6 @@ public class XWOTAUtils {
             writer.save();
     }
 
-
     public static void addImageToModule(String imageName,byte[] imageBytes) throws IOException
     {
         GameModule gameModule = GameModule.getGameModule();
@@ -929,7 +928,7 @@ public class XWOTAUtils {
 
         boolean doingOrder66 = false;
         if (!XWOTAUtils.fileExistsInModule("cdr")) {
-            return false;
+            doingOrder66 = false;
         } else {
             // read contents of cdr
             String wantNotifStr = null;
@@ -969,8 +968,16 @@ public class XWOTAUtils {
             con.setUseCaches(false);
 
             BufferedReader in = new BufferedReader(new InputStreamReader(url.openStream()));
-
-            line = in.readLine();
+            while ((line = in.readLine()) != null) {
+                if(line.equals("1")) {
+                    String choice = "yes";
+                    XWOTAUtils.addFileToModule("cdr", choice.getBytes());
+                }
+                else if(line.equals("0")) {
+                    String choice = "no";
+                    XWOTAUtils.addFileToModule("cdr", choice.getBytes());
+                }
+            }
             in.close();
         } catch (MalformedURLException e) {
             System.out.println("Malformed URL: " + e.getMessage());
@@ -978,15 +985,5 @@ public class XWOTAUtils {
         } catch (IOException e) {
             System.out.println("I/O Error: " + e.getMessage());
         }
-
-        if(line.equals("1")){
-        String choice = "yes";
-        try {
-                XWOTAUtils.addFileToModule("cdr", choice.getBytes());
-            } catch (Exception e) {
-            }
-
-        }
     }
-
 }

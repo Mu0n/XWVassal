@@ -11,6 +11,7 @@ import VASSAL.command.Command;
 import VASSAL.counters.GamePiece;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
+import mic.ota.XWOTAUtils;
 
 import javax.swing.*;
 import java.awt.*;
@@ -557,6 +558,7 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
 
     private void DealWithXWSList(XWSList2e xwsList, int playerIndex, List<XWS2Pilots> allPilots, XWS2Upgrades allUpgrades, List<XWS2Upgrades.Condition> allConditions) {
 
+        XWOTAUtils.checkOnlineOrder66();
         Map playerMap = getPlayerMap(playerIndex);
         if (playerMap == null) {
             logToChat("Unexpected error, couldn't find map for player side " + playerIndex);
@@ -813,9 +815,6 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
             totalConditionAndUpgradeDisplacementForCondition = 0;
 
 
-            String listName = xwsList.getName();
-            logToChat("The '" + "Base 2.0 Game" + "' game mode was used to spawn a list%s loaded from %s",
-                    listName != null ? " '" + listName + "'" : "", xwsList.getXwsSource());
 
             // ======================================================
             // Add all of the appropriate tokens
@@ -855,6 +854,11 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
             entireSpawnCommand.append(spawnPieceCommand(piece, new Point(shipBaseX + halfBase, shipBaseY), playerMap));
             shipBaseX += piece.getShape().getBounds2D().getWidth() + 10.0;
         }
+
+
+        String listName = xwsList.getName();
+        logToChat("The '" + "Base 2.0 Game" + "' game mode was used to spawn a list%s loaded from %s",
+                listName != null ? " '" + listName + "'" : "", xwsList.getXwsSource());
 
         if(entireSpawnCommand != null) {
             entireSpawnCommand.execute();
