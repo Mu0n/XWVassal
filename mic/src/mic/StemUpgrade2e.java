@@ -14,8 +14,8 @@ import java.awt.*;
 public class StemUpgrade2e extends Decorator implements EditablePiece {
     public static final String ID = "stemUpgrade";
 
-    private static final String wipGenericFrontImage = "Stem2e_Upgrade_WIP.png";
-    private static final String wipGenericBackImage = "Stem2e_Upgrade_WIP_back.png";
+    private static final String wipGenericFrontImage = "Stem2e_Upgrade_WIP.jpg";
+    private static final String wipGenericBackImage = "Stem2e_Upgrade_WIP.jpg";
 
     public StemUpgrade2e(){
         this(null);
