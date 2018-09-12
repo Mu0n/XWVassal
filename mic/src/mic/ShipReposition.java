@@ -200,6 +200,18 @@ public class ShipReposition extends Decorator implements EditablePiece {
             .put("ALT SHIFT K", RepoManeuver.BR_Bk1_Right_Bwd_Mid)
             .build();
 
+    //same stuff, but for 2nd edition. Echo style and SV Mk.2 style present.
+        private static Map<String, RepoManeuver> keyStrokeToDropTemplate2e = ImmutableMap.<String, RepoManeuver>builder()
+            .put("CTRL J", RepoManeuver.BR_Bk2_Left_Fwd_Mid)
+            .put("CTRL K", RepoManeuver.BR_Bk2_Right_Fwd_Mid)
+            .put("CTRL SHIFT J", RepoManeuver.BR_Bk2_Left_Bwd_Mid)
+            .put("CTRL SHIFT K", RepoManeuver.BR_Bk2_Right_Bwd_Mid)
+            .put("ALT J", RepoManeuver.BR_Bk1_Left_Fwd_Mid)
+            .put("ALT SHIFT J", RepoManeuver.BR_Bk1_Left_Bwd_Mid)
+            .put("ALT K", RepoManeuver.BR_Bk1_Right_Fwd_Mid)
+            .put("ALT SHIFT K", RepoManeuver.BR_Bk1_Right_Bwd_Mid)
+            .build();
+
     private static Map<String, RepoManeuver> keyStrokeToRepositionShip = ImmutableMap.<String, RepoManeuver>builder()
             .put("CTRL 8", RepoManeuver.BR1_Left_AFAP)
             .put("CTRL SHIFT 8", RepoManeuver.BR1_Left_ABAP)
@@ -603,8 +615,7 @@ public class ShipReposition extends Decorator implements EditablePiece {
         }
 
 
-            RepoManeuver repoTemplateDrop = getKeystrokeTemplateDrop(stroke);
-            if(is2pointohShip==false){ //for now, reserve template drops to 1.0 ships only    // Template drop requested
+            RepoManeuver repoTemplateDrop = getKeystrokeTemplateDrop(stroke, is2pointohShip);
             if (repoTemplateDrop != null && stroke.isOnKeyRelease() == false) {
                 hasSomethingHappened = true;
                 Command tempCommand = spawnRepoTemplate(repoTemplateDrop);
@@ -626,7 +637,7 @@ public class ShipReposition extends Decorator implements EditablePiece {
                 }
                 result.append(piece.keyEvent(stroke));
             }
-        }
+
 
 
         RepoManeuver repoShip = getKeystrokeRepoManeuver(stroke, is2pointohShip);
@@ -738,10 +749,18 @@ public class ShipReposition extends Decorator implements EditablePiece {
         return this.testRotator.getAngle();
     }
 
-    private RepoManeuver getKeystrokeTemplateDrop(KeyStroke keyStroke) {
+    private RepoManeuver getKeystrokeTemplateDrop(KeyStroke keyStroke, boolean is2pointohShip) {
         String hotKey = HotKeyConfigurer.getString(keyStroke);
-        if (keyStrokeToDropTemplate.containsKey(hotKey)) {
-            return keyStrokeToDropTemplate.get(hotKey);
+
+        if(is2pointohShip == false){
+            if (keyStrokeToDropTemplate.containsKey(hotKey)) {
+                return keyStrokeToDropTemplate.get(hotKey);
+            }
+        }
+        else {
+            if (keyStrokeToDropTemplate2e.containsKey(hotKey)) {
+                return keyStrokeToDropTemplate2e.get(hotKey);
+            }
         }
         return null;
     }

@@ -11,18 +11,18 @@ import org.slf4j.LoggerFactory;
 import javax.swing.*;
 import java.awt.*;
 
-public class StemCondition extends Decorator implements EditablePiece {
+public class StemCondition2e extends Decorator implements EditablePiece {
     public static final String ID = "stemCondition";
 
-    private static final String wipGenericFrontImage = "Cond-WIP.png";
-    private static final String genericBackImage = "Condition_back.png";
+    private static final String wipGenericFrontImage = "C2e_wip.jpg";
+    private static final String genericBackImage = "C2e_wip.jpg";
 
 
-    public StemCondition(){
+    public StemCondition2e(){
         this(null);
     }
 
-    public StemCondition(GamePiece piece){
+    public StemCondition2e(GamePiece piece){
         setInner(piece);
     }
 
@@ -96,7 +96,7 @@ public class StemCondition extends Decorator implements EditablePiece {
 
         // construct the Condition Card piece
         protected void executeCommand() {
-
+            boolean local66 = XWOTAUtils.amIDoingOrder66();
             // get the upgrade front image
             String frontImage = "C2e_" + conditionXWS + ".jpg";
 
@@ -104,7 +104,7 @@ public class StemCondition extends Decorator implements EditablePiece {
             // if it doesn't then use a WIP image
             boolean useWipImage = false;
 
-            if(XWOTAUtils.amIDoingOrder66()) frontImage = "C2e_o66.jpg";
+            if(local66) frontImage = "C2e_o66.jpg";
             else if (!XWOTAUtils.imageExistsInModule(frontImage))
             {
                 frontImage = wipGenericFrontImage;
@@ -121,7 +121,7 @@ public class StemCondition extends Decorator implements EditablePiece {
 
             // if we used a WIP image, we need to add the upgradeName
 
-            if (useWipImage) {
+            if (useWipImage || local66) {
                 piece.setProperty("Upgrade Name", conditionName);
 
             } else {
@@ -165,7 +165,7 @@ public class StemCondition extends Decorator implements EditablePiece {
             private static final Logger logger = LoggerFactory.getLogger(StemPilot.class);
             private static final String commandPrefix = "ConditionGeneratorEncoder=";
 
-            public static StemCondition.ConditionGenerateCommand.ConditionGeneratorEncoder INSTANCE = new StemCondition.ConditionGenerateCommand.ConditionGeneratorEncoder();
+            public static StemCondition2e.ConditionGenerateCommand.ConditionGeneratorEncoder INSTANCE = new StemCondition2e.ConditionGenerateCommand.ConditionGeneratorEncoder();
 
             public Command decode(String command) {
                 if (command == null || !command.contains(commandPrefix)) {
@@ -184,11 +184,11 @@ public class StemCondition extends Decorator implements EditablePiece {
             }
 
             public String encode(Command c) {
-                if (!(c instanceof StemCondition.ConditionGenerateCommand)) {
+                if (!(c instanceof StemCondition2e.ConditionGenerateCommand)) {
                     return null;
                 }
                 logger.info("Encoding UpgradeGenerateCommand");
-                StemCondition.ConditionGenerateCommand dialGenCommand = (StemCondition.ConditionGenerateCommand) c;
+                StemCondition2e.ConditionGenerateCommand dialGenCommand = (StemCondition2e.ConditionGenerateCommand) c;
                 try {
                     return commandPrefix + conditionXWS;
                 } catch (Exception e) {

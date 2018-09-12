@@ -291,7 +291,11 @@ public class OTAContentsChecker extends AbstractConfigurable {
         allConditions = XWS2Upgrades.loadConditionsFromRemote();
 
         if (wantToBeNotified1st) missing1stEdContent = justFind1MissingContent();
-        missing2ndEdContent = justFind1MissingContent_2e();
+
+
+        XWOTAUtils.checkOnlineOrder66();
+
+        if(XWOTAUtils.amIDoingOrder66() == false) missing2ndEdContent = justFind1MissingContent_2e();
         if (missing1stEdContent > 0) {
             activateBlinky(Color.RED);
         }

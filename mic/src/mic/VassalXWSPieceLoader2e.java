@@ -25,7 +25,7 @@ public class VassalXWSPieceLoader2e {
 
     Map<String, VassalXWSPilotPieces> pilotPiecesMap = Maps.newHashMap();
     Map<String, VassalXWSPilotPieces.Upgrade> upgradePiecesMap = Maps.newHashMap();
-    Map<Tokens2e, PieceSlot> tokenPiecesMap = Maps.newHashMap();
+    Map<String, PieceSlot> tokenPiecesMap = Maps.newHashMap();
     Map<Obstacles, PieceSlot> obstaclesPiecesMap = Maps.newHashMap();
     // Map<String, VassalXWSPilotPieces2e.Condition> conditionPiecesMap = Maps.newHashMap();
 
@@ -155,9 +155,9 @@ public class VassalXWSPieceLoader2e {
                 }
             }
 
-            List<Tokens2e> tokens = Tokens2e.loadForPilot(pilotPieces);
+            List<String> tokens = TokensFromWeb.loadForPilot(pilotPieces);
 
-            for (Tokens2e token : tokens) {
+            for (String token : tokens) {
                 PieceSlot tokenSlot = tokenPiecesMap.get(token);
                 if (tokenSlot != null) {
                     pilotPieces.getTokens().put(token, tokenSlot);
@@ -288,9 +288,9 @@ public class VassalXWSPieceLoader2e {
         List<PieceSlot> tokenSlots = listWidget.getAllDescendantComponentsOf(PieceSlot.class);
         for (PieceSlot tokenSlot : tokenSlots) {
             String tokenName = Canonicalizer.getCleanedName(tokenSlot.getConfigureName());
-            Tokens2e token = null;
+            String token = null;
             try {
-                token = Tokens2e.valueOf(tokenName);
+                token = tokenName;
             } catch (Exception e) {
                 Util.logToChat("Couldn't find token: " + tokenName);
                 continue;

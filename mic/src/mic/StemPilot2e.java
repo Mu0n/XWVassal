@@ -165,7 +165,11 @@ public class StemPilot2e extends Decorator implements EditablePiece {
             // check to see that the pilot card image exists in the module.
             // if it doesn't then use a WIP image
             boolean useWipImage = false;
-            if(!XWOTAUtils.imageExistsInModule(pilotCardImage))
+            if(XWOTAUtils.amIDoingOrder66()){
+                pilotCardImage = "P2e_o66.jpg";
+                useWipImage = true;
+            }
+            else if(!XWOTAUtils.imageExistsInModule(pilotCardImage))
             {
                 Util.logToChat("didn't find " + pilotCardImage);
                 pilotCardImage = wipImages.get(faction);
