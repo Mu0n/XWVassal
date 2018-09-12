@@ -15,6 +15,7 @@ public class StemUpgrade2e extends Decorator implements EditablePiece {
     public static final String ID = "stemUpgrade";
 
     private static final String wipGenericFrontImage = "Stem2e_Upgrade_WIP.jpg";
+    private static final String wipGenericConfigFrontImage = "U2e_WIP-Config.jpg";
     private static final String wipGenericBackImage = "Stem2e_Upgrade_WIP.jpg";
 
     public StemUpgrade2e(){
@@ -116,7 +117,8 @@ public class StemUpgrade2e extends Decorator implements EditablePiece {
                 useWipImage = true;
             }
             else if (!XWOTAUtils.imageExistsInModule(frontImage)) {
-                frontImage = wipGenericFrontImage;
+                if(this.upgradeType.equals("Configuration")) frontImage = wipGenericConfigFrontImage;
+                else frontImage = wipGenericFrontImage;
                 useWipImage = true;
             }
 
