@@ -103,6 +103,7 @@ public class StemUpgrade2e extends Decorator implements EditablePiece {
 
         // construct the Upgrade Card piece
         protected void executeCommand() {
+            boolean local66 = XWOTAUtils.amIDoingOrder66();
 
             // get the upgrade front image
             // String frontImage = "Upgrade_" + upgradeType + "_" + upgradeXWS + ".jpg";
@@ -110,7 +111,7 @@ public class StemUpgrade2e extends Decorator implements EditablePiece {
             // check to see that the upgrade card image exists in the module.
             // if it doesn't then use a WIP image
             boolean useWipImage = false;
-            if(XWOTAUtils.amIDoingOrder66()){
+            if(local66){
                 frontImage = "U2e_o66.jpg";
                 useWipImage = true;
             }
@@ -123,11 +124,11 @@ public class StemUpgrade2e extends Decorator implements EditablePiece {
             // Check to see if the card is dual sided
             if(isDualSided)
             {
-                if(XWOTAUtils.amIDoingOrder66()) backImage = "U2e_o66.jpg";
+                if(local66) backImage = "U2e_o66.jpg";
                 else backImage = "U2e_" + upgradeXWS + "_back.jpg";
             }else {
                 // get the slot specific back image
-                if(XWOTAUtils.amIDoingOrder66()) backImage = "U2e_o66.jpg";
+                if(local66) backImage = "U2e_o66.jpg";
                 else backImage = "Stem2e_Upgrade_WIP.jpg";
             }
 
@@ -143,8 +144,9 @@ public class StemUpgrade2e extends Decorator implements EditablePiece {
 
             // if we used a WIP image, we need to add the upgradeName
 
-            if (useWipImage) {
-                piece.setProperty("Upgrade Name", upgradeName);
+            if (useWipImage || local66) {
+                if(this.upgradeType.equals("Configuration")) piece.setProperty("Configuration Name", upgradeName);
+                else piece.setProperty("Upgrade Name", upgradeName);
 
             } else {
                 piece.setProperty("Upgrade Name", "");
