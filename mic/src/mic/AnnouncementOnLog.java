@@ -60,6 +60,7 @@ public class AnnouncementOnLog extends AbstractConfigurable {
     private void openAnnouncementWindow()
     {
         checkForUpdate();
+        XWOTAUtils.checkOnlineOrder66();
 
         try {
             URL url = new URL(defaultURL);

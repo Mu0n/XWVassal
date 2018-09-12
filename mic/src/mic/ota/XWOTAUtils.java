@@ -12,7 +12,9 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -922,4 +924,69 @@ public class XWOTAUtils {
 
         return found;
     }
+
+    public static boolean amIDoingOrder66(){
+
+        boolean doingOrder66 = false;
+        if (!XWOTAUtils.fileExistsInModule("cdr")) {
+            return false;
+        } else {
+            // read contents of cdr
+            String wantNotifStr = null;
+            try {
+
+                InputStream inputStream = GameModule.getGameModule().getDataArchive().getInputStream("cdr");
+                if (inputStream == null) {
+                }
+                BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+                StringBuilder contents = new StringBuilder();
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    contents.append(line);
+                }
+                reader.close();
+
+                wantNotifStr = contents.toString();
+                if (wantNotifStr.equalsIgnoreCase("yes")) {
+                    doingOrder66 = true;
+                }
+                else doingOrder66 = false;
+                inputStream.close();
+            } catch (Exception e) {
+            }
+        }
+         return doingOrder66;
+    }
+
+
+
+    public static void checkOnlineOrder66(){
+        String O66URL = "https://raw.githubusercontent.com/Mu0n/XWVassalOTA2e/master/oss";
+        String line = "";
+        try {
+            URL url = new URL(O66URL);
+            URLConnection con = url.openConnection();
+            con.setUseCaches(false);
+
+            BufferedReader in = new BufferedReader(new InputStreamReader(url.openStream()));
+
+            line = in.readLine();
+            in.close();
+        } catch (MalformedURLException e) {
+            System.out.println("Malformed URL: " + e.getMessage());
+
+        } catch (IOException e) {
+            System.out.println("I/O Error: " + e.getMessage());
+        }
+
+        if(line.equals("1")){
+        String choice = "yes";
+        try {
+                XWOTAUtils.addFileToModule("cdr", choice.getBytes());
+            } catch (Exception e) {
+            }
+
+        }
+    }
+
 }

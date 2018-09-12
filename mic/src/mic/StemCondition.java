@@ -103,7 +103,9 @@ public class StemCondition extends Decorator implements EditablePiece {
             // check to see that the condition card image exists in the module.
             // if it doesn't then use a WIP image
             boolean useWipImage = false;
-            if (!XWOTAUtils.imageExistsInModule(frontImage))
+
+            if(XWOTAUtils.amIDoingOrder66()) frontImage = "C2e_o66.jpg";
+            else if (!XWOTAUtils.imageExistsInModule(frontImage))
             {
                 frontImage = wipGenericFrontImage;
                 useWipImage = true;
@@ -112,7 +114,7 @@ public class StemCondition extends Decorator implements EditablePiece {
 
             // get the back image
             String backImage = genericBackImage;
-
+            if(XWOTAUtils.amIDoingOrder66()) backImage = "C2e_o66.jpg";
 
             // now build the piece
             piece = buildImageLayer(piece, frontImage, backImage, conditionName);
