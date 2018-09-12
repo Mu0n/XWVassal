@@ -343,7 +343,7 @@ public class GamePieceGenerator2e
         GamePiece newCondition = Util.newPiece(condition.getPieceSlot());
 
         // build the condition card
-        StemCondition.ConditionGenerateCommand myConditionGen = new StemCondition.ConditionGenerateCommand(condition.getConditionData().getXws(), newCondition, condition.getConditionData().getName());
+        StemCondition2e.ConditionGenerateCommand myConditionGen = new StemCondition2e.ConditionGenerateCommand(condition.getConditionData().getXws(), newCondition, condition.getConditionData().getName());
         myConditionGen.execute();
 
         return newCondition;
