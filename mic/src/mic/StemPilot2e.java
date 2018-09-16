@@ -161,11 +161,13 @@ public class StemPilot2e extends Decorator implements EditablePiece {
         // construct the Pilot Card piece
         protected void executeCommand()
         {
+            boolean local66 = XWOTAUtils.amIDoingOrder66();
+
             String pilotCardImage = "P2e_"+pilotXWSencoding+".jpg";
             // check to see that the pilot card image exists in the module.
             // if it doesn't then use a WIP image
             boolean useWipImage = false;
-            if(XWOTAUtils.amIDoingOrder66()){
+            if(local66){
                 pilotCardImage = "P2e_o66.jpg";
                 useWipImage = true;
             }
@@ -180,7 +182,7 @@ public class StemPilot2e extends Decorator implements EditablePiece {
 
             // if we used a WIP image, we need to add the ship and pilot Name to the card
 
-            if(useWipImage)
+            if(useWipImage || local66)
             {
 
             String combinedIDAndShipName ="";
@@ -189,10 +191,9 @@ public class StemPilot2e extends Decorator implements EditablePiece {
                 }
 
                 this.piece.setProperty("Pilot Name",combinedIDAndShipName + " " + pilotName);
-
+                this.piece.setProperty("Ship Type",shipName);
             }
 
-            this.piece.setProperty("Ship Type",shipName);
 
             piece.setProperty("xws2", pilotName);
             if(pilotName !=null) if(!pilotName.isEmpty()) {

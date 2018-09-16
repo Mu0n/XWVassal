@@ -26,6 +26,7 @@ public class MasterPilotData extends ArrayList<MasterPilotData.PilotData> {
             .build();
 
     public static String REMOTE_URL = "https://raw.githubusercontent.com/guidokessels/xwing-data/master/data/pilots.js";
+    public static String REMOTE_URL_DIR = "https://raw.githubusercontent.com/guidokessels/xwing-data/master/data/";
  //   public static String DISPATCHER_URL = "https://raw.githubusercontent.com/Mu0n/XWVassalOTA/master/json/dispatcher_pilots.json";
 
     private static Map<String, PilotData> loadedData = null;
@@ -66,7 +67,7 @@ public class MasterPilotData extends ArrayList<MasterPilotData.PilotData> {
             loadFromXwingData();
 
             // load data from dispatcher file
-            MasterPilotData dispatcherData = loadFromDispatcher(REMOTE_URL);
+            MasterPilotData dispatcherData = loadFromDispatcher(REMOTE_URL_DIR);
 
             // dispatcher overrides xwing-data
             if (dispatcherData != null)
