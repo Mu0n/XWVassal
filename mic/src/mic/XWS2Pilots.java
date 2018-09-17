@@ -99,6 +99,7 @@ public class XWS2Pilots {
 
 
     public String getName() {return this.name;}
+    public String getCleanedName() { return Canonicalizer.getCleanedName(this.name); }
     public List<String> getDial() {return this.dial;}
     public String getSize() { return this.size;}
     public String getFaction() {return this.faction;}

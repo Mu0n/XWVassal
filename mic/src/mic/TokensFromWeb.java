@@ -97,7 +97,8 @@ import java.util.List;
 
                 if (pilot.getPilotData() != null) {
                     String shipPilot = pilot.getPilotData().getXWS();
-                    if (aTokenFromWeb.getPilotsOrShips().contains(shipPilot)) {
+                    String ship = pilot.getShipData().getCleanedName();
+                    if (aTokenFromWeb.getPilotsOrShips().contains(shipPilot) || aTokenFromWeb.getPilotsOrShips().contains(ship)) {
                         tokens.add(aTokenFromWeb.getName());
                     }
                 }
