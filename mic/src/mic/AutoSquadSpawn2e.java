@@ -71,9 +71,6 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
 
     //Main interface via a Java Swing JFrame. The complexity has outgrown an InputDialog - we now use ActionListener on the JComboBox and JButton to react to the user commands
     private void spawnForPlayer(final int playerIndex) {
-        final List<XWS2Pilots> allShips = XWS2Pilots.loadFromRemote();
-        final XWS2Upgrades allUpgrades = XWS2Upgrades.loadFromRemote();
-        final List<XWS2Upgrades.Condition> allConditions = XWS2Upgrades.loadConditionsFromRemote();
 
 /*
         logToChat("*** -- pilot_images.json");
@@ -197,6 +194,12 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
             JOptionPane.showMessageDialog(playerMap.getView(), "Cannot spawn squads for other players");
             return;
         }
+
+        final List<XWS2Pilots> allShips = XWS2Pilots.loadFromRemote();
+        final XWS2Upgrades allUpgrades = XWS2Upgrades.loadFromRemote();
+        final List<XWS2Upgrades.Condition> allConditions = XWS2Upgrades.loadConditionsFromRemote();
+
+
 
         final JFrame frame = new JFrame();
         final JPanel rootPanel = new JPanel();
