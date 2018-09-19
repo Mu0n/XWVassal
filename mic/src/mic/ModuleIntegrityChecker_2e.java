@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Created by Mic on 24/08/18.
@@ -187,6 +189,9 @@ public class ModuleIntegrityChecker_2e {
 */
 
 
+    private static final Logger logger = LoggerFactory.getLogger(AnnouncementOnLog.class);  // replace the class name
+
+
 public ArrayList<OTAMasterPilots.OTAPilot> checkPilots(boolean onlyDetectOne, List<XWS2Pilots> allShips)
 {
     // get list of pilots from OTAMasterPilots
@@ -197,8 +202,11 @@ public ArrayList<OTAMasterPilots.OTAPilot> checkPilots(boolean onlyDetectOne, Li
     ArrayList<OTAMasterPilots.OTAPilot> pilotListToReturn = new ArrayList<OTAMasterPilots.OTAPilot>();
     Iterator<OTAMasterPilots.OTAPilot> i = pilots.iterator();
 
+    float totalpilot = 0;
+
     while(i.hasNext())
     {
+
         OTAMasterPilots.OTAPilot pilot = (OTAMasterPilots.OTAPilot)i.next();
 
         if(XWS2Pilots.getSpecificPilot(pilot.getPilotXws(), allShips)!=null) {

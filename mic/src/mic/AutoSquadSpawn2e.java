@@ -1310,7 +1310,7 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
         for (int i = 1; i <= 8; i++) {
             final int playerId = i;
 
-            JButton b = new JButton("2.0 Spawn");
+            JButton b = new JButton("2.0 Squad Spawn");
             b.setAlignmentY(0.0F);
             b.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent evt) {

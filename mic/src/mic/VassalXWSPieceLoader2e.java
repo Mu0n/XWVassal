@@ -221,10 +221,27 @@ public class VassalXWSPieceLoader2e {
     }
 
     public void loadPieces() {
+
+        obstaclesPiecesMap = Maps.newHashMap();
+        List<ListWidget> listWidgets = GameModule.getGameModule().getAllDescendantComponentsOf(ListWidget.class);
+        for (ListWidget listWidget : listWidgets) {
+            if (!(listWidget.getParent() instanceof TabWidget)) {
+                continue;
+            }
+            ListParentType parentType = ListParentType.fromTab(listWidget.getParent());
+            if (parentType == null) {
+                continue;
+            }
+            switch (parentType) {
+                case chits:
+                    loadChits(listWidget);
+                    break;
+            }
+        }
+        /*
        // pilotPiecesMap = Maps.newHashMap();
       //  upgradePiecesMap = Maps.newHashMap();
         tokenPiecesMap = Maps.newHashMap();
-        obstaclesPiecesMap = Maps.newHashMap();
 
         List<ListWidget> listWidgets = GameModule.getGameModule().getAllDescendantComponentsOf(ListWidget.class);
         for (ListWidget listWidget : listWidgets) {
@@ -251,6 +268,7 @@ public class VassalXWSPieceLoader2e {
                     break;
             }
         }
+        */
     }
 
     private void loadChits(ListWidget listWidget) {
@@ -259,10 +277,8 @@ public class VassalXWSPieceLoader2e {
             if (chitList.getConfigureName() == null) {
                 continue;
             }
-
             String name = chitList.getConfigureName().trim();
-
-            if (name.equals("Tokens")) {
+            if (name.equals("Tokens2e")) {
                 loadTokens(chitList);
             } else if (obstacleTabNames.contains(name)) {
                 loadObstacles(chitList);
