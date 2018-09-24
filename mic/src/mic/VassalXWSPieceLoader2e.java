@@ -233,9 +233,14 @@ public class VassalXWSPieceLoader2e {
                 continue;
             }
             switch (parentType) {
+                //this first case only used for rocks anymore
                 case chits:
                     loadChits(listWidget);
                     break;
+                case secondeditiontokens:
+                    load2eTokens(listWidget);
+                    break;
+
             }
         }
         /*
@@ -271,6 +276,21 @@ public class VassalXWSPieceLoader2e {
         */
     }
 
+    private void load2eTokens(ListWidget listWidget) {
+        List<PieceSlot> tokenSlots = listWidget.getAllDescendantComponentsOf(PieceSlot.class);
+        for (PieceSlot tokenSlot : tokenSlots) {
+            String tokenName = Canonicalizer.getCleanedName(tokenSlot.getConfigureName());
+            String token = null;
+            try {
+                token = tokenName;
+            } catch (Exception e) {
+                Util.logToChat("Couldn't find token: " + tokenName);
+                continue;
+            }
+            tokenPiecesMap.put(token, tokenSlot);
+        }
+    }
+
     private void loadChits(ListWidget listWidget) {
         List<ListWidget> chitLists = listWidget.getAllDescendantComponentsOf(ListWidget.class);
         for (ListWidget chitList : chitLists) {
@@ -278,9 +298,7 @@ public class VassalXWSPieceLoader2e {
                 continue;
             }
             String name = chitList.getConfigureName().trim();
-            if (name.equals("Tokens2e")) {
-                loadTokens(chitList);
-            } else if (obstacleTabNames.contains(name)) {
+            if (obstacleTabNames.contains(name)) {
                 loadObstacles(chitList);
             }
         }
@@ -300,111 +318,7 @@ public class VassalXWSPieceLoader2e {
         }
     }
 
-    private void loadTokens(ListWidget listWidget) {
-        List<PieceSlot> tokenSlots = listWidget.getAllDescendantComponentsOf(PieceSlot.class);
-        for (PieceSlot tokenSlot : tokenSlots) {
-            String tokenName = Canonicalizer.getCleanedName(tokenSlot.getConfigureName());
-            String token = null;
-            try {
-                token = tokenName;
-            } catch (Exception e) {
-                Util.logToChat("Couldn't find token: " + tokenName);
-                continue;
-            }
 
-            tokenPiecesMap.put(token, tokenSlot);
-        }
-    }
-
-
-    private void loadPilots(ListWidget shipList, ListParentType faction, List<XWS2Pilots> allShips) {
-
-        if (faction != ListParentType.rebel && faction != ListParentType.scum && faction != ListParentType.imperial) {
-            return;
-        }
-
-        String shipName = Canonicalizer.getCanonicalShipName(shipList.getConfigureName());
-        PieceSlot defaultShip = null;
-        Map<String, PieceSlot> altArtShips = Maps.newHashMap();
-        PieceSlot dial = null;
-        PieceSlot movementCard = null;
-        PieceSlot movementStrip = null;
-        PieceSlot openDial = null;
-        List<PieceSlot> slots = shipList.getAllDescendantComponentsOf(PieceSlot.class);
-        List<PieceSlot> pilots = new LinkedList<PieceSlot>();
-        for (PieceSlot slot : slots) {
-            String slotName = slot == null ? "" : slot.getConfigureName();
-            if (slotName.startsWith("=")) {
-                continue;
-            }
-            if (slotName.startsWith("ship") && defaultShip == null) {
-                defaultShip = slot;
-                continue;
-            }
-            if (slotName.startsWith("ship") && defaultShip != null) {
-                altArtShips.put(slotName, slot);
-                continue;
-            }
-            if (slotName.startsWith("dial")) {
-                dial = slot;
-                continue;
-            }
-            if (slotName.startsWith("Ordered Open Dial")) {
-                openDial = slot;
-                continue;
-            }
-            if (slotName.startsWith("Ordered maneuver")) {
-                movementStrip = slot;
-                continue;
-            }
-            if (slotName.startsWith("movement")) {
-                movementCard = slot;
-                continue;
-            }
-            // Must be a pilot if all is well
-            pilots.add(slot);
-        }
-
-        XWS2Pilots shipData = null;
-        for(XWS2Pilots sh : allShips)
-        {
-            if(shipName.equals(Canonicalizer.getCleanedName(sh.getName()))) shipData = sh;
-        }
-        if(shipData == null) return;
-        //Util.logToChat("pieceloader2e line 344  shipData " + ((shipData==null)?"is null":"is not null"));
-
-        //cycles through all the pilot PieceSlots of the wanted pilots List and wishes to gather the loaded pilotData from xwing-data2 for that specific ship/pilot key
-        for (PieceSlot pilot : pilots) {
-
-            String pilotName = Canonicalizer.getCanonicalPilotName(pilot.getConfigureName());
-
-            //get the right pilotData from the same ship, but make sure to verify it's the right faction too!
-            XWS2Pilots.Pilot2e pilotData = null;
-            for(XWS2Pilots xws2pilot : allShips){
-                if(xws2pilot.getFaction()!=shipData.getFaction()) continue;
-                pilotData = XWS2Pilots.getSpecificPilot(pilot.getConfigureName(), allShips);
-            }
-            if(pilotData == null) {
-                Util.logToChat("couldn't find the right pilot data");
-                return;
-            }
-            String mapKey = getPilotMapKey(faction.name(), shipName, pilotName);
-
-            VassalXWSPilotPieces2e pilotPieces = new VassalXWSPilotPieces2e();
-            pilotPieces.setShipData(shipData);
-            pilotPieces.setDial(dial);
-            pilotPieces.setShip(AltArtShipPicker.getAltArtShip(pilotName, altArtShips, defaultShip));
-            pilotPieces.setMovementCard(movementCard);
-            pilotPieces.setPilotCard(pilot);
-            pilotPieces.setMovementStrip(movementStrip);
-            pilotPieces.setOpenDial(openDial);
-            pilotPieces.setPilotData(pilotData);
-        }
-    }
-
-    private String getPilotMapKey(String faction, String shipName, String pilotName) {
-        return String.format("%s/%s/%s", faction, shipName, pilotName);
-    }
 
     private String getUpgradeMapKey(String upgradeType, String upgradeName) {
         return String.format("%s/%s", upgradeType, upgradeName);
@@ -416,7 +330,8 @@ public class VassalXWSPieceLoader2e {
         scum("Scum & Villainy"),
         imperial("Imperial"),
         upgrades("Upgrades"),
-        chits("SecondEdition");
+        chits("Chits"),
+        secondeditiontokens("SecondEdition");
 
         private String widgetName;
 
