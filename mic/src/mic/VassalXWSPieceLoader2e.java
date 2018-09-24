@@ -23,16 +23,13 @@ public class VassalXWSPieceLoader2e {
             "Asteroids", "TFA_Asteroids", "Debris"
     );
 
-    Map<String, VassalXWSPilotPieces> pilotPiecesMap = Maps.newHashMap();
-    Map<String, VassalXWSPilotPieces.Upgrade> upgradePiecesMap = Maps.newHashMap();
     Map<String, PieceSlot> tokenPiecesMap = Maps.newHashMap();
     Map<Obstacles, PieceSlot> obstaclesPiecesMap = Maps.newHashMap();
     // Map<String, VassalXWSPilotPieces2e.Condition> conditionPiecesMap = Maps.newHashMap();
 
     public VassalXWSListPieces2e loadListFromXWS(XWSList2e list, List<XWS2Pilots> allPilots, XWS2Upgrades allUpgrades, List<XWS2Upgrades.Condition> allConditions) {
 
-        if (pilotPiecesMap.isEmpty() || upgradePiecesMap.isEmpty()
-                || tokenPiecesMap.isEmpty()|| obstaclesPiecesMap.isEmpty()) {
+        if (tokenPiecesMap.isEmpty()|| obstaclesPiecesMap.isEmpty()) {
             loadPieces();
         }
 
@@ -223,6 +220,8 @@ public class VassalXWSPieceLoader2e {
     public void loadPieces() {
 
         obstaclesPiecesMap = Maps.newHashMap();
+        tokenPiecesMap = Maps.newHashMap();
+
         List<ListWidget> listWidgets = GameModule.getGameModule().getAllDescendantComponentsOf(ListWidget.class);
         for (ListWidget listWidget : listWidgets) {
             if (!(listWidget.getParent() instanceof TabWidget)) {
