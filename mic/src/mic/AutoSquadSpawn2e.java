@@ -858,6 +858,13 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
             shipBaseX += piece.getShape().getBounds2D().getWidth() + 10.0;
         }
 
+        int obstacleX = (int) dialstartPosition.getX() + totalDialsWidth - 30;
+        int obstacleStartY = shipBaseY + 200;
+        for (GamePiece obstacle : pieces.getObstaclesForDisplay()) {
+            int halfSize = (int) (obstacle.boundingBox().getWidth() / 2.0);
+            spawnPiece(obstacle, new Point(obstacleX + halfSize, obstacleStartY), playerMap);
+            obstacleX += obstacle.getShape().getBounds().getWidth();
+        }
 
         String listName = xwsList.getName();
         logToChat("The '" + "Base 2.0 Game" + "' game mode was used to spawn a list%s loaded from %s",

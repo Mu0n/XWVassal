@@ -160,8 +160,16 @@ public class VassalXWSPieceLoader2e {
                     pilotPieces.getTokens().put(token, tokenSlot);
                 }
             }
-
             pieces.getShips().add(pilotPieces);
+
+            for (String xwsObstacleName : list.getObstacles()) {
+                Obstacles obstacle = Obstacles.forXwsName(xwsObstacleName);
+                if (!obstaclesPiecesMap.containsKey(obstacle)) {
+                    Util.logToChat("Unable to find vassal obstacle for xws obstacle '" + xwsObstacleName + "'");
+                    continue;
+                }
+                pieces.getObstacles().add(obstaclesPiecesMap.get(obstacle));
+            }
 
         }
         return pieces;
@@ -183,42 +191,9 @@ public class VassalXWSPieceLoader2e {
             conditionSlots.add(condition);
         }
         return conditionSlots;
-
-        /*
-        List<VassalXWSPilotPieces.Upgrade> conditionSlots = Lists.newArrayList();
-        for (String conditionName : conditions) {
-            String canonicalConditionName = Canonicalizer.getCanonicalUpgradeName(
-                    "conditions", conditionName);
-            String mapKey = getUpgradeMapKey("conditions", canonicalConditionName);
-            VassalXWSPilotPieces.Upgrade condition = this.upgradePiecesMap.get(mapKey);
-            if (condition == null)
-            {
-                Util.logToChat("Condition " + conditionName +" is not yet included in XWVassal.  Generating it.");
-
-                // need to grab stem condition here
-                String stemConditionSlotName = "Stem Condition WIP";
-                List<PieceSlot> pieceSlots = GameModule.getGameModule().getAllDescendantComponentsOf(PieceSlot.class);
-
-                for (PieceSlot pieceSlot : pieceSlots) {
-                    String slotName = pieceSlot.getConfigureName();
-                    if (slotName.equals(stemConditionSlotName))
-                    {
-                        // this is the correct slot
-                        condition = new VassalXWSPilotPieces.Upgrade(conditionName, pieceSlot);
-
-                        continue;
-                    }
-                }
-
-            }
-            conditionSlots.add(condition);
-        }
-        return conditionSlots;
-        */
     }
 
     public void loadPieces() {
-
         obstaclesPiecesMap = Maps.newHashMap();
         tokenPiecesMap = Maps.newHashMap();
 
@@ -242,37 +217,6 @@ public class VassalXWSPieceLoader2e {
 
             }
         }
-        /*
-       // pilotPiecesMap = Maps.newHashMap();
-      //  upgradePiecesMap = Maps.newHashMap();
-        tokenPiecesMap = Maps.newHashMap();
-
-        List<ListWidget> listWidgets = GameModule.getGameModule().getAllDescendantComponentsOf(ListWidget.class);
-        for (ListWidget listWidget : listWidgets) {
-            if (!(listWidget.getParent() instanceof TabWidget)) {
-                continue;
-            }
-            ListParentType parentType = ListParentType.fromTab(listWidget.getParent());
-            if (parentType == null) {
-                continue;
-            }
-            switch (parentType) {
-                case chits:
-                    loadChits(listWidget);
-                    break;
-                case upgrades:
-                    // MrMurphM - commented for now
-                   // loadUpgrades(listWidget);
-                    break;
-                case imperial:
-                case rebel:
-                case scum:
-                    //MrMurphM - commented for now
-                   // loadPilots(listWidget, parentType);
-                    break;
-            }
-        }
-        */
     }
 
     private void load2eTokens(ListWidget listWidget) {
@@ -310,25 +254,17 @@ public class VassalXWSPieceLoader2e {
             if (tokenSlot.getConfigureName() == null) {
                 continue;
             }
-
             String obstacleName = tokenSlot.getConfigureName().trim();
             Obstacles obstacle = Obstacles.forVassalName(obstacleName);
             obstaclesPiecesMap.put(obstacle, tokenSlot);
         }
     }
 
-
-
     private String getUpgradeMapKey(String upgradeType, String upgradeName) {
         return String.format("%s/%s", upgradeType, upgradeName);
     }
 
-
     private enum ListParentType {
-        rebel("Rebel"),
-        scum("Scum & Villainy"),
-        imperial("Imperial"),
-        upgrades("Upgrades"),
         chits("Chits"),
         secondeditiontokens("SecondEdition");
 
