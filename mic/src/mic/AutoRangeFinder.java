@@ -872,7 +872,7 @@ public class AutoRangeFinder extends Decorator implements EditablePiece, MouseLi
     }
 
     private MicLine vetThisLine(MicLine A1D1, String label, double v) {
-        if(A1D1 == null || DEBUGMODE == false) return A1D1;
+        if(A1D1 == null || MULTILINES == false) return A1D1;
         return new MicLine(A1D1.first, A1D1.second, A1D1.markedAsDead, label, v);
     }
 
@@ -1564,9 +1564,19 @@ public class AutoRangeFinder extends Decorator implements EditablePiece, MouseLi
         lineToVet = vetThisLine(A1D1, "A1D1", 0.1);
         if(lineToVet != null) lineList.add(lineToVet);
 
+        //Closest Attacker to Closest Defender
+        MicLine A1D2 = new MicLine(A1, D2, false);
+        lineToVet = vetThisLine(A1D2, "A1D2", 0.1);
+        if(lineToVet != null) lineList.add(lineToVet);
+
         //Closest Defender to 2nd Closest Attacker
         MicLine A2D1 = new MicLine(A2, D1, false);
         lineToVet = vetThisLine(A2D1, "A2D1", 0.5);
+        if(lineToVet != null) lineList.add(lineToVet);
+
+        //Closest Defender to 2nd Closest Attacker
+        MicLine A2D2 = new MicLine(A2, D2, false);
+        lineToVet = vetThisLine(A2D2, "A2D2", 0.5);
         if(lineToVet != null) lineList.add(lineToVet);
 
         //Closest attacker's point to the defender's closest edge
@@ -1601,6 +1611,15 @@ public class AutoRangeFinder extends Decorator implements EditablePiece, MouseLi
         if(doesAAforInArcPassTest(AAD1, AA)== true && isRangeOk(AAD1, 1, rangeInt))
         {
             lineToVet = vetThisLine(AAD1, "AAD1", 0.8);
+            if(lineToVet != null) lineList.add(lineToVet);
+        }
+
+        //Attacker's edge to defender's 2nd closest vertex
+        MicLine AAD2 = createLinePtoAB(D2, AA, false);
+
+        if(doesAAforInArcPassTest(AAD2, AA)== true && isRangeOk(AAD2, 1, rangeInt))
+        {
+            lineToVet = vetThisLine(AAD2, "AAD2", 0.8);
             if(lineToVet != null) lineList.add(lineToVet);
         }
 
@@ -1837,7 +1856,9 @@ public class AutoRangeFinder extends Decorator implements EditablePiece, MouseLi
         double dist2 = Math.sqrt(Math.pow(xp - x2, 2.0) + Math.pow(yp - y2, 2.0));
         double distaa = Math.sqrt(Math.pow(x2 - x1, 2.0) + Math.pow(y2 - y1, 2.0));
         //is the point used in D1AA between A1 and A2?
-        if(Double.compare(distaa,dist1) > 0 && Double.compare(distaa,dist2) > 0) return true;
+        if(Double.compare(distaa,dist1) > 0 && Double.compare(distaa,dist2) > 0) {
+            return true;
+        }
         return false;
     }
 
@@ -1871,6 +1892,12 @@ public class AutoRangeFinder extends Decorator implements EditablePiece, MouseLi
         lineToVet = vetThisLine(A2D1, "A2D1", 0.5);
         if(lineToVet != null) lineList.add(lineToVet);
 
+        //2nd Closest Defender to 2nd Closest Attacker
+        MicLine A2D2 = new MicLine(A2, D2, false);
+        lineToVet = vetThisLine(A2D2, "A2D2", 0.5);
+        if(lineToVet != null) lineList.add(lineToVet);
+
+
         MicLine A1DD = createLinePtoAB(A1, DD, true);
         lineToVet = vetThisLine(A1DD, "A1DD", 0.2);
         if(lineToVet != null) lineList.add(lineToVet);
@@ -1884,6 +1911,12 @@ public class AutoRangeFinder extends Decorator implements EditablePiece, MouseLi
         lineToVet = vetThisLine(D1AA, "D1AA", 0.6);
         if(lineToVet != null) lineList.add(lineToVet);
 
+        MicLine D2AA = createLinePtoAB(D2, AA, false);
+        lineToVet = vetThisLine(D2AA, "D2AA", 0.6);
+        if(lineToVet != null) {
+            logToChat("added a D2AA line and deathmark is " + D2AA.markedAsDead);
+            lineList.add(lineToVet);
+        }
 
         //MULTILINES: if all lines have to been added to the visuals, then, uncomment this section
         if(MULTILINES == true){
