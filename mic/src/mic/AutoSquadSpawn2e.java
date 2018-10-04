@@ -714,11 +714,11 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
             // ======================================================
 
             //do charges
-            logToChat("line 717 autospawn nb of charges to spawn "+chargeLocations.size());
             for(Point p: chargeLocations){
                 GamePiece chargePiece = newPiece(chargePieceSlot);
                 entireSpawnCommand.append(spawnPieceCommand(chargePiece, p, playerMap));
             }
+            chargeLocations.clear();
 
             for (GamePiece token : ship.getTokensForDisplay()) {
 
