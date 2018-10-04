@@ -129,6 +129,9 @@ public class XWS2Upgrades {
         @JsonProperty("slots")
         private List<String> slots = Lists.newArrayList();
 
+        @JsonProperty("grants")
+        private List<grant> grants = Lists.newArrayList();
+
         @JsonProperty("attack")
         private Attack attack;
 
@@ -145,11 +148,34 @@ public class XWS2Upgrades {
         public String getType() { return this.type; }
         public String getAbility() { return this.ability; }
         public List<String> getSlots(){ return slots; }
+        public List<grant> getGrants() { return grants; }
         public List<String> getConditions() { return this.conditions; }
         public Attack getAttack() { return attack; }
         public List<Action> getActions() { return actions; }
         public Charge getCharges() { return charges; }
         public Force getForce() { return force; }
+    }
+
+    public static class grant {
+        public grant() { super(); }
+        public grant(String type, String value, int amount){
+            this.type = type;
+            this.value = value;
+            this.amount = amount;
+        }
+
+        @JsonProperty("type")
+        private String type;
+
+        @JsonProperty("value")
+        private String value;
+
+        @JsonProperty("amount")
+        private int amount;
+
+        public String getType() { return type; }
+        public String getValue() { return value; }
+        public int getAmount() { return amount; }
     }
 
     public static class Force {
