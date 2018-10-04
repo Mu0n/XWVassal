@@ -628,7 +628,7 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
                             if (testIfHasCharge != null)
                             {
                                 for(int chargeIncr = 0; chargeIncr < upgrade.getUpgradeData().getSides().get(0).getCharges().getValue(); chargeIncr++){
-                                    chargeLocations.add(new Point(
+                                            chargeLocations.add(new Point(
                                             placeUpgradeX + chargeIncr * 60,
                                             placeUpgradeY - upgradePiece.getShape().getBounds().height/2 - 10
                                     ));
@@ -714,6 +714,7 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
             // ======================================================
 
             //do charges
+            logToChat("line 717 autospawn nb of charges to spawn "+chargeLocations.size());
             for(Point p: chargeLocations){
                 GamePiece chargePiece = newPiece(chargePieceSlot);
                 entireSpawnCommand.append(spawnPieceCommand(chargePiece, p, playerMap));

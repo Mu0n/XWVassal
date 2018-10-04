@@ -295,7 +295,10 @@ public class OTAContentsChecker extends AbstractConfigurable {
 
         XWOTAUtils.checkOnlineOrder66();
 
-        if(XWOTAUtils.amIDoingOrder66() == false) missing2ndEdContent = justFind1MissingContent_2e();
+        //TODO replace the whole content checker by veryfiying a change to Guido's manifest version vs my own local file
+        //
+        // if(XWOTAUtils.amIDoingOrder66() == false) missing2ndEdContent = justFind1MissingContent_2e();
+        //
         if (missing1stEdContent > 0) {
             activateBlinky(Color.RED);
         }
