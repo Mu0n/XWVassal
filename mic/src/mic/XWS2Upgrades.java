@@ -276,7 +276,8 @@ public class XWS2Upgrades {
         try{
             conditionsRead = XWS2Upgrades.loadRemoteJsonArrayOfConditions(new URL(guidoRootUrl+whereToGetConditions.getUrlEnd()));
         }
-        catch(Exception e){}
+        catch(Exception e){
+        }
         return conditionsRead;
     }
 
@@ -293,7 +294,6 @@ public class XWS2Upgrades {
 
         XWS2Upgrades allUpgrades = new XWS2Upgrades();
         for(String urlEnd : whereToGetUpgrades.getUrlEnds()){
-
             List<XWS2Upgrades.OneUpgrade> upgradesListRead = Lists.newArrayList();
             try {
                 upgradesListRead = XWS2Upgrades.loadRemoteJsonArrayOfOneUpgrades(new URL(guidoRootUrl+urlEnd));

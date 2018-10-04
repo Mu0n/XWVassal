@@ -522,11 +522,17 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
             //figure out how many extra force charges a ship must have
             //figure out if there are config cards and count 'em
             int extraForceFromUpgrade = 0;
+            int extraHull = 0;
+            int extraShield = 0;
             int howManyConfigUpgradeCards = 0;
             int countHowManyNonConfigurationUpgrades = 0;
             for(VassalXWSPilotPieces2e.Upgrade up : ship.getUpgrades()){
                 try{
                     extraForceFromUpgrade += up.getUpgradeData().sides.get(0).getForce().getValue();
+                    for(XWS2Upgrades.grant g : up.getUpgradeData().sides.get(0).getGrants()){
+                        if(g.getType().equals("stat") && g.getValue().equals("Hull")) extraHull += g.getAmount();
+                        if(g.getType().equals("stat") && g.getValue().equals("Shield")) extraShield += g.getAmount();
+                    }
                 }
                 catch(Exception e){
                 }
@@ -536,7 +542,7 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
             // ======================================================
             // Generate the ship base pieces
             // ======================================================
-            GamePiece shipPiece = GamePieceGenerator2e.generateShip(ship, extraForceFromUpgrade);
+            GamePiece shipPiece = GamePieceGenerator2e.generateShip(ship, extraForceFromUpgrade, extraHull, extraShield);
             shipBases.add(shipPiece);
 
             // ======================================================
