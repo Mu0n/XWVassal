@@ -187,6 +187,7 @@ public class VassalXWSPilotPieces2e {
     private String getDisplayPilotName() {
         String pilotName = "";
         if (pilotData != null) {
+
             pilotName = Acronymizer.acronymizer(
                     this.pilotData.getName(),
                     this.pilotData.isUnique(),

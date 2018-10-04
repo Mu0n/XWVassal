@@ -166,7 +166,7 @@ public class XWS2Pilots {
         return 0;
     }
     public boolean hasSmallBase() {
-        if(size.equals("small")) return true;
+        if(size.equals("small") || size.equals("Small")) return true;
         return false;
     }
 

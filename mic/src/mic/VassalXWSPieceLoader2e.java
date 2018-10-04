@@ -135,11 +135,17 @@ public class VassalXWSPieceLoader2e {
             // ==================================================
             for (String upgradeType : pilot.getUpgrades().keySet())
             {
+                if(upgradeType.equals("hardpoint")) continue;
                 for (String upgradeName : pilot.getUpgrades().get(upgradeType))
                 {
-                    String upgradeKey = getUpgradeMapKey(upgradeType, upgradeName);
                     VassalXWSPilotPieces2e.Upgrade upgrade = new VassalXWSPilotPieces2e.Upgrade(upgradeName, stemUpgradeSlot);
                     XWS2Upgrades.OneUpgrade newUpData = allUpgrades.getSpecificUpgrade(upgradeName, allUpgrades);
+
+                    if(upgrade==null || newUpData == null)
+                    {
+                        Util.logToChat("Autospawn 2.0 doesn't know what to do with this upgrade " + upgradeName + " of type " + upgradeType);
+                        continue;
+                    }
                     upgrade.setUpgradeData(newUpData);
 
                         if(newUpData.getSides().get(0).getConditions()!=null && !newUpData.getSides().get(0).getConditions().isEmpty())
