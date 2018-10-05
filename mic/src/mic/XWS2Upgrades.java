@@ -5,14 +5,14 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
 
 import java.io.BufferedInputStream;
 import java.io.InputStream;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by Mic on 2018-07-31.
@@ -112,6 +112,7 @@ public class XWS2Upgrades {
             this.title = title;
             this.type = type;
             this.ability = ability;
+            this.grants = Lists.newArrayList();
         }
 
         @JsonProperty("title")
@@ -158,23 +159,37 @@ public class XWS2Upgrades {
 
     public static class grant {
         public grant() { super(); }
-        public grant(String type, String value, int amount){
-            this.type = type;
-            this.value = value;
-            this.amount = amount;
-        }
 
         @JsonProperty("type")
         private String type;
 
         @JsonProperty("value")
-        private String value;
+        private JsonNode value;
 
         @JsonProperty("amount")
         private int amount;
 
         public String getType() { return type; }
-        public String getValue() { return value; }
+
+        public Map<String,String> getValue() {
+            Map valueMap = new HashMap<String,String>();
+            if(value.isObject())
+            {
+                Iterator i = value.fieldNames();
+                while(i.hasNext())
+                {
+                    String nodeKey = (String)i.next();
+                    String nodeValue = value.get(nodeKey).textValue();
+                    valueMap.put(nodeKey,nodeValue);
+
+                }
+            }else {
+                valueMap.put("value",value.textValue());
+            }
+
+            return valueMap;
+        }
+
         public int getAmount() { return amount; }
     }
 

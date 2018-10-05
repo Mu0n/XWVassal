@@ -21,7 +21,11 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.net.URL;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import static mic.Util.*;
 
@@ -527,14 +531,30 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
             int howManyConfigUpgradeCards = 0;
             int countHowManyNonConfigurationUpgrades = 0;
             for(VassalXWSPilotPieces2e.Upgrade up : ship.getUpgrades()){
-                try{
+                try {
                     extraForceFromUpgrade += up.getUpgradeData().sides.get(0).getForce().getValue();
-                    for(XWS2Upgrades.grant g : up.getUpgradeData().sides.get(0).getGrants()){
-                        if(g.getType().equals("stat") && g.getValue().equals("Hull")) extraHull += g.getAmount();
-                        if(g.getType().equals("stat") && g.getValue().equals("Shield")) extraShield += g.getAmount();
+                }
+                catch(Exception e) {
+                logToChat("did not find a force stat here");
+                }
+                try{
+                    for (XWS2Upgrades.grant g : up.getUpgradeData().sides.get(0).getGrants()) {
+                        logToChat("found a grant of type " + g.getType());
+                        if (g.getType().equals("stat")) {
+                            Set keySet = g.getValue().keySet();
+                            Iterator it = keySet.iterator();
+                            while (it.hasNext()) {
+                                String key = (String) it.next();
+                                if(key.equals("value")){
+                                    if(g.getValue().containsValue("hull")) extraHull += g.getAmount();
+                                    else if(g.getValue().containsValue("shields")) extraShield += g.getAmount();
+                                }
+                            }
+                        }
                     }
                 }
                 catch(Exception e){
+                    logToChat("did not find a grants here");
                 }
                 if(up.getUpgradeData().sides.get(0).getType().equals("Configuration")) howManyConfigUpgradeCards++;
                 else countHowManyNonConfigurationUpgrades++;
