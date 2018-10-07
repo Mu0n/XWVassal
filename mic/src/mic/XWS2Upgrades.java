@@ -296,10 +296,7 @@ public class XWS2Upgrades {
         return conditionsRead;
     }
 
-
-
     public static XWS2Upgrades loadFromRemote() {
-
         upgradesDataSources whereToGetUpgrades = new upgradesDataSources();
         try{
             whereToGetUpgrades = Util.loadRemoteJson(remoteUrl, upgradesDataSources.class);

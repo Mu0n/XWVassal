@@ -20,6 +20,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.io.*;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.*;
 import java.util.List;
 import java.util.Timer;
@@ -68,6 +70,9 @@ public class OTAContentsChecker extends AbstractConfigurable {
     public static final String OTA_DISPATCHER_PILOTS_JSON_URL_2E = OTA_RAW_GITHUB_JSON_URL_2E + "dispatcher_pilots.json";
     public static final String OTA_DISPATCHER_SHIPS_JSON_URL_2E = OTA_RAW_GITHUB_JSON_URL_2E + "dispatcher_ships.json";
     public static final String OTA_DISPATCHER_CONDITIONS_JSON_URL_2E = OTA_RAW_GITHUB_JSON_URL_2E + "dispatcher_conditions.json";
+
+    public static String manifest2eURL = "https://raw.githubusercontent.com/guidokessels/xwing-data2/master/data/manifest.json";
+
 
     String aComboBoxChoice = "Base Game";
     String chosenURL = OTA_RAW_BRANCH_URL;
@@ -286,6 +291,8 @@ public class OTAContentsChecker extends AbstractConfigurable {
             }
         }
 
+        checkAndUpdateRemoteJsonsIfNewFound();
+
         allShips = XWS2Pilots.loadFromRemote();
         allUpgrades = XWS2Upgrades.loadFromRemote();
         allConditions = XWS2Upgrades.loadConditionsFromRemote();
@@ -306,6 +313,20 @@ public class OTAContentsChecker extends AbstractConfigurable {
             activateBlinky(Color.BLACK);
         }
         GameModule.getGameModule().getToolBar().add(b);
+    }
+
+    private boolean checkAndUpdateRemoteJsonsIfNewFound() {
+        if(XWOTAUtils.fileExitsOnTheNet(manifest2eURL))
+        {
+
+
+        }
+        else {
+            logToChat("Error: can't connect online to verify the module's integrity with xwing-data2");
+            return false;
+        }
+        return true;
+
     }
 
     private static XWS2Pilots.pilotsDataSources parseTheManifestForShipPilots(){

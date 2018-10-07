@@ -401,6 +401,33 @@ public class XWS2Pilots {
         return null;
     }
 
+    public static class tripleVersion{
+        private int major=0;
+        private int minor=0;
+        private int patch=0;
+
+        public tripleVersion(int major, int minor, int patch){
+            this.major = major;
+            this.minor = minor;
+            this.patch = patch;
+        }
+
+        public int getMajor(){ return this.major; }
+        public int getMinor(){ return this.minor; }
+        public int getPatch(){ return this.patch; }
+
+        public void setMajor(int n){ this.major = n;}
+        public void setMinor(int n){ this.minor = n;}
+        public void setPatch(int n){ this.patch = n;}
+
+        public boolean isNewerThan(tripleVersion toCompare){
+            if(this.major > toCompare.getMajor()) return true;
+            else if(this.minor > toCompare.getMinor()) return true;
+            else if(this.patch > toCompare.getPatch()) return true;
+            return false;
+        }
+    }
+
     public static List<XWS2Pilots> loadFromRemote() {
         pilotsDataSources whereToGetPilots = Util.loadRemoteJson(remoteUrl, pilotsDataSources.class);
         List<XWS2Pilots> dualBaseXWS2Ships = Lists.newArrayList();

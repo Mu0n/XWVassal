@@ -847,6 +847,26 @@ public class XWOTAUtils {
         }
     }
 
+    public static boolean fileExitsOnTheNet(String theURL)
+    {
+
+        HttpURLConnection httpUrlConn;
+        try {
+            httpUrlConn = (HttpURLConnection) new URL(theURL).openConnection();
+
+            httpUrlConn.setRequestMethod("HEAD");
+
+            // Set timeouts in milliseconds
+            httpUrlConn.setConnectTimeout(30000);
+            httpUrlConn.setReadTimeout(30000);
+
+            return (httpUrlConn.getResponseCode() == HttpURLConnection.HTTP_OK);
+        } catch (Exception e) {
+            System.out.println("Error: " + e.getMessage());
+            return false;
+        }
+    }
+
     public static void addFileToModule(String fileName,byte[] fileBytes, ArchiveWriter writer) throws IOException
     {
     //    GameModule gameModule = GameModule.getGameModule();
