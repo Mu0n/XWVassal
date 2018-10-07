@@ -428,6 +428,14 @@ public class XWS2Pilots {
         }
     }
 
+    public static tripleVersion checkRemoteManifestVersion(){
+
+    }
+
+    public static tripleVersion checkLocalManifestVersion(){
+
+    }
+
     public static List<XWS2Pilots> loadFromRemote() {
         pilotsDataSources whereToGetPilots = Util.loadRemoteJson(remoteUrl, pilotsDataSources.class);
         List<XWS2Pilots> dualBaseXWS2Ships = Lists.newArrayList();
