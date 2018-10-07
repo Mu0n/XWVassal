@@ -371,10 +371,24 @@ public class XWS2Pilots {
         public pilotsDataSources(List<OneFactionGroup> factionPilots){
             this.factionPilots = factionPilots;
         }
+        @JsonProperty("version")
+        private String version;
+
         @JsonProperty("pilots")
         List<OneFactionGroup> factionPilots = Lists.newArrayList();
 
         public List<OneFactionGroup> getPilots(){return this.factionPilots;}
+        public String getVersion(){return this.version;}
+        public tripleVersion getTripleVersion(){
+            if(this.version.contains(".")){
+                String[] parts = this.version.split(".");
+                tripleVersion myTV = new tripleVersion(Integer.parseInt(parts[0]),Integer.parseInt(parts[1]),Integer.parseInt(parts[2]));
+                return myTV;
+            }
+            else{
+                return null;
+            }
+        }
     }
 
     public static class OneFactionGroup{
@@ -429,11 +443,13 @@ public class XWS2Pilots {
     }
 
     public static tripleVersion checkRemoteManifestVersion(){
-
+        pilotsDataSources whereToGetPilots = Util.loadRemoteJson(remoteUrl, pilotsDataSources.class);
+        return whereToGetPilots.getTripleVersion();
     }
 
     public static tripleVersion checkLocalManifestVersion(){
-
+        pilotsDataSources whereToGetPilots = Util.loadClasspathJson("manifest.json", pilotsDataSources.class);
+        return whereToGetPilots.getTripleVersion();
     }
 
     public static List<XWS2Pilots> loadFromRemote() {

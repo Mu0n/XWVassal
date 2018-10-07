@@ -318,7 +318,11 @@ public class OTAContentsChecker extends AbstractConfigurable {
     private boolean checkAndUpdateRemoteJsonsIfNewFound() {
         if(XWOTAUtils.fileExitsOnTheNet(manifest2eURL))
         {
+            XWS2Pilots.tripleVersion remoteVer = XWS2Pilots.checkRemoteManifestVersion();
+            XWS2Pilots.tripleVersion localVer = XWS2Pilots.checkLocalManifestVersion();
 
+            if(remoteVer.isNewerThan(localVer)) logToChat("remote version is newer!!!");
+            else logToChat("remote version is older or similar");
 
         }
         else {
