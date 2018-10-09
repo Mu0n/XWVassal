@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
 import mic.ota.OTAContentsChecker;
 
+import javax.swing.*;
 import java.io.BufferedInputStream;
 import java.io.InputStream;
 import java.net.URL;
@@ -381,11 +382,17 @@ public class XWS2Pilots {
         public String getVersion(){return this.version;}
         public tripleVersion getTripleVersion(){
             if(this.version.contains(".")){
-                String[] parts = this.version.split(".");
-                tripleVersion myTV = new tripleVersion(Integer.parseInt(parts[0]),Integer.parseInt(parts[1]),Integer.parseInt(parts[2]));
-                return myTV;
+                String[] parts = this.version.split("\\.");
+                int length = parts.length;
+                if(length==3)
+                {
+                    tripleVersion myTV = new tripleVersion(Integer.parseInt(parts[0]),Integer.parseInt(parts[1]),Integer.parseInt(parts[2]));
+                    return myTV;
+                }
+                return null;
             }
             else{
+                Util.logToChat("ERROR: the manifest.json didn't have a well formatted version number.");
                 return null;
             }
         }
@@ -435,9 +442,16 @@ public class XWS2Pilots {
         public void setPatch(int n){ this.patch = n;}
 
         public boolean isNewerThan(tripleVersion toCompare){
-            if(this.major > toCompare.getMajor()) return true;
-            else if(this.minor > toCompare.getMinor()) return true;
-            else if(this.patch > toCompare.getPatch()) return true;
+            if(this.getMajor() > toCompare.getMajor()) return true;
+            else if(this.getMajor() < toCompare.getMajor()) return false;
+
+            if(this.getMinor() > toCompare.getMinor()) return true;
+            else if(this.getMinor() < toCompare.getMinor()) return false;
+
+            if(this.getPatch() > toCompare.getPatch()) return true;
+            else if(this.getPatch() < toCompare.getPatch()) return false;
+
+            //both versions are exactly identical
             return false;
         }
     }

@@ -321,12 +321,24 @@ public class OTAContentsChecker extends AbstractConfigurable {
             XWS2Pilots.tripleVersion remoteVer = XWS2Pilots.checkRemoteManifestVersion();
             XWS2Pilots.tripleVersion localVer = XWS2Pilots.checkLocalManifestVersion();
 
-            if(remoteVer.isNewerThan(localVer)) logToChat("remote version is newer!!!");
-            else logToChat("remote version is older or similar");
+            if(remoteVer != null && localVer != null)
+            {
 
+                if(remoteVer.isNewerThan(localVer)) {
+                    if((remoteVer.getMinor() > localVer.getMinor()) || (remoteVer.getMajor() > localVer.getMajor())) {
+                        //the new online stuff requires a content checker flash!
+
+                    }
+                    else if(remoteVer.getPatch() > localVer.getPatch()){
+                        //no new content to download, but let's still get the new files
+
+                    }
+                    logToChat("OTA line 328 online is newer!");
+                }
+            }
         }
         else {
-            logToChat("Error: can't connect online to verify the module's integrity with xwing-data2");
+            logToChat("Error: can't connect online to verify the module's integrity with xwing-data2 - will attempt to use local files instead.");
             return false;
         }
         return true;
