@@ -291,7 +291,47 @@ public class OTAContentsChecker extends AbstractConfigurable {
             }
         }
 
-        checkAndUpdateRemoteJsonsIfNewFound();
+        //deal with hanging content checker update request if it wasn't dealt with before
+        boolean hasPendingContentChecker = false;
+        if (!XWOTAUtils.fileExistsInModule("pendingContentCheck.txt")) {
+            String choice = "no";
+            try {
+                XWOTAUtils.addFileToModule("pendingContentCheck.txt", choice.getBytes());
+            } catch (Exception e) {
+            }
+        } else {
+            String pendingContentStr = null;
+            try {
+
+                InputStream inputStream = GameModule.getGameModule().getDataArchive().getInputStream("pendingContentCheck.txt");
+                if (inputStream == null) {
+                    logToChat("couldn't load /pendingContentCheck.txt");
+                }
+                BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+                StringBuilder contents = new StringBuilder();
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    contents.append(line);
+                }
+                reader.close();
+
+                pendingContentStr = contents.toString();
+                if (pendingContentStr.equalsIgnoreCase("yes")) {
+                    hasPendingContentChecker = true;
+                }
+                else hasPendingContentChecker = false;
+                inputStream.close();
+            } catch (Exception e) {
+                System.out.println("Unhandled error reading pendingContentCheck.txt: \n" + e.toString());
+                logToChat("Unhandled error reading pendingContentCheck.txt: \n" + e.toString());
+            }
+            missing2ndEdContent = 1;
+        }
+
+        if(hasPendingContentChecker == false) checkAndUpdateRemoteJsonsIfNewFound();
+        //if the pending file doesn't exist, give it a chance to find a new manifest that requires a content check and create that pendingContentCheck.txt again
+        //this file should be destroyed when a content check download or downloadAll is done
+
 
         allShips = XWS2Pilots.loadFromRemote();
         allUpgrades = XWS2Upgrades.loadFromRemote();
@@ -315,7 +355,7 @@ public class OTAContentsChecker extends AbstractConfigurable {
         GameModule.getGameModule().getToolBar().add(b);
     }
 
-    private boolean checkAndUpdateRemoteJsonsIfNewFound() {
+    private void checkAndUpdateRemoteJsonsIfNewFound() {
         if(XWOTAUtils.fileExitsOnTheNet(manifest2eURL))
         {
             XWS2Pilots.tripleVersion remoteVer = XWS2Pilots.checkRemoteManifestVersion();
@@ -323,26 +363,28 @@ public class OTAContentsChecker extends AbstractConfigurable {
 
             if(remoteVer != null && localVer != null)
             {
-
                 if(remoteVer.isNewerThan(localVer)) {
                     if((remoteVer.getMinor() > localVer.getMinor()) || (remoteVer.getMajor() > localVer.getMajor())) {
-                        //the new online stuff requires a content checker flash!
-
+                        //Scenario B: the new online stuff requires a content checker flash! and the local files will be replaced
+                        missing2ndEdContent=1;
+                        String msg = "yes";
+                        try {
+                            XWOTAUtils.addFileToModule("pendingContentCheck.txt", msg.getBytes());
+                        } catch (Exception e) {
+                        }
                     }
                     else if(remoteVer.getPatch() > localVer.getPatch()){
-                        //no new content to download, but let's still get the new files
-
+                        //Scenario C: no content checker flash, but the local files will be replaced.
                     }
-                    logToChat("OTA line 328 online is newer!");
+                    downloadXwingDataAndDispatcherJSONFiles_2e();
                 }
             }
         }
         else {
+            //SCENARIO A: can't connect to guido's xwing-data2 file online, will resort to purely local files for data.
             logToChat("Error: can't connect online to verify the module's integrity with xwing-data2 - will attempt to use local files instead.");
-            return false;
+            return;
         }
-        return true;
-
     }
 
     private static XWS2Pilots.pilotsDataSources parseTheManifestForShipPilots(){
