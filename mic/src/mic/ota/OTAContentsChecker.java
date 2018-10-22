@@ -104,6 +104,8 @@ public class OTAContentsChecker extends AbstractConfigurable {
     int missing2ndEdContent = 0;
     boolean wantToBeNotified1st = false;
 
+    boolean thinkingWeHaveNoNetAccess = false; //once it has trouble connecting, don't bother with more connections
+
     private boolean tictoc = false;
     private boolean tictoc1st = false;
     private boolean tictoc2nd = false;
@@ -242,6 +244,7 @@ public class OTAContentsChecker extends AbstractConfigurable {
     }
     public void addTo(Buildable parent) {
 
+
         JButton b = new JButton("Content Checker");
         b.setAlignmentY(0.0F);
         backupColor = b.getBackground();
@@ -291,46 +294,15 @@ public class OTAContentsChecker extends AbstractConfigurable {
             }
         }
 
-        //deal with hanging content checker update request if it wasn't dealt with before
-        boolean hasPendingContentChecker = false;
-        if (!XWOTAUtils.fileExistsInModule("pendingContentCheck.txt")) {
-            String choice = "no";
-            try {
-                XWOTAUtils.addFileToModule("pendingContentCheck.txt", choice.getBytes());
-            } catch (Exception e) {
-            }
-        } else {
-            String pendingContentStr = null;
-            try {
+        checkPendingCheck(); //locally
+        checkAndUpdateRemoteJsonsIfNewFound(); //remotely
+        checkPendingOTA(); //locally
+        if(thinkingWeHaveNoNetAccess == false) compareOTAversions(); //remotely only if the first net access worked, don't bother otherwise.
 
-                InputStream inputStream = GameModule.getGameModule().getDataArchive().getInputStream("pendingContentCheck.txt");
-                if (inputStream == null) {
-                    logToChat("couldn't load /pendingContentCheck.txt");
-                }
-                BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
-                StringBuilder contents = new StringBuilder();
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    contents.append(line);
-                }
-                reader.close();
-
-                pendingContentStr = contents.toString();
-                if (pendingContentStr.equalsIgnoreCase("yes")) {
-                    hasPendingContentChecker = true;
-                }
-                else hasPendingContentChecker = false;
-                inputStream.close();
-            } catch (Exception e) {
-                System.out.println("Unhandled error reading pendingContentCheck.txt: \n" + e.toString());
-                logToChat("Unhandled error reading pendingContentCheck.txt: \n" + e.toString());
-            }
-            missing2ndEdContent = 1;
-        }
-
-        if(hasPendingContentChecker == false) checkAndUpdateRemoteJsonsIfNewFound();
-        //if the pending file doesn't exist, give it a chance to find a new manifest that requires a content check and create that pendingContentCheck.txt again
+            //if the pending file doesn't exist, give it a chance to find a new manifest that requires a content check and create that pendingContentCheck.txt again
         //this file should be destroyed when a content check download or downloadAll is done
+
+
 
 
         allShips = XWS2Pilots.loadFromRemote();
@@ -355,6 +327,79 @@ public class OTAContentsChecker extends AbstractConfigurable {
         GameModule.getGameModule().getToolBar().add(b);
     }
 
+    private void checkPendingOTA() {
+        if(!XWOTAUtils.fileExistsInModule("pendingOTACheck.txt")){
+            String choice = "no";
+            try {
+                XWOTAUtils.addFileToModule("pendingOTACheck.txt", choice.getBytes());
+            } catch (Exception e) {
+            }
+        } else{
+            String pendingContentStr = null;
+            try {
+
+                InputStream inputStream = GameModule.getGameModule().getDataArchive().getInputStream("pendingOTACheck.txt");
+                if (inputStream == null) {
+                    logToChat("couldn't load /pendingOTACheck.txt");
+                }
+                BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+                StringBuilder contents = new StringBuilder();
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    contents.append(line);
+                }
+                reader.close();
+
+                pendingContentStr = contents.toString();
+                if (pendingContentStr.equalsIgnoreCase("yes")) {
+                    missing2ndEdContent = 1;
+                }
+                inputStream.close();
+            } catch (Exception e) {
+                System.out.println("Unhandled error reading pendingOTACheck.txt: \n" + e.toString());
+                logToChat("Unhandled error reading pendingOTACheck.txt: \n" + e.toString());
+            }
+        }
+
+
+    }
+
+
+    private void checkPendingCheck(){
+        //deal with hanging content checker update request if it wasn't dealt with before
+        if (!XWOTAUtils.fileExistsInModule("pendingContentCheck.txt")) {
+            String choice = "no";
+            try {
+                XWOTAUtils.addFileToModule("pendingContentCheck.txt", choice.getBytes());
+            } catch (Exception e) {
+            }
+        } else {
+            String pendingContentStr = null;
+            try {
+
+                InputStream inputStream = GameModule.getGameModule().getDataArchive().getInputStream("pendingContentCheck.txt");
+                if (inputStream == null) {
+                    logToChat("couldn't load /pendingContentCheck.txt");
+                }
+                BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+                StringBuilder contents = new StringBuilder();
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    contents.append(line);
+                }
+                reader.close();
+
+                pendingContentStr = contents.toString();
+                if (pendingContentStr.equalsIgnoreCase("yes")) {
+                    missing2ndEdContent = 1;
+                }
+                inputStream.close();
+            } catch (Exception e) {
+                System.out.println("Unhandled error reading pendingContentCheck.txt: \n" + e.toString());
+                logToChat("Unhandled error reading pendingContentCheck.txt: \n" + e.toString());
+            }
+        }
+    }
     private void checkAndUpdateRemoteJsonsIfNewFound() {
         if(XWOTAUtils.fileExitsOnTheNet(manifest2eURL))
         {
@@ -383,6 +428,7 @@ public class OTAContentsChecker extends AbstractConfigurable {
         else {
             //SCENARIO A: can't connect to guido's xwing-data2 file online, will resort to purely local files for data.
             logToChat("Error: can't connect online to verify the module's integrity with xwing-data2 - will attempt to use local files instead.");
+            thinkingWeHaveNoNetAccess = true;
             return;
         }
     }
