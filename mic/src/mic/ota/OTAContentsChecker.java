@@ -327,6 +327,8 @@ public class OTAContentsChecker extends AbstractConfigurable {
         GameModule.getGameModule().getToolBar().add(b);
     }
 
+
+
     private void checkPendingOTA() {
         if(!XWOTAUtils.fileExistsInModule("pendingOTACheck.txt")){
             String choice = "no";
@@ -363,7 +365,6 @@ public class OTAContentsChecker extends AbstractConfigurable {
 
 
     }
-
 
     private void checkPendingCheck(){
         //deal with hanging content checker update request if it wasn't dealt with before
@@ -432,6 +433,10 @@ public class OTAContentsChecker extends AbstractConfigurable {
             return;
         }
     }
+    private void compareOTAversions() {
+
+    }
+
 
     private static XWS2Pilots.pilotsDataSources parseTheManifestForShipPilots(){
             return mic.Util.loadRemoteJson(XWS2Pilots.remoteUrl, XWS2Pilots.pilotsDataSources.class);
