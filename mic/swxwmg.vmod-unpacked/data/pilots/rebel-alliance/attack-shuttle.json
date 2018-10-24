@@ -1,0 +1,112 @@
+{
+  "name": "Attack Shuttle",
+  "xws": "attackshuttle",
+  "ffg": 32,
+  "size": "Small",
+  "dial": [
+    "1TR",
+    "1BB",
+    "1FB",
+    "1NB",
+    "1YR",
+    "2TW",
+    "2BW",
+    "2FB",
+    "2NW",
+    "2YW",
+    "3TR",
+    "3BW",
+    "3FW",
+    "3NW",
+    "3YR",
+    "4FW",
+    "4KR"
+  ],
+  "faction": "Rebel Alliance",
+  "stats": [
+    { "arc": "Front Arc", "type": "attack", "value": 3 },
+    { "type": "agility", "value": 2 },
+    { "type": "hull", "value": 3 },
+    { "type": "shields", "value": 1 }
+  ],
+  "actions": [
+    { "difficulty": "White", "type": "Focus" },
+    { "difficulty": "White", "type": "Evade" },
+    {
+      "difficulty": "White",
+      "linked": { "difficulty": "Red", "type": "Evade" },
+      "type": "Barrel Roll"
+    }
+  ],
+  "pilots": [
+    {
+      "name": "\"Zeb\" Orrelios",
+      "caption": "Spectre-4",
+      "initiative": 2,
+      "limited": 1,
+      "cost": 34,
+      "xws": "zeborrelios",
+      "ability": "While you defend, [Critical Hit] results are neutralized before [Hit] results.",
+      "image": "https://sb-cdn.fantasyflightgames.com/card_images/Card_Pilot_37.png",
+      "shipAbility": {
+        "name": "Locked and Loaded",
+        "text": "While you are docked, after your carrier ship performs a primary [Front Arc] or [Turret] attack, it may perform a bonus primary [Rear Arc] attack."
+      },
+      "slots": ["Turret", "Crew", "Modification", "Title"],
+      "artwork": "https://sb-cdn.fantasyflightgames.com/card_art/Card_art_XW_P_37.jpg",
+      "ffg": 37
+    },
+    {
+      "name": "Ezra Bridger",
+      "caption": "Spectre-6",
+      "initiative": 3,
+      "limited": 1,
+      "cost": 41,
+      "xws": "ezrabridger",
+      "ability": "While you defend or perform an attack, if you are stressed, you may spend 1 [Force] to change up to 2 of your [Focus] results to [Evade] or [Hit] results.",
+      "image": "https://sb-cdn.fantasyflightgames.com/card_images/Card_Pilot_36.png",
+      "force": { "value": 1, "recovers": 1 },
+      "shipAbility": {
+        "name": "Locked and Loaded",
+        "text": "While you are docked, after your carrier ship performs a primary [Front Arc] or [Turret] attack, it may perform a bonus primary [Rear Arc] attack."
+      },
+      "slots": ["Force Power", "Turret", "Crew", "Modification", "Title"],
+      "artwork": "https://sb-cdn.fantasyflightgames.com/card_art/Card_art_XW_P_36.jpg",
+      "ffg": 36
+    },
+    {
+      "name": "Hera Syndulla",
+      "caption": "Spectre-2",
+      "initiative": 5,
+      "limited": 1,
+      "cost": 39,
+      "xws": "herasyndulla",
+      "ability": "After you reveal a red or blue maneuver, you may set your dial to another maneuver of the same difficulty.",
+      "image": "https://sb-cdn.fantasyflightgames.com/card_images/Card_Pilot_34.png",
+      "shipAbility": {
+        "name": "Locked and Loaded",
+        "text": "While you are docked, after your carrier ship performs a primary [Front Arc] or [Turret] attack, it may perform a bonus primary [Rear Arc] attack."
+      },
+      "slots": ["Talent", "Turret", "Crew", "Modification", "Title"],
+      "artwork": "https://sb-cdn.fantasyflightgames.com/card_art/Card_art_XW_P_34.jpg",
+      "ffg": 34
+    },
+    {
+      "name": "Sabine Wren",
+      "caption": "Spectre-5",
+      "initiative": 3,
+      "limited": 1,
+      "cost": 38,
+      "xws": "sabinewren",
+      "ability": "Before you activate, you may perform a [Barrel Roll] or [Boost] action.",
+      "image": "https://sb-cdn.fantasyflightgames.com/card_images/Card_Pilot_35.png",
+      "shipAbility": {
+        "name": "Locked and Loaded",
+        "text": "While you are docked, after your carrier ship performs a primary [Front Arc] or [Turret] attack, it may perform a bonus primary [Rear Arc] attack."
+      },
+      "slots": ["Talent", "Turret", "Crew", "Modification", "Title"],
+      "artwork": "https://sb-cdn.fantasyflightgames.com/card_art/Card_art_XW_P_35.jpg",
+      "ffg": 35
+    }
+  ]
+}

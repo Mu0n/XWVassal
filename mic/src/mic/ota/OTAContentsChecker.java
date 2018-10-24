@@ -295,7 +295,7 @@ public class OTAContentsChecker extends AbstractConfigurable {
         }
 
         checkPendingCheck(); //locally
-        checkAndUpdateRemoteJsonsIfNewFound(); //remotely
+        checkAndUpdateRemoteJsonsIfNewFound(); //remotely, will influence thinkingWeHaveNoNetAccess if the timeout is reached
         checkPendingOTA(); //locally
         if(thinkingWeHaveNoNetAccess == false) compareOTAversions(); //remotely only if the first net access worked, don't bother otherwise.
 
@@ -406,6 +406,9 @@ public class OTAContentsChecker extends AbstractConfigurable {
         {
             XWS2Pilots.tripleVersion remoteVer = XWS2Pilots.checkRemoteManifestVersion();
             XWS2Pilots.tripleVersion localVer = XWS2Pilots.checkLocalManifestVersion();
+            localVer.displayInChat("local");
+            remoteVer.displayInChat("remote");
+
 
             if(remoteVer != null && localVer != null)
             {
@@ -418,11 +421,17 @@ public class OTAContentsChecker extends AbstractConfigurable {
                             XWOTAUtils.addFileToModule("pendingContentCheck.txt", msg.getBytes());
                         } catch (Exception e) {
                         }
+                        downloadXwingDataAndDispatcherJSONFiles_2e();
+                        logToChat("The local xwing-data2 is being updated");
                     }
                     else if(remoteVer.getPatch() > localVer.getPatch()){
                         //Scenario C: no content checker flash, but the local files will be replaced.
+                        downloadXwingDataAndDispatcherJSONFiles_2e();
+                        logToChat("The local xwing-data2 is being updated");
                     }
-                    downloadXwingDataAndDispatcherJSONFiles_2e();
+                    else{
+                        logToChat("The local xwing-data2 is up to date.");
+                    }
                 }
             }
         }
@@ -454,6 +463,7 @@ public class OTAContentsChecker extends AbstractConfigurable {
         //by putting them in /data/pilots/rebelalliance/
         ArrayList<String> jsonFilesToDownloadFromURL_2e = new ArrayList<String>();
 
+        jsonFilesToDownloadFromURL_2e.add(XWS2Pilots.remoteUrl);
 
         for(XWS2Pilots.OneFactionGroup oSDS : parseTheManifestForShipPilots().getPilots()){
             for(String suffix : oSDS.getShipUrlSuffixes()){

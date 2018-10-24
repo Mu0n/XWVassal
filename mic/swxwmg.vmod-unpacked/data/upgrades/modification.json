@@ -1,0 +1,225 @@
+[
+  {
+    "name": "Ablative Plating",
+    "limited": 0,
+    "xws": "ablativeplating",
+    "sides": [
+      {
+        "title": "Ablative Plating",
+        "type": "Modification",
+        "ability": "Before you would suffer damage from an obstacle or from a friendly bomb detonating, you may spend 1 [Charge]. If you do, prevent 1 damage.",
+        "slots": ["Modification"],
+        "charges": { "value": 2, "recovers": 0 },
+        "image": "https://sb-cdn.fantasyflightgames.com/card_images/Card_Upgrade_68.png",
+        "artwork": "https://sb-cdn.fantasyflightgames.com/card_art/Card_art_XW_U_68.jpg",
+        "ffg": 292
+      }
+    ],
+    "cost": { "value": 4 },
+    "restrictions": [{ "sizes": ["Medium", "Large"] }]
+  },
+  {
+    "name": "Advanced SLAM",
+    "limited": 0,
+    "xws": "advancedslam",
+    "sides": [
+      {
+        "title": "Advanced SLAM",
+        "type": "Modification",
+        "ability": "After you perform a [Slam] action, if you fully executed that maneuver, you may perform a white action on your action bar, treating that action as red.",
+        "slots": ["Modification"],
+        "image": "https://sb-cdn.fantasyflightgames.com/card_images/Card_Upgrade_69.png",
+        "artwork": "https://sb-cdn.fantasyflightgames.com/card_art/Card_art_XW_U_69.jpg",
+        "ffg": 293
+      }
+    ],
+    "cost": { "value": 3 },
+    "restrictions": [{ "action": { "type": "SLAM", "difficulty": "White" } }]
+  },
+  {
+    "name": "Afterburners",
+    "limited": 0,
+    "xws": "afterburners",
+    "sides": [
+      {
+        "title": "Afterburners",
+        "type": "Modification",
+        "ability": "After you fully execute a speed 3-5 maneuver, you may spend 1 [Charge] to perform a [Boost] action, even while stressed.",
+        "slots": ["Modification"],
+        "charges": { "value": 2, "recovers": 0 },
+        "image": "https://sb-cdn.fantasyflightgames.com/card_images/Card_Upgrade_70.png",
+        "artwork": "https://sb-cdn.fantasyflightgames.com/card_art/Card_art_XW_U_70.jpg",
+        "ffg": 294
+      }
+    ],
+    "cost": { "value": 8 },
+    "restrictions": [{ "sizes": ["Small"] }]
+  },
+  {
+    "name": "Electronic Baffle",
+    "limited": 0,
+    "xws": "electronicbaffle",
+    "sides": [
+      {
+        "title": "Electronic Baffle",
+        "type": "Modification",
+        "ability": "During the End Phase, you may suffer 1 [Hit] damage to remove 1 red token.",
+        "slots": ["Modification"],
+        "image": "https://sb-cdn.fantasyflightgames.com/card_images/Card_Upgrade_71.png",
+        "artwork": "https://sb-cdn.fantasyflightgames.com/card_art/Card_art_XW_U_71.jpg",
+        "ffg": 295
+      }
+    ],
+    "cost": { "value": 2 }
+  },
+  {
+    "name": "Engine Upgrade",
+    "limited": 0,
+    "xws": "engineupgrade",
+    "sides": [
+      {
+        "title": "Engine Upgrade",
+        "type": "Modification",
+        "text": "Large military forces such as the Galactic Empire have standardized engines, but individual pilots and small organizations often replace the power couplings add thrusters, or use high-performance fuel to get extra push out of their engines.",
+        "slots": ["Modification"],
+        "actions": [{ "type": "Boost", "difficulty": "White" }],
+        "grants": [
+          {
+            "type": "action",
+            "value": { "type": "Boost", "difficulty": "White" },
+            "amount": 1
+          }
+        ],
+        "image": "https://sb-cdn.fantasyflightgames.com/card_images/Card_Upgrade_72.png",
+        "artwork": "https://sb-cdn.fantasyflightgames.com/card_art/Card_art_XW_U_72.jpg",
+        "ffg": 296
+      }
+    ],
+    "cost": {
+      "variable": "size",
+      "values": { "Small": 3, "Medium": 6, "Large": 9 }
+    },
+    "restrictions": [{ "action": { "type": "Boost", "difficulty": "Red" } }]
+  },
+  {
+    "name": "Hull Upgrade",
+    "limited": 0,
+    "xws": "hullupgrade",
+    "sides": [
+      {
+        "title": "Hull Upgrade",
+        "type": "Modification",
+        "text": "For those who cannot afford an enhanced shield generator, bolting additional plates onto the hull of a ship can serve as an adequate substitute.",
+        "slots": ["Modification"],
+        "grants": [{ "type": "stat", "value": "hull", "amount": 1 }],
+        "image": "https://sb-cdn.fantasyflightgames.com/card_images/Card_Upgrade_73.png",
+        "artwork": "https://sb-cdn.fantasyflightgames.com/card_art/Card_art_XW_U_73.jpg",
+        "ffg": 297
+      }
+    ],
+    "cost": {
+      "variable": "agility",
+      "values": { "0": 2, "1": 3, "2": 5, "3": 7 }
+    }
+  },
+  {
+    "name": "Munitions Failsafe",
+    "limited": 0,
+    "xws": "munitionsfailsafe",
+    "sides": [
+      {
+        "title": "Munitions Failsafe",
+        "type": "Modification",
+        "ability": "While you perform a [Torpedo] or [Missile] attack, after rolling attack dice, you may cancel all dice results to recover 1 [Charge] you spent as a cost for the attack.",
+        "slots": ["Modification"],
+        "image": "https://sb-cdn.fantasyflightgames.com/card_images/Card_Upgrade_74.png",
+        "artwork": "https://sb-cdn.fantasyflightgames.com/card_art/Card_art_XW_U_74.jpg",
+        "ffg": 298
+      }
+    ],
+    "cost": { "value": 2 }
+  },
+  {
+    "name": "Shield Upgrade",
+    "limited": 0,
+    "xws": "shieldupgrade",
+    "sides": [
+      {
+        "title": "Shield Upgrade",
+        "type": "Modification",
+        "text": "Deflector shields are a substantial line of defense on most starships beyond the lightest fighters. While enhancing a ship's shield capacity can be costly, all but the most confident or reckless pilots see the value in this sort of investment.",
+        "alt": [
+          {
+            "image": "https://images-cdn.fantasyflightgames.com/filer_public/2a/c1/2ac1eae4-dd25-4807-b09e-df97786a2093/g18x3-shield-upgrade-2.png",
+            "source": "Season Three 2018"
+          }
+        ],
+        "slots": ["Modification"],
+        "grants": [{ "type": "stat", "value": "shields", "amount": 1 }],
+        "image": "https://sb-cdn.fantasyflightgames.com/card_images/Card_Upgrade_75.png",
+        "artwork": "https://sb-cdn.fantasyflightgames.com/card_art/Card_art_XW_U_75.jpg",
+        "ffg": 299
+      }
+    ],
+    "cost": {
+      "variable": "agility",
+      "values": { "0": 3, "1": 4, "2": 6, "3": 8 }
+    }
+  },
+  {
+    "name": "Static Discharge Vanes",
+    "limited": 0,
+    "xws": "staticdischargevanes",
+    "sides": [
+      {
+        "title": "Static Discharge Vanes",
+        "type": "Modification",
+        "ability": "Before you would gain 1 ion or jam token, if you are not stressed, you may choose another ship at range 0-1 and gain 1 stress token. If you do, the chosen ship gains that ion or jam token instead.",
+        "slots": ["Modification"],
+        "image": "https://sb-cdn.fantasyflightgames.com/card_images/Card_Upgrade_76.png",
+        "artwork": "https://sb-cdn.fantasyflightgames.com/card_art/Card_art_XW_U_76.jpg",
+        "ffg": 300
+      }
+    ],
+    "cost": { "value": 6 }
+  },
+  {
+    "name": "Stealth Device",
+    "limited": 0,
+    "xws": "stealthdevice",
+    "sides": [
+      {
+        "title": "Stealth Device",
+        "type": "Modification",
+        "ability": "While you defend, if your [Charge] is active, roll 1 additional defense die. After you suffer damage, lose 1 [Charge].",
+        "slots": ["Modification"],
+        "charges": { "value": 1, "recovers": 0 },
+        "image": "https://sb-cdn.fantasyflightgames.com/card_images/Card_Upgrade_77.png",
+        "artwork": "https://sb-cdn.fantasyflightgames.com/card_art/Card_art_XW_U_77.jpg",
+        "ffg": 301
+      }
+    ],
+    "cost": {
+      "variable": "agility",
+      "values": { "0": 3, "1": 4, "2": 6, "3": 8 }
+    }
+  },
+  {
+    "name": "Tactical Scrambler",
+    "limited": 0,
+    "xws": "tacticalscrambler",
+    "sides": [
+      {
+        "title": "Tactical Scrambler",
+        "type": "Modification",
+        "ability": "While you obstruct an enemy ship's attack, the defender rolls 1 additional defense die.",
+        "slots": ["Modification"],
+        "image": "https://sb-cdn.fantasyflightgames.com/card_images/Card_Upgrade_78.png",
+        "artwork": "https://sb-cdn.fantasyflightgames.com/card_art/Card_art_XW_U_78.jpg",
+        "ffg": 302
+      }
+    ],
+    "cost": { "value": 2 },
+    "restrictions": [{ "sizes": ["Medium", "Large"] }]
+  }
+]

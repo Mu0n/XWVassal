@@ -454,6 +454,10 @@ public class XWS2Pilots {
             //both versions are exactly identical
             return false;
         }
+
+        public void displayInChat(String source){
+            Util.logToChat("The " + source + " version of xwing-data2 is " + Integer.toString(major)+"."+Integer.toString(minor)+"."+Integer.toString(patch));
+        }
     }
 
     public static tripleVersion checkRemoteManifestVersion(){
@@ -462,7 +466,7 @@ public class XWS2Pilots {
     }
 
     public static tripleVersion checkLocalManifestVersion(){
-        pilotsDataSources whereToGetPilots = Util.loadClasspathJson("manifest.json", pilotsDataSources.class);
+        pilotsDataSources whereToGetPilots = Util.loadClasspathJson("data/manifest.json", pilotsDataSources.class);
         return whereToGetPilots.getTripleVersion();
     }
 

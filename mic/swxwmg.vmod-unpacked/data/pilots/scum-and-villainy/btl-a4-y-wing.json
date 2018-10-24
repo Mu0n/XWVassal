@@ -1,0 +1,123 @@
+{
+  "name": "BTL-A4 Y-wing",
+  "xws": "btla4ywing",
+  "ffg": 12,
+  "size": "Small",
+  "dial": [
+    "1BB",
+    "1FB",
+    "1NB",
+    "2TW",
+    "2BW",
+    "2FB",
+    "2NW",
+    "2YW",
+    "3TR",
+    "3BW",
+    "3FW",
+    "3NW",
+    "3YR",
+    "4FR",
+    "4KR"
+  ],
+  "faction": "Scum and Villainy",
+  "stats": [
+    { "arc": "Front Arc", "type": "attack", "value": 2 },
+    { "type": "agility", "value": 1 },
+    { "type": "hull", "value": 6 },
+    { "type": "shields", "value": 2 }
+  ],
+  "actions": [
+    { "difficulty": "White", "type": "Focus" },
+    { "difficulty": "White", "type": "Lock" },
+    { "difficulty": "Red", "type": "Barrel Roll" },
+    { "difficulty": "Red", "type": "Reload" }
+  ],
+  "pilots": [
+    {
+      "name": "Crymorah Goon",
+      "initiative": 1,
+      "limited": 0,
+      "cost": 32,
+      "xws": "crymorahgoon",
+      "text": "Though far from nimble, the Y-wing's heavy hull, substantial shielding, and turret-mounted cannons make it an excellent patrol craft.",
+      "image": "https://sb-cdn.fantasyflightgames.com/card_images/Card_Pilot_168.png",
+      "slots": [
+        "Turret",
+        "Torpedo",
+        "Gunner",
+        "Astromech",
+        "Device",
+        "Illicit",
+        "Modification"
+      ],
+      "artwork": "https://sb-cdn.fantasyflightgames.com/card_art/Card_art_XW_P_168.jpg",
+      "ffg": 168
+    },
+    {
+      "name": "Drea Renthal",
+      "caption": "Pirate Lord",
+      "initiative": 4,
+      "limited": 1,
+      "cost": 40,
+      "xws": "drearenthal",
+      "ability": "While a friendly non-limited ship performs an attack, if the defender is in your firing arc, the attacker may reroll 1 attack die.",
+      "slots": [
+        "Talent",
+        "Turret",
+        "Torpedo",
+        "Gunner",
+        "Astromech",
+        "Device",
+        "Illicit",
+        "Modification"
+      ],
+      "image": "https://sb-cdn.fantasyflightgames.com/card_images/Card_Pilot_166.png",
+      "artwork": "https://sb-cdn.fantasyflightgames.com/card_art/Card_art_XW_P_166.jpg",
+      "ffg": 166
+    },
+    {
+      "name": "Hired Gun",
+      "initiative": 2,
+      "limited": 0,
+      "cost": 34,
+      "xws": "hiredgun",
+      "text": "Just the mention of Imperial credits can bring a host of less-than-trustworthy individuals to your side.",
+      "image": "https://sb-cdn.fantasyflightgames.com/card_images/Card_Pilot_167.png",
+      "slots": [
+        "Talent",
+        "Turret",
+        "Torpedo",
+        "Gunner",
+        "Astromech",
+        "Device",
+        "Illicit",
+        "Modification"
+      ],
+      "artwork": "https://sb-cdn.fantasyflightgames.com/card_art/Card_art_XW_P_167.jpg",
+      "ffg": 167
+    },
+    {
+      "name": "Kavil",
+      "caption": "Callous Corsair",
+      "initiative": 5,
+      "limited": 1,
+      "cost": 42,
+      "xws": "kavil",
+      "ability": "While you perform a non-[Front Arc] attack, roll 1 additional attack die.",
+      "image": "https://sb-cdn.fantasyflightgames.com/card_images/Card_Pilot_165.png",
+      "slots": [
+        "Talent",
+        "Turret",
+        "Torpedo",
+        "Gunner",
+        "Astromech",
+        "Device",
+        "Illicit",
+        "Modification"
+      ],
+      "artwork": "https://sb-cdn.fantasyflightgames.com/card_art/Card_art_XW_P_165.jpg",
+      "ffg": 165
+    }
+  ]
+}
