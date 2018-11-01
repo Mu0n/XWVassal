@@ -294,6 +294,7 @@ public class OTAContentsChecker extends AbstractConfigurable {
             }
         }
 
+        //The zipping process should happen only once when all the local files to be replaced are known. On slow hard disk, this could be unfortunate if it was done several times.
         checkPendingCheck(); //locally
         checkAndUpdateRemoteJsonsIfNewFound(); //remotely, will influence thinkingWeHaveNoNetAccess if the timeout is reached
         checkPendingOTA(); //locally

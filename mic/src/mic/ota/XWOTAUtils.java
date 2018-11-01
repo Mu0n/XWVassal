@@ -586,9 +586,11 @@ public class XWOTAUtils {
             else fileName = jsonFile.substring(jsonFile.lastIndexOf("/data/"),jsonFile.length());
             fileContents = null;
             fileContents = downlodFileFromOTA(jsonFile);
-            addFileToModule(fileName, fileContents, writer);
+            //addFileToModule(fileName, fileContents, writer);
+            addImageToModule(fileName, fileContents, writer);
         }
         writer.save();
+        //writer.close();
 
     }
     public static void downloadAndSaveImagesFromOTA( ArrayList<OTAImage> imagesToDownload, String branchURL)

@@ -466,7 +466,7 @@ public class XWS2Pilots {
     }
 
     public static tripleVersion checkLocalManifestVersion(){
-        pilotsDataSources whereToGetPilots = Util.loadClasspathJson("data/manifest.json", pilotsDataSources.class);
+        pilotsDataSources whereToGetPilots = Util.loadClasspathJson("images/manifest.json", pilotsDataSources.class);
         return whereToGetPilots.getTripleVersion();
     }
 
