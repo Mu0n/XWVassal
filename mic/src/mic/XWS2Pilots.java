@@ -475,6 +475,7 @@ public class XWS2Pilots {
         if(XWOTAUtils.checkExistenceOfLocalXWD2Zip() == false) //can't find the local depot, make it empty
         {
             try {
+                GameModule.getGameModule();
                 FileOutputStream fos = new FileOutputStream(XWOTAUtils.XWD2DATAFILE);
                 ZipOutputStream zipOut = new ZipOutputStream(fos);
 
@@ -495,6 +496,7 @@ public class XWS2Pilots {
             }
             catch(Exception e){
                 Util.logToChat("XWS2PIlots line 494 -was unable to create local xwd2 data depot");
+                Util.logToChat(e.getMessage());
                 return new tripleVersion(0,0,0);
             }
         }
