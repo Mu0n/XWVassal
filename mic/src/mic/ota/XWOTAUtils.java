@@ -577,15 +577,8 @@ public class XWOTAUtils {
 
     public static void downloadJSONFilesFromGitHub(ArrayList<String> jsonFiles, boolean keepPrefix) throws IOException
     {
-
-        String current = new java.io.File( "." ).getCanonicalPath();
-        logToChat("XWOA line 582 Current dir:"+current);
-
-        boolean existCheck = XWOTAUtils.checkExistenceOfLocalXWD2Zip();
-        Util.logToChat("XWOA line 585 check if xwd2 zip exists " + existCheck);
-        if(existCheck == false) {
-
-            FileOutputStream fos = new FileOutputStream(XWD2DATAFILE);
+        String pathToUse = XWOTAUtils.getModulePath();
+            FileOutputStream fos = new FileOutputStream(pathToUse + File.separator + XWD2DATAFILE);
             ZipOutputStream zipOut = new ZipOutputStream(fos);
 
             String fileName = null;
@@ -594,7 +587,6 @@ public class XWOTAUtils {
             {
                 if(keepPrefix == false) fileName = jsonFile.substring(jsonFile.lastIndexOf("/")+1,jsonFile.length());
                 else fileName = jsonFile.substring(jsonFile.lastIndexOf("/data/"),jsonFile.length());
-                fileContents = null;
                 fileContents = downloadFileFromOTA(jsonFile);
 
                 File fileToZip = new File(fileName);
@@ -609,8 +601,6 @@ public class XWOTAUtils {
                 fis.close();
             }
             fos.close();
-
-        }
     }
     public static void downloadAndSaveImagesFromOTA( ArrayList<OTAImage> imagesToDownload, String branchURL)
     {
@@ -1036,7 +1026,15 @@ public class XWOTAUtils {
 
     public static boolean checkExistenceOfLocalXWD2Zip()
     {
-        File theZip = new File("xwd2.zip");
+        File dummyFile = new File(GameModule.getGameModule().getDataArchive().getName());
+        String path = dummyFile.getPath();
+        File theZip = new File( path.substring(0,path.lastIndexOf(File.separator)) + File.separator + XWOTAUtils.XWD2DATAFILE);
         return theZip.exists() && theZip.isFile();
+    }
+
+    public static String getModulePath() {
+        File dummyFile = new File(GameModule.getGameModule().getDataArchive().getName());
+        String path = dummyFile.getPath();
+        return path.substring(0,path.lastIndexOf(File.separator));
     }
 }

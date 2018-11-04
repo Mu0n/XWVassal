@@ -463,7 +463,7 @@ public class OTAContentsChecker extends AbstractConfigurable {
         return mic.Util.loadRemoteJson(XWS2Upgrades.remoteUrl, XWS2Upgrades.conditionsDataSources.class);
     }
 
-    private static boolean downloadXwingDataAndDispatcherJSONFiles_2e() {
+    public static boolean downloadXwingDataAndDispatcherJSONFiles_2e() {
         boolean errorOccurredOnXWingData = false;
         //these have to be dumped in a /data subfolder, it will help prevent shipPilot json collisions, such as tielfighter
         //by putting them in /data/pilots/rebelalliance/
