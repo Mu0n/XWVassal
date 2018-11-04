@@ -63,6 +63,19 @@ public class Util {
         }
     }
 
+    public static <T> T loadClasspathJsonInDepot(String filename, Class<T> type, InputStream is) {
+        try {
+            if (is == null) {
+                logToChat("couldn't load " + filename);
+            }
+            return mapper.readValue(is, type);
+        } catch (Exception e) {
+            System.out.println("Unhandled error parsing classpath json: \n" + e.toString());
+            logToChat("Unhandled error parsing classpath json: \n" + e.toString());
+            return null;
+        }
+    }
+
     public static ObjectMapper getMapper() {
         return mapper;
     }
@@ -272,6 +285,7 @@ public class Util {
     public static Shape getRawShape(Decorator bumpable) {
         return Decorator.getDecorator(Decorator.getOutermost(bumpable), NonRectangular.class).getShape();
     }
+
 
     public static class XWPlayerInfo {
         public static int OBSERVER_SIDE = 66;

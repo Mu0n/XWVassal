@@ -427,11 +427,13 @@ public class OTAContentsChecker extends AbstractConfigurable {
                         XWS2Pilots.tripleVersion localVer2 = XWS2Pilots.checkLocalManifestVersion();
                         logToChat("new local version--");
                         localVer2.displayInChat("local");
+
                     }
                     else if(remoteVer.getPatch() > localVer.getPatch()){
                         //Scenario C: no content checker flash, but the local files will be replaced.
                         downloadXwingDataAndDispatcherJSONFiles_2e();
                         logToChat("The local xwing-data2 is being updated");
+
                     }
                     else{
                         logToChat("The local xwing-data2 is up to date.");

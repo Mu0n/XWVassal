@@ -18,9 +18,14 @@ import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
+
+import static mic.Util.logToChat;
 
 public class XWOTAUtils {
 
+    public static final String XWD2DATAFILE = "xwd2.zip";
     private static final String SHIP_BASE_ARC_IMAGE_PREFIX = "SBA_";
 
     private static String[] actionOrder = {
@@ -572,26 +577,40 @@ public class XWOTAUtils {
 
     public static void downloadJSONFilesFromGitHub(ArrayList<String> jsonFiles, boolean keepPrefix) throws IOException
     {
-        GameModule gameModule = GameModule.getGameModule();
-        DataArchive dataArchive = gameModule.getDataArchive();
-        FileArchive fileArchive = dataArchive.getArchive();
-        ArchiveWriter writer = new ArchiveWriter(fileArchive);
 
-        String fileName = null;
+        String current = new java.io.File( "." ).getCanonicalPath();
+        logToChat("XWOA line 582 Current dir:"+current);
 
-        byte[] fileContents = null;
-        for (String jsonFile : jsonFiles)
-        {
-            if(keepPrefix == false) fileName = jsonFile.substring(jsonFile.lastIndexOf("/")+1,jsonFile.length());
-            else fileName = jsonFile.substring(jsonFile.lastIndexOf("/data/"),jsonFile.length());
-            fileContents = null;
-            fileContents = downlodFileFromOTA(jsonFile);
-            //addFileToModule(fileName, fileContents, writer);
-            addImageToModule(fileName, fileContents, writer);
+        boolean existCheck = XWOTAUtils.checkExistenceOfLocalXWD2Zip();
+        Util.logToChat("XWOA line 585 check if xwd2 zip exists " + existCheck);
+        if(existCheck == false) {
+
+            FileOutputStream fos = new FileOutputStream(XWD2DATAFILE);
+            ZipOutputStream zipOut = new ZipOutputStream(fos);
+
+            String fileName = null;
+            byte[] fileContents = null;
+            for (String jsonFile : jsonFiles)
+            {
+                if(keepPrefix == false) fileName = jsonFile.substring(jsonFile.lastIndexOf("/")+1,jsonFile.length());
+                else fileName = jsonFile.substring(jsonFile.lastIndexOf("/data/"),jsonFile.length());
+                fileContents = null;
+                fileContents = downloadFileFromOTA(jsonFile);
+
+                File fileToZip = new File(fileName);
+                FileInputStream fis = new FileInputStream(fileToZip);
+                ZipEntry zipEntry = new ZipEntry(fileToZip.getName());
+                zipOut.putNextEntry(zipEntry);
+                int length;
+                while ((length = fis.read(fileContents)) >= 0) {
+                    zipOut.write(fileContents, 0, length);
+                }
+                zipOut.close();
+                fis.close();
+            }
+            fos.close();
+
         }
-        writer.save();
-        //writer.close();
-
     }
     public static void downloadAndSaveImagesFromOTA( ArrayList<OTAImage> imagesToDownload, String branchURL)
     {
@@ -779,7 +798,7 @@ public class XWOTAUtils {
 
     }
 
-    private static byte[] downlodFileFromOTA(String urlString) throws IOException
+    private static byte[] downloadFileFromOTA(String urlString) throws IOException
     {
         URL remoteURL = null;
         remoteURL = new URL(urlString);
@@ -875,9 +894,13 @@ public class XWOTAUtils {
     //    DataArchive dataArchive = gameModule.getDataArchive();
     //    FileArchive fileArchive = dataArchive.getArchive();
      //   ArchiveWriter writer = new ArchiveWriter(fileArchive);
-        writer.addFile(fileName,fileBytes);
-     //   writer.save();
+        Util.logToChat("addFileToModule used");
+
+        writer.addImage(fileName,fileBytes);
+        Util.logToChat("attempted to write " + fileName + " and I can find it? " + (writer.getArchive().contains(fileName)?"yes":"no"));
+        //   writer.save();
     }
+
 
 
     public static void addFileToModule(String fileName, byte[] fileBytes) throws IOException
@@ -903,7 +926,9 @@ public class XWOTAUtils {
 
     public static void addImageToModule(String imageName,byte[] imageBytes,  ArchiveWriter writer) throws IOException
     {
-
+        try{
+            writer.removeImage(imageName);
+        }catch(Exception e){}
         writer.addImage(imageName,imageBytes);
      //   writer.save();
     }
@@ -1007,5 +1032,11 @@ public class XWOTAUtils {
         } catch (IOException e) {
             System.out.println("I/O Error: " + e.getMessage());
         }
+    }
+
+    public static boolean checkExistenceOfLocalXWD2Zip()
+    {
+        File theZip = new File("xwd2.zip");
+        return theZip.exists() && theZip.isFile();
     }
 }

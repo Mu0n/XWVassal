@@ -1,17 +1,23 @@
 package mic;
 
+import VASSAL.build.GameModule;
+import VASSAL.tools.DataArchive;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
 import mic.ota.OTAContentsChecker;
+import mic.ota.XWOTAUtils;
 
 import javax.swing.*;
-import java.io.BufferedInputStream;
-import java.io.InputStream;
+import java.io.*;
 import java.net.URL;
+import java.util.Enumeration;
 import java.util.List;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
+import java.util.zip.ZipOutputStream;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class XWS2Pilots {
@@ -466,8 +472,63 @@ public class XWS2Pilots {
     }
 
     public static tripleVersion checkLocalManifestVersion(){
-        pilotsDataSources whereToGetPilots = Util.loadClasspathJson("images/manifest.json", pilotsDataSources.class);
-        return whereToGetPilots.getTripleVersion();
+        if(XWOTAUtils.checkExistenceOfLocalXWD2Zip() == false) //can't find the local depot, make it empty
+        {
+            try {
+                FileOutputStream fos = new FileOutputStream(XWOTAUtils.XWD2DATAFILE);
+                ZipOutputStream zipOut = new ZipOutputStream(fos);
+
+                String fileName = "iamempty.txt";
+                byte[] fileContents = new byte[1024];
+                File fileToZip = new File(fileName);
+                FileInputStream fis = new FileInputStream(fileToZip);
+                ZipEntry zipEntry = new ZipEntry(fileToZip.getName());
+                zipOut.putNextEntry(zipEntry);
+                int length;
+                while ((length = fis.read(fileContents)) >= 0) {
+                    zipOut.write(fileContents, 0, length);
+                }
+                zipOut.close();
+                fis.close();
+                fos.close();
+                return new tripleVersion(0,0,0); //zip file is made, but let's flag for xwd2 overwrite
+            }
+            catch(Exception e){
+                Util.logToChat("XWS2PIlots line 494 -was unable to create local xwd2 data depot");
+                return new tripleVersion(0,0,0);
+            }
+        }
+        try { //we know the zip file exists, so check it out
+                    DataArchive dataArchive = new DataArchive(XWOTAUtils.XWD2DATAFILE);
+                    InputStream inputStream = dataArchive.getInputStream(dataArchive.getName());
+                    pilotsDataSources whereToGetPilots = Util.loadClasspathJsonInDepot("manifest.json", pilotsDataSources.class, inputStream);
+                    inputStream.close();
+                    dataArchive.close();
+
+                    return whereToGetPilots.getTripleVersion(); //successfully loaded the local version
+            //could find the zip, but can't find the manifest, so return 0.0.0, flag it to overwrite
+        } catch(Exception e){
+            Util.logToChat("XWS2PIlots line 511 - Couldn't load the local xwd2 data depot");
+        }
+        return new tripleVersion(0,0,0);
+    }
+    private static byte[] extractEntry(final ZipEntry entry, InputStream is) throws IOException {
+        String exractedFile = entry.getName();
+        FileOutputStream fos = null;
+        try {
+            fos = new FileOutputStream(exractedFile);
+            final byte[] buf = new byte[8192];
+            int read = 0;
+            int length;
+            while ((length = is.read(buf, 0, buf.length)) >= 0) {
+                fos.write(buf, 0, length);
+            }
+            fos.close();
+            return buf;
+        } catch (IOException ioex) {
+            fos.close();
+        }
+        return null;
     }
 
     public static List<XWS2Pilots> loadFromRemote() {
