@@ -5,6 +5,7 @@ import VASSAL.tools.ArchiveWriter;
 import VASSAL.tools.DataArchive;
 import VASSAL.tools.image.ImageUtils;
 import VASSAL.tools.io.FileArchive;
+import javafx.scene.chart.PieChart;
 import mic.Util;
 
 import javax.imageio.ImageIO;
@@ -577,30 +578,93 @@ public class XWOTAUtils {
 
     public static void downloadJSONFilesFromGitHub(ArrayList<String> jsonFiles, boolean keepPrefix) throws IOException
     {
-        String pathToUse = XWOTAUtils.getModulePath();
-            FileOutputStream fos = new FileOutputStream(pathToUse + File.separator + XWD2DATAFILE);
-            ZipOutputStream zipOut = new ZipOutputStream(fos);
 
-            String fileName = null;
-            byte[] fileContents = null;
-            for (String jsonFile : jsonFiles)
+
+/* //this creates a new file with the File class, then attempts to piggy back through the DataArchive routines of the Vassal engine.
+// DataArchive is a wrapper for zip files
+// File Archive is the file system within the zip file
+
+        File file2 = new File(pathToUse + File.separator + XWOTAUtils.XWD2DATAFILE);
+        file2.createNewFile();
+
+        DataArchive dataArchive = new DataArchive(file2.getName(), "images");
+        FileArchive fileArchive = dataArchive.getArchive();
+        ArchiveWriter writer = new ArchiveWriter(fileArchive);
+*/
+
+        String pathToUse = XWOTAUtils.getModulePath();
+        //if xwd2.zip is here, delete it first, we know we want a newer one, might want to not do this in case there's
+        //no net connection though
+        if(XWOTAUtils.checkExistenceOfLocalXWD2Zip() == true){
+            File file = new File(pathToUse + File.separator + XWOTAUtils.XWD2DATAFILE);
+            file.delete();
+        }
+
+        logToChat("******** START OF ZIPPING PROCESS **********");
+
+        //the try-catch problem triggers at this line, an IOException Error
+        FileOutputStream fos = new FileOutputStream(pathToUse + File.separator + XWD2DATAFILE);
+        ZipOutputStream zipOut = new ZipOutputStream(new BufferedOutputStream(fos));
+
+        String fileName = null;
+
+        for (String jsonFile : jsonFiles)
+        {
+
+            if(keepPrefix == false) fileName = jsonFile.substring(jsonFile.lastIndexOf("/")+1,jsonFile.length());
+            else fileName = jsonFile.split("/data/")[1];
+
+            byte[] fileContents = downloadFileFromOTA(jsonFile);
+            ZipEntry zipEntry = new ZipEntry(fileName);
+            zipEntry.setSize(fileContents.length);
+            zipOut.putNextEntry(zipEntry);
+            zipOut.write(fileContents);
+            zipOut.closeEntry();
+
+        }
+
+        zipOut.close();
+        fos.close();
+
+
+
+                /*
+        String fileName = null;
+        byte[] fileContents = null;
+
+
+        for (String jsonFile : jsonFiles)
             {
-                if(keepPrefix == false) fileName = jsonFile.substring(jsonFile.lastIndexOf("/")+1,jsonFile.length());
-                else fileName = jsonFile.substring(jsonFile.lastIndexOf("/data/"),jsonFile.length());
+
+                logToChat("xwota line 598 trying to dl from this URL " + jsonFile);
+                logToChat("xwota line 598 trying to dl this fileName " + fileName);
+
                 fileContents = downloadFileFromOTA(jsonFile);
 
-                File fileToZip = new File(fileName);
+                File fileToZip = new File(jsonFile);
+
+                logToChat("xwota line File is ok? " + (fileToZip==null?"no":"yes"));
                 FileInputStream fis = new FileInputStream(fileToZip);
+
+                logToChat("xwota line FileInputStream is ok? " + (fis==null?"no":"yes"));
                 ZipEntry zipEntry = new ZipEntry(fileToZip.getName());
+                logToChat("xwota line ZipEntry name " + fileToZip.getName());
                 zipOut.putNextEntry(zipEntry);
                 int length;
                 while ((length = fis.read(fileContents)) >= 0) {
                     zipOut.write(fileContents, 0, length);
                 }
-                zipOut.close();
+                zipOut.closeEntry();
                 fis.close();
+
+                break;
             }
-            fos.close();
+            zipOut.close();
+        fos.close();
+        */
+
+
+        logToChat("******** END OF ZIPPING PROCESS **********");
     }
     public static void downloadAndSaveImagesFromOTA( ArrayList<OTAImage> imagesToDownload, String branchURL)
     {

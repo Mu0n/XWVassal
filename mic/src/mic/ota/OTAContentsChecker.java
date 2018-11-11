@@ -469,6 +469,7 @@ public class OTAContentsChecker extends AbstractConfigurable {
         //by putting them in /data/pilots/rebelalliance/
         ArrayList<String> jsonFilesToDownloadFromURL_2e = new ArrayList<String>();
 
+        logToChat("OTAContentChecker line 472 STEP adds the manifest from the remote URL to the list of files to zip up");
         jsonFilesToDownloadFromURL_2e.add(XWS2Pilots.remoteUrl);
 
         for(XWS2Pilots.OneFactionGroup oSDS : parseTheManifestForShipPilots().getPilots()){

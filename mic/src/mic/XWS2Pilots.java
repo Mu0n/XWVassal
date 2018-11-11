@@ -475,11 +475,14 @@ public class XWS2Pilots {
 
     public static tripleVersion checkLocalManifestVersion(){
         String pathToUse = XWOTAUtils.getModulePath();
-        Util.logToChat("xws2pilots line 476 path to use to create file " + pathToUse);
-        Util.logToChat("xws2pilots line 476 path to use to create file " + pathToUse + File.separator + XWOTAUtils.XWD2DATAFILE);
 
-        if(XWOTAUtils.checkExistenceOfLocalXWD2Zip() == false) //can't find the local depot, make it empty
+        Util.logToChat("XWS2Pilot line 479 STEP check if xwd2.zip exists:");
+
+        if(XWOTAUtils.checkExistenceOfLocalXWD2Zip() == false)
+            //can't find the local depot, rebuld it from...
+            // a stashed probably deprecated local copy or from remote
         {
+            Util.logToChat("xwd2.zip doesn't exist");
             try {
                 /*
                 File dummyTextFile = new File(pathToUse + File.separator + "dummy.txt");
@@ -507,6 +510,7 @@ public class XWS2Pilots {
                 */
 
                 //gets the source online. might change later #ONLINEDANGER
+                /*
                 OTAContentsChecker.downloadXwingDataAndDispatcherJSONFiles_2e();
 
                 //check the local version now that it's loaded
@@ -516,8 +520,9 @@ public class XWS2Pilots {
                 pilotsDataSources whereToGetPilotsLocal = Util.loadClasspathJsonInDepot("manifest.json", pilotsDataSources.class, inputStream);
                 inputStream.close();
                 dataArchive.close();
+                */
 
-                return whereToGetPilotsLocal.getTripleVersion();
+                return new tripleVersion(0,0,0);
             }
             catch(Exception e){
                 Util.logToChat("XWS2PIlots line 494 -was unable to create local xwd2 data depot");
@@ -525,17 +530,17 @@ public class XWS2Pilots {
                 return new tripleVersion(0,0,0);
             }
         }
-        try { //we know the zip file exists, so check it out
-                    DataArchive dataArchive = new DataArchive(pathToUse + File.separator + XWOTAUtils.XWD2DATAFILE);
-                    InputStream inputStream = dataArchive.getInputStream(pathToUse + File.separator + dataArchive.getName());
-                    pilotsDataSources whereToGetPilots = Util.loadClasspathJsonInDepot("manifest.json", pilotsDataSources.class, inputStream);
-                    inputStream.close();
-                    dataArchive.close();
-
-                    return whereToGetPilots.getTripleVersion(); //successfully loaded the local version
-            //could find the zip, but can't find the manifest, so return 0.0.0, flag it to overwrite
-        } catch(Exception e){
-            Util.logToChat("XWS2PIlots line 511 - Couldn't load the local xwd2 data depot");
+        else{
+            try { //we know the zip file exists, so check it out
+                DataArchive dataArchive = new DataArchive(pathToUse + File.separator + XWOTAUtils.XWD2DATAFILE);
+                InputStream inputStream = dataArchive.getInputStream("manifest.json");
+                pilotsDataSources whereToGetPilots = Util.loadClasspathJsonInDepot("manifest.json", pilotsDataSources.class, inputStream);
+                inputStream.close();
+                dataArchive.close();
+                return whereToGetPilots.getTripleVersion();
+            } catch(Exception e){
+                Util.logToChat("XWS2PIlots line 546 - Couldn't load the local xwd2 data depot");
+            }
         }
         return new tripleVersion(0,0,0);
     }
