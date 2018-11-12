@@ -306,9 +306,15 @@ public class OTAContentsChecker extends AbstractConfigurable {
 
 
 
-        allShips = XWS2Pilots.loadFromRemote();
+        //allShips = XWS2Pilots.loadFromRemote();
+
+
+        allShips = XWS2Pilots.loadFromLocal();
         allUpgrades = XWS2Upgrades.loadFromRemote();
         allConditions = XWS2Upgrades.loadConditionsFromRemote();
+
+        //allUpgrades = XWS2Upgrades.loadFromLocal();
+        //allConditions = XWS2Upgrades.loadFromLocal();
 
         if (wantToBeNotified1st) missing1stEdContent = justFind1MissingContent();
 

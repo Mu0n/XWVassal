@@ -7,9 +7,11 @@ import VASSAL.build.module.PlayerRoster;
 import VASSAL.build.widget.PieceSlot;
 import VASSAL.command.Command;
 import VASSAL.counters.*;
+import VASSAL.tools.DataArchive;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
+import mic.ota.XWOTAUtils;
 
 import java.awt.*;
 import java.awt.geom.*;
@@ -47,7 +49,21 @@ public class Util {
             return null;
         }
     }
-
+    public static <T> T loadClasspathJsonInSideZip(String sideZipName, String filename, Class<T> type) {
+        try {
+            String pathToUse = XWOTAUtils.getModulePath();
+            DataArchive dataArchive = new DataArchive(pathToUse + File.separator + sideZipName);
+            InputStream inputStream = dataArchive.getInputStream(filename);
+            if (inputStream == null) {
+                logToChat("couldn't load " + filename);
+            }
+            return mapper.readValue(inputStream, type);
+        } catch (Exception e) {
+            System.out.println("Unhandled error parsing classpath json: \n" + e.toString());
+            logToChat("Unhandled error parsing classpath json: \n" + e.toString());
+            return null;
+        }
+    }
 
     public static <T> T loadClasspathJson(String filename, Class<T> type) {
         try {

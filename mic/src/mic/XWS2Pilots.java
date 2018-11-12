@@ -65,6 +65,8 @@ public class XWS2Pilots {
     @JsonProperty("dual_base_report_2_identifier")
     private String baseReport2Identifier;
 
+
+
     public String getShipXWS() { return this.xws; }
     public Boolean hasDualBase() { return this.hasDualBase; }
     private void setDualBase(Boolean hasDualBase)
@@ -482,53 +484,8 @@ public class XWS2Pilots {
             //can't find the local depot, rebuld it from...
             // a stashed probably deprecated local copy or from remote
         {
-            Util.logToChat("xwd2.zip doesn't exist");
-            try {
-                /*
-                File dummyTextFile = new File(pathToUse + File.separator + "dummy.txt");
-                dummyTextFile.createNewFile();
-
-                FileOutputStream fos = new FileOutputStream(pathToUse + File.separator + XWOTAUtils.XWD2DATAFILE);
-                Util.logToChat("xws2pilots line 486 fileOutputStream status " + (fos==null?"null":"not null"));
-                ZipOutputStream zipOut = new ZipOutputStream(fos);
-
-                byte[] fileContents = new byte[1024];
-                File fileToZip = new File(pathToUse + File.separator + dummyTextFile.getName());
-                FileInputStream fis = new FileInputStream(fileToZip);
-
-                ZipEntry zipEntry = new ZipEntry(fileToZip.getName());
-                zipOut.putNextEntry(zipEntry);
-                int length;
-                while ((length = fis.read(fileContents)) >= 0) {
-                    zipOut.write(fileContents, 0, length);
-                }
-                zipOut.close();
-                fis.close();
-                fos.close();
-
-                dummyTextFile.delete();
-                */
-
-                //gets the source online. might change later #ONLINEDANGER
-                /*
-                OTAContentsChecker.downloadXwingDataAndDispatcherJSONFiles_2e();
-
-                //check the local version now that it's loaded
-                DataArchive dataArchive = new DataArchive(pathToUse + File.separator + XWOTAUtils.XWD2DATAFILE);
-                FileArchive fileArchive = dataArchive.getArchive();
-                InputStream inputStream = fileArchive.getInputStream("manifest.json");
-                pilotsDataSources whereToGetPilotsLocal = Util.loadClasspathJsonInDepot("manifest.json", pilotsDataSources.class, inputStream);
-                inputStream.close();
-                dataArchive.close();
-                */
-
-                return new tripleVersion(0,0,0);
-            }
-            catch(Exception e){
-                Util.logToChat("XWS2PIlots line 494 -was unable to create local xwd2 data depot");
-                Util.logToChat(e.getMessage());
-                return new tripleVersion(0,0,0);
-            }
+            Util.logToChat("--- Building a local cache of the game data.");
+            return new tripleVersion(0,0,0);
         }
         else{
             try { //we know the zip file exists, so check it out
@@ -563,6 +520,84 @@ public class XWS2Pilots {
         return null;
     }
 
+    public static List<XWS2Pilots> loadFromLocal() {
+        String pathToUse = XWOTAUtils.getModulePath();
+        List<XWS2Pilots> allPilots = Lists.newArrayList();
+
+        try {
+            //Load the manifest in the local xwd2.zip
+            DataArchive dataArchive = new DataArchive(pathToUse + File.separator + XWOTAUtils.XWD2DATAFILE);
+            InputStream inputStream = dataArchive.getInputStream("manifest.json");
+            pilotsDataSources whereToGetPilots = Util.loadClasspathJsonInDepot("manifest.json", pilotsDataSources.class, inputStream);
+
+            //Populate the list of ShipPilots jsons to load up
+            List<XWS2Pilots> dualBaseXWS2Ships = Lists.newArrayList();
+
+            //TO-DO replace with local version of this
+            dualBaseXWS2Ships = loadRemoteJsonArrayOfXWS2Pilots(new URL(OTAContentsChecker.OTA_DISPATCHER_SHIPS_JSON_URL_2E));
+
+            for(OneFactionGroup oSDS : whereToGetPilots.getPilots()){
+
+
+                Util.logToChat("xws2pilots line 541 onefactiongroup " + oSDS.getFaction());
+
+                for(String suffix : oSDS.getShipUrlSuffixes())
+                {
+                    String suffixWithoutDataRoot = suffix.split("data/")[1];
+                    Util.logToChat("xws2pilots line 543 suffix without root " + suffixWithoutDataRoot);
+                    try {
+                        //Dual Base detection
+                        //dualBaseXWSShips is an extra XWS2Pilot list that's loaded using a subset of JsonProperties right here, against a dispatcher_ships.json
+                        //if both dualBaseXWSShip's xws and the cleaned getName of pilottoAdd matches, then copy over the dual based information
+                        InputStream is = dataArchive.getInputStream(suffixWithoutDataRoot);
+
+                        Util.logToChat("xws2pilots line 550 inputstream status " + (is==null? "null":"not null") + " file exists? " + dataArchive.contains(suffixWithoutDataRoot));
+                        XWS2Pilots pilotsToAdd = Util.loadClasspathJsonInDepot(pathToUse + File.separator + XWOTAUtils.XWD2DATAFILE, XWS2Pilots.class, is);
+
+                        Util.logToChat("xws2pilots line 558 pilotsToAdd size " + pilotsToAdd.size + " and name: " + pilotsToAdd.getName());
+
+
+                        XWS2Pilots dualBasedInfoFound = ShipXWSFoundInDualBaseList(dualBaseXWS2Ships, Canonicalizer.getCleanedName(pilotsToAdd.getName()));
+
+                        if(dualBasedInfoFound !=null ) {
+                            pilotsToAdd.setBaseImage1(dualBasedInfoFound.getBaseImage1Identifier());
+                            pilotsToAdd.setBaseImage2(dualBasedInfoFound.getBaseImage2Identifier());
+                            pilotsToAdd.setBaseReport1Identifier(dualBasedInfoFound.getBaseReport1Identifier());
+                            pilotsToAdd.setBaseReport2Identifier(dualBasedInfoFound.getBaseReport2Identifier());
+                            pilotsToAdd.setDualBase(dualBasedInfoFound.hasDualBase());
+                            pilotsToAdd.setDualBaseToggleMenuText(dualBasedInfoFound.getDualBaseToggleMenuText());
+                        }
+
+                        //adding faction to every pilot
+                        for(XWS2Pilots.Pilot2e p : pilotsToAdd.getPilots()){
+                            p.setFaction(pilotsToAdd.getFaction());
+                        }
+
+                        allPilots.add(pilotsToAdd);
+                        is.close();
+
+                    }catch (Exception e){
+                        Util.logToChat(e.getMessage() + " on ship " + suffix);
+                        continue;
+                    }
+                }
+                inputStream.close();
+                dataArchive.close();
+            }
+        }
+            catch(FileNotFoundException e2)
+            {
+                Util.logToChat("--- File not found " + e2.getMessage());
+            }
+        catch(Exception e){
+            Util.logToChat("--- Couldn't load data from the local data depot.");
+        }
+
+
+
+        return allPilots;
+    }
+
     public static List<XWS2Pilots> loadFromRemote() {
         pilotsDataSources whereToGetPilots = Util.loadRemoteJson(remoteUrl, pilotsDataSources.class);
         List<XWS2Pilots> dualBaseXWS2Ships = Lists.newArrayList();
@@ -571,7 +606,7 @@ public class XWS2Pilots {
         } catch (Exception e) {
         }
 
-    List<XWS2Pilots> allPilots = Lists.newArrayList();
+        List<XWS2Pilots> allPilots = Lists.newArrayList();
         for(OneFactionGroup oSDS : whereToGetPilots.getPilots()){
             for(String suffix : oSDS.getShipUrlSuffixes())
             {
@@ -615,7 +650,19 @@ public class XWS2Pilots {
         }
     }
 
-    private static ObjectMapper mapper = new ObjectMapper()
+
+    private static List<XWS2Pilots> loadLocalJsonArrayOfXWS2Pilots(InputStream is) {
+        try {
+            InputStream inputStream = new BufferedInputStream(is);
+            List<XWS2Pilots> rawData = mapper.readValue(inputStream,  mapper.getTypeFactory().constructCollectionType(List.class, XWS2Pilots.class));
+            return rawData;
+        } catch (Exception e) {
+            System.out.println("Unhandled error parsing local json: \n" + e.toString());
+            return null;
+        }
+    }
+
+        private static ObjectMapper mapper = new ObjectMapper()
             .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
     public static XWS2Pilots getSpecificShipFromShipXWS(String  searchedXWS2Name, List<XWS2Pilots> allShips) {
