@@ -308,7 +308,6 @@ public class OTAContentsChecker extends AbstractConfigurable {
 
         //allShips = XWS2Pilots.loadFromRemote();
 
-
         allShips = XWS2Pilots.loadFromLocal();
         allUpgrades = XWS2Upgrades.loadFromRemote();
         allConditions = XWS2Upgrades.loadConditionsFromRemote();

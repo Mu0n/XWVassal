@@ -1,5 +1,6 @@
 package mic;
 
+import VASSAL.tools.DataArchive;
 import com.fasterxml.jackson.annotation.JacksonInject;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -8,8 +9,10 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
+import mic.ota.XWOTAUtils;
 
 import java.io.BufferedInputStream;
+import java.io.File;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.*;
@@ -302,6 +305,42 @@ public class XWS2Upgrades {
             whereToGetUpgrades = Util.loadRemoteJson(remoteUrl, upgradesDataSources.class);
         }catch(Exception e){
 
+        }
+
+        XWS2Upgrades allUpgrades = new XWS2Upgrades();
+        for(String urlEnd : whereToGetUpgrades.getUrlEnds()){
+            List<XWS2Upgrades.OneUpgrade> upgradesListRead = Lists.newArrayList();
+            try {
+                upgradesListRead = XWS2Upgrades.loadRemoteJsonArrayOfOneUpgrades(new URL(guidoRootUrl+urlEnd));
+                //XWS2Upgrades upgradesListRead = Util.loadRemoteJson(new URL(guidoRootUrl+urlEnd), XWS2Upgrades.class);
+            }catch (Exception e){
+                continue;
+            }
+
+            try{
+                for(XWS2Upgrades.OneUpgrade oneUp : upgradesListRead){
+                    allUpgrades.add(oneUp);
+                }
+
+            }catch (Exception e){
+                continue;
+            }
+        }
+        return allUpgrades;
+    }
+
+    public static XWS2Upgrades loadFromLocal() {
+        String pathToUse = XWOTAUtils.getModulePath();
+
+        upgradesDataSources whereToGetUpgrades = new upgradesDataSources();
+        try{
+            //Load the manifest in the local xwd2.zip
+            DataArchive dataArchive = new DataArchive(pathToUse + File.separator + XWOTAUtils.XWD2DATAFILE);
+            InputStream inputStream = dataArchive.getInputStream("manifest.json");
+
+            whereToGetUpgrades = Util.loadClasspathJsonInDepot("manifest.json", upgradesDataSources.class, inputStream);
+        }catch(Exception e){
+            Util.logToChat("XWS2Upgrades line 343 - couldn't load the manifest for upgrades");
         }
 
         XWS2Upgrades allUpgrades = new XWS2Upgrades();

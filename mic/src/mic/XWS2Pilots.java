@@ -478,8 +478,6 @@ public class XWS2Pilots {
     public static tripleVersion checkLocalManifestVersion(){
         String pathToUse = XWOTAUtils.getModulePath();
 
-        Util.logToChat("XWS2Pilot line 479 STEP check if xwd2.zip exists:");
-
         if(XWOTAUtils.checkExistenceOfLocalXWD2Zip() == false)
             //can't find the local depot, rebuld it from...
             // a stashed probably deprecated local copy or from remote
@@ -496,7 +494,7 @@ public class XWS2Pilots {
                 dataArchive.close();
                 return whereToGetPilots.getTripleVersion();
             } catch(Exception e){
-                Util.logToChat("XWS2PIlots line 546 - Couldn't load the local xwd2 data depot");
+                Util.logToChat("Couldn't load the local xwd2 data depot");
             }
         }
         return new tripleVersion(0,0,0);
@@ -538,25 +536,15 @@ public class XWS2Pilots {
 
             for(OneFactionGroup oSDS : whereToGetPilots.getPilots()){
 
-
-                Util.logToChat("xws2pilots line 541 onefactiongroup " + oSDS.getFaction());
-
                 for(String suffix : oSDS.getShipUrlSuffixes())
                 {
                     String suffixWithoutDataRoot = suffix.split("data/")[1];
-                    Util.logToChat("xws2pilots line 543 suffix without root " + suffixWithoutDataRoot);
                     try {
                         //Dual Base detection
                         //dualBaseXWSShips is an extra XWS2Pilot list that's loaded using a subset of JsonProperties right here, against a dispatcher_ships.json
                         //if both dualBaseXWSShip's xws and the cleaned getName of pilottoAdd matches, then copy over the dual based information
                         InputStream is = dataArchive.getInputStream(suffixWithoutDataRoot);
-
-                        Util.logToChat("xws2pilots line 550 inputstream status " + (is==null? "null":"not null") + " file exists? " + dataArchive.contains(suffixWithoutDataRoot));
                         XWS2Pilots pilotsToAdd = Util.loadClasspathJsonInDepot(pathToUse + File.separator + XWOTAUtils.XWD2DATAFILE, XWS2Pilots.class, is);
-
-                        Util.logToChat("xws2pilots line 558 pilotsToAdd size " + pilotsToAdd.size + " and name: " + pilotsToAdd.getName());
-
-
                         XWS2Pilots dualBasedInfoFound = ShipXWSFoundInDualBaseList(dualBaseXWS2Ships, Canonicalizer.getCleanedName(pilotsToAdd.getName()));
 
                         if(dualBasedInfoFound !=null ) {
