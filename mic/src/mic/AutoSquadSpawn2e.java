@@ -89,7 +89,7 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
             return;
         }
 
-        final List<XWS2Pilots> allShips = XWS2Pilots.loadFromRemote();
+        final List<XWS2Pilots> allShips = XWS2Pilots.loadFromLocal();
         final XWS2Upgrades allUpgrades = XWS2Upgrades.loadFromRemote();
         final List<XWS2Upgrades.Condition> allConditions = XWS2Upgrades.loadConditionsFromRemote();
 
