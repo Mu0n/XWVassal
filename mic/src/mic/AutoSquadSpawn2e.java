@@ -197,6 +197,16 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
         builderPanel.add(cisCheck);
         builderPanel.add(builderButton);
 
+
+        final JTextArea entryArea_0 = new JTextArea("Enter a valid squad URL from Yet Another Squadron Builder 2.0 or from the official FFG builder (warning, the latter may not work for some squads)");
+        entryArea_0.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        entryArea_0.setPreferredSize(new Dimension(850,50));
+        entryArea_0.setMaximumSize(new Dimension(850,50));
+        entryArea_0.setLineWrap(true);
+        entryArea_0.setAutoscrolls(true);
+
+
         final JTextArea entryArea = new JTextArea("Enter a valid XWS squad here.");
         entryArea.setAlignmentX(Component.LEFT_ALIGNMENT);
 
@@ -205,7 +215,19 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
         entryArea.setLineWrap(true);
         entryArea.setAutoscrolls(true);
 
-        JLabel method1Label = new JLabel("Method 1 for spawning a list - click on a suggested web builder, export to XWS and paste it here:");
+        JLabel method0Label = new JLabel("Method 1 for spawning a list - Insert a squad URL from YASB2 or the official FFG Builder");
+        method0Label.setFont(new Font("Dialog", Font.PLAIN, 18));
+        JButton clearTextArea_0_Button = new JButton("Clear");
+        clearTextArea_0_Button.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        clearTextArea_0_Button.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                entryArea_0.setText("");
+                entryArea_0.invalidate();
+            }
+        });
+
+        JLabel method1Label = new JLabel("Method 2 for spawning a list - click on a suggested web builder, export to XWS and paste it here:");
         method1Label.setFont(new Font("Dialog", Font.PLAIN, 18));
         JButton clearTextAreaButton = new JButton("Clear");
         clearTextAreaButton.setAlignmentX(Component.LEFT_ALIGNMENT);
@@ -216,6 +238,15 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
                 entryArea.invalidate();
             }
         });
+
+        JButton urlSpawnButton = new JButton("Spawn Squad from URL");
+        urlSpawnButton.setAlignmentX(Component.LEFT_ALIGNMENT);
+        urlSpawnButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                logToChat("Attempt at spawning a list from a squad URL");
+            }
+        });
+
         JButton xwsSpawnButton = new JButton("Spawn Squad from XWS");
         xwsSpawnButton.setAlignmentX(Component.LEFT_ALIGNMENT);
 
@@ -236,9 +267,17 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
                 frame.dispose();
             }
         });
-        JLabel method2Label = new JLabel("Method 2 for spawning a list - use the internal squad builder (allows illegal, cross-faction lists if needed)");
+        JLabel method2Label = new JLabel("Method 3 for spawning a list - use the internal squad builder (allows illegal, cross-faction lists if needed)");
         method2Label.setFont(new Font("Dialog", Font.PLAIN, 18));
         method2Label.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        JPanel method0ButtonsPanel = new JPanel();
+        method0ButtonsPanel.setLayout(new BoxLayout(method0ButtonsPanel, BoxLayout.X_AXIS));
+        method0ButtonsPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        method0ButtonsPanel.add(clearTextArea_0_Button);
+        method0ButtonsPanel.add(urlSpawnButton);
+
 
         JPanel method1ButtonsPanel = new JPanel();
         method1ButtonsPanel.setLayout(new BoxLayout(method1ButtonsPanel, BoxLayout.X_AXIS));
@@ -270,13 +309,21 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
             }
         }
 
+        JPanel method0Panel = new JPanel();
+        method0Panel.setLayout(new BoxLayout(method0Panel, BoxLayout.Y_AXIS));
+        method0Panel.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+
+        method0Panel.add(method1LinksPanel);
+        method0Panel.add(method0Label);
+        method0Panel.add(entryArea_0);
+        method0Panel.add(method0ButtonsPanel);
 
         JPanel method1Panel = new JPanel();
         method1Panel.setLayout(new BoxLayout(method1Panel, BoxLayout.Y_AXIS));
         method1Panel.setAlignmentX(Component.LEFT_ALIGNMENT);
 
         method1Panel.add(method1Label);
-        method1Panel.add(method1LinksPanel);
         method1Panel.add(entryArea);
         method1Panel.add(method1ButtonsPanel);
 
@@ -288,6 +335,8 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
         method2Panel.add(method2Label);
         method2Panel.add(builderPanel);
 
+        rootPanel.add(method0Panel);
+        rootPanel.add(Box.createRigidArea(new Dimension(0,8)));
         rootPanel.add(method1Panel);
         rootPanel.add(Box.createRigidArea(new Dimension(0,8)));
         rootPanel.add(new JSeparator());
