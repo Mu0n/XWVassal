@@ -14,6 +14,7 @@ public class XWSUrlHelper {
     static private Pattern fabsPat = Pattern.compile(".*?fabpsb.*");
     static private Pattern metaWingPat = Pattern.compile(".*?meta-wing\\.com/squadrons/(\\d+)\\.json");
 
+
     public static boolean isYASB(String url) {
         Matcher m = yasbPat.matcher(url);
         return m.matches();
@@ -24,7 +25,7 @@ public class XWSUrlHelper {
     private static String yasbXWSRoot =  "https://yasb-xws.herokuapp.com/?";
     private static URL translateYasb(String url) throws MalformedURLException {
         URL originalUrl = new URL(url);
-        String queryString = originalUrl.getQuery();
+        String queryString = originalUrl.toString();
         return new URL(yasbXWSRoot + queryString);
     }
 

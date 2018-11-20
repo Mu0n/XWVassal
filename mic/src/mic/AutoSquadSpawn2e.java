@@ -244,6 +244,19 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
         urlSpawnButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 logToChat("Attempt at spawning a list from a squad URL");
+                XWSList2e xwsList = LoadListFromURL(entryArea_0.getText());
+                try {
+                    validateList(xwsList, allShips);
+                } catch(Exception exc)
+                {
+                    logToChat("Unable to load URL list '%s': %s", entryArea_0.getText(), exc.toString());
+                    return;
+                }
+                if(xwsList == null || xwsList.getPilots() == null || xwsList.getPilots().size() == 0) {
+                    logToChat("URL list has detected no pilots in it.");
+                }
+                DealWithXWSList(xwsList, playerIndex, allShips, allUpgrades, allConditions);
+                frame.dispose();
             }
         });
 
@@ -287,6 +300,10 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
         method1ButtonsPanel.add(xwsSpawnButton);
 
 
+        JLabel suggestionsHeaderLabel = new JLabel("Suggested Builders:");
+        suggestionsHeaderLabel.setFont(new Font("Dialog", Font.PLAIN, 18));
+
+
         JPanel method1LinksPanel = new JPanel();
         method1LinksPanel.setLayout(new BoxLayout(method1LinksPanel, BoxLayout.Y_AXIS));
         method1LinksPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
@@ -314,6 +331,7 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
         method0Panel.setAlignmentX(Component.LEFT_ALIGNMENT);
 
 
+        method0Panel.add(suggestionsHeaderLabel);
         method0Panel.add(method1LinksPanel);
         method0Panel.add(method0Label);
         method0Panel.add(entryArea_0);
@@ -584,11 +602,9 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
                     extraForceFromUpgrade += up.getUpgradeData().sides.get(0).getForce().getValue();
                 }
                 catch(Exception e) {
-                logToChat("did not find a force stat here");
                 }
                 try{
                     for (XWS2Upgrades.grant g : up.getUpgradeData().sides.get(0).getGrants()) {
-                        logToChat("found a grant of type " + g.getType());
                         if (g.getType().equals("stat")) {
                             Set keySet = g.getValue().keySet();
                             Iterator it = keySet.iterator();
@@ -603,7 +619,6 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
                     }
                 }
                 catch(Exception e){
-                    logToChat("did not find a grants here");
                 }
                 if(up.getUpgradeData().sides.get(0).getType().equals("Configuration")) howManyConfigUpgradeCards++;
                 else countHowManyNonConfigurationUpgrades++;
@@ -657,7 +672,7 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
                 dialWidth = (int) dialPiece.boundingBox().getWidth();
             } catch (Exception e)
             {
-                logToChat("Couldn't find the dial infor for this ship: " + ship.getShipData().getName());
+                logToChat("Couldn't find the dial info for this ship: " + ship.getShipData().getName());
                 continue;
             }
             entireSpawnCommand.append(spawnPieceCommand(dialPiece, new Point((int) dialstartPosition.getX() + totalDialsWidth, (int) dialstartPosition.getY()), playerMap));
@@ -1274,6 +1289,25 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
             return list;
         } catch (Exception e) {
             logToChat("Unable to load raw JSON list '%s': %s", userInput, e.toString());
+            return null;
+        }
+    }
+
+
+    private XWSList2e LoadListFromURL(String userInput) {
+
+        try {
+            URL translatedURL = XWSUrlHelper2e.translate(userInput);
+            if (translatedURL == null) {
+                logToChat("Invalid list url detected, please try again");
+                return null;
+            }
+            XWSList2e xwsList = loadRemoteJson(translatedURL, XWSList2e.class);
+
+            xwsList.setXwsSource(userInput);
+            return xwsList;
+        } catch (Exception e) {
+            logToChat("Unable to load URL list '%s': %s", userInput, e.toString());
             return null;
         }
     }
