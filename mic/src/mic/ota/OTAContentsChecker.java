@@ -303,20 +303,11 @@ public class OTAContentsChecker extends AbstractConfigurable {
             //if the pending file doesn't exist, give it a chance to find a new manifest that requires a content check and create that pendingContentCheck.txt again
         //this file should be destroyed when a content check download or downloadAll is done
 
-
-
-
-        //allShips = XWS2Pilots.loadFromRemote();
-
         allShips = XWS2Pilots.loadFromLocal();
-        allUpgrades = XWS2Upgrades.loadFromRemote();
-        allConditions = XWS2Upgrades.loadConditionsFromRemote();
-
-        //allUpgrades = XWS2Upgrades.loadFromLocal();
-        //allConditions = XWS2Upgrades.loadFromLocal();
+        allUpgrades = XWS2Upgrades.loadFromLocal();
+        allConditions = XWS2Upgrades.loadConditionsFromLocal();
 
         if (wantToBeNotified1st) missing1stEdContent = justFind1MissingContent();
-
 
         XWOTAUtils.checkOnlineOrder66();
 
@@ -407,6 +398,25 @@ public class OTAContentsChecker extends AbstractConfigurable {
             }
         }
     }
+
+    private void removePendingCheck(){
+        //unlikely to happen, but if somehow the file isn't present, make one and mark it as no pending check, since this method is called after a content checker download op.
+        if (!XWOTAUtils.fileExistsInModule("pendingContentCheck.txt")) {
+            String choice = "no";
+            try {
+                XWOTAUtils.addFileToModule("pendingContentCheck.txt", choice.getBytes());
+            } catch (Exception e) {
+            }
+        } else {
+            String choice = "no";
+            try {
+                XWOTAUtils.addFileToModule("pendingContentCheck.txt", choice.getBytes());
+            } catch (Exception e) {
+            }
+        }
+    }
+
+
     private void checkAndUpdateRemoteJsonsIfNewFound() {
         if(XWOTAUtils.fileExitsOnTheNet(manifest2eURL))
         {
@@ -522,81 +532,6 @@ public class OTAContentsChecker extends AbstractConfigurable {
         return errorOccurredOnXWingData;
     }
 
-
-    public static int justFind1MissingContent_2e(){
-
-        int tempCount = 0;
-
-        boolean errorOccuredOnXWingData_2e = downloadXwingDataAndDispatcherJSONFiles_2e();
-        if(errorOccuredOnXWingData_2e){
-            mic.Util.logToChat("Unable to reach xwing-data2 server (2nd edition). No update performed");
-        } else{
-            ModuleIntegrityChecker_2e modIntCheck_2e = new ModuleIntegrityChecker_2e();
-            // =============================================================
-            // Pilots
-            // =============================================================
-            ArrayList<OTAMasterPilots.OTAPilot> pilots = modIntCheck_2e.checkPilots(true, allShips);
-            for(OTAMasterPilots.OTAPilot pilot : pilots){
-                if(!pilot.getStatus() && pilot.getStatusOTA()){
-                    return 1;
-                }
-            }
-            pilots = null;
-
-            // =============================================================
-            // Ships
-            // =============================================================
-            ArrayList<OTAMasterShips.OTAShip> ships = modIntCheck_2e.checkShips(true, allShips);
-            for (OTAMasterShips.OTAShip ship : ships) {
-                if (!ship.getStatus() && ship.getStatusOTA()) {
-                    return 1;
-                }
-            }
-            ships = null;
-
-            // =============================================================
-            // Upgrades
-            // =============================================================
-            ArrayList<OTAMasterUpgrades.OTAUpgrade> upgrades = modIntCheck_2e.checkUpgrades(true, allUpgrades);
-            for (OTAMasterUpgrades.OTAUpgrade upgrade : upgrades) {
-                if (!upgrade.getStatus() && upgrade.getStatusOTA()) {
-                    return 1;
-                }
-            }
-            upgrades = null;
-
-
-            // =============================================================
-            // Conditions
-            // =============================================================
-            ArrayList<OTAMasterConditions.OTACondition> conditions = modIntCheck_2e.checkConditions(true, allConditions);
-            for (OTAMasterConditions.OTACondition condition : conditions) {
-                if (!condition.getStatus() && condition.getStatusOTA()) {
-                    return 1;
-                }
-
-                if (!condition.getTokenStatus() && condition.getTokenStatusOTA()) {
-                    return 1;
-                }
-            }
-
-            // =============================================================
-            // Check Ship Bases
-            // =============================================================
-            ArrayList<OTAShipBase> shipBaseResults = modIntCheck_2e.checkShipBases(true, allShips);
-            Iterator<OTAShipBase> shipBaseIterator = shipBaseResults.iterator();
-            OTAShipBase missingShipBase = null;
-            while (shipBaseIterator.hasNext()) {
-                missingShipBase = shipBaseIterator.next();
-                if (!missingShipBase.getStatus() && missingShipBase.getStatusOTA()) {
-                    return 1;
-                }
-            }
-            conditions = null;
-        }
-
-        return tempCount;
-    }
     public static int justFind1MissingContent()
     {
 
@@ -756,8 +691,10 @@ public class OTAContentsChecker extends AbstractConfigurable {
                     killItIfYouHaveTo2ndTab = true; //gets rid of the blinky
                     stopBlink2ndTab = true; //gets rid of the tab blinky
                     refreshFinalTable2e();
+                    removePendingCheck();
                 }else{
                     downloadButton2e.setEnabled(true);
+                    removePendingCheck();
                 }
             }
         });

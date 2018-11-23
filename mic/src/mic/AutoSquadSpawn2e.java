@@ -621,7 +621,6 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
                 else countHowManyNonConfigurationUpgrades++;
             }
 
-            logToChat("autosp2e line 628 nbConfigs " + howManyConfigUpgradeCards + " nb of non-configs " + countHowManyNonConfigurationUpgrades + " upgrade size " + ship.getUpgrades().size());
             // ======================================================
             // Generate the ship base pieces
             // ======================================================
@@ -734,9 +733,6 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
                             + typicalUpgradeWidth/2
                             + i * (typicalUpgradeWidth - upgradeComeBackLeft);
 
-
-                    logToChat("spawn2e line 743 pilotWidth " + pilotWidth + " pilotstarposx " + pilotStartPosition.x + " upgradecomback " + upgradeComeBackLeft + "lastUpgradeFudge " + lastUpgradeFudge);
-
                     int placeUpgradeY = (int) configStartPosition.getY() + totalPilotHeight + i*upgradeYDisplace;
                     entireSpawnCommand.append(spawnPieceCommand(upgradePiece, new Point(placeUpgradeX, placeUpgradeY), playerMap));
                     XWS2Upgrades.Charge testIfHasCharge = upgrade.getUpgradeData().getSides().get(0).getCharges();
@@ -836,7 +832,7 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
         }
 
         String listName = xwsList.getName();
-        logToChat("The '" + "Base 2.0 Game" + "' game mode was used to spawn a list%s loaded from %s",
+        logToChat("The '" + "Base 2.0 Game" + "' game mode was used to spawn a list %s loaded from %s",
                 listName != null ? " '" + listName + "'" : "", xwsList.getXwsSource());
 
         if(entireSpawnCommand != null) {

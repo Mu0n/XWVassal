@@ -299,6 +299,88 @@ public class XWS2Upgrades {
         return conditionsRead;
     }
 
+
+    public static List<XWS2Upgrades.Condition> loadConditionsFromLocal() {
+        String pathToUse = XWOTAUtils.getModulePath();
+        conditionsDataSources whereToGetConditions = new conditionsDataSources();
+        try {
+            //Load the manifest in the local xwd2.zip
+            DataArchive dataArchive = new DataArchive(pathToUse + File.separator + XWOTAUtils.XWD2DATAFILE);
+            InputStream inputStream = dataArchive.getInputStream("manifest.json");
+
+            whereToGetConditions = Util.loadClasspathJsonInDepot("manifest.json", conditionsDataSources.class, inputStream);
+
+            inputStream.close();
+            dataArchive.close();
+        }catch(Exception e){
+            Util.logToChat("XWS2Upgrades line 343 - couldn't load the manifest for conditions");
+        }
+
+        List<XWS2Upgrades.Condition> conditionsRead = Lists.newArrayList();
+        try{
+
+            DataArchive dataArchive = new DataArchive(pathToUse + File.separator + XWOTAUtils.XWD2DATAFILE);
+
+            String suffixWithoutDataRoot = whereToGetConditions.getUrlEnd().split("data/")[1];
+            InputStream is = dataArchive.getInputStream(suffixWithoutDataRoot);
+            conditionsRead = XWS2Upgrades.loadLocalJsonArrayOfConditions(is);
+            is.close();
+            dataArchive.close();
+
+        }catch(Exception e){
+            Util.logToChat("XWS2Upgrades line 323 - couldn't load the manifest for conditions");
+
+        }
+        return conditionsRead;
+    }
+
+
+    public static XWS2Upgrades loadFromLocal() {
+        String pathToUse = XWOTAUtils.getModulePath();
+
+        upgradesDataSources whereToGetUpgrades = new upgradesDataSources();
+        try{
+            //Load the manifest in the local xwd2.zip
+            DataArchive dataArchive = new DataArchive(pathToUse + File.separator + XWOTAUtils.XWD2DATAFILE);
+            InputStream inputStream = dataArchive.getInputStream("manifest.json");
+
+            whereToGetUpgrades = Util.loadClasspathJsonInDepot("manifest.json", upgradesDataSources.class, inputStream);
+
+            inputStream.close();
+            dataArchive.close();
+        }catch(Exception e){
+            Util.logToChat("XWS2Upgrades line 343 - couldn't load the manifest for upgrades");
+        }
+
+        XWS2Upgrades allUpgrades = new XWS2Upgrades();
+        try {
+        DataArchive dataArchive = new DataArchive(pathToUse + File.separator + XWOTAUtils.XWD2DATAFILE);
+
+        for(String urlEnd : whereToGetUpgrades.getUrlEnds()) {
+            List<XWS2Upgrades.OneUpgrade> upgradesListRead = Lists.newArrayList();
+
+            String suffixWithoutDataRoot = urlEnd.split("data/")[1];
+
+            InputStream is = dataArchive.getInputStream(suffixWithoutDataRoot);
+            upgradesListRead = XWS2Upgrades.loadLocalJsonArrayOfOneUpgrades(is);
+
+            //XWS2Upgrades upgradesListRead = Util.loadRemoteJson(new URL(guidoRootUrl+urlEnd), XWS2Upgrades.class);
+
+            for (XWS2Upgrades.OneUpgrade oneUp : upgradesListRead) {
+                allUpgrades.add(oneUp);
+            }
+
+            is.close();
+        }
+        dataArchive.close();
+        }catch (Exception e){
+        }
+
+        return allUpgrades;
+    }
+
+
+
     public static XWS2Upgrades loadFromRemote() {
         upgradesDataSources whereToGetUpgrades = new upgradesDataSources();
         try{
@@ -329,41 +411,7 @@ public class XWS2Upgrades {
         return allUpgrades;
     }
 
-    public static XWS2Upgrades loadFromLocal() {
-        String pathToUse = XWOTAUtils.getModulePath();
 
-        upgradesDataSources whereToGetUpgrades = new upgradesDataSources();
-        try{
-            //Load the manifest in the local xwd2.zip
-            DataArchive dataArchive = new DataArchive(pathToUse + File.separator + XWOTAUtils.XWD2DATAFILE);
-            InputStream inputStream = dataArchive.getInputStream("manifest.json");
-
-            whereToGetUpgrades = Util.loadClasspathJsonInDepot("manifest.json", upgradesDataSources.class, inputStream);
-        }catch(Exception e){
-            Util.logToChat("XWS2Upgrades line 343 - couldn't load the manifest for upgrades");
-        }
-
-        XWS2Upgrades allUpgrades = new XWS2Upgrades();
-        for(String urlEnd : whereToGetUpgrades.getUrlEnds()){
-            List<XWS2Upgrades.OneUpgrade> upgradesListRead = Lists.newArrayList();
-            try {
-                upgradesListRead = XWS2Upgrades.loadRemoteJsonArrayOfOneUpgrades(new URL(guidoRootUrl+urlEnd));
-                //XWS2Upgrades upgradesListRead = Util.loadRemoteJson(new URL(guidoRootUrl+urlEnd), XWS2Upgrades.class);
-            }catch (Exception e){
-                continue;
-            }
-
-            try{
-                for(XWS2Upgrades.OneUpgrade oneUp : upgradesListRead){
-                    allUpgrades.add(oneUp);
-                }
-
-            }catch (Exception e){
-                continue;
-            }
-        }
-        return allUpgrades;
-    }
 
     private static ObjectMapper mapper = new ObjectMapper()
             .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
@@ -380,6 +428,18 @@ public class XWS2Upgrades {
         }
     }
 
+
+    public static List<XWS2Upgrades.OneUpgrade> loadLocalJsonArrayOfOneUpgrades(InputStream is) {
+        try {
+            List<XWS2Upgrades.OneUpgrade> rawData = mapper.readValue(is,  mapper.getTypeFactory().constructCollectionType(List.class, XWS2Upgrades.OneUpgrade.class));
+            return rawData;
+        } catch (Exception e) {
+            System.out.println("Unhandled error parsing local json: \n" + e.toString());
+            return null;
+        }
+    }
+
+
     private static List<XWS2Upgrades.Condition> loadRemoteJsonArrayOfConditions(URL url) {
         try {
             InputStream inputStream = new BufferedInputStream(url.openStream());
@@ -391,6 +451,16 @@ public class XWS2Upgrades {
         }
     }
 
+    private static List<XWS2Upgrades.Condition> loadLocalJsonArrayOfConditions(InputStream is) {
+        try {
+            InputStream inputStream = new BufferedInputStream(is);
+            List<XWS2Upgrades.Condition> rawData = mapper.readValue(inputStream,  mapper.getTypeFactory().constructCollectionType(List.class, XWS2Upgrades.Condition.class));
+            return rawData;
+        } catch (Exception e) {
+            System.out.println("Unhandled error parsing local json: \n" + e.toString());
+            return null;
+        }
+    }
 
     public static XWS2Upgrades.OneUpgrade getSpecificUpgrade(String searchedXWS2Name, XWS2Upgrades allUpgrades){
         for(XWS2Upgrades.OneUpgrade anUp : allUpgrades.upgrades)
