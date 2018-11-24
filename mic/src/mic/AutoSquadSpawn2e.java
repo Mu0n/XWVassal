@@ -621,6 +621,8 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
                 else countHowManyNonConfigurationUpgrades++;
             }
 
+            logToChat("configs " + howManyConfigUpgradeCards + " non-configs " + countHowManyNonConfigurationUpgrades);
+
             // ======================================================
             // Generate the ship base pieces
             // ======================================================
@@ -716,6 +718,7 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
                     }
 
                 //do non-configuration cards
+                int nonConfigUpgradePositionIndexer = ship.getUpgrades().size()-1;
                 for (int i = ship.getUpgrades().size()-1; i > -1; i--) {
                     //for (VassalXWSPilotPieces2e.Upgrade upgrade : ship.getUpgrades()) {
 
@@ -729,9 +732,22 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
                     GamePiece upgradePiece = GamePieceGenerator2e.generateUpgrade(upgrade);
 
                     typicalUpgradeWidth = upgradePiece.boundingBox().width;
+
+
+
+                    logToChat("nonConfigUpgradePositionIndexer is " + nonConfigUpgradePositionIndexer);
+                    int lastterm = (nonConfigUpgradePositionIndexer)*(typicalUpgradeWidth-upgradeComeBackLeft);
+                    logToChat("pw/2 " + pilotWidth/2 + " typuw/2 " + typicalUpgradeWidth/2 + " lastterm " + lastterm);
+                    int total = pilotWidth/2
+                            + typicalUpgradeWidth/2
+                            + lastterm;
+                    logToChat("total " + total);
+
+
+
                     int placeUpgradeX = pilotWidth/2
                             + typicalUpgradeWidth/2
-                            + i * (typicalUpgradeWidth - upgradeComeBackLeft);
+                            + (nonConfigUpgradePositionIndexer )* (typicalUpgradeWidth - upgradeComeBackLeft);
 
                     int placeUpgradeY = (int) configStartPosition.getY() + totalPilotHeight + i*upgradeYDisplace;
                     entireSpawnCommand.append(spawnPieceCommand(upgradePiece, new Point(placeUpgradeX, placeUpgradeY), playerMap));
@@ -746,6 +762,7 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
                             ));
                         }
                     }
+                    nonConfigUpgradePositionIndexer--;
                 }
             }
 

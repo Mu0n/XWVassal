@@ -135,7 +135,7 @@ public class VassalXWSPieceLoader2e {
             // ==================================================
             for (String upgradeType : pilot.getUpgrades().keySet())
             {
-                if(upgradeType.equals("hardpoint")) continue;
+                if(Canonicalizer.getCleanedName(upgradeType).equals("hardpoint")) continue;
                 for (String upgradeName : pilot.getUpgrades().get(upgradeType))
                 {
                     VassalXWSPilotPieces2e.Upgrade upgrade = new VassalXWSPilotPieces2e.Upgrade(upgradeName, stemUpgradeSlot);
