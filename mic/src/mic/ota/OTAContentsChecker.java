@@ -775,6 +775,11 @@ public class OTAContentsChecker extends AbstractConfigurable {
 
     private synchronized void ContentsCheckerWindow2ndEdTab(JPanel hostPanel) {
         results2e = checkAllResults2e();
+        if(results2e.getTotalWork() == 0) {
+            removePendingOTA2Check();
+            removePendingCheck();
+            killItIfYouHaveTo2ndTab = true;
+        }
         finalTable = buildFinalTable2e(results2e);
         hostPanel.setLayout(new BoxLayout(hostPanel, BoxLayout.Y_AXIS));
         // create the label
