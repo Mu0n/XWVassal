@@ -1,0 +1,120 @@
+{
+  "name": "A/SF-01 B-wing",
+  "xws": "asf01bwing",
+  "ffg": 17,
+  "size": "Small",
+  "dial": [
+    "1ER",
+    "1TR",
+    "1BB",
+    "1FB",
+    "1NB",
+    "1YR",
+    "1RR",
+    "2TW",
+    "2BW",
+    "2FB",
+    "2NW",
+    "2YW",
+    "2KR",
+    "3BR",
+    "3FB",
+    "3NR",
+    "4FR"
+  ],
+  "faction": "Rebel Alliance",
+  "stats": [
+    { "arc": "Front Arc", "type": "attack", "value": 3 },
+    { "type": "agility", "value": 1 },
+    { "type": "hull", "value": 4 },
+    { "type": "shields", "value": 4 }
+  ],
+  "actions": [
+    {
+      "difficulty": "White",
+      "linked": { "difficulty": "Red", "type": "Barrel Roll" },
+      "type": "Focus"
+    },
+    { "difficulty": "White", "type": "Lock" },
+    { "difficulty": "White", "type": "Barrel Roll" }
+  ],
+  "pilots": [
+    {
+      "name": "Blade Squadron Veteran",
+      "initiative": 3,
+      "limited": 0,
+      "cost": 44,
+      "xws": "bladesquadronveteran",
+      "text": "A unique gyrostabilization system surrounds the B-wing's cockpit, ensuring that the pilot always remains stationary during flight.",
+      "image": "https://sb-cdn.fantasyflightgames.com/card_images/Card_Pilot_25.png",
+      "slots": [
+        "Talent",
+        "Sensor",
+        "Cannon",
+        "Cannon",
+        "Torpedo",
+        "Modification"
+      ],
+      "artwork": "https://sb-cdn.fantasyflightgames.com/card_art/Card_art_XW_P_25.jpg",
+      "ffg": 25
+    },
+    {
+      "name": "Blue Squadron Pilot",
+      "initiative": 2,
+      "limited": 0,
+      "cost": 42,
+      "xws": "bluesquadronpilot",
+      "text": "Due to its heavy weapons array and resilient shielding, the B-wing has solidified itself as the Rebel Alliance's most innovative assault fighter.",
+      "image": "https://sb-cdn.fantasyflightgames.com/card_images/Card_Pilot_26.png",
+      "slots": ["Sensor", "Cannon", "Cannon", "Torpedo", "Modification"],
+      "alt": [
+        {
+          "image": "https://images-cdn.fantasyflightgames.com/filer_public/a4/a6/a4a6943b-6af3-4d33-9a04-bff98190d3ee/g18x3-blue-squadron-pilot-2.png",
+          "source": "Season Three 2018"
+        }
+      ],
+      "artwork": "https://sb-cdn.fantasyflightgames.com/card_art/Card_art_XW_P_26.jpg",
+      "ffg": 26
+    },
+    {
+      "name": "Braylen Stramm",
+      "caption": "Blade Leader",
+      "initiative": 4,
+      "limited": 1,
+      "cost": 50,
+      "xws": "braylenstramm",
+      "ability": "While you defend or perform an attack, if you are stressed, you may reroll up to 2 of your dice.",
+      "image": "https://sb-cdn.fantasyflightgames.com/card_images/Card_Pilot_23.png",
+      "slots": [
+        "Talent",
+        "Sensor",
+        "Cannon",
+        "Cannon",
+        "Torpedo",
+        "Modification"
+      ],
+      "artwork": "https://sb-cdn.fantasyflightgames.com/card_art/Card_art_XW_P_23.jpg",
+      "ffg": 23
+    },
+    {
+      "name": "Ten Numb",
+      "caption": "Blue Five",
+      "initiative": 4,
+      "limited": 1,
+      "cost": 50,
+      "xws": "tennumb",
+      "ability": "While you defend or perform an attack, you may spend 1 stress token to change all of your [Focus] results to [Evade] or [Hit] results.",
+      "image": "https://sb-cdn.fantasyflightgames.com/card_images/Card_Pilot_24.png",
+      "slots": [
+        "Talent",
+        "Sensor",
+        "Cannon",
+        "Cannon",
+        "Torpedo",
+        "Modification"
+      ],
+      "artwork": "https://sb-cdn.fantasyflightgames.com/card_art/Card_art_XW_P_24.jpg",
+      "ffg": 24
+    }
+  ]
+}

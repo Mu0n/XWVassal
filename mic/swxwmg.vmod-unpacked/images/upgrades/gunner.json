@@ -1,0 +1,334 @@
+[
+  {
+    "name": "Agile Gunner",
+    "limited": 0,
+    "xws": "agilegunner",
+    "sides": [
+      {
+        "title": "Agile Gunner",
+        "type": "Gunner",
+        "ability": "During the End Phase, you may rotate your [Single Turret Arc] indicator.",
+        "slots": ["Gunner"],
+        "image": "https://sb-cdn.fantasyflightgames.com/card_images/Card_Upgrade_162.png",
+        "artwork": "https://sb-cdn.fantasyflightgames.com/card_art/Card_art_XW_U_162.jpg",
+        "ffg": 388
+      }
+    ],
+    "cost": { "value": 10 }
+  },
+  {
+    "name": "BT-1",
+    "limited": 1,
+    "xws": "bt1",
+    "sides": [
+      {
+        "title": "BT-1",
+        "type": "Gunner",
+        "ability": "While you perform an attack, you may change 1 [Hit] result to a [Critical Hit] result for each stress token the defender has.",
+        "image": "https://sb-cdn.fantasyflightgames.com/card_images/Card_Upgrade_140.png",
+        "slots": ["Gunner"],
+        "artwork": "https://sb-cdn.fantasyflightgames.com/card_art/Card_art_XW_U_140.jpg",
+        "ffg": 365
+      }
+    ],
+    "cost": { "value": 2 },
+    "restrictions": [
+      { "factions": ["Scum and Villainy"], "names": ["Darth Vader"] }
+    ]
+  },
+  {
+    "name": "Bistan",
+    "limited": 1,
+    "xws": "bistan",
+    "sides": [
+      {
+        "title": "Bistan",
+        "type": "Gunner",
+        "ability": "After you perform a primary attack, if you are focused, you may perform a bonus [Single Turret Arc] attack against a ship you have not already attacked this round.",
+        "slots": ["Gunner"],
+        "image": "https://sb-cdn.fantasyflightgames.com/card_images/Card_Upgrade_95.png",
+        "artwork": "https://sb-cdn.fantasyflightgames.com/card_art/Card_art_XW_U_95.jpg",
+        "ffg": 319
+      }
+    ],
+    "cost": { "value": 14 },
+    "restrictions": [{ "factions": ["Rebel Alliance"] }]
+  },
+  {
+    "name": "Bossk",
+    "limited": 1,
+    "xws": "bossk",
+    "sides": [
+      {
+        "title": "Bossk",
+        "type": "Gunner",
+        "ability": "After you perform a primary attack that misses, if you are not stressed, you must receive 1 stress token to perform a bonus primary attack against the same target.",
+        "image": "https://sb-cdn.fantasyflightgames.com/card_images/Card_Upgrade_139.png",
+        "slots": ["Gunner"],
+        "artwork": "https://sb-cdn.fantasyflightgames.com/card_art/Card_art_XW_U_139.jpg",
+        "ffg": 364
+      }
+    ],
+    "cost": { "value": 10 },
+    "restrictions": [{ "factions": ["Scum and Villainy"] }]
+  },
+  {
+    "name": "Dengar",
+    "limited": 1,
+    "xws": "dengar",
+    "sides": [
+      {
+        "title": "Dengar",
+        "type": "Gunner",
+        "ability": "After you defend, if the attacker is in your firing arc, you may spend 1 [Charge]. If you do, roll 1 attack die unless the attacker chooses to remove 1 green token. On a [Hit] or [Critical Hit] result, the attacker suffers 1 [Hit] damage.",
+        "image": "https://sb-cdn.fantasyflightgames.com/card_images/Card_Upgrade_141.png",
+        "slots": ["Gunner"],
+        "charges": { "value": 1, "recovers": 1 },
+        "artwork": "https://sb-cdn.fantasyflightgames.com/card_art/Card_art_XW_U_141.jpg",
+        "ffg": 366
+      }
+    ],
+    "cost": { "value": 6 },
+    "restrictions": [{ "factions": ["Scum and Villainy"] }]
+  },
+  {
+    "name": "Ezra Bridger",
+    "limited": 1,
+    "xws": "ezrabridger",
+    "sides": [
+      {
+        "title": "Ezra Bridger",
+        "type": "Gunner",
+        "ability": "After you perform a primary attack, you may spend 1 [Force] to perform a bonus [Single Turret Arc] attack from a [Single Turret Arc] you have not attacked from this round. If you do and you are stressed, you may reroll 1 attack die.",
+        "image": "https://sb-cdn.fantasyflightgames.com/card_images/Card_Upgrade_96.png",
+        "slots": ["Gunner"],
+        "force": { "value": 1, "recovers": 1 },
+        "artwork": "https://sb-cdn.fantasyflightgames.com/card_art/Card_art_XW_U_96.jpg",
+        "ffg": 320
+      }
+    ],
+    "cost": { "value": 18 },
+    "restrictions": [{ "factions": ["Rebel Alliance"] }]
+  },
+  {
+    "name": "Fifth Brother",
+    "limited": 1,
+    "xws": "fifthbrother",
+    "sides": [
+      {
+        "title": "Fifth Brother",
+        "type": "Gunner",
+        "ability": "While you perform an attack, you may spend 1 [Force] to change 1 of your [Focus] results to a [Critical Hit] result.",
+        "image": "https://sb-cdn.fantasyflightgames.com/card_images/Card_Upgrade_122.png",
+        "slots": ["Gunner"],
+        "force": { "value": 1, "recovers": 1 },
+        "artwork": "https://sb-cdn.fantasyflightgames.com/card_art/Card_art_XW_U_122.jpg",
+        "ffg": 348
+      }
+    ],
+    "cost": { "value": 12 },
+    "restrictions": [{ "factions": ["Galactic Empire"] }]
+  },
+  {
+    "name": "Finn",
+    "limited": 1,
+    "xws": "finn",
+    "sides": [
+      {
+        "title": "Finn",
+        "type": "Gunner",
+        "ability": "While you defend or perform a primary attack, if the enemy is in your [Front Arc], you may add 1 blank result to your roll... ..can be rerolled or otherwise...",
+        "slots": ["Gunner"]
+      }
+    ],
+    "cost": { "value": 0 }
+  },
+  {
+    "name": "Greedo",
+    "limited": 1,
+    "xws": "greedo",
+    "sides": [
+      {
+        "title": "Greedo",
+        "type": "Gunner",
+        "ability": "While you perform an attack, you may spend 1 [Charge] to change 1 [Hit] result to a [Critical Hit] result. While you defend, if your [Charge] is active, the attacker may change 1 [Hit] result to a [Critical Hit] result.",
+        "image": "https://sb-cdn.fantasyflightgames.com/card_images/Card_Upgrade_142.png",
+        "slots": ["Gunner"],
+        "charges": { "value": 1, "recovers": 1 },
+        "artwork": "https://sb-cdn.fantasyflightgames.com/card_art/Card_art_XW_U_142.jpg",
+        "ffg": 367
+      }
+    ],
+    "cost": { "value": 1 },
+    "restrictions": [{ "factions": ["Scum and Villainy"] }]
+  },
+  {
+    "name": "Han Solo",
+    "limited": 1,
+    "xws": "hansolo",
+    "sides": [
+      {
+        "title": "Han Solo",
+        "type": "Gunner",
+        "ability": "During the Engagement Phase, at initiative 7, you may perform a [Single Turret Arc] attack. You cannot attack from that [Single Turret Arc] again this round.",
+        "slots": ["Gunner"],
+        "image": "https://sb-cdn.fantasyflightgames.com/card_images/Card_Upgrade_97.png",
+        "artwork": "https://sb-cdn.fantasyflightgames.com/card_art/Card_art_XW_U_97.jpg",
+        "ffg": 321
+      }
+    ],
+    "cost": { "value": 12 },
+    "restrictions": [{ "factions": ["Rebel Alliance"] }]
+  },
+  {
+    "name": "Han Solo",
+    "limited": 1,
+    "xws": "hansolo-gunner",
+    "sides": [
+      {
+        "title": "Han Solo",
+        "type": "Gunner",
+        "ability": "Before you engage, you may perform a red [Focus] action.",
+        "slots": ["Gunner"],
+        "image": "https://sb-cdn.fantasyflightgames.com/card_images/Card_Upgrade_163.png",
+        "artwork": "https://sb-cdn.fantasyflightgames.com/card_art/Card_art_XW_U_163.jpg",
+        "ffg": 389
+      }
+    ],
+    "cost": { "value": 4 },
+    "restrictions": [{ "factions": ["Scum and Villainy"] }]
+  },
+  {
+    "name": "Hotshot Gunner",
+    "limited": 0,
+    "xws": "hotshotgunner",
+    "sides": [
+      {
+        "title": "Hotshot Gunner",
+        "type": "Gunner",
+        "ability": "While you perform a [Single Turret Arc] attack, after the Modify Defense Dice step, the defender removes 1 focus or calculate token.",
+        "slots": ["Gunner"],
+        "image": "https://sb-cdn.fantasyflightgames.com/card_images/Card_Upgrade_49.png",
+        "artwork": "https://sb-cdn.fantasyflightgames.com/card_art/Card_art_XW_U_49.jpg",
+        "ffg": 278
+      }
+    ],
+    "cost": { "value": 7 }
+  },
+  {
+    "name": "Luke Skywalker",
+    "limited": 1,
+    "xws": "lukeskywalker",
+    "sides": [
+      {
+        "title": "Luke Skywalker",
+        "type": "Gunner",
+        "ability": "At the start of the Engagement Phase, you may spend 1 [Force] to rotate your [Single Turret Arc] indicator.",
+        "slots": ["Gunner"],
+        "force": { "value": 1, "recovers": 1 },
+        "image": "https://sb-cdn.fantasyflightgames.com/card_images/Card_Upgrade_98.png",
+        "artwork": "https://sb-cdn.fantasyflightgames.com/card_art/Card_art_XW_U_98.jpg",
+        "ffg": 322
+      }
+    ],
+    "cost": { "value": 30 },
+    "restrictions": [{ "factions": ["Rebel Alliance"] }]
+  },
+  {
+    "name": "Skilled Bombardier",
+    "limited": 0,
+    "xws": "skilledbombardier",
+    "sides": [
+      {
+        "title": "Skilled Bombardier",
+        "type": "Gunner",
+        "ability": "If you would drop or launch a device, you may use a template of the same bearing with a speed 1 higher or lower.",
+        "slots": ["Gunner"],
+        "image": "https://sb-cdn.fantasyflightgames.com/card_images/Card_Upgrade_50.png",
+        "artwork": "https://sb-cdn.fantasyflightgames.com/card_art/Card_art_XW_U_50.jpg",
+        "ffg": 279
+      }
+    ],
+    "cost": { "value": 2 }
+  },
+  {
+    "name": "Special Forces Gunner",
+    "limited": 0,
+    "xws": "specialforcesgunner",
+    "sides": [
+      {
+        "title": "Special Forces Gunner",
+        "type": "Gunner",
+        "ability": "...e you perform a primary [Front Arc] attack, ...your [Single Turret Arc] is in your [Front Arc], you may roll 1 additional attack die. ...er you perform a primary [Front Arc] attack, ...our [Single Turret Arc] is in your [Rear Arc], you may perform a bonus primary [Single Turret Arc] attack.",
+        "slots": ["Gunner"]
+      }
+    ],
+    "cost": { "value": 0 }
+  },
+  {
+    "name": "Veteran Tail Gunner",
+    "limited": 0,
+    "xws": "veterantailgunner",
+    "sides": [
+      {
+        "title": "Veteran Tail Gunner",
+        "type": "Gunner",
+        "ability": "After you perform a primary [Front Arc] attack, you may perform a bonus primary [Rear Arc] attack.",
+        "slots": ["Gunner"],
+        "image": "https://sb-cdn.fantasyflightgames.com/card_images/Card_Upgrade_51.png",
+        "artwork": "https://sb-cdn.fantasyflightgames.com/card_art/Card_art_XW_U_51.jpg",
+        "ffg": 280
+      }
+    ],
+    "cost": { "value": 4 },
+    "restrictions": [{ "arcs": ["Rear Arc"] }]
+  },
+  {
+    "name": "Veteran Turret Gunner",
+    "limited": 0,
+    "xws": "veteranturretgunner",
+    "sides": [
+      {
+        "title": "Veteran Turret Gunner",
+        "type": "Gunner",
+        "ability": "After you perform a primary attack, you may perform a bonus [Single Turret Arc] attack using a [Single Turret Arc] you did not already attack from this round.",
+        "slots": ["Gunner"],
+        "image": "https://sb-cdn.fantasyflightgames.com/card_images/Card_Upgrade_52.png",
+        "artwork": "https://sb-cdn.fantasyflightgames.com/card_art/Card_art_XW_U_52.jpg",
+        "ffg": 281
+      }
+    ],
+    "cost": { "value": 8 },
+    "restrictions": [{ "action": { "type": "Rotate Arc" } }]
+  },
+  {
+    "name": "Finn",
+    "limited": 1,
+    "xws": "finn",
+    "sides": [
+      {
+        "title": "Finn",
+        "type": "Gunner",
+        "ability": "While you defend or perform a primary attack, if the enemy ship is in your [Front Arc], you may add 1 blank result to your roll (this die can be rerolled or otherwise modified).",
+        "image": "https://images-cdn.fantasyflightgames.com/filer_public/89/06/8906ae3a-46b0-45f2-8db9-21b81cb05e0a/swz19_a2_finn-gunner.png",
+        "slots": ["Gunner"]
+      }
+    ],
+    "restrictions": [{ "factions": ["Resistance"] }]
+  },
+  {
+    "name": "Paige Tico",
+    "limited": 1,
+    "xws": "paigetico",
+    "sides": [
+      {
+        "title": "Paige Tico",
+        "type": "Gunner",
+        "ability": "After you perform an attack, you may drop 1 bomb or rotate your [Single Turret Arc]. After you are destroyed, you may drop 1 bomb.",
+        "image": "https://images-cdn.fantasyflightgames.com/filer_public/1d/1b/1d1bade1-7afd-40e6-97ae-4430dfe9d169/swz19_a2_paig-tico.png",
+        "slots": ["Gunner"]
+      }
+    ],
+    "restrictions": [{ "factions": ["Resistance"]} ]
+  }
+]

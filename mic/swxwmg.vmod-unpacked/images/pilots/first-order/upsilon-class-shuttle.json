@@ -1,0 +1,50 @@
+{
+  "name": "Upsilon-class Shuttle",
+  "xws": "upsilonclassshuttle",
+  "size": "Large",
+  "dial": [
+    "0OR",
+    "1TR",
+    "1BW",
+    "1FB",
+    "1NW",
+    "1YR",
+    "2TW",
+    "2BB",
+    "2FB",
+    "2NB",
+    "2YW",
+    "3TR",
+    "3BW",
+    "3FW",
+    "3NW",
+    "3YR"
+  ],
+  "faction": "First Order",
+  "stats": [
+    { "type": "agility", "value": 0 },
+    { "type": "hull", "value": 6 },
+    { "type": "shields", "value": 6 }
+  ],
+  "pilots": [
+    {
+      "name": "Lieutenant Dormitz",
+      "caption": "Hypercomms Specialist",
+      "initiative": 2,
+      "limited": 1,
+      "cost": 200,
+      "xws": "lieutenantdormitz",
+      "ability": "Setup: After you are placed, other friendly ships can be placed anywhere in the play area at range 0-2 of you."
+    },
+    {
+      "name": "Major Stridan",
+      "caption": "Stentorian Commander",
+      "initiative": 4,
+      "limited": 1,
+      "cost": 200,
+      "xws": "majorstridan",
+      "ability": "While you coordinate or resolve the effect of one of your upgrades, you may treat friendly ships at range 2-3 as being at range 0 or range1.",
+      "image": "https://images-cdn.fantasyflightgames.com/filer_public/1b/2c/1b2cbc1c-7e49-4f9d-b25a-b72d7319b90b/swz18_major-stridan_a2.png"
+    }
+  ]
+}

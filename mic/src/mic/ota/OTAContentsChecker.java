@@ -20,10 +20,14 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.io.*;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.*;
 import java.util.List;
 import java.util.Timer;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 import static mic.Util.logToChat;
 
@@ -69,6 +73,10 @@ public class OTAContentsChecker extends AbstractConfigurable {
     public static final String OTA_DISPATCHER_SHIPS_JSON_URL_2E = OTA_RAW_GITHUB_JSON_URL_2E + "dispatcher_ships.json";
     public static final String OTA_DISPATCHER_CONDITIONS_JSON_URL_2E = OTA_RAW_GITHUB_JSON_URL_2E + "dispatcher_conditions.json";
 
+    public static String manifest2eURL = "https://raw.githubusercontent.com/guidokessels/xwing-data2/master/data/manifest.json";
+    public static String ota2BuildURL = "https://raw.githubusercontent.com/Mu0n/XWVassalOTA2e/master/version";
+
+
     String aComboBoxChoice = "Base Game";
     String chosenURL = OTA_RAW_BRANCH_URL;
 
@@ -81,6 +89,9 @@ public class OTAContentsChecker extends AbstractConfigurable {
             .put("galacticrepublic","Galactic Republic")
             .put("separatistarmy","Separatist Army")
             .build();
+
+    private boolean debugMode = false;
+
 
     private JButton contentCheckerButton = new JButton();
     private ModuleIntegrityChecker modIntChecker = null;
@@ -98,6 +109,8 @@ public class OTAContentsChecker extends AbstractConfigurable {
     int missing1stEdContent = 0;
     int missing2ndEdContent = 0;
     boolean wantToBeNotified1st = false;
+
+    boolean thinkingWeHaveNoNetAccess = false; //once it has trouble connecting, don't bother with more connections
 
     private boolean tictoc = false;
     private boolean tictoc1st = false;
@@ -237,6 +250,7 @@ public class OTAContentsChecker extends AbstractConfigurable {
     }
     public void addTo(Buildable parent) {
 
+
         JButton b = new JButton("Content Checker");
         b.setAlignmentY(0.0F);
         backupColor = b.getBackground();
@@ -286,16 +300,27 @@ public class OTAContentsChecker extends AbstractConfigurable {
             }
         }
 
-        allShips = XWS2Pilots.loadFromRemote();
-        allUpgrades = XWS2Upgrades.loadFromRemote();
-        allConditions = XWS2Upgrades.loadConditionsFromRemote();
+        //The zipping process should happen only once when all the local files to be replaced are known. On slow hard disk, this could be unfortunate if it was done several times.
+        checkPendingCheck(); //locally
+        checkAndUpdateRemoteJsonsIfNewFound(); //remotely, will influence thinkingWeHaveNoNetAccess if the timeout is reached
+        checkPendingOTA(); //locally
+        if(thinkingWeHaveNoNetAccess == false) compareOTAversions(); //remotely only if the first net access worked, don't bother otherwise.
+
+            //if the pending file doesn't exist, give it a chance to find a new manifest that requires a content check and create that pendingContentCheck.txt again
+        //this file should be destroyed when a content check download or downloadAll is done
+
+        allShips = XWS2Pilots.loadFromLocal();
+        allUpgrades = XWS2Upgrades.loadFromLocal();
+        allConditions = XWS2Upgrades.loadConditionsFromLocal();
 
         if (wantToBeNotified1st) missing1stEdContent = justFind1MissingContent();
 
-
         XWOTAUtils.checkOnlineOrder66();
 
-        if(XWOTAUtils.amIDoingOrder66() == false) missing2ndEdContent = justFind1MissingContent_2e();
+        //TODO replace the whole content checker by veryfiying a change to Guido's manifest version vs my own local file
+        //
+        // if(XWOTAUtils.amIDoingOrder66() == false) missing2ndEdContent = justFind1MissingContent_2e();
+        //
         if (missing1stEdContent > 0) {
             activateBlinky(Color.RED);
         }
@@ -304,6 +329,267 @@ public class OTAContentsChecker extends AbstractConfigurable {
         }
         GameModule.getGameModule().getToolBar().add(b);
     }
+
+
+
+    private void checkPendingOTA() {
+        if(!XWOTAUtils.fileExistsInModule("pendingOTACheck.txt")){
+            String choice = "no";
+            try {
+                XWOTAUtils.addFileToModule("pendingOTACheck.txt", choice.getBytes());
+                if(debugMode) logToChat("otacheck line 337 adding pending OTA check");
+            } catch (Exception e) {
+            }
+        } else{
+            String pendingContentStr = null;
+            try {
+
+                InputStream inputStream = GameModule.getGameModule().getDataArchive().getInputStream("pendingOTACheck.txt");
+                if (inputStream == null) {
+                    logToChat("couldn't load /pendingOTACheck.txt");
+                }
+                BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+                StringBuilder contents = new StringBuilder();
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    contents.append(line);
+                }
+                reader.close();
+
+                pendingContentStr = contents.toString();
+                if (pendingContentStr.equalsIgnoreCase("yes")) {
+                    missing2ndEdContent = 1;
+                    if(debugMode) logToChat("otacheck line 359 pending OTA detected as yes");
+                }
+                else {
+                    if(debugMode) logToChat("otacheck line 362 pending OTA detected as no");
+                }
+                inputStream.close();
+            } catch (Exception e) {
+                System.out.println("Unhandled error reading pendingOTACheck.txt: \n" + e.toString());
+                logToChat("Unhandled error reading pendingOTACheck.txt: \n" + e.toString());
+            }
+        }
+
+
+    }
+
+    private void checkPendingCheck(){
+        //deal with hanging content checker update request if it wasn't dealt with before
+        if (!XWOTAUtils.fileExistsInModule("pendingContentCheck.txt")) {
+            String choice = "no";
+            try {
+                XWOTAUtils.addFileToModule("pendingContentCheck.txt", choice.getBytes());
+                if(debugMode) logToChat("otacheck line 380 xwd2 check added to module");
+            } catch (Exception e) {
+            }
+        } else {
+            String pendingContentStr = null;
+            try {
+
+                InputStream inputStream = GameModule.getGameModule().getDataArchive().getInputStream("pendingContentCheck.txt");
+                if (inputStream == null) {
+                    logToChat("couldn't load /pendingContentCheck.txt");
+                }
+                BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+                StringBuilder contents = new StringBuilder();
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    contents.append(line);
+                }
+                reader.close();
+
+                pendingContentStr = contents.toString();
+                if (pendingContentStr.equalsIgnoreCase("yes")) {
+                    missing2ndEdContent = 1;
+                    if(debugMode) logToChat("otacheck line 380 xwd2 pending check as yes");
+                } else {
+                    if(debugMode) logToChat("otacheck line 382 xwd2 pending check as no");
+                }
+                inputStream.close();
+            } catch (Exception e) {
+                System.out.println("Unhandled error reading pendingContentCheck.txt: \n" + e.toString());
+                logToChat("Unhandled error reading pendingContentCheck.txt: \n" + e.toString());
+            }
+        }
+    }
+
+    private void removePendingCheck(){
+        //unlikely to happen, but if somehow the file isn't present, make one and mark it as no pending check, since this method is called after a content checker download op.
+        if (!XWOTAUtils.fileExistsInModule("pendingContentCheck.txt")) {
+            String choice = "no";
+            try {
+                XWOTAUtils.addFileToModule("pendingContentCheck.txt", choice.getBytes());
+                if(debugMode) logToChat("otacheck line 421xwd2 pending check as no after a download AND had to remake the file");
+            } catch (Exception e) {
+            }
+        } else {
+            String choice = "no";
+            try {
+                XWOTAUtils.addFileToModule("pendingContentCheck.txt", choice.getBytes());
+                if(debugMode) logToChat("otacheck line 426 xwd2 pending check as no after a download");
+            } catch (Exception e) {
+            }
+        }
+    }
+
+    private void removePendingOTA2Check(){
+        //unlikely to happen, but if somehow the file isn't present, make one and mark it as no pending check, since this method is called after a content checker download op.
+        if (!XWOTAUtils.fileExistsInModule("pendingOTACheck.txt")) {
+            String choice = "no";
+            try {
+                XWOTAUtils.addFileToModule("pendingOTACheck.txt", choice.getBytes());
+                if(debugMode) logToChat("otacheck line 421xwd2 pending check as no after a download AND had to remake the file");
+            } catch (Exception e) {
+            }
+        } else {
+            String choice = "no";
+            try {
+                XWOTAUtils.addFileToModule("pendingOTACheck.txt", choice.getBytes());
+                if(debugMode) logToChat("otacheck line 426 xwd2 pending check as no after a download");
+            } catch (Exception e) {
+            }
+        }
+    }
+
+    private void checkAndUpdateRemoteJsonsIfNewFound()  {
+        if(XWOTAUtils.fileExitsOnTheNet(manifest2eURL))
+        {
+            XWS2Pilots.tripleVersion remoteVer = XWS2Pilots.checkRemoteManifestVersion();
+            XWS2Pilots.tripleVersion localVer = XWS2Pilots.checkLocalManifestVersion();
+            localVer.displayInChat("local");
+            remoteVer.displayInChat("remote");
+
+
+            if(remoteVer != null && localVer != null)
+            {
+                if(remoteVer.isNewerThan(localVer)) {
+                    if((remoteVer.getMinor() > localVer.getMinor()) || (remoteVer.getMajor() > localVer.getMajor())) {
+                        //Scenario B: the new online stuff requires a content checker flash! and the local files will be replaced
+                        missing2ndEdContent=1;
+                        String msg = "yes";
+                        try {
+                            XWOTAUtils.addFileToModule("pendingContentCheck.txt", msg.getBytes());
+                        } catch (Exception e) {
+                        }
+                        downloadXwingDataAndDispatcherJSONFiles_2e();
+                        logToChat("The local xwing-data2 is being updated");
+                        XWS2Pilots.tripleVersion localVer2 = XWS2Pilots.checkLocalManifestVersion();
+                        logToChat("new local version--");
+                        localVer2.displayInChat("local");
+
+                    }
+                    else if(remoteVer.getPatch() > localVer.getPatch()){
+                        //Scenario C: no content checker flash, but the local files will be replaced.
+                        downloadXwingDataAndDispatcherJSONFiles_2e();
+                        logToChat("The local xwing-data2 is being updated");
+
+                    }
+                    else{
+                        logToChat("The local xwing-data2 is up to date.");
+                    }
+                }
+            }
+        }
+        else {
+            //SCENARIO A: can't connect to guido's xwing-data2 file online, will resort to purely local files for data.
+            logToChat("Error: can't connect online to verify the module's integrity with xwing-data2 - will attempt to use local files instead.");
+            thinkingWeHaveNoNetAccess = true;
+            return;
+        }
+    }
+    private void compareOTAversions() {
+
+        if(XWOTAUtils.fileExitsOnTheNet(ota2BuildVersion.remoteUrl))
+        {
+            int remoteVer = ota2BuildVersion.checkRemoteBuildVersion();
+            int localVer = ota2BuildVersion.checkLocalBuildVersion();
+            logToChat("Over-the-air local version: " + localVer + " remote version: " + remoteVer);
+            if(remoteVer != -1){
+                if(localVer == 0 || localVer < remoteVer){ //needs a rebuild of ota2.zip
+                    missing2ndEdContent=1;
+                    String msg = "yes";
+                    try{
+                        String pathToUse = XWOTAUtils.getModulePath();
+                        //if ota2.zip is here, delete it first, we know we want a newer one, might want to not do this in case there's
+                        //no net connection though
+                        if(ota2BuildVersion.checkExistenceOfLocalOTA2Zip() == true){
+                            File file = new File(pathToUse + File.separator + ota2BuildVersion.ota2Zip);
+                            file.delete();
+                        }
+                        //the try-catch problem triggers at this line, an IOException Error
+                        FileOutputStream fos = new FileOutputStream(pathToUse + File.separator + ota2BuildVersion.ota2Zip);
+                        ZipOutputStream zipOut = new ZipOutputStream(new BufferedOutputStream(fos));
+
+                        String content = "{\"version\":\"" + remoteVer + "\"}";
+
+                        String fileName = "version";
+                        ZipEntry zipEntry = new ZipEntry(fileName);
+                        zipEntry.setSize(content.getBytes().length);
+                        zipOut.putNextEntry(zipEntry);
+                        zipOut.write(content.getBytes());
+                        zipOut.closeEntry();
+                        zipOut.close();
+                        fos.close();
+                    } catch(Exception e)
+                    {
+                        logToChat("Error: can't create a local journal of the over-the-air content depot.");
+                    }
+                } else{ //do nothing
+                    logToChat("The local over-the-air journal is up to date.");
+                }
+            }
+            else{
+                logToChat("Error: can't connect to the online over-the-air content depot.");
+            }
+        }
+        /*
+        {
+            XWS2Pilots.tripleVersion remoteVer = XWS2Pilots.checkRemoteManifestVersion();
+            XWS2Pilots.tripleVersion localVer = XWS2Pilots.checkLocalManifestVersion();
+            localVer.displayInChat("local");
+            remoteVer.displayInChat("remote");
+
+
+            if(remoteVer != null && localVer != null)
+            {
+                if(remoteVer.isNewerThan(localVer)) {
+                    if((remoteVer.getMinor() > localVer.getMinor()) || (remoteVer.getMajor() > localVer.getMajor())) {
+                        //Scenario B: the new online stuff requires a content checker flash! and the local files will be replaced
+                        missing2ndEdContent=1;
+                        String msg = "yes";
+                        try {
+                            XWOTAUtils.addFileToModule("pendingContentCheck.txt", msg.getBytes());
+                        } catch (Exception e) {
+                        }
+                        downloadXwingDataAndDispatcherJSONFiles_2e();
+                        logToChat("The local xwing-data2 is being updated");
+                        XWS2Pilots.tripleVersion localVer2 = XWS2Pilots.checkLocalManifestVersion();
+                        logToChat("new local version--");
+                        localVer2.displayInChat("local");
+
+                    }
+                    else if(remoteVer.getPatch() > localVer.getPatch()){
+                        //Scenario C: no content checker flash, but the local files will be replaced.
+                        downloadXwingDataAndDispatcherJSONFiles_2e();
+                        logToChat("The local xwing-data2 is being updated");
+
+                    }
+                    else{
+                        logToChat("The local xwing-data2 is up to date.");
+                    }
+                }
+            }
+        }
+        else {
+            //SCENARIO A: can't connect to guido's xwing-data2 file online, will resort to purely local files for data.
+            logToChat("Error: can't connect online to verify the module's integrity with xwing-data2 - will attempt to use local files instead.");
+            thinkingWeHaveNoNetAccess = true;
+            return;
+
+         */
+    }
+
 
     private static XWS2Pilots.pilotsDataSources parseTheManifestForShipPilots(){
             return mic.Util.loadRemoteJson(XWS2Pilots.remoteUrl, XWS2Pilots.pilotsDataSources.class);
@@ -315,12 +601,14 @@ public class OTAContentsChecker extends AbstractConfigurable {
         return mic.Util.loadRemoteJson(XWS2Upgrades.remoteUrl, XWS2Upgrades.conditionsDataSources.class);
     }
 
-    private static boolean downloadXwingDataAndDispatcherJSONFiles_2e() {
+    public static boolean downloadXwingDataAndDispatcherJSONFiles_2e() {
         boolean errorOccurredOnXWingData = false;
         //these have to be dumped in a /data subfolder, it will help prevent shipPilot json collisions, such as tielfighter
         //by putting them in /data/pilots/rebelalliance/
         ArrayList<String> jsonFilesToDownloadFromURL_2e = new ArrayList<String>();
 
+        //logToChat("OTAContentChecker line 472 STEP adds the manifest from the remote URL to the list of files to zip up");
+        jsonFilesToDownloadFromURL_2e.add(XWS2Pilots.remoteUrl);
 
         for(XWS2Pilots.OneFactionGroup oSDS : parseTheManifestForShipPilots().getPilots()){
             for(String suffix : oSDS.getShipUrlSuffixes()){
@@ -367,81 +655,6 @@ public class OTAContentsChecker extends AbstractConfigurable {
         return errorOccurredOnXWingData;
     }
 
-
-    public static int justFind1MissingContent_2e(){
-
-        int tempCount = 0;
-
-        boolean errorOccuredOnXWingData_2e = downloadXwingDataAndDispatcherJSONFiles_2e();
-        if(errorOccuredOnXWingData_2e){
-            mic.Util.logToChat("Unable to reach xwing-data2 server (2nd edition). No update performed");
-        } else{
-            ModuleIntegrityChecker_2e modIntCheck_2e = new ModuleIntegrityChecker_2e();
-            // =============================================================
-            // Pilots
-            // =============================================================
-            ArrayList<OTAMasterPilots.OTAPilot> pilots = modIntCheck_2e.checkPilots(true, allShips);
-            for(OTAMasterPilots.OTAPilot pilot : pilots){
-                if(!pilot.getStatus() && pilot.getStatusOTA()){
-                    return 1;
-                }
-            }
-            pilots = null;
-
-            // =============================================================
-            // Ships
-            // =============================================================
-            ArrayList<OTAMasterShips.OTAShip> ships = modIntCheck_2e.checkShips(true, allShips);
-            for (OTAMasterShips.OTAShip ship : ships) {
-                if (!ship.getStatus() && ship.getStatusOTA()) {
-                    return 1;
-                }
-            }
-            ships = null;
-
-            // =============================================================
-            // Upgrades
-            // =============================================================
-            ArrayList<OTAMasterUpgrades.OTAUpgrade> upgrades = modIntCheck_2e.checkUpgrades(true, allUpgrades);
-            for (OTAMasterUpgrades.OTAUpgrade upgrade : upgrades) {
-                if (!upgrade.getStatus() && upgrade.getStatusOTA()) {
-                    return 1;
-                }
-            }
-            upgrades = null;
-
-
-            // =============================================================
-            // Conditions
-            // =============================================================
-            ArrayList<OTAMasterConditions.OTACondition> conditions = modIntCheck_2e.checkConditions(true, allConditions);
-            for (OTAMasterConditions.OTACondition condition : conditions) {
-                if (!condition.getStatus() && condition.getStatusOTA()) {
-                    return 1;
-                }
-
-                if (!condition.getTokenStatus() && condition.getTokenStatusOTA()) {
-                    return 1;
-                }
-            }
-
-            // =============================================================
-            // Check Ship Bases
-            // =============================================================
-            ArrayList<OTAShipBase> shipBaseResults = modIntCheck_2e.checkShipBases(true, allShips);
-            Iterator<OTAShipBase> shipBaseIterator = shipBaseResults.iterator();
-            OTAShipBase missingShipBase = null;
-            while (shipBaseIterator.hasNext()) {
-                missingShipBase = shipBaseIterator.next();
-                if (!missingShipBase.getStatus() && missingShipBase.getStatusOTA()) {
-                    return 1;
-                }
-            }
-            conditions = null;
-        }
-
-        return tempCount;
-    }
     public static int justFind1MissingContent()
     {
 
@@ -562,6 +775,11 @@ public class OTAContentsChecker extends AbstractConfigurable {
 
     private synchronized void ContentsCheckerWindow2ndEdTab(JPanel hostPanel) {
         results2e = checkAllResults2e();
+        if(results2e.getTotalWork() == 0) {
+            removePendingOTA2Check();
+            removePendingCheck();
+            killItIfYouHaveTo2ndTab = true;
+        }
         finalTable = buildFinalTable2e(results2e);
         hostPanel.setLayout(new BoxLayout(hostPanel, BoxLayout.Y_AXIS));
         // create the label
@@ -601,8 +819,12 @@ public class OTAContentsChecker extends AbstractConfigurable {
                     killItIfYouHaveTo2ndTab = true; //gets rid of the blinky
                     stopBlink2ndTab = true; //gets rid of the tab blinky
                     refreshFinalTable2e();
+                    removePendingCheck();
+                    removePendingOTA2Check();
                 }else{
                     downloadButton2e.setEnabled(true);
+                    removePendingCheck();
+                    removePendingOTA2Check();
                 }
             }
         });
@@ -635,6 +857,8 @@ public class OTAContentsChecker extends AbstractConfigurable {
         {
             jlabel.setText("All content is up to date");
             downloadButton2e.setEnabled(false);
+            removePendingCheck();
+            removePendingOTA2Check();
         }else{
 
             downloadButton2e.setEnabled(true);
@@ -819,7 +1043,10 @@ public class OTAContentsChecker extends AbstractConfigurable {
         // =============================================================
         final JPanel secondEditionMainPanel = new JPanel();
         final JLabel sourceExplanationLabel2nd = new JLabel("<html><body>The Content Checker allows you to download card images, ship dials, ship bases as new content<br>" +
-                "is previewed or released in the game. Please download this new content to ensure maximum compatibility with other players.</body></html>");
+                "is previewed or released in the game.<br>"+
+                "If you see the Content Checker flashing black, it means you need to verify if you have some files to download right here in this window.<br>" +
+                "Click on the 'Check for missing content...' button to get a list of missing elements and then click download.<br>" +
+                "Doing so will ensure maximum compatibility with other players.</body></html>");
 
         final JButton activate2ndTab = new JButton("Check for missing content in 2nd edition (Warning: may take minutes!)");
         activate2ndTab.addActionListener(new ActionListener() {

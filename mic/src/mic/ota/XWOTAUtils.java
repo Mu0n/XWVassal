@@ -5,6 +5,7 @@ import VASSAL.tools.ArchiveWriter;
 import VASSAL.tools.DataArchive;
 import VASSAL.tools.image.ImageUtils;
 import VASSAL.tools.io.FileArchive;
+import javafx.scene.chart.PieChart;
 import mic.Util;
 
 import javax.imageio.ImageIO;
@@ -18,9 +19,14 @@ import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
+
+import static mic.Util.logToChat;
 
 public class XWOTAUtils {
 
+    public static final String XWD2DATAFILE = "xwd2.zip";
     private static final String SHIP_BASE_ARC_IMAGE_PREFIX = "SBA_";
 
     private static String[] actionOrder = {
@@ -572,24 +578,88 @@ public class XWOTAUtils {
 
     public static void downloadJSONFilesFromGitHub(ArrayList<String> jsonFiles, boolean keepPrefix) throws IOException
     {
-        GameModule gameModule = GameModule.getGameModule();
-        DataArchive dataArchive = gameModule.getDataArchive();
+
+
+/* //this creates a new file with the File class, then attempts to piggy back through the DataArchive routines of the Vassal engine.
+// DataArchive is a wrapper for zip files
+// File Archive is the file system within the zip file
+
+        File file2 = new File(pathToUse + File.separator + XWOTAUtils.XWD2DATAFILE);
+        file2.createNewFile();
+
+        DataArchive dataArchive = new DataArchive(file2.getName(), "images");
         FileArchive fileArchive = dataArchive.getArchive();
         ArchiveWriter writer = new ArchiveWriter(fileArchive);
+*/
+
+        String pathToUse = XWOTAUtils.getModulePath();
+        //if xwd2.zip is here, delete it first, we know we want a newer one, might want to not do this in case there's
+        //no net connection though
+        if(XWOTAUtils.checkExistenceOfLocalXWD2Zip() == true){
+            File file = new File(pathToUse + File.separator + XWOTAUtils.XWD2DATAFILE);
+            file.delete();
+        }
+
+        //the try-catch problem triggers at this line, an IOException Error
+        FileOutputStream fos = new FileOutputStream(pathToUse + File.separator + XWD2DATAFILE);
+        ZipOutputStream zipOut = new ZipOutputStream(new BufferedOutputStream(fos));
 
         String fileName = null;
 
-        byte[] fileContents = null;
         for (String jsonFile : jsonFiles)
         {
-            if(keepPrefix == false) fileName = jsonFile.substring(jsonFile.lastIndexOf("/")+1,jsonFile.length());
-            else fileName = jsonFile.substring(jsonFile.lastIndexOf("/data/"),jsonFile.length());
-            fileContents = null;
-            fileContents = downlodFileFromOTA(jsonFile);
-            addFileToModule(fileName, fileContents, writer);
-        }
-        writer.save();
 
+            if(keepPrefix == false) fileName = jsonFile.substring(jsonFile.lastIndexOf("/")+1,jsonFile.length());
+            else fileName = jsonFile.split("/data/")[1];
+
+            byte[] fileContents = downloadFileFromOTA(jsonFile);
+            ZipEntry zipEntry = new ZipEntry(fileName);
+            zipEntry.setSize(fileContents.length);
+            zipOut.putNextEntry(zipEntry);
+            zipOut.write(fileContents);
+            zipOut.closeEntry();
+
+        }
+
+        zipOut.close();
+        fos.close();
+
+
+
+                /*
+        String fileName = null;
+        byte[] fileContents = null;
+
+
+        for (String jsonFile : jsonFiles)
+            {
+
+                logToChat("xwota line 598 trying to dl from this URL " + jsonFile);
+                logToChat("xwota line 598 trying to dl this fileName " + fileName);
+
+                fileContents = downloadFileFromOTA(jsonFile);
+
+                File fileToZip = new File(jsonFile);
+
+                logToChat("xwota line File is ok? " + (fileToZip==null?"no":"yes"));
+                FileInputStream fis = new FileInputStream(fileToZip);
+
+                logToChat("xwota line FileInputStream is ok? " + (fis==null?"no":"yes"));
+                ZipEntry zipEntry = new ZipEntry(fileToZip.getName());
+                logToChat("xwota line ZipEntry name " + fileToZip.getName());
+                zipOut.putNextEntry(zipEntry);
+                int length;
+                while ((length = fis.read(fileContents)) >= 0) {
+                    zipOut.write(fileContents, 0, length);
+                }
+                zipOut.closeEntry();
+                fis.close();
+
+                break;
+            }
+            zipOut.close();
+        fos.close();
+        */
     }
     public static void downloadAndSaveImagesFromOTA( ArrayList<OTAImage> imagesToDownload, String branchURL)
     {
@@ -777,7 +847,7 @@ public class XWOTAUtils {
 
     }
 
-    private static byte[] downlodFileFromOTA(String urlString) throws IOException
+    private static byte[] downloadFileFromOTA(String urlString) throws IOException
     {
         URL remoteURL = null;
         remoteURL = new URL(urlString);
@@ -847,15 +917,39 @@ public class XWOTAUtils {
         }
     }
 
+    public static boolean fileExitsOnTheNet(String theURL)
+    {
+
+        HttpURLConnection httpUrlConn;
+        try {
+            httpUrlConn = (HttpURLConnection) new URL(theURL).openConnection();
+
+            httpUrlConn.setRequestMethod("HEAD");
+
+            // Set timeouts in milliseconds
+            httpUrlConn.setConnectTimeout(30000);
+            httpUrlConn.setReadTimeout(30000);
+
+            return (httpUrlConn.getResponseCode() == HttpURLConnection.HTTP_OK);
+        } catch (Exception e) {
+            System.out.println("Error: " + e.getMessage());
+            return false;
+        }
+    }
+
     public static void addFileToModule(String fileName,byte[] fileBytes, ArchiveWriter writer) throws IOException
     {
     //    GameModule gameModule = GameModule.getGameModule();
     //    DataArchive dataArchive = gameModule.getDataArchive();
     //    FileArchive fileArchive = dataArchive.getArchive();
      //   ArchiveWriter writer = new ArchiveWriter(fileArchive);
-        writer.addFile(fileName,fileBytes);
-     //   writer.save();
+        Util.logToChat("addFileToModule used");
+
+        writer.addImage(fileName,fileBytes);
+        Util.logToChat("attempted to write " + fileName + " and I can find it? " + (writer.getArchive().contains(fileName)?"yes":"no"));
+        //   writer.save();
     }
+
 
 
     public static void addFileToModule(String fileName, byte[] fileBytes) throws IOException
@@ -881,7 +975,9 @@ public class XWOTAUtils {
 
     public static void addImageToModule(String imageName,byte[] imageBytes,  ArchiveWriter writer) throws IOException
     {
-
+        try{
+            writer.removeImage(imageName);
+        }catch(Exception e){}
         writer.addImage(imageName,imageBytes);
      //   writer.save();
     }
@@ -985,5 +1081,19 @@ public class XWOTAUtils {
         } catch (IOException e) {
             System.out.println("I/O Error: " + e.getMessage());
         }
+    }
+
+    public static boolean checkExistenceOfLocalXWD2Zip()
+    {
+        File dummyFile = new File(GameModule.getGameModule().getDataArchive().getName());
+        String path = dummyFile.getPath();
+        File theZip = new File( path.substring(0,path.lastIndexOf(File.separator)) + File.separator + XWOTAUtils.XWD2DATAFILE);
+        return theZip.exists() && theZip.isFile();
+    }
+
+    public static String getModulePath() {
+        File dummyFile = new File(GameModule.getGameModule().getDataArchive().getName());
+        String path = dummyFile.getPath();
+        return path.substring(0,path.lastIndexOf(File.separator));
     }
 }

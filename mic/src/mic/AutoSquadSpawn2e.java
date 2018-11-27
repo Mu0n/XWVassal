@@ -21,7 +21,11 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.net.URL;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import static mic.Util.*;
 
@@ -71,119 +75,6 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
 
     //Main interface via a Java Swing JFrame. The complexity has outgrown an InputDialog - we now use ActionListener on the JComboBox and JButton to react to the user commands
     private void spawnForPlayer(final int playerIndex) {
-        final List<XWS2Pilots> allShips = XWS2Pilots.loadFromRemote();
-        final XWS2Upgrades allUpgrades = XWS2Upgrades.loadFromRemote();
-        final List<XWS2Upgrades.Condition> allConditions = XWS2Upgrades.loadConditionsFromRemote();
-
-/*
-        logToChat("*** -- pilot_images.json");
-        logToChat("[");
-        int i=0, j=0;
-        for(XWS2Pilots ship : allShips){
-            for(XWS2Pilots.Pilot2e pilot : ship.getPilots()){
-                String shipStr = Canonicalizer.getCleanedName(XWS2Pilots.getSpecificShipFromPilotXWS2(pilot.getXWS(),allShips).getName());
-                String pilotStr = pilot.getXWS();
-                String factionStr = Canonicalizer.getCleanedName(XWS2Pilots.getSpecificShipFromPilotXWS2(pilot.getXWS(),allShips).getFaction());
-                String imageStr = "P2e_" + factionStr + "_" + shipStr + "_" + pilotStr + ".jpg";
-                logToChat("{");
-                logToChat("\"shipxws\":\""+shipStr+"\",");
-                logToChat("\"pilotxws\":\""+pilotStr+"\",");
-                logToChat("\"faction\":\""+factionStr+"\",");
-                logToChat("\"image\":\""+imageStr+"\"");
-                if(i == (allShips.size()-1) && j == (ship.getPilots().size()-1)) logToChat("}");
-                else logToChat("},");
-                j++;
-            }
-            i++;
-            j=0;
-        }
-        logToChat("]");
-        logToChat("*** -- pilot_images.json end");
-
-
-        logToChat("*** -- ship_images.json");
-        logToChat("[");
-        i=0;
-        List<String> processedShipXWS = Lists.newArrayList();
-        HashMap<String, List<String>> shipFactionMap = new HashMap<String, List<String>>();
-        for(XWS2Pilots ship : allShips) {
-            //checks if this ship already has an entry in the shipFaction map, if so, add the faction in the value of the map
-            if (shipFactionMap.containsKey(Canonicalizer.getCleanedName(ship.getName()))) {
-                List<String> tempFactionsToAppend = shipFactionMap.get(Canonicalizer.getCleanedName(ship.getName()));
-                tempFactionsToAppend.add(Canonicalizer.getCleanedName(ship.getFaction()));
-                shipFactionMap.put(Canonicalizer.getCleanedName(ship.getName()), tempFactionsToAppend);
-            } else {
-                List<String> tempFactionsToAppend = Lists.newArrayList();
-                tempFactionsToAppend.add(Canonicalizer.getCleanedName(ship.getFaction()));
-                shipFactionMap.put(Canonicalizer.getCleanedName(ship.getName()), tempFactionsToAppend);
-            }
-        }
-        for(String shipXWS : shipFactionMap.keySet())
-        {
-            String imageStr = "S2e_"+shipXWS+".png";
-            String factionsStr = "";
-            int k=0;
-            for(String faction : shipFactionMap.get(shipXWS))
-            {
-                factionsStr += faction;
-                if(k != shipFactionMap.get(shipXWS).size()-1) factionsStr += "\",\"";
-                k++;
-            }
-            logToChat("{");
-            logToChat("\"xws\":\""+shipXWS+"\",");
-            logToChat("\"image\":\""+imageStr+"\",");
-            logToChat("\"identifier\": \"standard\",");
-            logToChat("\"faction\":[\""+factionsStr+"\"]");
-            if(i == (shipFactionMap.keySet().size()-1)) logToChat("}");
-            else logToChat("},");
-            i++;
-        }
-        logToChat("]");
-        logToChat("*** -- ship_images.json end");
-*/
-
-/*
-        logToChat("*** -- upgrade_images.json");
-        logToChat("[");
-        int i=0;
-        for(XWS2Upgrades.OneUpgrade upgrade : allUpgrades.getUpgrades()) {
-            String slotStr = upgrade.getSides().get(0).getType();
-            String upgradeStr = upgrade.getXws();
-            String imageStr = "U2e_" + upgradeStr + ".jpg";
-
-            logToChat("{");
-            logToChat("\"slot\":\"" + slotStr + "\",");
-            logToChat("\"xws\":\""+upgradeStr+"\",");
-            logToChat("\"image\":\""+imageStr+"\"");
-            if(i == allUpgrades.getUpgrades().size()-1) logToChat("}");
-            else logToChat("},");
-            i++;
-        }
-        logToChat("]");
-        logToChat("*** -- upgrade_images.json end");
-
-
-        logToChat("*** -- condition_images.json");
-        logToChat("[");
-        i=0;
-        for(XWS2Upgrades.Condition condition : allConditions) {
-
-            String xwsStr = condition.getXws();
-            String imageStr = "C2e_" + xwsStr + ".jpg";
-            String tokenStr = "CT2e_" + xwsStr + ".png";
-
-            logToChat("{");
-            logToChat("\"image\":\"" + imageStr + "\",");
-            logToChat("\"tokenimage\":\""+tokenStr+"\",");
-            logToChat("\"xws\":\""+xwsStr+"\"");
-            if(i == allConditions.size()-1) logToChat("}");
-            else logToChat("},");
-            i++;
-        }
-
-        logToChat("]");
-        logToChat("*** -- condition_images.json end");
-*/
         final List<String> factionsWanted = Lists.newArrayList();
 
         Map playerMap = getPlayerMap(playerIndex);
@@ -197,6 +88,12 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
             JOptionPane.showMessageDialog(playerMap.getView(), "Cannot spawn squads for other players");
             return;
         }
+
+        final List<XWS2Pilots> allShips = XWS2Pilots.loadFromLocal();
+        final XWS2Upgrades allUpgrades = XWS2Upgrades.loadFromLocal();
+        final List<XWS2Upgrades.Condition> allConditions = XWS2Upgrades.loadConditionsFromLocal();
+
+
 
         final JFrame frame = new JFrame();
         final JPanel rootPanel = new JPanel();
@@ -300,6 +197,16 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
         builderPanel.add(cisCheck);
         builderPanel.add(builderButton);
 
+
+        final JTextArea entryArea_0 = new JTextArea("Enter a valid squad URL from Yet Another Squadron Builder 2.0 or from the official FFG builder (warning, the latter may not work for some squads)");
+        entryArea_0.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        entryArea_0.setPreferredSize(new Dimension(850,50));
+        entryArea_0.setMaximumSize(new Dimension(850,50));
+        entryArea_0.setLineWrap(true);
+        entryArea_0.setAutoscrolls(true);
+
+
         final JTextArea entryArea = new JTextArea("Enter a valid XWS squad here.");
         entryArea.setAlignmentX(Component.LEFT_ALIGNMENT);
 
@@ -308,7 +215,19 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
         entryArea.setLineWrap(true);
         entryArea.setAutoscrolls(true);
 
-        JLabel method1Label = new JLabel("Method 1 for spawning a list - click on a suggested web builder, export to XWS and paste it here:");
+        JLabel method0Label = new JLabel("Method 1 for spawning a list - Insert a squad URL from YASB2 or the official FFG Builder");
+        method0Label.setFont(new Font("Dialog", Font.PLAIN, 18));
+        JButton clearTextArea_0_Button = new JButton("Clear");
+        clearTextArea_0_Button.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        clearTextArea_0_Button.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                entryArea_0.setText("");
+                entryArea_0.invalidate();
+            }
+        });
+
+        JLabel method1Label = new JLabel("Method 2 for spawning a list - click on a suggested web builder, export to XWS and paste it here:");
         method1Label.setFont(new Font("Dialog", Font.PLAIN, 18));
         JButton clearTextAreaButton = new JButton("Clear");
         clearTextAreaButton.setAlignmentX(Component.LEFT_ALIGNMENT);
@@ -319,6 +238,28 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
                 entryArea.invalidate();
             }
         });
+
+        JButton urlSpawnButton = new JButton("Spawn Squad from URL");
+        urlSpawnButton.setAlignmentX(Component.LEFT_ALIGNMENT);
+        urlSpawnButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                logToChat("Attempt at spawning a list from a squad URL");
+                XWSList2e xwsList = LoadListFromURL(entryArea_0.getText());
+                try {
+                    validateList(xwsList, allShips);
+                } catch(Exception exc)
+                {
+                    logToChat("Unable to load URL list '%s': %s", entryArea_0.getText(), exc.toString());
+                    return;
+                }
+                if(xwsList == null || xwsList.getPilots() == null || xwsList.getPilots().size() == 0) {
+                    logToChat("URL list has detected no pilots in it.");
+                }
+                DealWithXWSList(xwsList, playerIndex, allShips, allUpgrades, allConditions);
+                frame.dispose();
+            }
+        });
+
         JButton xwsSpawnButton = new JButton("Spawn Squad from XWS");
         xwsSpawnButton.setAlignmentX(Component.LEFT_ALIGNMENT);
 
@@ -339,9 +280,17 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
                 frame.dispose();
             }
         });
-        JLabel method2Label = new JLabel("Method 2 for spawning a list - use the internal squad builder (allows illegal, cross-faction lists if needed)");
+        JLabel method2Label = new JLabel("Method 3 for spawning a list - use the internal squad builder (allows illegal, cross-faction lists if needed)");
         method2Label.setFont(new Font("Dialog", Font.PLAIN, 18));
         method2Label.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        JPanel method0ButtonsPanel = new JPanel();
+        method0ButtonsPanel.setLayout(new BoxLayout(method0ButtonsPanel, BoxLayout.X_AXIS));
+        method0ButtonsPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        method0ButtonsPanel.add(clearTextArea_0_Button);
+        method0ButtonsPanel.add(urlSpawnButton);
+
 
         JPanel method1ButtonsPanel = new JPanel();
         method1ButtonsPanel.setLayout(new BoxLayout(method1ButtonsPanel, BoxLayout.X_AXIS));
@@ -349,6 +298,10 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
 
         method1ButtonsPanel.add(clearTextAreaButton);
         method1ButtonsPanel.add(xwsSpawnButton);
+
+
+        JLabel suggestionsHeaderLabel = new JLabel("Suggested Builders:");
+        suggestionsHeaderLabel.setFont(new Font("Dialog", Font.PLAIN, 18));
 
 
         JPanel method1LinksPanel = new JPanel();
@@ -373,13 +326,22 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
             }
         }
 
+        JPanel method0Panel = new JPanel();
+        method0Panel.setLayout(new BoxLayout(method0Panel, BoxLayout.Y_AXIS));
+        method0Panel.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+
+        method0Panel.add(suggestionsHeaderLabel);
+        method0Panel.add(method1LinksPanel);
+        method0Panel.add(method0Label);
+        method0Panel.add(entryArea_0);
+        method0Panel.add(method0ButtonsPanel);
 
         JPanel method1Panel = new JPanel();
         method1Panel.setLayout(new BoxLayout(method1Panel, BoxLayout.Y_AXIS));
         method1Panel.setAlignmentX(Component.LEFT_ALIGNMENT);
 
         method1Panel.add(method1Label);
-        method1Panel.add(method1LinksPanel);
         method1Panel.add(entryArea);
         method1Panel.add(method1ButtonsPanel);
 
@@ -391,6 +353,8 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
         method2Panel.add(method2Label);
         method2Panel.add(builderPanel);
 
+        rootPanel.add(method0Panel);
+        rootPanel.add(Box.createRigidArea(new Dimension(0,8)));
         rootPanel.add(method1Panel);
         rootPanel.add(Box.createRigidArea(new Dimension(0,8)));
         rootPanel.add(new JSeparator());
@@ -572,16 +536,14 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
         List<GamePiece> shipBases = Lists.newArrayList();
 
         //reference constant positions or displacements
-        Point pilotStartPosition = new Point(150, 659);
+        Point pilotStartPosition = new Point(0, 659);
         Point dialstartPosition = new Point(300, 100);
         Point tlStartPosition = new Point(300, 290);
-        Point configStartPosition = new Point(200, 220);
+        Point configStartPosition = new Point(0, 220);
         Point tokensStartPosition = new Point(300, 220);
         int optDisplacePerConfig = 250;
         int upgradeYDisplace = 10;
         int upgradeComeBackLeft = 170;
-        int nbOfConfigs = 0;
-        int nbOfUpgrades = 0;
 
         int lastUpgradeFudge = 50;
         int shipBaseY = 110;
@@ -591,11 +553,10 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
         int totalPilotHeight = 0;
         int totalDialsWidth = 0;
         int totalTLWidth = 0;
+        int typicalUpgradeWidth = 0;
 
         //related to the pesky condition locations
         Point conditionStartPosition = new Point(0, 0); // gonna be calculated later
-        int pilotWidthForCondition = 0;
-        int totalConditionAndUpgradeDisplacementForCondition = 0;
 
 
         //receptors of relative coordinates; refreshed at any time a cluster of those is needed
@@ -629,41 +590,55 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
             //figure out how many extra force charges a ship must have
             //figure out if there are config cards and count 'em
             int extraForceFromUpgrade = 0;
+            int extraHull = 0;
+            int extraShield = 0;
             int howManyConfigUpgradeCards = 0;
             int countHowManyNonConfigurationUpgrades = 0;
             for(VassalXWSPilotPieces2e.Upgrade up : ship.getUpgrades()){
-                try{
+                try {
                     extraForceFromUpgrade += up.getUpgradeData().sides.get(0).getForce().getValue();
+                }
+                catch(Exception e) {
+                }
+                try{
+                    for (XWS2Upgrades.grant g : up.getUpgradeData().sides.get(0).getGrants()) {
+                        if (g.getType().equals("stat")) {
+                            Set keySet = g.getValue().keySet();
+                            Iterator it = keySet.iterator();
+                            while (it.hasNext()) {
+                                String key = (String) it.next();
+                                if(key.equals("value")){
+                                    if(g.getValue().containsValue("hull")) extraHull += g.getAmount();
+                                    else if(g.getValue().containsValue("shields")) extraShield += g.getAmount();
+                                }
+                            }
+                        }
+                    }
                 }
                 catch(Exception e){
                 }
-                if(up.getUpgradeData().sides.get(0).getType().equals("Configuration")) howManyConfigUpgradeCards++;
+                if(Canonicalizer.getCleanedName((up.getUpgradeData().sides.get(0).getType())).equals("configuration")) howManyConfigUpgradeCards++;
                 else countHowManyNonConfigurationUpgrades++;
             }
+
+            logToChat("configs " + howManyConfigUpgradeCards + " non-configs " + countHowManyNonConfigurationUpgrades);
+
             // ======================================================
             // Generate the ship base pieces
             // ======================================================
-            GamePiece shipPiece = GamePieceGenerator2e.generateShip(ship, extraForceFromUpgrade);
+            GamePiece shipPiece = GamePieceGenerator2e.generateShip(ship, extraForceFromUpgrade, extraHull, extraShield);
             shipBases.add(shipPiece);
 
             // ======================================================
             // Generate the Pilot Pieces
             // ======================================================
 
-            //verifies if there's a configuration upgrade card - if so, shift the pilot card start position to the right
-            boolean hasConfiguration = false;
-            for(VassalXWSPilotPieces2e.Upgrade up : ship.getUpgrades())
-            {
-             if(up.getUpgradeData().sides.get(0).getType().equals("Configuration")) hasConfiguration = true;
-            }
-
             GamePiece pilotPiece = GamePieceGenerator2e.generatePilot(ship);
 
             int pilotWidth = (int) pilotPiece.boundingBox().getWidth();
             int pilotHeight = (int) pilotPiece.boundingBox().getHeight();
-            pilotWidthForCondition += pilotWidth;
 
-            int pilotPosX = (int) pilotStartPosition.getX()+howManyConfigUpgradeCards*optDisplacePerConfig;
+            int pilotPosX = (int) pilotStartPosition.getX()+ pilotWidth / 2 + howManyConfigUpgradeCards*optDisplacePerConfig;
             int pilotPosY = (int) pilotStartPosition.getY() + totalPilotHeight;
             entireSpawnCommand.append(spawnPieceCommand(pilotPiece, new Point(pilotPosX,pilotPosY),playerMap));
 
@@ -689,7 +664,7 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
                 dialWidth = (int) dialPiece.boundingBox().getWidth();
             } catch (Exception e)
             {
-                logToChat("Couldn't find the dial infor for this ship: " + ship.getShipData().getName());
+                logToChat("Couldn't find the dial info for this ship: " + ship.getShipData().getName());
                 continue;
             }
             entireSpawnCommand.append(spawnPieceCommand(dialPiece, new Point((int) dialstartPosition.getX() + totalDialsWidth, (int) dialstartPosition.getY()), playerMap));
@@ -703,14 +678,11 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
             //This is where the first upgrade starts.  Current value puts half of the upgrade under the pilot, assuming
             // the pilot is at the far left of the screen
 
-            //int totalUpgradeWidth = 251*ship.getUpgrades().size();
-            int totalUpgradeWidth = 260;
             int savedTotalUpgradeWidth = 0;
 
             VassalXWSPilotPieces2e.Upgrade upgrade = new VassalXWSPilotPieces2e.Upgrade("",null);
             if(ship.getUpgrades().size()!=0) {
                 //do configuration cards
-
 
                     //find the config cards among the upgrade cards
                     int configsDoneSoFar = 0;
@@ -724,18 +696,18 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
                         if (upgrade == null) break;
                         GamePiece upgradePiece = GamePieceGenerator2e.generateUpgrade(upgrade);
 
-                        if (upgrade.getUpgradeData().sides.get(0).getType().equals("Configuration")) {
-                            savedTotalUpgradeWidth += upgradePiece.boundingBox().width;
-                            totalConditionAndUpgradeDisplacementForCondition += upgradePiece.boundingBox().width - upgradeComeBackLeft;
+                        if (Canonicalizer.getCleanedName(upgrade.getUpgradeData().sides.get(0).getType()).equals("configuration")) {
+                            int configWidth = (int) upgradePiece.boundingBox().width;
+                            int placeUpgradeX = configWidth/2 + savedTotalUpgradeWidth;
+                            savedTotalUpgradeWidth += upgradePiece.boundingBox().width - upgradeComeBackLeft;
 
-                            int placeUpgradeX = configStartPosition.x + configsDoneSoFar * (upgradePiece.boundingBox().width - upgradeComeBackLeft);
                             int placeUpgradeY = configStartPosition.y + configsDoneSoFar * upgradeYDisplace + totalPilotHeight;
                             entireSpawnCommand.append(spawnPieceCommand(upgradePiece, new Point(placeUpgradeX, placeUpgradeY), playerMap));
                             XWS2Upgrades.Charge testIfHasCharge = upgrade.getUpgradeData().getSides().get(0).getCharges();
                             if (testIfHasCharge != null)
                             {
                                 for(int chargeIncr = 0; chargeIncr < upgrade.getUpgradeData().getSides().get(0).getCharges().getValue(); chargeIncr++){
-                                    chargeLocations.add(new Point(
+                                            chargeLocations.add(new Point(
                                             placeUpgradeX + chargeIncr * 60,
                                             placeUpgradeY - upgradePiece.getShape().getBounds().height/2 - 10
                                     ));
@@ -744,9 +716,9 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
                             configsDoneSoFar++;
                         }
                     }
-                    nbOfConfigs = configsDoneSoFar;
 
                 //do non-configuration cards
+                int nonConfigUpgradePositionIndexer = ship.getUpgrades().size()-1;
                 for (int i = ship.getUpgrades().size()-1; i > -1; i--) {
                     //for (VassalXWSPilotPieces2e.Upgrade upgrade : ship.getUpgrades()) {
 
@@ -756,18 +728,31 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
                     }
 
                     if (upgrade == null) break;
-                    if(upgrade.getUpgradeData().sides.get(0).getType().equals("Configuration")) continue;
+                    if(Canonicalizer.getCleanedName(upgrade.getUpgradeData().sides.get(0).getType()).equals("configuration")) continue;
                     GamePiece upgradePiece = GamePieceGenerator2e.generateUpgrade(upgrade);
 
-                    savedTotalUpgradeWidth += upgradePiece.boundingBox().width;
-                    totalUpgradeWidth = i * (upgradePiece.boundingBox().width - upgradeComeBackLeft);
-                    totalConditionAndUpgradeDisplacementForCondition += upgradePiece.boundingBox().width - upgradeComeBackLeft;
+                    typicalUpgradeWidth = upgradePiece.boundingBox().width;
 
-                    int placeUpgradeX = (int) pilotStartPosition.getX() + pilotWidth + totalUpgradeWidth - upgradeComeBackLeft + lastUpgradeFudge;
+
+
+                    logToChat("nonConfigUpgradePositionIndexer is " + nonConfigUpgradePositionIndexer);
+                    int lastterm = (nonConfigUpgradePositionIndexer)*(typicalUpgradeWidth-upgradeComeBackLeft);
+                    logToChat("pw/2 " + pilotWidth/2 + " typuw/2 " + typicalUpgradeWidth/2 + " lastterm " + lastterm);
+                    int total = pilotWidth/2
+                            + typicalUpgradeWidth/2
+                            + lastterm;
+                    logToChat("total " + total);
+
+
+
+                    int placeUpgradeX = pilotWidth/2
+                            + typicalUpgradeWidth/2
+                            + (nonConfigUpgradePositionIndexer )* (typicalUpgradeWidth - upgradeComeBackLeft);
+
                     int placeUpgradeY = (int) configStartPosition.getY() + totalPilotHeight + i*upgradeYDisplace;
                     entireSpawnCommand.append(spawnPieceCommand(upgradePiece, new Point(placeUpgradeX, placeUpgradeY), playerMap));
                     XWS2Upgrades.Charge testIfHasCharge = upgrade.getUpgradeData().getSides().get(0).getCharges();
-                    nbOfUpgrades++;
+
                     if (testIfHasCharge != null)
                     {
                         for(int chargeIncr = 0; chargeIncr < upgrade.getUpgradeData().getSides().get(0).getCharges().getValue(); chargeIncr++){
@@ -777,11 +762,9 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
                             ));
                         }
                     }
-
-                    totalUpgradeWidth -= (upgradePiece.boundingBox().width - upgradeComeBackLeft);
+                    nonConfigUpgradePositionIndexer--;
                 }
             }
-            totalUpgradeWidth = savedTotalUpgradeWidth;
 
             // ======================================================
             //Generate the Conditions
@@ -792,7 +775,9 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
             for (VassalXWSPilotPieces2e.Condition condition: ship.getConditions()) {
                 GamePiece conditionPiece = GamePieceGenerator2e.generateCondition(condition);
 
-                conditionStartPosition.x = pilotStartPosition.x + totalConditionAndUpgradeDisplacementForCondition + conditionPiece.boundingBox().width + upgradeComeBackLeft;
+                conditionStartPosition.x = pilotWidth/2
+                        + typicalUpgradeWidth/2
+                        + (countHowManyNonConfigurationUpgrades + howManyConfigUpgradeCards + 1) * (typicalUpgradeWidth - upgradeComeBackLeft);
                 conditionStartPosition.y = pilotStartPosition.y + totalPilotHeight - pilotHeight - 50;
 
 
@@ -812,7 +797,6 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
                 extraXFromConditions += conditionPiece.boundingBox().getWidth();
 
             } //loop to next condition
-            totalConditionAndUpgradeDisplacementForCondition = 0;
 
 
 
@@ -825,6 +809,7 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
                 GamePiece chargePiece = newPiece(chargePieceSlot);
                 entireSpawnCommand.append(spawnPieceCommand(chargePiece, p, playerMap));
             }
+            chargeLocations.clear();
 
             for (GamePiece token : ship.getTokensForDisplay()) {
 
@@ -855,9 +840,16 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
             shipBaseX += piece.getShape().getBounds2D().getWidth() + 10.0;
         }
 
+        int obstacleX = (int) dialstartPosition.getX() + totalDialsWidth - 30;
+        int obstacleStartY = shipBaseY + 200;
+        for (GamePiece obstacle : pieces.getObstaclesForDisplay()) {
+            int halfSize = (int) (obstacle.boundingBox().getWidth() / 2.0);
+            spawnPiece(obstacle, new Point(obstacleX + halfSize, obstacleStartY), playerMap);
+            obstacleX += obstacle.getShape().getBounds().getWidth();
+        }
 
         String listName = xwsList.getName();
-        logToChat("The '" + "Base 2.0 Game" + "' game mode was used to spawn a list%s loaded from %s",
+        logToChat("The '" + "Base 2.0 Game" + "' game mode was used to spawn a list %s loaded from %s",
                 listName != null ? " '" + listName + "'" : "", xwsList.getXwsSource());
 
         if(entireSpawnCommand != null) {
@@ -1302,12 +1294,31 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
         }
     }
 
+
+    private XWSList2e LoadListFromURL(String userInput) {
+
+        try {
+            URL translatedURL = XWSUrlHelper2e.translate(userInput);
+            if (translatedURL == null) {
+                logToChat("Invalid list url detected, please try again");
+                return null;
+            }
+            XWSList2e xwsList = loadRemoteJson(translatedURL, XWSList2e.class);
+
+            xwsList.setXwsSource(userInput);
+            return xwsList;
+        } catch (Exception e) {
+            logToChat("Unable to load URL list '%s': %s", userInput, e.toString());
+            return null;
+        }
+    }
+
     public void addTo(Buildable parent) {
 
         for (int i = 1; i <= 8; i++) {
             final int playerId = i;
 
-            JButton b = new JButton("2.0 Spawn");
+            JButton b = new JButton("2.0 Squad Spawn");
             b.setAlignmentY(0.0F);
             b.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent evt) {
@@ -1316,8 +1327,34 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
             });
             spawnButtons.add(b);
 
+
+            JButton c = new JButton("Say \"set\"");
+            c.setAlignmentY(0.0F);
+            c.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent evt) {
+                    saySetFromPlayer(playerId);
+                }
+            });
+            spawnButtons.add(c);
             getPlayerMap(i).getToolBar().add(b);
+            getPlayerMap(i).getToolBar().add(c);
         }
+    }
+
+    private void saySetFromPlayer(int playerId) {
+        Map playerMap = getPlayerMap(playerId);
+        if (playerMap == null) {
+            logToChat("Unexpected error, couldn't find map for player side " + playerId);
+            return;
+        }
+
+        XWPlayerInfo playerInfo = getCurrentPlayer();
+        if (playerInfo.getSide() != playerId) {
+            JOptionPane.showMessageDialog(playerMap.getView(), "Cannot say \"set\" for other players");
+            return;
+        }
+
+        logToChatWithTime(" :.:.:.: " + playerInfo.getName() +" (player " + playerInfo.getSide() + ") is set.");
     }
 
     public void removeFrom(Buildable parent) {

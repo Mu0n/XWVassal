@@ -96,7 +96,7 @@ public class VassalXWSPilotPieces2e {
         List<GamePiece> tokenPieces = Lists.newArrayList();
         for (String token : tokens.keySet()) {
             GamePiece piece = Util.newPiece(tokens.get(token));
-            if (token.equals("Lock") && pilotData != null) {
+            if (token.equals("lock") && pilotData != null) {
                 piece.setProperty("ID", getDisplayPilotName());
             }
             tokenPieces.add(piece);
@@ -187,6 +187,7 @@ public class VassalXWSPilotPieces2e {
     private String getDisplayPilotName() {
         String pilotName = "";
         if (pilotData != null) {
+
             pilotName = Acronymizer.acronymizer(
                     this.pilotData.getName(),
                     this.pilotData.isUnique(),

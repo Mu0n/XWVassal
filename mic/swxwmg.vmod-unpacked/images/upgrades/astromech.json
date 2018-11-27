@@ -1,0 +1,198 @@
+[
+  {
+    "name": "\"Chopper\"",
+    "limited": 1,
+    "xws": "chopper",
+    "sides": [
+      {
+        "title": "\"Chopper\"",
+        "type": "Astromech",
+        "ability": "Action: Spend 1 non-recurring [Charge] from another equipped upgrade to recover 1 shield. Action: Spend 2 shields to recover 1 non-recurring [Charge] on an equipped upgrade.",
+        "slots": ["Astromech"],
+        "image": "https://sb-cdn.fantasyflightgames.com/card_images/Card_Upgrade_99.png",
+        "ffg": 323
+      }
+    ],
+    "cost": { "value": 2 },
+    "restrictions": [{ "factions": ["Rebel Alliance"] }]
+  },
+  {
+    "name": "\"Genius\"",
+    "limited": 1,
+    "xws": "genius",
+    "sides": [
+      {
+        "title": "\"Genius\"",
+        "type": "Astromech",
+        "ability": "After you fully execute a maneuver, if you have not dropped or launched a device this round, you may drop 1 bomb.",
+        "image": "https://sb-cdn.fantasyflightgames.com/card_images/Card_Upgrade_143.png",
+        "slots": ["Astromech"],
+        "artwork": "https://sb-cdn.fantasyflightgames.com/card_art/Card_art_XW_U_143.jpg",
+        "ffg": 368
+      }
+    ],
+    "cost": { "value": 0 },
+    "restrictions": [{ "factions": ["Scum and Villainy"] }]
+  },
+  {
+    "name": "R2 Astromech",
+    "limited": 0,
+    "xws": "r2astromech",
+    "sides": [
+      {
+        "title": "R2 Astromech",
+        "type": "Astromech",
+        "ability": "After you reveal your dial, you may spend 1 [Charge] and gain 1 disarm token to recover 1 shield.",
+        "slots": ["Astromech"],
+        "charges": { "value": 2, "recovers": 0 },
+        "image": "https://sb-cdn.fantasyflightgames.com/card_images/Card_Upgrade_53.png",
+        "artwork": "https://sb-cdn.fantasyflightgames.com/card_art/Card_art_XW_U_53.jpg",
+        "ffg": 282
+      }
+    ],
+    "cost": { "value": 6 }
+  },
+  {
+    "name": "R2-D2",
+    "limited": 1,
+    "xws": "r2d2",
+    "sides": [
+      {
+        "title": "R2-D2",
+        "type": "Astromech",
+        "ability": "After you reveal your dial, you may spend 1 [Charge] and gain 1 disarm token to recover 1 shield.",
+        "image": "https://sb-cdn.fantasyflightgames.com/card_images/Card_Upgrade_100.png",
+        "slots": ["Astromech"],
+        "charges": { "value": 3, "recovers": 0 },
+        "artwork": "https://sb-cdn.fantasyflightgames.com/card_art/Card_art_XW_U_100.jpg",
+        "ffg": 324
+      }
+    ],
+    "cost": { "value": 8 },
+    "restrictions": [{ "factions": ["Rebel Alliance"] }]
+  },
+  {
+    "name": "R3 Astromech",
+    "limited": 0,
+    "xws": "r3astromech",
+    "sides": [
+      {
+        "title": "R3 Astromech",
+        "type": "Astromech",
+        "ability": "You can maintain up to 2 locks. Each lock must be on a different object. After you perform a [Lock] action, you may acquire a lock.",
+        "slots": ["Astromech"],
+        "image": "https://sb-cdn.fantasyflightgames.com/card_images/Card_Upgrade_54.png",
+        "artwork": "https://sb-cdn.fantasyflightgames.com/card_art/Card_art_XW_U_54.jpg",
+        "ffg": 283
+      }
+    ],
+    "cost": { "value": 3 }
+  },
+  {
+    "name": "R4 Astromech",
+    "limited": 0,
+    "xws": "r4astromech",
+    "sides": [
+      {
+        "title": "R4 Astromech",
+        "type": "Astromech",
+        "ability": "Decrease the difficulty of your speed 1-2 basic maneuvers ([Turn Left], [Bank Left], [Straight], [Bank Right], [Turn Right]).",
+        "slots": ["Astromech"],
+        "image": "https://sb-cdn.fantasyflightgames.com/card_images/Card_Upgrade_55.png",
+        "artwork": "https://sb-cdn.fantasyflightgames.com/card_art/Card_art_XW_U_55.jpg",
+        "ffg": 284
+      }
+    ],
+    "cost": { "value": 2 },
+    "restrictions": [{ "sizes": ["Small"] }]
+  },
+  {
+    "name": "R5 Astromech",
+    "limited": 0,
+    "xws": "r5astromech",
+    "sides": [
+      {
+        "title": "R5 Astromech",
+        "type": "Astromech",
+        "ability": "Action: Spend 1 [Charge] to repair 1 facedown damage card. Action: Repair 1 faceup Ship damage card.",
+        "slots": ["Astromech"],
+        "charges": { "value": 2, "recovers": 0 },
+        "image": "https://sb-cdn.fantasyflightgames.com/card_images/Card_Upgrade_56.png",
+        "artwork": "https://sb-cdn.fantasyflightgames.com/card_art/Card_art_XW_U_56.jpg",
+        "ffg": 285
+      }
+    ],
+    "cost": { "value": 5 }
+  },
+  {
+    "name": "R5-D8",
+    "limited": 1,
+    "xws": "r5d8",
+    "sides": [
+      {
+        "title": "R5-D8",
+        "type": "Astromech",
+        "ability": "Action: Spend 1 [Charge] to repair 1 facedown damage card. Action: Repair 1 faceup Ship damage card.",
+        "slots": ["Astromech"],
+        "charges": { "value": 3, "recovers": 0 },
+        "image": "https://sb-cdn.fantasyflightgames.com/card_images/Card_Upgrade_101.png",
+        "artwork": "https://sb-cdn.fantasyflightgames.com/card_art/Card_art_XW_U_101.jpg",
+        "ffg": 325
+      }
+    ],
+    "cost": { "value": 7 },
+    "restrictions": [{ "factions": ["Rebel Alliance"] }]
+  },
+  {
+    "name": "R5-P8",
+    "limited": 1,
+    "xws": "r5p8",
+    "sides": [
+      {
+        "title": "R5-P8",
+        "type": "Astromech",
+        "ability": "While you perform an attack against a defender in your [Front Arc], you may spend 1 [Charge] to reroll 1 attack die. If the rerolled result is a [Critical Hit], suffer 1 [Critical Hit] damage.",
+        "image": "https://sb-cdn.fantasyflightgames.com/card_images/Card_Upgrade_144.png",
+        "slots": ["Astromech"],
+        "charges": { "value": 3, "recovers": 0 },
+        "artwork": "https://sb-cdn.fantasyflightgames.com/card_art/Card_art_XW_U_144.jpg",
+        "ffg": 369
+      }
+    ],
+    "cost": { "value": 4 },
+    "restrictions": [{ "factions": ["Scum and Villainy"] }]
+  },
+  {
+    "name": "R5-TK",
+    "limited": 1,
+    "xws": "r5tk",
+    "sides": [
+      {
+        "title": "R5-TK",
+        "type": "Astromech",
+        "ability": "You can perform attacks against friendly ships.",
+        "image": "https://sb-cdn.fantasyflightgames.com/card_images/Card_Upgrade_145.png",
+        "slots": ["Astromech"],
+        "artwork": "https://sb-cdn.fantasyflightgames.com/card_art/Card_art_XW_U_145.jpg",
+        "ffg": 370
+      }
+    ],
+    "cost": { "value": 1 },
+    "restrictions": [{ "factions": ["Scum and Villainy"] }]
+  },
+  {
+    "name": "R2-HA",
+    "limited": 1,
+    "xws": "r2ha",
+    "sides": [
+      {
+        "title": "R2-HA",
+        "type": "Astromech",
+        "ability": "While you defend, you may spend your lock on the attacker to reroll any number of your defense dice.",
+        "image": "https://images-cdn.fantasyflightgames.com/filer_public/2b/17/2b17e1c2-ba4f-4456-aba3-7b66a7a2d803/swz19_a2_r2-ha.png",
+        "slots": ["Astromech"]
+      }
+    ],
+    "restrictions": [{ "factions": ["Resistance"] }]
+  }
+]

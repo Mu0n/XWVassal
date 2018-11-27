@@ -655,6 +655,8 @@ public class ShipReposition extends Decorator implements EditablePiece {
             if(repoCommand == null) return piece.keyEvent(stroke);
             else{
                 result.append(repoCommand);
+                result.append(logToChatCommand("*** " + this.getProperty("Pilot Name").toString() +
+                " has repositioned"));
                 //result.append(piece.keyEvent(stroke));
                 if(this.previousCollisionVisualization != null &&  this.previousCollisionVisualization.getShapes().size() > 0){
                     result.append(previousCollisionVisualization);

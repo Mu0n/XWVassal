@@ -1,16 +1,25 @@
 package mic;
 
+import VASSAL.build.GameModule;
+import VASSAL.tools.ArchiveWriter;
+import VASSAL.tools.DataArchive;
+import VASSAL.tools.io.FileArchive;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
 import mic.ota.OTAContentsChecker;
+import mic.ota.XWOTAUtils;
 
-import java.io.BufferedInputStream;
-import java.io.InputStream;
+import javax.swing.*;
+import java.io.*;
 import java.net.URL;
+import java.util.Enumeration;
 import java.util.List;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
+import java.util.zip.ZipOutputStream;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class XWS2Pilots {
@@ -56,6 +65,8 @@ public class XWS2Pilots {
     @JsonProperty("dual_base_report_2_identifier")
     private String baseReport2Identifier;
 
+
+
     public String getShipXWS() { return this.xws; }
     public Boolean hasDualBase() { return this.hasDualBase; }
     private void setDualBase(Boolean hasDualBase)
@@ -99,6 +110,7 @@ public class XWS2Pilots {
 
 
     public String getName() {return this.name;}
+    public String getCleanedName() { return Canonicalizer.getCleanedName(this.name); }
     public List<String> getDial() {return this.dial;}
     public String getSize() { return this.size;}
     public String getFaction() {return this.faction;}
@@ -165,7 +177,7 @@ public class XWS2Pilots {
         return 0;
     }
     public boolean hasSmallBase() {
-        if(size.equals("small")) return true;
+        if(size.equals("small") || size.equals("Small")) return true;
         return false;
     }
 
@@ -370,10 +382,30 @@ public class XWS2Pilots {
         public pilotsDataSources(List<OneFactionGroup> factionPilots){
             this.factionPilots = factionPilots;
         }
+        @JsonProperty("version")
+        private String version;
+
         @JsonProperty("pilots")
         List<OneFactionGroup> factionPilots = Lists.newArrayList();
 
         public List<OneFactionGroup> getPilots(){return this.factionPilots;}
+        public String getVersion(){return this.version;}
+        public tripleVersion getTripleVersion(){
+            if(this.version.contains(".")){
+                String[] parts = this.version.split("\\.");
+                int length = parts.length;
+                if(length==3)
+                {
+                    tripleVersion myTV = new tripleVersion(Integer.parseInt(parts[0]),Integer.parseInt(parts[1]),Integer.parseInt(parts[2]));
+                    return myTV;
+                }
+                return null;
+            }
+            else{
+                Util.logToChat("ERROR: the manifest.json didn't have a well formatted version number.");
+                return null;
+            }
+        }
     }
 
     public static class OneFactionGroup{
@@ -400,6 +432,160 @@ public class XWS2Pilots {
         return null;
     }
 
+    public static class tripleVersion{
+        private int major=0;
+        private int minor=0;
+        private int patch=0;
+
+        public tripleVersion(int major, int minor, int patch){
+            this.major = major;
+            this.minor = minor;
+            this.patch = patch;
+        }
+
+        public int getMajor(){ return this.major; }
+        public int getMinor(){ return this.minor; }
+        public int getPatch(){ return this.patch; }
+
+        public void setMajor(int n){ this.major = n;}
+        public void setMinor(int n){ this.minor = n;}
+        public void setPatch(int n){ this.patch = n;}
+
+        public boolean isNewerThan(tripleVersion toCompare){
+            if(this.getMajor() > toCompare.getMajor()) return true;
+            else if(this.getMajor() < toCompare.getMajor()) return false;
+
+            if(this.getMinor() > toCompare.getMinor()) return true;
+            else if(this.getMinor() < toCompare.getMinor()) return false;
+
+            if(this.getPatch() > toCompare.getPatch()) return true;
+            else if(this.getPatch() < toCompare.getPatch()) return false;
+
+            //both versions are exactly identical
+            return false;
+        }
+
+        public void displayInChat(String source){
+            Util.logToChat("The " + source + " version of xwing-data2 is " + Integer.toString(major)+"."+Integer.toString(minor)+"."+Integer.toString(patch));
+        }
+    }
+
+    public static tripleVersion checkRemoteManifestVersion(){
+        pilotsDataSources whereToGetPilots = Util.loadRemoteJson(remoteUrl, pilotsDataSources.class);
+        return whereToGetPilots.getTripleVersion();
+    }
+
+    public static tripleVersion checkLocalManifestVersion(){
+        String pathToUse = XWOTAUtils.getModulePath();
+
+        if(XWOTAUtils.checkExistenceOfLocalXWD2Zip() == false)
+            //can't find the local depot, rebuld it from...
+            // a stashed probably deprecated local copy or from remote
+        {
+            Util.logToChat("--- Building a local cache of the game data.");
+            return new tripleVersion(0,0,0);
+        }
+        else{
+            try { //we know the zip file exists, so check it out
+                DataArchive dataArchive = new DataArchive(pathToUse + File.separator + XWOTAUtils.XWD2DATAFILE);
+                InputStream inputStream = dataArchive.getInputStream("manifest.json");
+                pilotsDataSources whereToGetPilots = Util.loadClasspathJsonInDepot("manifest.json", pilotsDataSources.class, inputStream);
+                inputStream.close();
+                dataArchive.close();
+                return whereToGetPilots.getTripleVersion();
+            } catch(Exception e){
+                Util.logToChat("Couldn't load the local xwd2 data depot");
+            }
+        }
+        return new tripleVersion(0,0,0);
+    }
+    private static byte[] extractEntry(final ZipEntry entry, InputStream is) throws IOException {
+        String exractedFile = entry.getName();
+        FileOutputStream fos = null;
+        try {
+            fos = new FileOutputStream(exractedFile);
+            final byte[] buf = new byte[8192];
+            int read = 0;
+            int length;
+            while ((length = is.read(buf, 0, buf.length)) >= 0) {
+                fos.write(buf, 0, length);
+            }
+            fos.close();
+            return buf;
+        } catch (IOException ioex) {
+            fos.close();
+        }
+        return null;
+    }
+
+    public static List<XWS2Pilots> loadFromLocal() {
+        String pathToUse = XWOTAUtils.getModulePath();
+        List<XWS2Pilots> allPilots = Lists.newArrayList();
+
+        try {
+            //Load the manifest in the local xwd2.zip
+            DataArchive dataArchive = new DataArchive(pathToUse + File.separator + XWOTAUtils.XWD2DATAFILE);
+            InputStream inputStream = dataArchive.getInputStream("manifest.json");
+            pilotsDataSources whereToGetPilots = Util.loadClasspathJsonInDepot("manifest.json", pilotsDataSources.class, inputStream);
+
+            //Populate the list of ShipPilots jsons to load up
+            List<XWS2Pilots> dualBaseXWS2Ships = Lists.newArrayList();
+
+            //TO-DO replace with local version of this
+            dualBaseXWS2Ships = loadRemoteJsonArrayOfXWS2Pilots(new URL(OTAContentsChecker.OTA_DISPATCHER_SHIPS_JSON_URL_2E));
+
+            for(OneFactionGroup oSDS : whereToGetPilots.getPilots()){
+
+                for(String suffix : oSDS.getShipUrlSuffixes())
+                {
+                    String suffixWithoutDataRoot = suffix.split("data/")[1];
+                    try {
+                        //Dual Base detection
+                        //dualBaseXWSShips is an extra XWS2Pilot list that's loaded using a subset of JsonProperties right here, against a dispatcher_ships.json
+                        //if both dualBaseXWSShip's xws and the cleaned getName of pilottoAdd matches, then copy over the dual based information
+                        InputStream is = dataArchive.getInputStream(suffixWithoutDataRoot);
+                        XWS2Pilots pilotsToAdd = Util.loadClasspathJsonInDepot(pathToUse + File.separator + XWOTAUtils.XWD2DATAFILE, XWS2Pilots.class, is);
+                        XWS2Pilots dualBasedInfoFound = ShipXWSFoundInDualBaseList(dualBaseXWS2Ships, Canonicalizer.getCleanedName(pilotsToAdd.getName()));
+
+                        if(dualBasedInfoFound !=null ) {
+                            pilotsToAdd.setBaseImage1(dualBasedInfoFound.getBaseImage1Identifier());
+                            pilotsToAdd.setBaseImage2(dualBasedInfoFound.getBaseImage2Identifier());
+                            pilotsToAdd.setBaseReport1Identifier(dualBasedInfoFound.getBaseReport1Identifier());
+                            pilotsToAdd.setBaseReport2Identifier(dualBasedInfoFound.getBaseReport2Identifier());
+                            pilotsToAdd.setDualBase(dualBasedInfoFound.hasDualBase());
+                            pilotsToAdd.setDualBaseToggleMenuText(dualBasedInfoFound.getDualBaseToggleMenuText());
+                        }
+
+                        //adding faction to every pilot
+                        for(XWS2Pilots.Pilot2e p : pilotsToAdd.getPilots()){
+                            p.setFaction(pilotsToAdd.getFaction());
+                        }
+
+                        allPilots.add(pilotsToAdd);
+                        is.close();
+
+                    }catch (Exception e){
+                        Util.logToChat(e.getMessage() + " on ship " + suffix);
+                        continue;
+                    }
+                }
+                inputStream.close();
+                dataArchive.close();
+            }
+        }
+            catch(FileNotFoundException e2)
+            {
+                Util.logToChat("--- File not found " + e2.getMessage());
+            }
+        catch(Exception e){
+            Util.logToChat("--- Couldn't load data from the local data depot.");
+        }
+
+
+
+        return allPilots;
+    }
+
     public static List<XWS2Pilots> loadFromRemote() {
         pilotsDataSources whereToGetPilots = Util.loadRemoteJson(remoteUrl, pilotsDataSources.class);
         List<XWS2Pilots> dualBaseXWS2Ships = Lists.newArrayList();
@@ -408,7 +594,7 @@ public class XWS2Pilots {
         } catch (Exception e) {
         }
 
-    List<XWS2Pilots> allPilots = Lists.newArrayList();
+        List<XWS2Pilots> allPilots = Lists.newArrayList();
         for(OneFactionGroup oSDS : whereToGetPilots.getPilots()){
             for(String suffix : oSDS.getShipUrlSuffixes())
             {
@@ -452,7 +638,19 @@ public class XWS2Pilots {
         }
     }
 
-    private static ObjectMapper mapper = new ObjectMapper()
+
+    private static List<XWS2Pilots> loadLocalJsonArrayOfXWS2Pilots(InputStream is) {
+        try {
+            InputStream inputStream = new BufferedInputStream(is);
+            List<XWS2Pilots> rawData = mapper.readValue(inputStream,  mapper.getTypeFactory().constructCollectionType(List.class, XWS2Pilots.class));
+            return rawData;
+        } catch (Exception e) {
+            System.out.println("Unhandled error parsing local json: \n" + e.toString());
+            return null;
+        }
+    }
+
+        private static ObjectMapper mapper = new ObjectMapper()
             .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
     public static XWS2Pilots getSpecificShipFromShipXWS(String  searchedXWS2Name, List<XWS2Pilots> allShips) {

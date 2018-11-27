@@ -1,0 +1,71 @@
+[
+  {
+    "name": "Heightened Perception",
+    "limited": 0,
+    "xws": "heightenedperception",
+    "sides": [
+      {
+        "title": "Heightened Perception",
+        "type": "Force Power",
+        "ability": "At the start of the Engagement Phase, you may spend 1 [Force]. If you do, engage at initiative 7 instead of your standard initiative value this phase.",
+        "slots": ["Force Power"],
+        "image": "https://sb-cdn.fantasyflightgames.com/card_images/Card_Upgrade_19.png",
+        "artwork": "https://sb-cdn.fantasyflightgames.com/card_art/Card_art_XW_U_19.jpg",
+        "ffg": 248
+      }
+    ],
+    "cost": { "value": 3 }
+  },
+  {
+    "name": "Instinctive Aim",
+    "limited": 0,
+    "xws": "instinctiveaim",
+    "sides": [
+      {
+        "title": "Instinctive Aim",
+        "type": "Force Power",
+        "ability": "While you perform a special attack, you may spend 1 [Force] to ignore the [Focus] or [Lock] requirement.",
+        "slots": ["Force Power"],
+        "image": "https://sb-cdn.fantasyflightgames.com/card_images/Card_Upgrade_20.png",
+        "artwork": "https://sb-cdn.fantasyflightgames.com/card_art/Card_art_XW_U_20.jpg",
+        "ffg": 249
+      }
+    ],
+    "cost": { "value": 2 }
+  },
+  {
+    "name": "Sense",
+    "limited": 0,
+    "xws": "sense",
+    "sides": [
+      {
+        "title": "Sense",
+        "type": "Force Power",
+        "ability": "During the System Phase, you may choose 1 ship at range 0-1 and look at its dial. If you spend 1 [Force], you may choose a ship at range 0-3 instead.",
+        "slots": ["Force Power"],
+        "image": "https://sb-cdn.fantasyflightgames.com/card_images/Card_Upgrade_21.png",
+        "artwork": "https://sb-cdn.fantasyflightgames.com/card_art/Card_art_XW_U_21.jpg",
+        "ffg": 250
+      }
+    ],
+    "cost": { "value": 6 }
+  },
+  {
+    "name": "Supernatural Reflexes",
+    "limited": 0,
+    "xws": "supernaturalreflexes",
+    "sides": [
+      {
+        "title": "Supernatural Reflexes",
+        "type": "Force Power",
+        "ability": "Before you activate, you may spend 1 [Force] to perform a [Barrel Roll] or [Boost] action. Then, if you performed an action you do not have on your action bar, suffer 1 [Hit] damage.",
+        "slots": ["Force Power"],
+        "image": "https://sb-cdn.fantasyflightgames.com/card_images/Card_Upgrade_22.png",
+        "artwork": "https://sb-cdn.fantasyflightgames.com/card_art/Card_art_XW_U_22.jpg",
+        "ffg": 251
+      }
+    ],
+    "cost": { "value": 12 },
+    "restrictions": [{ "sizes": ["Small"] }]
+  }
+]
