@@ -26,6 +26,8 @@ import java.util.*;
 import java.util.List;
 import java.util.Timer;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 import static mic.Util.logToChat;
 
@@ -72,6 +74,7 @@ public class OTAContentsChecker extends AbstractConfigurable {
     public static final String OTA_DISPATCHER_CONDITIONS_JSON_URL_2E = OTA_RAW_GITHUB_JSON_URL_2E + "dispatcher_conditions.json";
 
     public static String manifest2eURL = "https://raw.githubusercontent.com/guidokessels/xwing-data2/master/data/manifest.json";
+    public static String ota2BuildURL = "https://raw.githubusercontent.com/Mu0n/XWVassalOTA2e/master/version";
 
 
     String aComboBoxChoice = "Base Game";
@@ -417,7 +420,7 @@ public class OTAContentsChecker extends AbstractConfigurable {
     }
 
 
-    private void checkAndUpdateRemoteJsonsIfNewFound() {
+    private void checkAndUpdateRemoteJsonsIfNewFound()  {
         if(XWOTAUtils.fileExitsOnTheNet(manifest2eURL))
         {
             XWS2Pilots.tripleVersion remoteVer = XWS2Pilots.checkRemoteManifestVersion();
@@ -465,6 +468,93 @@ public class OTAContentsChecker extends AbstractConfigurable {
     }
     private void compareOTAversions() {
 
+        if(XWOTAUtils.fileExitsOnTheNet(ota2BuildVersion.remoteUrl))
+        {
+            int remoteVer = ota2BuildVersion.checkRemoteBuildVersion();
+            int localVer = ota2BuildVersion.checkLocalBuildVersion();
+            if(remoteVer != -1){
+                if(localVer == 0 || localVer < remoteVer){ //needs a rebuild of ota2.zip
+                    missing2ndEdContent=1;
+                    String msg = "yes";
+                    try{
+                        String pathToUse = XWOTAUtils.getModulePath();
+                        //if ota2.zip is here, delete it first, we know we want a newer one, might want to not do this in case there's
+                        //no net connection though
+                        if(ota2BuildVersion.checkExistenceOfLocalOTA2Zip() == true){
+                            File file = new File(pathToUse + File.separator + ota2BuildVersion.ota2Zip);
+                            file.delete();
+                        }
+                        //the try-catch problem triggers at this line, an IOException Error
+                        FileOutputStream fos = new FileOutputStream(pathToUse + File.separator + ota2BuildVersion.ota2Zip);
+                        ZipOutputStream zipOut = new ZipOutputStream(new BufferedOutputStream(fos));
+
+                        String content = "{\"version\":\"" + remoteVer + "\"}";
+
+                        String fileName = "version";
+                        ZipEntry zipEntry = new ZipEntry(fileName);
+                        zipEntry.setSize(content.getBytes().length);
+                        zipOut.putNextEntry(zipEntry);
+                        zipOut.write(content.getBytes());
+                        zipOut.closeEntry();
+                        zipOut.close();
+                        fos.close();
+                    } catch(Exception e)
+                    {
+                        logToChat("Error: can't create a local journal of the over-the-air content depot.");
+                    }
+                } else{ //do nothing
+                    logToChat("The local over-the-air journal is up to date.");
+                }
+            }
+            else{
+                logToChat("Error: can't connect to the online over-the-air content depot.");
+            }
+        }
+        /*
+        {
+            XWS2Pilots.tripleVersion remoteVer = XWS2Pilots.checkRemoteManifestVersion();
+            XWS2Pilots.tripleVersion localVer = XWS2Pilots.checkLocalManifestVersion();
+            localVer.displayInChat("local");
+            remoteVer.displayInChat("remote");
+
+
+            if(remoteVer != null && localVer != null)
+            {
+                if(remoteVer.isNewerThan(localVer)) {
+                    if((remoteVer.getMinor() > localVer.getMinor()) || (remoteVer.getMajor() > localVer.getMajor())) {
+                        //Scenario B: the new online stuff requires a content checker flash! and the local files will be replaced
+                        missing2ndEdContent=1;
+                        String msg = "yes";
+                        try {
+                            XWOTAUtils.addFileToModule("pendingContentCheck.txt", msg.getBytes());
+                        } catch (Exception e) {
+                        }
+                        downloadXwingDataAndDispatcherJSONFiles_2e();
+                        logToChat("The local xwing-data2 is being updated");
+                        XWS2Pilots.tripleVersion localVer2 = XWS2Pilots.checkLocalManifestVersion();
+                        logToChat("new local version--");
+                        localVer2.displayInChat("local");
+
+                    }
+                    else if(remoteVer.getPatch() > localVer.getPatch()){
+                        //Scenario C: no content checker flash, but the local files will be replaced.
+                        downloadXwingDataAndDispatcherJSONFiles_2e();
+                        logToChat("The local xwing-data2 is being updated");
+
+                    }
+                    else{
+                        logToChat("The local xwing-data2 is up to date.");
+                    }
+                }
+            }
+        }
+        else {
+            //SCENARIO A: can't connect to guido's xwing-data2 file online, will resort to purely local files for data.
+            logToChat("Error: can't connect online to verify the module's integrity with xwing-data2 - will attempt to use local files instead.");
+            thinkingWeHaveNoNetAccess = true;
+            return;
+
+         */
     }
 
 
@@ -484,7 +574,7 @@ public class OTAContentsChecker extends AbstractConfigurable {
         //by putting them in /data/pilots/rebelalliance/
         ArrayList<String> jsonFilesToDownloadFromURL_2e = new ArrayList<String>();
 
-        logToChat("OTAContentChecker line 472 STEP adds the manifest from the remote URL to the list of files to zip up");
+        //logToChat("OTAContentChecker line 472 STEP adds the manifest from the remote URL to the list of files to zip up");
         jsonFilesToDownloadFromURL_2e.add(XWS2Pilots.remoteUrl);
 
         for(XWS2Pilots.OneFactionGroup oSDS : parseTheManifestForShipPilots().getPilots()){
@@ -911,7 +1001,10 @@ public class OTAContentsChecker extends AbstractConfigurable {
         // =============================================================
         final JPanel secondEditionMainPanel = new JPanel();
         final JLabel sourceExplanationLabel2nd = new JLabel("<html><body>The Content Checker allows you to download card images, ship dials, ship bases as new content<br>" +
-                "is previewed or released in the game. Please download this new content to ensure maximum compatibility with other players.</body></html>");
+                "is previewed or released in the game.<br>"+
+                "If you see the Content Checker flashing black, it means you need to verify if you have some files to download right here in this window.<br>" +
+                "Click on the 'Check for missing content...' button to get a list of missing elements and then click download.<br>" +
+                "Doing so will ensure maximum compatibility with other players.</body></html>");
 
         final JButton activate2ndTab = new JButton("Check for missing content in 2nd edition (Warning: may take minutes!)");
         activate2ndTab.addActionListener(new ActionListener() {

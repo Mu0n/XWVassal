@@ -600,8 +600,6 @@ public class XWOTAUtils {
             file.delete();
         }
 
-        logToChat("******** START OF ZIPPING PROCESS **********");
-
         //the try-catch problem triggers at this line, an IOException Error
         FileOutputStream fos = new FileOutputStream(pathToUse + File.separator + XWD2DATAFILE);
         ZipOutputStream zipOut = new ZipOutputStream(new BufferedOutputStream(fos));
@@ -662,9 +660,6 @@ public class XWOTAUtils {
             zipOut.close();
         fos.close();
         */
-
-
-        logToChat("******** END OF ZIPPING PROCESS **********");
     }
     public static void downloadAndSaveImagesFromOTA( ArrayList<OTAImage> imagesToDownload, String branchURL)
     {
