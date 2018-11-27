@@ -12,7 +12,7 @@ public class ota2BuildVersion {
     public static String remoteUrl = "https://raw.githubusercontent.com/Mu0n/XWVassalOTA2e/master/version";
     public static String ota2Zip = "OTA2.zip";
 
-    @JsonProperty("build")
+    @JsonProperty("version")
     private int build;
 
     public int getBuild(){ return build; }

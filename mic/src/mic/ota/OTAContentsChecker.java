@@ -90,6 +90,9 @@ public class OTAContentsChecker extends AbstractConfigurable {
             .put("separatistarmy","Separatist Army")
             .build();
 
+    private boolean debugMode = false;
+
+
     private JButton contentCheckerButton = new JButton();
     private ModuleIntegrityChecker modIntChecker = null;
     private ModuleIntegrityChecker_2e modIntChecker_2e = null;
@@ -334,6 +337,7 @@ public class OTAContentsChecker extends AbstractConfigurable {
             String choice = "no";
             try {
                 XWOTAUtils.addFileToModule("pendingOTACheck.txt", choice.getBytes());
+                if(debugMode) logToChat("otacheck line 337 adding pending OTA check");
             } catch (Exception e) {
             }
         } else{
@@ -355,6 +359,10 @@ public class OTAContentsChecker extends AbstractConfigurable {
                 pendingContentStr = contents.toString();
                 if (pendingContentStr.equalsIgnoreCase("yes")) {
                     missing2ndEdContent = 1;
+                    if(debugMode) logToChat("otacheck line 359 pending OTA detected as yes");
+                }
+                else {
+                    if(debugMode) logToChat("otacheck line 362 pending OTA detected as no");
                 }
                 inputStream.close();
             } catch (Exception e) {
@@ -372,6 +380,7 @@ public class OTAContentsChecker extends AbstractConfigurable {
             String choice = "no";
             try {
                 XWOTAUtils.addFileToModule("pendingContentCheck.txt", choice.getBytes());
+                if(debugMode) logToChat("otacheck line 380 xwd2 check added to module");
             } catch (Exception e) {
             }
         } else {
@@ -393,6 +402,9 @@ public class OTAContentsChecker extends AbstractConfigurable {
                 pendingContentStr = contents.toString();
                 if (pendingContentStr.equalsIgnoreCase("yes")) {
                     missing2ndEdContent = 1;
+                    if(debugMode) logToChat("otacheck line 380 xwd2 pending check as yes");
+                } else {
+                    if(debugMode) logToChat("otacheck line 382 xwd2 pending check as no");
                 }
                 inputStream.close();
             } catch (Exception e) {
@@ -408,17 +420,37 @@ public class OTAContentsChecker extends AbstractConfigurable {
             String choice = "no";
             try {
                 XWOTAUtils.addFileToModule("pendingContentCheck.txt", choice.getBytes());
+                if(debugMode) logToChat("otacheck line 421xwd2 pending check as no after a download AND had to remake the file");
             } catch (Exception e) {
             }
         } else {
             String choice = "no";
             try {
                 XWOTAUtils.addFileToModule("pendingContentCheck.txt", choice.getBytes());
+                if(debugMode) logToChat("otacheck line 426 xwd2 pending check as no after a download");
             } catch (Exception e) {
             }
         }
     }
 
+    private void removePendingOTA2Check(){
+        //unlikely to happen, but if somehow the file isn't present, make one and mark it as no pending check, since this method is called after a content checker download op.
+        if (!XWOTAUtils.fileExistsInModule("pendingOTACheck.txt")) {
+            String choice = "no";
+            try {
+                XWOTAUtils.addFileToModule("pendingOTACheck.txt", choice.getBytes());
+                if(debugMode) logToChat("otacheck line 421xwd2 pending check as no after a download AND had to remake the file");
+            } catch (Exception e) {
+            }
+        } else {
+            String choice = "no";
+            try {
+                XWOTAUtils.addFileToModule("pendingOTACheck.txt", choice.getBytes());
+                if(debugMode) logToChat("otacheck line 426 xwd2 pending check as no after a download");
+            } catch (Exception e) {
+            }
+        }
+    }
 
     private void checkAndUpdateRemoteJsonsIfNewFound()  {
         if(XWOTAUtils.fileExitsOnTheNet(manifest2eURL))
@@ -472,6 +504,7 @@ public class OTAContentsChecker extends AbstractConfigurable {
         {
             int remoteVer = ota2BuildVersion.checkRemoteBuildVersion();
             int localVer = ota2BuildVersion.checkLocalBuildVersion();
+            logToChat("Over-the-air local version: " + localVer + " remote version: " + remoteVer);
             if(remoteVer != -1){
                 if(localVer == 0 || localVer < remoteVer){ //needs a rebuild of ota2.zip
                     missing2ndEdContent=1;
@@ -782,9 +815,11 @@ public class OTAContentsChecker extends AbstractConfigurable {
                     stopBlink2ndTab = true; //gets rid of the tab blinky
                     refreshFinalTable2e();
                     removePendingCheck();
+                    removePendingOTA2Check();
                 }else{
                     downloadButton2e.setEnabled(true);
                     removePendingCheck();
+                    removePendingOTA2Check();
                 }
             }
         });
@@ -817,6 +852,8 @@ public class OTAContentsChecker extends AbstractConfigurable {
         {
             jlabel.setText("All content is up to date");
             downloadButton2e.setEnabled(false);
+            removePendingCheck();
+            removePendingOTA2Check();
         }else{
 
             downloadButton2e.setEnabled(true);
