@@ -621,8 +621,6 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
                 else countHowManyNonConfigurationUpgrades++;
             }
 
-            logToChat("configs " + howManyConfigUpgradeCards + " non-configs " + countHowManyNonConfigurationUpgrades);
-
             // ======================================================
             // Generate the ship base pieces
             // ======================================================
@@ -735,13 +733,10 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
 
 
 
-                    logToChat("nonConfigUpgradePositionIndexer is " + nonConfigUpgradePositionIndexer);
                     int lastterm = (nonConfigUpgradePositionIndexer)*(typicalUpgradeWidth-upgradeComeBackLeft);
-                    logToChat("pw/2 " + pilotWidth/2 + " typuw/2 " + typicalUpgradeWidth/2 + " lastterm " + lastterm);
                     int total = pilotWidth/2
                             + typicalUpgradeWidth/2
                             + lastterm;
-                    logToChat("total " + total);
 
 
 

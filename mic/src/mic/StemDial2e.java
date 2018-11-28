@@ -325,9 +325,9 @@ public class StemDial2e extends Decorator implements EditablePiece {
 
         private void buildDialMask(GamePiece piece, String xwsShipName, String faction)
         {
-            final String wipResistanceMask = "Dial_Back_Rebel_WIP.png";
+            final String wipResistanceMask = "Dial_Back_Resistance_WIP.png";
             final String wipRebelMask = "Dial_Back_Rebel_WIP.png";
-            final String wipFirstOrderMask = "Dial_Back_Empire_WIP.pngg";
+            final String wipFirstOrderMask = "Dial_Back_FirstOrder_WIP.png";
             final String wipEmpireMask = "Dial_Back_Empire_WIP.png";
             final String wipScumMask = "Dial_Back_Scum_WIP.png";
             final String wipRepublicMask = "Dial_Back_Republic_WIP.png";
