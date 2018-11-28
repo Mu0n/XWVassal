@@ -1914,7 +1914,6 @@ public class AutoRangeFinder extends Decorator implements EditablePiece, MouseLi
         MicLine D2AA = createLinePtoAB(D2, AA, false);
         lineToVet = vetThisLine(D2AA, "D2AA", 0.6);
         if(lineToVet != null) {
-            logToChat("added a D2AA line and deathmark is " + D2AA.markedAsDead);
             lineList.add(lineToVet);
         }
 
