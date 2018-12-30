@@ -326,7 +326,7 @@ public class StemDial2e extends Decorator implements EditablePiece {
             StringBuilder moveNamesString = new StringBuilder();
 
             // start the state string
-            stateString.append("emb2;Activate;2;;;2;;;2;;;;1;false;0;-24;");
+            stateString.append("emb2;Activate;2;;;2;;;2;;;;1;false;0;-24;,");
 
             String moveImage;
             String move = newMoveList.get(0);
@@ -343,16 +343,17 @@ public class StemDial2e extends Decorator implements EditablePiece {
             moveNamesString.append(moveName).append(" ").append(speed);
             // add in move names
             stateString.append(moveImage);
-            stateString.append(",;"+moveNamesString+",empty");
+            stateString.append(";empty,"+moveNamesString);
 
             // finish the type string
             stateString.append(";false;Chosen Move;;;false;;1;1;true;65,130");
             Embellishment chosenMoveEmb = (Embellishment)Util.getEmbellishment(piece,"Layer - Chosen Move");
             Embellishment chosenSpeedEmb = (Embellishment)Util.getEmbellishment(piece, "Layer - Chosen Speed");
+            Embellishment fullDialEmb = (Embellishment)Util.getEmbellishment(piece, "Layer - Basic Piece");
             chosenSpeedEmb.setValue(Integer.parseInt(speed)+1);
 
 
-            // chosen move embellishment looks like: emb2;Activate;2;;;2;;;2;;;;1;false;0;-24;mFW.png,;move,empty;false;Chosen Move;;;false;;1;1;true;65,130;;\\\\\\\\
+            // chosen move embellishment looks like: emb2;Activate;2;;;2;;;2;;;;1;false;0;-24;,mFW.png;empty,move;false;Chosen Move;;;false;;1;1;true;65,130;;
             // chosen speed embell looks like:       emb2;;2;;;2;;;2;;;;1;false;0;24;kimb5.png,,kimb0.png,kimb1.png,kimb2.png,kimb3.png,kimb4.png;5,empty,0,1,2,3,4;false;Chosen Speed;;;false;;1;1;true;;;
             //Embellishment myEmb = (Embellishment)Decorator.getDecorator(piece,Embellishment.class);
             chosenMoveEmb.mySetType(stateString.toString());
