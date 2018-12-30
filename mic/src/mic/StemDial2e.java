@@ -332,7 +332,7 @@ public class StemDial2e extends Decorator implements EditablePiece {
             String move = newMoveList.get(0);
             String moveWithoutSpeed = move.substring(1);
             moveImage = dialHeadingImages.get(moveWithoutSpeed);
-            stateString.append(moveImage);
+
             String speed = move.substring(0,1);
             String moveCode = move.substring(1,2);
             String moveName = maneuverNames.get(moveCode);
@@ -343,16 +343,18 @@ public class StemDial2e extends Decorator implements EditablePiece {
             moveNamesString.append(moveName).append(" ").append(speed);
             // add in move names
             stateString.append(moveImage);
-            stateString.append(","+moveNamesString+";");
+            stateString.append(",;"+moveNamesString+",empty");
 
             // finish the type string
-            stateString.append("move,empty;false;Chosen Move;;;false;;1;1;true;65,130");
-            Embellishment myEmb = (Embellishment)Util.getEmbellishment(piece,"Layer - Chosen Move");
+            stateString.append(";false;Chosen Move;;;false;;1;1;true;65,130");
+            Embellishment chosenMoveEmb = (Embellishment)Util.getEmbellishment(piece,"Layer - Chosen Move");
+            Embellishment chosenSpeedEmb = (Embellishment)Util.getEmbellishment(piece, "Layer - Chosen Speed");
+            chosenSpeedEmb.setValue(Integer.parseInt(speed));
 
             // chosen move embellishment looks like: emb2;Activate;2;;;2;;;2;;;;1;false;0;-24;mFW.png,;move,empty;false;Chosen Move;;;false;;1;1;true;65,130;;\\\\\\\\
-
+            // chosen speed embell looks like:       emb2;;2;;;2;;;2;;;;1;false;0;24;kimb5.png,,kimb0.png,kimb1.png,kimb2.png,kimb3.png,kimb4.png;5,empty,0,1,2,3,4;false;Chosen Speed;;;false;;1;1;true;;;
             //Embellishment myEmb = (Embellishment)Decorator.getDecorator(piece,Embellishment.class);
-            myEmb.mySetType(stateString.toString());
+            chosenMoveEmb.mySetType(stateString.toString()+1);
 
             // build the layers for the maneuvers on the dial
             // old 1.0 style for 2.0 play
