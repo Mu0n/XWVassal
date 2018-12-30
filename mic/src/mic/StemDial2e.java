@@ -318,14 +318,47 @@ public class StemDial2e extends Decorator implements EditablePiece {
         protected void executeCommand() {
 
             Util.logToChat(newMoveList.size() + " is the number of moves in this dial and the owner is player " + whoOwns);
+
+
+
+            // build the type string
+            StringBuilder stateString = new StringBuilder();
+            StringBuilder moveNamesString = new StringBuilder();
+
+            // start the state string
+            stateString.append("emb2;Activate;2;;;2;;;2;;;;1;false;0;-24;");
+
+            String moveImage;
+            String move = newMoveList.get(0);
+            String moveWithoutSpeed = move.substring(1);
+            moveImage = dialHeadingImages.get(moveWithoutSpeed);
+            stateString.append(moveImage);
+            String speed = move.substring(0,1);
+            String moveCode = move.substring(1,2);
+            String moveName = maneuverNames.get(moveCode);
+
+            Util.logToChat("First move code = " + move + " code with no speed = " + moveWithoutSpeed + " png image = " + moveImage + " name = " + moveName);
+
+
+            moveNamesString.append(moveName).append(" ").append(speed);
+            // add in move names
+            stateString.append(moveImage);
+            stateString.append(","+moveNamesString+";");
+
+            // finish the type string
+            stateString.append("move,empty;false;Chosen Move;;;false;;1;1;true;65,130");
+            Embellishment myEmb = (Embellishment)Util.getEmbellishment(piece,"Layer - Chosen Move");
+
+            // chosen move embellishment looks like: emb2;Activate;2;;;2;;;2;;;;1;false;0;-24;mFW.png,;move,empty;false;Chosen Move;;;false;;1;1;true;65,130;;\\\\\\\\
+
+            //Embellishment myEmb = (Embellishment)Decorator.getDecorator(piece,Embellishment.class);
+            myEmb.mySetType(stateString.toString());
+
             // build the layers for the maneuvers on the dial
             // old 1.0 style for 2.0 play
             //buildManeuvers(piece, newMoveList);
-
             // build the dial back and dial hide images
-            //old 1.0 style for 2.0 play
             //buildDialMask(piece,xwsShipName,faction);
-
         }
 
         // build the maneuvers layer
@@ -343,7 +376,6 @@ public class StemDial2e extends Decorator implements EditablePiece {
             String moveImage;
             for (String move : newMoveList)
             {
-
                 // look up the image for the maneuver
                 moveImage = (String)dialManeuverImages.get(move);
                 if(moveImage == null)
