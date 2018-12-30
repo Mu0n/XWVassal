@@ -165,6 +165,51 @@ public class StemDial2e extends Decorator implements EditablePiece {
             .put("5KR", "Move_5_U_R.png")
             .build();
 
+    private static Map<String, String> dialHeadingImages = ImmutableMap.<String, String>builder()
+            .put("OB", "mOB.png")
+            .put("OW", "mOW.png")
+            .put("OR", "mOR.png")
+            .put("AB", "mAB.png")
+            .put("AW", "mAW.png")
+            .put("AR", "mAR.png")
+            .put("SB", "mSB.png")
+            .put("SW", "mSW.png")
+            .put("SR", "mSR.png")
+            .put("DB", "mDB.png")
+            .put("DW", "mDW.png")
+            .put("DR", "mDR.png")
+            .put("EB","mEB.png")
+            .put("EW","mEW.png")
+            .put("ER","mER.png")
+            .put("TB", "mTB.png")
+            .put("TW", "mTW.png")
+            .put("TR", "mTR.png")
+            .put("BB", "mBB.png")
+            .put("BW", "mBW.png")
+            .put("BR", "mBR.png")
+            .put("FB", "mFB.png")
+            .put("FW", "mFW.png")
+            .put("FR", "mFR.png")
+            .put("NB", "mNB.png")
+            .put("NW", "mNW.png")
+            .put("NR", "mNR.png")
+            .put("YB", "mYB.png")
+            .put("YW", "mYW.png")
+            .put("YR", "mYR.png")
+            .put("LB","mLB.png")
+            .put("LW","mLW.png")
+            .put("LR","mLR.png")
+            .put("KB","mKB.png")
+            .put("KW","mKW.png")
+            .put("KR","mKR.png")
+            .put("PB","mPB.png")
+            .put("PW","mPW.png")
+            .put("PR","mPR.png")
+            .put("RB","mRB.png")
+            .put("RW","mRW.png")
+            .put("RR","mRR.png")
+            .build();
+
     public StemDial2e(){
         this(null);
     }
@@ -232,6 +277,7 @@ public class StemDial2e extends Decorator implements EditablePiece {
         List<String> newMoveList;
         String shipName;
         String faction = "";
+        int whoOwns = 0;
 
         DialGenerateCommand(String thisName, GamePiece piece, String thisFaction, List<XWS2Pilots> allShips) {
 
@@ -255,14 +301,30 @@ public class StemDial2e extends Decorator implements EditablePiece {
             this.piece = piece;
         }
 
+        DialGenerateCommand(List<String> aMoveList, String aShipName, GamePiece piece, String thisFaction, int owner) {
+            // more direcct approach where the move list and the ship name are dictated directly without a master list fetch
+            faction = thisFaction;
+            newMoveList = aMoveList;
+            shipName = aShipName;
+            this.piece = piece;
+            whoOwns = owner;
+        }
+
+        public int getOwner(){
+            return whoOwns;
+        }
+
         // construct the dial Layers trait (Embellishment class) layer by layer according to the previous Array of Arrays.
         protected void executeCommand() {
 
+            Util.logToChat(newMoveList.size() + " is the number of moves in this dial and the owner is player " + whoOwns);
             // build the layers for the maneuvers on the dial
-            buildManeuvers(piece, newMoveList);
+            // old 1.0 style for 2.0 play
+            //buildManeuvers(piece, newMoveList);
 
             // build the dial back and dial hide images
-            buildDialMask(piece,xwsShipName,faction);
+            //old 1.0 style for 2.0 play
+            //buildDialMask(piece,xwsShipName,faction);
 
         }
 
