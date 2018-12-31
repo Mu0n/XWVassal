@@ -308,6 +308,7 @@ public class StemDial2e extends Decorator implements EditablePiece {
             shipName = aShipName;
             this.piece = piece;
             whoOwns = owner;
+            xwsShipName = Canonicalizer.getCleanedName(shipName);
         }
 
         public int getOwner(){
@@ -324,9 +325,11 @@ public class StemDial2e extends Decorator implements EditablePiece {
             // build the type string
             StringBuilder stateString = new StringBuilder();
             StringBuilder moveNamesString = new StringBuilder();
+            StringBuilder basicPieceString = new StringBuilder();
 
             // start the state string
             stateString.append("emb2;Activate;2;;;2;;;2;;;;1;false;0;-24;,");
+            basicPieceString.append("emb2;;2;;;2;;;2;;;;;false;0;0;");
 
             String moveImage;
             String move = newMoveList.get(0);
@@ -338,7 +341,8 @@ public class StemDial2e extends Decorator implements EditablePiece {
             String moveName = maneuverNames.get(moveCode);
 
             Util.logToChat("First move code = " + move + " code with no speed = " + moveWithoutSpeed + " png image = " + moveImage + " name = " + moveName);
-
+            basicPieceString.append("D2e_" + xwsShipName + ".png");
+            basicPieceString.append(";;false;Front Plate;;;false;;1;1;true;;;");
 
             moveNamesString.append(moveName).append(" ").append(speed);
             // add in move names
@@ -349,15 +353,20 @@ public class StemDial2e extends Decorator implements EditablePiece {
             stateString.append(";false;Chosen Move;;;false;;1;1;true;65,130");
             Embellishment chosenMoveEmb = (Embellishment)Util.getEmbellishment(piece,"Layer - Chosen Move");
             Embellishment chosenSpeedEmb = (Embellishment)Util.getEmbellishment(piece, "Layer - Chosen Speed");
-            Embellishment fullDialEmb = (Embellishment)Util.getEmbellishment(piece, "Layer - Basic Piece");
+            Embellishment fullDialEmb = (Embellishment)Util.getEmbellishment(piece, "Layer - Front Plate");
             chosenSpeedEmb.setValue(Integer.parseInt(speed)+1);
 
 
             // chosen move embellishment looks like: emb2;Activate;2;;;2;;;2;;;;1;false;0;-24;,mFW.png;empty,move;false;Chosen Move;;;false;;1;1;true;65,130;;
             // chosen speed embell looks like:       emb2;;2;;;2;;;2;;;;1;false;0;24;kimb5.png,,kimb0.png,kimb1.png,kimb2.png,kimb3.png,kimb4.png;5,empty,0,1,2,3,4;false;Chosen Speed;;;false;;1;1;true;;;
+            // basic piece face plate looks like: emb2;;2;;;2;;;2;;;;;false;0;0;D2e_arc170starfighter.png;;false;Front Plate;;;false;;1;1;true;;;
+
             //Embellishment myEmb = (Embellishment)Decorator.getDecorator(piece,Embellishment.class);
+
             chosenMoveEmb.mySetType(stateString.toString());
             chosenMoveEmb.setValue(1);
+
+            fullDialEmb.mySetType(basicPieceString.toString());
 
             // build the layers for the maneuvers on the dial
             // old 1.0 style for 2.0 play
