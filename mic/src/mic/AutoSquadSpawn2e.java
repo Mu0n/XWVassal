@@ -655,7 +655,9 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
             // Generate the Dial
             // ======================================================
 
-            GamePiece dialPiece = GamePieceGenerator2e.generateDial(ship);
+
+            XWPlayerInfo owner  = getCurrentPlayer();
+            GamePiece dialPiece = GamePieceGenerator2e.generateDial(ship, owner);
 
             int dialWidth = 0;
             try {

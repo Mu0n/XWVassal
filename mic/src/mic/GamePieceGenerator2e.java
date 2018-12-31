@@ -254,7 +254,7 @@ public class GamePieceGenerator2e
         return targetPieceSlot;
     }
 
-    public static GamePiece generateDial(VassalXWSPilotPieces2e ship)
+    public static GamePiece generateDial(VassalXWSPilotPieces2e ship, Util.XWPlayerInfo owner)
     {
 
         /*
@@ -333,11 +333,8 @@ public class GamePieceGenerator2e
         GamePiece dial = null;
         dial = Util.newPiece(nuDialSlot);
 
-        //TODO get the real owner player #
-        int owner = 1;
-
         // execute the command
-        StemDial2e.DialGenerateCommand myDialGen = new StemDial2e.DialGenerateCommand(ship.getShipData().getDial(), ship.getShipData().getName(), dial, faction, owner);
+        StemDial2e.DialGenerateCommand myDialGen = new StemDial2e.DialGenerateCommand(ship.getShipData().getDial(), ship.getShipData().getName(), dial, faction, owner.getSide());
 
         myDialGen.execute();
 
