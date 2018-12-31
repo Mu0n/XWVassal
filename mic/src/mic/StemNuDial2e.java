@@ -30,7 +30,7 @@ import java.awt.event.KeyEvent;
  */
 
 public class StemNuDial2e extends Decorator implements EditablePiece {
-    public static final String ID = "stemnudial2e";
+    public static final String ID = "StemNuDial2e";
 
 
     public StemNuDial2e(GamePiece piece)
