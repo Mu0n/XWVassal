@@ -63,11 +63,7 @@ public class StemNuDial2e extends Decorator implements EditablePiece {
     }
 
     @Override
-    public Command myKeyEvent(KeyStroke stroke) {
-
-
-        return null;
-    }
+    public Command myKeyEvent(KeyStroke stroke) { return null; }
 
     public int getOwner(){
         GamePiece dialPiece = (GamePiece)this.piece;
