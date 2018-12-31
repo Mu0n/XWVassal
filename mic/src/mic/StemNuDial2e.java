@@ -1,7 +1,9 @@
 package mic;
 
 import VASSAL.build.module.documentation.HelpFile;
+import VASSAL.command.ChangeTracker;
 import VASSAL.command.Command;
+import VASSAL.command.MoveTracker;
 import VASSAL.counters.Decorator;
 import VASSAL.counters.EditablePiece;
 import VASSAL.counters.GamePiece;
@@ -31,6 +33,7 @@ import java.awt.event.KeyEvent;
 
 public class StemNuDial2e extends Decorator implements EditablePiece {
     public static final String ID = "StemNuDial2e";
+    public boolean isHidden = false;
 
     public StemNuDial2e()  {
         this(null);
@@ -56,23 +59,51 @@ public class StemNuDial2e extends Decorator implements EditablePiece {
         return new KeyCommand[0];
     }
 
-
-    @Override
-    public Command keyEvent(KeyStroke stroke) {
-        if (KeyStroke.getKeyStroke(KeyEvent.VK_R, KeyEvent.CTRL_DOWN_MASK,false).equals(stroke)){
-            getOwner();
-        }
-        return null;
-    }
-
     @Override
     public Command myKeyEvent(KeyStroke stroke) { return null; }
 
-    public int getOwner(){
+    @Override
+    public Command keyEvent(KeyStroke stroke) {
+        boolean hasSomethingHappened = false;
+
+        ChangeTracker changeTracker = new ChangeTracker(this);
+        Command result = changeTracker.getChangeCommand();
+        MoveTracker moveTracker = new MoveTracker(Decorator.getOutermost(this));
+        result.append(moveTracker.getMoveCommand());
+
+        if (getOwnerOfThisDial() == Util.getCurrentPlayer().getSide()) {
+            if(KeyStroke.getKeyStroke(KeyEvent.VK_R, KeyEvent.CTRL_DOWN_MASK, false).equals(stroke)) {
+                hasSomethingHappened = true;
+                if(isHidden) { // about to reveal the dial
+                    isHidden = false;
+
+                    result.append(buildRevealCommand());
+                } else { // about to hide the dial
+                    isHidden = true;
+
+                    result.append(buildHideCommand());
+                }
+            }
+        } else { // get scolded for not owning the dial that was manipulated
+            Util.logToChatWithoutUndo("You (player " + Util.getCurrentPlayer().getSide() + ") are not the owner of this dial, player " + getOwnerOfThisDial() + " is.");
+        }
+        return result;
+    }
+
+    private Command buildHideCommand() {
+        return null;
+    }
+
+    private Command buildRevealCommand() {
+        return null;
+    }
+
+
+    public int getOwnerOfThisDial(){
         GamePiece dialPiece = (GamePiece)this.piece;
         String ownerStr = dialPiece.getProperty("owner").toString();
         int ownerInt = Integer.parseInt(ownerStr);
-        Util.logToChat("ctrl-r detected, owner is: " + ownerInt);
+        Util.logToChat("StemNuDial2e line 75:: ctrl-r detected, owner is: " + ownerInt + " and you are " + Util.getCurrentPlayer().getSide());
 
         return ownerInt;
     }
