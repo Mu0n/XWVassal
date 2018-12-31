@@ -338,7 +338,7 @@ public class GamePieceGenerator2e
 
         myDialGen.execute();
 
-        dial.setProperty("owner", owner);
+        dial.setProperty("owner", owner.getSide());
         Util.logToChat("dial string is " + ship.getShipData().getDial().toString());
         //dial.setProperty("dialstring", ship.getShipData().getDial().toString());
 
