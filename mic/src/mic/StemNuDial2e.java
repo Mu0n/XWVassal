@@ -9,10 +9,12 @@ import VASSAL.counters.KeyCommand;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.KeyEvent;
 
 /**
  * Created by Mic on 04/12/2018.
  *
+ * this file is for all programmatic reactions to ',', '.' and 'ctrl-r' commands issued to this new style of dial
  * New style of dial:
  *
  * 1) looks like the open face 2nd edition dial instead of the 1st edition
@@ -50,6 +52,16 @@ public class StemNuDial2e extends Decorator implements EditablePiece {
     protected KeyCommand[] myGetKeyCommands() {
         return new KeyCommand[0];
     }
+
+
+    @Override
+    public Command keyEvent(KeyStroke stroke) {
+        if (KeyStroke.getKeyStroke(KeyEvent.VK_R, KeyEvent.CTRL_DOWN_MASK,false).equals(stroke)){
+            getOwner();
+        }
+        return null;
+    }
+
     @Override
     public Command myKeyEvent(KeyStroke stroke) {
 
@@ -57,6 +69,14 @@ public class StemNuDial2e extends Decorator implements EditablePiece {
         return null;
     }
 
+    public int getOwner(){
+        GamePiece dialPiece = (GamePiece)this.piece;
+        String ownerStr = dialPiece.getProperty("owner").toString();
+        int ownerInt = Integer.parseInt(ownerStr);
+        Util.logToChat("ctrl-r detected, owner is: " + ownerInt);
+
+        return ownerInt;
+    }
     public String getDescription() {
         return "Custom StemNuDial (mic.StemNuDial2e)";
     }
