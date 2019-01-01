@@ -4,10 +4,7 @@ import VASSAL.build.module.documentation.HelpFile;
 import VASSAL.command.ChangeTracker;
 import VASSAL.command.Command;
 import VASSAL.command.MoveTracker;
-import VASSAL.counters.Decorator;
-import VASSAL.counters.EditablePiece;
-import VASSAL.counters.GamePiece;
-import VASSAL.counters.KeyCommand;
+import VASSAL.counters.*;
 
 import javax.swing.*;
 import java.awt.*;
@@ -66,45 +63,90 @@ public class StemNuDial2e extends Decorator implements EditablePiece {
     public Command keyEvent(KeyStroke stroke) {
         boolean hasSomethingHappened = false;
 
-        ChangeTracker changeTracker = new ChangeTracker(this);
-        Command result = changeTracker.getChangeCommand();
-        MoveTracker moveTracker = new MoveTracker(Decorator.getOutermost(this));
-        result.append(moveTracker.getMoveCommand());
+        Command result = piece.keyEvent(stroke);
 
         if (getOwnerOfThisDial() == Util.getCurrentPlayer().getSide()) {
-            if(KeyStroke.getKeyStroke(KeyEvent.VK_R, KeyEvent.CTRL_DOWN_MASK, false).equals(stroke)) {
+            KeyStroke checkForCtrlRReleased = KeyStroke.getKeyStroke(KeyEvent.VK_R, KeyEvent.CTRL_DOWN_MASK, true);
+            KeyStroke checkForCtrlRPressed = KeyStroke.getKeyStroke(KeyEvent.VK_R, KeyEvent.CTRL_DOWN_MASK, false);
+            KeyStroke checkForCommaReleased = KeyStroke.getKeyStroke(KeyEvent.VK_COMMA, 0, true);
+            KeyStroke checkForPeriodReleased = KeyStroke.getKeyStroke(KeyEvent.VK_PERIOD, 0, true);
+
+            if(checkForCtrlRReleased.equals(stroke)) {
                 hasSomethingHappened = true;
                 if(isHidden) { // about to reveal the dial
                     isHidden = false;
-
-                    result.append(buildRevealCommand());
+                    Embellishment chosenMoveEmb = (Embellishment)Util.getEmbellishment(piece,"Layer - Chosen Move");
+                    Embellishment chosenSpeedEmb = (Embellishment)Util.getEmbellishment(piece, "Layer - Chosen Speed");
+                    chosenMoveEmb.setValue(1);
+                    chosenSpeedEmb.setValue(1);
+                    String dialString = piece.getProperty("dialstring").toString();
+                    Util.logToChatWithoutUndo("revealed this dialstring " + dialString);
                 } else { // about to hide the dial
                     isHidden = true;
-
-                    result.append(buildHideCommand());
+                    Embellishment chosenMoveEmb = (Embellishment)Util.getEmbellishment(piece,"Layer - Chosen Move");
+                    Embellishment chosenSpeedEmb = (Embellishment)Util.getEmbellishment(piece, "Layer - Chosen Speed");
+                    chosenMoveEmb.setValue(0);
+                    chosenSpeedEmb.setValue(0);
                 }
+            }
+            else if(checkForCommaReleased.equals(stroke)){ //rotate left, move--
+                hasSomethingHappened = true;
+                String dialString = piece.getProperty("dialstring").toString();
+                String[] values = dialString.split(",");
+
+                int nbOfMoves = values.length;
+                String currentMove = piece.getProperty("selectedMove").toString();
+                int currentMoveInt = Integer.parseInt(currentMove);
+
+                if(currentMoveInt == 1) currentMoveInt = nbOfMoves; //cycle around
+                else currentMoveInt--;
+
+                currentMove = ""+currentMoveInt;
+                piece.setProperty("selectedMove", currentMove);
+
+                String newMove = values[currentMoveInt-1];
+                int newMoveSpeed = getLayerFromMoveCode(newMove);
+
+                Embellishment chosenSpeedEmb = (Embellishment)Util.getEmbellishment(piece, "Layer - Chosen Speed");
+                chosenSpeedEmb.setValue(newMoveSpeed);
+
+
+            } else if(checkForPeriodReleased.equals(stroke)){
+                hasSomethingHappened = true;
+                String dialString = piece.getProperty("dialstring").toString();
+                String[] values = dialString.split(",");
+
+                int nbOfMoves = values.length;
+                String currentMove = piece.getProperty("selectedMove").toString();
+                int currentMoveInt = Integer.parseInt(currentMove);
+
+                if(currentMoveInt == nbOfMoves) currentMoveInt = 1; //cycle around
+                else currentMoveInt++;
+
+                currentMove = ""+currentMoveInt;
+                piece.setProperty("selectedMove", currentMove);
+
+                String newMove = values[currentMoveInt-1];
+                int newMoveSpeed = getLayerFromMoveCode(newMove);
+
+                Embellishment chosenSpeedEmb = (Embellishment)Util.getEmbellishment(piece, "Layer - Chosen Speed");
+                chosenSpeedEmb.setValue(newMoveSpeed);
+
             }
         } else { // get scolded for not owning the dial that was manipulated
             Util.logToChatWithoutUndo("You (player " + Util.getCurrentPlayer().getSide() + ") are not the owner of this dial, player " + getOwnerOfThisDial() + " is.");
         }
-        return result;
+        if(hasSomethingHappened) return result;
+        return piece.keyEvent(stroke);
     }
 
-    private Command buildHideCommand() {
-        return null;
+    public int getLayerFromMoveCode(String code){
+        return Integer.parseInt(code.substring(0,1)) + 1;
     }
-
-    private Command buildRevealCommand() {
-        return null;
-    }
-
-
     public int getOwnerOfThisDial(){
         GamePiece dialPiece = (GamePiece)this.piece;
         String ownerStr = dialPiece.getProperty("owner").toString();
         int ownerInt = Integer.parseInt(ownerStr);
-        Util.logToChat("StemNuDial2e line 75:: ctrl-r detected, owner is: " + ownerInt + " and you are " + Util.getCurrentPlayer().getSide());
-
         return ownerInt;
     }
     public String getDescription() {
@@ -135,10 +177,18 @@ public class StemNuDial2e extends Decorator implements EditablePiece {
         return this.piece.getName();
     }
 
-    public static class DialGenerateCommand extends Command {
+    public static class buildHideCommand extends Command {
+        GamePiece pieceInCommand;
+
+        protected void buildHideCommand(GamePiece piece) {
+            pieceInCommand = piece;
+        }
 
         protected void executeCommand() {
-
+            Embellishment chosenMoveEmb = (Embellishment)Util.getEmbellishment(pieceInCommand,"Layer - Chosen Move");
+            Embellishment chosenSpeedEmb = (Embellishment)Util.getEmbellishment(pieceInCommand, "Layer - Chosen Speed");
+            chosenMoveEmb.setValue(0);
+            chosenSpeedEmb.setValue(0);
         }
 
         protected Command myUndoCommand() {

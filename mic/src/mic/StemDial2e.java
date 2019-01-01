@@ -372,6 +372,15 @@ public class StemDial2e extends Decorator implements EditablePiece {
             Embellishment fullDialEmb = (Embellishment)Util.getEmbellishment(piece, "Layer - Front Plate");
             chosenSpeedEmb.setValue(Integer.parseInt(speed)+1);
 
+            String injectDialString = "";
+            int count=0;
+            for(String moveItem : newMoveList) {
+                count++;
+                injectDialString+= moveItem;
+                if(count!=newMoveList.size()) injectDialString+=",";
+            }
+            Util.logToChatWithoutUndo("injection looks like: " + injectDialString);
+            piece.setProperty("dialstring",injectDialString);
 
             // chosen move embellishment looks like: emb2;Activate;2;;;2;;;2;;;;1;false;0;-24;,mFW.png;empty,move;false;Chosen Move;;;false;;1;1;true;65,130;;
             // chosen speed embell looks like:       emb2;;2;;;2;;;2;;;;1;false;0;24;kimb5.png,,kimb0.png,kimb1.png,kimb2.png,kimb3.png,kimb4.png;5,empty,0,1,2,3,4;false;Chosen Speed;;;false;;1;1;true;;;
