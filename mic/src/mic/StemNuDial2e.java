@@ -73,65 +73,150 @@ public class StemNuDial2e extends Decorator implements EditablePiece {
 
             if(checkForCtrlRReleased.equals(stroke)) {
                 hasSomethingHappened = true;
+
+                Embellishment chosenMoveEmb = (Embellishment)Util.getEmbellishment(piece,"Layer - Chosen Move");
+                Embellishment chosenSpeedEmb = (Embellishment)Util.getEmbellishment(piece, "Layer - Chosen Speed");
+
                 if(isHidden) { // about to reveal the dial
                     isHidden = false;
-                    Embellishment chosenMoveEmb = (Embellishment)Util.getEmbellishment(piece,"Layer - Chosen Move");
-                    Embellishment chosenSpeedEmb = (Embellishment)Util.getEmbellishment(piece, "Layer - Chosen Speed");
-                    chosenMoveEmb.setValue(1);
-                    chosenSpeedEmb.setValue(1);
+
+                    // Fetch the string of movement from the dynamic property and chop it up in an array
                     String dialString = piece.getProperty("dialstring").toString();
-                    Util.logToChatWithoutUndo("revealed this dialstring " + dialString);
+                    String[] values = dialString.split(",");
+
+                    // Fetch the saved move from the dynamic property of the dial piece
+                    String savedMoveString = piece.getProperty("selectedMove").toString();
+                    int savedMoveStringInt = Integer.parseInt(savedMoveString);
+                    String moveCode = values[savedMoveStringInt-1];
+                    int moveSpeedLayerToUse = getLayerFromMoveCode(moveCode);
+                    int rawSpeed = getRawSpeedFromMoveCode(moveCode);
+
+                    Util.logToChatWithoutUndo("savedMove " + savedMoveString + " (" + savedMoveStringInt + ") = " + moveCode + " at speed layer # " + moveSpeedLayerToUse);
+
+                    // Make the speed appear (by correctly chosing among the 6 existing layers
+                    chosenSpeedEmb.setValue(moveSpeedLayerToUse);
+
+                    //attempt to seed the move layer with the right image just like at spawn time
+                    StringBuilder stateString = new StringBuilder();
+                    StringBuilder moveNamesString = new StringBuilder();
+                    stateString.append("emb2;Activate;2;;;2;;;2;;;;1;false;0;-24;,");
+
+                    String moveImage;
+                    String moveWithoutSpeed = getMoveCodeWithoutSpeed(moveCode);
+                    String moveName = StemDial2e.maneuverNames.get(getMoveRaw(moveCode));
+                    moveNamesString.append(moveName).append(" ").append(rawSpeed);
+
+                    moveImage = StemDial2e.dialHeadingImages.get(moveWithoutSpeed);
+                    stateString.append(moveImage);
+                    // add in move names
+                    stateString.append(";empty,"+moveNamesString);
+                    stateString.append(";false;Chosen Move;;;false;;1;1;true;65,130");
+
+                    Util.logToChatWithoutUndo("moveWOspeed " + moveWithoutSpeed + " moveImage " + moveImage);
+                    Util.logToChatWithoutUndo(stateString.toString());
+                    chosenMoveEmb.mySetType(stateString.toString());
+                    chosenMoveEmb.setValue(1);
+
                 } else { // about to hide the dial
                     isHidden = true;
-                    Embellishment chosenMoveEmb = (Embellishment)Util.getEmbellishment(piece,"Layer - Chosen Move");
-                    Embellishment chosenSpeedEmb = (Embellishment)Util.getEmbellishment(piece, "Layer - Chosen Speed");
+
                     chosenMoveEmb.setValue(0);
                     chosenSpeedEmb.setValue(0);
                 }
             }
             else if(checkForCommaReleased.equals(stroke)){ //rotate left, move--
                 hasSomethingHappened = true;
+
+                // Fetch the string of movement from the dynamic property and chop it up in an array
                 String dialString = piece.getProperty("dialstring").toString();
                 String[] values = dialString.split(",");
-
                 int nbOfMoves = values.length;
-                String currentMove = piece.getProperty("selectedMove").toString();
-                int currentMoveInt = Integer.parseInt(currentMove);
 
-                if(currentMoveInt == 1) currentMoveInt = nbOfMoves; //cycle around
-                else currentMoveInt--;
+                // Fetch the saved move from the dynamic property of the dial piece
+                String savedMoveString = piece.getProperty("selectedMove").toString();
+                int savedMoveStringInt = Integer.parseInt(savedMoveString);
 
-                currentMove = ""+currentMoveInt;
-                piece.setProperty("selectedMove", currentMove);
+                // Decrement the movement index and reinject the saved move property
+                if(savedMoveStringInt == 1) savedMoveStringInt = nbOfMoves; //cycle around
+                else savedMoveStringInt--;
+                savedMoveString = ""+savedMoveStringInt;
+                piece.setProperty("selectedMove", savedMoveString);
 
-                String newMove = values[currentMoveInt-1];
+                // Fetch the new move based on the new lowered index
+                String newMove = values[savedMoveStringInt-1]; //-1 because if a dial has moves from 1-15, the indices must be 0-14
+                int newRawSpeed = getRawSpeedFromMoveCode(newMove);
                 int newMoveSpeed = getLayerFromMoveCode(newMove);
 
+                Util.logToChatWithoutUndo("decremented savedMove " + savedMoveString + " (" + savedMoveStringInt + ") = " + newMove + " at speed layer # " + newMoveSpeed);
+
+                // Make the speed appear (by correctly chosing among the 6 existing layers
                 Embellishment chosenSpeedEmb = (Embellishment)Util.getEmbellishment(piece, "Layer - Chosen Speed");
                 chosenSpeedEmb.setValue(newMoveSpeed);
 
+                //Prepare to modify the chosen move layer
+                Embellishment chosenMoveEmb = (Embellishment)Util.getEmbellishment(piece,"Layer - Chosen Move");
+                StringBuilder stateString = new StringBuilder();
+                StringBuilder moveNamesString = new StringBuilder();
+                stateString.append("emb2;Activate;2;;;2;;;2;;;;1;false;0;-24;,");
+                String moveWithoutSpeed = getMoveCodeWithoutSpeed(newMove);
+                String moveImage = StemDial2e.dialHeadingImages.get(moveWithoutSpeed);
 
+                String moveName = StemDial2e.maneuverNames.get(getMoveRaw(newMove));
+                moveNamesString.append(moveName).append(" ").append(newRawSpeed);
+                // add in move names
+                stateString.append(moveImage);
+                stateString.append(";empty,"+moveNamesString);
+                stateString.append(";false;Chosen Move;;;false;;1;1;true;65,130");
+
+                Util.logToChatWithoutUndo("moveWOspeed " + moveWithoutSpeed + " moveImage " + moveImage);
+                Util.logToChatWithoutUndo(stateString.toString());
+
+                chosenMoveEmb.mySetType(stateString.toString());
+                chosenMoveEmb.setValue(1);
             } else if(checkForPeriodReleased.equals(stroke)){
                 hasSomethingHappened = true;
+
+                // Fetch the string of movement from the dynamic property and chop it up in an array
                 String dialString = piece.getProperty("dialstring").toString();
                 String[] values = dialString.split(",");
-
                 int nbOfMoves = values.length;
-                String currentMove = piece.getProperty("selectedMove").toString();
-                int currentMoveInt = Integer.parseInt(currentMove);
 
-                if(currentMoveInt == nbOfMoves) currentMoveInt = 1; //cycle around
-                else currentMoveInt++;
+                // Fetch the saved move from the dynamic property of the dial piece
+                String savedMoveString = piece.getProperty("selectedMove").toString();
+                int savedMoveStringInt = Integer.parseInt(savedMoveString);
 
-                currentMove = ""+currentMoveInt;
-                piece.setProperty("selectedMove", currentMove);
+                // Increment the movement index and reinject the saved move property
+                if(savedMoveStringInt == nbOfMoves) savedMoveStringInt = 1; //cycle around
+                else savedMoveStringInt++;
+                savedMoveString = ""+savedMoveStringInt;
+                piece.setProperty("selectedMove", savedMoveString);
 
-                String newMove = values[currentMoveInt-1];
+                // Fetch the new move based on the new lowered index
+                String newMove = values[savedMoveStringInt-1]; //-1 because if a dial has moves from 1-15, the indices must be 0-14
+                int newRawSpeed = getRawSpeedFromMoveCode(newMove);
                 int newMoveSpeed = getLayerFromMoveCode(newMove);
 
+                // Make the speed appear (by correctly chosing among the 6 existing layers
                 Embellishment chosenSpeedEmb = (Embellishment)Util.getEmbellishment(piece, "Layer - Chosen Speed");
                 chosenSpeedEmb.setValue(newMoveSpeed);
 
+                //Prepare to modify the chosen move layer
+                Embellishment chosenMoveEmb = (Embellishment)Util.getEmbellishment(piece,"Layer - Chosen Move");
+                StringBuilder stateString = new StringBuilder();
+                StringBuilder moveNamesString = new StringBuilder();
+                stateString.append("emb2;Activate;2;;;2;;;2;;;;1;false;0;-24;,");
+                String moveWithoutSpeed = getMoveCodeWithoutSpeed(newMove);
+                String moveImage = StemDial2e.dialHeadingImages.get(moveWithoutSpeed);
+
+                String moveName = StemDial2e.maneuverNames.get(getMoveRaw(newMove));
+                moveNamesString.append(moveName).append(" ").append(newRawSpeed);
+                // add in move names
+                stateString.append(moveImage);
+                stateString.append(";empty,"+moveNamesString);
+                stateString.append(";false;Chosen Move;;;false;;1;1;true;65,130");
+
+                chosenMoveEmb.mySetType(stateString.toString());
+                chosenMoveEmb.setValue(1);
             }
         } else { // get scolded for not owning the dial that was manipulated
             Util.logToChatWithoutUndo("You (player " + Util.getCurrentPlayer().getSide() + ") are not the owner of this dial, player " + getOwnerOfThisDial() + " is.");
@@ -142,6 +227,18 @@ public class StemNuDial2e extends Decorator implements EditablePiece {
 
     public int getLayerFromMoveCode(String code){
         return Integer.parseInt(code.substring(0,1)) + 1;
+    }
+
+    public int getRawSpeedFromMoveCode(String code){
+        return Integer.parseInt(code.substring(0,1));
+    }
+
+    public String getMoveCodeWithoutSpeed(String code){
+        return code.substring(1,3);
+    }
+
+    public String getMoveRaw(String code){
+        return code.substring(1,2);
     }
     public int getOwnerOfThisDial(){
         GamePiece dialPiece = (GamePiece)this.piece;

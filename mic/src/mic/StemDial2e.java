@@ -42,7 +42,7 @@ public class StemDial2e extends Decorator implements EditablePiece {
 
     // English names of the maneuvers
     // DialGen move / English Name
-    private static Map<String, String> maneuverNames = ImmutableMap.<String, String>builder()
+    public static Map<String, String> maneuverNames = ImmutableMap.<String, String>builder()
             .put("O","Stop")
             .put("A","Reverse Left Bank")
             .put("S","Reverse")
@@ -181,7 +181,7 @@ public class StemDial2e extends Decorator implements EditablePiece {
             .put("5KR", "Move_5_U_R.png")
             .build();
 
-    private static Map<String, String> dialHeadingImages = ImmutableMap.<String, String>builder()
+    public static Map<String, String> dialHeadingImages = ImmutableMap.<String, String>builder()
             .put("OB", "mOB.png")
             .put("OW", "mOW.png")
             .put("OR", "mOR.png")
