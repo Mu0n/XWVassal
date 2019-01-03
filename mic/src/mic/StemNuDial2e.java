@@ -288,7 +288,7 @@ public class StemNuDial2e extends Decorator implements EditablePiece {
     public static class dialHideCommand extends Command {
         GamePiece pieceInCommand;
 
-        public dialHideCommand(GamePiece piece) {
+        dialHideCommand(GamePiece piece) {
             pieceInCommand = piece;
         }
 
@@ -327,7 +327,7 @@ public class StemNuDial2e extends Decorator implements EditablePiece {
                     return null;
                 }
                 logger.info("Encoding DialGenerateCommand");
-                StemNuDial2e.dialHideCommand dialHideCommand = (StemNuDial2e.dialHideCommand) c;
+                StemNuDial2e.dialHideCommand dhc = (StemNuDial2e.dialHideCommand) c;
                 try {
                     return commandPrefix;
                 } catch(Exception e) {
