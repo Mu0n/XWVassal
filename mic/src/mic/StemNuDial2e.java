@@ -124,7 +124,7 @@ public class StemNuDial2e extends Decorator implements EditablePiece {
                     isHidden = true;
                     dialHideCommand hideNow = new dialHideCommand(piece);
                     result.append(hideNow);
-                    hideNow.execute();
+                    hideNow.executeCommand();
                 }
             }
             else if(checkForCommaReleased.equals(stroke)){ //rotate left, move--
