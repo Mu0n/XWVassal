@@ -122,7 +122,9 @@ public class StemNuDial2e extends Decorator implements EditablePiece {
 
                 } else { // about to hide the dial
                     isHidden = true;
-                    result.append(new dialHideCommand());
+                    dialHideCommand hideNow = new dialHideCommand(piece);
+                    result.append(hideNow);
+                    hideNow.execute();
                 }
             }
             else if(checkForCommaReleased.equals(stroke)){ //rotate left, move--
@@ -286,9 +288,7 @@ public class StemNuDial2e extends Decorator implements EditablePiece {
     public static class dialHideCommand extends Command {
         GamePiece pieceInCommand;
 
-        public dialHideCommand(){};
-
-        protected void dialHideCommand(GamePiece piece) {
+        public dialHideCommand(GamePiece piece) {
             pieceInCommand = piece;
         }
 
