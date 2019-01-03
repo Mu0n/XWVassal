@@ -3,8 +3,11 @@ package mic;
 import VASSAL.build.module.documentation.HelpFile;
 import VASSAL.command.ChangeTracker;
 import VASSAL.command.Command;
+import VASSAL.command.CommandEncoder;
 import VASSAL.command.MoveTracker;
 import VASSAL.counters.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.swing.*;
 import java.awt.*;
@@ -119,13 +122,12 @@ public class StemNuDial2e extends Decorator implements EditablePiece {
 
                 } else { // about to hide the dial
                     isHidden = true;
-
-                    chosenMoveEmb.setValue(0);
-                    chosenSpeedEmb.setValue(0);
+                    result.append(new dialHideCommand());
                 }
             }
             else if(checkForCommaReleased.equals(stroke)){ //rotate left, move--
                 hasSomethingHappened = true;
+
 
                 // Fetch the string of movement from the dynamic property and chop it up in an array
                 String dialString = piece.getProperty("dialstring").toString();
@@ -151,7 +153,7 @@ public class StemNuDial2e extends Decorator implements EditablePiece {
 
                 // Make the speed appear (by correctly chosing among the 6 existing layers
                 Embellishment chosenSpeedEmb = (Embellishment)Util.getEmbellishment(piece, "Layer - Chosen Speed");
-                chosenSpeedEmb.setValue(newMoveSpeed);
+
 
                 //Prepare to modify the chosen move layer
                 Embellishment chosenMoveEmb = (Embellishment)Util.getEmbellishment(piece,"Layer - Chosen Move");
@@ -171,8 +173,15 @@ public class StemNuDial2e extends Decorator implements EditablePiece {
                 Util.logToChatWithoutUndo("moveWOspeed " + moveWithoutSpeed + " moveImage " + moveImage);
                 Util.logToChatWithoutUndo(stateString.toString());
 
-                chosenMoveEmb.mySetType(stateString.toString());
-                chosenMoveEmb.setValue(1);
+                if(isHidden){
+                    chosenMoveEmb.mySetType(stateString.toString());
+                    chosenMoveEmb.setValue(1);
+                    chosenSpeedEmb.setValue(newMoveSpeed);
+                } else {
+
+                }
+
+
             } else if(checkForPeriodReleased.equals(stroke)){
                 hasSomethingHappened = true;
 
@@ -274,10 +283,12 @@ public class StemNuDial2e extends Decorator implements EditablePiece {
         return this.piece.getName();
     }
 
-    public static class buildHideCommand extends Command {
+    public static class dialHideCommand extends Command {
         GamePiece pieceInCommand;
 
-        protected void buildHideCommand(GamePiece piece) {
+        public dialHideCommand(){};
+
+        protected void dialHideCommand(GamePiece piece) {
             pieceInCommand = piece;
         }
 
@@ -291,6 +302,44 @@ public class StemNuDial2e extends Decorator implements EditablePiece {
         protected Command myUndoCommand() {
             return null;
         }
+
+        //the following class is used to send the info to the other player whenever a dial generation command is issued, so it can be done locally on all machines playing/watching the game
+        //only the ship XWS string is sent
+        public static class Dial2eHideEncoder implements CommandEncoder {
+            private static final Logger logger = LoggerFactory.getLogger(StemNuDial2e.class);
+            private static final String commandPrefix = "Dial2eHideEncoder=";
+
+            public static StemNuDial2e.dialHideCommand.Dial2eHideEncoder INSTANCE = new StemNuDial2e.dialHideCommand.Dial2eHideEncoder();
+
+            public Command decode(String command) {
+                if (command == null || !command.contains(commandPrefix)) {
+                    return null;
+                }
+                logger.info("Decoding DialGenerateCommand");
+
+                command = command.substring(commandPrefix.length());
+
+                return null;
+            }
+
+            public String encode(Command c) {
+                if (!(c instanceof StemNuDial2e.dialHideCommand)) {
+                    return null;
+                }
+                logger.info("Encoding DialGenerateCommand");
+                StemNuDial2e.dialHideCommand dialHideCommand = (StemNuDial2e.dialHideCommand) c;
+                try {
+                    return commandPrefix;
+                } catch(Exception e) {
+                    logger.error("Error encoding dialHideCommand", e);
+                    return null;
+                }
+            }
+        }
     }
+
+
+
+
 
 }
