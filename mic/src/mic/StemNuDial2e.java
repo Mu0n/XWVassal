@@ -1,10 +1,9 @@
 package mic;
 
+import VASSAL.build.GameModule;
 import VASSAL.build.module.documentation.HelpFile;
-import VASSAL.command.ChangeTracker;
 import VASSAL.command.Command;
 import VASSAL.command.CommandEncoder;
-import VASSAL.command.MoveTracker;
 import VASSAL.counters.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
+import java.util.List;
 
 /**
  * Created by Mic on 04/12/2018.
@@ -286,7 +286,7 @@ public class StemNuDial2e extends Decorator implements EditablePiece {
     }
 
     public static class dialHideCommand extends Command {
-        GamePiece pieceInCommand;
+        static GamePiece pieceInCommand;
 
         public dialHideCommand(GamePiece piece) {
             pieceInCommand = piece;
@@ -318,6 +318,11 @@ public class StemNuDial2e extends Decorator implements EditablePiece {
                 logger.info("Decoding DialGenerateCommand");
 
                 command = command.substring(commandPrefix.length());
+                List<GamePiece> pieces = GameModule.getGameModule().getAllDescendantComponentsOf(GamePiece.class);
+
+                for (GamePiece piece : pieces) {
+                    if(piece.getId() == command) return new dialHideCommand(piece);
+                }
 
                 return null;
             }
@@ -329,7 +334,7 @@ public class StemNuDial2e extends Decorator implements EditablePiece {
                 logger.info("Encoding DialGenerateCommand");
                 StemNuDial2e.dialHideCommand dialHideCommand = (StemNuDial2e.dialHideCommand) c;
                 try {
-                    return commandPrefix;
+                    return commandPrefix + pieceInCommand.getId();
                 } catch(Exception e) {
                     logger.error("Error encoding dialHideCommand", e);
                     return null;
