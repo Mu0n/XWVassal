@@ -40,7 +40,6 @@ import static mic.Util.serializeToBase64;
 
 public class StemNuDial2e extends Decorator implements EditablePiece, Serializable {
     public static final String ID = "StemNuDial2e";
-    public boolean isHidden = false;
 
     public StemNuDial2e()  {
         this(null);
@@ -84,10 +83,8 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
             if(checkForCtrlRReleased.equals(stroke)) {
                 hasSomethingHappened = true;
 
-                if(isHidden) { // about to reveal the dial
-                    isHidden = false;
-
-                    // Fetch the string of movement from the dynamic property and chop it up in an array
+                if(piece.getProperty("isHidden").equals(true)) { // about to reveal the dial
+                                        // Fetch the string of movement from the dynamic property and chop it up in an array
                     String dialString = piece.getProperty("dialstring").toString();
                     String[] values = dialString.split(",");
 
@@ -124,8 +121,7 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
                     //chosenMoveEmb.mySetType(stateString.toString());
                     //chosenMoveEmb.setValue(1);
 
-                } else { // about to hide the dial
-                    isHidden = true;
+                } else if(piece.getProperty("isHidden").equals(false)){ // about to hide the dial
                     dialHideCommand hideNow = new dialHideCommand(piece);
                     result.append(hideNow);
                     hideNow.execute();
