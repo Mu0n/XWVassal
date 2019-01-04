@@ -329,7 +329,7 @@ public class StemNuDial2e extends Decorator implements EditablePiece {
                         return new dialRevealCommand(piece, parts[1], parts[2]);
                     }
                 }
-
+                return null;
             }
 
             public String encode(Command c){
