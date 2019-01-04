@@ -118,7 +118,7 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
                     stateString.append(";empty,"+moveNamesString);
                     stateString.append(";false;Chosen Move;;;false;;1;1;true;65,130");
 
-                    dialRevealCommand revealNow = new dialRevealCommand(piece, stateString.toString(), moveSpeedLayerString, this);
+                    dialRevealCommand revealNow = new dialRevealCommand(piece, stateString.toString(), moveSpeedLayerString);
                     result.append(revealNow);
                     revealNow.execute();
                     //chosenMoveEmb.mySetType(stateString.toString());
@@ -126,7 +126,7 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
 
                 } else { // about to hide the dial
                     isHidden = true;
-                    dialHideCommand hideNow = new dialHideCommand(piece, this);
+                    dialHideCommand hideNow = new dialHideCommand(piece);
                     result.append(hideNow);
                     hideNow.execute();
                 }
@@ -293,13 +293,11 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
         static GamePiece pieceInCommand;
         static String moveDef;
         static String speedLayer;
-        static StemNuDial2e dec;
 
-        dialRevealCommand(GamePiece piece, String requiredMoveDef, String requiredSpeedLayer, StemNuDial2e stemnu){
+        dialRevealCommand(GamePiece piece, String requiredMoveDef, String requiredSpeedLayer){
             pieceInCommand = piece;
             moveDef = requiredMoveDef;
             speedLayer = requiredSpeedLayer;
-            dec = stemnu;
         }
 
         protected void executeCommand() {
@@ -308,7 +306,7 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
             chosenMoveEmb.mySetType(moveDef);
             chosenMoveEmb.setValue(1);
             chosenSpeedEmb.setValue(Integer.parseInt(speedLayer));
-            dec.isHidden = false;
+            pieceInCommand.setProperty("isHidden", "false");
             final VASSAL.build.module.Map map = pieceInCommand.getMap();
             map.repaint();
         }
@@ -337,7 +335,7 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
                     Collection<GamePiece> pieces = GameModule.getGameModule().getGameState().getAllPieces();
                     for (GamePiece piece : pieces) {
                         if(piece.getId().equals(parts[0])) {
-                            return new dialRevealCommand(piece, parts[1], parts[2], deco);
+                            return new dialRevealCommand(piece, parts[1], parts[2]);
                         }
                     }
 
@@ -355,7 +353,7 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
                     return null;
                 }
                 try{
-                    return commandPrefix + Joiner.on(itemDelim).join(pieceInCommand.getId(), moveDef,speedLayer, serializeToBase64(dec));
+                    return commandPrefix + Joiner.on(itemDelim).join(pieceInCommand.getId(), moveDef,speedLayer);
                 }catch(Exception e) {
                     logger.error("Error encoding dialRevealCommand", e);
                     return null;
@@ -366,11 +364,9 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
     }
     public static class dialHideCommand extends Command {
         static GamePiece pieceInCommand;
-        static StemNuDial2e dec;
 
-        dialHideCommand(GamePiece piece, StemNuDial2e stemnu) {
+        dialHideCommand(GamePiece piece) {
             pieceInCommand = piece;
-            dec = stemnu;
         }
 
         protected void executeCommand() {
@@ -378,7 +374,7 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
             Embellishment chosenSpeedEmb = (Embellishment)Util.getEmbellishment(pieceInCommand, "Layer - Chosen Speed");
             chosenMoveEmb.setValue(0);
             chosenSpeedEmb.setValue(0);
-            dec.isHidden = true;
+            pieceInCommand.setProperty("isHidden", "true");
             final VASSAL.build.module.Map map = pieceInCommand.getMap();
             map.repaint();
         }
@@ -392,7 +388,6 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
         public static class Dial2eHideEncoder implements CommandEncoder {
             private static final Logger logger = LoggerFactory.getLogger(StemNuDial2e.class);
             private static final String commandPrefix = "Dial2eHideEncoder=";
-            private static final String itemDelim = "\t";
 
             public static StemNuDial2e.dialHideCommand.Dial2eHideEncoder INSTANCE = new StemNuDial2e.dialHideCommand.Dial2eHideEncoder();
 
@@ -403,16 +398,13 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
                 logger.info("Decoding dialHideCommand");
 
                 command = command.substring(commandPrefix.length());
-                String[] parts = command.split(itemDelim);
 
                 try{
-
-                    StemNuDial2e deco = (StemNuDial2e)deserializeBase64Obj(parts[1]);
                     Collection<GamePiece> pieces = GameModule.getGameModule().getGameState().getAllPieces();
 
                     for (GamePiece piece : pieces) {
-                        if(piece.getId().equals(parts[0])) {
-                            return new dialHideCommand(piece, deco);
+                        if(piece.getId().equals(command)) {
+                            return new dialHideCommand(piece);
                         }
                     }
                 }catch(Exception e){
@@ -430,7 +422,7 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
                 logger.info("Encoding dialHideCommand");
                 StemNuDial2e.dialHideCommand dhc = (StemNuDial2e.dialHideCommand) c;
                 try {
-                    return commandPrefix +  Joiner.on(itemDelim).join(pieceInCommand.getId(),serializeToBase64(dec));
+                    return commandPrefix + pieceInCommand.getId();
                 } catch(Exception e) {
                     logger.error("Error encoding dialHideCommand", e);
                     return null;
