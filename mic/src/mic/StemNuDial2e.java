@@ -322,7 +322,7 @@ public class StemNuDial2e extends Decorator implements EditablePiece {
 
                 Util.logToChat("about to decode this gamepiece id: " + command);
                 for (GamePiece piece : pieces) {
-                    if(piece.getId() == command) {
+                    if(piece.getId().equals(command)) {
                         Util.logToChat("found it during decode");
                         return new dialHideCommand(piece);
                     }
