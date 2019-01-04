@@ -175,7 +175,7 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
                 Util.logToChatWithoutUndo("moveWOspeed " + moveWithoutSpeed + " moveImage " + moveImage);
                 Util.logToChatWithoutUndo(stateString.toString());
 
-                if(isHidden){
+                if(piece.getProperty("isHidden").equals(true)){
                     chosenMoveEmb.mySetType(stateString.toString());
                     chosenMoveEmb.setValue(1);
                     chosenSpeedEmb.setValue(newMoveSpeed);
@@ -326,11 +326,10 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
                 String[] parts = command.split(itemDelim);
 
                 try{
-                    StemNuDial2e deco = (StemNuDial2e)deserializeBase64Obj(parts[1]);
-
                     Collection<GamePiece> pieces = GameModule.getGameModule().getGameState().getAllPieces();
                     for (GamePiece piece : pieces) {
                         if(piece.getId().equals(parts[0])) {
+                            Util.logToChatWithoutUndo("DialReveal decoder moveDef=" + moveDef + " speedLayer=" + speedLayer);
                             return new dialRevealCommand(piece, parts[1], parts[2]);
                         }
                     }
@@ -349,6 +348,7 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
                     return null;
                 }
                 try{
+                    Util.logToChatWithoutUndo("DialReveal encoder moveDef=" + moveDef + " speedLayer=" + speedLayer);
                     return commandPrefix + Joiner.on(itemDelim).join(pieceInCommand.getId(), moveDef,speedLayer);
                 }catch(Exception e) {
                     logger.error("Error encoding dialRevealCommand", e);

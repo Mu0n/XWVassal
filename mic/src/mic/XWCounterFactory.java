@@ -17,6 +17,7 @@ public class XWCounterFactory extends BasicCommandEncoder {
         GameModule.getGameModule().addCommandEncoder(AutoRangeFinder.FOVisualization.AutorangeVisualizationEncoder.INSTANCE);
         GameModule.getGameModule().addCommandEncoder(new AutoRangeFinder.FOVisualization.FOVisualizationClearEncoder());
         GameModule.getGameModule().addCommandEncoder(new StemDial.DialGenerateCommand.DialGeneratorEncoder());
+        GameModule.getGameModule().addCommandEncoder(new StemNuDial2e.dialRevealCommand.Dial2eRevealEncoder());
         GameModule.getGameModule().addCommandEncoder(new StemNuDial2e.dialHideCommand.Dial2eHideEncoder());
     }
 
