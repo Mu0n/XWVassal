@@ -18,6 +18,7 @@ import java.util.Collection;
 import java.util.List;
 
 import static mic.Util.deserializeBase64Obj;
+import static mic.Util.logToChat;
 import static mic.Util.serializeToBase64;
 
 /**
@@ -71,7 +72,7 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
     @Override
     public Command keyEvent(KeyStroke stroke) {
         boolean hasSomethingHappened = false;
-
+        String isHiddenPropCheck ="";
         Command result = piece.keyEvent(stroke);
 
         if (getOwnerOfThisDial() == Util.getCurrentPlayer().getSide()) {
@@ -80,10 +81,13 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
             KeyStroke checkForCommaReleased = KeyStroke.getKeyStroke(KeyEvent.VK_COMMA, 0, true);
             KeyStroke checkForPeriodReleased = KeyStroke.getKeyStroke(KeyEvent.VK_PERIOD, 0, true);
 
+            isHiddenPropCheck = piece.getProperty("isHidden").toString();
+
             if(checkForCtrlRReleased.equals(stroke)) {
                 hasSomethingHappened = true;
 
-                if(piece.getProperty("isHidden").equals(true)) { // about to reveal the dial
+                logToChat("isHidden property is " +isHiddenPropCheck);
+                if(isHiddenPropCheck.equals("true")) { // about to reveal the dial
                                         // Fetch the string of movement from the dynamic property and chop it up in an array
                     String dialString = piece.getProperty("dialstring").toString();
                     String[] values = dialString.split(",");
@@ -122,7 +126,7 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
                     //chosenMoveEmb.mySetType(stateString.toString());
                     //chosenMoveEmb.setValue(1);
 
-                } else if(piece.getProperty("isHidden").equals(false)){ // about to hide the dial
+                } else if(isHiddenPropCheck.equals("false")){ // about to hide the dial
                     Util.logToChat("Dial was revealed , about to hide");
                     dialHideCommand hideNow = new dialHideCommand(piece);
                     result.append(hideNow);
