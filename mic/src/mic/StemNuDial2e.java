@@ -115,6 +115,7 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
                     stateString.append(";empty,"+moveNamesString);
                     stateString.append(";false;Chosen Move;;;false;;1;1;true;65,130");
 
+                    Util.logToChat("Dial was hidden , about to reveal");
                     dialRevealCommand revealNow = new dialRevealCommand(piece, stateString.toString(), moveSpeedLayerString);
                     result.append(revealNow);
                     revealNow.execute();
@@ -122,6 +123,7 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
                     //chosenMoveEmb.setValue(1);
 
                 } else if(piece.getProperty("isHidden").equals(false)){ // about to hide the dial
+                    Util.logToChat("Dial was revealed , about to hide");
                     dialHideCommand hideNow = new dialHideCommand(piece);
                     result.append(hideNow);
                     hideNow.execute();
@@ -176,6 +178,7 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
                 Util.logToChatWithoutUndo(stateString.toString());
 
                 if(piece.getProperty("isHidden").equals(true)){
+
                     chosenMoveEmb.mySetType(stateString.toString());
                     chosenMoveEmb.setValue(1);
                     chosenSpeedEmb.setValue(newMoveSpeed);
@@ -400,6 +403,7 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
 
                     for (GamePiece piece : pieces) {
                         if(piece.getId().equals(command)) {
+                            Util.logToChat("DialHide encode id=" + command);
                             return new dialHideCommand(piece);
                         }
                     }
@@ -418,6 +422,7 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
                 logger.info("Encoding dialHideCommand");
                 StemNuDial2e.dialHideCommand dhc = (StemNuDial2e.dialHideCommand) c;
                 try {
+                    Util.logToChat("DialHide encode id=" + pieceInCommand.getId());
                     return commandPrefix + pieceInCommand.getId();
                 } catch(Exception e) {
                     logger.error("Error encoding dialHideCommand", e);
