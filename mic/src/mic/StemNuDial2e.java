@@ -115,6 +115,8 @@ public class StemNuDial2e extends Decorator implements EditablePiece {
                     stateString.append(";false;Chosen Move;;;false;;1;1;true;65,130");
 
                     dialRevealCommand revealNow = new dialRevealCommand(piece, stateString.toString(), moveSpeedLayerString);
+                    result.append(revealNow);
+                    revealNow.execute();
                     //chosenMoveEmb.mySetType(stateString.toString());
                     //chosenMoveEmb.setValue(1);
 
