@@ -70,9 +70,6 @@ public class StemNuDial2e extends Decorator implements EditablePiece {
 
         Command result = piece.keyEvent(stroke);
 
-        ChangeTracker changeTracker = new ChangeTracker(this);
-         result.append(changeTracker.getChangeCommand());
-
         if (getOwnerOfThisDial() == Util.getCurrentPlayer().getSide()) {
             KeyStroke checkForCtrlRReleased = KeyStroke.getKeyStroke(KeyEvent.VK_R, KeyEvent.CTRL_DOWN_MASK, true);
             KeyStroke checkForCtrlRPressed = KeyStroke.getKeyStroke(KeyEvent.VK_R, KeyEvent.CTRL_DOWN_MASK, false);
@@ -302,6 +299,8 @@ public class StemNuDial2e extends Decorator implements EditablePiece {
             Embellishment chosenSpeedEmb = (Embellishment)Util.getEmbellishment(pieceInCommand, "Layer - Chosen Speed");
             chosenMoveEmb.setValue(0);
             chosenSpeedEmb.setValue(0);
+            final VASSAL.build.module.Map map = pieceInCommand.getMap();
+            map.repaint();
         }
 
         protected Command myUndoCommand() {
@@ -325,11 +324,8 @@ public class StemNuDial2e extends Decorator implements EditablePiece {
                 command = command.substring(commandPrefix.length());
                 Collection<GamePiece> pieces = GameModule.getGameModule().getGameState().getAllPieces();
 
-                Util.logToChat("about to decode this gamepiece id: " + command);
                 for (GamePiece piece : pieces) {
-                    Util.logToChat("piece id: " + piece.getId());
                     if(piece.getId().equals(command)) {
-                        Util.logToChat("found it during decode");
                         return new dialHideCommand(piece);
                     }
                 }
@@ -344,7 +340,6 @@ public class StemNuDial2e extends Decorator implements EditablePiece {
                 logger.info("Encoding DialGenerateCommand");
                 StemNuDial2e.dialHideCommand dhc = (StemNuDial2e.dialHideCommand) c;
                 try {
-                    Util.logToChat("about to encode this gamepiece id: " + pieceInCommand.getId());
                     return commandPrefix + pieceInCommand.getId();
                 } catch(Exception e) {
                     logger.error("Error encoding dialHideCommand", e);
