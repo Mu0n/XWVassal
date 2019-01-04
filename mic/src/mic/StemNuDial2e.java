@@ -320,8 +320,12 @@ public class StemNuDial2e extends Decorator implements EditablePiece {
                 command = command.substring(commandPrefix.length());
                 List<GamePiece> pieces = GameModule.getGameModule().getAllDescendantComponentsOf(GamePiece.class);
 
+                Util.logToChat("about to decode this gamepiece id: " + command);
                 for (GamePiece piece : pieces) {
-                    if(piece.getId() == command) return new dialHideCommand(piece);
+                    if(piece.getId() == command) {
+                        Util.logToChat("found it during decode");
+                        return new dialHideCommand(piece);
+                    }
                 }
 
                 return null;
@@ -334,6 +338,7 @@ public class StemNuDial2e extends Decorator implements EditablePiece {
                 logger.info("Encoding DialGenerateCommand");
                 StemNuDial2e.dialHideCommand dhc = (StemNuDial2e.dialHideCommand) c;
                 try {
+                    Util.logToChat("about to encode this gamepiece id: " + pieceInCommand.getId());
                     return commandPrefix + pieceInCommand.getId();
                 } catch(Exception e) {
                     logger.error("Error encoding dialHideCommand", e);
