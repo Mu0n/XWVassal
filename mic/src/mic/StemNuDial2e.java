@@ -2,6 +2,7 @@ package mic;
 
 import VASSAL.build.GameModule;
 import VASSAL.build.module.documentation.HelpFile;
+import VASSAL.command.ChangeTracker;
 import VASSAL.command.Command;
 import VASSAL.command.CommandEncoder;
 import VASSAL.counters.*;
@@ -68,6 +69,9 @@ public class StemNuDial2e extends Decorator implements EditablePiece {
         boolean hasSomethingHappened = false;
 
         Command result = piece.keyEvent(stroke);
+
+        ChangeTracker changeTracker = new ChangeTracker(this);
+         result.append(changeTracker.getChangeCommand());
 
         if (getOwnerOfThisDial() == Util.getCurrentPlayer().getSide()) {
             KeyStroke checkForCtrlRReleased = KeyStroke.getKeyStroke(KeyEvent.VK_R, KeyEvent.CTRL_DOWN_MASK, true);
