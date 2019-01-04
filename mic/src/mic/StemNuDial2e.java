@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -318,10 +319,11 @@ public class StemNuDial2e extends Decorator implements EditablePiece {
                 logger.info("Decoding DialGenerateCommand");
 
                 command = command.substring(commandPrefix.length());
-                List<GamePiece> pieces = GameModule.getGameModule().getAllDescendantComponentsOf(GamePiece.class);
+                Collection<GamePiece> pieces = GameModule.getGameModule().getGameState().getAllPieces();
 
                 Util.logToChat("about to decode this gamepiece id: " + command);
                 for (GamePiece piece : pieces) {
+                    Util.logToChat("piece id: " + piece.getId());
                     if(piece.getId().equals(command)) {
                         Util.logToChat("found it during decode");
                         return new dialHideCommand(piece);
