@@ -126,7 +126,7 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
 
                 } else { // about to hide the dial
                     isHidden = true;
-                    dialHideCommand hideNow = new dialHideCommand(piece);
+                    dialHideCommand hideNow = new dialHideCommand(piece, this);
                     result.append(hideNow);
                     hideNow.execute();
                 }
