@@ -81,6 +81,9 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
             KeyStroke checkForCommaReleased = KeyStroke.getKeyStroke(KeyEvent.VK_COMMA, 0, true);
             KeyStroke checkForPeriodReleased = KeyStroke.getKeyStroke(KeyEvent.VK_PERIOD, 0, true);
 
+            boolean goingLeft = checkForCommaReleased.equals(stroke);
+            boolean goingRight = checkForPeriodReleased.equals(stroke);
+
             isHiddenPropCheck = piece.getProperty("isHidden").toString();
 
             if(checkForCtrlRReleased.equals(stroke)) {
@@ -133,11 +136,10 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
                     hideNow.execute();
                 }
             }
-            else if(checkForCommaReleased.equals(stroke)){ //rotate left, move--
+            else if(goingLeft || goingRight){ //rotate left, move-- or rotate right, move++
                 hasSomethingHappened = true;
 
-
-                // Fetch the string of movement from the dynamic property and chop it up in an array
+// Fetch the string of movement from the dynamic property and chop it up in an array
                 String dialString = piece.getProperty("dialstring").toString();
                 String[] values = dialString.split(",");
                 int nbOfMoves = values.length;
@@ -146,10 +148,17 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
                 String savedMoveString = piece.getProperty("selectedMove").toString();
                 int savedMoveStringInt = Integer.parseInt(savedMoveString);
 
-                // Decrement the movement index and reinject the saved move property
-                if(savedMoveStringInt == 1) savedMoveStringInt = nbOfMoves; //cycle around
-                else savedMoveStringInt--;
-                savedMoveString = ""+savedMoveStringInt;
+                if(goingLeft) {
+                    // Decrement the movement index and reinject the saved move property
+                    if (savedMoveStringInt == 1) savedMoveStringInt = nbOfMoves; //cycle around
+                    else savedMoveStringInt--;
+                    savedMoveString = "" + savedMoveStringInt;
+                } else if(goingRight){
+                    if(savedMoveStringInt == nbOfMoves) savedMoveStringInt = 1;
+                    else savedMoveStringInt++;
+                    savedMoveString = "" + savedMoveStringInt;
+                }
+
                 piece.setProperty("selectedMove", savedMoveString);
 
                 // Fetch the new move based on the new lowered index
@@ -181,60 +190,11 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
                 Util.logToChatWithoutUndo("moveWOspeed " + moveWithoutSpeed + " moveImage " + moveImage);
                 Util.logToChatWithoutUndo(stateString.toString());
 
-                if(piece.getProperty("isHidden").equals(true)){
-
-                    chosenMoveEmb.mySetType(stateString.toString());
-                    chosenMoveEmb.setValue(1);
-                    chosenSpeedEmb.setValue(newMoveSpeed);
-                } else {
-
+                if(piece.getProperty("isHidden").equals("true")){ //encode only the modified selected move property
+                    dialRotateCommand(piece, false, newMove);
+                } else { //dial is revealed, show everything to all
+                    dialRotateCommand(piece, true, stateString.toString(), newMoveSpeed);
                 }
-
-
-            } else if(checkForPeriodReleased.equals(stroke)){
-                hasSomethingHappened = true;
-
-                // Fetch the string of movement from the dynamic property and chop it up in an array
-                String dialString = piece.getProperty("dialstring").toString();
-                String[] values = dialString.split(",");
-                int nbOfMoves = values.length;
-
-                // Fetch the saved move from the dynamic property of the dial piece
-                String savedMoveString = piece.getProperty("selectedMove").toString();
-                int savedMoveStringInt = Integer.parseInt(savedMoveString);
-
-                // Increment the movement index and reinject the saved move property
-                if(savedMoveStringInt == nbOfMoves) savedMoveStringInt = 1; //cycle around
-                else savedMoveStringInt++;
-                savedMoveString = ""+savedMoveStringInt;
-                piece.setProperty("selectedMove", savedMoveString);
-
-                // Fetch the new move based on the new lowered index
-                String newMove = values[savedMoveStringInt-1]; //-1 because if a dial has moves from 1-15, the indices must be 0-14
-                int newRawSpeed = getRawSpeedFromMoveCode(newMove);
-                int newMoveSpeed = getLayerFromMoveCode(newMove);
-
-                // Make the speed appear (by correctly chosing among the 6 existing layers
-                Embellishment chosenSpeedEmb = (Embellishment)Util.getEmbellishment(piece, "Layer - Chosen Speed");
-                chosenSpeedEmb.setValue(newMoveSpeed);
-
-                //Prepare to modify the chosen move layer
-                Embellishment chosenMoveEmb = (Embellishment)Util.getEmbellishment(piece,"Layer - Chosen Move");
-                StringBuilder stateString = new StringBuilder();
-                StringBuilder moveNamesString = new StringBuilder();
-                stateString.append("emb2;Activate;2;;;2;;;2;;;;1;false;0;-24;,");
-                String moveWithoutSpeed = getMoveCodeWithoutSpeed(newMove);
-                String moveImage = StemDial2e.dialHeadingImages.get(moveWithoutSpeed);
-
-                String moveName = StemDial2e.maneuverNames.get(getMoveRaw(newMove));
-                moveNamesString.append(moveName).append(" ").append(newRawSpeed);
-                // add in move names
-                stateString.append(moveImage);
-                stateString.append(";empty,"+moveNamesString);
-                stateString.append(";false;Chosen Move;;;false;;1;1;true;65,130");
-
-                chosenMoveEmb.mySetType(stateString.toString());
-                chosenMoveEmb.setValue(1);
             }
         } else { // get scolded for not owning the dial that was manipulated
             Util.logToChatWithoutUndo("You (player " + Util.getCurrentPlayer().getSide() + ") are not the owner of this dial, player " + getOwnerOfThisDial() + " is.");
@@ -243,14 +203,13 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
         return piece.keyEvent(stroke);
     }
 
-    public int getLayerFromMoveCode(String code){
-        return Integer.parseInt(code.substring(0,1)) + 1;
-    }
 
     public int getRawSpeedFromMoveCode(String code){
         return Integer.parseInt(code.substring(0,1));
     }
-
+    public int getLayerFromMoveCode(String code){
+        return Integer.parseInt(code.substring(0,1)) + 1;
+    }
     public String getMoveCodeWithoutSpeed(String code){
         return code.substring(1,3);
     }
@@ -258,6 +217,9 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
     public String getMoveRaw(String code){
         return code.substring(1,2);
     }
+
+
+
     public int getOwnerOfThisDial(){
         GamePiece dialPiece = (GamePiece)this.piece;
         String ownerStr = dialPiece.getProperty("owner").toString();
@@ -436,6 +398,84 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
         }
     }
 
+
+
+
+    public static class dialRotateCommand extends Command {
+        static GamePiece pieceInCommand;
+        boolean goingPublic;
+        String newMove;
+
+        dialRotateCommand(GamePiece piece, boolean wantPublicShowing, String selectedMove) {
+            pieceInCommand = piece;
+            goingPublic = wantPublicShowing;
+            newMove = selectedMove;
+        }
+
+        protected void executeCommand() {
+            if(goingPublic == false){
+
+            } else {
+
+            }
+            final VASSAL.build.module.Map map = pieceInCommand.getMap();
+            map.repaint();
+        }
+
+
+        protected Command myUndoCommand() {
+            return null;
+        }
+
+        //the following class is used to send the info to the other player whenever a dial generation command is issued, so it can be done locally on all machines playing/watching the game
+        //only the ship XWS string is sent
+        public static class Dial2eRotateEncoder implements CommandEncoder {
+            private static final Logger logger = LoggerFactory.getLogger(StemNuDial2e.class);
+            private static final String commandPrefix = "Dial2eHideEncoder=";
+
+            public static StemNuDial2e.dialRotateCommand.Dial2eRotateEncoder INSTANCE = new StemNuDial2e.dialRotateCommand.Dial2eRotateEncoder();
+
+            public Command decode(String command) {
+                if (command == null || !command.contains(commandPrefix)) {
+                    return null;
+                }
+                logger.info("Decoding dialRotateCommand");
+
+                command = command.substring(commandPrefix.length());
+
+                try{
+                    Collection<GamePiece> pieces = GameModule.getGameModule().getGameState().getAllPieces();
+
+                    for (GamePiece piece : pieces) {
+                        if(piece.getId().equals(command)) {
+                            Util.logToChat("dialRotateCommand encode id=" + command);
+                            return new dialRotateCommand(piece);
+                        }
+                    }
+                }catch(Exception e){
+                    return null;
+                }
+
+
+                return null;
+            }
+
+            public String encode(Command c) {
+                if (!(c instanceof StemNuDial2e.dialRotateCommand)) {
+                    return null;
+                }
+                logger.info("Encoding dialRotateCommand");
+                StemNuDial2e.dialRotateCommand dhc = (StemNuDial2e.dialRotateCommand) c;
+                try {
+                    Util.logToChat("dialRotateCommand encode id=" + pieceInCommand.getId());
+                    return commandPrefix + pieceInCommand.getId();
+                } catch(Exception e) {
+                    logger.error("Error encoding dialRotateCommand", e);
+                    return null;
+                }
+            }
+        }
+    }
 
 
 
