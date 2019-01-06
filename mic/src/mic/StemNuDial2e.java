@@ -398,25 +398,31 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
         }
     }
 
-
-
-
     public static class dialRotateCommand extends Command {
         static GamePiece pieceInCommand;
-        boolean goingPublic;
-        String newMove;
+        public static boolean goingPublic;
 
-        dialRotateCommand(GamePiece piece, boolean wantPublicShowing, String selectedMove) {
+        static String moveDef;
+        static String speedLayer;
+
+        dialRotateCommand(GamePiece piece, boolean wantPublicShowing, String selectedMove, String requiredSpeedLayer) {
             pieceInCommand = piece;
             goingPublic = wantPublicShowing;
-            newMove = selectedMove;
+            moveDef = selectedMove;
+            speedLayer = requiredSpeedLayer;
         }
 
         protected void executeCommand() {
             if(goingPublic == false){
 
             } else {
-
+                Embellishment chosenMoveEmb = (Embellishment)Util.getEmbellishment(pieceInCommand,"Layer - Chosen Move");
+                Embellishment chosenSpeedEmb = (Embellishment)Util.getEmbellishment(pieceInCommand, "Layer - Chosen Speed");
+                chosenMoveEmb.mySetType(moveDef);
+                chosenSpeedEmb.setValue(Integer.parseInt(speedLayer));
+                pieceInCommand.setProperty("isHidden", "false");
+                final VASSAL.build.module.Map map = pieceInCommand.getMap();
+                map.repaint();
             }
             final VASSAL.build.module.Map map = pieceInCommand.getMap();
             map.repaint();
@@ -432,27 +438,29 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
         public static class Dial2eRotateEncoder implements CommandEncoder {
             private static final Logger logger = LoggerFactory.getLogger(StemNuDial2e.class);
             private static final String commandPrefix = "Dial2eHideEncoder=";
+            private static final String itemDelim = "\t";
 
             public static StemNuDial2e.dialRotateCommand.Dial2eRotateEncoder INSTANCE = new StemNuDial2e.dialRotateCommand.Dial2eRotateEncoder();
 
-            public Command decode(String command) {
-                if (command == null || !command.contains(commandPrefix)) {
+            public Command decode(String command){
+                if(command == null || !command.contains(commandPrefix)) {
                     return null;
                 }
-                logger.info("Decoding dialRotateCommand");
 
                 command = command.substring(commandPrefix.length());
+                String[] parts = command.split(itemDelim);
 
                 try{
                     Collection<GamePiece> pieces = GameModule.getGameModule().getGameState().getAllPieces();
-
                     for (GamePiece piece : pieces) {
-                        if(piece.getId().equals(command)) {
-                            Util.logToChat("dialRotateCommand encode id=" + command);
-                            return new dialRotateCommand(piece);
+                        if(piece.getId().equals(parts[0])) {
+                            Util.logToChatWithoutUndo("DialReveal decoder moveDef=" + moveDef + " speedLayer=" + speedLayer);
+                            return new dialRevealCommand(piece, parts[1], parts[2]);
                         }
                     }
+
                 }catch(Exception e){
+
                     return null;
                 }
 
@@ -460,20 +468,20 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
                 return null;
             }
 
-            public String encode(Command c) {
-                if (!(c instanceof StemNuDial2e.dialRotateCommand)) {
+            public String encode(Command c){
+                if (!(c instanceof StemNuDial2e.dialRevealCommand)) {
                     return null;
                 }
-                logger.info("Encoding dialRotateCommand");
-                StemNuDial2e.dialRotateCommand dhc = (StemNuDial2e.dialRotateCommand) c;
-                try {
-                    Util.logToChat("dialRotateCommand encode id=" + pieceInCommand.getId());
-                    return commandPrefix + pieceInCommand.getId();
-                } catch(Exception e) {
-                    logger.error("Error encoding dialRotateCommand", e);
+                try{
+                    Util.logToChatWithoutUndo("DialReveal encoder moveDef=" + moveDef + " speedLayer=" + speedLayer);
+                    return commandPrefix + Joiner.on(itemDelim).join(pieceInCommand.getId(), moveDef,speedLayer);
+                }catch(Exception e) {
+                    logger.error("Error encoding dialRevealCommand", e);
                     return null;
                 }
+
             }
+        }
         }
     }
 
