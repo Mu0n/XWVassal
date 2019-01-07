@@ -564,7 +564,7 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
                 }
                 try{
 
-                    return commandPrefix + Joiner.on(itemDelim).join(pieceInCommand.getId(), moveDef, ""+showEverything, stateString, moveSpeedLayerString,);
+                    return commandPrefix + Joiner.on(itemDelim).join(pieceInCommand.getId(), moveDef, ""+showEverything, stateString, moveSpeedLayerString);
                 }catch(Exception e) {
                     logger.error("Error encoding Dial2eRotateEncoder", e);
                     return null;
