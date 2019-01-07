@@ -495,7 +495,6 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
         static String stateString;
         static String moveSpeedLayerString;
 
-//piece, moveDef, true, stateString.toString(), moveSpeedLayerString
         dialRotateCommand(GamePiece piece, String selectedMove, boolean wantShowEverything, String reqStateString, String reqMoveSpeedLayerString) {
             pieceInCommand = piece;
             moveDef = selectedMove;
@@ -548,12 +547,6 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
                     for (GamePiece piece : pieces) {
                         if(piece.getId().equals(parts[0])) {
 
-                            Util.logToChat("parts[1] " + parts[1]);
-                            Util.logToChat("parts[2] " + Boolean.parseBoolean(parts[2]));
-                            Util.logToChat("parts[3] " + parts[3]);
-                            Util.logToChat("parts[4] " + parts[4]);
-
-
                             return new dialRotateCommand(piece, parts[1], Boolean.parseBoolean(parts[2]), parts[3], parts[4]);
                         }
                     }
@@ -570,12 +563,8 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
                     return null;
                 }
                 try{
-                    Util.logToChat("moveDef " + moveDef);
-                    Util.logToChat("showEver " + showEverything);
-                    Util.logToChat("moveSpeedLayerString " + moveSpeedLayerString);
-                    Util.logToChat("stateString " + stateString);
 
-                    return commandPrefix + Joiner.on(itemDelim).join(pieceInCommand.getId(), moveDef, ""+showEverything, moveSpeedLayerString, stateString);
+                    return commandPrefix + Joiner.on(itemDelim).join(pieceInCommand.getId(), moveDef, ""+showEverything, stateString, moveSpeedLayerString,);
                 }catch(Exception e) {
                     logger.error("Error encoding Dial2eRotateEncoder", e);
                     return null;
