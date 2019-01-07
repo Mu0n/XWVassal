@@ -334,18 +334,16 @@ public class GamePieceGenerator2e
         dial = Util.newPiece(nuDialSlot);
 
         // execute the command
-        StemDial2e.DialGenerateCommand myDialGen = new StemDial2e.DialGenerateCommand(ship.getShipData().getDial(), ship.getShipData().getName(), dial, faction, owner.getSide());
+        StemDial2e.DialGenerateCommand myDialGen = new StemDial2e.DialGenerateCommand(ship.getShipData().getDial(), ship.getShipData().getName(), dial, Canonicalizer.getCleanedName(faction), owner.getSide());
 
         myDialGen.execute();
 
         dial.setProperty("owner", owner.getSide());
-        Util.logToChat("dial string is " + ship.getShipData().getDial().toString());
-        //dial.setProperty("dialstring", ship.getShipData().getDial().toString());
 
         //is this even needed
         //dial.setProperty("ShipXwsId",Canonicalizer.getCleanedName(shipTag));
-        dial.setProperty("Pilot Name", getDisplayShipName(ship));
-        dial.setProperty("Craft ID #", getDisplayPilotName(ship, ship.getShipNumber()));
+        dial.setProperty("Pilot Name", ship.getShipData().getName());
+        dial.setProperty("Craft ID #", ship.getPilotData().getName() + " " + ship.getShipNumber());
 
         return dial;
     }
