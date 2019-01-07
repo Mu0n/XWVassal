@@ -499,6 +499,8 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
 
         protected void executeCommand() {
                 pieceInCommand.setProperty("selectedMove", moveDef);
+            final VASSAL.build.module.Map map = pieceInCommand.getMap();
+            map.repaint();
         }
 
 
