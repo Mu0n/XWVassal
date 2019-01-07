@@ -343,7 +343,7 @@ public class GamePieceGenerator2e
         //is this even needed
         //dial.setProperty("ShipXwsId",Canonicalizer.getCleanedName(shipTag));
         dial.setProperty("Pilot Name", ship.getShipData().getName());
-        dial.setProperty("Craft ID #", ship.getPilotData().getName() + " " + ship.getShipNumber());
+        dial.setProperty("Craft ID #", ship.getPilotData().getName() + " " + (ship.getShipNumber()==null?"":ship.getShipNumber()));
 
         return dial;
     }

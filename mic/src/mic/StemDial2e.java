@@ -392,7 +392,7 @@ public class StemDial2e extends Decorator implements EditablePiece {
             chosenMoveEmb.setValue(1);
 
             fullDialEmb.mySetType(basicPieceString.toString());
-            ringEmb.mySetType(ringEmb.toString());
+            ringEmb.mySetType(factionRingString.toString());
 
         }
 
