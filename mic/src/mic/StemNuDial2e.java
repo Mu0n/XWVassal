@@ -209,13 +209,14 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
 
                 //Get the movement heading layer
                 String moveDef = getNewMoveDefFromScratch(moveMod);
+                //get the speed layer to show
+                String moveSpeedLayerString = getLayerFromScratch(moveMod);
+                Integer newMoveSpeed = Integer.parseInt(moveSpeedLayerString);
 
                 if(piece.getProperty("isHidden").equals("true")){ //encode only the modified selected move property
-                    //get the speed layer to show
-                    String moveSpeedLayerString = getLayerFromScratch(moveMod);
-                    Integer newMoveSpeed = Integer.parseInt(moveSpeedLayerString);
 
-                    dialRotateCommand drc = new dialRotateCommand(piece, moveDef);
+
+                    dialRotateCommand drc = new dialRotateCommand(piece, moveDef, false, stateString.toString(), moveSpeedLayerString);
                     drc.execute();
 
                     Embellishment chosenMoveEmb = (Embellishment)Util.getEmbellishment(piece,"Layer - Chosen Move");
@@ -225,7 +226,7 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
                     chosenSpeedEmb.setValue(newMoveSpeed);
                 } else if(piece.getProperty("isHidden").equals("false")) { //dial is revealed, show everything to all
 
-                    dialRotateCommand drc = new dialRotateCommand(piece, moveDef);
+                    dialRotateCommand drc = new dialRotateCommand(piece, moveDef, true, stateString.toString(), moveSpeedLayerString);
                     result.append(drc);
                     drc.execute();
                 }
@@ -489,18 +490,35 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
 
     public static class dialRotateCommand extends Command {
         static GamePiece pieceInCommand;
-
         static String moveDef;
+        static boolean showEverything = false;
+        static String stateString;
+        static String moveSpeedLayerString;
 
-        dialRotateCommand(GamePiece piece, String selectedMove) {
+//piece, moveDef, true, stateString.toString(), moveSpeedLayerString
+        dialRotateCommand(GamePiece piece, String selectedMove, boolean wantShowEverything, String reqStateString, String reqMoveSpeedLayerString) {
             pieceInCommand = piece;
             moveDef = selectedMove;
+            showEverything = wantShowEverything;
+            stateString = reqStateString;
+            moveSpeedLayerString = reqMoveSpeedLayerString;
         }
 
         protected void executeCommand() {
                 pieceInCommand.setProperty("selectedMove", moveDef);
-            final VASSAL.build.module.Map map = pieceInCommand.getMap();
-            map.repaint();
+
+                if(showEverything == true){
+                    Embellishment chosenMoveEmb = (Embellishment)Util.getEmbellishment(pieceInCommand,"Layer - Chosen Move");
+                    Embellishment chosenSpeedEmb = (Embellishment)Util.getEmbellishment(pieceInCommand, "Layer - Chosen Speed");
+
+                    chosenMoveEmb.mySetType(stateString);
+                    chosenMoveEmb.setValue(1);
+                    chosenSpeedEmb.setValue(Integer.parseInt(moveSpeedLayerString));
+
+                    final VASSAL.build.module.Map map = pieceInCommand.getMap();
+                    map.repaint();
+                }
+
         }
 
 
@@ -529,7 +547,7 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
                     Collection<GamePiece> pieces = GameModule.getGameModule().getGameState().getAllPieces();
                     for (GamePiece piece : pieces) {
                         if(piece.getId().equals(parts[0])) {
-                            return new dialRotateCommand(piece, parts[1]);
+                            return new dialRotateCommand(piece, parts[1], Boolean.parseBoolean(parts[2]), parts[3], parts[4]);
                         }
                     }
 
@@ -545,12 +563,11 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
                     return null;
                 }
                 try{
-                    return commandPrefix + Joiner.on(itemDelim).join(pieceInCommand.getId(), moveDef);
+                    return commandPrefix + Joiner.on(itemDelim).join(pieceInCommand.getId(), moveDef, showEverything, moveSpeedLayerString, stateString);
                 }catch(Exception e) {
                     logger.error("Error encoding Dial2eRotateEncoder", e);
                     return null;
                 }
-
             }
         }
 
