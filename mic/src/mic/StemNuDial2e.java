@@ -195,9 +195,6 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
                     Integer newMoveSpeed = Integer.parseInt(moveSpeedLayerString);
 
                     chosenSpeedEmb.setValue(newMoveSpeed);
-
-                    final VASSAL.build.module.Map map = piece.getMap();
-                    map.repaint();
                 }
             }
             else if(goingLeft || goingRight){ //rotate left, move-- or rotate right, move++
@@ -214,7 +211,6 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
                 String moveDef = getNewMoveDefFromScratch(moveMod);
 
                 if(piece.getProperty("isHidden").equals("true")){ //encode only the modified selected move property
-
                     //get the speed layer to show
                     String moveSpeedLayerString = getLayerFromScratch(moveMod);
                     Integer newMoveSpeed = Integer.parseInt(moveSpeedLayerString);
@@ -227,9 +223,6 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
                     chosenMoveEmb.mySetType(stateString.toString());
                     chosenMoveEmb.setValue(1);
                     chosenSpeedEmb.setValue(newMoveSpeed);
-                    final VASSAL.build.module.Map map = piece.getMap();
-                    map.repaint();
-
                 } else if(piece.getProperty("isHidden").equals("false")) { //dial is revealed, show everything to all
 
                     dialRotateCommand drc = new dialRotateCommand(piece, moveDef);
@@ -240,7 +233,11 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
         } else { // get scolded for not owning the dial that was manipulated
             Util.logToChatWithoutUndo("You (player " + Util.getCurrentPlayer().getSide() + ") are not the owner of this dial, player " + getOwnerOfThisDial() + " is.");
         }
-        if(hasSomethingHappened) return result;
+        if(hasSomethingHappened) {
+            final VASSAL.build.module.Map map = piece.getMap();
+            map.repaint();
+            return result;
+        }
         return piece.keyEvent(stroke);
     }
 
