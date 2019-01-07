@@ -163,6 +163,9 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
                     Util.logToChat("Dial was hidden , about to reveal");
                     dialRevealCommand revealNow = new dialRevealCommand(piece, stateString.toString(), moveSpeedLayerString);
                     result.append(revealNow);
+                    Command logThis = Util.logToChatCommand("* - "+ Util.getCurrentPlayer().getName()+ " reveals the dial for "
+                            + piece.getProperty("Craft ID #").toString() + " (" + piece.getProperty("Pilot Name").toString() + ") *");
+                    result.append(logThis);
                     revealNow.execute();
 
                 } else if(isHiddenPropCheck.equals("false")){ // about to hide the dial
