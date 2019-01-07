@@ -196,6 +196,9 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
                     Integer newMoveSpeed = Integer.parseInt(moveSpeedLayerString);
 
                     chosenSpeedEmb.setValue(newMoveSpeed);
+
+                    final VASSAL.build.module.Map map = piece.getMap();
+                    map.repaint();
                 }
             }
             else if(goingLeft || goingRight){ //rotate left, move-- or rotate right, move++
@@ -425,8 +428,10 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
         protected void executeCommand() {
             Embellishment chosenMoveEmb = (Embellishment)Util.getEmbellishment(pieceInCommand,"Layer - Chosen Move");
             Embellishment chosenSpeedEmb = (Embellishment)Util.getEmbellishment(pieceInCommand, "Layer - Chosen Speed");
+            Embellishment centralHideEmb = (Embellishment)Util.getEmbellishment(pieceInCommand, "Layer - Central Hide");
             chosenMoveEmb.setValue(0);
             chosenSpeedEmb.setValue(0);
+            centralHideEmb.setValue(1);
             pieceInCommand.setProperty("isHidden", "true");
             final VASSAL.build.module.Map map = pieceInCommand.getMap();
             map.repaint();
