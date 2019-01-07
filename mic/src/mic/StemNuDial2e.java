@@ -179,6 +179,8 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
                     //Stuff outside of a command, should only show for owner.
                     Embellishment chosenMoveEmb = (Embellishment)Util.getEmbellishment(piece,"Layer - Chosen Move");
                     Embellishment chosenSpeedEmb = (Embellishment)Util.getEmbellishment(piece, "Layer - Chosen Speed");
+                    Embellishment sideHideEmb = (Embellishment)Util.getEmbellishment(piece,"Layer - Side Hide");
+                    Embellishment centralHideEmb = (Embellishment)Util.getEmbellishment(piece, "Layer - Central Hide");
 
                     //Construct the next build string
                     StringBuilder stateString = new StringBuilder();
@@ -186,6 +188,8 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
 
                     chosenMoveEmb.mySetType(stateString.toString());
                     chosenMoveEmb.setValue(1);
+                    sideHideEmb.setValue(1);
+                    centralHideEmb.setValue(0);
 
                     //get the speed layer to show
                     String moveSpeedLayerString = getLayerFromScratch(0);
@@ -348,8 +352,12 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
         protected void executeCommand() {
             Embellishment chosenMoveEmb = (Embellishment)Util.getEmbellishment(pieceInCommand,"Layer - Chosen Move");
             Embellishment chosenSpeedEmb = (Embellishment)Util.getEmbellishment(pieceInCommand, "Layer - Chosen Speed");
+            Embellishment sideHideEmb = (Embellishment)Util.getEmbellishment(pieceInCommand,"Layer - Side Hide");
+            Embellishment centralHideEmb = (Embellishment)Util.getEmbellishment(pieceInCommand, "Layer - Central Hide");
             chosenMoveEmb.mySetType(moveDef);
             chosenMoveEmb.setValue(1);
+            sideHideEmb.setValue(0);
+            centralHideEmb.setValue(0);
             chosenSpeedEmb.setValue(Integer.parseInt(speedLayer));
             pieceInCommand.setProperty("isHidden", "false");
             final VASSAL.build.module.Map map = pieceInCommand.getMap();
