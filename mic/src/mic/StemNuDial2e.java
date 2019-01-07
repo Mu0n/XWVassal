@@ -138,7 +138,6 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
 
         if (getOwnerOfThisDial() == Util.getCurrentPlayer().getSide()) {
             KeyStroke checkForCtrlRReleased = KeyStroke.getKeyStroke(KeyEvent.VK_R, KeyEvent.CTRL_DOWN_MASK, true);
-            KeyStroke checkForCtrlRPressed = KeyStroke.getKeyStroke(KeyEvent.VK_R, KeyEvent.CTRL_DOWN_MASK, false);
             KeyStroke checkForCommaReleased = KeyStroke.getKeyStroke(KeyEvent.VK_COMMA, 0, true);
             KeyStroke checkForPeriodReleased = KeyStroke.getKeyStroke(KeyEvent.VK_PERIOD, 0, true);
 
@@ -214,13 +213,13 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
                 //Get the movement heading layer
                 String moveDef = getNewMoveDefFromScratch(moveMod);
 
-                //get the speed layer to show
-                String moveSpeedLayerString = getLayerFromScratch(moveMod);
-                Integer newMoveSpeed = Integer.parseInt(moveSpeedLayerString);
-
                 if(piece.getProperty("isHidden").equals("true")){ //encode only the modified selected move property
 
-                    dialRotateCommand drc = new dialRotateCommand(piece, false, moveDef, newMoveSpeed, stateString.toString());
+                    //get the speed layer to show
+                    String moveSpeedLayerString = getLayerFromScratch(moveMod);
+                    Integer newMoveSpeed = Integer.parseInt(moveSpeedLayerString);
+
+                    dialRotateCommand drc = new dialRotateCommand(piece, moveDef);
                     drc.execute();
 
                     Embellishment chosenMoveEmb = (Embellishment)Util.getEmbellishment(piece,"Layer - Chosen Move");
@@ -233,7 +232,7 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
 
                 } else if(piece.getProperty("isHidden").equals("false")) { //dial is revealed, show everything to all
 
-                    dialRotateCommand drc = new dialRotateCommand(piece, true, moveDef, newMoveSpeed, stateString.toString());
+                    dialRotateCommand drc = new dialRotateCommand(piece, moveDef);
                     result.append(drc);
                     drc.execute();
                 }
@@ -493,34 +492,16 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
 
     public static class dialRotateCommand extends Command {
         static GamePiece pieceInCommand;
-        public static boolean goingPublic;
 
         static String moveDef;
-        static Integer speedLayer;
-        static String stateStringDef;
 
-        dialRotateCommand(GamePiece piece, boolean wantPublicShowing, String selectedMove, Integer requiredSpeedLayer, String reqStateString) {
+        dialRotateCommand(GamePiece piece, String selectedMove) {
             pieceInCommand = piece;
-            goingPublic = wantPublicShowing;
             moveDef = selectedMove;
-            speedLayer = requiredSpeedLayer;
-            stateStringDef = reqStateString;
         }
 
         protected void executeCommand() {
-            if(goingPublic == false){
                 pieceInCommand.setProperty("selectedMove", moveDef);
-            } else {
-                Embellishment chosenMoveEmb = (Embellishment)Util.getEmbellishment(pieceInCommand,"Layer - Chosen Move");
-                Embellishment chosenSpeedEmb = (Embellishment)Util.getEmbellishment(pieceInCommand, "Layer - Chosen Speed");
-                chosenMoveEmb.mySetType(stateStringDef);
-                chosenMoveEmb.setValue(1);
-                chosenSpeedEmb.setValue(speedLayer);
-
-                pieceInCommand.setProperty("selectedMove", moveDef);
-                final VASSAL.build.module.Map map = pieceInCommand.getMap();
-                map.repaint();
-            }
         }
 
 
@@ -549,19 +530,14 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
                     Collection<GamePiece> pieces = GameModule.getGameModule().getGameState().getAllPieces();
                     for (GamePiece piece : pieces) {
                         if(piece.getId().equals(parts[0])) {
-                            Util.logToChatWithoutUndo("Dial2eRotate decoder moveDef=" + moveDef + " speedLayer=" + speedLayer);
-                            return new dialRotateCommand(piece, goingPublic, parts[1], Integer.parseInt(parts[2]), parts[3]);
+                            return new dialRotateCommand(piece, parts[1]);
                         }
                     }
-
-                    // dialRotateCommand(GamePiece piece, boolean wantPublicShowing, String selectedMove, Integer requiredSpeedLayer)
 
                 }catch(Exception e){
                     logger.error("Error decoding Dial2eRotateEncoder", e);
                     return null;
                 }
-
-
                 return null;
             }
 
@@ -570,8 +546,7 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
                     return null;
                 }
                 try{
-                    Util.logToChatWithoutUndo("Dial2eRotate encoder moveDef=" + moveDef + " speedLayer=" + speedLayer);
-                    return commandPrefix + Joiner.on(itemDelim).join(pieceInCommand.getId(), moveDef, speedLayer.toString(), stateStringDef);
+                    return commandPrefix + Joiner.on(itemDelim).join(pieceInCommand.getId(), moveDef);
                 }catch(Exception e) {
                     logger.error("Error encoding Dial2eRotateEncoder", e);
                     return null;
