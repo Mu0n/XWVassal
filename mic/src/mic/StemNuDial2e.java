@@ -403,7 +403,6 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
                     return null;
                 }
                 try{
-                    Util.logToChatWithoutUndo("DialReveal encoder moveDef=" + moveDef + " speedLayer=" + speedLayer);
                     return commandPrefix + Joiner.on(itemDelim).join(pieceInCommand.getId(), moveDef,speedLayer);
                 }catch(Exception e) {
                     logger.error("Error encoding dialRevealCommand", e);
