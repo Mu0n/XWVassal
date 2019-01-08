@@ -368,7 +368,7 @@ public class StemDial2e extends Decorator implements EditablePiece {
             Embellishment fullDialEmb = (Embellishment)Util.getEmbellishment(piece, "Layer - Front Plate");
             Embellishment ringEmb = (Embellishment)Util.getEmbellishment(piece, "Layer - Faction Ring");
 
-            factionRingString.append("emb2;;2;;;2;;;2;;;;;false;0;-6;DialSelect_");
+            factionRingString.append("emb2;;2;;;2;;;2;;;;;false;0;0;DialSelect_");
             factionRingString.append(faction);
             factionRingString.append(".png;;false;Faction Ring;;;false;;1;1;true;;;");
             chosenSpeedEmb.setValue(Integer.parseInt(speed)+1);
