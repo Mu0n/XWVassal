@@ -17,6 +17,9 @@ public class XWCounterFactory extends BasicCommandEncoder {
         GameModule.getGameModule().addCommandEncoder(AutoRangeFinder.FOVisualization.AutorangeVisualizationEncoder.INSTANCE);
         GameModule.getGameModule().addCommandEncoder(new AutoRangeFinder.FOVisualization.FOVisualizationClearEncoder());
         GameModule.getGameModule().addCommandEncoder(new StemDial.DialGenerateCommand.DialGeneratorEncoder());
+        GameModule.getGameModule().addCommandEncoder(new StemNuDial2e.dialRevealCommand.Dial2eRevealEncoder());
+        GameModule.getGameModule().addCommandEncoder(new StemNuDial2e.dialHideCommand.Dial2eHideEncoder());
+        GameModule.getGameModule().addCommandEncoder(new StemNuDial2e.dialRotateCommand.Dial2eRotateEncoder());
     }
 
     public Decorator createDecorator(String type, GamePiece inner) {
@@ -45,6 +48,8 @@ public class XWCounterFactory extends BasicCommandEncoder {
             piece = new ReportCardText(inner);
         }else if (type.startsWith(ReportCardText2e.ID)) {
             piece = new ReportCardText2e(inner);
+        }else if (type.startsWith(StemNuDial2e.ID)) {
+            piece = new StemNuDial2e(inner);
         }else {
             piece = super.createDecorator(type, inner);
         }

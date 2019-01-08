@@ -254,8 +254,11 @@ public class GamePieceGenerator2e
         return targetPieceSlot;
     }
 
-    public static GamePiece generateDial(VassalXWSPilotPieces2e ship)
+    public static GamePiece generateDial(VassalXWSPilotPieces2e ship, Util.XWPlayerInfo owner)
     {
+
+        /*
+        // old 1.0 style of dial for 2.0 play here
         PieceSlot rebelDialSlot = null;
         PieceSlot imperialDialSlot = null;
         PieceSlot scumDialSlot = null;
@@ -264,7 +267,7 @@ public class GamePieceGenerator2e
         PieceSlot cisDialSlot = null;
         PieceSlot republicDialSlot = null;
 
-        // find the 3 slots for the auto-gen dials
+        // find the 7 slots for the auto-gen dials
         List<PieceSlot> pieceSlots = GameModule.getGameModule().getAllDescendantComponentsOf(PieceSlot.class);
 
         for (PieceSlot pieceSlot : pieceSlots) {
@@ -312,16 +315,35 @@ public class GamePieceGenerator2e
         dial = Util.newPiece(cisDialSlot);
     }
 
+*/
+
+        // new style of dial for 2.0 here
+        PieceSlot nuDialSlot = null;
+
+        List<PieceSlot> pieceSlots = GameModule.getGameModule().getAllDescendantComponentsOf(PieceSlot.class);
+
+        for (PieceSlot pieceSlot : pieceSlots) {
+            String slotName = pieceSlot.getConfigureName();
+            if (slotName.startsWith("Nu Stem2Dial") && nuDialSlot == null) {
+                nuDialSlot = pieceSlot;
+                continue;
+            }
+        }
+        String faction = ship.getShipData().getFaction();
+        GamePiece dial = null;
+        dial = Util.newPiece(nuDialSlot);
 
         // execute the command
-        StemDial2e.DialGenerateCommand myDialGen = new StemDial2e.DialGenerateCommand(ship.getShipData().getDial(), ship.getShipData().getName(), dial, faction);
+        StemDial2e.DialGenerateCommand myDialGen = new StemDial2e.DialGenerateCommand(ship.getShipData().getDial(), ship.getShipData().getName(), dial, Canonicalizer.getCleanedName(faction), owner.getSide());
 
         myDialGen.execute();
 
+        dial.setProperty("owner", owner.getSide());
+
         //is this even needed
         //dial.setProperty("ShipXwsId",Canonicalizer.getCleanedName(shipTag));
-        dial.setProperty("Pilot Name", getDisplayShipName(ship));
-        dial.setProperty("Craft ID #", getDisplayPilotName(ship, ship.getShipNumber()));
+        dial.setProperty("Pilot Name", ship.getShipData().getName());
+        dial.setProperty("Craft ID #", ship.getPilotData().getName() + " " + (ship.getShipNumber()==null?"":ship.getShipNumber()));
 
         return dial;
     }

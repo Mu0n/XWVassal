@@ -114,7 +114,7 @@ public class Util {
         }
         Command c = new Chatter.DisplayText(GameModule.getGameModule().getChatter(), msg);
         c.execute();
-        GameModule.getGameModule().sendAndLog(c);
+        //GameModule.getGameModule().sendAndLog(c);
     }
 
     public static void logToChatWithTime(String msg, Object... args) {

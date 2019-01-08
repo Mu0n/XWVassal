@@ -54,7 +54,7 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
             .put("First Order","firstorder")
             .put("Resistance","resistance")
             .put("Galactic Republic","galacticrepublic")
-            .put("CIS","cis")
+            .put("Separatist Alliance","separatistalliance")
             .build();
 
 //keepsake for this whole class' behavior inside the player window - they must be kept track so they can be removed safely later
@@ -159,13 +159,13 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
             }
         });
 
-        final JCheckBox cisCheck = new JCheckBox("CIS");
+        final JCheckBox cisCheck = new JCheckBox("Separatist Alliance");
         cisCheck.setAlignmentX(Component.LEFT_ALIGNMENT);
         cisCheck.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if(cisCheck.isSelected()) factionsWanted.add("CIS");
-                else factionsWanted.remove("CIS");
+                if(cisCheck.isSelected()) factionsWanted.add("Separatist Alliance");
+                else factionsWanted.remove("Separatist Alliance");
             }
         });
 
@@ -655,7 +655,9 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
             // Generate the Dial
             // ======================================================
 
-            GamePiece dialPiece = GamePieceGenerator2e.generateDial(ship);
+
+            XWPlayerInfo owner  = getCurrentPlayer();
+            GamePiece dialPiece = GamePieceGenerator2e.generateDial(ship, owner);
 
             int dialWidth = 0;
             try {
