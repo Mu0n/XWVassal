@@ -380,7 +380,6 @@ public class StemDial2e extends Decorator implements EditablePiece {
                 injectDialString+= moveItem;
                 if(count!=newMoveList.size()) injectDialString+=",";
             }
-            Util.logToChatWithoutUndo("injection looks like: " + injectDialString);
             piece.setProperty("dialstring",injectDialString);
 
             // chosen move embellishment looks like: emb2;Activate;2;;;2;;;2;;;;1;false;0;-24;,mFW.png;empty,move;false;Chosen Move;;;false;;1;1;true;65,130;;
