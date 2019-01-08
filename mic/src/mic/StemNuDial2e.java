@@ -149,7 +149,6 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
             if(checkForCtrlRReleased.equals(stroke)) {
                 hasSomethingHappened = true;
 
-                logToChat("isHidden property is " +isHiddenPropCheck);
                 if(isHiddenPropCheck.equals("true")) { // about to reveal the dial
 
                     //Construct the next build string
@@ -159,7 +158,6 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
                     //get the speed layer to show
                     String moveSpeedLayerString = getLayerFromScratch(0);
 
-                    Util.logToChat("Dial was hidden , about to reveal");
                     dialRevealCommand revealNow = new dialRevealCommand(piece, stateString.toString(), moveSpeedLayerString);
                     result.append(revealNow);
                     Command logThis = Util.logToChatCommand("* - "+ Util.getCurrentPlayer().getName()+ " reveals the dial for "
@@ -168,7 +166,6 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
                     revealNow.execute();
 
                 } else if(isHiddenPropCheck.equals("false")){ // about to hide the dial
-                    Util.logToChat("Dial was revealed , about to hide");
 
                     //command shown to all players
                     dialHideCommand hideNow = new dialHideCommand(piece);
@@ -213,6 +210,8 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
                 String moveSpeedLayerString = getLayerFromScratch(moveMod);
                 Integer newMoveSpeed = Integer.parseInt(moveSpeedLayerString);
 
+                if(piece.getMap().equals(VASSAL.build.module.Map.getMapById("Map0"))) logToChat("* DIAL WARNING - " + Util.getCurrentPlayer().getName() + " has rotated the " + piece.getProperty("Craft ID #").toString()
+                        + " (" + piece.getProperty("Pilot Name").toString() + ") on the map. Please use your player window to do so instead.");
                 if(piece.getProperty("isHidden").equals("true")){ //encode only the modified selected move property
 
 
@@ -386,7 +385,6 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
                     Collection<GamePiece> pieces = GameModule.getGameModule().getGameState().getAllPieces();
                     for (GamePiece piece : pieces) {
                         if(piece.getId().equals(parts[0])) {
-                            Util.logToChatWithoutUndo("DialReveal decoder moveDef=" + moveDef + " speedLayer=" + speedLayer);
                             return new dialRevealCommand(piece, parts[1], parts[2]);
                         }
                     }
@@ -459,7 +457,6 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
 
                     for (GamePiece piece : pieces) {
                         if(piece.getId().equals(command)) {
-                            Util.logToChat("DialHide encode id=" + command);
                             return new dialHideCommand(piece);
                         }
                     }
@@ -478,7 +475,6 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
                 logger.info("Encoding dialHideCommand");
                 StemNuDial2e.dialHideCommand dhc = (StemNuDial2e.dialHideCommand) c;
                 try {
-                    Util.logToChat("DialHide encode id=" + pieceInCommand.getId());
                     return commandPrefix + pieceInCommand.getId();
                 } catch(Exception e) {
                     logger.error("Error encoding dialHideCommand", e);
