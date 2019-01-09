@@ -5,8 +5,10 @@ import VASSAL.build.module.documentation.HelpFile;
 import VASSAL.command.ChangeTracker;
 import VASSAL.command.Command;
 import VASSAL.command.CommandEncoder;
+import VASSAL.configure.HotKeyConfigurer;
 import VASSAL.counters.*;
 import com.google.common.base.Joiner;
+import com.google.common.collect.ImmutableMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,6 +18,7 @@ import java.awt.event.KeyEvent;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import static mic.Util.deserializeBase64Obj;
 import static mic.Util.logToChat;
@@ -41,6 +44,14 @@ import static mic.Util.serializeToBase64;
 
 public class StemNuDial2e extends Decorator implements EditablePiece, Serializable {
     public static final String ID = "StemNuDial2e";
+
+    boolean hasGoneThroughItOnce = false;
+
+    private static Map<String, String> keyStrokeForDial = ImmutableMap.<String, String>builder()
+            .put("CTRL R", "Hide/Reveal Toggle")
+            .put("COMMA", "Rotate to previous move")
+            .put("PERIOD", "Rotate to next move")
+            .build();
 
     public StemNuDial2e()  {
         this(null);
@@ -134,7 +145,23 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
     public Command keyEvent(KeyStroke stroke) {
         boolean hasSomethingHappened = false;
         String isHiddenPropCheck ="";
+
+        if(hasGoneThroughItOnce == true)
+        {
+            hasGoneThroughItOnce =false;
+            return null;
+        }
+
+
         Command result = piece.keyEvent(stroke);
+
+
+        String hotKey = HotKeyConfigurer.getString(stroke);
+        if(keyStrokeForDial.containsKey(hotKey) == false) return null;
+
+        isHiddenPropCheck = piece.getProperty("isHidden").toString();
+
+        Util.logToChat("Before the hotkey is determined hide=" + isHiddenPropCheck);
 
         if (getOwnerOfThisDial() == Util.getCurrentPlayer().getSide()) {
             KeyStroke checkForCtrlRReleased = KeyStroke.getKeyStroke(KeyEvent.VK_R, KeyEvent.CTRL_DOWN_MASK, true);
@@ -144,7 +171,6 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
             boolean goingLeft = checkForCommaReleased.equals(stroke);
             boolean goingRight = checkForPeriodReleased.equals(stroke);
 
-            isHiddenPropCheck = piece.getProperty("isHidden").toString();
 
             if(checkForCtrlRReleased.equals(stroke)) {
                 hasSomethingHappened = true;
@@ -159,17 +185,16 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
                     String moveSpeedLayerString = getLayerFromScratch(0);
 
                     dialRevealCommand revealNow = new dialRevealCommand(piece, stateString.toString(), moveSpeedLayerString);
-                    result.append(revealNow);
-                    Command logThis = Util.logToChatCommand("* - "+ Util.getCurrentPlayer().getName()+ " reveals the dial for "
-                            + piece.getProperty("Craft ID #").toString() + " (" + piece.getProperty("Pilot Name").toString() + ") *");
-                    result.append(logThis);
+                    result = revealNow;
+                   result.append(Util.logToChatCommand("* - "+ Util.getCurrentPlayer().getName()+ " reveals the dial for "
+                            + piece.getProperty("Craft ID #").toString() + " (" + piece.getProperty("Pilot Name").toString() + ") *"));
                     revealNow.execute();
 
                 } else if(isHiddenPropCheck.equals("false")){ // about to hide the dial
 
                     //command shown to all players
                     dialHideCommand hideNow = new dialHideCommand(piece);
-                    result.append(hideNow);
+                    result = hideNow;
                     hideNow.execute();
 
                     //Stuff outside of a command, should only show for owner.
@@ -212,7 +237,7 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
 
                 if(piece.getMap().equals(VASSAL.build.module.Map.getMapById("Map0"))) logToChat("* DIAL WARNING - " + Util.getCurrentPlayer().getName() + " has rotated the " + piece.getProperty("Craft ID #").toString()
                         + " (" + piece.getProperty("Pilot Name").toString() + ") on the map. Please use your player window to do so instead.");
-                if(piece.getProperty("isHidden").equals("true")){ //encode only the modified selected move property
+                if(isHiddenPropCheck.equals("true")){ //encode only the modified selected move property
 
 
                     dialRotateCommand drc = new dialRotateCommand(piece, moveDef, false, stateString.toString(), moveSpeedLayerString);
@@ -223,10 +248,10 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
                     chosenMoveEmb.mySetType(stateString.toString());
                     chosenMoveEmb.setValue(1);
                     chosenSpeedEmb.setValue(newMoveSpeed);
-                } else if(piece.getProperty("isHidden").equals("false")) { //dial is revealed, show everything to all
+                } else if(isHiddenPropCheck.equals("false")) { //dial is revealed, show everything to all
 
                     dialRotateCommand drc = new dialRotateCommand(piece, moveDef, true, stateString.toString(), moveSpeedLayerString);
-                    result.append(drc);
+                    result = drc;
                     drc.execute();
                 }
             }
@@ -236,6 +261,7 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
         if(hasSomethingHappened) {
             final VASSAL.build.module.Map map = piece.getMap();
             map.repaint();
+            hasGoneThroughItOnce=true;
             return result;
         }
         return piece.keyEvent(stroke);
@@ -359,6 +385,7 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
             centralHideEmb.setValue(0);
             chosenSpeedEmb.setValue(Integer.parseInt(speedLayer));
             pieceInCommand.setProperty("isHidden", "false");
+            Util.logToChat("post reveal: isHidden false");
             final VASSAL.build.module.Map map = pieceInCommand.getMap();
             map.repaint();
         }
@@ -427,6 +454,7 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
             chosenSpeedEmb.setValue(0);
             centralHideEmb.setValue(1);
             pieceInCommand.setProperty("isHidden", "true");
+            logToChat("post hide, isHidden true");
             final VASSAL.build.module.Map map = pieceInCommand.getMap();
             map.repaint();
         }
