@@ -471,13 +471,17 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
             public static StemNuDial2e.dialHideCommand.Dial2eHideEncoder INSTANCE = new StemNuDial2e.dialHideCommand.Dial2eHideEncoder();
 
             public Command decode(String command) {
+
+
+                logToChat("Step 3b decode prep - command " + command);
+
+
                 if (command == null || !command.contains(commandPrefix)) {
                     return null;
                 }
                 logger.info("Decoding dialHideCommand");
 
                 command = command.substring(commandPrefix.length());
-                logToChat("Step 3b decode prep - piece.getId " + pieceInCommand.getId() + " and command " + command);
                 try{
                     Collection<GamePiece> pieces = GameModule.getGameModule().getGameState().getAllPieces();
                     logToChat("Step 3b prep - piece.getId " + pieceInCommand.getId() + " and command " + command);
