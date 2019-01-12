@@ -46,36 +46,12 @@ import static mic.Util.serializeToBase64;
 public class StemNuDial2e extends Decorator implements EditablePiece, Serializable {
     public static final String ID = "StemNuDial2e";
 
-    List<String> allowedKeyStrokesInStrings = Lists.newArrayList();
-
-
-    private static Map<String, String> keyStrokeForDial = ImmutableMap.<String, String>builder()
-            .put("CTRL R", "Hide/Reveal Toggle")
-            .put("COMMA", "Rotate to previous move")
-            .put("PERIOD", "Rotate to next move")
-            .build();
-
     public StemNuDial2e()  {
         this(null);
     }
 
     public StemNuDial2e(GamePiece piece)
         {setInner(piece);
-
-            KeyStroke commaKeyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_COMMA, 0, true);
-            String commaKStoString = HotKeyConfigurer.getString(commaKeyStroke);
-
-            KeyStroke periodKeyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_PERIOD, 0, true);
-            String periodKStoString = HotKeyConfigurer.getString(periodKeyStroke);
-
-            KeyStroke ctrlRKeyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_R, KeyEvent.CTRL_DOWN_MASK, true);
-            String ctrlRKStoString = HotKeyConfigurer.getString(ctrlRKeyStroke);
-
-            List<String> allowedKeyStrokesInStrings = Lists.newArrayList();
-            allowedKeyStrokesInStrings.add(commaKStoString);
-            allowedKeyStrokesInStrings.add(periodKStoString);
-            allowedKeyStrokesInStrings.add(ctrlRKStoString);
-
         }
 
     @Override
@@ -170,10 +146,7 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
 
         isHiddenPropCheck = Integer.parseInt(piece.getProperty("isHidden").toString());
 
-        logToChat("Hotkeyconfig = " + HotKeyConfigurer.getString(stroke));
-        if(allowedKeyStrokesInStrings.contains(HotKeyConfigurer.getString(stroke))) Util.logToChat("good key detected");
-
-        Util.logToChat("Before the hotkey is determined hide=" + isHiddenPropCheck);
+        Util.logToChat("STEP 0 - keyEvent=" + stroke.getKeyEventType());
 
         if (getOwnerOfThisDial() == Util.getCurrentPlayer().getSide()) {
             KeyStroke checkForCtrlRReleased = KeyStroke.getKeyStroke(KeyEvent.VK_R, KeyEvent.CTRL_DOWN_MASK, true);
@@ -183,8 +156,12 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
             boolean goingLeft = checkForCommaReleased.equals(stroke);
             boolean goingRight = checkForPeriodReleased.equals(stroke);
 
+            Util.logToChat("STEP 1 - player side verified " + getOwnerOfThisDial());
 
             if(checkForCtrlRReleased.equals(stroke)) {
+
+                Util.logToChat("STEP 2a - CTRL-R released");
+
                 hasSomethingHappened = true;
 
                 if(isHiddenPropCheck == 1) { // about to reveal the dial
@@ -197,14 +174,14 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
                     String moveSpeedLayerString = getLayerFromScratch(0);
 
                     dialRevealCommand revealNow = new dialRevealCommand(piece, stateString.toString(), moveSpeedLayerString);
-                    //result.append(revealNow);
+                    result.append(revealNow);
                     revealNow.execute();
 
                 } else if(isHiddenPropCheck == 0){ // about to hide the dial
 
                     //command shown to all players
                     dialHideCommand hideNow = new dialHideCommand(piece);
-                    //result.append(hideNow);
+                    result.append(hideNow);
                     hideNow.execute();
 
                     //Stuff outside of a command, should only show for owner.
@@ -230,6 +207,10 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
                 }
             }
             else if(goingLeft || goingRight){ //rotate left, move-- or rotate right, move++
+
+                Util.logToChat("STEP 2b - , or . released");
+
+
                 hasSomethingHappened = true;
                 int moveMod = 0;
                 if(goingLeft) moveMod = -1;
@@ -261,7 +242,7 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
                 } else if(isHiddenPropCheck == 0) { //dial is revealed, show everything to all
 
                     dialRotateCommand drc = new dialRotateCommand(piece, moveDef, true, stateString.toString(), moveSpeedLayerString);
-                    //result.append(drc);
+                    result.append(drc);
                     drc.execute();
                 }
             }
@@ -273,6 +254,7 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
             map.repaint();
             return result;
         }
+        Util.logToChat("STEP 2c - Not a keystroke worth reacting to.");
         return piece.keyEvent(stroke);
     }
 
@@ -398,7 +380,8 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
             if(pieceInCommand.getMap().equals(VASSAL.build.module.Map.getMapById("Map0"))) Util.logToChatCommand("* - "+ Util.getCurrentPlayer().getName()+ " reveals the dial for "
                     + pieceInCommand.getProperty("Craft ID #").toString() + " (" + pieceInCommand.getProperty("Pilot Name").toString() + ") = "+ chosenMoveEmb.getProperty("Chosen Move_Name") + "*");
 
-            Util.logToChat("post reveal: isHidden false");
+
+            Util.logToChat("STEP 4a - Revealed the dial with " + chosenMoveEmb.getProperty("Chosen Move_Name"));
             final VASSAL.build.module.Map map = pieceInCommand.getMap();
             map.repaint();
         }
@@ -425,6 +408,8 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
                     Collection<GamePiece> pieces = GameModule.getGameModule().getGameState().getAllPieces();
                     for (GamePiece piece : pieces) {
                         if(piece.getId().equals(parts[0])) {
+
+                            logToChat("Step 3a - Reveal Decoder " + pieceInCommand.getId() + " " + parts[1] + " " + parts[2]);
                             return new dialRevealCommand(piece, parts[1], parts[2]);
                         }
                     }
@@ -467,7 +452,7 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
             chosenSpeedEmb.setValue(0);
             centralHideEmb.setValue(1);
             pieceInCommand.setProperty("isHidden", "1");
-            logToChat("post hide, isHidden true");
+            Util.logToChat("STEP 4b - Hid the dial");
             final VASSAL.build.module.Map map = pieceInCommand.getMap();
             map.repaint();
         }
@@ -494,9 +479,12 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
 
                 try{
                     Collection<GamePiece> pieces = GameModule.getGameModule().getGameState().getAllPieces();
-
+                    logToChat("Step 3b prep - piece.getId " + pieceInCommand.getId() + " and command " + command);
                     for (GamePiece piece : pieces) {
                         if(piece.getId().equals(command)) {
+
+                            logToChat("Step 3b - Hide Encoder " + pieceInCommand.getId());
+
                             return new dialHideCommand(piece);
                         }
                     }
@@ -550,8 +538,14 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
                     chosenMoveEmb.setValue(1);
                     chosenSpeedEmb.setValue(Integer.parseInt(moveSpeedLayerString));
 
+
+                    Util.logToChat("STEP 4c - Rotated the dial while revealed ");
+
                     final VASSAL.build.module.Map map = pieceInCommand.getMap();
                     map.repaint();
+                }
+                else {
+                    Util.logToChat("STEP 4d - Rotated the dial while hidden");
                 }
 
         }
@@ -583,6 +577,7 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
                     for (GamePiece piece : pieces) {
                         if(piece.getId().equals(parts[0])) {
 
+                            Util.logToChat("STEP 3c - Rotate decoder " + parts[1] + " " + Boolean.parseBoolean(parts[2]) +" " + parts[3] +" "+ parts[4]);
                             return new dialRotateCommand(piece, parts[1], Boolean.parseBoolean(parts[2]), parts[3], parts[4]);
                         }
                     }
