@@ -429,7 +429,8 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
                     return null;
                 }
                 try{
-                    return commandPrefix + Joiner.on(itemDelim).join(pieceInCommand.getId(), moveDef,speedLayer);
+                    dialRevealCommand drc = (dialRevealCommand) c;
+                    return commandPrefix + Joiner.on(itemDelim).join(drc.pieceInCommand.getId(), moveDef,speedLayer);
                 }catch(Exception e) {
                     logger.error("Error encoding dialRevealCommand", e);
                     return null;
