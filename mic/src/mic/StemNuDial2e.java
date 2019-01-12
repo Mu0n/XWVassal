@@ -146,7 +146,7 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
 
         isHiddenPropCheck = Integer.parseInt(piece.getProperty("isHidden").toString());
 
-        Util.logToChat("STEP 0 - keyEvent=" + stroke.getKeyEventType());
+        Util.logToChat("STEP 0 - keyEvent=" + stroke.getKeyEventType() + " isHidden=" + isHiddenPropCheck);
 
         if (getOwnerOfThisDial() == Util.getCurrentPlayer().getSide()) {
             KeyStroke checkForCtrlRReleased = KeyStroke.getKeyStroke(KeyEvent.VK_R, KeyEvent.CTRL_DOWN_MASK, true);
@@ -477,7 +477,7 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
                 logger.info("Decoding dialHideCommand");
 
                 command = command.substring(commandPrefix.length());
-
+                logToChat("Step 3b decode prep - piece.getId " + pieceInCommand.getId() + " and command " + command);
                 try{
                     Collection<GamePiece> pieces = GameModule.getGameModule().getGameState().getAllPieces();
                     logToChat("Step 3b prep - piece.getId " + pieceInCommand.getId() + " and command " + command);
@@ -502,6 +502,8 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
                     return null;
                 }
                 logger.info("Encoding dialHideCommand");
+
+                logToChat("Step 3b encode prep - piece.getId " + pieceInCommand.getId());
                 StemNuDial2e.dialHideCommand dhc = (StemNuDial2e.dialHideCommand) c;
                 try {
                     return commandPrefix + pieceInCommand.getId();
