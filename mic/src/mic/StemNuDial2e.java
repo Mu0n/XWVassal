@@ -232,6 +232,7 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
 
 
                     dialRotateCommand drc = new dialRotateCommand(piece, moveDef, false, stateString.toString(), moveSpeedLayerString);
+                    result.append(drc);
                     drc.execute();
 
                     Embellishment chosenMoveEmb = (Embellishment)Util.getEmbellishment(piece,"Layer - Chosen Move");
@@ -375,7 +376,7 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
             sideHideEmb.setValue(0); //hide the small slashed eye icon
             centralHideEmb.setValue(0); //hide the central slashed eye icon
             chosenSpeedEmb.setValue(Integer.parseInt(speedLayer)); //use the right speed layer
-            pieceInCommand.setProperty("isHidden", "0");
+            pieceInCommand.setProperty("isHidden", 0);
 
             if(pieceInCommand.getMap().equals(VASSAL.build.module.Map.getMapById("Map0"))) Util.logToChatCommand("* - "+ Util.getCurrentPlayer().getName()+ " reveals the dial for "
                     + pieceInCommand.getProperty("Craft ID #").toString() + " (" + pieceInCommand.getProperty("Pilot Name").toString() + ") = "+ chosenMoveEmb.getProperty("Chosen Move_Name") + "*");
@@ -451,7 +452,7 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
             chosenMoveEmb.setValue(0);
             chosenSpeedEmb.setValue(0);
             centralHideEmb.setValue(1);
-            pieceInCommand.setProperty("isHidden", "1");
+            pieceInCommand.setProperty("isHidden", 1);
             Util.logToChat("STEP 4b - Hid the dial");
             final VASSAL.build.module.Map map = pieceInCommand.getMap();
             map.repaint();
