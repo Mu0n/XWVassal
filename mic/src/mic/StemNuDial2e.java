@@ -410,7 +410,7 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
                     for (GamePiece piece : pieces) {
                         if(piece.getId().equals(parts[0])) {
 
-                            logToChat("Step 3a - Reveal Decoder " + pieceInCommand.getId() + " " + parts[1] + " " + parts[2]);
+                            logger.info("Step 3a - Reveal Decoder " + pieceInCommand.getId() + " " + parts[1] + " " + parts[2]);
                             return new dialRevealCommand(piece, parts[1], parts[2]);
                         }
                     }
@@ -472,28 +472,27 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
 
             public Command decode(String command) {
 
-
-                logToChat("Step 3b decode prep - command " + command);
-
-
                 if (command == null || !command.contains(commandPrefix)) {
                     return null;
                 }
                 logger.info("Decoding dialHideCommand");
 
-                command = command.substring(commandPrefix.length());
+                logger.info("Step 3b decoding - before chop " + command);
+                String extractedId = command.substring(commandPrefix.length());
+                logger.info("Step 3b decoding after chop " + extractedId);
                 try{
                     Collection<GamePiece> pieces = GameModule.getGameModule().getGameState().getAllPieces();
-                    logToChat("Step 3b prep - piece.getId " + pieceInCommand.getId() + " and command " + command);
+                    logger.info("Step 3b prep - extractedId " + extractedId);
                     for (GamePiece piece : pieces) {
-                        if(piece.getId().equals(command)) {
+                        if(piece.getId().equals(extractedId)) {
 
-                            logToChat("Step 3b - Hide Encoder " + pieceInCommand.getId());
+                            logger.info("Step 3b - Hide Encoder " + piece.getId());
 
                             return new dialHideCommand(piece);
                         }
                     }
                 }catch(Exception e){
+                    logger.info("Step 3b - exception error");
                     return null;
                 }
 
@@ -502,15 +501,20 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
             }
 
             public String encode(Command c) {
-                if (!(c instanceof StemNuDial2e.dialHideCommand)) {
+                if (!(c instanceof dialHideCommand)) {
                     return null;
                 }
                 logger.info("Encoding dialHideCommand");
 
-                logToChat("Step 3b encode prep - piece.getId " + pieceInCommand.getId());
-                StemNuDial2e.dialHideCommand dhc = (StemNuDial2e.dialHideCommand) c;
+                logger.info("Step 3b encode prep - piece.getId " + pieceInCommand.getId());
+                //StemNuDial2e.dialHideCommand dhc = (StemNuDial2e.dialHideCommand) c;
                 try {
-                    return commandPrefix + pieceInCommand.getId();
+                    String prepString = commandPrefix+pieceInCommand.getId();
+                    if(prepString.contains(commandPrefix)) logToChat("it contains commandPrefix");
+
+                    dialHideCommand dhc = (dialHideCommand) c;
+                    logger.info("Encoded dialHideCommand with id = {}", dhc.pieceInCommand.getId());
+                    return commandPrefix + dhc.pieceInCommand.getId();
                 } catch(Exception e) {
                     logger.error("Error encoding dialHideCommand", e);
                     return null;
@@ -584,7 +588,7 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
                     for (GamePiece piece : pieces) {
                         if(piece.getId().equals(parts[0])) {
 
-                            Util.logToChat("STEP 3c - Rotate decoder " + parts[1] + " " + Boolean.parseBoolean(parts[2]) +" " + parts[3] +" "+ parts[4]);
+                            logger.info("STEP 3c - Rotate decoder " + parts[1] + " " + Boolean.parseBoolean(parts[2]) +" " + parts[3] +" "+ parts[4]);
                             return new dialRotateCommand(piece, parts[1], Boolean.parseBoolean(parts[2]), parts[3], parts[4]);
                         }
                     }
