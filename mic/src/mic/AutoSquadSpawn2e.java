@@ -625,6 +625,7 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
             // Generate the ship base pieces
             // ======================================================
             GamePiece shipPiece = GamePieceGenerator2e.generateShip(ship, extraForceFromUpgrade, extraHull, extraShield);
+            String associatedShipID = shipPiece.getId().toString();
             shipBases.add(shipPiece);
 
             // ======================================================
@@ -657,7 +658,7 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
 
 
             XWPlayerInfo owner  = getCurrentPlayer();
-            GamePiece dialPiece = GamePieceGenerator2e.generateDial(ship, owner);
+            GamePiece dialPiece = GamePieceGenerator2e.generateDial(ship, owner, associatedShipID);
 
             int dialWidth = 0;
             try {

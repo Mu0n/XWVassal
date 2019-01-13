@@ -294,6 +294,7 @@ public class StemDial2e extends Decorator implements EditablePiece {
         String shipName;
         String faction = "";
         int whoOwns = 0;
+        String associatedShipID = "";
 
         DialGenerateCommand(String thisName, GamePiece piece, String thisFaction, List<XWS2Pilots> allShips) {
 
@@ -317,7 +318,7 @@ public class StemDial2e extends Decorator implements EditablePiece {
             this.piece = piece;
         }
 
-        DialGenerateCommand(List<String> aMoveList, String aShipName, GamePiece piece, String thisFaction, int owner) {
+        DialGenerateCommand(List<String> aMoveList, String aShipName, GamePiece piece, String thisFaction, int owner, String targettingThisShipID) {
             // more direcct approach where the move list and the ship name are dictated directly without a master list fetch
             faction = thisFaction;
             newMoveList = aMoveList;
@@ -325,6 +326,7 @@ public class StemDial2e extends Decorator implements EditablePiece {
             this.piece = piece;
             whoOwns = owner;
             xwsShipName = Canonicalizer.getCleanedName(shipName);
+            associatedShipID = targettingThisShipID;
         }
 
         public int getOwner(){
@@ -381,6 +383,7 @@ public class StemDial2e extends Decorator implements EditablePiece {
                 if(count!=newMoveList.size()) injectDialString+=",";
             }
             piece.setProperty("dialstring",injectDialString);
+            piece.setProperty("shipID", associatedShipID);
 
             // chosen move embellishment looks like: emb2;Activate;2;;;2;;;2;;;;1;false;0;-24;,mFW.png;empty,move;false;Chosen Move;;;false;;1;1;true;65,130;;
             // chosen speed embell looks like:       emb2;;2;;;2;;;2;;;;1;false;0;24;kimb5.png,,kimb0.png,kimb1.png,kimb2.png,kimb3.png,kimb4.png;5,empty,0,1,2,3,4;false;Chosen Speed;;;false;;1;1;true;;;
@@ -392,6 +395,7 @@ public class StemDial2e extends Decorator implements EditablePiece {
 
             fullDialEmb.mySetType(basicPieceString.toString());
             ringEmb.mySetType(factionRingString.toString());
+
 
         }
 
