@@ -46,6 +46,48 @@ import static mic.Util.serializeToBase64;
 public class StemNuDial2e extends Decorator implements EditablePiece, Serializable {
     public static final String ID = "StemNuDial2e";
 
+
+    final public static Map<String, KeyStroke> moveCodeToKeyStroke = ImmutableMap.<String, KeyStroke>builder()
+            .put("1F", KeyStroke.getKeyStroke(KeyEvent.VK_1, KeyEvent.SHIFT_DOWN_MASK, false))
+            .put("2F", KeyStroke.getKeyStroke(KeyEvent.VK_2, KeyEvent.SHIFT_DOWN_MASK, false))
+            .put("3F", KeyStroke.getKeyStroke(KeyEvent.VK_3, KeyEvent.SHIFT_DOWN_MASK, false))
+            .put("4F", KeyStroke.getKeyStroke(KeyEvent.VK_4, KeyEvent.SHIFT_DOWN_MASK, false))
+            .put("5F", KeyStroke.getKeyStroke(KeyEvent.VK_5, KeyEvent.SHIFT_DOWN_MASK, false))
+            .put("1T", KeyStroke.getKeyStroke(KeyEvent.VK_1, KeyEvent.CTRL_DOWN_MASK+KeyEvent.SHIFT_DOWN_MASK, false))
+            .put("2T", KeyStroke.getKeyStroke(KeyEvent.VK_2, KeyEvent.CTRL_DOWN_MASK+KeyEvent.SHIFT_DOWN_MASK, false))
+            .put("3T", KeyStroke.getKeyStroke(KeyEvent.VK_3, KeyEvent.CTRL_DOWN_MASK+KeyEvent.SHIFT_DOWN_MASK, false))
+            .put("1Y", KeyStroke.getKeyStroke(KeyEvent.VK_1, KeyEvent.ALT_DOWN_MASK+KeyEvent.SHIFT_DOWN_MASK, false))
+            .put("2Y", KeyStroke.getKeyStroke(KeyEvent.VK_2, KeyEvent.ALT_DOWN_MASK+KeyEvent.SHIFT_DOWN_MASK, false))
+            .put("3Y", KeyStroke.getKeyStroke(KeyEvent.VK_3, KeyEvent.ALT_DOWN_MASK+KeyEvent.SHIFT_DOWN_MASK, false))
+            .put("1B", KeyStroke.getKeyStroke(KeyEvent.VK_1, KeyEvent.CTRL_DOWN_MASK, false))
+            .put("2B", KeyStroke.getKeyStroke(KeyEvent.VK_2, KeyEvent.CTRL_DOWN_MASK, false))
+            .put("3B", KeyStroke.getKeyStroke(KeyEvent.VK_3, KeyEvent.CTRL_DOWN_MASK, false))
+            .put("1N", KeyStroke.getKeyStroke(KeyEvent.VK_1, KeyEvent.ALT_DOWN_MASK, false))
+            .put("2N", KeyStroke.getKeyStroke(KeyEvent.VK_2, KeyEvent.ALT_DOWN_MASK, false))
+            .put("3N", KeyStroke.getKeyStroke(KeyEvent.VK_3, KeyEvent.ALT_DOWN_MASK, false))
+            .put("1K", KeyStroke.getKeyStroke(KeyEvent.VK_1, KeyEvent.CTRL_DOWN_MASK+KeyEvent.ALT_DOWN_MASK, false))
+            .put("2K", KeyStroke.getKeyStroke(KeyEvent.VK_2, KeyEvent.CTRL_DOWN_MASK+KeyEvent.ALT_DOWN_MASK, false))
+            .put("3K", KeyStroke.getKeyStroke(KeyEvent.VK_3, KeyEvent.CTRL_DOWN_MASK+KeyEvent.ALT_DOWN_MASK, false))
+            .put("4K", KeyStroke.getKeyStroke(KeyEvent.VK_4, KeyEvent.CTRL_DOWN_MASK+KeyEvent.ALT_DOWN_MASK, false))
+            .put("5K", KeyStroke.getKeyStroke(KeyEvent.VK_5, KeyEvent.CTRL_DOWN_MASK+KeyEvent.ALT_DOWN_MASK, false))
+            .put("1A", KeyStroke.getKeyStroke(KeyEvent.VK_6, KeyEvent.CTRL_DOWN_MASK, false))
+            .put("1S", KeyStroke.getKeyStroke(KeyEvent.VK_6, KeyEvent.SHIFT_DOWN_MASK, false))
+            .put("2S", KeyStroke.getKeyStroke(KeyEvent.VK_7, KeyEvent.SHIFT_DOWN_MASK, false))
+            .put("1D", KeyStroke.getKeyStroke(KeyEvent.VK_6, KeyEvent.ALT_DOWN_MASK, false))
+            .put("1L", KeyStroke.getKeyStroke(KeyEvent.VK_Q, KeyEvent.CTRL_DOWN_MASK, false))
+            .put("2L", KeyStroke.getKeyStroke(KeyEvent.VK_W, KeyEvent.CTRL_DOWN_MASK, false))
+            .put("3L", KeyStroke.getKeyStroke(KeyEvent.VK_E, KeyEvent.CTRL_DOWN_MASK, false))
+            .put("1P", KeyStroke.getKeyStroke(KeyEvent.VK_Q, KeyEvent.ALT_DOWN_MASK, false))
+            .put("2P", KeyStroke.getKeyStroke(KeyEvent.VK_W, KeyEvent.ALT_DOWN_MASK, false))
+            .put("3P", KeyStroke.getKeyStroke(KeyEvent.VK_E, KeyEvent.ALT_DOWN_MASK, false))
+            .put("1E", KeyStroke.getKeyStroke(KeyEvent.VK_I, KeyEvent.CTRL_DOWN_MASK, false))
+            .put("2E", KeyStroke.getKeyStroke(KeyEvent.VK_Y, KeyEvent.CTRL_DOWN_MASK, false))
+            .put("3E", KeyStroke.getKeyStroke(KeyEvent.VK_T, KeyEvent.CTRL_DOWN_MASK, false))
+            .put("1R", KeyStroke.getKeyStroke(KeyEvent.VK_I, KeyEvent.ALT_DOWN_MASK, false))
+            .put("2R", KeyStroke.getKeyStroke(KeyEvent.VK_Y, KeyEvent.ALT_DOWN_MASK, false))
+            .put("3R", KeyStroke.getKeyStroke(KeyEvent.VK_T, KeyEvent.ALT_DOWN_MASK, false))
+            .build();
+
     public StemNuDial2e()  {
         this(null);
     }
@@ -181,18 +223,19 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
                     if(checkForSuperCtrlRReleased.equals(stroke)) {
                         String shipID = this.piece.getProperty("shipID").toString(); //gets the random UUID from the dial that was saved during spawning
                         Collection<GamePiece> pieces = GameModule.getGameModule().getGameState().getAllPieces();
-                        for (GamePiece piece : pieces) {
+                        for (GamePiece pieceScanned : pieces) {
                             try{
-                                String micID = piece.getProperty("micID").toString();
-                                if (micID.equals(shipID) && piece.getMap().getMapName().equals("Contested Sector") && this.piece.getMap().getMapName().equals("Contested Sector")){
+                                String micID = pieceScanned.getProperty("micID").toString();
+                                if (micID.equals(shipID) && pieceScanned.getMap().getMapName().equals("Contested Sector") && this.piece.getMap().getMapName().equals("Contested Sector")){
                                     String moveFromScratch = getNewMoveCodeFromScratch(0);
                                     //logToChat("moveFromScratch "+ moveFromScratch);
                                     String moveRaw = moveFromScratch.substring(0,2);
                                     //logToChat("moveRaw " + moveRaw);
-                                    boolean foundMoveCode = AutoBumpDecorator.moveCodeToKeyStroke.containsKey(moveRaw);
+                                    KeyStroke thisKey = moveCodeToKeyStroke.get(moveRaw);
+
                                     //logToChat("found the move? " + foundMoveCode);
-                                    if(foundMoveCode) {
-                                        Command moveShipCommand = piece.keyEvent(AutoBumpDecorator.moveCodeToKeyStroke.get(moveRaw));
+                                    if(thisKey!=null) {
+                                        Command moveShipCommand = pieceScanned.keyEvent(thisKey);
                                         result.append(moveShipCommand);
                                     }
                                 }
