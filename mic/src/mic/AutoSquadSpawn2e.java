@@ -538,9 +538,9 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
         //reference constant positions or displacements
         Point pilotStartPosition = new Point(0, 659);
         Point dialstartPosition = new Point(300, 130);
-        Point tlStartPosition = new Point(300, 330);
+        Point tlStartPosition = new Point(300, 355);
         Point configStartPosition = new Point(0, 220);
-        Point tokensStartPosition = new Point(300, 290);
+        Point tokensStartPosition = new Point(300, 300);
         int optDisplacePerConfig = 250;
         int upgradeYDisplace = 10;
         int upgradeComeBackLeft = 170;
