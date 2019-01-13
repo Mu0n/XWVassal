@@ -179,15 +179,17 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
                     revealNow.execute();
 
                     if(checkForSuperCtrlRReleased.equals(stroke)) {
-                        String shipID = piece.getProperty("shipID").toString();
-
-                        logToChat("must find shipID " + shipID);
+                        String shipID = piece.getProperty("shipID").toString(); //gets the random UUID from the dial that was saved during spawning
                         Collection<GamePiece> pieces = GameModule.getGameModule().getGameState().getAllPieces();
                         for (GamePiece piece : pieces) {
-                            logToChat("ship=" + piece.getId());
-                            if (piece.getId().equals(shipID)){
-
-                                logToChat("the ship was found and his pilot is " + piece.getProperty("Craft ID #").toString());
+                            try{
+                                String micID = piece.getProperty("micID").toString();
+                                if (micID.equals(shipID) && piece.getMap().getMapName().equals("Contested Sector")){
+                                    Command moveShipCommand = piece.keyEvent(KeyStroke.getKeyStroke(KeyEvent.VK_1, KeyEvent.SHIFT_DOWN_MASK, false));
+                                    result.append(moveShipCommand);
+                                }
+                            }catch (Exception e){
+                                continue;
                             }
                         }
                     }

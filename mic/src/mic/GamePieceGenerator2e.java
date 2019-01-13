@@ -7,6 +7,7 @@ import VASSAL.counters.GamePiece;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.UUID;
 
 import static mic.Util.logToChat;
 
@@ -152,6 +153,7 @@ public class GamePieceGenerator2e
         if (ship.getShipData().getName() != null) {
             piece.setProperty("Pilot Name", getDisplayPilotName(ship, ship.getShipNumber()));
         }
+        piece.setProperty("micID", UUID.randomUUID().toString());
         return piece;
     }
 
