@@ -194,16 +194,16 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
                     StringBuilder stateString = new StringBuilder();
                     stateString.append(buildStateString(0));
 
-                    chosenMoveEmb.mySetType(stateString.toString());
-                    chosenMoveEmb.setValue(1);
-                    sideHideEmb.setValue(1);
-                    centralHideEmb.setValue(0);
+                    chosenMoveEmb.mySetType(stateString.toString()); //restore the dial's chosen move like before only for the owner who's doing CTRl-R
+                    chosenMoveEmb.setValue(1); //unhide the movement only for the owner who's doing CTRL-R
+                    sideHideEmb.setValue(1); //show the side slashed eye icon
+                    centralHideEmb.setValue(0); //hide back the central slashed eye icon
 
                     //get the speed layer to show
                     String moveSpeedLayerString = getLayerFromScratch(0);
                     Integer newMoveSpeed = Integer.parseInt(moveSpeedLayerString);
 
-                    chosenSpeedEmb.setValue(newMoveSpeed);
+                    chosenSpeedEmb.setValue(newMoveSpeed); //unhide the speed only for the owner who's doing CTRL-R
                 }
             }
             else if(goingLeft || goingRight){ //rotate left, move-- or rotate right, move++
@@ -429,8 +429,7 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
                     return null;
                 }
                 try{
-                    dialRevealCommand drc = (dialRevealCommand) c;
-                    return commandPrefix + Joiner.on(itemDelim).join(drc.pieceInCommand.getId(), moveDef,speedLayer);
+                    return commandPrefix + Joiner.on(itemDelim).join(pieceInCommand.getId(), moveDef,speedLayer);
                 }catch(Exception e) {
                     logger.error("Error encoding dialRevealCommand", e);
                     return null;
@@ -450,9 +449,9 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
             Embellishment chosenMoveEmb = (Embellishment)Util.getEmbellishment(pieceInCommand,"Layer - Chosen Move");
             Embellishment chosenSpeedEmb = (Embellishment)Util.getEmbellishment(pieceInCommand, "Layer - Chosen Speed");
             Embellishment centralHideEmb = (Embellishment)Util.getEmbellishment(pieceInCommand, "Layer - Central Hide");
-            chosenMoveEmb.setValue(0);
-            chosenSpeedEmb.setValue(0);
-            centralHideEmb.setValue(1);
+            chosenMoveEmb.setValue(0); //Hide the maneuver
+            chosenSpeedEmb.setValue(0); //Hide the speed
+            centralHideEmb.setValue(1); //Show the central slashed icon
             pieceInCommand.setProperty("isHidden", 1);
             Util.logToChat("STEP 4b - Hid the dial");
             final VASSAL.build.module.Map map = pieceInCommand.getMap();
