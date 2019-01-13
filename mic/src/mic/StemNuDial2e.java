@@ -405,12 +405,13 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
                 command = command.substring(commandPrefix.length());
                 String[] parts = command.split(itemDelim);
 
+                logger.info("Step 3a - Reveal Decoder id=" + pieceInCommand.getId());
                 try{
                     Collection<GamePiece> pieces = GameModule.getGameModule().getGameState().getAllPieces();
                     for (GamePiece piece : pieces) {
                         if(piece.getId().equals(parts[0])) {
 
-                            logger.info("Step 3a - Reveal Decoder " + pieceInCommand.getId() + " " + parts[1] + " " + parts[2]);
+                            logger.info("Step 3a -found the right piece and will use " + parts[1] + " " + parts[2]);
                             return new dialRevealCommand(piece, parts[1], parts[2]);
                         }
                     }
