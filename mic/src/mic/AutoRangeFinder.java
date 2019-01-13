@@ -2928,7 +2928,7 @@ public class AutoRangeFinder extends Decorator implements EditablePiece, MouseLi
 
     }
 
-    private static class FOVisualizationClear extends Command {
+    public static class FOVisualizationClear extends Command {
 
         private final String id;
 
@@ -2948,6 +2948,30 @@ public class AutoRangeFinder extends Decorator implements EditablePiece, MouseLi
         protected Command myUndoCommand() {
             return null;
         }
+
+        public static class FOVisualizationClearEncoder implements CommandEncoder {
+            private static final String prefix = "FoVisClearId=";
+            private static final Logger logger = LoggerFactory.getLogger(FOVisualizationClearEncoder.class);
+
+            public Command decode(String command) {
+                if (command == null || !command.contains(prefix)) {
+                    return null;
+                }
+                String id = command.substring(prefix.length());
+                logger.info("Decoded clear visualization with id = {}", id);
+                return new FOVisualizationClear(id);
+            }
+
+            public String encode(Command c) {
+                if(!(c instanceof FOVisualizationClear)) {
+                    return null;
+                }
+                FOVisualizationClear visClear = (FOVisualizationClear) c;
+                logger.info("Encoded clear visualization with id = {}", visClear.id);
+                return prefix + visClear.id;
+            }
+        }
+
     }
 
 
@@ -3178,28 +3202,7 @@ public class AutoRangeFinder extends Decorator implements EditablePiece, MouseLi
             }
         }
 
-        public static class FOVisualizationClearEncoder implements CommandEncoder {
-            private static final String prefix = "FoVisClearId=";
-            private static final Logger logger = LoggerFactory.getLogger(FOVisualizationClearEncoder.class);
 
-            public Command decode(String command) {
-                if (command == null || !command.contains(prefix)) {
-                    return null;
-                }
-                String id = command.substring(prefix.length());
-                logger.info("Decoded clear visualization with id = {}", id);
-                return new FOVisualizationClear(id);
-            }
-
-            public String encode(Command c) {
-                if(!(c instanceof FOVisualizationClear)) {
-                    return null;
-                }
-                FOVisualizationClear visClear = (FOVisualizationClear) c;
-                logger.info("Encoded clear visualization with id = {}", visClear.id);
-                return prefix + visClear.id;
-            }
-        }
     }
 
 

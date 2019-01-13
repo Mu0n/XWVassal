@@ -43,6 +43,7 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
     //public CollisionVisualization previousCollisionVisualization = null;
     MapVisualizations previousCollisionVisualization = null;
 
+
     private static Map<String, ManeuverPaths> keyStrokeToManeuver = ImmutableMap.<String, ManeuverPaths>builder()
             .put("SHIFT 1", ManeuverPaths.Str1)
             .put("SHIFT 2", ManeuverPaths.Str2)
@@ -227,11 +228,11 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
             innerCommand.append(buildTranslateCommand(part, path.getAdditionalAngleForShip()));
 
             //check for Tallon rolls and spawn the template
-            if(lastManeuver == ManeuverPaths.TrollL1  || lastManeuver == ManeuverPaths.TrollL2 || lastManeuver == ManeuverPaths.TrollL3
+            /*if(lastManeuver == ManeuverPaths.TrollL1  || lastManeuver == ManeuverPaths.TrollL2 || lastManeuver == ManeuverPaths.TrollL3
             || lastManeuver == ManeuverPaths.TrollR1  || lastManeuver == ManeuverPaths.TrollR2 || lastManeuver == ManeuverPaths.TrollR3) {
                 Command placeTrollTemplate = spawnRotatedPiece(lastManeuver);
                 innerCommand.append(placeTrollTemplate);
-            }
+            }*/
             //These lines fetch the Shape of the last movement template used
             FreeRotator rotator = (FreeRotator) (Decorator.getDecorator(Decorator.getOutermost(this), FreeRotator.class));
             Shape lastMoveShapeUsed = path.getTransformedTemplateShape(this.getPosition().getX(),

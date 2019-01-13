@@ -7,6 +7,7 @@ import VASSAL.counters.GamePiece;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.UUID;
 
 import static mic.Util.logToChat;
 
@@ -152,6 +153,7 @@ public class GamePieceGenerator2e
         if (ship.getShipData().getName() != null) {
             piece.setProperty("Pilot Name", getDisplayPilotName(ship, ship.getShipNumber()));
         }
+        piece.setProperty("micID", UUID.randomUUID().toString());
         return piece;
     }
 
@@ -220,7 +222,7 @@ public class GamePieceGenerator2e
                 }
                 grantIterator = upgradeGrants.iterator();
                 MasterUpgradeData.UpgradeGrants grant = null;
-                while(grantIterator.hasNext() && !needsBomb)
+                while(grantIterator.hasNext() && !)
                 {
                     grant = grantIterator.next();
                     if(grant.getType().equalsIgnoreCase("slot") && grant.getName().equalsIgnoreCase("Bomb"))
@@ -254,7 +256,7 @@ public class GamePieceGenerator2e
         return targetPieceSlot;
     }
 
-    public static GamePiece generateDial(VassalXWSPilotPieces2e ship, Util.XWPlayerInfo owner)
+    public static GamePiece generateDial(VassalXWSPilotPieces2e ship, Util.XWPlayerInfo owner, String associatedShipID)
     {
 
         /*
@@ -334,7 +336,7 @@ public class GamePieceGenerator2e
         dial = Util.newPiece(nuDialSlot);
 
         // execute the command
-        StemDial2e.DialGenerateCommand myDialGen = new StemDial2e.DialGenerateCommand(ship.getShipData().getDial(), ship.getShipData().getName(), dial, Canonicalizer.getCleanedName(faction), owner.getSide());
+        StemDial2e.DialGenerateCommand myDialGen = new StemDial2e.DialGenerateCommand(ship.getShipData().getDial(), ship.getShipData().getName(), dial, Canonicalizer.getCleanedName(faction), owner.getSide(), associatedShipID);
 
         myDialGen.execute();
 

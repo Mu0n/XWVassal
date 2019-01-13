@@ -537,10 +537,10 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
 
         //reference constant positions or displacements
         Point pilotStartPosition = new Point(0, 659);
-        Point dialstartPosition = new Point(300, 100);
-        Point tlStartPosition = new Point(300, 290);
+        Point dialstartPosition = new Point(300, 130);
+        Point tlStartPosition = new Point(300, 355);
         Point configStartPosition = new Point(0, 220);
-        Point tokensStartPosition = new Point(300, 220);
+        Point tokensStartPosition = new Point(300, 300);
         int optDisplacePerConfig = 250;
         int upgradeYDisplace = 10;
         int upgradeComeBackLeft = 170;
@@ -625,6 +625,7 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
             // Generate the ship base pieces
             // ======================================================
             GamePiece shipPiece = GamePieceGenerator2e.generateShip(ship, extraForceFromUpgrade, extraHull, extraShield);
+            String associatedShipID = shipPiece.getProperty("micID").toString();
             shipBases.add(shipPiece);
 
             // ======================================================
@@ -657,7 +658,7 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
 
 
             XWPlayerInfo owner  = getCurrentPlayer();
-            GamePiece dialPiece = GamePieceGenerator2e.generateDial(ship, owner);
+            GamePiece dialPiece = GamePieceGenerator2e.generateDial(ship, owner, associatedShipID);
 
             int dialWidth = 0;
             try {
