@@ -179,14 +179,22 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
                     revealNow.execute();
 
                     if(checkForSuperCtrlRReleased.equals(stroke)) {
-                        String shipID = piece.getProperty("shipID").toString(); //gets the random UUID from the dial that was saved during spawning
+                        String shipID = this.piece.getProperty("shipID").toString(); //gets the random UUID from the dial that was saved during spawning
                         Collection<GamePiece> pieces = GameModule.getGameModule().getGameState().getAllPieces();
                         for (GamePiece piece : pieces) {
                             try{
                                 String micID = piece.getProperty("micID").toString();
-                                if (micID.equals(shipID) && piece.getMap().getMapName().equals("Contested Sector")){
-                                    Command moveShipCommand = piece.keyEvent(KeyStroke.getKeyStroke(KeyEvent.VK_1, KeyEvent.SHIFT_DOWN_MASK, false));
-                                    result.append(moveShipCommand);
+                                if (micID.equals(shipID) && piece.getMap().getMapName().equals("Contested Sector") && this.piece.getMap().getMapName().equals("Contested Sector")){
+                                    String moveFromScratch = getNewMoveCodeFromScratch(0);
+                                    //logToChat("moveFromScratch "+ moveFromScratch);
+                                    String moveRaw = moveFromScratch.substring(0,2);
+                                    //logToChat("moveRaw " + moveRaw);
+                                    boolean foundMoveCode = AutoBumpDecorator.moveCodeToKeyStroke.containsKey(moveRaw);
+                                    //logToChat("found the move? " + foundMoveCode);
+                                    if(foundMoveCode) {
+                                        Command moveShipCommand = piece.keyEvent(AutoBumpDecorator.moveCodeToKeyStroke.get(moveRaw));
+                                        result.append(moveShipCommand);
+                                    }
                                 }
                             }catch (Exception e){
                                 continue;
@@ -295,6 +303,38 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
         }
 
         return ""+savedMoveStringInt;
+    }
+
+    private String getNewMoveCodeFromScratch(int moveMod) {
+        String dialString = piece.getProperty("dialstring").toString();
+        String[] values = dialString.split(",");
+        int nbOfMoves = values.length;
+
+        // Fetch the saved move from the dynamic property of the dial piece
+        String savedMoveString = piece.getProperty("selectedMove").toString();
+        int savedMoveStringInt = Integer.parseInt(savedMoveString);
+
+        if(moveMod == 1){ //if you want to shift the selected move 1 up.
+            if(savedMoveStringInt == nbOfMoves) savedMoveStringInt = 1; //loop
+            else savedMoveStringInt++;
+        } else if(moveMod == -1) //if you want to shift the selected move 1 down
+        {
+            if (savedMoveStringInt == 1) savedMoveStringInt = nbOfMoves; //loop
+            else savedMoveStringInt--;
+        }
+
+        if(moveMod == 1){ //if you want to shift the selected move 1 up.
+            if(savedMoveStringInt == nbOfMoves) savedMoveStringInt = 1; //loop
+            else savedMoveStringInt++;
+        } else if(moveMod == -1) //if you want to shift the selected move 1 down
+        {
+            if (savedMoveStringInt == 1) savedMoveStringInt = nbOfMoves; //loop
+            else savedMoveStringInt--;
+        }
+
+        String moveCode = values[savedMoveStringInt-1];
+
+        return moveCode;
     }
 
 
