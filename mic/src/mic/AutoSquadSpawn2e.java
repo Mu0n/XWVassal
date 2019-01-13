@@ -625,7 +625,9 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
             // Generate the ship base pieces
             // ======================================================
             GamePiece shipPiece = GamePieceGenerator2e.generateShip(ship, extraForceFromUpgrade, extraHull, extraShield);
-            String associatedShipID = shipPiece.getId().toString();
+            String associatedShipID = shipPiece.getId();
+            String tempCheck = shipPiece.getProperty("Pilot Name").toString();
+            logToChat("autosquadspawn2e line 629 shipPieceID " + tempCheck);
             shipBases.add(shipPiece);
 
             // ======================================================

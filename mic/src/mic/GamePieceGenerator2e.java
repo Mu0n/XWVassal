@@ -220,7 +220,7 @@ public class GamePieceGenerator2e
                 }
                 grantIterator = upgradeGrants.iterator();
                 MasterUpgradeData.UpgradeGrants grant = null;
-                while(grantIterator.hasNext() && !needsBomb)
+                while(grantIterator.hasNext() && !)
                 {
                     grant = grantIterator.next();
                     if(grant.getType().equalsIgnoreCase("slot") && grant.getName().equalsIgnoreCase("Bomb"))
