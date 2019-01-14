@@ -457,7 +457,6 @@ public class StemShip2e extends Decorator implements EditablePiece {
                 sb.append("emb2;Activate;2;;Ghost;2;;;2;;;;1;false;0;0;");
                 sb.append(shipBaseImage);
 
-                Util.logToChat("StemShip2e line 460 - shipBaseImg=" + shipBaseImage + " size="+size);
                 if(size.equals("small")) {
                     sb.append(",Ship_Small_SeeThrough.png");
 

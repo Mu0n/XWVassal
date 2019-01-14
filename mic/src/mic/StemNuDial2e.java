@@ -122,14 +122,23 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
             Embellishment chosenSpeedEmb = (Embellishment)Util.getEmbellishment(piece, "Layer - Chosen Speed");
             Embellishment sideHideEmb = (Embellishment)Util.getEmbellishment(piece,"Layer - Side Hide");
             Embellishment centralHideEmb = (Embellishment)Util.getEmbellishment(piece, "Layer - Central Hide");
-
             chosenMoveEmb.setValue(0);
             chosenSpeedEmb.setValue(0);
             sideHideEmb.setValue(0);
             centralHideEmb.setValue(1);
-
         }
 
+        //sync source is not the dial owner, must pass the owner's vision of a hidden dial
+        if(thisSide == ownerSide && isHiddenPropCheck == 1){
+            Embellishment chosenMoveEmb = (Embellishment)Util.getEmbellishment(piece,"Layer - Chosen Move");
+            Embellishment chosenSpeedEmb = (Embellishment)Util.getEmbellishment(piece, "Layer - Chosen Speed");
+            Embellishment sideHideEmb = (Embellishment)Util.getEmbellishment(piece,"Layer - Side Hide");
+            Embellishment centralHideEmb = (Embellishment)Util.getEmbellishment(piece, "Layer - Central Hide");
+            chosenMoveEmb.setValue(1);
+            chosenSpeedEmb.setValue(1);
+            sideHideEmb.setValue(1);
+            centralHideEmb.setValue(0);
+        }
         return "";
     }
     @Override
@@ -210,9 +219,7 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
         boolean hasSomethingHappened = false;
         Integer isHiddenPropCheck;
 
-        ChangeTracker changeTracker = new ChangeTracker(this);
-        Command result = changeTracker.getChangeCommand();
-        result.append(piece.keyEvent(stroke));
+        Command result = piece.keyEvent(stroke);
 
         isHiddenPropCheck = Integer.parseInt(piece.getProperty("isHidden").toString());
 
