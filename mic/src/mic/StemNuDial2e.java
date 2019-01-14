@@ -117,37 +117,19 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
 
         //sync source is the dial owner, must not pass the owner's vision of a hidden dial
         if(thisSide != ownerSide && isHiddenPropCheck == 1){
-            logToChat("must hide the dial like a non-owner");
+            Embellishment chosenMoveEmb = (Embellishment)Util.getEmbellishment(piece,"Layer - Chosen Move");
+            Embellishment chosenSpeedEmb = (Embellishment)Util.getEmbellishment(piece, "Layer - Chosen Speed");
+            Embellishment sideHideEmb = (Embellishment)Util.getEmbellishment(piece,"Layer - Side Hide");
+            Embellishment centralHideEmb = (Embellishment)Util.getEmbellishment(piece, "Layer - Central Hide");
+
+            chosenMoveEmb.setValue(0);
+            chosenSpeedEmb.setValue(0);
+            sideHideEmb.setValue(0);
+            centralHideEmb.setValue(1);
+
         }
 
-        String dialString = piece.getProperty("dialstring").toString();
-        String[] values = dialString.split(",");
-
-        // Fetch the saved move from the dynamic property of the dial piece
-        String savedMoveString = piece.getProperty("selectedMove").toString();
-        int savedMoveStringInt = Integer.parseInt(savedMoveString);
-
-        String moveCode = values[savedMoveStringInt-1];
-        int rawSpeed = getRawSpeedFromMoveCode(moveCode);
-
-        //attempt to seed the move layer with the right image just like at spawn time
-        StringBuilder stateString = new StringBuilder();
-        StringBuilder moveNamesString = new StringBuilder();
-        stateString.append("emb2;Activate;2;;;2;;;2;;;;1;false;0;-24;,");
-
-        String moveImage;
-        String moveWithoutSpeed = getMoveCodeWithoutSpeed(moveCode);
-        String moveName = StemDial2e.maneuverNames.get(getMoveRaw(moveCode));
-        moveNamesString.append(moveName).append(" ").append(rawSpeed);
-
-        moveImage = StemDial2e.dialHeadingImages.get(moveWithoutSpeed);
-        stateString.append(moveImage);
-        // add in move names
-        stateString.append(";empty,"+moveNamesString);
-        stateString.append(";false;Chosen Move;;;false;;1;1;true;65,130");
-
-        logToChat("state String = " + stateString.toString());
-        return stateString.toString();
+        return "";
     }
     @Override
     public String myGetType() {
