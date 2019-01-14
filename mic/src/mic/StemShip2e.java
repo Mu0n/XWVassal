@@ -33,7 +33,7 @@ public class StemShip2e extends Decorator implements EditablePiece {
             .put("small/resistance/Front Arc","emb2;;2;;Toggle Firing Arc;2;;;2;;;;;true;0;-480;,Arc_2e_Resistance_Small.svg;,;true;Arc;;;false;;1;1;true;;70,130;")
             .put("small/firstorder/Front Arc","emb2;;2;;Toggle Firing Arc;2;;;2;;;;;true;0;-480;,Arc_2e_FirstOrder_Small.svg;,;true;Arc;;;false;;1;1;true;;70,130;")
             .put("small/galacticrepublic/Front Arc","emb2;;2;;Toggle Firing Arc;2;;;2;;;;;true;0;-480;,Arc_2e_Republic_Small.svg;,;true;Arc;;;false;;1;1;true;;70,130;")
-            .put("small/cis/Front Arc","emb2;;2;;Toggle Firing Arc;2;;;2;;;;;true;0;-480;,Arc_2e_CIS_Small.svg;,;true;Arc;;;false;;1;1;true;;70,130;")
+            .put("small/separatistalliance/Front Arc","emb2;;2;;Toggle Firing Arc;2;;;2;;;;;true;0;-480;,Arc_2e_CIS_Small.svg;,;true;Arc;;;false;;1;1;true;;70,130;")
 
             .put("medium/rebelalliance/Front Arc","emb2;;2;;Toggle Firing Arc;2;;;2;;;;;true;0;-508;,Arc_2e_Rebel_Medium.svg;,;true;Arc;;;false;;1;1;true;;70,130;")
             .put("medium/galacticempire/Front Arc","emb2;;2;;Toggle Firing Arc;2;;;2;;;;;true;0;-508;,Arc_2e_Empire_Medium.svg;,;true;Arc;;;false;;1;1;true;;70,130;")
@@ -41,7 +41,7 @@ public class StemShip2e extends Decorator implements EditablePiece {
             .put("medium/resistance/Front Arc","emb2;;2;;Toggle Firing Arc;2;;;2;;;;;true;0;-508;,Arc_2e_Resistance_Medium.svg;,;true;Arc;;;false;;1;1;true;;70,130;")
             .put("medium/firstorder/Front Arc","emb2;;2;;Toggle Firing Arc;2;;;2;;;;;true;0;-508;,Arc_2e_FirstOrder_Medium.svg;,;true;Arc;;;false;;1;1;true;;70,130;")
             .put("medium/galacticrepublic/Front Arc","emb2;;2;;Toggle Firing Arc;2;;;2;;;;;true;0;-508;,Arc_2e_Republic_Medium.svg;,;true;Arc;;;false;;1;1;true;;70,130;")
-            .put("medium/cis/Front Arc","emb2;;2;;Toggle Firing Arc;2;;;2;;;;;true;0;-508;,Arc_2e_CIS_Medium.svg;,;true;Arc;;;false;;1;1;true;;70,130;")
+            .put("medium/separatistalliance/Front Arc","emb2;;2;;Toggle Firing Arc;2;;;2;;;;;true;0;-508;,Arc_2e_CIS_Medium.svg;,;true;Arc;;;false;;1;1;true;;70,130;")
 
             .put("large/rebelalliance/Front Arc","emb2;;2;;Toggle Firing Arc;2;;;2;;;;;true;0;-537;,Arc_2e_Rebel_Large.svg;,;true;Arc;;;false;;1;1;true;;70,130;")
             .put("large/galacticempire/Front Arc","emb2;;2;;Toggle Firing Arc;2;;;2;;;;;true;0;-537;,Arc_2e_Empire_Large.svg;,;true;Arc;;;false;;1;1;true;;70,130;")
@@ -49,7 +49,7 @@ public class StemShip2e extends Decorator implements EditablePiece {
             .put("large/resistance/Front Arc","emb2;;2;;Toggle Firing Arc;2;;;2;;;;;true;0;-537;,Arc_2e_Resistance_Large.svg;,;true;Arc;;;false;;1;1;true;;70,130;")
             .put("large/firstorder/Front Arc","emb2;;2;;Toggle Firing Arc;2;;;2;;;;;true;0;-537;,Arc_2e_FirstOrder_Large.svg;,;true;Arc;;;false;;1;1;true;;70,130;")
             .put("large/galacticrepublic/Front Arc","emb2;;2;;Toggle Firing Arc;2;;;2;;;;;true;0;-537;,Arc_2e_Republic_Large.svg;,;true;Arc;;;false;;1;1;true;;70,130;")
-            .put("large/cis/Front Arc","emb2;;2;;Toggle Firing Arc;2;;;2;;;;;true;0;-537;,Arc_2e_CIS_Large.svg;,;true;Arc;;;false;;1;1;true;;70,130;")
+            .put("large/separatistalliance/Front Arc","emb2;;2;;Toggle Firing Arc;2;;;2;;;;;true;0;-537;,Arc_2e_CIS_Large.svg;,;true;Arc;;;false;;1;1;true;;70,130;")
 
             // Full Front Arc
             .put("small/rebelalliance/Full Front Arc","emb2;;2;;Show Auxiliary Arc;2;;;2;;;;;true;0;-452;,Arc_2e_Rebel_Small_FFA.svg;,;true;Show Auxiliary Firing Arc;;;false;;1;1;true;;78,130;")
@@ -58,7 +58,7 @@ public class StemShip2e extends Decorator implements EditablePiece {
             .put("small/resistance/Full Front Arc","emb2;;2;;Show Auxiliary Arc;2;;;2;;;;;true;0;-452;,Arc_2e_Resistance_Small_FFA.svg;,;true;Show Auxiliary Firing Arc;;;false;;1;1;true;;78,130;")
             .put("small/firstorder/Full Front Arc","emb2;;2;;Show Auxiliary Arc;2;;;2;;;;;true;0;-452;,Arc_2e_FirstOrder_Small_FFA.svg;,;true;Show Auxiliary Firing Arc;;;false;;1;1;true;;78,130;")
             .put("small/galacticrepublic/Full Front Arc","emb2;;2;;Show Auxiliary Arc;2;;;2;;;;;true;0;-452;,Arc_2e_Republic_Small_FFA.svg;,;true;Show Auxiliary Firing Arc;;;false;;1;1;true;;78,130;")
-            .put("small/cis/Full Front Arc","emb2;;2;;Show Auxiliary Arc;2;;;2;;;;;true;0;-452;,Arc_2e_CIS_Small_FFA.svg;,;true;Show Auxiliary Firing Arc;;;false;;1;1;true;;78,130;")
+            .put("small/separatistalliance/Full Front Arc","emb2;;2;;Show Auxiliary Arc;2;;;2;;;;;true;0;-452;,Arc_2e_CIS_Small_FFA.svg;,;true;Show Auxiliary Firing Arc;;;false;;1;1;true;;78,130;")
 
             .put("medium/rebelalliance/Full Front Arc","emb2;;2;;Show Auxiliary Arc;2;;;2;;;;;true;0;-466;,Arc_2e_Rebel_Medium_FFA.svg;,;true;Show Auxiliary Firing Arc;;;false;;1;1;true;;78,130;")
             .put("medium/galacticempire/Full Front Arc","emb2;;2;;Show Auxiliary Arc;2;;;2;;;;;true;0;-466;,Arc_2e_Empire_Medium_FFA.svg;,;true;Show Auxiliary Firing Arc;;;false;;1;1;true;;78,130;")
@@ -66,7 +66,7 @@ public class StemShip2e extends Decorator implements EditablePiece {
             .put("medium/resistance/Full Front Arc","emb2;;2;;Show Auxiliary Arc;2;;;2;;;;;true;0;-466;,Arc_2e_Resistance_Medium_FFA.svg;,;true;Show Auxiliary Firing Arc;;;false;;1;1;true;;78,130;")
             .put("medium/firstorder/Full Front Arc","emb2;;2;;Show Auxiliary Arc;2;;;2;;;;;true;0;-466;,Arc_2e_FirstOrder_Medium_FFA.svg;,;true;Show Auxiliary Firing Arc;;;false;;1;1;true;;78,130;")
             .put("medium/galacticrepublic/Full Front Arc","emb2;;2;;Show Auxiliary Arc;2;;;2;;;;;true;0;-466;,Arc_2e_Republic_Medium_FFA.svg;,;true;Show Auxiliary Firing Arc;;;false;;1;1;true;;78,130;")
-            .put("medium/cis/Full Front Arc","emb2;;2;;Show Auxiliary Arc;2;;;2;;;;;true;0;-466;,Arc_2e_CIS_Medium_FFA.svg;,;true;Show Auxiliary Firing Arc;;;false;;1;1;true;;78,130;")
+            .put("medium/separatistalliance/Full Front Arc","emb2;;2;;Show Auxiliary Arc;2;;;2;;;;;true;0;-466;,Arc_2e_CIS_Medium_FFA.svg;,;true;Show Auxiliary Firing Arc;;;false;;1;1;true;;78,130;")
 
             .put("large/rebelalliance/Full Front Arc","emb2;;2;;Show Aux Arc;2;;;2;;;;;true;0;-480;,Arc_2e_Rebel_Large_FFA.svg;,;true;Show Big Aux Arc;;;false;;1;1;true;;78,130;")
             .put("large/galacticempire/Full Front Arc","emb2;;2;;Show Aux Arc;2;;;2;;;;;true;0;-480;,Arc_2e_Empire_Large_FFA.svg;,;true;Show Big Aux Arc;;;false;;1;1;true;;78,130;")
@@ -74,7 +74,7 @@ public class StemShip2e extends Decorator implements EditablePiece {
             .put("large/resistance/Full Front Arc","emb2;;2;;Show Aux Arc;2;;;2;;;;;true;0;-480;,Arc_2e_Resistance_Large_FFA.svg;,;true;Show Big Aux Arc;;;false;;1;1;true;;78,130;")
             .put("large/firstorder/Full Front Arc","emb2;;2;;Show Aux Arc;2;;;2;;;;;true;0;-480;,Arc_2e_FirstOrder_Large_FFA.svg;,;true;Show Big Aux Arc;;;false;;1;1;true;;78,130;")
             .put("large/galacticrepublic/Full Front Arc","emb2;;2;;Show Aux Arc;2;;;2;;;;;true;0;-480;,Arc_2e_Republic_Large_FFA.svg;,;true;Show Big Aux Arc;;;false;;1;1;true;;78,130;")
-            .put("large/cis/Full Front Arc","emb2;;2;;Show Aux Arc;2;;;2;;;;;true;0;-480;,Arc_2e_CIS_Large_FFA.svg;,;true;Show Big Aux Arc;;;false;;1;1;true;;78,130;")
+            .put("large/separatistalliance/Full Front Arc","emb2;;2;;Show Aux Arc;2;;;2;;;;;true;0;-480;,Arc_2e_CIS_Large_FFA.svg;,;true;Show Big Aux Arc;;;false;;1;1;true;;78,130;")
 
             // Rear Arc
             .put("small/rebelalliance/Rear Arc","emb2;;2;;Show Auxiliary Arc;2;;;2;;;;;true;0;481;,Arc_2e_Rebel_Small_Aux.svg;,;true;Show Auxiliary Firing Arc;;;false;;1;1;true;;86,130;")
@@ -83,7 +83,7 @@ public class StemShip2e extends Decorator implements EditablePiece {
             .put("small/resistance/Rear Arc","emb2;;2;;Show Auxiliary Arc;2;;;2;;;;;true;0;481;,Arc_2e_Resistance_Small_Aux.svg;,;true;Show Auxiliary Firing Arc;;;false;;1;1;true;;86,130;")
             .put("small/firstorder/Rear Arc","emb2;;2;;Show Auxiliary Arc;2;;;2;;;;;true;0;481;,Arc_2e_FirstOrder_Small_Aux.svg;,;true;Show Auxiliary Firing Arc;;;false;;1;1;true;;86,130;")
             .put("small/galacticrepublic/Rear Arc","emb2;;2;;Show Auxiliary Arc;2;;;2;;;;;true;0;481;,Arc_2e_Republic_Small_Aux.svg;,;true;Show Auxiliary Firing Arc;;;false;;1;1;true;;86,130;")
-            .put("small/cis/Rear Arc","emb2;;2;;Show Auxiliary Arc;2;;;2;;;;;true;0;481;,Arc_2e_CIS_Small_Aux.svg;,;true;Show Auxiliary Firing Arc;;;false;;1;1;true;;86,130;")
+            .put("small/separatistalliance/Rear Arc","emb2;;2;;Show Auxiliary Arc;2;;;2;;;;;true;0;481;,Arc_2e_CIS_Small_Aux.svg;,;true;Show Auxiliary Firing Arc;;;false;;1;1;true;;86,130;")
 
             .put("medium/rebelalliance/Rear Arc","emb2;;2;;Show Auxiliary Arc;2;;;2;;;;;true;0;509;,Arc_2e_Rebel_Medium_Aux.svg;,;true;Show Auxiliary Firing Arc;;;false;;1;1;true;;86,130;")
             .put("medium/galacticempire/Rear Arc","emb2;;2;;Show Auxiliary Arc;2;;;2;;;;;true;0;509;,Arc_2e_Empire_Medium_Aux.svg;,;true;Show Auxiliary Firing Arc;;;false;;1;1;true;;86,130;")
@@ -91,7 +91,7 @@ public class StemShip2e extends Decorator implements EditablePiece {
             .put("medium/resistance/Rear Arc","emb2;;2;;Show Auxiliary Arc;2;;;2;;;;;true;0;509;,Arc_2e_Resistance_Medium_Aux.svg;,;true;Show Auxiliary Firing Arc;;;false;;1;1;true;;86,130;")
             .put("medium/firstorder/Rear Arc","emb2;;2;;Show Auxiliary Arc;2;;;2;;;;;true;0;509;,Arc_2e_FirstOrder_Medium_Aux.svg;,;true;Show Auxiliary Firing Arc;;;false;;1;1;true;;86,130;")
             .put("medium/galacticrepublic/Rear Arc","emb2;;2;;Show Auxiliary Arc;2;;;2;;;;;true;0;509;,Arc_2e_Republic_Medium_Aux.svg;,;true;Show Auxiliary Firing Arc;;;false;;1;1;true;;86,130;")
-            .put("medium/cis/Rear Arc","emb2;;2;;Show Auxiliary Arc;2;;;2;;;;;true;0;509;,Arc_2e_CIS_Medium_Aux.svg;,;true;Show Auxiliary Firing Arc;;;false;;1;1;true;;86,130;")
+            .put("medium/separatistalliance/Rear Arc","emb2;;2;;Show Auxiliary Arc;2;;;2;;;;;true;0;509;,Arc_2e_CIS_Medium_Aux.svg;,;true;Show Auxiliary Firing Arc;;;false;;1;1;true;;86,130;")
 
             .put("large/rebelalliance/Rear Arc","emb2;;2;;Show Auxiliary Arc;2;;;2;;;;;true;0;537;,Arc_2e_Rebel_Large_Aux.svg;,;true;Show Auxiliary Firing Arc;;;false;;1;1;true;;86,130;")
             .put("large/galacticempire/Rear Arc","emb2;;2;;Show Auxiliary Arc;2;;;2;;;;;true;0;537;,Arc_2e_Empire_Large_Aux.svg;,;true;Show Auxiliary Firing Arc;;;false;;1;1;true;;86,130;")
@@ -99,7 +99,7 @@ public class StemShip2e extends Decorator implements EditablePiece {
             .put("large/resistance/Rear Arc","emb2;;2;;Show Auxiliary Arc;2;;;2;;;;;true;0;537;,Arc_2e_Resistance_Large_Aux.svg;,;true;Show Auxiliary Firing Arc;;;false;;1;1;true;;86,130;")
             .put("large/firstorder/Rear Arc","emb2;;2;;Show Auxiliary Arc;2;;;2;;;;;true;0;537;,Arc_2e_FirstOrder_Large_Aux.svg;,;true;Show Auxiliary Firing Arc;;;false;;1;1;true;;86,130;")
             .put("large/galacticrepublic/Rear Arc","emb2;;2;;Show Auxiliary Arc;2;;;2;;;;;true;0;537;,Arc_2e_Republic_Large_Aux.svg;,;true;Show Auxiliary Firing Arc;;;false;;1;1;true;;86,130;")
-            .put("large/cis/Rear Arc","emb2;;2;;Show Auxiliary Arc;2;;;2;;;;;true;0;537;,Arc_2e_CIS_Large_Aux.svg;,;true;Show Auxiliary Firing Arc;;;false;;1;1;true;;86,130;")
+            .put("large/separatistalliance/Rear Arc","emb2;;2;;Show Auxiliary Arc;2;;;2;;;;;true;0;537;,Arc_2e_CIS_Large_Aux.svg;,;true;Show Auxiliary Firing Arc;;;false;;1;1;true;;86,130;")
 
             // Bullseye
             .put("small/rebelalliance/Bullseye","emb2;;2;;Toggle Bullseye Arc;2;;;2;;;;;true;0;-479;,Arc_2e_BE_Rebel.svg;,;true;Show Bullseye Arc;;;false;;1;1;true;;88,130;")
@@ -108,7 +108,7 @@ public class StemShip2e extends Decorator implements EditablePiece {
             .put("small/resistance/Bullseye","emb2;;2;;Toggle Bullseye Arc;2;;;2;;;;;true;0;-479;,Arc_2e_BE_Resistance.svg;,;true;Show Bullseye Arc;;;false;;1;1;true;;88,130;")
             .put("small/firstorder/Bullseye","emb2;;2;;Toggle Bullseye Arc;2;;;2;;;;;true;0;-479;,Arc_2e_BE_FirstOrder.svg;,;true;Show Bullseye Arc;;;false;;1;1;true;;88,130;")
             .put("small/galacticrepublic/Bullseye","emb2;;2;;Toggle Bullseye Arc;2;;;2;;;;;true;0;-479;,Arc_2e_BE_Republic.svg;,;true;Show Bullseye Arc;;;false;;1;1;true;;88,130;")
-            .put("small/cis/Bullseye","emb2;;2;;Toggle Bullseye Arc;2;;;2;;;;;true;0;-479;,Arc_2e_BE_CIS.svg;,;true;Show Bullseye Arc;;;false;;1;1;true;;88,130;")
+            .put("small/separatistalliance/Bullseye","emb2;;2;;Toggle Bullseye Arc;2;;;2;;;;;true;0;-479;,Arc_2e_BE_CIS.svg;,;true;Show Bullseye Arc;;;false;;1;1;true;;88,130;")
 
             .put("medium/rebelalliance/Bullseye","emb2;;2;;Toggle Bullseye Arc;2;;;2;;;;;true;0;-507;,Arc_2e_BE_Rebel.svg;,;true;Show Bullseye Arc;;;false;;1;1;true;;88,130;")
             .put("medium/galacticempire/Bullseye","emb2;;2;;Toggle Bullseye Arc;2;;;2;;;;;true;0;-507;,Arc_2e_BE_Empire.svg;,;true;Show Bullseye Arc;;;false;;1;1;true;;88,130;")
@@ -116,7 +116,7 @@ public class StemShip2e extends Decorator implements EditablePiece {
             .put("medium/resistance/Bullseye","emb2;;2;;Toggle Bullseye Arc;2;;;2;;;;;true;0;-507;,Arc_2e_BE_Resistance.svg;,;true;Show Bullseye Arc;;;false;;1;1;true;;88,130;")
             .put("medium/firstorder/Bullseye","emb2;;2;;Toggle Bullseye Arc;2;;;2;;;;;true;0;-507;,Arc_2e_BE_FirstOrder.svg;,;true;Show Bullseye Arc;;;false;;1;1;true;;88,130;")
             .put("medium/galacticrepublic/Bullseye","emb2;;2;;Toggle Bullseye Arc;2;;;2;;;;;true;0;-507;,Arc_2e_BE_Republic.svg;,;true;Show Bullseye Arc;;;false;;1;1;true;;88,130;")
-            .put("medium/cis/Bullseye","emb2;;2;;Toggle Bullseye Arc;2;;;2;;;;;true;0;-507;,Arc_2e_BE_CIS.svg;,;true;Show Bullseye Arc;;;false;;1;1;true;;88,130;")
+            .put("medium/separatistalliance/Bullseye","emb2;;2;;Toggle Bullseye Arc;2;;;2;;;;;true;0;-507;,Arc_2e_BE_CIS.svg;,;true;Show Bullseye Arc;;;false;;1;1;true;;88,130;")
 
             .put("large/rebelalliance/Bullseye","emb2;;2;;Toggle Bullseye Arc;2;;;2;;;;;true;0;-535;,Arc_2e_BE_Rebel.svg;,;true;Show Bullseye Arc;;;false;;1;1;true;;88,130;")
             .put("large/galacticempire/Bullseye","emb2;;2;;Toggle Bullseye Arc;2;;;2;;;;;true;0;-535;,Arc_2e_BE_Empire.svg;,;true;Show Bullseye Arc;;;false;;1;1;true;;88,130;")
@@ -124,7 +124,7 @@ public class StemShip2e extends Decorator implements EditablePiece {
             .put("large/resistance/Bullseye","emb2;;2;;Toggle Bullseye Arc;2;;;2;;;;;true;0;-535;,Arc_2e_BE_Resistance.svg;,;true;Show Bullseye Arc;;;false;;1;1;true;;88,130;")
             .put("large/firstorder/Bullseye","emb2;;2;;Toggle Bullseye Arc;2;;;2;;;;;true;0;-535;,Arc_2e_BE_FirstOrder.svg;,;true;Show Bullseye Arc;;;false;;1;1;true;;88,130;")
             .put("large/galacticrepublic/Bullseye","emb2;;2;;Toggle Bullseye Arc;2;;;2;;;;;true;0;-535;,Arc_2e_BE_Republic.svg;,;true;Show Bullseye Arc;;;false;;1;1;true;;88,130;")
-            .put("large/cis/Bullseye","emb2;;2;;Toggle Bullseye Arc;2;;;2;;;;;true;0;-535;,Arc_2e_BE_CIS.svg;,;true;Show Bullseye Arc;;;false;;1;1;true;;88,130;")
+            .put("large/separatistalliance/Bullseye","emb2;;2;;Toggle Bullseye Arc;2;;;2;;;;;true;0;-535;,Arc_2e_BE_CIS.svg;,;true;Show Bullseye Arc;;;false;;1;1;true;;88,130;")
 
             .build();
 
@@ -255,6 +255,7 @@ public class StemShip2e extends Decorator implements EditablePiece {
                     arcKey = mic.Canonicalizer.getCleanedName(source.getShipData().getSize()) + "/" + mic.Canonicalizer.getCleanedName(source.getPilotData().getFaction()) + "/" + arc;
 
                     newType = firingArcTypes.get(arcKey);
+
                     if(newType != null && !newType.isEmpty())
                     {
                         emb.mySetType(newType);
@@ -319,8 +320,6 @@ public class StemShip2e extends Decorator implements EditablePiece {
             final String scumMediumImage = "TargetLock_Scum_Medium.svg";
             final String scumLargeImage = "TargetLock_Scum_Large.svg";
 
-            String newFaction = XWOTAUtils.simplifyFactionName(faction);
-
             Embellishment myEmb = (Embellishment)Util.getEmbellishment(newGamePiece,targetLockLayerName);
 
             newSize = mic.Canonicalizer.getCleanedName(newSize);
@@ -345,7 +344,7 @@ public class StemShip2e extends Decorator implements EditablePiece {
             }else if(newSize.equals("small") && faction.equals("galacticrepublic") )
             {
                 sb.append(republicSmallImage);
-            }else if(newSize.equals("small") && faction.equals("cis") )
+            }else if(newSize.equals("small") && faction.equals("separatistalliance") )
             {
                 sb.append(cisSmallImage);
             }
@@ -369,7 +368,7 @@ public class StemShip2e extends Decorator implements EditablePiece {
             }else if(newSize.equals("medium") && faction.equals("galacticrepublic") )
             {
                 sb.append(republicMediumImage);
-            }else if(newSize.equals("medium") && faction.equals("cis") )
+            }else if(newSize.equals("medium") && faction.equals("separatistalliance") )
             {
                 sb.append(cisMediumImage);
             }
@@ -393,7 +392,7 @@ public class StemShip2e extends Decorator implements EditablePiece {
             }else if(newSize.equals("large") && faction.equals("galacticrepublic") )
             {
                 sb.append(republicLargeImage);
-            }else if(newSize.equals("large") && faction.equals("cis") )
+            }else if(newSize.equals("large") && faction.equals("separatistalliance") )
             {
                 sb.append(cisLargeImage);
             }
@@ -458,6 +457,7 @@ public class StemShip2e extends Decorator implements EditablePiece {
                 sb.append("emb2;Activate;2;;Ghost;2;;;2;;;;1;false;0;0;");
                 sb.append(shipBaseImage);
 
+                Util.logToChat("StemShip2e line 460 - shipBaseImg=" + shipBaseImage + " size="+size);
                 if(size.equals("small")) {
                     sb.append(",Ship_Small_SeeThrough.png");
 
