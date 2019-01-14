@@ -93,16 +93,60 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
     }
 
     public StemNuDial2e(GamePiece piece)
-        {setInner(piece);
+        {
+            setInner(piece);
+
         }
 
     @Override
     public void mySetState(String newState) {
 
     }
+    /*
+    @Override
+    public String getState(){
+
+    }
+    */
+
     @Override
     public String myGetState() {
-        return "";
+        Integer isHiddenPropCheck = Integer.parseInt(piece.getProperty("isHidden").toString());
+        int ownerSide = getOwnerOfThisDial();
+        int thisSide = Util.getCurrentPlayer().getSide();
+
+        //sync source is the dial owner, must not pass the owner's vision of a hidden dial
+        if(thisSide != ownerSide && isHiddenPropCheck == 1){
+            logToChat("must hide the dial like a non-owner");
+        }
+
+        String dialString = piece.getProperty("dialstring").toString();
+        String[] values = dialString.split(",");
+
+        // Fetch the saved move from the dynamic property of the dial piece
+        String savedMoveString = piece.getProperty("selectedMove").toString();
+        int savedMoveStringInt = Integer.parseInt(savedMoveString);
+
+        String moveCode = values[savedMoveStringInt-1];
+        int rawSpeed = getRawSpeedFromMoveCode(moveCode);
+
+        //attempt to seed the move layer with the right image just like at spawn time
+        StringBuilder stateString = new StringBuilder();
+        StringBuilder moveNamesString = new StringBuilder();
+        stateString.append("emb2;Activate;2;;;2;;;2;;;;1;false;0;-24;,");
+
+        String moveImage;
+        String moveWithoutSpeed = getMoveCodeWithoutSpeed(moveCode);
+        String moveName = StemDial2e.maneuverNames.get(getMoveRaw(moveCode));
+        moveNamesString.append(moveName).append(" ").append(rawSpeed);
+
+        moveImage = StemDial2e.dialHeadingImages.get(moveWithoutSpeed);
+        stateString.append(moveImage);
+        // add in move names
+        stateString.append(";empty,"+moveNamesString);
+        stateString.append(";false;Chosen Move;;;false;;1;1;true;65,130");
+
+        return stateString.toString();
     }
     @Override
     public String myGetType() {
