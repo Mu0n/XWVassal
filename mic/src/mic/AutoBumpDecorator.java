@@ -228,11 +228,11 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
             innerCommand.append(buildTranslateCommand(part, path.getAdditionalAngleForShip()));
 
             //check for Tallon rolls and spawn the template
-            /*if(lastManeuver == ManeuverPaths.TrollL1  || lastManeuver == ManeuverPaths.TrollL2 || lastManeuver == ManeuverPaths.TrollL3
+            if(lastManeuver == ManeuverPaths.TrollL1  || lastManeuver == ManeuverPaths.TrollL2 || lastManeuver == ManeuverPaths.TrollL3
             || lastManeuver == ManeuverPaths.TrollR1  || lastManeuver == ManeuverPaths.TrollR2 || lastManeuver == ManeuverPaths.TrollR3) {
                 Command placeTrollTemplate = spawnRotatedPiece(lastManeuver);
                 innerCommand.append(placeTrollTemplate);
-            }*/
+            }
             //These lines fetch the Shape of the last movement template used
             FreeRotator rotator = (FreeRotator) (Decorator.getDecorator(Decorator.getOutermost(this), FreeRotator.class));
             Shape lastMoveShapeUsed = path.getTransformedTemplateShape(this.getPosition().getX(),

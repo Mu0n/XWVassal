@@ -17,6 +17,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -250,7 +251,8 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
                     if(checkForSuperCtrlRReleased.equals(stroke)) {
                         String shipID = this.piece.getProperty("shipID").toString(); //gets the random UUID from the dial that was saved during spawning
                         Collection<GamePiece> pieces = GameModule.getGameModule().getGameState().getAllPieces();
-                        for (GamePiece pieceScanned : pieces) {
+                        Collection<GamePiece> piecesCopied = new ArrayList<GamePiece>(pieces);
+                        for (GamePiece pieceScanned : piecesCopied) {
                             try{
                                 String micID = pieceScanned.getProperty("micID").toString();
                                 if (micID.equals(shipID) && pieceScanned.getMap().getMapName().equals("Contested Sector") && this.piece.getMap().getMapName().equals("Contested Sector")){
