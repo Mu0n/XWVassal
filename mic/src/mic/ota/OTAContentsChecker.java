@@ -60,12 +60,13 @@ public class OTAContentsChecker extends AbstractConfigurable {
     public static final String OTA_SHIPS_JSON_URL_2E = OTA_RAW_GITHUB_JSON_URL_2E + "ship_images.json";
     public static final String OTA_PILOTS_JSON_URL_2E = OTA_RAW_GITHUB_JSON_URL_2E + "pilot_images.json";
     public static final String OTA_CONDITIONS_JSON_URL_2E =  OTA_RAW_GITHUB_JSON_URL_2E + "condition_images.json";
-
+    public static final String OTA_DIALPLATES_JSON_URL_2E = OTA_RAW_GITHUB_JSON_URL_2E + "dialPlates_images.json";
 
     public static final String OTA_DISPATCHER_UPGRADES_JSON_URL = OTA_RAW_GITHUB_JSON_URL + "dispatcher_upgrades.json";
     public static final String OTA_DISPATCHER_PILOTS_JSON_URL = OTA_RAW_GITHUB_JSON_URL + "dispatcher_pilots.json";
     public static final String OTA_DISPATCHER_SHIPS_JSON_URL = OTA_RAW_GITHUB_JSON_URL + "dispatcher_ships.json";
     public static final String OTA_DISPATCHER_CONDITIONS_JSON_URL = OTA_RAW_GITHUB_JSON_URL + "dispatcher_conditions.json";
+
 
 
     public static final String OTA_DISPATCHER_UPGRADES_JSON_URL_2E = OTA_RAW_GITHUB_JSON_URL_2E + "dispatcher_upgrades.json";
@@ -87,7 +88,7 @@ public class OTAContentsChecker extends AbstractConfigurable {
             .put("resistance","Resistance")
             .put("scumandvillainy","Scum and Villainy")
             .put("galacticrepublic","Galactic Republic")
-            .put("separatistarmy","Separatist Army")
+            .put("separatistalliance","Separatist Alliance")
             .build();
 
     private boolean debugMode = false;
@@ -1120,6 +1121,9 @@ public class OTAContentsChecker extends AbstractConfigurable {
             needToSaveModule = true;
         }
 
+        if(results2e.getMissingDialPlates().size() > 0) {
+            XWOTAUtils.downloadImagesFromOTA("dials", results2e.getMissingDialPlateImages(),writer,branchURL);
+        }
         if(needToSaveModule)
         {
             try {
@@ -1377,31 +1381,19 @@ public class OTAContentsChecker extends AbstractConfigurable {
             tableResults.add(tableRow);
         }
 
- /*
-        // dial hides
-        OTAMasterDialHides.OTADialHide dialHide = null;
-        for(int i=0;i<results.getMissingDialHides().size();i++)
+
+        // dial plates
+        OTAMasterDialPlates.OTADialPlate dialPlate = null;
+        for(int i=0;i<results.getMissingDialPlates().size();i++)
         {
-            dialHide = results.getMissingDialHides().get(i);
+            dialPlate = results.getMissingDialPlates().get(i);
             tableRow = new String[3];
-            tableRow[0] = "Dial Hide";
-            tableRow[1] = MasterShipData.getShipData(dialHide.getXws()).getName();
+            tableRow[0] = "Dial Plate";
+            tableRow[1] = XWS2Pilots.getSpecificShipFromShipXWS(shipBase.getShipXws(), allShips).getName();
             tableRow[2] = "";
             tableResults.add(tableRow);
         }
 
-        // dial masks
-        OTADialMask dialMask = null;
-        for(int i=0;i<results.getMissingDialMasks().size();i++)
-        {
-            dialMask = results.getMissingDialMasks().get(i);
-            tableRow = new String[3];
-            tableRow[0] = "Dial Mask";
-            tableRow[1] = MasterShipData.getShipData(dialMask.getShipXws()).getName();
-            tableRow[2] = fullFactionNames.get(dialMask.getFaction());
-            tableResults.add(tableRow);
-        }
-*/
         // pilots
         OTAMasterPilots.OTAPilot pilot = null;
         for(int i=0;i<results.getMissingPilots().size();i++)
@@ -1673,6 +1665,7 @@ public class OTAContentsChecker extends AbstractConfigurable {
         results2e.setUpgradeResults(modIntChecker_2e.checkUpgrades(false, allUpgrades));
         results2e.setConditionResults(modIntChecker_2e.checkConditions(false, allConditions));
         results2e.setShipBaseResults(modIntChecker_2e.checkShipBases(false, allShips));
+        results2e.setDialPlateResults(modIntChecker_2e.checkDialPlates(false, allShips));
         /*
         results2e.setActionResults(modIntChecker_2e.checkActions(false));
         results.setDialHideResults(modIntChecker_2e.checkDialHides(false));
@@ -1690,6 +1683,7 @@ public class OTAContentsChecker extends AbstractConfigurable {
         results2e.setMissingUpgrades(findMissingUpgrades(results2e.getUpgradeResults()));
         results2e.setMissingConditions(findMissingConditions(results2e.getConditionResults()));
         results2e.setMissingShipBases(findMissingShipBases(results2e.getShipBaseResults()));
+        results2e.setMissingDialPlates(findMissingDialPlates(results2e.getDialPlateResults()));
 
 /*
         results.setMissingActions(findMissingActions(results.getActionResults()));
@@ -1825,6 +1819,23 @@ public class OTAContentsChecker extends AbstractConfigurable {
         }
         return missing;
     }
+
+    private ArrayList<OTAMasterDialPlates.OTADialPlate> findMissingDialPlates(ArrayList<OTAMasterDialPlates.OTADialPlate> dialPlateResults)
+    {
+        ArrayList<OTAMasterDialPlates.OTADialPlate> missing = new ArrayList<OTAMasterDialPlates.OTADialPlate>();
+        Iterator<OTAMasterDialPlates.OTADialPlate> dialPlateIterator = dialPlateResults.iterator();
+        OTAMasterDialPlates.OTADialPlate dialPlate = null;
+        while(dialPlateIterator.hasNext())
+        {
+            dialPlate = dialPlateIterator.next();
+            if(!dialPlate.getStatus() || downloadAll)
+            {
+                missing.add(dialPlate);
+            }
+        }
+        return missing;
+    }
+
 
     private ArrayList<OTADialMask> findMissingDialMasks(ArrayList<OTADialMask> dialMaskResults)
     {
