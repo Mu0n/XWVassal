@@ -1121,8 +1121,10 @@ public class OTAContentsChecker extends AbstractConfigurable {
             needToSaveModule = true;
         }
 
+        //download dial plates
         if(results2e.getMissingDialPlates().size() > 0) {
             XWOTAUtils.downloadImagesFromOTA("dials", results2e.getMissingDialPlateImages(),writer,branchURL);
+            needToSaveModule = true;
         }
         if(needToSaveModule)
         {
@@ -1389,7 +1391,7 @@ public class OTAContentsChecker extends AbstractConfigurable {
             dialPlate = results.getMissingDialPlates().get(i);
             tableRow = new String[3];
             tableRow[0] = "Dial Plate";
-            tableRow[1] = XWS2Pilots.getSpecificShipFromShipXWS(shipBase.getShipXws(), allShips).getName();
+            tableRow[1] = XWS2Pilots.getSpecificShipFromShipXWS(dialPlate.getXws(), allShips).getName();
             tableRow[2] = "";
             tableResults.add(tableRow);
         }

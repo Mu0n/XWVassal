@@ -274,6 +274,7 @@ public ArrayList<OTAMasterShips.OTAShip> checkShips(boolean onlyDetectOne, List<
         ArrayList<OTAMasterDialPlates.OTADialPlate> dialPlateList = new ArrayList<OTAMasterDialPlates.OTADialPlate>();
         Iterator<OTAMasterDialPlates.OTADialPlate> i = dialPlates.iterator();
 
+
         OTAMasterDialPlates.OTADialPlate dialPlate = null;
         while(i.hasNext())
         {
@@ -294,7 +295,6 @@ public ArrayList<OTAMasterShips.OTAShip> checkShips(boolean onlyDetectOne, List<
                 }
             }
         }
-
         return dialPlateList;
     }
 
