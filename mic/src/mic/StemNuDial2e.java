@@ -135,7 +135,10 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
             Embellishment sideHideEmb = (Embellishment)Util.getEmbellishment(piece,"Layer - Side Hide");
             Embellishment centralHideEmb = (Embellishment)Util.getEmbellishment(piece, "Layer - Central Hide");
             chosenMoveEmb.setValue(1);
-            chosenSpeedEmb.setValue(1);
+
+            String moveSpeedLayerString = getLayerFromScratch(0);
+            chosenSpeedEmb.setValue(Integer.parseInt(moveSpeedLayerString)); //use the right speed layer
+
             sideHideEmb.setValue(1);
             centralHideEmb.setValue(0);
         }
