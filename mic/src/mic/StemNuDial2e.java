@@ -146,6 +146,7 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
         stateString.append(";empty,"+moveNamesString);
         stateString.append(";false;Chosen Move;;;false;;1;1;true;65,130");
 
+        logToChat("state String = " + stateString.toString());
         return stateString.toString();
     }
     @Override
