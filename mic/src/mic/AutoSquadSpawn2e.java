@@ -842,7 +842,7 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
         int obstacleStartY = shipBaseY + 200;
         for (GamePiece obstacle : pieces.getObstaclesForDisplay()) {
             int halfSize = (int) (obstacle.boundingBox().getWidth() / 2.0);
-            spawnPiece(obstacle, new Point(obstacleX + halfSize, obstacleStartY), playerMap);
+            entireSpawnCommand.append(spawnPieceCommand(obstacle, new Point(obstacleX + halfSize, obstacleStartY), playerMap));
             obstacleX += obstacle.getShape().getBounds().getWidth();
         }
 
