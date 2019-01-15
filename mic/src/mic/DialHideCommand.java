@@ -79,10 +79,8 @@ public class DialHideCommand extends Command {
             }
             logger.info("Encoding dialHideCommand");
 
-            logger.info("Step 3b encode prep - piece.getId " + pieceInCommand.getId());
             //StemNuDial2e.dialHideCommand dhc = (StemNuDial2e.dialHideCommand) c;
             try {
-                String prepString = commandPrefix+pieceInCommand.getId();
                 DialHideCommand dhc = (DialHideCommand) c;
                 logger.info("Encoded dialHideCommand with id = {}", dhc.pieceInCommand.getId());
                 return commandPrefix + dhc.pieceInCommand.getId();
