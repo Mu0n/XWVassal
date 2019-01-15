@@ -582,23 +582,24 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
     }
 
     public static class dialHideCommand extends Command {
-        static GamePiece pieceInCommand;
+        static List<GamePiece> pieceInCommand = new ArrayList<GamePiece>();
 
         dialHideCommand(GamePiece piece) {
-            pieceInCommand = piece;
+            pieceInCommand.add(piece);
         }
 
         protected void executeCommand() {
-            Embellishment chosenMoveEmb = (Embellishment)Util.getEmbellishment(pieceInCommand,"Layer - Chosen Move");
-            Embellishment chosenSpeedEmb = (Embellishment)Util.getEmbellishment(pieceInCommand, "Layer - Chosen Speed");
-            Embellishment centralHideEmb = (Embellishment)Util.getEmbellishment(pieceInCommand, "Layer - Central Hide");
-            chosenMoveEmb.setValue(0); //Hide the maneuver
-            chosenSpeedEmb.setValue(0); //Hide the speed
-            centralHideEmb.setValue(1); //Show the central slashed icon
-            pieceInCommand.setProperty("isHidden", 1);
-            //Util.logToChat("STEP 4b - Hid the dial");
-            final VASSAL.build.module.Map map = pieceInCommand.getMap();
-            map.repaint();
+            for(GamePiece pc : pieceInCommand){
+                Embellishment chosenMoveEmb = (Embellishment)Util.getEmbellishment(pc,"Layer - Chosen Move");
+                Embellishment chosenSpeedEmb = (Embellishment)Util.getEmbellishment(pc, "Layer - Chosen Speed");
+                Embellishment centralHideEmb = (Embellishment)Util.getEmbellishment(pc, "Layer - Central Hide");
+                chosenMoveEmb.setValue(0); //Hide the maneuver
+                chosenSpeedEmb.setValue(0); //Hide the speed
+                centralHideEmb.setValue(1); //Show the central slashed icon
+                pc.setProperty("isHidden", 1);//Util.logToChat("STEP 4b - Hid the dial");
+                final VASSAL.build.module.Map map = pc.getMap();
+                map.repaint();
+            }
         }
 
         protected Command myUndoCommand() {
@@ -612,6 +613,7 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
         public static class Dial2eHideEncoder implements CommandEncoder {
             private static final Logger logger = LoggerFactory.getLogger(StemNuDial2e.class);
             private static final String commandPrefix = "Dial2eHideEncoder=";
+            private static final String itemDelim = "\t";
 
             public static StemNuDial2e.dialHideCommand.Dial2eHideEncoder INSTANCE = new StemNuDial2e.dialHideCommand.Dial2eHideEncoder();
 
@@ -650,14 +652,14 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
                     return null;
                 }
                 logger.info("Encoding dialHideCommand");
-
-                logger.info("Step 3b encode prep - piece.getId " + pieceInCommand.getId());
-                //StemNuDial2e.dialHideCommand dhc = (StemNuDial2e.dialHideCommand) c;
                 try {
-                    String prepString = commandPrefix+pieceInCommand.getId();
                     dialHideCommand dhc = (dialHideCommand) c;
-                    logger.info("Encoded dialHideCommand with id = {}", dhc.pieceInCommand.getId());
-                    return commandPrefix + dhc.pieceInCommand.getId();
+                    String prepString = commandPrefix;
+                    for(GamePiece pc : dhc.pieceInCommand){
+                        logger.info("Encoded dialHideCommand with id = {}", pc.getId());
+                        prepString = prepString + Joiner.on(itemDelim) + pc.getId();
+                    }
+                    return prepString;
                 } catch(Exception e) {
                     logger.error("Error encoding dialHideCommand", e);
                     return null;
