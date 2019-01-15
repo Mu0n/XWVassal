@@ -15,40 +15,12 @@ import java.awt.event.MouseListener;
  *
  * This source file manages every mouse event so that the ships can be driven by a non-modal mouse interface with buttons
  */
-public class MouseShipGUI extends Decorator implements EditablePiece {
+public class MouseShipGUI extends Decorator implements EditablePiece, MouseListener {
     public static final String ID = "MouseShipGUI";
-    private MouseEvent mEvent;
-    private MouseListener mListener;
-
 
     public MouseShipGUI(){
         this(null);
     }
-/*
-    public void addDragSource(Component var1) {
-        var1.addMouseListener(new MouseAdapter() {
-            public void mousePressed(MouseEvent var1) {
-                DragBuffer.this.lastRelease = null;
-                DragBuffer.this.dropTarget = null;
-                DragBuffer.this.dropHandler = null;
-            }
-
-            public void mouseReleased(MouseEvent var1) {
-                var1.getComponent().setCursor((Cursor)null);
-                Component var2 = (Component)var1.getSource();
-                if(DragBuffer.this.dropTarget == null) {
-                    var1.translatePoint(var2.getLocationOnScreen().x, var2.getLocationOnScreen().y);
-                    DragBuffer.this.lastRelease = var1;
-                } else {
-                    var1.translatePoint(var2.getLocationOnScreen().x, var2.getLocationOnScreen().y);
-                    var1.translatePoint(-DragBuffer.this.dropTarget.getLocationOnScreen().x, -DragBuffer.this.dropTarget.getLocationOnScreen().y);
-                    DragBuffer.this.dropHandler.mouseReleased(var1);
-                }
-
-            }
-        });
-    }
-*/
 
     public MouseShipGUI(GamePiece piece){
         setInner(piece);
@@ -106,5 +78,27 @@ public class MouseShipGUI extends Decorator implements EditablePiece {
 
     public String getName() {
         return this.piece.getName();
+    }
+
+    public void mouseClicked(MouseEvent e) {
+        Util.logToChat("YOU CLICKED ME, RUFFIAN");
+    }
+
+    public void mousePressed(MouseEvent e) {
+
+    }
+
+    public void mouseReleased(MouseEvent e) {
+
+    }
+
+    public void mouseEntered(MouseEvent e) {
+
+        Util.logToChat("YOU MOUSE ENTERED ME, RUFFIAN");
+    }
+
+    public void mouseExited(MouseEvent e) {
+        Util.logToChat("YOU MOUSE EXITED ME, RUFFIAN");
+
     }
 }
