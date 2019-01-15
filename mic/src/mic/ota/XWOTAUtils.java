@@ -135,6 +135,8 @@ public class XWOTAUtils {
 
     private static String findArcImageName(String size, String faction) {
         String sb = "";
+
+        if(faction.equals("separatistalliance")) faction="cis";
         sb+=SHIP_BASE_ARC_IMAGE_PREFIX + faction + "_" + size + ".png";
         return sb;
     }

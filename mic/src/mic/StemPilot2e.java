@@ -33,7 +33,7 @@ public class StemPilot2e extends Decorator implements EditablePiece {
             .put("Galactic Empire","Pilot2e_WIP_Empire.jpg")
             .put("First Order","Pilot2e_WIP_First_Order.jpg")
             .put("Scum and Villainy","Pilot2e_WIP_Scum.jpg")
-            .put("CIS","Pilot2e_WIP_CIS.jpg")
+            .put("Separatist Alliance","Pilot2e_WIP_CIS.jpg")
             .put("Galactic Republic","Pilot2e_WIP_Republic.jpg")
             .build();
 

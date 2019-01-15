@@ -13,6 +13,8 @@ public class OTAContentsCheckerResults
     private ArrayList<OTAMasterDialHides.OTADialHide> missingDialHides;
     private ArrayList<OTADialMask> missingDialMasks;
     private ArrayList<OTAShipBase> missingShipBases;
+    private ArrayList<OTAMasterDialPlates.OTADialPlate> missingDialPlates;
+
     ArrayList<OTAMasterPilots.OTAPilot> pilotResults;
     ArrayList<OTAMasterShips.OTAShip> shipResults;
     ArrayList<OTAMasterActions.OTAAction> actionResults;
@@ -21,6 +23,7 @@ public class OTAContentsCheckerResults
     ArrayList<OTAMasterConditions.OTACondition> conditionResults;
     ArrayList<OTAMasterDialHides.OTADialHide> dialHideResults;
     ArrayList<OTADialMask> dialMaskResults;
+    ArrayList<OTAMasterDialPlates.OTADialPlate> dialPlateResults;
 
     public int getTotalWork()
     {
@@ -33,6 +36,7 @@ public class OTAContentsCheckerResults
         total += missingDialHides.size();
         total += missingDialMasks.size();
         total += missingShipBases.size();
+        total += missingDialPlates.size();
         return total;
     }
 
@@ -115,6 +119,19 @@ public class OTAContentsCheckerResults
         return images;
     }
 
+    public ArrayList<String> getMissingDialPlateImages()
+    {
+        ArrayList<String> images = new ArrayList<String>();
+        Iterator<OTAMasterDialPlates.OTADialPlate> iterator = missingDialPlates.iterator();
+        OTAMasterDialPlates.OTADialPlate dialPlate  = null;
+        while(iterator.hasNext())
+        {
+            dialPlate = iterator.next();
+            images.add(dialPlate.getImage());
+        }
+        return images;
+    }
+
     public ArrayList<OTAMasterShips.OTAShip> getMissingShips() {
         return missingShips;
     }
@@ -153,6 +170,14 @@ public class OTAContentsCheckerResults
 
     public void setMissingDialHides(ArrayList<OTAMasterDialHides.OTADialHide> missingDialHides) {
         this.missingDialHides = missingDialHides;
+    }
+
+    public ArrayList<OTAMasterDialPlates.OTADialPlate> getMissingDialPlates() {
+        return missingDialPlates;
+    }
+
+    public void setMissingDialPlates(ArrayList<OTAMasterDialPlates.OTADialPlate> missingDialPlates) {
+        this.missingDialPlates = missingDialPlates;
     }
 
     public ArrayList<OTADialMask> getMissingDialMasks() {
@@ -225,6 +250,14 @@ public class OTAContentsCheckerResults
 
     public void setDialHideResults(ArrayList<OTAMasterDialHides.OTADialHide> dialHideResults) {
         this.dialHideResults = dialHideResults;
+    }
+
+    public ArrayList<OTAMasterDialPlates.OTADialPlate> getDialPlateResults() {
+        return dialPlateResults;
+    }
+
+    public void setDialPlateResults(ArrayList<OTAMasterDialPlates.OTADialPlate> dialPlateResults) {
+        this.dialPlateResults = dialPlateResults;
     }
 
     public ArrayList<OTADialMask> getDialMaskResults() {

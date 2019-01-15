@@ -110,6 +110,8 @@ public class ModuleIntegrityChecker_2e {
         return conditionList;
     }
 
+
+/* old hide that wasn't used in 2e
     public ArrayList<OTAMasterDialHides.OTADialHide> checkDialHides(boolean onlyDetectOne)
     {
 
@@ -143,7 +145,7 @@ public class ModuleIntegrityChecker_2e {
 
         return dialHideList;
     }
-
+*/
 /*
     public ArrayList<OTAMasterPilots.OTAPilot> checkPilots(boolean onlyDetectOne, List<XWS2Pilots> allShips)
     {
@@ -245,7 +247,6 @@ public ArrayList<OTAMasterShips.OTAShip> checkShips(boolean onlyDetectOne, List<
 
             if(XWS2Pilots.getSpecificShipFromShipXWS(ship.getXws(), allShips)!=null)
             {
-
                 boolean exists = XWOTAUtils.imageExistsInModule(ship.getImage());
                 ship.setStatus(exists);
                 boolean existsInOTA = XWOTAUtils.imageExistsInOTA("ships",ship.getImage(), OTAContentsChecker.OTA_RAW_BRANCH_URL_2E);
@@ -262,6 +263,39 @@ public ArrayList<OTAMasterShips.OTAShip> checkShips(boolean onlyDetectOne, List<
             }
         }
         return shipList;
+    }
+
+    public ArrayList<OTAMasterDialPlates.OTADialPlate> checkDialPlates(boolean onlyDetectOne, List<XWS2Pilots> allShips)
+    {
+        OTAMasterDialPlates omdp = new OTAMasterDialPlates();
+        omdp.flushData();
+        Collection<OTAMasterDialPlates.OTADialPlate> dialPlates = omdp.getAllDialPlates();
+
+        ArrayList<OTAMasterDialPlates.OTADialPlate> dialPlateList = new ArrayList<OTAMasterDialPlates.OTADialPlate>();
+        Iterator<OTAMasterDialPlates.OTADialPlate> i = dialPlates.iterator();
+
+
+        OTAMasterDialPlates.OTADialPlate dialPlate = null;
+        while(i.hasNext())
+        {
+            dialPlate = i.next();
+            if(XWS2Pilots.getSpecificShipFromShipXWS(dialPlate.getXws(), allShips)!=null)
+            {
+                boolean exists = XWOTAUtils.imageExistsInModule(dialPlate.getImage());
+                dialPlate.setStatus(exists);
+                boolean existsInOTA = XWOTAUtils.imageExistsInOTA("dials",dialPlate.getImage(), OTAContentsChecker.OTA_RAW_BRANCH_URL_2E);
+                dialPlate.setStatusOTA(existsInOTA);
+
+                boolean gonnaDL = false;
+                if(exists == false && existsInOTA) gonnaDL = true;
+
+                if(exists || gonnaDL){
+                    dialPlateList.add(dialPlate);
+                    if(onlyDetectOne && gonnaDL) return dialPlateList;
+                }
+            }
+        }
+        return dialPlateList;
     }
 
 public ArrayList<OTAShipBase> checkShipBases(boolean onlyDetectOne, List<XWS2Pilots> allShips)
