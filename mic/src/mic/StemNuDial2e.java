@@ -588,6 +588,9 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
             pieceInCommand.add(piece);
         }
 
+        dialHideCommand(List<GamePiece> piecesToHide) {
+            pieceInCommand = new ArrayList<GamePiece>(piecesToHide);
+        }
         protected void executeCommand() {
             for(GamePiece pc : pieceInCommand){
                 Embellishment chosenMoveEmb = (Embellishment)Util.getEmbellishment(pc,"Layer - Chosen Move");
@@ -625,26 +628,29 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
                 logger.info("Decoding dialHideCommand");
 
                 logger.info("Step 3b decoding - before chop " + command);
-                String extractedId = command.substring(commandPrefix.length());
-                logger.info("Step 3b decoding after chop " + extractedId);
+                command =  command.substring(commandPrefix.length());
+                String[] parts = command.split(itemDelim);
                 try{
-                    Collection<GamePiece> pieces = GameModule.getGameModule().getGameState().getAllPieces();
-                    logger.info("Step 3b prep - extractedId " + extractedId);
-                    for (GamePiece piece : pieces) {
-                        if(piece.getId().equals(extractedId)) {
+                    List<GamePiece> piecesToHide = new ArrayList<GamePiece>();
 
-                            logger.info("Step 3b - Hide Encoder " + piece.getId());
+                    for(String part: parts){
+                        Collection<GamePiece> pieces = GameModule.getGameModule().getGameState().getAllPieces();
+                        for (GamePiece piece : pieces) {
+                            if(piece.getId().equals(part)) {
 
-                            return new dialHideCommand(piece);
+                                logger.info("Step 3b - Hide Encoder " + piece.getId());
+
+                                piecesToHide.add(piece);
+                            }
                         }
                     }
+                    return new StemNuDial2e.dialHideCommand(piecesToHide);
+
                 }catch(Exception e){
                     logger.info("Step 3b - exception error");
                     return null;
                 }
 
-
-                return null;
             }
 
             public String encode(Command c) {
