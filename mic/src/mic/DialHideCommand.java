@@ -48,28 +48,18 @@ public class DialHideCommand extends Command {
             if (command == null || !command.contains(commandPrefix)) {
                 return null;
             }
-            logger.info("Decoding dialHideCommand");
-
-            logger.info("Step 3b decoding - before chop " + command);
             String extractedId = command.substring(commandPrefix.length());
-            logger.info("Step 3b decoding after chop " + extractedId);
             try{
                 Collection<GamePiece> pieces = GameModule.getGameModule().getGameState().getAllPieces();
-                logger.info("Step 3b prep - extractedId " + extractedId);
                 for (GamePiece piece : pieces) {
                     if(piece.getId().equals(extractedId)) {
-
-                        logger.info("Step 3b - Hide Encoder " + piece.getId());
-
                         return new DialHideCommand(piece);
                     }
                 }
             }catch(Exception e){
-                logger.info("Step 3b - exception error");
+                logger.info("Error decoding DialHideCommand - exception error");
                 return null;
             }
-
-
             return null;
         }
 
@@ -77,15 +67,11 @@ public class DialHideCommand extends Command {
             if (!(c instanceof DialHideCommand)) {
                 return null;
             }
-            logger.info("Encoding dialHideCommand");
-
-            //StemNuDial2e.dialHideCommand dhc = (StemNuDial2e.dialHideCommand) c;
             try {
                 DialHideCommand dhc = (DialHideCommand) c;
-                logger.info("Encoded dialHideCommand with id = {}", dhc.pieceInCommand.getId());
                 return commandPrefix + dhc.pieceInCommand.getId();
             } catch(Exception e) {
-                logger.error("Error encoding dialHideCommand", e);
+                logger.error("Error encoding DialHideCommand", e);
                 return null;
             }
         }
