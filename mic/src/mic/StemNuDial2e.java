@@ -258,7 +258,7 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
                     result.append(revealNow);
                     revealNow.execute();
 
-                    logToChat("StemNuDial2e line 261 - dial is looking for=" +this.piece.getProperty("shipID").toString());
+                    //logToChat("StemNuDial2e line 261 - dial is looking for=" +this.piece.getProperty("shipID").toString());
                     if(checkForSuperCtrlRReleased.equals(stroke)) {
                         String shipID = this.piece.getProperty("shipID").toString(); //gets the random UUID from the dial that was saved during spawning
                         Collection<GamePiece> pieces = GameModule.getGameModule().getGameState().getAllPieces();
@@ -267,7 +267,7 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
                             try{
                                 String micID = pieceScanned.getProperty("micID").toString();
 
-                                logToChat("StemNuDial2e line 270 -ship=" +pieceScanned.getProperty("micID").toString());
+                               // logToChat("StemNuDial2e line 270 -ship=" +pieceScanned.getProperty("micID").toString());
                                 if (micID.equals(shipID) && pieceScanned.getMap().getMapName().equals("Contested Sector") && this.piece.getMap().getMapName().equals("Contested Sector")){
                                     String moveFromScratch = getNewMoveCodeFromScratch(0);
                                     //logToChat("moveFromScratch "+ moveFromScratch);
