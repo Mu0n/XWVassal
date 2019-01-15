@@ -94,10 +94,10 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
     }
 
     public StemNuDial2e(GamePiece piece)
-        {
-            setInner(piece);
+    {
+        setInner(piece);
 
-        }
+    }
 
     @Override
     public void mySetState(String newState) {
@@ -311,9 +311,7 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
                     Integer newMoveSpeed = Integer.parseInt(moveSpeedLayerString);
 
                     chosenSpeedEmb.setValue(newMoveSpeed); //unhide the speed only for the owner who's doing CTRL-R
-
                 }
-
             }
             else if(goingLeft || goingRight){ //rotate left, move-- or rotate right, move++
 
@@ -580,43 +578,35 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
             }
         }
     }
-
     public static class dialHideCommand extends Command {
-        static List<GamePiece> pieceInCommand = new ArrayList<GamePiece>();
+        static GamePiece pieceInCommand;
 
         dialHideCommand(GamePiece piece) {
-            pieceInCommand.add(piece);
+            pieceInCommand = piece;
         }
 
-        dialHideCommand(List<GamePiece> piecesToHide) {
-            pieceInCommand = new ArrayList<GamePiece>(piecesToHide);
-        }
         protected void executeCommand() {
-            for(GamePiece pc : pieceInCommand){
-                Embellishment chosenMoveEmb = (Embellishment)Util.getEmbellishment(pc,"Layer - Chosen Move");
-                Embellishment chosenSpeedEmb = (Embellishment)Util.getEmbellishment(pc, "Layer - Chosen Speed");
-                Embellishment centralHideEmb = (Embellishment)Util.getEmbellishment(pc, "Layer - Central Hide");
-                chosenMoveEmb.setValue(0); //Hide the maneuver
-                chosenSpeedEmb.setValue(0); //Hide the speed
-                centralHideEmb.setValue(1); //Show the central slashed icon
-                pc.setProperty("isHidden", 1);//Util.logToChat("STEP 4b - Hid the dial");
-                final VASSAL.build.module.Map map = pc.getMap();
-                map.repaint();
-            }
+            Embellishment chosenMoveEmb = (Embellishment)Util.getEmbellishment(pieceInCommand,"Layer - Chosen Move");
+            Embellishment chosenSpeedEmb = (Embellishment)Util.getEmbellishment(pieceInCommand, "Layer - Chosen Speed");
+            Embellishment centralHideEmb = (Embellishment)Util.getEmbellishment(pieceInCommand, "Layer - Central Hide");
+            chosenMoveEmb.setValue(0); //Hide the maneuver
+            chosenSpeedEmb.setValue(0); //Hide the speed
+            centralHideEmb.setValue(1); //Show the central slashed icon
+            pieceInCommand.setProperty("isHidden", 1);
+            //Util.logToChat("STEP 4b - Hid the dial");
+            final VASSAL.build.module.Map map = pieceInCommand.getMap();
+            map.repaint();
         }
 
         protected Command myUndoCommand() {
             return null;
         }
 
-
-
         //the following class is used to send the info to the other player whenever a dial generation command is issued, so it can be done locally on all machines playing/watching the game
         //only the ship XWS string is sent
         public static class Dial2eHideEncoder implements CommandEncoder {
             private static final Logger logger = LoggerFactory.getLogger(StemNuDial2e.class);
             private static final String commandPrefix = "Dial2eHideEncoder=";
-            private static final String itemDelim = "\t";
 
             public static StemNuDial2e.dialHideCommand.Dial2eHideEncoder INSTANCE = new StemNuDial2e.dialHideCommand.Dial2eHideEncoder();
 
@@ -628,29 +618,26 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
                 logger.info("Decoding dialHideCommand");
 
                 logger.info("Step 3b decoding - before chop " + command);
-                command =  command.substring(commandPrefix.length());
-                String[] parts = command.split(itemDelim);
+                String extractedId = command.substring(commandPrefix.length());
+                logger.info("Step 3b decoding after chop " + extractedId);
                 try{
-                    List<GamePiece> piecesToHide = new ArrayList<GamePiece>();
+                    Collection<GamePiece> pieces = GameModule.getGameModule().getGameState().getAllPieces();
+                    logger.info("Step 3b prep - extractedId " + extractedId);
+                    for (GamePiece piece : pieces) {
+                        if(piece.getId().equals(extractedId)) {
 
-                    for(String part: parts){
-                        Collection<GamePiece> pieces = GameModule.getGameModule().getGameState().getAllPieces();
-                        for (GamePiece piece : pieces) {
-                            if(piece.getId().equals(part)) {
+                            logger.info("Step 3b - Hide Encoder " + piece.getId());
 
-                                logger.info("Step 3b - Hide Encoder " + piece.getId());
-
-                                piecesToHide.add(piece);
-                            }
+                            return new dialHideCommand(piece);
                         }
                     }
-                    return new StemNuDial2e.dialHideCommand(piecesToHide);
-
                 }catch(Exception e){
                     logger.info("Step 3b - exception error");
                     return null;
                 }
 
+
+                return null;
             }
 
             public String encode(Command c) {
@@ -658,14 +645,14 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
                     return null;
                 }
                 logger.info("Encoding dialHideCommand");
+
+                logger.info("Step 3b encode prep - piece.getId " + pieceInCommand.getId());
+                //StemNuDial2e.dialHideCommand dhc = (StemNuDial2e.dialHideCommand) c;
                 try {
+                    String prepString = commandPrefix+pieceInCommand.getId();
                     dialHideCommand dhc = (dialHideCommand) c;
-                    String prepString = commandPrefix;
-                    for(GamePiece pc : dhc.pieceInCommand){
-                        logger.info("Encoded dialHideCommand with id = {}", pc.getId());
-                        prepString = prepString + Joiner.on(itemDelim) + pc.getId();
-                    }
-                    return prepString;
+                    logger.info("Encoded dialHideCommand with id = {}", dhc.pieceInCommand.getId());
+                    return commandPrefix + dhc.pieceInCommand.getId();
                 } catch(Exception e) {
                     logger.error("Error encoding dialHideCommand", e);
                     return null;
@@ -673,6 +660,7 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
             }
         }
     }
+
     public static class dialRotateCommand extends Command {
         static GamePiece pieceInCommand;
         static String moveDef;
@@ -689,25 +677,25 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
         }
 
         protected void executeCommand() {
-                pieceInCommand.setProperty("selectedMove", moveDef);
+            pieceInCommand.setProperty("selectedMove", moveDef);
 
-                if(showEverything == true){
-                    Embellishment chosenMoveEmb = (Embellishment)Util.getEmbellishment(pieceInCommand,"Layer - Chosen Move");
-                    Embellishment chosenSpeedEmb = (Embellishment)Util.getEmbellishment(pieceInCommand, "Layer - Chosen Speed");
+            if(showEverything == true){
+                Embellishment chosenMoveEmb = (Embellishment)Util.getEmbellishment(pieceInCommand,"Layer - Chosen Move");
+                Embellishment chosenSpeedEmb = (Embellishment)Util.getEmbellishment(pieceInCommand, "Layer - Chosen Speed");
 
-                    chosenMoveEmb.mySetType(stateString);
-                    chosenMoveEmb.setValue(1);
-                    chosenSpeedEmb.setValue(Integer.parseInt(moveSpeedLayerString));
+                chosenMoveEmb.mySetType(stateString);
+                chosenMoveEmb.setValue(1);
+                chosenSpeedEmb.setValue(Integer.parseInt(moveSpeedLayerString));
 
 
-                   // Util.logToChat("STEP 4c - Rotated the dial while revealed ");
+                // Util.logToChat("STEP 4c - Rotated the dial while revealed ");
 
-                    final VASSAL.build.module.Map map = pieceInCommand.getMap();
-                    map.repaint();
-                }
-                else {
-                    //Util.logToChat("STEP 4d - Rotated the dial while hidden");
-                }
+                final VASSAL.build.module.Map map = pieceInCommand.getMap();
+                map.repaint();
+            }
+            else {
+                //Util.logToChat("STEP 4d - Rotated the dial while hidden");
+            }
 
         }
 
