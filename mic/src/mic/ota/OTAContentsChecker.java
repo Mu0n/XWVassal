@@ -467,7 +467,7 @@ public class OTAContentsChecker extends AbstractConfigurable {
                 if(remoteVer.isNewerThan(localVer)) {
                     if((remoteVer.getMinor() > localVer.getMinor()) || (remoteVer.getMajor() > localVer.getMajor())) {
                         //Scenario B: the new online stuff requires a content checker flash! and the local files will be replaced
-                        missing2ndEdContent=1;
+                        //missing2ndEdContent=1;
                         String msg = "yes";
                         try {
                             XWOTAUtils.addFileToModule("pendingContentCheck.txt", msg.getBytes());
