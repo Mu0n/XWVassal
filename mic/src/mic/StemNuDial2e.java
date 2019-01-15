@@ -285,17 +285,7 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
                     }
 
                 } else if(isHiddenPropCheck == 0){ // about to hide the dial
-  Embellishment chosenMoveEmb = (Embellishment)Util.getEmbellishment(piece,"Layer - Chosen Move");
-            Embellishment chosenSpeedEmb = (Embellishment)Util.getEmbellishment(piece, "Layer - Chosen Speed");
-            Embellishment centralHideEmb = (Embellishment)Util.getEmbellishment(piece, "Layer - Central Hide");
-            chosenMoveEmb.setValue(0); //Hide the maneuver
-            chosenSpeedEmb.setValue(0); //Hide the speed
-            centralHideEmb.setValue(1); //Show the central slashed icon
-                    piece.setProperty("isHidden", 1);
 
-
-
-            /*
                     //command shown to all players
                     dialHideCommand hideNow = new dialHideCommand(piece);
                     result.append(hideNow);
@@ -321,7 +311,7 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
                     Integer newMoveSpeed = Integer.parseInt(moveSpeedLayerString);
 
                     chosenSpeedEmb.setValue(newMoveSpeed); //unhide the speed only for the owner who's doing CTRL-R
-                    */
+
                 }
 
             }
@@ -591,8 +581,6 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
         }
     }
 
-
-    /*
     public static class dialHideCommand extends Command {
         static GamePiece pieceInCommand;
 
@@ -677,9 +665,6 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
             }
         }
     }
-
-
-    */
     public static class dialRotateCommand extends Command {
         static GamePiece pieceInCommand;
         static String moveDef;
