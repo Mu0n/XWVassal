@@ -13,6 +13,7 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.geom.AffineTransform;
 import java.awt.geom.Area;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -66,7 +67,6 @@ public class MouseShipGUI extends AbstractConfigurable  {
             public void mouseClicked(MouseEvent e) {
                 Collection<GamePiece> shipPieces = new ArrayList<GamePiece>();
                 GamePiece[] gpArray = theMap.getAllPieces();
-                logToChat(gpArray.length + " pieces detected");
                 for (int i = 0; i < gpArray.length; i++)
                 {
                     try{
@@ -77,9 +77,16 @@ public class MouseShipGUI extends AbstractConfigurable  {
                         continue;
                     }
                 }
-                logToChat(shipPieces.size() + " of these are ships");
                 if(shipPieces.size()>0){
-                    logToChat(e.getClickCount() + "th click and you clicked here " + e.getX() + "," + e.getY());
+                    for(GamePiece ship : shipPieces){
+
+                        Shape theShape = getTransformedPieceShape(ship);
+
+                        if(theShape.contains(e.getX(),e.getY()))
+                        {
+                            logToChat(ship.getProperty("Pilot Name") + " is a ");
+                        }
+                    }
                 }
             }
 
@@ -102,6 +109,22 @@ public class MouseShipGUI extends AbstractConfigurable  {
             }
         };
         theMap.addLocalMouseListener(ml);
+    }
+
+    private static Shape getTransformedPieceShape(GamePiece piece) {
+        Shape rawShape = piece.getShape();
+        Shape transformed = AffineTransform
+                .getTranslateInstance(piece.getPosition().getX(), piece.getPosition().getY())
+                .createTransformedShape(rawShape);
+
+        FreeRotator rotator = (FreeRotator) (Decorator.getDecorator(Decorator.getOutermost(piece), FreeRotator.class));
+        double centerX = piece.getPosition().getX();
+        double centerY = piece.getPosition().getY();
+        transformed = AffineTransform
+                .getRotateInstance(rotator.getAngleInRadians(), centerX, centerY)
+                .createTransformedShape(transformed);
+
+        return transformed;
     }
 
 
