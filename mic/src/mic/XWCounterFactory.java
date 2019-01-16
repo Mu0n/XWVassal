@@ -38,8 +38,6 @@ public class XWCounterFactory extends BasicCommandEncoder {
             piece = new ShipReposition(inner);
         }else if (type.startsWith(EmptyTest.ID)) {
             piece = new EmptyTest(inner);
-        }else if (type.startsWith(MouseShipGUI.ID)) {
-            piece = new MouseShipGUI(inner);
         }else if (type.startsWith(CritSpawner.ID)) {
             piece = new CritSpawner(inner);
         }else if (type.startsWith(StemDial.ID)) {
@@ -50,8 +48,6 @@ public class XWCounterFactory extends BasicCommandEncoder {
             piece = new ReportCardText2e(inner);
         }else if (type.startsWith(StemNuDial2e.ID)) {
             piece = new StemNuDial2e(inner);
-        }else if (type.startsWith(MouseShipGUI.ID)) {
-            piece = new MouseShipGUI(inner);
         }else {
             piece = super.createDecorator(type, inner);
         }
