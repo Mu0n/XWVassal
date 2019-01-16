@@ -13,6 +13,9 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.geom.Area;
+import java.util.ArrayList;
+import java.util.Collection;
 
 import static mic.Util.logToChat;
 
@@ -58,10 +61,26 @@ public class MouseShipGUI extends AbstractConfigurable  {
     }
 
     public void addTo(Buildable parent) {
-        Map theMap = getTheMainMap();
+        final Map theMap = getTheMainMap();
         MouseListener ml = new MouseListener() {
             public void mouseClicked(MouseEvent e) {
-                logToChat("You clicked me RUFFIAN");
+                Collection<GamePiece> shipPieces = new ArrayList<GamePiece>();
+                GamePiece[] gpArray = theMap.getAllPieces();
+                logToChat(gpArray.length + " pieces detected");
+                for (int i = 0; i < gpArray.length; i++)
+                {
+                    try{
+                        if(gpArray[i].getState().contains("this_is_a_ship")){
+                            shipPieces.add(gpArray[i]);
+                        }
+                    }catch(Exception ex){
+                        continue;
+                    }
+                }
+                logToChat(shipPieces.size() + " of these are ships");
+                if(shipPieces.size()>0){
+                    logToChat(e.getClickCount() + "th click and you clicked here " + e.getX() + "," + e.getY());
+                }
             }
 
             public void mousePressed(MouseEvent e) {
@@ -73,6 +92,8 @@ public class MouseShipGUI extends AbstractConfigurable  {
             }
 
             public void mouseEntered(MouseEvent e) {
+
+
 
             }
 
