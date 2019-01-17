@@ -5,6 +5,7 @@ import VASSAL.build.Buildable;
 import VASSAL.build.GameModule;
 import VASSAL.build.module.Map;
 import VASSAL.build.module.documentation.HelpFile;
+import VASSAL.build.module.map.Drawable;
 import VASSAL.command.Command;
 import VASSAL.counters.*;
 
@@ -15,8 +16,8 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Area;
-import java.util.ArrayList;
-import java.util.Collection;
+import java.awt.geom.Rectangle2D;
+import java.util.*;
 
 import static mic.Util.logToChat;
 
@@ -25,7 +26,7 @@ import static mic.Util.logToChat;
  *
  * This source file manages every mouse event so that the ships can be driven by a non-modal mouse interface with buttons
  */
-public class MouseShipGUI extends AbstractConfigurable  {
+public class MouseShipGUI extends AbstractConfigurable {
     public static final String ID = "MouseShipGUI";
 
     public String[] getAttributeNames() {
@@ -84,7 +85,16 @@ public class MouseShipGUI extends AbstractConfigurable  {
 
                         if(theShape.contains(e.getX(),e.getY()))
                         {
-                            logToChat(ship.getProperty("Pilot Name") + " is a ");
+                            final java.util.List<XWS2Pilots> allShips = XWS2Pilots.loadFromLocal();
+                            String xwsStr = ship.getProperty("xws").toString();
+                            XWS2Pilots.Pilot2e pilot = XWS2Pilots.getSpecificPilot(xwsStr, allShips);
+                            XWS2Pilots pilotShip = XWS2Pilots.getSpecificShipFromPilotXWS2(xwsStr,allShips);
+                            logToChat("Pilot name = " + pilot.getName() + " xws = " + pilot.getXWS()+ " who flies a " + pilotShip.getName());
+                            logToChat("Hull Status: " + ship.getProperty("Hull Rating").toString() + "/" + pilotShip.getHull() + " Shield Rating: " + ship.getProperty("Shield Rating") + "/" + pilotShip.getShields());
+                            logToChat("Attack Rating Front Arc: " + pilotShip.getFrontArc() + " Back Arc: " + pilotShip.getRearArc());
+                            MouseShipGUICommand msgc = new MouseShipGUICommand(450,450,600,250, theMap);
+                            msgc.execute();
+                            break;
                         }
                     }
                 }
@@ -127,8 +137,7 @@ public class MouseShipGUI extends AbstractConfigurable  {
         return transformed;
     }
 
-
-    private Map getTheMainMap(){
+    static public Map getTheMainMap(){
         for (Map loopMap : GameModule.getGameModule().getComponentsOf(Map.class)) {
             if (("Contested Sector").equals(loopMap.getMapName())) {
                 return loopMap;

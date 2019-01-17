@@ -153,6 +153,8 @@ public class GamePieceGenerator2e
         if (ship.getShipData().getName() != null) {
             piece.setProperty("Pilot Name", getDisplayPilotName(ship, ship.getShipNumber()));
         }
+
+        piece.setProperty("xws", ship.getPilotData().getXWS());
         piece.setProperty("micID", UUID.randomUUID().toString());
         return piece;
     }
