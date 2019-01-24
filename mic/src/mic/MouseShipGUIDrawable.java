@@ -16,6 +16,7 @@ import java.awt.image.BufferedImage;
 import java.awt.image.ImageObserver;
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStream;
 import java.text.AttributedString;
 
@@ -71,6 +72,7 @@ public class MouseShipGUIDrawable implements Drawable {
 
                 InputStream inputstream = new BufferedInputStream(fileArchive.getInputStream("images/"+imageNameToLoad));
                 image = ImageIO.read(inputstream);
+                inputstream.close();
 
                 AffineTransform translateNScale = new AffineTransform();
                 translateNScale.scale(scale, scale);
@@ -83,16 +85,23 @@ public class MouseShipGUIDrawable implements Drawable {
                 });
             }
 
-
         }catch(Exception e){}
+
+
+        try{
+
+            fileArchive.close();
+            dataArchive.close();
+        }catch(IOException ioe){
+            Util.logToChat("can't close the xwd2 files " + ioe.getMessage());
+        }
 
         drawText(_pilotShip.getDial().toString(),scale,_x + 30, _y + 50, g2d);
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, prevAntiAliasing);
-        g2d.dispose();
     }
 
     public boolean drawAboveCounters() {
-        return true;
+        return false;
     }
 
 

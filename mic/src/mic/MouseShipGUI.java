@@ -24,6 +24,7 @@ public class MouseShipGUI extends AbstractConfigurable {
     public static final String ID = "MouseShipGUI";
     GamePiece activatedPiece;
     MouseShipGUIDrawable lastPopup;
+    MouseListener ml;
 
     public String[] getAttributeNames() {
         return new String[0];
@@ -49,6 +50,7 @@ public class MouseShipGUI extends AbstractConfigurable {
     public void removeFrom(Buildable parent) {
         Map theMap = getTheMainMap();
         theMap.removeDrawComponent(lastPopup);
+        theMap.removeLocalMouseListener(ml);
     }
 
     public HelpFile getHelpFile() {
@@ -61,7 +63,7 @@ public class MouseShipGUI extends AbstractConfigurable {
 
     public void addTo(Buildable parent) {
         final Map theMap = getTheMainMap();
-        MouseListener ml = new MouseListener() {
+        ml = new MouseListener() {
             public void mouseClicked(MouseEvent e) {
 
             }
@@ -96,7 +98,11 @@ public class MouseShipGUI extends AbstractConfigurable {
                             }
                             //Go ahead and make this ship the active popup owner
                             final java.util.List<XWS2Pilots> allShips = XWS2Pilots.loadFromLocal();
+
+                            //final solution to fetch a ship's info
                             String xwsStr = ship.getProperty("xws").toString();
+
+
                             XWS2Pilots.Pilot2e pilot = XWS2Pilots.getSpecificPilot(xwsStr, allShips);
                             XWS2Pilots pilotShip = XWS2Pilots.getSpecificShipFromPilotXWS2(xwsStr,allShips);
                             logToChat("Pilot name = " + pilot.getName() + " xws = " + pilot.getXWS()+ " who flies a " + pilotShip.getName());
