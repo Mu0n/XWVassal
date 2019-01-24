@@ -2,9 +2,11 @@ package mic;
 
 import VASSAL.build.GameModule;
 import VASSAL.build.module.documentation.HelpFile;
+import VASSAL.build.module.map.PieceMover;
 import VASSAL.command.ChangeTracker;
 import VASSAL.command.Command;
 import VASSAL.command.CommandEncoder;
+import VASSAL.command.MoveTracker;
 import VASSAL.configure.HotKeyConfigurer;
 import VASSAL.counters.*;
 import com.google.common.base.Joiner;
@@ -16,6 +18,7 @@ import org.slf4j.LoggerFactory;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -233,6 +236,7 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
             KeyStroke checkForCommaReleased = KeyStroke.getKeyStroke(KeyEvent.VK_COMMA, 0, false);
             KeyStroke checkForPeriodReleased = KeyStroke.getKeyStroke(KeyEvent.VK_PERIOD, 0, false);
             KeyStroke checkForSuperCtrlRReleased = KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyEvent.CTRL_DOWN_MASK, false);
+            KeyStroke checkForC = KeyStroke.getKeyStroke(KeyEvent.VK_C, 0, false);
 
             boolean goingLeft = checkForCommaReleased.equals(stroke);
             boolean goingRight = checkForPeriodReleased.equals(stroke);
@@ -254,7 +258,7 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
                     //get the speed layer to show
                     String moveSpeedLayerString = getLayerFromScratch(0);
 
-                    DialRevealCommand revealNow = new DialRevealCommand(piece, stateString.toString(), moveSpeedLayerString);
+                    DialRevealCommand revealNow = new DialRevealCommand(piece, stateString.toString(), moveSpeedLayerString, Util.getCurrentPlayer().getName());
                     result.append(revealNow);
                     revealNow.execute();
 
@@ -263,7 +267,7 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
                         String shipID = this.piece.getProperty("shipID").toString(); //gets the random UUID from the dial that was saved during spawning
                         Collection<GamePiece> pieces = GameModule.getGameModule().getGameState().getAllPieces();
                         Collection<GamePiece> piecesCopied = new ArrayList<GamePiece>(pieces);
-                        for (GamePiece pieceScanned : piecesCopied) {
+                        for (final GamePiece pieceScanned : piecesCopied) {
                             try{
                                 String micID = pieceScanned.getProperty("micID").toString();
 
@@ -279,6 +283,7 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
                                     if(thisKey!=null) {
                                         Command moveShipCommand = pieceScanned.keyEvent(thisKey);
                                         result.append(moveShipCommand);
+
                                     }
                                 }
                             }catch (Exception e){
@@ -314,6 +319,25 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
                     Integer newMoveSpeed = Integer.parseInt(moveSpeedLayerString);
 
                     chosenSpeedEmb.setValue(newMoveSpeed); //unhide the speed only for the owner who's doing CTRL-R
+                }
+            }
+            else if(checkForC.equals(stroke)){
+                String shipID = this.piece.getProperty("shipID").toString(); //gets the random UUID from the dial that was saved during spawning
+                Collection<GamePiece> pieces = GameModule.getGameModule().getGameState().getAllPieces();
+                Collection<GamePiece> piecesCopied = new ArrayList<GamePiece>(pieces);
+                for (final GamePiece pieceScanned : piecesCopied) {
+                    try{
+                        String micID = pieceScanned.getProperty("micID").toString();
+
+                        // logToChat("StemNuDial2e line 270 -ship=" +pieceScanned.getProperty("micID").toString());
+                        if (micID.equals(shipID) && pieceScanned.getMap().getMapName().equals("Contested Sector") && this.piece.getMap().getMapName().equals("Contested Sector")){
+                            Command doCCommand = pieceScanned.keyEvent(checkForC);
+                            result.append(doCCommand);
+
+                        }
+                    }catch (Exception e){
+                        continue;
+                    }
                 }
             }
             else if(goingLeft || goingRight){ //rotate left, move-- or rotate right, move++

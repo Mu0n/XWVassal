@@ -5,6 +5,7 @@ import VASSAL.command.Command;
 import VASSAL.command.CommandEncoder;
 import VASSAL.counters.Embellishment;
 import VASSAL.counters.GamePiece;
+import VASSAL.counters.Properties;
 import com.google.common.base.Joiner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,11 +17,13 @@ public class DialRevealCommand extends Command {
     GamePiece pieceInCommand;
     String moveDef;
     String speedLayer;
+    String revealerName ="";
 
-    DialRevealCommand(GamePiece piece, String requiredMoveDef, String requiredSpeedLayer){
+    DialRevealCommand(GamePiece piece, String requiredMoveDef, String requiredSpeedLayer, String revealerNamePassed){
         pieceInCommand = piece;
         moveDef = requiredMoveDef;
         speedLayer = requiredSpeedLayer;
+        revealerNamePassed = revealerName;
     }
 
     protected void executeCommand() {
@@ -35,8 +38,9 @@ public class DialRevealCommand extends Command {
         chosenSpeedEmb.setValue(Integer.parseInt(speedLayer)); //use the right speed layer
         pieceInCommand.setProperty("isHidden", 0);
 
-        if(pieceInCommand.getMap().equals(VASSAL.build.module.Map.getMapById("Map0"))) Util.logToChatCommand("* - "+ Util.getCurrentPlayer().getName()+ " reveals the dial for "
+        if(pieceInCommand.getMap().equals(VASSAL.build.module.Map.getMapById("Map0"))) Util.logToChatCommand("* - "+ revealerName + " reveals the dial for "
                 + pieceInCommand.getProperty("Craft ID #").toString() + " (" + pieceInCommand.getProperty("Pilot Name").toString() + ") = "+ chosenMoveEmb.getProperty("Chosen Move_Name") + "*");
+
 
 
         //Util.logToChat("STEP 4a - Revealed the dial with " + chosenMoveEmb.getProperty("Chosen Move_Name"));
@@ -66,7 +70,7 @@ public class DialRevealCommand extends Command {
                 Collection<GamePiece> pieces = GameModule.getGameModule().getGameState().getAllPieces();
                 for (GamePiece piece : pieces) {
                     if(piece.getId().equals(parts[0])) {
-                        return new DialRevealCommand(piece, parts[1], parts[2]);
+                        return new DialRevealCommand(piece, parts[1], parts[2],parts[3]);
                     }
                 }
             }catch(Exception e){
@@ -82,7 +86,8 @@ public class DialRevealCommand extends Command {
             }
             try{
                 DialRevealCommand drc = (DialRevealCommand) c;
-                return commandPrefix + Joiner.on(itemDelim).join(drc.pieceInCommand.getId(), drc.moveDef, drc.speedLayer);
+                String whoReveals = Util.getCurrentPlayer().getName();
+                return commandPrefix + Joiner.on(itemDelim).join(drc.pieceInCommand.getId(), drc.moveDef, drc.speedLayer, whoReveals);
             }catch(Exception e) {
                 logger.error("Error encoding DialRevealCommand", e);
                 return null;
