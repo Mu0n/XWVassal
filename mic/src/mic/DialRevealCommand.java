@@ -38,8 +38,15 @@ public class DialRevealCommand extends Command {
         chosenSpeedEmb.setValue(Integer.parseInt(speedLayer)); //use the right speed layer
         pieceInCommand.setProperty("isHidden", 0);
 
-        if(pieceInCommand.getMap().equals(VASSAL.build.module.Map.getMapById("Map0"))) Util.logToChatCommand("* - "+ revealerName + " reveals the dial for "
-                + pieceInCommand.getProperty("Craft ID #").toString() + " (" + pieceInCommand.getProperty("Pilot Name").toString() + ") = "+ chosenMoveEmb.getProperty("Chosen Move_Name") + "*");
+        VASSAL.build.module.Map mapNameCheck = VASSAL.build.module.Map.getMapById("Map0");
+        String craftIDCheck = pieceInCommand.getProperty("Craft ID #").toString();
+        String pilotNameCheck = pieceInCommand.getProperty("Pilot Name").toString();
+        String chosenMoveCheck = chosenMoveEmb.getProperty("Chosen Move_Name").toString();
+
+
+
+        if(pieceInCommand.getMap().equals(mapNameCheck)) Util.logToChatCommand("* - "+ revealerName + " reveals the dial for "
+                + craftIDCheck + " (" + pilotNameCheck + ") = "+ chosenMoveCheck + "*");
 
 
 
