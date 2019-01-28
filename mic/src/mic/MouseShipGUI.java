@@ -5,6 +5,7 @@ import VASSAL.build.Buildable;
 import VASSAL.build.GameModule;
 import VASSAL.build.module.Map;
 import VASSAL.build.module.documentation.HelpFile;
+import VASSAL.command.Command;
 import VASSAL.counters.*;
 
 import java.awt.*;
@@ -22,8 +23,8 @@ import static mic.Util.logToChat;
  */
 public class MouseShipGUI extends AbstractConfigurable {
     public static final String ID = "MouseShipGUI";
-    GamePiece activatedPiece;
-    MouseShipGUIDrawable lastPopup;
+    GamePiece activatedPiece; //ship piece whose popup is active
+    MouseShipGUIDrawable lastPopup; //active popup drawable component with info on images, clickable areas, etc
     MouseListener ml;
 
     public String[] getAttributeNames() {
@@ -71,6 +72,7 @@ public class MouseShipGUI extends AbstractConfigurable {
             public void mousePressed(MouseEvent e) {
                 Collection<GamePiece> shipPieces = new ArrayList<GamePiece>();
                 GamePiece[] gpArray = theMap.getAllPieces();
+                // scan all game pieces, keep only the ones we're sure are ships
                 for (int i = 0; i < gpArray.length; i++)
                 {
                     try{
@@ -105,11 +107,10 @@ public class MouseShipGUI extends AbstractConfigurable {
 
                             XWS2Pilots.Pilot2e pilot = XWS2Pilots.getSpecificPilot(xwsStr, allShips);
                             XWS2Pilots pilotShip = XWS2Pilots.getSpecificShipFromPilotXWS2(xwsStr,allShips);
-                            logToChat("Pilot name = " + pilot.getName() + " xws = " + pilot.getXWS()+ " who flies a " + pilotShip.getName());
+                            /*logToChat("Pilot name = " + pilot.getName() + " xws = " + pilot.getXWS()+ " who flies a " + pilotShip.getName());
                             logToChat("Hull Status: " + ship.getProperty("Hull Rating").toString() + "/" + pilotShip.getHull() + " Shield Rating: " + ship.getProperty("Shield Rating") + "/" + pilotShip.getShields());
-                            logToChat("Attack Rating Front Arc: " + pilotShip.getFrontArc() + " Back Arc: " + pilotShip.getRearArc());
-                            MouseShipGUIDrawable msgd = new MouseShipGUIDrawable( (int)ship.getPosition().getX() + ship.getShape().getBounds().width + 50,
-                                    (int)ship.getPosition().getY() - 50,1000,150, theMap, pilotShip, pilot);
+                            logToChat("Attack Rating Front Arc: " + pilotShip.getFrontArc() + " Back Arc: " + pilotShip.getRearArc());*/
+                            MouseShipGUIDrawable msgd = new MouseShipGUIDrawable( ship, theMap, pilotShip, pilot);
                             theMap.addDrawComponent(msgd);
                             theMap.repaint();
 
@@ -118,7 +119,29 @@ public class MouseShipGUI extends AbstractConfigurable {
                             lastPopup=msgd;
                             break;
                         }
-                        else{ //clicked outside of a ship, deactivate the popup and remove the component
+                        else{ // clicked outside of a ship, check first if you clicked one of the areas
+                              // else deactivate the popup and remove the component
+                            if(activatedPiece != null && lastPopup != null)
+                            {
+                                for(MouseShipGUIDrawable.miElement elem : lastPopup.listOfInteractiveElements){
+                                    double scale = theMap.getZoom();
+                                    AffineTransform af = elem.getTransformForClick(scale);
+                                    Rectangle rawR = elem.image.getData().getBounds();
+                                    Shape s = af.createTransformedShape(rawR);
+
+                                    /* logToChat("click at= " +e.getX() + "," + e.getY() + " scale= " + scale);
+                                    logToChat("clickable x int= " +s.getBounds2D().getMinX() + " to " + s.getBounds2D().getMaxX() +
+                                            " y int = "  +s.getBounds2D().getMinY() + " to " +s.getBounds2D().getMaxY());*/
+                                    if(s.contains(e.getX(), e.getY())){
+                                        Command moveShipCommand = activatedPiece.keyEvent(elem.associatedKeyStroke);
+                                        moveShipCommand.execute();
+                                        GameModule.getGameModule().sendAndLog(moveShipCommand);
+                                        break;
+                                    }
+                                }
+                            }
+
+
                             activatedPiece = null;
                             if(lastPopup!=null) {
                                 theMap.removeDrawComponent(lastPopup);
