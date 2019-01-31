@@ -14,7 +14,7 @@ import java.util.Collection;
 public class DialRotateCommand extends Command {
      GamePiece pieceInCommand;
      String moveDef;
-     boolean showEverything = false;
+     boolean showEverything;
      String stateString;
      String moveSpeedLayerString;
 
@@ -33,13 +33,9 @@ public class DialRotateCommand extends Command {
             Embellishment chosenMoveEmb = (Embellishment)Util.getEmbellishment(pieceInCommand,"Layer - Chosen Move");
             Embellishment chosenSpeedEmb = (Embellishment)Util.getEmbellishment(pieceInCommand, "Layer - Chosen Speed");
 
+            chosenSpeedEmb.setValue(Integer.parseInt(moveSpeedLayerString));
             chosenMoveEmb.mySetType(stateString);
             chosenMoveEmb.setValue(1);
-            chosenSpeedEmb.setValue(Integer.parseInt(moveSpeedLayerString));
-
-
-            final VASSAL.build.module.Map map = pieceInCommand.getMap();
-            map.repaint();
         }
         else {
             //Util.logToChat("STEP 4d - Rotated the dial while hidden");

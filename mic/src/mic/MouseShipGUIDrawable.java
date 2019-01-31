@@ -10,6 +10,8 @@ import VASSAL.tools.DataArchive;
 import VASSAL.tools.io.FileArchive;
 import com.google.common.collect.Lists;
 import javafx.scene.transform.Affine;
+import mic.ota.OTAContentsChecker;
+import mic.ota.OTAMasterShips;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -72,49 +74,50 @@ public class MouseShipGUIDrawable implements Drawable {
                 KeyStroke.getKeyStroke(KeyEvent.VK_8, KeyEvent.CTRL_DOWN_MASK, false));
         listOfInteractiveElements.add(brIconLeft);
 
-        miElement brIconLeftDown = new miElement("mi_barrelroll.png", ulX + cursorX, ulY + cursorY + smallGapX,
+        miElement brIconLeftDown = new miElement("mi_barrelroll.png", ulX + cursorX, ulY + brIconLeft.image.getHeight() + cursorY + smallGapX,
                 KeyStroke.getKeyStroke(KeyEvent.VK_8, KeyEvent.CTRL_DOWN_MASK + KeyEvent.SHIFT_DOWN_MASK, false));
         listOfInteractiveElements.add(brIconLeftDown);
         cursorX += brIconLeft.image.getWidth() + smallGapX;
 
 
-        miElement shipGfx = new miElement(getShipImage(pilotShip),ulX+cursorX, ulY+cursorY, null);
-        listOfInteractiveElements.add(shipGfx);
-        cursorX += shipGfx.image.getWidth() + smallGapX;
-        cursorY += shipGfx.image.getHeight();
+        //add ship gfx, getShipImage deals with alt paint jobs and dual ships (just takes the first one it finds)
+        miElement shipGfx = new miElement(getShipImage(pilotShip, pilot),ulX+cursorX, ulY+cursorY, null);
+        if(shipGfx!=null && shipGfx.image!=null) {
+            listOfInteractiveElements.add(shipGfx);
+            cursorX += shipGfx.image.getWidth() + smallGapX;
+        }
 
         miElement brIconRight = new miElement("mi_barrelroll.png", ulX + cursorX, ulY + cursorY,
                 KeyStroke.getKeyStroke(KeyEvent.VK_8, KeyEvent.ALT_DOWN_MASK, false));
-        miElement brIconRightDown = new miElement("mi_barrelroll.png", ulX + cursorX, ulY + cursorY,
+        miElement brIconRightDown = new miElement("mi_barrelroll.png", ulX + cursorX, ulY + cursorY + brIconRight.image.getHeight() + smallGapX,
                 KeyStroke.getKeyStroke(KeyEvent.VK_8, KeyEvent.ALT_DOWN_MASK+ KeyEvent.SHIFT_DOWN_MASK, false));
         listOfInteractiveElements.add(brIconRight);
         listOfInteractiveElements.add(brIconRightDown);
 
         cursorX += brIconRight.image.getWidth() + padX;
+        if(shipGfx !=null && shipGfx.image!=null) cursorY += shipGfx.image.getHeight();
+        else cursorY += 2*brIconLeft.image.getHeight();
+
 
         totalWidth = cursorX + padX;
         totalHeight = cursorY + padY;
     }
 
-    private String getShipImage(XWS2Pilots pilotShip) {
-        StringBuilder sb = new StringBuilder();
+    private String getShipImage(XWS2Pilots pilotShip, XWS2Pilots.Pilot2e pilot) {
 
-        sb.append("S2e_");
-        sb.append(pilotShip.getShipXWS());
-        if(pilotShip.hasDualBase()){
-            sb.append("_");
-            sb.append(pilotShip.getBaseImage1Identifier());
-        }
-        else if(pilotShip.getBaseImage1Identifier() !=null) {
-            if (!pilotShip.getBaseImage1Identifier().equals("")) {
-                sb.append("-");
-                sb.append(pilotShip.getBaseImage1Identifier());
+        OTAMasterShips data = Util.loadRemoteJson(OTAContentsChecker.OTA_SHIPS_JSON_URL_2E, OTAMasterShips.class);
+
+        for(java.util.Map.Entry<String, OTAMasterShips.OTAShip> entry : data.getLoadedData(2).entrySet()){
+            if(pilotShip.hasDualBase()) {
+                if(entry.getValue().getXws().equals(pilotShip.getShipXWS())) return entry.getValue().getImage();
             }
 
+            if(entry.getValue().getXws().equals(pilotShip.getShipXWS()) && entry.getValue().getIdentifier().equals(pilot.getXWS()))
+            {
+                return entry.getValue().getImage();
+            }
         }
-        sb.append(".png");
-        Util.logToChat("gonna use " + sb.toString());
-        return sb.toString();
+        return "";
     }
 
     public void draw(Graphics g, Map map) {

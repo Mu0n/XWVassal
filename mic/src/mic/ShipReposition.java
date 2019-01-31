@@ -239,6 +239,21 @@ public class ShipReposition extends Decorator implements EditablePiece {
             .put("ALT SHIFT 9", RepoManeuver.BR2_Right_ABAP_2E)
             .build();
 
+    //Names of the reposition
+    private static Map<String, String> keyStrokeToName_2e = ImmutableMap.<String, String>builder()
+            .put("CTRL 8", "Left Barrel Roll as Forward as Possible")
+            .put("CTRL R", "Left Barrel Roll, centered")
+            .put("CTRL SHIFT 8", "Left Barrel Roll as Backward as Possible")
+            .put("ALT 8", "Right Barrel Roll as Forward as Possible")
+            .put("ALT R", "Right Barrel Roll, centered")
+            .put("ALT SHIFT 8", "Left Barrel Roll as Backward as Possible")
+            .put("CTRL 9", "Left Straight Decloak as Forward as Possible")
+            .put("J", "Left Straight Decloak, centered")
+            .put("CTRL SHIFT 9", "Left Straight Decloak as Backward as Possible")
+            .put("ALT 9", "Right Straight Decloak as Forward as Possible")
+            .put("K", "Right Straight Decloak, centered")
+            .put("ALT SHIFT 9", "Right Straight Decloak as Backward as Possible")
+            .build();
 
 
     public ShipReposition() {
@@ -656,7 +671,7 @@ public class ShipReposition extends Decorator implements EditablePiece {
             else{
                 result.append(repoCommand);
                 result.append(logToChatCommand("*** " + this.getProperty("Pilot Name").toString() +
-                " has repositioned"));
+                " has repositioned" + (is2pointohShip?" with " + getRepositionNameMappedToKeyStroke(stroke, true):"")));
                 //result.append(piece.keyEvent(stroke));
                 if(this.previousCollisionVisualization != null &&  this.previousCollisionVisualization.getShapes().size() > 0){
                     result.append(previousCollisionVisualization);
@@ -762,6 +777,21 @@ public class ShipReposition extends Decorator implements EditablePiece {
         else {
             if (keyStrokeToDropTemplate2e.containsKey(hotKey)) {
                 return keyStrokeToDropTemplate2e.get(hotKey);
+            }
+        }
+        return null;
+    }
+
+    private String getRepositionNameMappedToKeyStroke(KeyStroke keyStroke, boolean is2pointohShip) {
+        String hotKey = HotKeyConfigurer.getString(keyStroke);
+
+        if(is2pointohShip == false){
+            //TODO want this for 1st edition? then add a map for the reposition names. But they're already present in the vassal traits for the pieces
+            return "";
+        }
+        else {
+            if (keyStrokeToName_2e.containsKey(hotKey)) {
+                return keyStrokeToName_2e.get(hotKey);
             }
         }
         return null;

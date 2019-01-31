@@ -159,7 +159,6 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
     @Override
     public Command myKeyEvent(KeyStroke stroke) { return null; }
 
-
     public String buildStateString(int moveModification){
         /*
          * dialString, like: 1BW,1FB,1NW,2TW,2BB,2FB,2NB,2YW,3LR,3TW,3BW,3FW,3NW,3YW,3PR,4FR
@@ -225,6 +224,7 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
         boolean hasSomethingHappened = false;
         Integer isHiddenPropCheck;
 
+        ChangeTracker changeTracker = new ChangeTracker(this);
         Command result = piece.keyEvent(stroke);
 
         isHiddenPropCheck = Integer.parseInt(piece.getProperty("isHidden").toString());
@@ -259,8 +259,10 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
                     String moveSpeedLayerString = getLayerFromScratch(0);
 
                     DialRevealCommand revealNow = new DialRevealCommand(piece, stateString.toString(), moveSpeedLayerString, Util.getCurrentPlayer().getName());
-                    result.append(revealNow);
                     revealNow.execute();
+                    Command change = changeTracker.getChangeCommand();
+                    result.append(revealNow);
+                    result.append(change);
 
                     //logToChat("StemNuDial2e line 261 - dial is looking for=" +this.piece.getProperty("shipID").toString());
                     if(checkForSuperCtrlRReleased.equals(stroke)) {
@@ -296,8 +298,10 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
 
                     //command shown to all players
                     DialHideCommand hideNow = new DialHideCommand(piece);
-                    result.append(hideNow);
                     hideNow.execute();
+                    Command change = changeTracker.getChangeCommand();
+                    result.append(hideNow);
+                    result.append(change);
 
                     //Stuff outside of a command, should only show for owner.
                     Embellishment chosenMoveEmb = (Embellishment)Util.getEmbellishment(piece,"Layer - Chosen Move");
@@ -366,19 +370,38 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
 
 
                     DialRotateCommand drc = new DialRotateCommand(piece, moveDef, false, stateString.toString(), moveSpeedLayerString);
-                    result.append(drc);
+
                     drc.execute();
+                    result.append(drc);
+
+                    /*
+                    DialHideCommand hideNow = new DialHideCommand(piece);
+                    GameModule.getGameModule().sendAndLog(hideNow);
+                    hideNow.execute();
+                    Command change = changeTracker.getChangeCommand();
+                    result.append(hideNow);
+                    result.append(change);
+                     */
 
                     Embellishment chosenMoveEmb = (Embellishment)Util.getEmbellishment(piece,"Layer - Chosen Move");
                     Embellishment chosenSpeedEmb = (Embellishment)Util.getEmbellishment(piece, "Layer - Chosen Speed");
                     chosenMoveEmb.mySetType(stateString.toString());
                     chosenMoveEmb.setValue(1);
                     chosenSpeedEmb.setValue(newMoveSpeed);
+
+
+                    Command change = changeTracker.getChangeCommand();
+                    result.append(change);
+
                 } else if(isHiddenPropCheck == 0) { //dial is revealed, show everything to all
 
                     DialRotateCommand drc = new DialRotateCommand(piece, moveDef, true, stateString.toString(), moveSpeedLayerString);
-                    result.append(drc);
                     drc.execute();
+                    Command change = changeTracker.getChangeCommand();
+                    change.execute();
+
+                    result.append(drc);
+                    result.append(change);
                 }
             }
         } else { // get scolded for not owning the dial that was manipulated
@@ -387,6 +410,10 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
         if(hasSomethingHappened) {
             final VASSAL.build.module.Map map = piece.getMap();
             map.repaint();
+
+            GameModule gm = GameModule.getGameModule();
+            gm.sendAndLog(result);
+
             return result;
         }
         //Util.logToChat("STEP 2c - Not a keystroke worth reacting to.");
