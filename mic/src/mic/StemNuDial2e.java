@@ -51,6 +51,63 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
     public static final String ID = "StemNuDial2e";
 
 
+    final public static Map<String, Integer> moveCodeWithColorToLayer = ImmutableMap.<String, Integer>builder()
+            .put("FB", 1) //FORWARDS
+            .put("FW", 2)
+            .put("FR", 3)
+
+            .put("TB", 4) //TURNS LEFT
+            .put("TW", 5)
+            .put("TR", 6)
+
+            .put("YB", 7) //TURNS RIGHT
+            .put("YW", 8)
+            .put("YR", 9)
+
+            .put("BB", 10) //BANKS LEFT
+            .put("BW", 11)
+            .put("BR", 12)
+
+            .put("NB", 13)//BANKS RIGHT
+            .put("NW", 14)
+            .put("NR", 15)
+
+            .put("LB", 16) //SLOOPS LEFT
+            .put("LW", 17)
+            .put("LR", 18)
+
+            .put("PB", 19) //SLOOPS RIGHT
+            .put("PW", 20)
+            .put("PR", 21)
+
+            .put("EB", 22) //TROLLS LEFT
+            .put("EW", 23)
+            .put("ER", 24)
+
+            .put("RB", 25) //TROLLS RIGHT
+            .put("RW", 26)
+            .put("RR", 27)
+
+            .put("AB", 28) //REVERSE BANK LEFT
+            .put("AW", 29)
+            .put("AR", 30)
+
+            .put("SB", 31) //REVERSE STRAIGHT
+            .put("SW", 32)
+            .put("SR", 33)
+
+            .put("DB", 34) //REVERSE BANK RIGHT
+            .put("DW", 35)
+            .put("DR", 36)
+
+            .put("OB", 37) //STOP
+            .put("OW", 38)
+            .put("OR", 39)
+
+            .put("KB", 40) //K-TURNS
+            .put("KW", 41)
+            .put("KR", 42)
+            .build();
     final public static Map<String, KeyStroke> moveCodeToKeyStroke = ImmutableMap.<String, KeyStroke>builder()
             .put("1F", KeyStroke.getKeyStroke(KeyEvent.VK_1, KeyEvent.SHIFT_DOWN_MASK, false))
             .put("2F", KeyStroke.getKeyStroke(KeyEvent.VK_2, KeyEvent.SHIFT_DOWN_MASK, false))
