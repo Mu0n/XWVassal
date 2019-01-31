@@ -28,17 +28,20 @@ public class DialRotateCommand extends Command {
 
     protected void executeCommand() {
         pieceInCommand.setProperty("selectedMove", moveDef);
+        String ownerStr = pieceInCommand.getProperty("owner").toString();
+        int ownerInt = Integer.parseInt(ownerStr);
 
-        if(showEverything == true){
+        if(showEverything == true || (ownerInt == Util.getCurrentPlayer().getSide())){
             Embellishment chosenMoveEmb = (Embellishment)Util.getEmbellishment(pieceInCommand,"Layer - Chosen Move");
             Embellishment chosenSpeedEmb = (Embellishment)Util.getEmbellishment(pieceInCommand, "Layer - Chosen Speed");
 
             chosenSpeedEmb.setValue(Integer.parseInt(moveSpeedLayerString));
             chosenMoveEmb.mySetType(stateString);
             chosenMoveEmb.setValue(1);
-        }
-        else {
-            //Util.logToChat("STEP 4d - Rotated the dial while hidden");
+
+            final VASSAL.build.module.Map map = pieceInCommand.getMap();
+            map.repaint();
+
         }
     }
 

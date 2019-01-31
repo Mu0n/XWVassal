@@ -383,12 +383,13 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
                     result.append(change);
                      */
 
+                    /*
                     Embellishment chosenMoveEmb = (Embellishment)Util.getEmbellishment(piece,"Layer - Chosen Move");
                     Embellishment chosenSpeedEmb = (Embellishment)Util.getEmbellishment(piece, "Layer - Chosen Speed");
                     chosenMoveEmb.mySetType(stateString.toString());
                     chosenMoveEmb.setValue(1);
                     chosenSpeedEmb.setValue(newMoveSpeed);
-
+*/
 
                     Command change = changeTracker.getChangeCommand();
                     result.append(change);
