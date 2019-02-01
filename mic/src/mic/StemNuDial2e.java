@@ -194,7 +194,7 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
             Embellishment chosenSpeedEmb = (Embellishment)Util.getEmbellishment(piece, "Layer - Chosen Speed");
             Embellishment sideHideEmb = (Embellishment)Util.getEmbellishment(piece,"Layer - Side Hide");
             Embellishment centralHideEmb = (Embellishment)Util.getEmbellishment(piece, "Layer - Central Hide");
-            chosenMoveEmb.setValue(1);
+            chosenMoveEmb.setValue(getProperMoveLayer());
 
             String moveSpeedLayerString = getLayerFromScratch(0);
             chosenSpeedEmb.setValue(Integer.parseInt(moveSpeedLayerString)); //use the right speed layer
@@ -204,6 +204,8 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
         }
         return "";
     }
+
+
     @Override
     public String myGetType() {
         return ID;
@@ -366,12 +368,14 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
                     Embellishment sideHideEmb = (Embellishment)Util.getEmbellishment(piece,"Layer - Side Hide");
                     Embellishment centralHideEmb = (Embellishment)Util.getEmbellishment(piece, "Layer - Central Hide");
 
+                    /*
                     //Construct the next build string
                     StringBuilder stateString = new StringBuilder();
                     stateString.append(buildStateString(0));
+                    */
 
-                    chosenMoveEmb.mySetType(stateString.toString()); //restore the dial's chosen move like before only for the owner who's doing CTRl-R
-                    chosenMoveEmb.setValue(1); //unhide the movement only for the owner who's doing CTRL-R
+                    //chosenMoveEmb.mySetType(stateString.toString()); //restore the dial's chosen move like before only for the owner who's doing CTRl-R
+                    chosenMoveEmb.setValue(getProperMoveLayer()); //unhide the movement only for the owner who's doing CTRL-R
                     sideHideEmb.setValue(1); //show the side slashed eye icon
                     centralHideEmb.setValue(0); //hide back the central slashed eye icon
 
@@ -426,7 +430,7 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
                 if(isHiddenPropCheck == 1){ //encode only the modified selected move property
 
 
-                    DialRotateCommand drc = new DialRotateCommand(piece, moveDef, false, stateString.toString(), moveSpeedLayerString);
+                    DialRotateCommand drc = new DialRotateCommand(piece, moveDef, false, getProperMoveLayer()+"", moveSpeedLayerString);
 
                     drc.execute();
                     result.append(drc);
@@ -456,7 +460,7 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
                     logToChat("before selecting move changed? " + changeTracker.isChanged());
                     logToChat(Decorator.getOutermost(piece).getState());
                     logToChat(piece.getProperty("selectedMove").toString());
-                    DialRotateCommand drc = new DialRotateCommand(piece, moveDef, true, stateString.toString(), moveSpeedLayerString);
+                    DialRotateCommand drc = new DialRotateCommand(piece, moveDef, true, getProperMoveLayer()+"", moveSpeedLayerString);
                     drc.execute();
                     Command change = changeTracker.getChangeCommand();
                     logToChat("after selecting move changed? " + changeTracker.isChanged());
@@ -574,6 +578,22 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
 
     public String getMoveRaw(String code){
         return code.substring(1,2);
+    }
+
+    public int getProperMoveLayer() {
+        String dialString = piece.getProperty("dialstring").toString();
+        String[] values = dialString.split(",");
+        int nbOfMoves = values.length;
+
+        // Fetch the saved move from the dynamic property of the dial piece
+        String savedMoveString = piece.getProperty("selectedMove").toString();
+        int savedMoveStringInt = Integer.parseInt(savedMoveString);
+
+        String moveCode = values[savedMoveStringInt-1];
+        String moveCodeRaw = getMoveCodeWithoutSpeed(moveCode);
+
+        logToChat("move code raw without speed: " + moveCodeRaw);
+        return moveCodeWithColorToLayer.get(moveCodeRaw).intValue();
     }
 
     public int getOwnerOfThisDial(){

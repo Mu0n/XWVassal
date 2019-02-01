@@ -15,14 +15,14 @@ public class DialRotateCommand extends Command {
      GamePiece pieceInCommand;
      String moveDef;
      boolean showEverything;
-     String stateString;
+     String moveLayerString;
      String moveSpeedLayerString;
 
-    DialRotateCommand(GamePiece piece, String selectedMove, boolean wantShowEverything, String reqStateString, String reqMoveSpeedLayerString) {
+    DialRotateCommand(GamePiece piece, String selectedMove, boolean wantShowEverything, String reqMoveLayerString, String reqMoveSpeedLayerString) {
         pieceInCommand = piece;
         moveDef = selectedMove;
         showEverything = wantShowEverything;
-        stateString = reqStateString;
+        moveLayerString = reqMoveLayerString;
         moveSpeedLayerString = reqMoveSpeedLayerString;
     }
 
@@ -36,8 +36,8 @@ public class DialRotateCommand extends Command {
             Embellishment chosenSpeedEmb = (Embellishment)Util.getEmbellishment(pieceInCommand, "Layer - Chosen Speed");
 
             chosenSpeedEmb.setValue(Integer.parseInt(moveSpeedLayerString));
-            chosenMoveEmb.mySetType(stateString);
-            chosenMoveEmb.setValue(1);
+            //chosenMoveEmb.mySetType(stateString);
+            chosenMoveEmb.setValue(Integer.parseInt(moveLayerString));
 
             final VASSAL.build.module.Map map = pieceInCommand.getMap();
             map.repaint();
@@ -87,7 +87,7 @@ public class DialRotateCommand extends Command {
             }
             try{
                 DialRotateCommand drc = (DialRotateCommand)c;
-                return commandPrefix + Joiner.on(itemDelim).join(drc.pieceInCommand.getId(), drc.moveDef, ""+drc.showEverything, drc.stateString, drc.moveSpeedLayerString);
+                return commandPrefix + Joiner.on(itemDelim).join(drc.pieceInCommand.getId(), drc.moveDef, ""+drc.showEverything, drc.moveLayerString, drc.moveSpeedLayerString);
             }catch(Exception e) {
                 logger.error("Error encoding Dial2eRotateEncoder", e);
                 return null;
