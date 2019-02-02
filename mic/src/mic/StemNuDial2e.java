@@ -415,9 +415,11 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
                 if(goingLeft) moveMod = -1;
                 if(goingRight) moveMod = 1;
 
+                /*
                 //Construct the next build string
                 StringBuilder stateString = new StringBuilder();
                 stateString.append(buildStateString(moveMod));
+                */
 
                 //Get the movement heading layer
                 String moveDef = getNewMoveDefFromScratch(moveMod);
@@ -451,9 +453,6 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
                     chosenMoveEmb.setValue(1);
                     chosenSpeedEmb.setValue(newMoveSpeed);
 */
-
-                    Command change = changeTracker.getChangeCommand();
-                    result.append(change);
 
                 } else if(isHiddenPropCheck == 0) { //dial is revealed, show everything to all
 
@@ -592,7 +591,6 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
         String moveCode = values[savedMoveStringInt-1];
         String moveCodeRaw = getMoveCodeWithoutSpeed(moveCode);
 
-        logToChat("move code raw without speed: " + moveCodeRaw);
         return moveCodeWithColorToLayer.get(moveCodeRaw).intValue();
     }
 
