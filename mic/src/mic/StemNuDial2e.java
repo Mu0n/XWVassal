@@ -362,33 +362,8 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
                     result = hideNow;
                     hideNow.execute();
 
-                    //Stuff outside of a command, should only show for owner.
-                    Embellishment chosenMoveEmb = (Embellishment)Util.getEmbellishment(piece,"Layer - Chosen Move");
-                    Embellishment chosenSpeedEmb = (Embellishment)Util.getEmbellishment(piece, "Layer - Chosen Speed");
-                    Embellishment sideHideEmb = (Embellishment)Util.getEmbellishment(piece,"Layer - Side Hide");
-                    Embellishment centralHideEmb = (Embellishment)Util.getEmbellishment(piece, "Layer - Central Hide");
-
-                    /*
-                    //Construct the next build string
-                    StringBuilder stateString = new StringBuilder();
-                    stateString.append(buildStateString(0));
-                    */
-
-                    //chosenMoveEmb.mySetType(stateString.toString()); //restore the dial's chosen move like before only for the owner who's doing CTRl-R
-                    chosenMoveEmb.setValue(getProperMoveLayer(0)); //unhide the movement only for the owner who's doing CTRL-R
-                    sideHideEmb.setValue(1); //show the side slashed eye icon
-                    centralHideEmb.setValue(0); //hide back the central slashed eye icon
-
-                    //get the speed layer to show
-                    String moveSpeedLayerString = getLayerFromScratch(0);
-                    Integer newMoveSpeed = Integer.parseInt(moveSpeedLayerString);
-
-                    chosenSpeedEmb.setValue(newMoveSpeed); //unhide the speed only for the owner who's doing CTRL-R
-
-
                     Command change = changeTracker.getChangeCommand();
-                    result.append(change);
-
+                    result.append(change); //make the change for all players, including the owner. Set the right hidden icons and hide all moves
                 }
             }
             else if(checkForC.equals(stroke)){
@@ -444,7 +419,7 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
                     /*
                     DialHideCommand hideNow = new DialHideCommand(piece);
                     GameModule.getGameModule().sendAndLog(hideNow);
-                    hideNow.execute();
+                    hideNow.execute();Àèé
                     Command change = changeTracker.getChangeCommand();
                     result.append(hideNow);
                     result.append(change);
