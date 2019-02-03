@@ -194,7 +194,7 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
             Embellishment chosenSpeedEmb = (Embellishment)Util.getEmbellishment(piece, "Layer - Chosen Speed");
             Embellishment sideHideEmb = (Embellishment)Util.getEmbellishment(piece,"Layer - Side Hide");
             Embellishment centralHideEmb = (Embellishment)Util.getEmbellishment(piece, "Layer - Central Hide");
-            chosenMoveEmb.setValue(getProperMoveLayer());
+            chosenMoveEmb.setValue(getProperMoveLayer(0));
 
             String moveSpeedLayerString = getLayerFromScratch(0);
             chosenSpeedEmb.setValue(Integer.parseInt(moveSpeedLayerString)); //use the right speed layer
@@ -375,7 +375,7 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
                     */
 
                     //chosenMoveEmb.mySetType(stateString.toString()); //restore the dial's chosen move like before only for the owner who's doing CTRl-R
-                    chosenMoveEmb.setValue(getProperMoveLayer()); //unhide the movement only for the owner who's doing CTRL-R
+                    chosenMoveEmb.setValue(getProperMoveLayer(0)); //unhide the movement only for the owner who's doing CTRL-R
                     sideHideEmb.setValue(1); //show the side slashed eye icon
                     centralHideEmb.setValue(0); //hide back the central slashed eye icon
 
@@ -432,7 +432,7 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
                 if(isHiddenPropCheck == 1){ //encode only the modified selected move property
 
 
-                    DialRotateCommand drc = new DialRotateCommand(piece, moveDef, false, getProperMoveLayer()+"", moveSpeedLayerString);
+                    DialRotateCommand drc = new DialRotateCommand(piece, moveDef, false, getProperMoveLayer(moveMod)+"", moveSpeedLayerString);
 
                     drc.execute();
                     result.append(drc);
@@ -456,15 +456,15 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
 
                 } else if(isHiddenPropCheck == 0) { //dial is revealed, show everything to all
 
-                    logToChat("before selecting move changed? " + changeTracker.isChanged());
-                    logToChat(Decorator.getOutermost(piece).getState());
-                    logToChat(piece.getProperty("selectedMove").toString());
-                    DialRotateCommand drc = new DialRotateCommand(piece, moveDef, true, getProperMoveLayer()+"", moveSpeedLayerString);
+                   // logToChat("before selecting move changed? " + changeTracker.isChanged());
+                    //logToChat(Decorator.getOutermost(piece).getState());
+                   // logToChat(piece.getProperty("selectedMove").toString());
+                    DialRotateCommand drc = new DialRotateCommand(piece, moveDef, true, getProperMoveLayer(moveMod)+"", moveSpeedLayerString);
                     drc.execute();
                     Command change = changeTracker.getChangeCommand();
-                    logToChat("after selecting move changed? " + changeTracker.isChanged());
-                    logToChat(Decorator.getOutermost(piece).getState());
-                    logToChat(piece.getProperty("selectedMove").toString());
+                   // logToChat("after selecting move changed? " + changeTracker.isChanged());
+                   // logToChat(Decorator.getOutermost(piece).getState());
+                   // logToChat(piece.getProperty("selectedMove").toString());
                     change.execute();
 
                     result.append(drc);
@@ -579,7 +579,7 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
         return code.substring(1,2);
     }
 
-    public int getProperMoveLayer() {
+    public int getProperMoveLayer(int moveModification) {
         String dialString = piece.getProperty("dialstring").toString();
         String[] values = dialString.split(",");
         int nbOfMoves = values.length;
@@ -587,6 +587,15 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
         // Fetch the saved move from the dynamic property of the dial piece
         String savedMoveString = piece.getProperty("selectedMove").toString();
         int savedMoveStringInt = Integer.parseInt(savedMoveString);
+
+        if(moveModification == 1){ //if you want to shift the selected move 1 up.
+            if(savedMoveStringInt == nbOfMoves) savedMoveStringInt = 1; //loop
+            else savedMoveStringInt++;
+        } else if(moveModification == -1) //if you want to shift the selected move 1 down
+        {
+            if (savedMoveStringInt == 1) savedMoveStringInt = nbOfMoves; //loop
+            else savedMoveStringInt--;
+        }
 
         String moveCode = values[savedMoveStringInt-1];
         String moveCodeRaw = getMoveCodeWithoutSpeed(moveCode);
