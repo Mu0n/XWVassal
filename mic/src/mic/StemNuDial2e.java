@@ -441,9 +441,6 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
                     result = drc;
                     drc.execute();
 
-                    Command change = changeTracker.getChangeCommand();
-                    result.append(change);
-
                     /*
                     DialHideCommand hideNow = new DialHideCommand(piece);
                     GameModule.getGameModule().sendAndLog(hideNow);
