@@ -320,7 +320,7 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
                     Integer moveLayerInt = getProperMoveLayer(0);
 
                     DialRevealCommand revealNow = new DialRevealCommand(piece, moveSpeedLayerString, moveLayerInt+"", Util.getCurrentPlayer().getName());
-                    result.append(revealNow);
+                    result = revealNow;
                     revealNow.execute();
                     Command change = changeTracker.getChangeCommand();
                     result.append(change);
@@ -359,7 +359,7 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
 
                     //command shown to all players
                     DialHideCommand hideNow = new DialHideCommand(piece);
-                    result.append(hideNow);
+                    result = hideNow;
                     hideNow.execute();
 
                     //Stuff outside of a command, should only show for owner.
@@ -438,7 +438,7 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
 
 
                     DialRotateCommand drc = new DialRotateCommand(piece, moveDef, false, getProperMoveLayer(moveMod)+"", moveSpeedLayerString);
-                    result.append(drc);
+                    result = drc;
                     drc.execute();
 
                     Command change = changeTracker.getChangeCommand();
@@ -467,7 +467,7 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
                     //logToChat(Decorator.getOutermost(piece).getState());
                    // logToChat(piece.getProperty("selectedMove").toString());
                     DialRotateCommand drc = new DialRotateCommand(piece, moveDef, true, getProperMoveLayer(moveMod)+"", moveSpeedLayerString);
-                    result.append(drc);
+                    result = drc;
                     drc.execute();
 
                     Command change = changeTracker.getChangeCommand();
