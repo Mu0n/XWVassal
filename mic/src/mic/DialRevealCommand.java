@@ -15,15 +15,15 @@ import java.util.Collection;
 public class DialRevealCommand extends Command {
 
     GamePiece pieceInCommand;
-    String moveDef;
     String speedLayer;
-    String revealerName ="";
+    String revealerName;
+    String moveLayer;
 
-    DialRevealCommand(GamePiece piece, String requiredMoveDef, String requiredSpeedLayer, String revealerNamePassed){
+    DialRevealCommand(GamePiece piece, String requiredSpeedLayer, String reqMoveLayerString, String revealerNamePassed){
         pieceInCommand = piece;
-        moveDef = requiredMoveDef;
         speedLayer = requiredSpeedLayer;
-        revealerNamePassed = revealerName;
+        revealerName = revealerNamePassed;
+        moveLayer = reqMoveLayerString;
     }
 
     protected void executeCommand() {
@@ -31,8 +31,8 @@ public class DialRevealCommand extends Command {
         Embellishment chosenSpeedEmb = (Embellishment) Util.getEmbellishment(pieceInCommand, "Layer - Chosen Speed");
         Embellishment sideHideEmb = (Embellishment) Util.getEmbellishment(pieceInCommand, "Layer - Side Hide");
         Embellishment centralHideEmb = (Embellishment) Util.getEmbellishment(pieceInCommand, "Layer - Central Hide");
-        chosenMoveEmb.mySetType(moveDef);
-        chosenMoveEmb.setValue(1); // use the layer that shows the move
+
+        chosenMoveEmb.setValue(Integer.parseInt(moveLayer)); // use the layer that shows the move
         sideHideEmb.setValue(0); //hide the small slashed eye icon
         centralHideEmb.setValue(0); //hide the central slashed eye icon
         chosenSpeedEmb.setValue(Integer.parseInt(speedLayer)); //use the right speed layer
@@ -93,8 +93,7 @@ public class DialRevealCommand extends Command {
             }
             try{
                 DialRevealCommand drc = (DialRevealCommand) c;
-                String whoReveals = Util.getCurrentPlayer().getName();
-                return commandPrefix + Joiner.on(itemDelim).join(drc.pieceInCommand.getId(), drc.moveDef, drc.speedLayer, whoReveals);
+                return commandPrefix + Joiner.on(itemDelim).join(drc.pieceInCommand.getId(), drc.speedLayer, drc.moveLayer, drc.revealerName);
             }catch(Exception e) {
                 logger.error("Error encoding DialRevealCommand", e);
                 return null;
