@@ -36,38 +36,38 @@ import static mic.Util.*;
 
 enum RepoManeuver {
     //Section for when you only want to place a template on the side of the start position of a repositioning
-        //small normal BR
+    //small normal BR
     BR1_Left_Mid("Place Mid BR Left", "524", -90.0f, -113.0f, 0.0f),
     BR1_Right_Mid("Place Mid BR Right", "524", -90.0f, 113.0f, 0.0f),
-        //small decloak/zeta ace
+    //small decloak/zeta ace
     BR2_Left_Mid("Place Mid BR2/Decloak Left", "525", -90.0f, -169.5f, 0.0f),
     BR2_Right_Mid("Place Mid BR2/Decloak Right", "525", -90.0f, 169.5f, 0.0f),
-        //large normal BR
+    //large normal BR
     BR1_Left_Mid_Large("Place Mid BR Left", "524", 0.0f, -141.5f, 0.0f),
     BR1_Right_Mid_Large("Place Mid BR Right", "524", 0.0f, 141.5f, 0.0f),
-        //small Lorrir/SVmk2 BR
+    //small Lorrir/SVmk2 BR
     BR_Bk1_Left_Fwd_Mid("Place Mid BR Bank 1 Left Fwd", "517", 135.0f, -133.0f, -22.0f),
     BR_Bk1_Left_Bwd_Mid("Place Mid BR Bank 1 Left Bwd", "517", -90.0f, -146.0f, 30.0f),
     BR_Bk1_Right_Fwd_Mid("Place Mid BR Bank 1 Right Fwd", "517", 90.0f, 147.0f, -28.0f),
     BR_Bk1_Right_Bwd_Mid("Place Mid BR Bank 1 Right Bwd", "517", -45.0f, 134.0f, 25.0f),
-        //small echo decloaks
+    //small echo decloaks
     BR_Bk2_Left_Fwd_Mid("Place Mid Echo Decloak Left Fwd", "519", 135.0f, -183.0f, -45.0f),
     BR_Bk2_Left_Bwd_Mid("Place Mid Echo Decloak Left Bwd", "519", -90.0f, -196.0f, 50.0f),
     BR_Bk2_Right_Fwd_Mid("Place Mid Echo Decloak Right Fwd", "519", 90.0f, 196.0f, -49.0f),
     BR_Bk2_Right_Bwd_Mid("Place Mid Echo Decloak Right Bwd", "519", -45.0f, 183.0f, 43.0f),
 
     //Section for when you want to move the whole ship to extreme forward or backward positions, code must both fetch the final position and the template used in case of an overlap event
-        //small normal BR
+    //small normal BR
     BR1_Left_AFAP("BR Left as Forward as Possible", "524", -90.0f, -113.0f, -28.25f, 0.0f, -226.0f, -56.5f),
     BR1_Left_ABAP("BR Left as Backward as Possible", "524", -90.0f, -113.0f, 28.25f, 0.0f, -226.0f, 56.5f),
     BR1_Right_AFAP("BR Right as Forward as Possible", "524", -90.0f, 113.0f, -28.25f, 0.0f, 226.0f, -56.5f),
     BR1_Right_ABAP("BR Right as Backward as Possible", "524", -90.0f, 113.0f, 28.25f, 0.0f, 226.0f, 56.5f),
-        //small Zeta Ace BR
+    //small Zeta Ace BR
     BR2_Left_AFAP("BR2 Left as Forward as Possible", "525", -90.0f, -169.5f, -28.25f, 0.0f, -339.0f, -56.5f),
     BR2_Left_ABAP("BR2 Left as Backward as Possible", "525", -90.0f, -169.5f, 28.25f, 0.0f, -339.0f, 56.5f),
     BR2_Right_AFAP("BR2 Right as Forward as Possible", "525", -90.0f, 169.5f, -28.25f, 0.0f, 339.0f, -56.5f),
     BR2_Right_ABAP("BR2 Right as Backward as Possible", "525", -90.0f, 169.5f, 28.25f, 0.0f, 339.0f, 56.5f),
-        //large normal BR
+    //large normal BR
     BR1_Left_AFAP_Large("BR Left as Forward as Possible", "524", 0.0f, -141.25f, -56.5f, 0.0f, -283.0f, -113.0f),
     BR1_Left_ABAP_Large("BR Left as Backward as Possible", "524", 0.0f, -141.25f, 56.5f, 0.0f, -283.0f, 113.0f),
     BR1_Right_AFAP_Large("BR Right as Forward as Possible", "524", 0.0f, 141.25f, -56.5f, 0.0f, 283.0f, -113.0f),
@@ -201,7 +201,7 @@ public class ShipReposition extends Decorator implements EditablePiece {
             .build();
 
     //same stuff, but for 2nd edition. Echo style and SV Mk.2 style present.
-        private static Map<String, RepoManeuver> keyStrokeToDropTemplate2e = ImmutableMap.<String, RepoManeuver>builder()
+    private static Map<String, RepoManeuver> keyStrokeToDropTemplate2e = ImmutableMap.<String, RepoManeuver>builder()
             .put("CTRL J", RepoManeuver.BR_Bk2_Left_Fwd_Mid)
             .put("CTRL K", RepoManeuver.BR_Bk2_Right_Fwd_Mid)
             .put("CTRL SHIFT J", RepoManeuver.BR_Bk2_Left_Bwd_Mid)
@@ -414,24 +414,24 @@ public class ShipReposition extends Decorator implements EditablePiece {
             }
         }
 
-            if(size == 3 && is2pointOh == false)
-            {
-                switch(repoTemplate){
-                    case BR1_Left_AFAP:
-                        repoTemplate = RepoManeuver.BR1_Left_AFAP_Large;
-                        break;
-                    case BR1_Left_ABAP:
-                        repoTemplate = RepoManeuver.BR1_Left_ABAP_Large;
-                        break;
-                    case BR1_Right_AFAP:
-                        repoTemplate = RepoManeuver.BR1_Right_AFAP_Large;
-                        break;
-                    case BR1_Right_ABAP:
-                        repoTemplate = RepoManeuver.BR1_Right_ABAP_Large;
-                        break;
-                    default:
-                        return null;
-                }
+        if(size == 3 && is2pointOh == false)
+        {
+            switch(repoTemplate){
+                case BR1_Left_AFAP:
+                    repoTemplate = RepoManeuver.BR1_Left_AFAP_Large;
+                    break;
+                case BR1_Left_ABAP:
+                    repoTemplate = RepoManeuver.BR1_Left_ABAP_Large;
+                    break;
+                case BR1_Right_AFAP:
+                    repoTemplate = RepoManeuver.BR1_Right_AFAP_Large;
+                    break;
+                case BR1_Right_ABAP:
+                    repoTemplate = RepoManeuver.BR1_Right_ABAP_Large;
+                    break;
+                default:
+                    return null;
+            }
         }
 
         //STEP 1: Collision reposition template, centered as in in the image file, centered on 0,0 (upper left corner)
@@ -550,7 +550,7 @@ public class ShipReposition extends Decorator implements EditablePiece {
         else bigCommand = getMap().placeOrMerge(Decorator.getOutermost(this), new Point((int)off1x_rot_s + (int)off2x, (int)off1y_rot_s + (int)off2y));
         //check if the templates is needed as well, in case of any kind of overlap
 
-    return bigCommand;
+        return bigCommand;
     }
 
     private void checkIfOutOfBounds(String yourShipName, Shape shapeForOutOfBounds) {
@@ -613,45 +613,45 @@ public class ShipReposition extends Decorator implements EditablePiece {
             List<BumpableWithShape> BWS = getBumpablesOnMap(true);
             Shape shipShape = getBumpableCompareShape(this);
             List<BumpableWithShape> overlappingObstacles = findCollidingEntities(shipShape, BWS);
-                if(overlappingObstacles.size() > 0) {
-                    hasSomethingHappened = true;
-                    for(BumpableWithShape bws : overlappingObstacles)
-                    {
-                        previousCollisionVisualization.add(bws.shape);
-                        String yourShipName = getShipStringForReports(true, this.getProperty("Pilot Name").toString(), this.getProperty("Craft ID #").toString());
-                        logToChat("*** Warning: " + yourShipName + " overlaps a " + bws.type + ".");
-                    }
-                    previousCollisionVisualization.add(shipShape);
-                }
-                else {
+            if(overlappingObstacles.size() > 0) {
+                hasSomethingHappened = true;
+                for(BumpableWithShape bws : overlappingObstacles)
+                {
+                    previousCollisionVisualization.add(bws.shape);
                     String yourShipName = getShipStringForReports(true, this.getProperty("Pilot Name").toString(), this.getProperty("Craft ID #").toString());
-                    logToChatWithTime(yourShipName + " does not overlap with an obstacle, ship or mine.");
+                    logToChat("*** Warning: " + yourShipName + " overlaps a " + bws.type + ".");
                 }
+                previousCollisionVisualization.add(shipShape);
+            }
+            else {
+                String yourShipName = getShipStringForReports(true, this.getProperty("Pilot Name").toString(), this.getProperty("Craft ID #").toString());
+                logToChatWithTime(yourShipName + " does not overlap with an obstacle, ship or mine.");
+            }
         }
 
 
-            RepoManeuver repoTemplateDrop = getKeystrokeTemplateDrop(stroke, is2pointohShip);
-            if (repoTemplateDrop != null && stroke.isOnKeyRelease() == false) {
-                hasSomethingHappened = true;
-                Command tempCommand = spawnRepoTemplate(repoTemplateDrop);
-                result.append(tempCommand);
+        RepoManeuver repoTemplateDrop = getKeystrokeTemplateDrop(stroke, is2pointohShip);
+        if (repoTemplateDrop != null && stroke.isOnKeyRelease() == false) {
+            hasSomethingHappened = true;
+            Command tempCommand = spawnRepoTemplate(repoTemplateDrop);
+            result.append(tempCommand);
 
-                List<BumpableWithShape> obstacles = getBumpablesOnMap(false);
+            List<BumpableWithShape> obstacles = getBumpablesOnMap(false);
 
 
-                if(shapeForOverlap != null){
-                    List<BumpableWithShape> overlappingObstacles = findCollidingEntities(shapeForOverlap, obstacles);
-                    if(overlappingObstacles.size() > 0) {
-                        for(BumpableWithShape bws : overlappingObstacles)
-                        {
-                            previousCollisionVisualization.add(bws.shape);
-                            logToChat("*** Warning: reposition template currently overlaps an obstacle");
-                        }
-                        previousCollisionVisualization.add(shapeForOverlap);
+            if(shapeForOverlap != null){
+                List<BumpableWithShape> overlappingObstacles = findCollidingEntities(shapeForOverlap, obstacles);
+                if(overlappingObstacles.size() > 0) {
+                    for(BumpableWithShape bws : overlappingObstacles)
+                    {
+                        previousCollisionVisualization.add(bws.shape);
+                        logToChat("*** Warning: reposition template currently overlaps an obstacle");
                     }
+                    previousCollisionVisualization.add(shapeForOverlap);
                 }
-                result.append(piece.keyEvent(stroke));
             }
+            result.append(piece.keyEvent(stroke));
+        }
 
 
 
@@ -671,7 +671,7 @@ public class ShipReposition extends Decorator implements EditablePiece {
             else{
                 result.append(repoCommand);
                 result.append(logToChatCommand("*** " + this.getProperty("Pilot Name").toString() +
-                " has repositioned" + (is2pointohShip?" with " + getRepositionNameMappedToKeyStroke(stroke, true):"")));
+                        " has repositioned" + (is2pointohShip?" with " + getRepositionNameMappedToKeyStroke(stroke, true):"")));
                 //result.append(piece.keyEvent(stroke));
                 if(this.previousCollisionVisualization != null &&  this.previousCollisionVisualization.getShapes().size() > 0){
                     result.append(previousCollisionVisualization);
@@ -725,8 +725,8 @@ public class ShipReposition extends Decorator implements EditablePiece {
                 bumpables.add(new BumpableWithShape((Decorator)piece, "Mine", false, false));
             } else if(wantShipsToo == true && piece.getState().contains("this_is_a_ship")){
                 //MrMurphM
-            //    GamePiece newPiece = PieceCloner.getInstance().clonePiece(piece);
-            //    newPiece.setPosition(piece.getPosition());
+                //    GamePiece newPiece = PieceCloner.getInstance().clonePiece(piece);
+                //    newPiece.setPosition(piece.getPosition());
                 //END
                 BumpableWithShape tentativeBumpable = new BumpableWithShape((Decorator)piece, "Ship",false,
                         this.getInner().getState().contains("this_is_2pointoh"));
@@ -819,12 +819,12 @@ public class ShipReposition extends Decorator implements EditablePiece {
     public void mySetState(String s) {
 
     }
-  
+
     @Override
     public String myGetState() {
         return "";
     }
-  
+
     @Override
     public String myGetType() {
         return ID;

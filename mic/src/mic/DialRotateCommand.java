@@ -12,36 +12,33 @@ import org.slf4j.LoggerFactory;
 import java.util.Collection;
 
 public class DialRotateCommand extends Command {
-     GamePiece pieceInCommand;
-     String moveDef;
-     boolean showEverything;
-     String moveLayerString;
-     String moveSpeedLayerString;
+    GamePiece pieceInCommand;
+    String moveDef;
+    boolean showEverything;
+    String stateString;
+    String moveSpeedLayerString;
 
-    DialRotateCommand(GamePiece piece, String selectedMove, boolean wantShowEverything, String reqMoveLayerString, String reqMoveSpeedLayerString) {
+    DialRotateCommand(GamePiece piece, String selectedMove, boolean wantShowEverything, String reqStateString, String reqMoveSpeedLayerString) {
         pieceInCommand = piece;
         moveDef = selectedMove;
         showEverything = wantShowEverything;
-        moveLayerString = reqMoveLayerString;
+        stateString = reqStateString;
         moveSpeedLayerString = reqMoveSpeedLayerString;
     }
 
     protected void executeCommand() {
         pieceInCommand.setProperty("selectedMove", moveDef);
-        String ownerStr = pieceInCommand.getProperty("owner").toString();
-        int ownerInt = Integer.parseInt(ownerStr);
 
-        if(showEverything == true || (ownerInt == Util.getCurrentPlayer().getSide())){
+        if(showEverything == true){
             Embellishment chosenMoveEmb = (Embellishment)Util.getEmbellishment(pieceInCommand,"Layer - Chosen Move");
             Embellishment chosenSpeedEmb = (Embellishment)Util.getEmbellishment(pieceInCommand, "Layer - Chosen Speed");
 
             chosenSpeedEmb.setValue(Integer.parseInt(moveSpeedLayerString));
-            //chosenMoveEmb.mySetType(stateString);
-            chosenMoveEmb.setValue(Integer.parseInt(moveLayerString));
-
-            final VASSAL.build.module.Map map = pieceInCommand.getMap();
-            map.repaint();
-
+            chosenMoveEmb.mySetType(stateString);
+            chosenMoveEmb.setValue(1);
+        }
+        else {
+            //Util.logToChat("STEP 4d - Rotated the dial while hidden");
         }
     }
 
@@ -87,7 +84,7 @@ public class DialRotateCommand extends Command {
             }
             try{
                 DialRotateCommand drc = (DialRotateCommand)c;
-                return commandPrefix + Joiner.on(itemDelim).join(drc.pieceInCommand.getId(), drc.moveDef, ""+drc.showEverything, drc.moveLayerString, drc.moveSpeedLayerString);
+                return commandPrefix + Joiner.on(itemDelim).join(drc.pieceInCommand.getId(), drc.moveDef, ""+drc.showEverything, drc.stateString, drc.moveSpeedLayerString);
             }catch(Exception e) {
                 logger.error("Error encoding Dial2eRotateEncoder", e);
                 return null;

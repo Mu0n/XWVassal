@@ -390,25 +390,8 @@ public class StemDial2e extends Decorator implements EditablePiece {
             // basic piece face plate looks like: emb2;;2;;;2;;;2;;;;;false;0;0;D2e_arc170starfighter.png;;false;Front Plate;;;false;;1;1;true;;;
             // faction ring looks like: emb2;;2;;;2;;;2;;;;;false;0;-6;DialSelect_rebelalliance.png;;false;Faction Ring;;;false;;1;1;true;;;
 
-            //chosenMoveEmb.mySetType(stateString.toString());
-
-            /*
-            String dialString = piece.getProperty("dialstring").toString();
-        String[] values = dialString.split(",");
-        int nbOfMoves = values.length;
-
-        // Fetch the saved move from the dynamic property of the dial piece
-        String savedMoveString = piece.getProperty("selectedMove").toString();
-        int savedMoveStringInt = Integer.parseInt(savedMoveString);
-
-        String moveCode = values[savedMoveStringInt-1];
-        String moveCodeRaw = getMoveCodeWithoutSpeed(moveCode);
-
-        logToChat("move code raw without speed: " + moveCodeRaw);
-        logToChat("want this chosenMove layer " + moveCodeWithColorToLayer.get(moveCodeRaw).intValue());
-        return moveCodeWithColorToLayer.get(moveCodeRaw).intValue(
-             */
-            chosenMoveEmb.setValue(StemNuDial2e.moveCodeWithColorToLayer.get(moveWithoutSpeed).intValue());
+            chosenMoveEmb.mySetType(stateString.toString());
+            chosenMoveEmb.setValue(1);
 
             fullDialEmb.mySetType(basicPieceString.toString());
             ringEmb.mySetType(factionRingString.toString());
@@ -503,7 +486,7 @@ public class StemDial2e extends Decorator implements EditablePiece {
             }
 
             // get the back image
-           // String dialBackImage = dialBackImages.get(xwsShipName+"/"+faction);
+            // String dialBackImage = dialBackImages.get(xwsShipName+"/"+faction);
             String dialMaskImageName = "DialMask_"+coreFactionName+"_"+xwsShipName+".png";
 
             // if we don't have the image (unreleased ship), use a WIP image
@@ -535,7 +518,7 @@ public class StemDial2e extends Decorator implements EditablePiece {
 
 
             // get the dial hide image
-           // String dialHideImage = dialHideImages.get(xwsShipName);
+            // String dialHideImage = dialHideImages.get(xwsShipName);
             String dialHideImageName = "DialHide_"+xwsShipName+".png";
 
             // if we don't have the image (unreleased ship), use a WIP image
@@ -606,5 +589,4 @@ public class StemDial2e extends Decorator implements EditablePiece {
 
 
 }
-
 

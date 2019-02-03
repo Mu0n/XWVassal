@@ -25,7 +25,9 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-import static mic.Util.*;
+import static mic.Util.deserializeBase64Obj;
+import static mic.Util.logToChat;
+import static mic.Util.serializeToBase64;
 
 /**
  * Created by Mic on 04/12/2018.
@@ -49,63 +51,6 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
     public static final String ID = "StemNuDial2e";
 
 
-    final public static Map<String, Integer> moveCodeWithColorToLayer = ImmutableMap.<String, Integer>builder()
-            .put("FB", 1) //FORWARDS
-            .put("FW", 2)
-            .put("FR", 3)
-
-            .put("TB", 4) //TURNS LEFT
-            .put("TW", 5)
-            .put("TR", 6)
-
-            .put("YB", 7) //TURNS RIGHT
-            .put("YW", 8)
-            .put("YR", 9)
-
-            .put("BB", 10) //BANKS LEFT
-            .put("BW", 11)
-            .put("BR", 12)
-
-            .put("NB", 13)//BANKS RIGHT
-            .put("NW", 14)
-            .put("NR", 15)
-
-            .put("LB", 16) //SLOOPS LEFT
-            .put("LW", 17)
-            .put("LR", 18)
-
-            .put("PB", 19) //SLOOPS RIGHT
-            .put("PW", 20)
-            .put("PR", 21)
-
-            .put("EB", 22) //TROLLS LEFT
-            .put("EW", 23)
-            .put("ER", 24)
-
-            .put("RB", 25) //TROLLS RIGHT
-            .put("RW", 26)
-            .put("RR", 27)
-
-            .put("AB", 28) //REVERSE BANK LEFT
-            .put("AW", 29)
-            .put("AR", 30)
-
-            .put("SB", 31) //REVERSE STRAIGHT
-            .put("SW", 32)
-            .put("SR", 33)
-
-            .put("DB", 34) //REVERSE BANK RIGHT
-            .put("DW", 35)
-            .put("DR", 36)
-
-            .put("OB", 37) //STOP
-            .put("OW", 38)
-            .put("OR", 39)
-
-            .put("KB", 40) //K-TURNS
-            .put("KW", 41)
-            .put("KR", 42)
-            .build();
     final public static Map<String, KeyStroke> moveCodeToKeyStroke = ImmutableMap.<String, KeyStroke>builder()
             .put("1F", KeyStroke.getKeyStroke(KeyEvent.VK_1, KeyEvent.SHIFT_DOWN_MASK, false))
             .put("2F", KeyStroke.getKeyStroke(KeyEvent.VK_2, KeyEvent.SHIFT_DOWN_MASK, false))
@@ -176,7 +121,6 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
 
         //sync source is the dial owner, must not pass the owner's vision of a hidden dial
         if(thisSide != ownerSide && isHiddenPropCheck == 1){
-            logToChatWithoutUndo("myGetState not owner, hidden");
             Embellishment chosenMoveEmb = (Embellishment)Util.getEmbellishment(piece,"Layer - Chosen Move");
             Embellishment chosenSpeedEmb = (Embellishment)Util.getEmbellishment(piece, "Layer - Chosen Speed");
             Embellishment sideHideEmb = (Embellishment)Util.getEmbellishment(piece,"Layer - Side Hide");
@@ -188,36 +132,21 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
         }
 
         //sync source is not the dial owner, must pass the owner's vision of a hidden dial
-        else if(thisSide == ownerSide && isHiddenPropCheck == 1){
-            logToChatWithoutUndo("myGetState is owner, hidden");
+        if(thisSide == ownerSide && isHiddenPropCheck == 1){
             Embellishment chosenMoveEmb = (Embellishment)Util.getEmbellishment(piece,"Layer - Chosen Move");
             Embellishment chosenSpeedEmb = (Embellishment)Util.getEmbellishment(piece, "Layer - Chosen Speed");
             Embellishment sideHideEmb = (Embellishment)Util.getEmbellishment(piece,"Layer - Side Hide");
             Embellishment centralHideEmb = (Embellishment)Util.getEmbellishment(piece, "Layer - Central Hide");
+            chosenMoveEmb.setValue(1);
 
-            chosenMoveEmb.setValue(getProperMoveLayer(0));
-            chosenSpeedEmb.setValue(Integer.parseInt(getLayerFromScratch(0))); //use the right speed layer
+            String moveSpeedLayerString = getLayerFromScratch(0);
+            chosenSpeedEmb.setValue(Integer.parseInt(moveSpeedLayerString)); //use the right speed layer
 
             sideHideEmb.setValue(1);
             centralHideEmb.setValue(0);
         }
-        else if(isHiddenPropCheck == 0){
-            logToChatWithoutUndo("myGetState not hidden");
-            Embellishment chosenMoveEmb = (Embellishment)Util.getEmbellishment(piece,"Layer - Chosen Move");
-            Embellishment chosenSpeedEmb = (Embellishment)Util.getEmbellishment(piece, "Layer - Chosen Speed");
-            Embellishment sideHideEmb = (Embellishment)Util.getEmbellishment(piece,"Layer - Side Hide");
-            Embellishment centralHideEmb = (Embellishment)Util.getEmbellishment(piece, "Layer - Central Hide");
-
-            sideHideEmb.setValue(0);
-            centralHideEmb.setValue(0);
-
-            chosenMoveEmb.setValue(getProperMoveLayer(0));
-            chosenSpeedEmb.setValue(Integer.parseInt(getLayerFromScratch(0))); //use the right speed layer
-        }
         return "";
     }
-
-
     @Override
     public String myGetType() {
         return ID;
@@ -295,9 +224,8 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
         boolean hasSomethingHappened = false;
         Integer isHiddenPropCheck;
 
+        ChangeTracker changeTracker = new ChangeTracker(this);
         Command result = piece.keyEvent(stroke);
-        ChangeTracker changeTracker = new ChangeTracker(piece);
-
 
         isHiddenPropCheck = Integer.parseInt(piece.getProperty("isHidden").toString());
 
@@ -329,12 +257,11 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
 
                     //get the speed layer to show
                     String moveSpeedLayerString = getLayerFromScratch(0);
-                    Integer moveLayerInt = getProperMoveLayer(0);
 
-                    DialRevealCommand revealNow = new DialRevealCommand(piece, moveSpeedLayerString, moveLayerInt+"", Util.getCurrentPlayer().getName());
-                    result = revealNow;
+                    DialRevealCommand revealNow = new DialRevealCommand(piece, stateString.toString(), moveSpeedLayerString, Util.getCurrentPlayer().getName());
                     revealNow.execute();
                     Command change = changeTracker.getChangeCommand();
+                    result.append(revealNow);
                     result.append(change);
 
                     //logToChat("StemNuDial2e line 261 - dial is looking for=" +this.piece.getProperty("shipID").toString());
@@ -346,7 +273,7 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
                             try{
                                 String micID = pieceScanned.getProperty("micID").toString();
 
-                               // logToChat("StemNuDial2e line 270 -ship=" +pieceScanned.getProperty("micID").toString());
+                                // logToChat("StemNuDial2e line 270 -ship=" +pieceScanned.getProperty("micID").toString());
                                 if (micID.equals(shipID) && pieceScanned.getMap().getMapName().equals("Contested Sector") && this.piece.getMap().getMapName().equals("Contested Sector")){
                                     String moveFromScratch = getNewMoveCodeFromScratch(0);
                                     //logToChat("moveFromScratch "+ moveFromScratch);
@@ -371,11 +298,31 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
 
                     //command shown to all players
                     DialHideCommand hideNow = new DialHideCommand(piece);
-                    result = hideNow;
                     hideNow.execute();
-
                     Command change = changeTracker.getChangeCommand();
-                    result.append(change); //make the change for all players, including the owner. Set the right hidden icons and hide all moves
+                    result.append(hideNow);
+                    result.append(change);
+
+                    //Stuff outside of a command, should only show for owner.
+                    Embellishment chosenMoveEmb = (Embellishment)Util.getEmbellishment(piece,"Layer - Chosen Move");
+                    Embellishment chosenSpeedEmb = (Embellishment)Util.getEmbellishment(piece, "Layer - Chosen Speed");
+                    Embellishment sideHideEmb = (Embellishment)Util.getEmbellishment(piece,"Layer - Side Hide");
+                    Embellishment centralHideEmb = (Embellishment)Util.getEmbellishment(piece, "Layer - Central Hide");
+
+                    //Construct the next build string
+                    StringBuilder stateString = new StringBuilder();
+                    stateString.append(buildStateString(0));
+
+                    chosenMoveEmb.mySetType(stateString.toString()); //restore the dial's chosen move like before only for the owner who's doing CTRl-R
+                    chosenMoveEmb.setValue(1); //unhide the movement only for the owner who's doing CTRL-R
+                    sideHideEmb.setValue(1); //show the side slashed eye icon
+                    centralHideEmb.setValue(0); //hide back the central slashed eye icon
+
+                    //get the speed layer to show
+                    String moveSpeedLayerString = getLayerFromScratch(0);
+                    Integer newMoveSpeed = Integer.parseInt(moveSpeedLayerString);
+
+                    chosenSpeedEmb.setValue(newMoveSpeed); //unhide the speed only for the owner who's doing CTRL-R
                 }
             }
             else if(checkForC.equals(stroke)){
@@ -407,11 +354,9 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
                 if(goingLeft) moveMod = -1;
                 if(goingRight) moveMod = 1;
 
-                /*
                 //Construct the next build string
                 StringBuilder stateString = new StringBuilder();
                 stateString.append(buildStateString(moveMod));
-                */
 
                 //Get the movement heading layer
                 String moveDef = getNewMoveDefFromScratch(moveMod);
@@ -424,41 +369,39 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
                 if(isHiddenPropCheck == 1){ //encode only the modified selected move property
 
 
-                    DialRotateCommand drc = new DialRotateCommand(piece, moveDef, false, getProperMoveLayer(moveMod)+"", moveSpeedLayerString);
-                    result = drc;
+                    DialRotateCommand drc = new DialRotateCommand(piece, moveDef, false, stateString.toString(), moveSpeedLayerString);
+
                     drc.execute();
+                    result.append(drc);
 
                     /*
                     DialHideCommand hideNow = new DialHideCommand(piece);
                     GameModule.getGameModule().sendAndLog(hideNow);
-                    hideNow.execute();Àèé
+                    hideNow.execute();
                     Command change = changeTracker.getChangeCommand();
                     result.append(hideNow);
                     result.append(change);
                      */
 
-                    /*
                     Embellishment chosenMoveEmb = (Embellishment)Util.getEmbellishment(piece,"Layer - Chosen Move");
                     Embellishment chosenSpeedEmb = (Embellishment)Util.getEmbellishment(piece, "Layer - Chosen Speed");
                     chosenMoveEmb.mySetType(stateString.toString());
                     chosenMoveEmb.setValue(1);
                     chosenSpeedEmb.setValue(newMoveSpeed);
-*/
 
-                } else if(isHiddenPropCheck == 0) { //dial is revealed, show everything to all
-
-                   // logToChat("before selecting move changed? " + changeTracker.isChanged());
-                    //logToChat(Decorator.getOutermost(piece).getState());
-                   // logToChat(piece.getProperty("selectedMove").toString());
-                    DialRotateCommand drc = new DialRotateCommand(piece, moveDef, true, getProperMoveLayer(moveMod)+"", moveSpeedLayerString);
-                    result = drc;
-                    drc.execute();
 
                     Command change = changeTracker.getChangeCommand();
                     result.append(change);
-                   // logToChat("after selecting move changed? " + changeTracker.isChanged());
-                   // logToChat(Decorator.getOutermost(piece).getState());
-                   // logToChat(piece.getProperty("selectedMove").toString());
+
+                } else if(isHiddenPropCheck == 0) { //dial is revealed, show everything to all
+
+                    DialRotateCommand drc = new DialRotateCommand(piece, moveDef, true, stateString.toString(), moveSpeedLayerString);
+                    drc.execute();
+                    Command change = changeTracker.getChangeCommand();
+                    change.execute();
+
+                    result.append(drc);
+                    result.append(change);
                 }
             }
         } else { // get scolded for not owning the dial that was manipulated
@@ -467,6 +410,9 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
         if(hasSomethingHappened) {
             final VASSAL.build.module.Map map = piece.getMap();
             map.repaint();
+
+            GameModule gm = GameModule.getGameModule();
+            gm.sendAndLog(result);
 
             return result;
         }
@@ -564,30 +510,6 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
 
     public String getMoveRaw(String code){
         return code.substring(1,2);
-    }
-
-    public int getProperMoveLayer(int moveModification) {
-        String dialString = piece.getProperty("dialstring").toString();
-        String[] values = dialString.split(",");
-        int nbOfMoves = values.length;
-
-        // Fetch the saved move from the dynamic property of the dial piece
-        String savedMoveString = piece.getProperty("selectedMove").toString();
-        int savedMoveStringInt = Integer.parseInt(savedMoveString);
-
-        if(moveModification == 1){ //if you want to shift the selected move 1 up.
-            if(savedMoveStringInt == nbOfMoves) savedMoveStringInt = 1; //loop
-            else savedMoveStringInt++;
-        } else if(moveModification == -1) //if you want to shift the selected move 1 down
-        {
-            if (savedMoveStringInt == 1) savedMoveStringInt = nbOfMoves; //loop
-            else savedMoveStringInt--;
-        }
-
-        String moveCode = values[savedMoveStringInt-1];
-        String moveCodeRaw = getMoveCodeWithoutSpeed(moveCode);
-
-        return moveCodeWithColorToLayer.get(moveCodeRaw).intValue();
     }
 
     public int getOwnerOfThisDial(){
