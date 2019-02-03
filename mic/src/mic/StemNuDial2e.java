@@ -189,20 +189,31 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
         }
 
         //sync source is not the dial owner, must pass the owner's vision of a hidden dial
-        if(thisSide == ownerSide && isHiddenPropCheck == 1){
+        else if(thisSide == ownerSide && isHiddenPropCheck == 1){
             Embellishment chosenMoveEmb = (Embellishment)Util.getEmbellishment(piece,"Layer - Chosen Move");
             Embellishment chosenSpeedEmb = (Embellishment)Util.getEmbellishment(piece, "Layer - Chosen Speed");
             Embellishment sideHideEmb = (Embellishment)Util.getEmbellishment(piece,"Layer - Side Hide");
             Embellishment centralHideEmb = (Embellishment)Util.getEmbellishment(piece, "Layer - Central Hide");
-            chosenMoveEmb.setValue(getProperMoveLayer(0));
 
-            String moveSpeedLayerString = getLayerFromScratch(0);
-            chosenSpeedEmb.setValue(Integer.parseInt(moveSpeedLayerString)); //use the right speed layer
+            chosenMoveEmb.setValue(getProperMoveLayer(0));
+            chosenSpeedEmb.setValue(Integer.parseInt(getLayerFromScratch(0))); //use the right speed layer
 
             sideHideEmb.setValue(1);
             centralHideEmb.setValue(0);
         }
-        return "";
+        else if(isHiddenPropCheck == 0){
+            Embellishment chosenMoveEmb = (Embellishment)Util.getEmbellishment(piece,"Layer - Chosen Move");
+            Embellishment chosenSpeedEmb = (Embellishment)Util.getEmbellishment(piece, "Layer - Chosen Speed");
+            Embellishment sideHideEmb = (Embellishment)Util.getEmbellishment(piece,"Layer - Side Hide");
+            Embellishment centralHideEmb = (Embellishment)Util.getEmbellishment(piece, "Layer - Central Hide");
+
+            sideHideEmb.setValue(0);
+            centralHideEmb.setValue(0);
+
+            chosenMoveEmb.setValue(getProperMoveLayer(0));
+            chosenSpeedEmb.setValue(Integer.parseInt(getLayerFromScratch(0))); //use the right speed layer
+        }
+        return piece.getState();
     }
 
 

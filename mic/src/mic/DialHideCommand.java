@@ -26,17 +26,10 @@ public class DialHideCommand extends Command {
 
         Embellishment chosenMoveEmb = (Embellishment)Util.getEmbellishment(pieceInCommand,"Layer - Chosen Move");
         Embellishment chosenSpeedEmb = (Embellishment)Util.getEmbellishment(pieceInCommand, "Layer - Chosen Speed");
-        Embellishment centralHideEmb = (Embellishment)Util.getEmbellishment(pieceInCommand, "Layer - Central Hide");
-        Embellishment sideHideEmb = (Embellishment)Util.getEmbellishment(pieceInCommand, "Layer - Side Hide");
 
-        if((ownerInt == Util.getCurrentPlayer().getSide())){
-            sideHideEmb.setValue(1);
-        }
-        else{
-            chosenMoveEmb.setValue(0); //Hide the maneuver
-            chosenSpeedEmb.setValue(0); //Hide the speed
-            centralHideEmb.setValue(1); //Show the central slashed icon
-        }
+        chosenMoveEmb.setValue(0); //Hide the maneuver
+        chosenSpeedEmb.setValue(0); //Hide the speed
+
         pieceInCommand.setProperty("isHidden", 1);
         //Util.logToChat("STEP 4b - Hid the dial");
         final VASSAL.build.module.Map map = pieceInCommand.getMap();
