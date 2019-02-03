@@ -25,9 +25,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-import static mic.Util.deserializeBase64Obj;
-import static mic.Util.logToChat;
-import static mic.Util.serializeToBase64;
+import static mic.Util.*;
 
 /**
  * Created by Mic on 04/12/2018.
@@ -178,6 +176,7 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
 
         //sync source is the dial owner, must not pass the owner's vision of a hidden dial
         if(thisSide != ownerSide && isHiddenPropCheck == 1){
+            logToChatWithoutUndo("myGetState not owner, hidden");
             Embellishment chosenMoveEmb = (Embellishment)Util.getEmbellishment(piece,"Layer - Chosen Move");
             Embellishment chosenSpeedEmb = (Embellishment)Util.getEmbellishment(piece, "Layer - Chosen Speed");
             Embellishment sideHideEmb = (Embellishment)Util.getEmbellishment(piece,"Layer - Side Hide");
@@ -190,6 +189,7 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
 
         //sync source is not the dial owner, must pass the owner's vision of a hidden dial
         else if(thisSide == ownerSide && isHiddenPropCheck == 1){
+            logToChatWithoutUndo("myGetState is owner, hidden");
             Embellishment chosenMoveEmb = (Embellishment)Util.getEmbellishment(piece,"Layer - Chosen Move");
             Embellishment chosenSpeedEmb = (Embellishment)Util.getEmbellishment(piece, "Layer - Chosen Speed");
             Embellishment sideHideEmb = (Embellishment)Util.getEmbellishment(piece,"Layer - Side Hide");
@@ -202,6 +202,7 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
             centralHideEmb.setValue(0);
         }
         else if(isHiddenPropCheck == 0){
+            logToChatWithoutUndo("myGetState not hidden");
             Embellishment chosenMoveEmb = (Embellishment)Util.getEmbellishment(piece,"Layer - Chosen Move");
             Embellishment chosenSpeedEmb = (Embellishment)Util.getEmbellishment(piece, "Layer - Chosen Speed");
             Embellishment sideHideEmb = (Embellishment)Util.getEmbellishment(piece,"Layer - Side Hide");
@@ -213,7 +214,7 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
             chosenMoveEmb.setValue(getProperMoveLayer(0));
             chosenSpeedEmb.setValue(Integer.parseInt(getLayerFromScratch(0))); //use the right speed layer
         }
-        return piece.getState();
+        return "";
     }
 
 
