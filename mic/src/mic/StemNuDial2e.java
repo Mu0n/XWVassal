@@ -254,7 +254,7 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
                     //get the speed layer to show
                     String moveSpeedLayerString = getLayerFromScratch(0);
 
-                    DialRevealCommand revealNow = new DialRevealCommand(piece, stateString.toString(), moveSpeedLayerString);
+                    DialRevealCommand revealNow = new DialRevealCommand(piece, stateString.toString(), moveSpeedLayerString, Util.getCurrentPlayer().getName());
                     result.append(revealNow);
                     revealNow.execute();
 
@@ -351,6 +351,8 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
                     chosenMoveEmb.setValue(1);
                     chosenSpeedEmb.setValue(newMoveSpeed);
                 } else if(isHiddenPropCheck == 0) { //dial is revealed, show everything to all
+
+                    ChangeTracker ct = new ChangeTracker(piece);
 
                     DialRotateCommand drc = new DialRotateCommand(piece, moveDef, true, stateString.toString(), moveSpeedLayerString);
                     result.append(drc);
@@ -453,6 +455,7 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
 
         return moveSpeedLayerString;
     }
+
     public String getMoveCodeWithoutSpeed(String code){
         return code.substring(1,3);
     }

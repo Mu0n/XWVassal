@@ -23,7 +23,7 @@ public class DialRevealCommand extends Command {
         pieceInCommand = piece;
         moveDef = requiredMoveDef;
         speedLayer = requiredSpeedLayer;
-        revealerNamePassed = revealerName;
+        revealerName = revealerNamePassed;
     }
 
     protected void executeCommand() {
@@ -93,8 +93,8 @@ public class DialRevealCommand extends Command {
             }
             try{
                 DialRevealCommand drc = (DialRevealCommand) c;
-                String whoReveals = Util.getCurrentPlayer().getName();
-                return commandPrefix + Joiner.on(itemDelim).join(drc.pieceInCommand.getId(), drc.moveDef, drc.speedLayer, whoReveals);
+
+                return commandPrefix + Joiner.on(itemDelim).join(drc.pieceInCommand.getId(), drc.moveDef, drc.speedLayer, drc.revealerName);
             }catch(Exception e) {
                 logger.error("Error encoding DialRevealCommand", e);
                 return null;
