@@ -13,20 +13,38 @@ import org.slf4j.LoggerFactory;
 import java.util.Collection;
 
 public class DialRevealCommand extends Command {
+    private static final Logger logger = LoggerFactory.getLogger(DialRevealCommand.class);
 
     GamePiece pieceInCommand;
+    String pieceId;
     String moveDef;
     String speedLayer;
     String revealerName ="";
 
     DialRevealCommand(GamePiece piece, String requiredMoveDef, String requiredSpeedLayer, String revealerNamePassed){
         pieceInCommand = piece;
+        pieceId = piece.getId();
+        moveDef = requiredMoveDef;
+        speedLayer = requiredSpeedLayer;
+        revealerNamePassed = revealerName;
+    }
+
+    DialRevealCommand(String pieceIdPassed, String requiredMoveDef, String requiredSpeedLayer, String revealerNamePassed){
+        pieceId = pieceIdPassed;
         moveDef = requiredMoveDef;
         speedLayer = requiredSpeedLayer;
         revealerNamePassed = revealerName;
     }
 
     protected void executeCommand() {
+        if(pieceInCommand == null && pieceId != null){
+            Collection<GamePiece> pieces = GameModule.getGameModule().getGameState().getAllPieces();
+            for (GamePiece piece : pieces) {
+                if(piece.getId().equals(pieceId)) {
+                    pieceInCommand = piece;
+                }
+            }
+        }
         Embellishment chosenMoveEmb = (Embellishment) Util.getEmbellishment(pieceInCommand, "Layer - Chosen Move");
         Embellishment chosenSpeedEmb = (Embellishment) Util.getEmbellishment(pieceInCommand, "Layer - Chosen Speed");
         Embellishment sideHideEmb = (Embellishment) Util.getEmbellishment(pieceInCommand, "Layer - Side Hide");
@@ -55,11 +73,12 @@ public class DialRevealCommand extends Command {
         map.repaint();
     }
     protected Command myUndoCommand() {
+        logger.info("DialReveal Undo");
         return null;
     }
 
     public static class Dial2eRevealEncoder implements CommandEncoder {
-        private static final Logger logger = LoggerFactory.getLogger(StemNuDial2e.class);
+        private static final Logger logger = LoggerFactory.getLogger(Dial2eRevealEncoder.class);
         private static final String commandPrefix = "Dial2eRevealEncoder=";
         private static final String itemDelim = "\t";
 
@@ -80,11 +99,11 @@ public class DialRevealCommand extends Command {
                         return new DialRevealCommand(piece, parts[1], parts[2],parts[3]);
                     }
                 }
+                return new DialRevealCommand(parts[0], parts[1], parts[2],parts[3]);
             }catch(Exception e){
                 logger.info("Error decoding DialRevealCommand - exception error");
                 return null;
             }
-            return null;
         }
 
         public String encode(Command c){
@@ -94,7 +113,7 @@ public class DialRevealCommand extends Command {
             try{
                 DialRevealCommand drc = (DialRevealCommand) c;
                 String whoReveals = Util.getCurrentPlayer().getName();
-                return commandPrefix + Joiner.on(itemDelim).join(drc.pieceInCommand.getId(), drc.moveDef, drc.speedLayer, whoReveals);
+                return commandPrefix + Joiner.on(itemDelim).join(drc.pieceId, drc.moveDef, drc.speedLayer, whoReveals);
             }catch(Exception e) {
                 logger.error("Error encoding DialRevealCommand", e);
                 return null;
