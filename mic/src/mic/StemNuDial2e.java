@@ -113,7 +113,6 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
 
     @Override
     public String myGetState() {
-        /*
         Integer isHiddenPropCheck = Integer.parseInt(piece.getProperty("isHidden").toString());
         int ownerSide = getOwnerOfThisDial();
         int thisSide = Util.getCurrentPlayer().getSide();
@@ -144,9 +143,6 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
             sideHideEmb.setValue(1);
             centralHideEmb.setValue(0);
         }
-        return "";
-
-         */
         return "";
     }
     @Override
