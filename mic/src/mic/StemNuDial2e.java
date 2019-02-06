@@ -246,7 +246,7 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
                     //get the speed layer to show
                     String moveSpeedLayerString = getLayerFromScratch(0);
 
-                    DialRevealCommand revealNow = new DialRevealCommand(piece, stateString.toString(), moveSpeedLayerString, Util.getCurrentPlayer().getName());
+                    DialRevealCommand revealNow = new DialRevealCommand(piece, stateString.toString(), moveSpeedLayerString, Util.getCurrentPlayer().getName(), true);
                     Command result =revealNow;
 
                     if(checkForSuperCtrlRReleased.equals(stroke)) { //Deal with ship movement with CTRL-S
@@ -275,7 +275,7 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
                     return result;
                 } else if(isHiddenPropCheck == 0){ // about to hide the dial
                     //command shown to all players
-                    DialHideCommand hideNow = new DialHideCommand(piece);
+                    DialHideCommand hideNow = new DialHideCommand(piece, true);
                     Command result = hideNow;
 
                     result.execute();
@@ -289,27 +289,18 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
                 if(goingLeft) moveMod = -1;
                 if(goingRight) moveMod = 1;
 
-                //Construct the next build string
-                StringBuilder stateString = new StringBuilder();
-                stateString.append(buildStateString(moveMod));
-
-                //Get the movement heading layer
-                String moveDef = getNewMoveDefFromScratch(moveMod);
-                //get the speed layer to show
-                String moveSpeedLayerString = getLayerFromScratch(moveMod);
-
                 Command warningCommand = new Chatter.DisplayText(GameModule.getGameModule().getChatter(),"* DIAL WARNING - " + Util.getCurrentPlayer().getName() + " has rotated the " + piece.getProperty("Craft ID #").toString()
                         + " (" + piece.getProperty("Pilot Name").toString() + ") on the map. Please use your player window to do so instead.");
 
                 if(isHiddenPropCheck == 1){ //encode only the modified selected move property
-                    DialRotateCommand drc = new DialRotateCommand(piece, moveDef, false, stateString.toString(), moveSpeedLayerString);
+                    DialRotateCommand drc = new DialRotateCommand(piece, moveMod==1?true:false, false,  true);
                     Command result = drc;
 
                     if(piece.getMap().equals(VASSAL.build.module.Map.getMapById("Map0"))) result.append(warningCommand);
                     result.execute();
                     return result;
                 } else if(isHiddenPropCheck == 0) { //dial is revealed, show everything to all
-                    DialRotateCommand drc = new DialRotateCommand(piece, moveDef, true, stateString.toString(), moveSpeedLayerString);
+                    DialRotateCommand drc = new DialRotateCommand(piece, moveMod==1?true:false, true, true);
                     Command result = drc;
 
                     if(piece.getMap().equals(VASSAL.build.module.Map.getMapById("Map0"))) result.append(warningCommand);
@@ -321,27 +312,6 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
             Util.logToChatWithoutUndo("You (player " + Util.getCurrentPlayer().getSide() + ") are not the owner of this dial, player " + getOwnerOfThisDial() + " is.");
         }
         return piece.keyEvent(stroke);
-    }
-
-    private String getNewMoveDefFromScratch(int moveMod) {
-        String dialString = piece.getProperty("dialstring").toString();
-        String[] values = dialString.split(",");
-        int nbOfMoves = values.length;
-
-        // Fetch the saved move from the dynamic property of the dial piece
-        String savedMoveString = piece.getProperty("selectedMove").toString();
-        int savedMoveStringInt = Integer.parseInt(savedMoveString);
-
-        if(moveMod == 1){ //if you want to shift the selected move 1 up.
-            if(savedMoveStringInt == nbOfMoves) savedMoveStringInt = 1; //loop
-            else savedMoveStringInt++;
-        } else if(moveMod == -1) //if you want to shift the selected move 1 down
-        {
-            if (savedMoveStringInt == 1) savedMoveStringInt = nbOfMoves; //loop
-            else savedMoveStringInt--;
-        }
-
-        return ""+savedMoveStringInt;
     }
 
     private String getNewMoveCodeFromScratch(int moveMod) {
