@@ -15,22 +15,41 @@ import java.util.Collection;
 public class DialRevealCommand extends Command {
 
     GamePiece pieceInCommand;
+    String pieceId;
     String moveDef;
     String speedLayer;
     String revealerName ="";
 
     DialRevealCommand(GamePiece piece, String requiredMoveDef, String requiredSpeedLayer, String revealerNamePassed){
         pieceInCommand = piece;
+        pieceId = piece.getId();
+        moveDef = requiredMoveDef;
+        speedLayer = requiredSpeedLayer;
+        revealerName = revealerNamePassed;
+    }
+
+    DialRevealCommand(String pieceIdPassed, String requiredMoveDef, String requiredSpeedLayer, String revealerNamePassed){
+        pieceId = pieceIdPassed;
         moveDef = requiredMoveDef;
         speedLayer = requiredSpeedLayer;
         revealerName = revealerNamePassed;
     }
 
     protected void executeCommand() {
+        if(pieceInCommand == null && pieceId != null){
+            Collection<GamePiece> pieces = GameModule.getGameModule().getGameState().getAllPieces();
+            for (GamePiece piece : pieces) {
+                if(piece.getId().equals(pieceId)) {
+                    pieceInCommand = piece;
+                }
+            }
+        }
+
         Embellishment chosenMoveEmb = (Embellishment) Util.getEmbellishment(pieceInCommand, "Layer - Chosen Move");
         Embellishment chosenSpeedEmb = (Embellishment) Util.getEmbellishment(pieceInCommand, "Layer - Chosen Speed");
         Embellishment sideHideEmb = (Embellishment) Util.getEmbellishment(pieceInCommand, "Layer - Side Hide");
         Embellishment centralHideEmb = (Embellishment) Util.getEmbellishment(pieceInCommand, "Layer - Central Hide");
+
         chosenMoveEmb.mySetType(moveDef);
         chosenMoveEmb.setValue(1); // use the layer that shows the move
         sideHideEmb.setValue(0); //hide the small slashed eye icon
@@ -43,14 +62,9 @@ public class DialRevealCommand extends Command {
         String pilotNameCheck = pieceInCommand.getProperty("Pilot Name").toString();
         String chosenMoveCheck = chosenMoveEmb.getProperty("Chosen Move_Name").toString();
 
-
-
         if(pieceInCommand.getMap().equals(mapNameCheck)) Util.logToChatCommand("* - "+ revealerName + " reveals the dial for "
                 + craftIDCheck + " (" + pilotNameCheck + ") = "+ chosenMoveCheck + "*");
 
-
-
-        //Util.logToChat("STEP 4a - Revealed the dial with " + chosenMoveEmb.getProperty("Chosen Move_Name"));
         final VASSAL.build.module.Map map = pieceInCommand.getMap();
         map.repaint();
     }
@@ -80,11 +94,11 @@ public class DialRevealCommand extends Command {
                         return new DialRevealCommand(piece, parts[1], parts[2],parts[3]);
                     }
                 }
+                return new DialRevealCommand(parts[0], parts[1], parts[2],parts[3]);
             }catch(Exception e){
                 logger.info("Error decoding DialRevealCommand - exception error");
                 return null;
             }
-            return null;
         }
 
         public String encode(Command c){
@@ -94,7 +108,7 @@ public class DialRevealCommand extends Command {
             try{
                 DialRevealCommand drc = (DialRevealCommand) c;
 
-                return commandPrefix + Joiner.on(itemDelim).join(drc.pieceInCommand.getId(), drc.moveDef, drc.speedLayer, drc.revealerName);
+                return commandPrefix + Joiner.on(itemDelim).join(drc.pieceId, drc.moveDef, drc.speedLayer, drc.revealerName);
             }catch(Exception e) {
                 logger.error("Error encoding DialRevealCommand", e);
                 return null;

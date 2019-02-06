@@ -13,25 +13,48 @@ import java.util.Collection;
 public class DialHideCommand extends Command {
 
     public GamePiece pieceInCommand;
+    public String pieceId;
+
 
     public DialHideCommand(GamePiece piece) {
         pieceInCommand = piece;
+        pieceId = pieceInCommand.getId();
     }
 
+    public DialHideCommand(String pieceIdPassed) {
+        pieceId = pieceIdPassed;
+    }
+
+
     protected void executeCommand() {
+
+        if(pieceInCommand == null && pieceId != null){
+            Collection<GamePiece> pieces = GameModule.getGameModule().getGameState().getAllPieces();
+            for (GamePiece piece : pieces) {
+                if(piece.getId().equals(pieceId)) {
+                    pieceInCommand = piece;
+                }
+            }
+        }
 
         String ownerStr = pieceInCommand.getProperty("owner").toString();
         int ownerInt = Integer.parseInt(ownerStr);
 
-
         Embellishment chosenMoveEmb = (Embellishment)Util.getEmbellishment(pieceInCommand,"Layer - Chosen Move");
         Embellishment chosenSpeedEmb = (Embellishment)Util.getEmbellishment(pieceInCommand, "Layer - Chosen Speed");
+        Embellishment sideHideEmb = (Embellishment) Util.getEmbellishment(pieceInCommand, "Layer - Side Hide");
+        Embellishment centralHideEmb = (Embellishment) Util.getEmbellishment(pieceInCommand, "Layer - Central Hide");
 
-        chosenMoveEmb.setValue(0); //Hide the maneuver
-        chosenSpeedEmb.setValue(0); //Hide the speed
-
+        if(Util.getCurrentPlayer().getSide() == ownerInt){
+            sideHideEmb.setValue(1);
+            centralHideEmb.setValue(0);
+        }else{
+            chosenMoveEmb.setValue(0); //Hide the maneuver
+            chosenSpeedEmb.setValue(0); //Hide the speed
+            sideHideEmb.setValue(0);
+            centralHideEmb.setValue(1);
+        }
         pieceInCommand.setProperty("isHidden", 1);
-        //Util.logToChat("STEP 4b - Hid the dial");
         final VASSAL.build.module.Map map = pieceInCommand.getMap();
         map.repaint();
     }
@@ -61,11 +84,11 @@ public class DialHideCommand extends Command {
                         return new DialHideCommand(piece);
                     }
                 }
+                return new DialHideCommand(extractedId);
             }catch(Exception e){
                 logger.info("Error decoding DialHideCommand - exception error");
                 return null;
             }
-            return null;
         }
 
         public String encode(Command c) {
@@ -74,7 +97,7 @@ public class DialHideCommand extends Command {
             }
             try {
                 DialHideCommand dhc = (DialHideCommand) c;
-                return commandPrefix + dhc.pieceInCommand.getId();
+                return commandPrefix + dhc.pieceId;
             } catch(Exception e) {
                 logger.error("Error encoding DialHideCommand", e);
                 return null;

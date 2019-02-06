@@ -1,6 +1,7 @@
 package mic;
 
 import VASSAL.build.GameModule;
+import VASSAL.build.module.Chatter;
 import VASSAL.build.module.documentation.HelpFile;
 import VASSAL.build.module.map.boardPicker.Board;
 import VASSAL.build.widget.PieceSlot;
@@ -670,7 +671,7 @@ public class ShipReposition extends Decorator implements EditablePiece {
             if(repoCommand == null) return piece.keyEvent(stroke);
             else{
                 result.append(repoCommand);
-                result.append(logToChatCommand("*** " + this.getProperty("Pilot Name").toString() +
+                result.append(new Chatter.DisplayText(GameModule.getGameModule().getChatter(),"*** " + this.getProperty("Pilot Name").toString() +
                         " has repositioned" + (is2pointohShip?" with " + getRepositionNameMappedToKeyStroke(stroke, true):"")));
                 //result.append(piece.keyEvent(stroke));
                 if(this.previousCollisionVisualization != null &&  this.previousCollisionVisualization.getShapes().size() > 0){

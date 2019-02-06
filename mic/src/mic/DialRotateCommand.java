@@ -13,6 +13,7 @@ import java.util.Collection;
 
 public class DialRotateCommand extends Command {
     GamePiece pieceInCommand;
+    String pieceId;
     String moveDef;
     boolean showEverything = false;
     String stateString;
@@ -20,6 +21,15 @@ public class DialRotateCommand extends Command {
 
     DialRotateCommand(GamePiece piece, String selectedMove, boolean wantShowEverything, String reqStateString, String reqMoveSpeedLayerString) {
         pieceInCommand = piece;
+        pieceId = piece.getId();
+        moveDef = selectedMove;
+        showEverything = wantShowEverything;
+        stateString = reqStateString;
+        moveSpeedLayerString = reqMoveSpeedLayerString;
+    }
+
+    DialRotateCommand(String pieceIdPassed, String selectedMove, boolean wantShowEverything, String reqStateString, String reqMoveSpeedLayerString) {
+        pieceId = pieceIdPassed;
         moveDef = selectedMove;
         showEverything = wantShowEverything;
         stateString = reqStateString;
@@ -27,23 +37,33 @@ public class DialRotateCommand extends Command {
     }
 
     protected void executeCommand() {
+        if(pieceInCommand == null && pieceId != null){
+            Collection<GamePiece> pieces = GameModule.getGameModule().getGameState().getAllPieces();
+            for (GamePiece piece : pieces) {
+                if(piece.getId().equals(pieceId)) {
+                    pieceInCommand = piece;
+                }
+            }
+        }
+
         pieceInCommand.setProperty("selectedMove", moveDef);
+        String ownerStr = pieceInCommand.getProperty("owner").toString();
+        int ownerInt = Integer.parseInt(ownerStr);
 
-        if(showEverything == true){
-            Embellishment chosenMoveEmb = (Embellishment)Util.getEmbellishment(pieceInCommand,"Layer - Chosen Move");
-            Embellishment chosenSpeedEmb = (Embellishment)Util.getEmbellishment(pieceInCommand, "Layer - Chosen Speed");
+        Embellishment chosenMoveEmb = (Embellishment)Util.getEmbellishment(pieceInCommand,"Layer - Chosen Move");
+        Embellishment chosenSpeedEmb = (Embellishment)Util.getEmbellishment(pieceInCommand, "Layer - Chosen Speed");
 
+        if(Util.getCurrentPlayer().getSide()==ownerInt || showEverything){
             chosenMoveEmb.mySetType(stateString);
             chosenMoveEmb.setValue(1);
             chosenSpeedEmb.setValue(Integer.parseInt(moveSpeedLayerString));
-
+        }else{
+            //do nothing!
+        }
 
             final VASSAL.build.module.Map map = pieceInCommand.getMap();
             map.repaint();
-        }
-        else {
-            //Util.logToChat("STEP 4d - Rotated the dial while hidden");
-        }
+
     }
 
     protected Command myUndoCommand() {
@@ -74,12 +94,11 @@ public class DialRotateCommand extends Command {
                         return new DialRotateCommand(piece, parts[1], Boolean.parseBoolean(parts[2]), parts[3], parts[4]);
                     }
                 }
-
+                return new DialRotateCommand(parts[0], parts[1], Boolean.parseBoolean(parts[2]), parts[3], parts[4]);
             }catch(Exception e){
                 logger.error("Error decoding Dial2eRotateEncoder", e);
                 return null;
             }
-            return null;
         }
 
         public String encode(Command c){
@@ -88,7 +107,7 @@ public class DialRotateCommand extends Command {
             }
             try{
                 DialRotateCommand drc = (DialRotateCommand)c;
-                return commandPrefix + Joiner.on(itemDelim).join(drc.pieceInCommand.getId(), drc.moveDef, ""+drc.showEverything, drc.stateString, drc.moveSpeedLayerString);
+                return commandPrefix + Joiner.on(itemDelim).join(drc.pieceId, drc.moveDef, ""+drc.showEverything, drc.stateString, drc.moveSpeedLayerString);
             }catch(Exception e) {
                 logger.error("Error encoding Dial2eRotateEncoder", e);
                 return null;

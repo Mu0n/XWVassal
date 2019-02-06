@@ -335,7 +335,6 @@ public class StemDial2e extends Decorator implements EditablePiece {
 
         // construct the dial Layers trait (Embellishment class) layer by layer according to the previous Array of Arrays.
         protected void executeCommand() {
-
             // build the type string
             StringBuilder stateString = new StringBuilder();
             StringBuilder moveNamesString = new StringBuilder();
@@ -395,8 +394,6 @@ public class StemDial2e extends Decorator implements EditablePiece {
 
             fullDialEmb.mySetType(basicPieceString.toString());
             ringEmb.mySetType(factionRingString.toString());
-
-
         }
 
         // build the maneuvers layer

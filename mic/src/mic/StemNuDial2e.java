@@ -1,6 +1,7 @@
 package mic;
 
 import VASSAL.build.GameModule;
+import VASSAL.build.module.Chatter;
 import VASSAL.build.module.documentation.HelpFile;
 import VASSAL.command.ChangeTracker;
 import VASSAL.command.Command;
@@ -112,6 +113,7 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
 
     @Override
     public String myGetState() {
+        /*
         Integer isHiddenPropCheck = Integer.parseInt(piece.getProperty("isHidden").toString());
         int ownerSide = getOwnerOfThisDial();
         int thisSide = Util.getCurrentPlayer().getSide();
@@ -142,6 +144,9 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
             sideHideEmb.setValue(1);
             centralHideEmb.setValue(0);
         }
+        return "";
+
+         */
         return "";
     }
     @Override
@@ -222,8 +227,6 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
         boolean hasSomethingHappened = false;
         Integer isHiddenPropCheck;
 
-        Command result = piece.keyEvent(stroke);
-
         isHiddenPropCheck = Integer.parseInt(piece.getProperty("isHidden").toString());
 
         //Util.logToChat("STEP 0 - keyEvent=" + stroke.getKeyEventType() + " isHidden=" + isHiddenPropCheck);
@@ -237,16 +240,9 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
             boolean goingLeft = checkForCommaReleased.equals(stroke);
             boolean goingRight = checkForPeriodReleased.equals(stroke);
 
-            //Util.logToChat("STEP 1 - player side verified " + getOwnerOfThisDial());
-
-            if(checkForCtrlRReleased.equals(stroke) || checkForSuperCtrlRReleased.equals(stroke)) {
-
-                //Util.logToChat("STEP 2a - CTRL-R released");
-
-                hasSomethingHappened = true;
+            if(checkForCtrlRReleased.equals(stroke) || checkForSuperCtrlRReleased.equals(stroke)) { //CTRL-R or CTRL-S detected
 
                 if(isHiddenPropCheck == 1) { // about to reveal the dial
-
                     //Construct the next build string
                     StringBuilder stateString = new StringBuilder();
                     stateString.append(buildStateString(0));
@@ -255,11 +251,9 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
                     String moveSpeedLayerString = getLayerFromScratch(0);
 
                     DialRevealCommand revealNow = new DialRevealCommand(piece, stateString.toString(), moveSpeedLayerString, Util.getCurrentPlayer().getName());
-                    result.append(revealNow);
-                    revealNow.execute();
+                    Command result =revealNow;
 
-                    //logToChat("StemNuDial2e line 261 - dial is looking for=" +this.piece.getProperty("shipID").toString());
-                    if(checkForSuperCtrlRReleased.equals(stroke)) {
+                    if(checkForSuperCtrlRReleased.equals(stroke)) { //Deal with ship movement with CTRL-S
                         String shipID = this.piece.getProperty("shipID").toString(); //gets the random UUID from the dial that was saved during spawning
                         Collection<GamePiece> pieces = GameModule.getGameModule().getGameState().getAllPieces();
                         Collection<GamePiece> piecesCopied = new ArrayList<GamePiece>(pieces);
@@ -267,15 +261,10 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
                             try{
                                 String micID = pieceScanned.getProperty("micID").toString();
 
-                                // logToChat("StemNuDial2e line 270 -ship=" +pieceScanned.getProperty("micID").toString());
                                 if (micID.equals(shipID) && pieceScanned.getMap().getMapName().equals("Contested Sector") && this.piece.getMap().getMapName().equals("Contested Sector")){
                                     String moveFromScratch = getNewMoveCodeFromScratch(0);
-                                    //logToChat("moveFromScratch "+ moveFromScratch);
                                     String moveRaw = moveFromScratch.substring(0,2);
-                                    //logToChat("moveRaw " + moveRaw);
                                     KeyStroke thisKey = moveCodeToKeyStroke.get(moveRaw);
-
-                                    //logToChat("found the move? " + foundMoveCode);
                                     if(thisKey!=null) {
                                         Command moveShipCommand = pieceScanned.keyEvent(thisKey);
                                         result.append(moveShipCommand);
@@ -286,42 +275,20 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
                             }
                         }
                     }
-
+                    result.execute();
+                    return result;
                 } else if(isHiddenPropCheck == 0){ // about to hide the dial
-
                     //command shown to all players
                     DialHideCommand hideNow = new DialHideCommand(piece);
-                    result.append(hideNow);
-                    hideNow.execute();
+                    Command result = hideNow;
 
-                    //Stuff outside of a command, should only show for owner.
-                    Embellishment chosenMoveEmb = (Embellishment)Util.getEmbellishment(piece,"Layer - Chosen Move");
-                    Embellishment chosenSpeedEmb = (Embellishment)Util.getEmbellishment(piece, "Layer - Chosen Speed");
-                    Embellishment sideHideEmb = (Embellishment)Util.getEmbellishment(piece,"Layer - Side Hide");
-                    Embellishment centralHideEmb = (Embellishment)Util.getEmbellishment(piece, "Layer - Central Hide");
-
-                    //Construct the next build string
-                    StringBuilder stateString = new StringBuilder();
-                    stateString.append(buildStateString(0));
-
-                    chosenMoveEmb.mySetType(stateString.toString()); //restore the dial's chosen move like before only for the owner who's doing CTRl-R
-                    chosenMoveEmb.setValue(1); //unhide the movement only for the owner who's doing CTRL-R
-                    sideHideEmb.setValue(1); //show the side slashed eye icon
-                    centralHideEmb.setValue(0); //hide back the central slashed eye icon
-
-                    //get the speed layer to show
-                    String moveSpeedLayerString = getLayerFromScratch(0);
-                    Integer newMoveSpeed = Integer.parseInt(moveSpeedLayerString);
-
-                    chosenSpeedEmb.setValue(newMoveSpeed); //unhide the speed only for the owner who's doing CTRL-R
+                    result.execute();
+                    return result;
                 }
             }
             else if(goingLeft || goingRight){ //rotate left, move-- or rotate right, move++
 
                 //Util.logToChat("STEP 2b - , or . released");
-
-
-                hasSomethingHappened = true;
                 int moveMod = 0;
                 if(goingLeft) moveMod = -1;
                 if(goingRight) moveMod = 1;
@@ -334,40 +301,29 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
                 String moveDef = getNewMoveDefFromScratch(moveMod);
                 //get the speed layer to show
                 String moveSpeedLayerString = getLayerFromScratch(moveMod);
-                Integer newMoveSpeed = Integer.parseInt(moveSpeedLayerString);
 
-                if(piece.getMap().equals(VASSAL.build.module.Map.getMapById("Map0"))) logToChat("* DIAL WARNING - " + Util.getCurrentPlayer().getName() + " has rotated the " + piece.getProperty("Craft ID #").toString()
+                Command warningCommand = new Chatter.DisplayText(GameModule.getGameModule().getChatter(),"* DIAL WARNING - " + Util.getCurrentPlayer().getName() + " has rotated the " + piece.getProperty("Craft ID #").toString()
                         + " (" + piece.getProperty("Pilot Name").toString() + ") on the map. Please use your player window to do so instead.");
+
                 if(isHiddenPropCheck == 1){ //encode only the modified selected move property
-
-
                     DialRotateCommand drc = new DialRotateCommand(piece, moveDef, false, stateString.toString(), moveSpeedLayerString);
-                    result.append(drc);
-                    drc.execute();
+                    Command result = drc;
 
-                    Embellishment chosenMoveEmb = (Embellishment)Util.getEmbellishment(piece,"Layer - Chosen Move");
-                    Embellishment chosenSpeedEmb = (Embellishment)Util.getEmbellishment(piece, "Layer - Chosen Speed");
-                    chosenMoveEmb.mySetType(stateString.toString());
-                    chosenMoveEmb.setValue(1);
-                    chosenSpeedEmb.setValue(newMoveSpeed);
+                    if(piece.getMap().equals(VASSAL.build.module.Map.getMapById("Map0"))) result.append(warningCommand);
+                    result.execute();
+                    return result;
                 } else if(isHiddenPropCheck == 0) { //dial is revealed, show everything to all
-
-                    ChangeTracker ct = new ChangeTracker(piece);
-
                     DialRotateCommand drc = new DialRotateCommand(piece, moveDef, true, stateString.toString(), moveSpeedLayerString);
-                    result.append(drc);
-                    drc.execute();
+                    Command result = drc;
+
+                    if(piece.getMap().equals(VASSAL.build.module.Map.getMapById("Map0"))) result.append(warningCommand);
+                    result.execute();
+                    return result;
                 }
             }
         } else { // get scolded for not owning the dial that was manipulated
             Util.logToChatWithoutUndo("You (player " + Util.getCurrentPlayer().getSide() + ") are not the owner of this dial, player " + getOwnerOfThisDial() + " is.");
         }
-        if(hasSomethingHappened) {
-            final VASSAL.build.module.Map map = piece.getMap();
-            map.repaint();
-            return result;
-        }
-        //Util.logToChat("STEP 2c - Not a keystroke worth reacting to.");
         return piece.keyEvent(stroke);
     }
 
