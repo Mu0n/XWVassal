@@ -9,6 +9,7 @@ import VASSAL.build.AbstractConfigurable;
 import VASSAL.build.Buildable;
 import VASSAL.build.GameModule;
 import VASSAL.build.module.Map;
+import VASSAL.build.module.PlayerRoster;
 import VASSAL.build.module.documentation.HelpFile;
 import VASSAL.launch.Player;
 import com.google.common.collect.Lists;
@@ -40,19 +41,15 @@ public class EscrowSquads extends AbstractConfigurable {
                 "In this window, you can verify the status of squads submitted to the escrow service.<br>"+
                 "Step 1: each player goes to their respective player window and go into the 2nd edition Squad Spawn<br>"+
                 "Step 2: they enter a list and carefully hit the 'Send to Escrow' button instead of the 'Spawn List' button.<br>"+
-                "Step 3: the players then open the Escrow Squad popup (this here window) and select their opponent's player # and click 'Ready'.+" +
+                "Step 3: the players then open the Escrow Squad popup (this here window) and select their opponent's player # and click 'Ready'<br>" +
                 "Step 4: When the last player to click on the 'Ready' button has done so and a match is found, both lists will spawn in their respective windows.<br></body></html>");
 
         List<JLabel> playerLabelList = Lists.newArrayList();
-        for(int i=0; i<8; i++){
-            String name = "";
-            try{
-                name = mic.Util.getInfoOnPlayer(i+1).getName();
-            }catch(Exception e){
-            }
-            if(name.equals("")) continue;
 
-            playerLabelList.add(new JLabel("Player " + (i+1) + " " + name));
+        PlayerRoster.PlayerInfo[] arrayOfPlayerInfo = mic.Util.getAllPlayerInfo();
+
+        for(int i=0; i<arrayOfPlayerInfo.length; i++){
+            playerLabelList.add(new JLabel("Player " + arrayOfPlayerInfo[i].getSide() + " " + arrayOfPlayerInfo[i].playerName));
         }
 
         panel.add(explanation);
@@ -61,7 +58,7 @@ public class EscrowSquads extends AbstractConfigurable {
         }
         frame.add(panel);
         frame.setPreferredSize(new Dimension(800,900));
-        frame.setTitle("Content Checker");
+        frame.setTitle("Escrow Squads");
         panel.setOpaque(true); // content panes must be opaque
         frame.pack();
         frame.setVisible(true);
