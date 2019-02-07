@@ -171,6 +171,13 @@ public class Util {
         return new XWPlayerInfo(parsePlayerSide(sideStr), name, userId);
     }
 
+    public static XWPlayerInfo getInfoOnPlayer(int side) {
+        String name = GlobalOptions.getInstance().getPlayerId();
+        String userId = GameModule.getGameModule().getUserId();
+
+        return new XWPlayerInfo(side, name, userId);
+    }
+
     public static String getShipStringForReports(boolean isYours, String pilotName, String shipName)
     {
 
