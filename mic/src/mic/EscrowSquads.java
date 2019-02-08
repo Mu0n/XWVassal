@@ -40,22 +40,34 @@ public class EscrowSquads extends AbstractConfigurable {
         JLabel explanation = new JLabel("<html><body>Escrow service for squads (2nd edition only)!<br><br>" +
                 "In this window, you can verify the status of squads submitted to the escrow service.<br>"+
                 "Step 1: each player goes to their respective player window and go into the 2nd edition Squad Spawn<br>"+
-                "Step 2: they enter a list and carefully hit the 'Send to Escrow' button instead of the 'Spawn List' button.<br>"+
+                "Step 2: they enter a list and carefully hit the 'Send to Escrow' button instead of the 'Spawn Squad...' button.<br>"+
                 "Step 3: the players then open the Escrow Squad popup (this here window) and select their opponent's player # and click 'Ready'<br>" +
                 "Step 4: When the last player to click on the 'Ready' button has done so and a match is found, both lists will spawn in their respective windows.<br></body></html>");
 
         List<JLabel> playerLabelList = Lists.newArrayList();
+
 
         PlayerRoster.PlayerInfo[] arrayOfPlayerInfo = mic.Util.getAllPlayerInfo();
 
         for(int i=0; i<arrayOfPlayerInfo.length; i++){
             playerLabelList.add(new JLabel("Player " + arrayOfPlayerInfo[i].getSide() + " " + arrayOfPlayerInfo[i].playerName));
         }
+        JPanel playersAreaPanel = new JPanel();
+        playersAreaPanel.setLayout(new BoxLayout(playersAreaPanel, BoxLayout.Y_AXIS));
+        for(JLabel jl : playerLabelList){
+            JPanel aPlayerSlot = new JPanel();
+            aPlayerSlot.setLayout(new BoxLayout(aPlayerSlot, BoxLayout.X_AXIS));
+
+            JLabel readyLabel = new JLabel("not ready");
+            aPlayerSlot.add(jl);
+            playersAreaPanel.add(aPlayerSlot);
+        }
+
+        JPanel controlButtonPanel = new JPanel();
+        controlButtonPanel.setLayout(new BoxLayout(controlButtonPanel, BoxLayout.X_AXIS));
 
         panel.add(explanation);
-        for(JLabel jl : playerLabelList){
-            panel.add(jl);
-        }
+        panel.add(playersAreaPanel);
         frame.add(panel);
         frame.setPreferredSize(new Dimension(800,900));
         frame.setTitle("Escrow Squads");
