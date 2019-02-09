@@ -1,5 +1,9 @@
 package mic;
-
+/**
+ * Created by mjuneau in 2019-01.
+ * Allows a dial selection rotation to be sent to other players for the new style of dial spawned with StemDial2e. This command is normally called
+ * by StemNuDial2e (a decorator found in that Game Piece)
+ */
 import VASSAL.build.GameModule;
 import VASSAL.command.Command;
 import VASSAL.command.CommandEncoder;

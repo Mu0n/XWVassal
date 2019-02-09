@@ -259,6 +259,20 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
                 frame.dispose();
             }
         });
+        JButton escrowURLButton = new JButton("Send to Escrow");
+        escrowURLButton.setAlignmentX(Component.LEFT_ALIGNMENT);
+        escrowURLButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+
+            }
+        });
+        JButton whatIsEscrowButton = new JButton("What is Escrow?");
+        whatIsEscrowButton.setAlignmentX(Component.LEFT_ALIGNMENT);
+        whatIsEscrowButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                EscrowSquads.escrowInstructionsPopup();
+            }
+        });
 
         JButton xwsSpawnButton = new JButton("Spawn Squad from XWS");
         xwsSpawnButton.setAlignmentX(Component.LEFT_ALIGNMENT);
@@ -280,6 +294,21 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
                 frame.dispose();
             }
         });
+        JButton escrowXWSButton = new JButton("Send to Escrow");
+        escrowXWSButton.setAlignmentX(Component.LEFT_ALIGNMENT);
+        escrowXWSButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+
+            }
+        });
+        JButton whatIsEscrowButton2 = new JButton("What is Escrow?");
+        whatIsEscrowButton2.setAlignmentX(Component.LEFT_ALIGNMENT);
+        whatIsEscrowButton2.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                EscrowSquads.escrowInstructionsPopup();
+            }
+        });
+
         JLabel method2Label = new JLabel("Method 3 for spawning a list - use the internal squad builder (allows illegal, cross-faction lists if needed)");
         method2Label.setFont(new Font("Dialog", Font.PLAIN, 18));
         method2Label.setAlignmentX(Component.LEFT_ALIGNMENT);
@@ -290,6 +319,8 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
 
         method0ButtonsPanel.add(clearTextArea_0_Button);
         method0ButtonsPanel.add(urlSpawnButton);
+        method0ButtonsPanel.add(escrowURLButton);
+        method0ButtonsPanel.add(whatIsEscrowButton);
 
 
         JPanel method1ButtonsPanel = new JPanel();
@@ -298,6 +329,8 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
 
         method1ButtonsPanel.add(clearTextAreaButton);
         method1ButtonsPanel.add(xwsSpawnButton);
+        method1ButtonsPanel.add(escrowXWSButton);
+        method1ButtonsPanel.add(whatIsEscrowButton2);
 
 
         JLabel suggestionsHeaderLabel = new JLabel("Suggested Builders:");
@@ -484,12 +517,28 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
                 frame.dispose();
             }
         });
+        JButton escrowXWSButton = new JButton("Send to Escrow");
+        escrowXWSButton.setAlignmentX(Component.LEFT_ALIGNMENT);
+        escrowXWSButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+
+            }
+        });
+        JButton whatIsEscrowButton2 = new JButton("What is Escrow?");
+        whatIsEscrowButton2.setAlignmentX(Component.LEFT_ALIGNMENT);
+        whatIsEscrowButton2.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                EscrowSquads.escrowInstructionsPopup();
+            }
+        });
 
         JPanel buttonPanel = new JPanel();
         buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.X_AXIS));
 
         buttonPanel.add(createXWS2Button);
         buttonPanel.add(validateButton);
+        buttonPanel.add(escrowXWSButton);
+        buttonPanel.add(whatIsEscrowButton2);
 
         rootPanel.add(buttonPanel);
 

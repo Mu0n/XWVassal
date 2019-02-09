@@ -25,8 +25,70 @@ import static mic.Util.getCurrentPlayer;
 public class EscrowSquads extends AbstractConfigurable {
 
     private List<JButton> escrowButtons = Lists.newArrayList();
-    private List<String> escrowedSquadXWS = Lists.newArrayList();
+    private static List<EscrowEntry> escrowEntries = Lists.newArrayList();
+    List<JLabel> escrowLabels = Lists.newArrayList(); //the labels that are shown in the frame
 
+
+    public static void escrowInstructionsPopup(){
+        final JFrame frameInstr = new JFrame();
+        frameInstr.setResizable(true);
+        JLabel title = new JLabel("Escrow your squad - what, why, how?");
+        title.setFont(new Font("Serif", Font.PLAIN, 20));
+
+        JLabel instructions = new JLabel("<html><body>Step 1: each player goes to their respective player window and go into the 2nd edition Squad Spawn<br>"+
+                "Step 2: they enter a list and carefully hit the 'Send to Escrow' button instead of the 'Spawn Squad...' button.<br>"+
+                "Step 3: the players then open the Escrow Squad in their player window and select their opponent's player # and click 'Ready'<br>" +
+                "Step 4: When the last player to click on the 'Ready' button has done so and a match is found, both lists will spawn in their respective windows.<br></body></html>");
+
+        JButton gotItButton = new JButton("Got it!");
+        gotItButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                frameInstr.dispose();
+            }
+        });
+        JPanel mainPanel = new JPanel();
+        mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
+
+
+        mainPanel.add(title);
+        mainPanel.add(instructions);
+        mainPanel.add(gotItButton);
+
+        frameInstr.add(mainPanel);
+        frameInstr.setTitle("Escrow Squad Instructions");
+        frameInstr.pack();
+        frameInstr.setVisible(true);
+        frameInstr.toFront();
+    }
+
+    public static void insertEntry(String playerSide, String playerName, String verifiedXWSSquad, String source, String squadPoints) {
+        for(EscrowEntry ee : escrowEntries){
+            if(ee.playerSide.equals(playerSide) && ee.playerName.equals(playerName)){ //found the entry, simply update the squad info, leave the side and name intact
+                ee.xwsSquad = verifiedXWSSquad;
+                ee.source = source;
+                ee.points = squadPoints;
+                return;
+            }
+        }
+        escrowEntries.add(new EscrowEntry(playerSide, playerName, verifiedXWSSquad, source, squadPoints)); //this will happen for late joiners not already in the list
+    }
+
+    public static void clearOwnEntry() {
+        String thisSide = "" + mic.Util.getCurrentPlayer().getSide();
+        String thisName = mic.Util.getCurrentPlayer().getName();
+        for(EscrowEntry ee : escrowEntries){
+            if(ee.playerSide.equals(thisSide) && ee.playerName.equals(thisName)){ //found it!
+                ee.clearSquad();
+            }
+        }
+    }
+
+    private synchronized void findPlayersAndPopulateFrameAtTheStart(){
+        PlayerRoster.PlayerInfo[] arrayOfPlayerInfo = mic.Util.getAllPlayerInfo();
+        for(int i=0; i<arrayOfPlayerInfo.length; i++){
+            escrowLabels.add(new JLabel(arrayOfPlayerInfo[i].getSide() + " " + arrayOfPlayerInfo[i].playerName + " - no list escrowed yet."));
+        }
+    }
     private synchronized void escrowPopup(int playerId) {
         mic.Util.XWPlayerInfo playerInfo = getCurrentPlayer();
         if (playerInfo.getSide() != playerId) {
@@ -37,21 +99,10 @@ public class EscrowSquads extends AbstractConfigurable {
         frame.setResizable(true);
 
         final JPanel panel = new JPanel();
-        JLabel explanation = new JLabel("<html><body>Escrow service for squads (2nd edition only)!<br><br>" +
-                "In this window, you can verify the status of squads submitted to the escrow service.<br>"+
-                "Step 1: each player goes to their respective player window and go into the 2nd edition Squad Spawn<br>"+
-                "Step 2: they enter a list and carefully hit the 'Send to Escrow' button instead of the 'Spawn Squad...' button.<br>"+
-                "Step 3: the players then open the Escrow Squad popup (this here window) and select their opponent's player # and click 'Ready'<br>" +
-                "Step 4: When the last player to click on the 'Ready' button has done so and a match is found, both lists will spawn in their respective windows.<br></body></html>");
-
-        List<JLabel> playerLabelList = Lists.newArrayList();
 
 
-        PlayerRoster.PlayerInfo[] arrayOfPlayerInfo = mic.Util.getAllPlayerInfo();
+        //Populate the labels of the known players at this point
 
-        for(int i=0; i<arrayOfPlayerInfo.length; i++){
-            playerLabelList.add(new JLabel("Player " + arrayOfPlayerInfo[i].getSide() + " " + arrayOfPlayerInfo[i].playerName));
-        }
         JPanel playersAreaPanel = new JPanel();
         playersAreaPanel.setLayout(new BoxLayout(playersAreaPanel, BoxLayout.Y_AXIS));
         for(JLabel jl : playerLabelList){
@@ -65,9 +116,15 @@ public class EscrowSquads extends AbstractConfigurable {
 
         JPanel controlButtonPanel = new JPanel();
         controlButtonPanel.setLayout(new BoxLayout(controlButtonPanel, BoxLayout.X_AXIS));
-
-        panel.add(explanation);
+        JButton instrButton = new JButton("What is Escrow?");
+        instrButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                escrowInstructionsPopup();
+            }
+        });
+        controlButtonPanel.add(instrButton);
         panel.add(playersAreaPanel);
+        panel.add(controlButtonPanel);
         frame.add(panel);
         frame.setPreferredSize(new Dimension(800,900));
         frame.setTitle("Escrow Squads");
@@ -138,5 +195,27 @@ public class EscrowSquads extends AbstractConfigurable {
             }
         }
         return null;
+    }
+
+    public static class EscrowEntry{
+        String playerSide="";
+        String playerName="";
+        String xwsSquad="";
+        String source="";
+        String points="";
+
+        public EscrowEntry(String reqSide, String reqPlayerName, String reqXWS, String reqSource, String reqPoints){
+            playerSide = reqSide;
+            playerName = reqPlayerName;
+            xwsSquad = reqXWS;
+            source = reqSource;
+            points = reqPoints;
+        }
+
+        public void clearSquad(){
+            xwsSquad ="";
+            source="";
+            points="";
+        }
     }
 }

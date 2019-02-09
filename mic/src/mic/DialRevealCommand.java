@@ -1,11 +1,14 @@
 package mic;
-
+/**
+ * Created by mjuneau in 2019-01.
+ * Allows a dial reveal command to be sent to other players for the new style of dial spawned with StemDial2e. This command is normally called
+ * by StemNuDial2e (a decorator found in that Game Piece)
+ */
 import VASSAL.build.GameModule;
 import VASSAL.command.Command;
 import VASSAL.command.CommandEncoder;
 import VASSAL.counters.Embellishment;
 import VASSAL.counters.GamePiece;
-import VASSAL.counters.Properties;
 import com.google.common.base.Joiner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
