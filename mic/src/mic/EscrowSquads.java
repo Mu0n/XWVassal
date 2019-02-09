@@ -21,6 +21,7 @@ import java.awt.event.ActionListener;
 import java.util.List;
 
 import static mic.Util.getCurrentPlayer;
+import static mic.Util.logToChat;
 
 public class EscrowSquads extends AbstractConfigurable {
 
@@ -85,8 +86,13 @@ public class EscrowSquads extends AbstractConfigurable {
 
     private synchronized void findPlayersAndPopulateFrameAtTheStart(){
         PlayerRoster.PlayerInfo[] arrayOfPlayerInfo = mic.Util.getAllPlayerInfo();
-        for(int i=0; i<arrayOfPlayerInfo.length; i++){
-            escrowLabels.add(new JLabel(arrayOfPlayerInfo[i].getSide() + " " + arrayOfPlayerInfo[i].playerName + " - no list escrowed yet."));
+        for(int i=0; i<8; i++) {
+            try {
+                escrowLabels.add(new JLabel(arrayOfPlayerInfo[i].getSide() + " " + arrayOfPlayerInfo[i].playerName + " - no list escrowed yet."));
+                escrowEntries.add(new EscrowEntry(arrayOfPlayerInfo[i].getSide()+"", arrayOfPlayerInfo[i].playerName, "", "", ""));
+            } catch(Exception e){
+                continue;
+            }
         }
     }
     private synchronized void escrowPopup(int playerId) {
@@ -94,6 +100,8 @@ public class EscrowSquads extends AbstractConfigurable {
         if (playerInfo.getSide() != playerId) {
             return;
         }
+        if(escrowLabels.size() == 0) findPlayersAndPopulateFrameAtTheStart();
+
 
         final JFrame frame = new JFrame();
         frame.setResizable(true);
@@ -105,13 +113,31 @@ public class EscrowSquads extends AbstractConfigurable {
 
         JPanel playersAreaPanel = new JPanel();
         playersAreaPanel.setLayout(new BoxLayout(playersAreaPanel, BoxLayout.Y_AXIS));
-        for(JLabel jl : playerLabelList){
+        for(int i=0; i<8; i++){
             JPanel aPlayerSlot = new JPanel();
             aPlayerSlot.setLayout(new BoxLayout(aPlayerSlot, BoxLayout.X_AXIS));
+            aPlayerSlot.add(escrowLabels.get(i));
 
-            JLabel readyLabel = new JLabel("not ready");
-            aPlayerSlot.add(jl);
+
+            String sideCheck = mic.Util.getCurrentPlayer().getSide()+"";
+            JButton ready = new JButton("Ready");
+            try{
+                if(sideCheck.equals(escrowEntries.get(i).playerSide)) {
+                    aPlayerSlot.add(ready);
+                }
+                JButton clear = new JButton("Clear");
+                clear.addActionListener(new ActionListener() {
+                    public void actionPerformed(ActionEvent e) {
+                        clearOwnEntry();
+                    }
+                });
+            }catch(Exception e){
+
+            }
+
+
             playersAreaPanel.add(aPlayerSlot);
+
         }
 
         JPanel controlButtonPanel = new JPanel();
@@ -183,8 +209,6 @@ public class EscrowSquads extends AbstractConfigurable {
             //Adding those elements to the player window toolbars
             Map playerMap = getPlayerMap(i);
             playerMap.getToolBar().add(b);
-
-            escrowedSquadXWS.add("");
         }
     }
 
