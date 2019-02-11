@@ -14,8 +14,15 @@ import com.google.common.base.Joiner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.Serializable;
 import java.util.Collection;
 
+import static mic.Util.deserializeBase64Obj;
+import static mic.Util.serializeToBase64;
+/*
+  Created by mjuneau in 2019-02-08
+  Allows to insert an escrowed squad into everyone's EscrowSquads' object
+ */
 public class BroadcastEscrowSquadCommand extends Command {
     EscrowSquads.EscrowEntry entry;
 
@@ -34,7 +41,7 @@ public class BroadcastEscrowSquadCommand extends Command {
     }
 
     protected Command myUndoCommand() {
-        return new BroadcastEscrowSquadCommand(new EscrowSquads.EscrowEntry(entry.playerSide, entry.playerName,"", "", ""));
+        return new BroadcastEscrowSquadCommand(new EscrowSquads.EscrowEntry(entry.playerSide, entry.playerName,null, "", ""));
     }
 
     public static class broadcastEscrowSquadCommandEncoder implements CommandEncoder {
@@ -57,7 +64,8 @@ public class BroadcastEscrowSquadCommand extends Command {
                 3: source ("ffg", "yasb2", "internal", "xws")
                 4: squad points
                  */
-                EscrowSquads.EscrowEntry retEntry = new EscrowSquads.EscrowEntry(parts[0], parts[1], parts[2], parts[3], parts[4]);
+                XWSList2e xwsList = (XWSList2e) deserializeBase64Obj(parts[2]);
+                EscrowSquads.EscrowEntry retEntry = new EscrowSquads.EscrowEntry(parts[0], parts[1], xwsList, parts[3], parts[4]);
                 return new BroadcastEscrowSquadCommand(retEntry);
             }catch(Exception e){
                 logger.info("Error decoding BroadcastEscrowSquadCommand - exception error");
@@ -71,8 +79,9 @@ public class BroadcastEscrowSquadCommand extends Command {
             }
             try{
                 BroadcastEscrowSquadCommand beq = (BroadcastEscrowSquadCommand) c;
+                Serializable serList = (Serializable) beq.entry.xwsSquad;
 
-                return commandPrefix + Joiner.on(itemDelim).join(beq.entry.playerSide, beq.entry.playerName, beq.entry.xwsSquad, beq.entry.source, beq.entry.points);
+                return commandPrefix + Joiner.on(itemDelim).join(beq.entry.playerSide, beq.entry.playerName, serializeToBase64(serList), beq.entry.source, beq.entry.points);
             }catch(Exception e) {
                 logger.error("Error encoding BroadcastEscrowSquadCommand", e);
                 return null;

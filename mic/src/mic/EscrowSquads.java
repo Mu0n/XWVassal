@@ -22,12 +22,13 @@ import java.util.List;
 
 import static mic.Util.getCurrentPlayer;
 import static mic.Util.logToChat;
+import static mic.Util.logToChatWithoutUndo;
 
 public class EscrowSquads extends AbstractConfigurable {
 
     private List<JButton> escrowButtons = Lists.newArrayList();
     private static List<EscrowEntry> escrowEntries = Lists.newArrayList();
-    List<JLabel> escrowLabels = Lists.newArrayList(); //the labels that are shown in the frame
+    static List<JLabel> escrowLabels = Lists.newArrayList(); //the labels that are shown in the frame
 
 
     public static void escrowInstructionsPopup(){
@@ -62,16 +63,20 @@ public class EscrowSquads extends AbstractConfigurable {
         frameInstr.toFront();
     }
 
-    public static void insertEntry(String playerSide, String playerName, String verifiedXWSSquad, String source, String squadPoints) {
+    public static void insertEntry(String playerSide, String playerName, XWSList2e verifiedXWSSquad, String source, String squadPoints) {
         for(EscrowEntry ee : escrowEntries){
-            if(ee.playerSide.equals(playerSide) && ee.playerName.equals(playerName)){ //found the entry, simply update the squad info, leave the side and name intact
+            if(ee.playerSide.equals(playerSide)){ //found the entry, simply update the squad info, leave the side and name intact
+                ee.playerSide = playerSide;
+                ee.playerName = playerName;
                 ee.xwsSquad = verifiedXWSSquad;
                 ee.source = source;
                 ee.points = squadPoints;
+                findPlayersAndRefreshFrame();
                 return;
             }
         }
         escrowEntries.add(new EscrowEntry(playerSide, playerName, verifiedXWSSquad, source, squadPoints)); //this will happen for late joiners not already in the list
+        findPlayersAndRefreshFrame();
     }
 
     public static void clearOwnEntry() {
@@ -84,23 +89,50 @@ public class EscrowSquads extends AbstractConfigurable {
         }
     }
 
-    private synchronized void findPlayersAndPopulateFrameAtTheStart(){
+    private static synchronized void findPlayersAndPopulateFrameAtTheStart(){
         PlayerRoster.PlayerInfo[] arrayOfPlayerInfo = mic.Util.getAllPlayerInfo();
+        int currentSide = mic.Util.getCurrentPlayer().getSide();
         for(int i=0; i<8; i++) {
             try {
-                escrowLabels.add(new JLabel(arrayOfPlayerInfo[i].getSide() + " " + arrayOfPlayerInfo[i].playerName + " - no list escrowed yet."));
-                escrowEntries.add(new EscrowEntry(arrayOfPlayerInfo[i].getSide()+"", arrayOfPlayerInfo[i].playerName, "", "", ""));
+                String foundPlayerName = arrayOfPlayerInfo[i].playerName;
+                Integer arraySide = Integer.parseInt(arrayOfPlayerInfo[i].getSide().split("Player ")[0]);
+                escrowLabels.add(new JLabel(((arraySide+1) == currentSide?"(you)":"")+
+                        (arrayOfPlayerInfo[i].getSide()+1) + " " + foundPlayerName + " - no list escrowed yet."));
+                escrowEntries.add(new EscrowEntry((arrayOfPlayerInfo[i].getSide()+1)+"", foundPlayerName, null, "", ""));
+            } catch(Exception e){
+                escrowLabels.add(new JLabel("Player " + (i+1) + " (spot open)"));
+                int adjustedPlayerNumber = i+1;
+                escrowEntries.add(new EscrowEntry("Player " + adjustedPlayerNumber + " ", "", null, "", ""));
+                continue;
+            }
+        }
+    }
+    private static synchronized void findPlayersAndRefreshFrame(){
+        for(int i=0; i<8; i++) {
+            try {
+                if(escrowEntries.get(i).xwsSquad!=null){
+                    escrowLabels.get(i).setText(escrowEntries.get(i).playerSide + " - " +
+                            escrowEntries.get(i).playerName + " - " +
+                            escrowEntries.get(i).xwsSquad + " - " +
+                            escrowEntries.get(i).source);
+                }else {
+                    escrowLabels.get(i).setText(escrowEntries.get(i).playerSide + " - " +
+                            escrowEntries.get(i).playerName + " - no list escrowed yet");
+                }
+
             } catch(Exception e){
                 continue;
             }
         }
     }
-    private synchronized void escrowPopup(int playerId) {
+
+    public static synchronized void escrowPopup(int playerId) {
         mic.Util.XWPlayerInfo playerInfo = getCurrentPlayer();
         if (playerInfo.getSide() != playerId) {
             return;
         }
         if(escrowLabels.size() == 0) findPlayersAndPopulateFrameAtTheStart();
+        findPlayersAndRefreshFrame();
 
 
         final JFrame frame = new JFrame();
@@ -148,11 +180,34 @@ public class EscrowSquads extends AbstractConfigurable {
                 escrowInstructionsPopup();
             }
         });
+        JButton refreshButton = new JButton("Refresh");
+        refreshButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                findPlayersAndRefreshFrame();
+            }
+        });
+        JButton spawnButton = new JButton("Spawn");
+        spawnButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+
+                final List<XWS2Pilots> allShips = XWS2Pilots.loadFromLocal();
+                final XWS2Upgrades allUpgrades = XWS2Upgrades.loadFromLocal();
+                final List<XWS2Upgrades.Condition> allConditions = XWS2Upgrades.loadConditionsFromLocal();
+
+                int theSide = mic.Util.getCurrentPlayer().getSide();
+                for(int i=0;i<8;i++){
+                    if(escrowEntries.get(i).playerSide.equals("Player " + theSide)) AutoSquadSpawn2e.DealWithXWSList(escrowEntries.get(i).xwsSquad, theSide, allShips, allUpgrades, allConditions);
+                }
+
+            }
+        });
         controlButtonPanel.add(instrButton);
+        controlButtonPanel.add(refreshButton);
+        controlButtonPanel.add(spawnButton);
         panel.add(playersAreaPanel);
         panel.add(controlButtonPanel);
         frame.add(panel);
-        frame.setPreferredSize(new Dimension(800,900));
+        frame.setPreferredSize(new Dimension(800,300));
         frame.setTitle("Escrow Squads");
         panel.setOpaque(true); // content panes must be opaque
         frame.pack();
@@ -224,11 +279,11 @@ public class EscrowSquads extends AbstractConfigurable {
     public static class EscrowEntry{
         String playerSide="";
         String playerName="";
-        String xwsSquad="";
+        XWSList2e xwsSquad;
         String source="";
         String points="";
 
-        public EscrowEntry(String reqSide, String reqPlayerName, String reqXWS, String reqSource, String reqPoints){
+        public EscrowEntry(String reqSide, String reqPlayerName, XWSList2e reqXWS, String reqSource, String reqPoints){
             playerSide = reqSide;
             playerName = reqPlayerName;
             xwsSquad = reqXWS;
@@ -237,7 +292,7 @@ public class EscrowSquads extends AbstractConfigurable {
         }
 
         public void clearSquad(){
-            xwsSquad ="";
+            xwsSquad = new XWSList2e();
             source="";
             points="";
         }
