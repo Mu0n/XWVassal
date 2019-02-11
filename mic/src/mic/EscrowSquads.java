@@ -29,7 +29,7 @@ public class EscrowSquads extends AbstractConfigurable {
     private List<JButton> escrowButtons = Lists.newArrayList();
     private static List<EscrowEntry> escrowEntries = Lists.newArrayList();
     static List<JLabel> escrowLabels = Lists.newArrayList(); //the labels that are shown in the frame
-
+    final static JFrame frame = new JFrame();
 
     public static void escrowInstructionsPopup(){
         final JFrame frameInstr = new JFrame();
@@ -119,7 +119,7 @@ public class EscrowSquads extends AbstractConfigurable {
             for(int i=0;i<8;i++){
                 String sideString = arrayOfPlayerInfo[i].getSide();
                 String justSideNo = sideString.split("Player ")[1];
-                logToChat("sideString:"+sideString + ": justSideNo:"+justSideNo+":");
+                logToChat("ES line 122 - sideString:"+sideString + ": justSideNo:"+justSideNo+":");
             }
         }catch(Exception e){}
 
@@ -134,6 +134,14 @@ public class EscrowSquads extends AbstractConfigurable {
             }
         }catch(Exception e){}
     }
+
+    public static synchronized  void refreshFrame(){
+        frame.repaint();
+    }
+    public static synchronized  void disposeFrame(){
+        frame.dispose();
+    }
+    /*
     private static synchronized void findPlayersAndRefreshFrame(){
         logToChat("ES line 117 entering refresh");
         for(int i=0; i<8; i++) {
@@ -156,7 +164,7 @@ public class EscrowSquads extends AbstractConfigurable {
             }
         }
     }
-
+*/
     public static synchronized void escrowPopup(int playerId) {
         //playerId is 1 to 8
 
@@ -169,7 +177,7 @@ public class EscrowSquads extends AbstractConfigurable {
        // findPlayersAndRefreshFrame();
 
 
-        final JFrame frame = new JFrame();
+
         frame.setResizable(true);
 
         final JPanel panel = new JPanel();
@@ -286,7 +294,8 @@ public class EscrowSquads extends AbstractConfigurable {
             b.setAlignmentY(0.0F);
             b.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent evt) {
-                    escrowPopup(playerId);
+                    if(!frame.isDisplayable()) escrowPopup(playerId);
+
                 }
             });
             escrowButtons.add(b);

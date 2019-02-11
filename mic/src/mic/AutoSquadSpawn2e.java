@@ -293,8 +293,12 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
                         BroadcastEscrowSquadCommand besq = new BroadcastEscrowSquadCommand(ee);
                         besq.execute();
                         frame.dispose();
-                        EscrowSquads.frame.dispose();
-                        EscrowSquads.escrowPopup(playerIndex);
+                        if(!EscrowSquads.frame.isDisplayable()) {
+
+                            logToChat("spawn2e line 298 repoping");
+                            EscrowSquads.escrowPopup(playerIndex);
+                        }
+                        else EscrowSquads.frame.toFront();
                     }
                 }catch(Exception e2) {
                     logToChat("Player " + playerIndex + " tried to send a URL squad to escrow and failed.");
@@ -363,8 +367,13 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
                         BroadcastEscrowSquadCommand besq = new BroadcastEscrowSquadCommand(ee);
                         besq.execute();
                         frame.dispose();
-                        EscrowSquads.frame.dispose();
-                        EscrowSquads.escrowPopup(playerIndex);
+                        EscrowSquads.disposeFrame();
+                        if(!EscrowSquads.frame.isDisplayable()) {
+
+                            logToChat("spawn2e line 372 repoping");
+                            EscrowSquads.escrowPopup(playerIndex);
+                        }
+                        else EscrowSquads.frame.toFront();
                     }
                 }catch(Exception e2){
                     logToChat("Player " + playerIndex + " tried to send a raw JSON (XWS format) to escrow and failed.");
@@ -610,8 +619,12 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
                     BroadcastEscrowSquadCommand besq = new BroadcastEscrowSquadCommand(ee);
                     besq.execute();
                     frame.dispose();
-                    EscrowSquads.frame.dispose();
-                    EscrowSquads.escrowPopup(playerIndex);
+                    EscrowSquads.disposeFrame();
+                    if(!EscrowSquads.frame.isDisplayable()) {
+                        logToChat("spawn2e line 616 repoping");
+                        EscrowSquads.escrowPopup(playerIndex);
+                    }
+                    else EscrowSquads.frame.toFront();
                 }catch(Exception e2){
                     logToChat("Player " + playerIndex + " tried to send a raw JSON (XWS format) to escrow and failed.");
                 }
