@@ -64,7 +64,9 @@ public class EscrowSquads extends AbstractConfigurable {
     }
 
     public static void insertEntry(String playerSide, String playerName, XWSList2e verifiedXWSSquad, String source, String squadPoints) {
+        logToChat("ES line 67 inserting for playerSide " + playerSide);
         for(EscrowEntry ee : escrowEntries){
+            logToChat("ES lines 69 checking out this side: " + ee.playerSide);
             if(ee.playerSide.equals(playerSide)){ //found the entry, simply update the squad info, leave the side and name intact
                 ee.playerSide = playerSide;
                 ee.playerName = playerName;
