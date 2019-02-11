@@ -29,7 +29,7 @@ public class EscrowSquads extends AbstractConfigurable {
     private List<JButton> escrowButtons = Lists.newArrayList();
     private static List<EscrowEntry> escrowEntries = Lists.newArrayList();
     static List<JLabel> escrowLabels = Lists.newArrayList(); //the labels that are shown in the frame
-
+    final static JFrame frame = new JFrame();
 
     public static void escrowInstructionsPopup(){
         final JFrame frameInstr = new JFrame();
@@ -73,12 +73,11 @@ public class EscrowSquads extends AbstractConfigurable {
                 ee.xwsSquad = verifiedXWSSquad;
                 ee.source = source;
                 ee.points = squadPoints;
-                findPlayersAndRefreshFrame();
-                return;
+                break;
             }
         }
-        escrowEntries.add(new EscrowEntry(playerSide, playerName, verifiedXWSSquad, source, squadPoints)); //this will happen for late joiners not already in the list
         findPlayersAndRefreshFrame();
+        frame.repaint();
     }
 
     public static void clearOwnEntry() {
@@ -98,9 +97,14 @@ public class EscrowSquads extends AbstractConfigurable {
             try {
                 String foundPlayerName = arrayOfPlayerInfo[i].playerName;
                 Integer arraySide = Integer.parseInt(arrayOfPlayerInfo[i].getSide().split("Player ")[0]);
+
+                logToChat("ES line 103 currentSide " + currentSide + " arraySide " + arraySide);
+
+
                 escrowLabels.add(new JLabel(((arraySide+1) == currentSide?"(you)":"")+
                         (arrayOfPlayerInfo[i].getSide()+1) + " " + foundPlayerName + " - no list escrowed yet."));
                 escrowEntries.add(new EscrowEntry((arrayOfPlayerInfo[i].getSide()+1)+"", foundPlayerName, null, "", ""));
+
             } catch(Exception e){
                 escrowLabels.add(new JLabel("Player " + (i+1) + " (spot open)"));
                 int adjustedPlayerNumber = i+1;
@@ -111,7 +115,7 @@ public class EscrowSquads extends AbstractConfigurable {
     }
     private static synchronized void findPlayersAndRefreshFrame(){
         for(int i=0; i<8; i++) {
-            try {
+            try { //refresh squads for players that have it
                 if(escrowEntries.get(i).xwsSquad!=null){
                     escrowLabels.get(i).setText(escrowEntries.get(i).playerSide + " - " +
                             escrowEntries.get(i).playerName + " - " +
@@ -121,11 +125,14 @@ public class EscrowSquads extends AbstractConfigurable {
                     escrowLabels.get(i).setText(escrowEntries.get(i).playerSide + " - " +
                             escrowEntries.get(i).playerName + " - no list escrowed yet");
                 }
-
             } catch(Exception e){
                 continue;
             }
         }
+        for(int i=0; i<8; i++){
+            escrowLabels.get(i).repaint();
+        }
+        frame.repaint();
     }
 
     public static synchronized void escrowPopup(int playerId) {
@@ -137,7 +144,7 @@ public class EscrowSquads extends AbstractConfigurable {
         findPlayersAndRefreshFrame();
 
 
-        final JFrame frame = new JFrame();
+
         frame.setResizable(true);
 
         final JPanel panel = new JPanel();
