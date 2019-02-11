@@ -293,6 +293,7 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
                         BroadcastEscrowSquadCommand besq = new BroadcastEscrowSquadCommand(ee);
                         besq.execute();
                         frame.dispose();
+                        EscrowSquads.frame.dispose();
                         EscrowSquads.escrowPopup(playerIndex);
                     }
                 }catch(Exception e2) {
@@ -362,6 +363,8 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
                         BroadcastEscrowSquadCommand besq = new BroadcastEscrowSquadCommand(ee);
                         besq.execute();
                         frame.dispose();
+                        EscrowSquads.frame.dispose();
+                        EscrowSquads.escrowPopup(playerIndex);
                     }
                 }catch(Exception e2){
                     logToChat("Player " + playerIndex + " tried to send a raw JSON (XWS format) to escrow and failed.");
@@ -607,6 +610,7 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
                     BroadcastEscrowSquadCommand besq = new BroadcastEscrowSquadCommand(ee);
                     besq.execute();
                     frame.dispose();
+                    EscrowSquads.frame.dispose();
                     EscrowSquads.escrowPopup(playerIndex);
                 }catch(Exception e2){
                     logToChat("Player " + playerIndex + " tried to send a raw JSON (XWS format) to escrow and failed.");
