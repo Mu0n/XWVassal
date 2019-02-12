@@ -94,53 +94,59 @@ public class EscrowSquads extends AbstractConfigurable {
         }
     }
 
-    private static synchronized void populateEE(){
+    private static synchronized void populateEE(){ //gets called in the addTo as the module is loading up
         if(escrowEntries==null) escrowEntries = Lists.newArrayList();
+
+        PlayerRoster.PlayerInfo[] arrayOfPI = mic.Util.getAllPlayerInfo();
         if(escrowEntries.size()==0){
             for(int i=1;i<=8;i++){
-                escrowEntries.add(new EscrowEntry("Player " + i, "(spot open)", null, "", ""));
+                String nameToUse = "(spot open)";
+                try{
+                    String detectedName = arrayOfPI[i-1].playerName;
+                    nameToUse = detectedName;
+                }catch(Exception e){}
+                escrowEntries.add(new EscrowEntry("Player " + i, nameToUse, null, "", ""));
             }
         }
     }
-    private static synchronized void populateEL(){
+    private static synchronized void populateEL(){ //it's assumed EE is populated before EL
         if(escrowLabels==null) escrowLabels = Lists.newArrayList();
         if(escrowLabels.size()==0){
             for(int i=1;i<=8;i++){
-                escrowLabels.add(new JLabel("Player " + i + " - (spot open) - (no list yet)"));
+                escrowLabels.add(new JLabel(escrowEntries.get(i-1).playerSide + " - "+ escrowEntries.get(i-1).playerName + " - null"));
             }
         }
     }
 
-    private static synchronized void refreshEE(){
-        if(escrowEntries==null || escrowEntries.size()==0) populateEE();
-        PlayerRoster.PlayerInfo[] arrayOfPlayerInfo = mic.Util.getAllPlayerInfo();
-        int currentSide = mic.Util.getCurrentPlayer().getSide();
+    private static synchronized void refreshEL(){ //this gets called every time an escrowEntry is redone so that the labels are updated
         try{
-            for(int i=0;i<8;i++){
-                String sideString = arrayOfPlayerInfo[i].getSide();
-                String justSideNo = sideString.split("Player ")[1];
-                logToChat("ES line 122 - sideString:"+sideString + ": justSideNo:"+justSideNo+":");
-            }
-        }catch(Exception e){}
-
-    }
-
-    private static synchronized void refreshEL(){
-        try{
-            for(int i=0;i<8;i++){
-                EscrowEntry ee = escrowEntries.get(i);
-                JLabel jl = escrowLabels.get(i);
+            for(int i=1;i<=8;i++){
+                EscrowEntry ee = escrowEntries.get(i-1);
+                JLabel jl = escrowLabels.get(i-1);
                 jl.setText(ee.playerSide + " - " + ee.playerName + " - " + ee.xwsSquad + " - " + ee.source);
             }
         }catch(Exception e){}
     }
+    private static synchronized void refreshEE(){ //this has to be called after addTo (otherwise no players are present yet) when the popup is made visible
+//only use is to make the player names visible asap they are available to fetch
+        PlayerRoster.PlayerInfo[] arrayOfPI = mic.Util.getAllPlayerInfo();
+        try{
+            for(int i=1;i<=8;i++){
+                String nameToUse = "(spot open)";
+                try{
+                    String detectedName = arrayOfPI[i-1].playerName;
+                    nameToUse = detectedName;
+                    logToChat("ES line 139 yes");
+                }catch(Exception e){
+                    logToChat("ES line 141 no");
+                }
+                EscrowEntry ee = escrowEntries.get(i-1);
+                ee.playerName = nameToUse;
 
-    public static synchronized  void refreshFrame(){
-        frame.repaint();
+            }
+        }catch(Exception e){}
     }
-    public static synchronized  void disposeFrame(){
-        frame.dispose();
-    }
+
     /*
     private static synchronized void findPlayersAndRefreshFrame(){
         logToChat("ES line 117 entering refresh");
@@ -165,26 +171,12 @@ public class EscrowSquads extends AbstractConfigurable {
         }
     }
 */
-    public static synchronized void escrowPopup(int playerId) {
-        //playerId is 1 to 8
-
-        mic.Util.XWPlayerInfo playerInfo = getCurrentPlayer();
-        if (playerInfo.getSide() != playerId) {
-            return;
-        }
-        refreshEE();
-        refreshEL();
-       // findPlayersAndRefreshFrame();
-
-
-
+    public static synchronized void escrowPopup() {
         frame.setResizable(true);
-
+        frame.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
         final JPanel panel = new JPanel();
 
-
         //Populate the labels of the known players at this point
-
         JPanel playersAreaPanel = new JPanel();
         playersAreaPanel.setLayout(new BoxLayout(playersAreaPanel, BoxLayout.Y_AXIS));
         for(int i=0; i<8; i++){
@@ -203,7 +195,6 @@ public class EscrowSquads extends AbstractConfigurable {
 
             }
             playersAreaPanel.add(aPlayerSlot);
-
         }
 
         JPanel controlButtonPanel = new JPanel();
@@ -217,7 +208,6 @@ public class EscrowSquads extends AbstractConfigurable {
         JButton refreshButton = new JButton("Refresh");
         refreshButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                refreshEE();
                 refreshEL();
             }
         });
@@ -246,6 +236,12 @@ public class EscrowSquads extends AbstractConfigurable {
         frame.setTitle("Escrow Squads");
         panel.setOpaque(true); // content panes must be opaque
         frame.pack();
+        frame.setVisible(false);
+    }
+
+    public static void showPopup(){
+        refreshEE();
+        refreshEL();
         frame.setVisible(true);
         frame.toFront();
     }
@@ -285,6 +281,11 @@ public class EscrowSquads extends AbstractConfigurable {
     public void addTo(Buildable parent) {
         populateEE();
         populateEL();
+//create the popup for the first time, don't show it by default
+        if(frame.getContentPane().getComponents().length == 0) {
+            logToChat("ES line 278 making popup for first time");
+            escrowPopup();
+        }
 
         for (int i = 1; i <= 8; i++) {
             final int playerId = i;
@@ -294,8 +295,7 @@ public class EscrowSquads extends AbstractConfigurable {
             b.setAlignmentY(0.0F);
             b.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent evt) {
-                    if(!frame.isDisplayable()) escrowPopup(playerId);
-
+                    showPopup();
                 }
             });
             escrowButtons.add(b);
@@ -304,6 +304,7 @@ public class EscrowSquads extends AbstractConfigurable {
             Map playerMap = getPlayerMap(i);
             playerMap.getToolBar().add(b);
         }
+
     }
 
     private Map getPlayerMap(int playerIndex) {
