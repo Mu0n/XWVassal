@@ -33,6 +33,13 @@ public class BroadcastEscrowSquadCommand extends Command {
     3: squad points
      */
     public BroadcastEscrowSquadCommand(EscrowSquads.EscrowEntry reqEntry){
+        /*
+        entry.playerSide = reqEntry.playerSide;
+        entry.playerName = reqEntry.playerName;
+        entry.xwsSquad = reqEntry.xwsSquad;
+        entry.source = reqEntry.source;
+        entry.points = reqEntry.points;
+        */
         entry = reqEntry;
     }
 

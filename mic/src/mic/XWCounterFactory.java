@@ -20,6 +20,7 @@ public class XWCounterFactory extends BasicCommandEncoder {
         GameModule.getGameModule().addCommandEncoder(new DialRevealCommand.Dial2eRevealEncoder());
         GameModule.getGameModule().addCommandEncoder(new DialHideCommand.Dial2eHideEncoder());
         GameModule.getGameModule().addCommandEncoder(new DialRotateCommand.Dial2eRotateEncoder());
+        GameModule.getGameModule().addCommandEncoder(new BroadcastEscrowSquadCommand.broadcastEscrowSquadCommandEncoder());
     }
 
     public Decorator createDecorator(String type, GamePiece inner) {
