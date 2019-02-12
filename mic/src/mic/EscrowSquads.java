@@ -78,6 +78,7 @@ public class EscrowSquads extends AbstractConfigurable {
                 ee.xwsSquad = verifiedXWSSquad;
                 ee.source = source;
                 ee.points = squadPoints;
+                refreshEE();
                 refreshEL();
                 return;
             }
