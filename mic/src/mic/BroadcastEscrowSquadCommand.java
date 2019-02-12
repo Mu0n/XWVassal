@@ -18,6 +18,7 @@ import java.io.Serializable;
 import java.util.Collection;
 
 import static mic.Util.deserializeBase64Obj;
+import static mic.Util.logToChat;
 import static mic.Util.serializeToBase64;
 /*
   Created by mjuneau in 2019-02-08
@@ -38,6 +39,7 @@ public class BroadcastEscrowSquadCommand extends Command {
     }
 
     protected void executeCommand() {
+        logToChat("besq line 42 xwssquad sent "+entry.xwsSquad);
         EscrowSquads.insertEntry(entry.playerSide, entry.playerName, entry.xwsSquad, entry.source, entry.points);
     }
 
