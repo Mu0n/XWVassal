@@ -34,8 +34,7 @@ public class BroadcastEscrowSquadCommand extends Command {
     3: squad points
      */
     public BroadcastEscrowSquadCommand(EscrowSquads.EscrowEntry reqEntry){
-        entry = new EscrowSquads.EscrowEntry(reqEntry.playerSide, reqEntry.playerName, reqEntry.xwsSquad, reqEntry.source, reqEntry.points);
-        //entry = reqEntry;
+        entry = reqEntry;
     }
 
     protected void executeCommand() {
@@ -52,6 +51,8 @@ public class BroadcastEscrowSquadCommand extends Command {
         private static final Logger logger = LoggerFactory.getLogger(EscrowSquads.class);
         private static final String commandPrefix = "broadcastEscrowSquadEncoder=";
         private static final String itemDelim = "\t";
+
+        public static BroadcastEscrowSquadCommand.broadcastEscrowSquadCommandEncoder INSTANCE = new BroadcastEscrowSquadCommand.broadcastEscrowSquadCommandEncoder();
 
         public Command decode(String command) {
             if(command == null || !command.contains(commandPrefix)) {
