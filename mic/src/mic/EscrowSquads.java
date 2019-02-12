@@ -130,21 +130,28 @@ public class EscrowSquads extends AbstractConfigurable {
     private static synchronized void refreshEE(){ //this has to be called after addTo (otherwise no players are present yet) when the popup is made visible
 //only use is to make the player names visible asap they are available to fetch
         PlayerRoster.PlayerInfo[] arrayOfPI = mic.Util.getAllPlayerInfo();
-        try{
-            for(int i=1;i<=8;i++){
-                String nameToUse = "(spot open)";
-                try{
-                    String detectedName = arrayOfPI[i-1].playerName;
-                    nameToUse = detectedName;
-                    logToChat("ES line 139 yes");
-                }catch(Exception e){
-                    logToChat("ES line 141 no");
-                }
-                EscrowEntry ee = escrowEntries.get(i-1);
-                ee.playerName = nameToUse;
+        //PlayerRoster will only occupy a 2-element array if there are only 2 players. the trick is to still find and match the Player side in order to see escrowentries right
 
+        List<Integer> donePlayers = Lists.newArrayList();
+
+        for(int i=0; i< arrayOfPI.length;i++) {
+            try {
+                String detectedName = arrayOfPI[i].playerName;
+                String detectedSide = arrayOfPI[i].getSide();
+                String justSideNumberString = detectedSide.split("Player ")[1];
+                Integer justSideNumber = Integer.parseInt(justSideNumberString);
+
+                EscrowEntry ee = escrowEntries.get(justSideNumber - 1);
+                ee.playerName = detectedName;
+                donePlayers.add(justSideNumber);
+            } catch (Exception e) {
             }
-        }catch(Exception e){}
+        }
+        for(int i=0; i<8;i++){
+            if(donePlayers.contains(i+1)) continue;
+            EscrowEntry ee = escrowEntries.get(i);
+            ee.playerName = "(spot open)";
+        }
     }
 
     /*
@@ -208,6 +215,7 @@ public class EscrowSquads extends AbstractConfigurable {
         JButton refreshButton = new JButton("Refresh");
         refreshButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
+                refreshEE();
                 refreshEL();
             }
         });
@@ -221,7 +229,8 @@ public class EscrowSquads extends AbstractConfigurable {
 
                 int theSide = mic.Util.getCurrentPlayer().getSide();
                 for(int i=0;i<8;i++){
-                    if(escrowEntries.get(i).playerSide.equals("Player " + theSide)) AutoSquadSpawn2e.DealWithXWSList(escrowEntries.get(i).xwsSquad, theSide, allShips, allUpgrades, allConditions);
+                    if(escrowEntries.get(i).playerSide.equals("Player " + theSide) && escrowEntries.get(i).xwsSquad !=null)
+                        AutoSquadSpawn2e.DealWithXWSList(escrowEntries.get(i).xwsSquad, theSide, allShips, allUpgrades, allConditions);
                 }
 
             }
