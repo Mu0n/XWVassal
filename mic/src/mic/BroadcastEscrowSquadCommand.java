@@ -70,6 +70,8 @@ public class BroadcastEscrowSquadCommand extends Command {
                  */
                 XWSList2e xwsList = (XWSList2e) deserializeBase64Obj(parts[2]);
                 EscrowSquads.EscrowEntry retEntry = new EscrowSquads.EscrowEntry(parts[0], parts[1], xwsList, parts[3], parts[4]);
+
+                logger.info("decoding pSide " + parts[0] + " pName " + parts[1] + " xwsList " + xwsList + " source " + parts[3]);
                 return new BroadcastEscrowSquadCommand(retEntry);
             }catch(Exception e){
                 logger.info("Error decoding BroadcastEscrowSquadCommand - exception error");
@@ -84,6 +86,8 @@ public class BroadcastEscrowSquadCommand extends Command {
             try{
                 BroadcastEscrowSquadCommand beq = (BroadcastEscrowSquadCommand) c;
                 Serializable serList = (Serializable) beq.entry.xwsSquad;
+
+                logger.info("encoding pSide " + beq.entry.playerSide + " pName " + beq.entry.playerName + " xwsList " + serializeToBase64(serList) + " source " + beq.entry.source);
 
                 return commandPrefix + Joiner.on(itemDelim).join(beq.entry.playerSide, beq.entry.playerName, serializeToBase64(serList), beq.entry.source, beq.entry.points);
             }catch(Exception e) {
