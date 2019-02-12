@@ -42,7 +42,7 @@ public class BroadcastEscrowSquadCommand extends Command {
     }
 
     protected Command myUndoCommand() {
-        return new BroadcastEscrowSquadCommand(new EscrowSquads.EscrowEntry(entry.playerSide, entry.playerName,null, "", ""));
+        return null;
     }
 
     public static class broadcastEscrowSquadCommandEncoder implements CommandEncoder {
