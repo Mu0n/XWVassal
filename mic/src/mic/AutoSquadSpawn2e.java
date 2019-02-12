@@ -615,6 +615,7 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
                     EscrowSquads.EscrowEntry ee = new EscrowSquads.EscrowEntry("Player " + playerIndex, mic.Util.getCurrentPlayer().getName(), xwsList, "internal squad builder", "n/a points");
                     BroadcastEscrowSquadCommand besq = new BroadcastEscrowSquadCommand(ee);
                     besq.execute();
+                    GameModule.getGameModule().sendAndLog(besq);
                     frame.dispose();
                     if(!EscrowSquads.frame.isDisplayable()) {
                         logToChat("spawn2e line 616 repoping");

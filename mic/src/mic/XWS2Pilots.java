@@ -22,7 +22,7 @@ import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class XWS2Pilots {
+public class XWS2Pilots implements Serializable {
     public static String remoteUrl = "https://raw.githubusercontent.com/guidokessels/xwing-data2/master/data/manifest.json";
     //public static String remoteUrl = "https://raw.githubusercontent.com/Mu0nHub/xwing-data2/master/data/manifest.json";
     public static String guidoRootUrl = "https://raw.githubusercontent.com/guidokessels/xwing-data2/master/";

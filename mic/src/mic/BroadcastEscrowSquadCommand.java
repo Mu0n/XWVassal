@@ -17,9 +17,8 @@ import org.slf4j.LoggerFactory;
 import java.io.Serializable;
 import java.util.Collection;
 
-import static mic.Util.deserializeBase64Obj;
-import static mic.Util.logToChat;
-import static mic.Util.serializeToBase64;
+import static mic.Util.*;
+
 /*
   Created by mjuneau in 2019-02-08
   Allows to insert an escrowed squad into everyone's EscrowSquads' object
@@ -48,7 +47,7 @@ public class BroadcastEscrowSquadCommand extends Command {
 
     public static class broadcastEscrowSquadCommandEncoder implements CommandEncoder {
 
-        private static final Logger logger = LoggerFactory.getLogger(EscrowSquads.class);
+        private static final Logger logger = LoggerFactory.getLogger(AutoSquadSpawn2e.class);
         private static final String commandPrefix = "broadcastEscrowSquadEncoder=";
         private static final String itemDelim = "\t";
 
@@ -83,14 +82,18 @@ public class BroadcastEscrowSquadCommand extends Command {
             if (!(c instanceof BroadcastEscrowSquadCommand)) {
                 return null;
             }
+            logToChatWithoutUndo("BESQ line 85 reached encode start");
             try{
                 BroadcastEscrowSquadCommand beq = (BroadcastEscrowSquadCommand) c;
                 Serializable serList = (Serializable) beq.entry.xwsSquad;
 
                 logger.info("encoding pSide " + beq.entry.playerSide + " pName " + beq.entry.playerName + " xwsList " + serializeToBase64(serList) + " source " + beq.entry.source);
 
+                logToChatWithoutUndo("BESQ line 92 reached encode end");
                 return commandPrefix + Joiner.on(itemDelim).join(beq.entry.playerSide, beq.entry.playerName, serializeToBase64(serList), beq.entry.source, beq.entry.points);
             }catch(Exception e) {
+
+                logToChatWithoutUndo("BESQ line 95 reached encode error");
                 logger.error("Error encoding BroadcastEscrowSquadCommand", e);
                 return null;
             }
