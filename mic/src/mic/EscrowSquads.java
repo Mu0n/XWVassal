@@ -8,9 +8,11 @@ package mic;
 import VASSAL.build.AbstractConfigurable;
 import VASSAL.build.Buildable;
 import VASSAL.build.GameModule;
+import VASSAL.build.module.GameComponent;
 import VASSAL.build.module.Map;
 import VASSAL.build.module.PlayerRoster;
 import VASSAL.build.module.documentation.HelpFile;
+import VASSAL.command.Command;
 import VASSAL.launch.Player;
 import com.google.common.collect.Lists;
 
@@ -24,7 +26,7 @@ import static mic.Util.getCurrentPlayer;
 import static mic.Util.logToChat;
 import static mic.Util.logToChatWithoutUndo;
 
-public class EscrowSquads extends AbstractConfigurable {
+public class EscrowSquads extends AbstractConfigurable implements GameComponent {
 
     private List<JButton> escrowButtons = Lists.newArrayList();
     private static List<EscrowEntry> escrowEntries = Lists.newArrayList();
@@ -62,6 +64,8 @@ public class EscrowSquads extends AbstractConfigurable {
         frameInstr.setVisible(true);
         frameInstr.toFront();
     }
+
+    public static List<EscrowEntry> getEscrowEntries(){ return escrowEntries; }
 
     public static void insertEntry(String playerSide, String playerName, XWSList2e verifiedXWSSquad, String source, String squadPoints) {
         logToChat("ES line 67 number of Eentries " + escrowEntries.size());
@@ -324,6 +328,24 @@ public class EscrowSquads extends AbstractConfigurable {
             }
         }
         return null;
+    }
+
+    public void setup(boolean gameStarting) {
+
+    }
+
+    public Command getRestoreCommand() {
+        Command bigCommandChain = null;
+
+        for(int i=0; i<8; i++){
+            try{
+                BroadcastEscrowSquadCommand besq = new BroadcastEscrowSquadCommand(escrowEntries.get(i));
+                bigCommandChain.append(besq);
+            }catch(Exception e){
+                logToChat("EGC line 40 couldn't access escrowEntries as Game Component");
+            }
+        }
+        return bigCommandChain;
     }
 
     public static class EscrowEntry{

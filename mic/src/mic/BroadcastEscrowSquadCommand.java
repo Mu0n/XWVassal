@@ -1,5 +1,7 @@
 package mic;
 
+import VASSAL.build.GameModule;
+import VASSAL.build.module.GameComponent;
 import VASSAL.command.Command;
 
 /**
@@ -16,6 +18,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.List;
 
 import static mic.Util.*;
 
