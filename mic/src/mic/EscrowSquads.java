@@ -82,6 +82,7 @@ public class EscrowSquads extends AbstractConfigurable implements GameComponent 
                 ee.xwsSquad = verifiedXWSSquad;
                 ee.source = source;
                 ee.points = squadPoints;
+                ee.isReady = false;
                 refreshEE();
                 refreshEL();
                 return;
@@ -90,11 +91,12 @@ public class EscrowSquads extends AbstractConfigurable implements GameComponent 
     }
 
     public static void clearOwnEntry() {
-        String thisSide = "" + mic.Util.getCurrentPlayer().getSide();
+        String thisSide = "Player " + mic.Util.getCurrentPlayer().getSide();
         String thisName = mic.Util.getCurrentPlayer().getName();
         for(EscrowEntry ee : escrowEntries){
             if(ee.playerSide.equals(thisSide) && ee.playerName.equals(thisName)){ //found it!
                 ee.clearSquad();
+                refreshEL();
             }
         }
     }
@@ -110,7 +112,7 @@ public class EscrowSquads extends AbstractConfigurable implements GameComponent 
                     String detectedName = arrayOfPI[i-1].playerName;
                     nameToUse = detectedName;
                 }catch(Exception e){}
-                escrowEntries.add(new EscrowEntry("Player " + i, nameToUse, null, "", ""));
+                escrowEntries.add(new EscrowEntry("Player " + i, nameToUse, null, "", "", false));
             }
         }
     }
@@ -128,7 +130,7 @@ public class EscrowSquads extends AbstractConfigurable implements GameComponent 
             for(int i=1;i<=8;i++){
                 EscrowEntry ee = escrowEntries.get(i-1);
                 JLabel jl = escrowLabels.get(i-1);
-                jl.setText(ee.playerSide + " - " + ee.playerName + " - " + ee.xwsSquad + " - " + ee.source);
+                jl.setText(ee.playerSide + " - " + ee.playerName + " - " + ee.xwsSquad + " - " + ee.source + (ee.isReady?" Ready for Escrow!":" Not ready for escrow."));
             }
         }catch(Exception e){}
     }
@@ -187,6 +189,7 @@ public class EscrowSquads extends AbstractConfigurable implements GameComponent 
         frame.setResizable(true);
         frame.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
         final JPanel panel = new JPanel();
+        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
 
         //Populate the labels of the known players at this point
         JPanel playersAreaPanel = new JPanel();
@@ -225,6 +228,7 @@ public class EscrowSquads extends AbstractConfigurable implements GameComponent 
             }
         });
         JButton spawnButton = new JButton("Spawn");
+        spawnButton.setEnabled(false);
         spawnButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
 
@@ -240,9 +244,16 @@ public class EscrowSquads extends AbstractConfigurable implements GameComponent 
 
             }
         });
+        JButton clearButton = new JButton("Clear own Squad");
+        clearButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                clearOwnEntry();
+            }
+        });
         controlButtonPanel.add(instrButton);
         controlButtonPanel.add(refreshButton);
         controlButtonPanel.add(spawnButton);
+        controlButtonPanel.add(clearButton);
         panel.add(playersAreaPanel);
         panel.add(controlButtonPanel);
         frame.add(panel);
@@ -339,7 +350,7 @@ public class EscrowSquads extends AbstractConfigurable implements GameComponent 
 
         for(int i=0; i<8; i++){
             try{
-                BroadcastEscrowSquadCommand besq = new BroadcastEscrowSquadCommand(escrowEntries.get(i));
+                BroadcastEscrowSquadCommand besq = new BroadcastEscrowSquadCommand(escrowEntries.get(i), escrowEntries.get(i).isReady);
                 bigCommandChain.append(besq);
             }catch(Exception e){
                 logToChat("EGC line 40 couldn't access escrowEntries as Game Component");
@@ -354,19 +365,22 @@ public class EscrowSquads extends AbstractConfigurable implements GameComponent 
         XWSList2e xwsSquad;
         String source="";
         String points="";
+        Boolean isReady=false;
 
-        public EscrowEntry(String reqSide, String reqPlayerName, XWSList2e reqXWS, String reqSource, String reqPoints){
+        public EscrowEntry(String reqSide, String reqPlayerName, XWSList2e reqXWS, String reqSource, String reqPoints, Boolean reqReady){
             playerSide = reqSide;
             playerName = reqPlayerName;
             xwsSquad = reqXWS;
             source = reqSource;
             points = reqPoints;
+            isReady = reqReady;
         }
 
         public void clearSquad(){
-            xwsSquad = new XWSList2e();
+            xwsSquad = null;
             source="";
             points="";
+            isReady = false;
         }
     }
 }

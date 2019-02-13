@@ -285,12 +285,12 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
                     //validity confirmed, send to escrow
                     EscrowSquads.EscrowEntry ee;
                     if (canReadPoints) {
-                        ee = new EscrowSquads.EscrowEntry("Player " + playerIndex, mic.Util.getCurrentPlayer().getName(), xwsList, "Squad from Web", xwsList.getPoints().toString());
+                        ee = new EscrowSquads.EscrowEntry("Player " + playerIndex, mic.Util.getCurrentPlayer().getName(), xwsList, "Squad from Web", xwsList.getPoints().toString(), false);
                     } else
-                        ee = new EscrowSquads.EscrowEntry("Player " + playerIndex, mic.Util.getCurrentPlayer().getName(), xwsList, "Squad from Web", "n/a points");
+                        ee = new EscrowSquads.EscrowEntry("Player " + playerIndex, mic.Util.getCurrentPlayer().getName(), xwsList, "Squad from Web", "n/a points", false);
 
                     if (ee != null) {
-                        BroadcastEscrowSquadCommand besq = new BroadcastEscrowSquadCommand(ee);
+                        BroadcastEscrowSquadCommand besq = new BroadcastEscrowSquadCommand(ee, ee.isReady);
                         besq.execute();
                         frame.dispose();
                         if(!EscrowSquads.frame.isDisplayable()) {
@@ -359,11 +359,11 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
                 try{ //validity confirmed, send to escrow
                     EscrowSquads.EscrowEntry ee;
                     if(canReadPoints){
-                        ee = new EscrowSquads.EscrowEntry("Player " + playerIndex, mic.Util.getCurrentPlayer().getName(), xwsList, "XWS format", xwsList.getPoints().toString());
-                    }else  ee = new EscrowSquads.EscrowEntry("Player " + playerIndex, mic.Util.getCurrentPlayer().getName(), xwsList, "XWS format", "n/a points");
+                        ee = new EscrowSquads.EscrowEntry("Player " + playerIndex, mic.Util.getCurrentPlayer().getName(), xwsList, "XWS format", xwsList.getPoints().toString(), false);
+                    }else  ee = new EscrowSquads.EscrowEntry("Player " + playerIndex, mic.Util.getCurrentPlayer().getName(), xwsList, "XWS format", "n/a points", false);
 
                     if(ee!=null) {
-                        BroadcastEscrowSquadCommand besq = new BroadcastEscrowSquadCommand(ee);
+                        BroadcastEscrowSquadCommand besq = new BroadcastEscrowSquadCommand(ee, ee.isReady);
                         besq.execute();
                         frame.dispose();
                         if(!EscrowSquads.frame.isDisplayable()) {
@@ -612,8 +612,8 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
                 }
                 //validity confirmed, send to escrow
                 try {
-                    EscrowSquads.EscrowEntry ee = new EscrowSquads.EscrowEntry("Player " + playerIndex, mic.Util.getCurrentPlayer().getName(), xwsList, "internal squad builder", "n/a points");
-                    BroadcastEscrowSquadCommand besq = new BroadcastEscrowSquadCommand(ee);
+                    EscrowSquads.EscrowEntry ee = new EscrowSquads.EscrowEntry("Player " + playerIndex, mic.Util.getCurrentPlayer().getName(), xwsList, "internal squad builder", "n/a points", false);
+                    BroadcastEscrowSquadCommand besq = new BroadcastEscrowSquadCommand(ee, ee.isReady);
                     besq.execute();
                     GameModule.getGameModule().sendAndLog(besq);
                     frame.dispose();

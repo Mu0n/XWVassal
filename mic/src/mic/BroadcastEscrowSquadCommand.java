@@ -28,6 +28,7 @@ import static mic.Util.*;
  */
 public class BroadcastEscrowSquadCommand extends Command {
     EscrowSquads.EscrowEntry entry;
+    boolean isReady;
 
     /*
     0: player.getSide()
@@ -35,12 +36,17 @@ public class BroadcastEscrowSquadCommand extends Command {
     2: source ("ffg", "yasb2", "internal", "xws")
     3: squad points
      */
-    public BroadcastEscrowSquadCommand(EscrowSquads.EscrowEntry reqEntry){
+    public BroadcastEscrowSquadCommand(EscrowSquads.EscrowEntry reqEntry, boolean wantReady){
         entry = reqEntry;
+        isReady = wantReady;
     }
 
     protected void executeCommand() {
-        logToChat("besq line 42 xwssquad sent "+entry.xwsSquad);
+        if(("Player " + mic.Util.getCurrentPlayer().getSide()).equals(entry.playerSide)){
+            if(isReady)logToChat(entry.playerName +" has sent squad "+entry.xwsSquad + " to Escrow.");
+            else logToChat(entry.playerName +" has is Ready for Escrow");
+        }
+
         EscrowSquads.insertEntry(entry.playerSide, entry.playerName, entry.xwsSquad, entry.source, entry.points);
     }
 
@@ -71,10 +77,10 @@ public class BroadcastEscrowSquadCommand extends Command {
                 4: squad points
                  */
                 XWSList2e xwsList = (XWSList2e) deserializeBase64Obj(parts[2]);
-                EscrowSquads.EscrowEntry retEntry = new EscrowSquads.EscrowEntry(parts[0], parts[1], xwsList, parts[3], parts[4]);
-
+                Boolean readyDecoded = Boolean.parseBoolean(parts[5]);
+                EscrowSquads.EscrowEntry retEntry = new EscrowSquads.EscrowEntry(parts[0], parts[1], xwsList, parts[3], parts[4],readyDecoded);
                 logger.info("decoding pSide " + parts[0] + " pName " + parts[1] + " xwsList " + xwsList + " source " + parts[3]);
-                return new BroadcastEscrowSquadCommand(retEntry);
+                return new BroadcastEscrowSquadCommand(retEntry, readyDecoded);
             }catch(Exception e){
                 logger.info("Error decoding BroadcastEscrowSquadCommand - exception error");
                 return null;
@@ -93,7 +99,7 @@ public class BroadcastEscrowSquadCommand extends Command {
                 logger.info("encoding pSide " + beq.entry.playerSide + " pName " + beq.entry.playerName + " xwsList " + serializeToBase64(serList) + " source " + beq.entry.source);
 
                 logToChatWithoutUndo("BESQ line 92 reached encode end");
-                return commandPrefix + Joiner.on(itemDelim).join(beq.entry.playerSide, beq.entry.playerName, serializeToBase64(serList), beq.entry.source, beq.entry.points);
+                return commandPrefix + Joiner.on(itemDelim).join(beq.entry.playerSide, beq.entry.playerName, serializeToBase64(serList), beq.entry.source, beq.entry.points, ""+beq.isReady);
             }catch(Exception e) {
 
                 logToChatWithoutUndo("BESQ line 95 reached encode error");
