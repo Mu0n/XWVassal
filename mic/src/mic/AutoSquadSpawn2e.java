@@ -293,10 +293,7 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
                         BroadcastEscrowSquadCommand besq = new BroadcastEscrowSquadCommand(ee, ee.isReady);
                         besq.execute();
                         frame.dispose();
-                        if(!EscrowSquads.frame.isDisplayable()) {
-                            EscrowSquads.showPopup();
-                        }
-                        else EscrowSquads.frame.toFront();
+                        EscrowSquads.showPopup();
                         logToChat(ee.playerSide + " (" + ee.playerName + ") has sent a squad to Escrow.");
                     }
                 }catch(Exception e2) {
@@ -366,10 +363,7 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
                         BroadcastEscrowSquadCommand besq = new BroadcastEscrowSquadCommand(ee, ee.isReady);
                         besq.execute();
                         frame.dispose();
-                        if(!EscrowSquads.frame.isDisplayable()) {
-                            EscrowSquads.showPopup();
-                        }
-                        else EscrowSquads.frame.toFront();
+                        EscrowSquads.showPopup();
 
                         logToChat(ee.playerSide + " (" + ee.playerName + ") has sent a squad to Escrow.");
                     }
@@ -618,11 +612,7 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
                     besq.execute();
                     GameModule.getGameModule().sendAndLog(besq);
                     frame.dispose();
-                    if(!EscrowSquads.frame.isDisplayable()) {
-                        logToChat("spawn2e line 616 repoping");
-                        EscrowSquads.showPopup();
-                    }
-                    else EscrowSquads.frame.toFront();
+                    EscrowSquads.showPopup();
 
                     logToChat(ee.playerSide + " (" + ee.playerName + ") has sent a squad to Escrow.");
                 }catch(Exception e2){

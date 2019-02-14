@@ -103,14 +103,32 @@ public class MouseShipGUIDrawable implements Drawable {
 
         cursorX += brIconRight.image.getWidth();
 
-        miElement addHull = new miElement("Token_Hull.png", ulX + cursorX+smallGapX, ulY+padY,
+        miElement hullGfx = new miElement("mi_hull.png", ulX + cursorX+smallGapX, ulY+padY,
+                null);
+        miElement addHull = new miElement("mi_plus.png", ulX + cursorX+ smallGapX + hullGfx.image.getWidth(), ulY+padY,
                 KeyStroke.getKeyStroke(KeyEvent.VK_H, KeyEvent.ALT_DOWN_MASK, false));
-        miElement removeHull = new miElement("Token_Hull.png", ulX + cursorX+smallGapX, ulY+padY+addHull.image.getHeight() + smallGapX,
-                KeyStroke.getKeyStroke(KeyEvent.VK_H, KeyEvent.ALT_DOWN_MASK + KeyEvent.CTRL_DOWN_MASK, false));
+        miElement removeHull = new miElement("mi_minus.png", ulX + cursorX + 2*smallGapX + hullGfx.image.getWidth() + addHull.image.getWidth(),
+                ulY+padY,
+        KeyStroke.getKeyStroke(KeyEvent.VK_H, KeyEvent.ALT_DOWN_MASK + KeyEvent.CTRL_DOWN_MASK, false));
+
+        listOfInteractiveElements.add(hullGfx);
         listOfInteractiveElements.add(addHull);
         listOfInteractiveElements.add(removeHull);
 
-        cursorX += addHull.image.getWidth() + padX;
+        cursorY += hullGfx.image.getHeight() + smallGapX;
+        miElement shieldGfx = new miElement("mi_shield.png", ulX + cursorX+smallGapX, ulY+padY+cursorY,
+                null);
+        miElement addShield = new miElement("mi_plus.png", ulX + cursorX+ smallGapX + hullGfx.image.getWidth(), ulY+padY+cursorY,
+                KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyEvent.ALT_DOWN_MASK, false));
+        miElement removeShield = new miElement("mi_minus.png", ulX + cursorX + 2*smallGapX + hullGfx.image.getWidth() + addHull.image.getWidth(),
+                ulY+padY+cursorY,
+                KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyEvent.ALT_DOWN_MASK + KeyEvent.CTRL_DOWN_MASK, false));
+
+        listOfInteractiveElements.add(shieldGfx);
+        listOfInteractiveElements.add(addShield);
+        listOfInteractiveElements.add(removeShield);
+
+        cursorX += hullGfx.image.getWidth() + addHull.image.getWidth() + removeHull.image.getWidth();
 
 
         if(shipGfx !=null && shipGfx.image!=null) cursorY += shipGfx.image.getHeight();
@@ -165,8 +183,12 @@ public class MouseShipGUIDrawable implements Drawable {
         g2d.setPaint(new Color(0,0,255, 150));
         for(miElement elem : listOfInteractiveElements){
             AffineTransform af;
+           /*
             if(_pilotShip.getSize().equals("Large") || _pilotShip.getSize().equals("large")) af = elem.getTransformForDraw(scale, 0.5);
             else af = elem.getTransformForDraw(scale);
+*/
+
+            af = elem.getTransformForDraw(scale);
             g2d.drawImage(elem.image, af, new ImageObserver() {
                 public boolean imageUpdate(Image img, int infoflags, int x, int y, int width, int height) {
                     return false;
