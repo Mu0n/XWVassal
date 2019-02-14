@@ -20,6 +20,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.beans.PropertyChangeListener;
 import java.util.List;
 
 import static mic.Util.getCurrentPlayer;
@@ -32,6 +33,7 @@ public class EscrowSquads extends AbstractConfigurable implements GameComponent 
     private static List<EscrowEntry> escrowEntries = Lists.newArrayList();
     static List<JLabel> escrowLabels = Lists.newArrayList(); //the labels that are shown in the frame
     final static JFrame frame = new JFrame();
+    static JButton spawnButton;
 
     public static void escrowInstructionsPopup(){
         final JFrame frameInstr = new JFrame();
@@ -97,6 +99,17 @@ public class EscrowSquads extends AbstractConfigurable implements GameComponent 
             if(ee.playerSide.equals(thisSide) && ee.playerName.equals(thisName)){ //found it!
                 ee.clearSquad();
                 refreshEL();
+            }
+        }
+    }
+    public static void resendOwnEntry() {
+        String thisSide = "Player " + mic.Util.getCurrentPlayer().getSide();
+        String thisName = mic.Util.getCurrentPlayer().getName();
+        for(EscrowEntry ee : escrowEntries){
+            if(ee.playerSide.equals(thisSide) && ee.playerName.equals(thisName)){ //found it!
+                BroadcastEscrowSquadCommand besq = new BroadcastEscrowSquadCommand(ee, ee.isReady);
+                besq.execute();
+                GameModule.getGameModule().sendAndLog(besq);
             }
         }
     }
@@ -198,17 +211,32 @@ public class EscrowSquads extends AbstractConfigurable implements GameComponent 
             JPanel aPlayerSlot = new JPanel();
             aPlayerSlot.setLayout(new BoxLayout(aPlayerSlot, BoxLayout.X_AXIS));
             aPlayerSlot.add(escrowLabels.get(i));
+            final int index = i;
 
+            JButton ready = new JButton("Set");
+            ready.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    EscrowEntry ee = escrowEntries.get(index);
 
-            String sideCheck = mic.Util.getCurrentPlayer().getSide()+"";
-            JButton ready = new JButton("Ready");
-            try{
-                if(sideCheck.equals(escrowEntries.get(i).playerSide)) {
-                    aPlayerSlot.add(ready);
+                    String thisSide = "Player " + mic.Util.getCurrentPlayer().getSide();
+                    String sideCheckString = "Player " + (index+1);
+
+                    if(sideCheckString.equals(thisSide)){
+                        if(ee.xwsSquad!=null){
+                            if(ee.isReady == false) ee.isReady = true;
+                            else ee.isReady= false;
+                            revisitSpawnReadiness();
+                        }else{
+                            JOptionPane.showMessageDialog(frame, "Send a squad to escrow first! Go to the 2.0 Squad Spawn in your player window.");
+                        }
+                    }else{
+                        JOptionPane.showMessageDialog(frame, "You can only mark yourself ready for escrow for your own side!");
+                    }
+                   refreshEL();
                 }
-            }catch(Exception e){
+            });
+            aPlayerSlot.add(ready);
 
-            }
             playersAreaPanel.add(aPlayerSlot);
         }
 
@@ -225,9 +253,10 @@ public class EscrowSquads extends AbstractConfigurable implements GameComponent 
             public void actionPerformed(ActionEvent e) {
                 refreshEE();
                 refreshEL();
+                revisitSpawnReadiness();
             }
         });
-        JButton spawnButton = new JButton("Spawn");
+        spawnButton = new JButton("Spawn");
         spawnButton.setEnabled(false);
         spawnButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -241,7 +270,12 @@ public class EscrowSquads extends AbstractConfigurable implements GameComponent 
                     if(escrowEntries.get(i).playerSide.equals("Player " + theSide) && escrowEntries.get(i).xwsSquad !=null)
                         AutoSquadSpawn2e.DealWithXWSList(escrowEntries.get(i).xwsSquad, theSide, allShips, allUpgrades, allConditions);
                 }
+                //After the lists spawn final, go into a final state:
+                //Make the labels simpler
+                //make the Set button inactive
+                //transform the players who just spawned's set button to a button that sends the XWS to sirjorj or another service
 
+                spawnButton.setEnabled(false);
             }
         });
         JButton clearButton = new JButton("Clear own Squad");
@@ -250,10 +284,19 @@ public class EscrowSquads extends AbstractConfigurable implements GameComponent 
                 clearOwnEntry();
             }
         });
+        JButton resendSquad = new JButton("Resend own Squad");
+        resendSquad.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                resendOwnEntry();
+            }
+        });
+
         controlButtonPanel.add(instrButton);
+        controlButtonPanel.add(resendSquad);
         controlButtonPanel.add(refreshButton);
         controlButtonPanel.add(spawnButton);
         controlButtonPanel.add(clearButton);
+
         panel.add(playersAreaPanel);
         panel.add(controlButtonPanel);
         frame.add(panel);
@@ -262,6 +305,14 @@ public class EscrowSquads extends AbstractConfigurable implements GameComponent 
         panel.setOpaque(true); // content panes must be opaque
         frame.pack();
         frame.setVisible(false);
+    }
+
+    private static void revisitSpawnReadiness() {
+        int readyCount = 0;
+        for(int i=0;i<8;i++){
+            if(escrowEntries.get(i).isReady) readyCount++;
+        }
+        if(readyCount>1) spawnButton.setEnabled(true);
     }
 
     public static void showPopup(){
