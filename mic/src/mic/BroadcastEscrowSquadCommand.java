@@ -42,11 +42,6 @@ public class BroadcastEscrowSquadCommand extends Command {
     }
 
     protected void executeCommand() {
-        if(("Player " + mic.Util.getCurrentPlayer().getSide()).equals(entry.playerSide)){
-            if(isReady)logToChat(entry.playerName +" has sent squad "+entry.xwsSquad + " to Escrow.");
-            else logToChat(entry.playerName +" has is Ready for Escrow");
-        }
-
         EscrowSquads.insertEntry(entry.playerSide, entry.playerName, entry.xwsSquad, entry.source, entry.points);
     }
 

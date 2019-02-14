@@ -73,15 +73,8 @@ public class EscrowSquads extends AbstractConfigurable implements GameComponent 
     public static List<EscrowEntry> getEscrowEntries(){ return escrowEntries; }
 
     public static void insertEntry(String playerSide, String playerName, XWSList2e verifiedXWSSquad, String source, String squadPoints) {
-        logToChat("ES line 67 number of Eentries " + escrowEntries.size());
-        logToChat("ES line 67 number of Elabels " + escrowLabels.size());
-        logToChat("ES line 67 inserting for playerSide:" + playerSide+":");
-        if(verifiedXWSSquad!=null) logToChat("ES line 67 sending xwslist " + verifiedXWSSquad.toString());
-        logToChat("ES line 67 source "+ source);
         for(EscrowEntry ee : escrowEntries){
-            logToChat("ES lines 69 checking out this side:" + ee.playerSide+":");
             if(ee.playerSide.equals(playerSide)){ //found the entry, simply update the squad info, leave the side and name intact
-                logToChat("ES line 74 found a playerSide match!");
                 ee.playerSide = playerSide;
                 ee.playerName = playerName;
                 ee.xwsSquad = verifiedXWSSquad;
@@ -104,6 +97,7 @@ public class EscrowSquads extends AbstractConfigurable implements GameComponent 
                 BroadcastEscrowSquadCommand besq = new BroadcastEscrowSquadCommand(clearedEE, clearedEE.isReady);
                 besq.execute();
                 GameModule.getGameModule().sendAndLog(besq);
+                logToChat(thisSide + " (" + ee.playerName + ") has cleared a squad for Escrow.");
                 refreshEL();
             }
         }
@@ -116,6 +110,7 @@ public class EscrowSquads extends AbstractConfigurable implements GameComponent 
                 BroadcastEscrowSquadCommand besq = new BroadcastEscrowSquadCommand(ee, ee.isReady);
                 besq.execute();
                 GameModule.getGameModule().sendAndLog(besq);
+                logToChat(thisSide + " (" + ee.playerName + ") has resent a squad for Escrow.");
             }
         }
     }
@@ -180,30 +175,6 @@ public class EscrowSquads extends AbstractConfigurable implements GameComponent 
         }
     }
 
-    /*
-    private static synchronized void findPlayersAndRefreshFrame(){
-        logToChat("ES line 117 entering refresh");
-        for(int i=0; i<8; i++) {
-            try {
-                if(escrowEntries.get(i).xwsSquad!=null){
-                    escrowLabels.get(i).setText(escrowEntries.get(i).playerSide + " - " +
-                            escrowEntries.get(i).playerName + " - " +
-                            escrowEntries.get(i).xwsSquad + " - " +
-                            escrowEntries.get(i).source);
-                }else {
-                    EscrowEntry ee = escrowEntries.get(i);
-
-                    logToChat("ES line 126 refreshing a name with no list");
-                    escrowLabels.get(i).setText("Player " + escrowEntries.get(i).playerSide + " - " +
-                            escrowEntries.get(i).playerName + " - no list escrowed yet");
-                }
-
-            } catch(Exception e){
-                continue;
-            }
-        }
-    }
-*/
     public static synchronized void escrowPopup() {
         frame.setResizable(true);
         frame.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
@@ -231,6 +202,10 @@ public class EscrowSquads extends AbstractConfigurable implements GameComponent 
                         if(ee.xwsSquad!=null){
                             if(ee.isReady == false) ee.isReady = true;
                             else ee.isReady= false;
+                            BroadcastEscrowSquadCommand besq = new BroadcastEscrowSquadCommand(ee, ee.isReady);
+                            besq.execute();
+                            GameModule.getGameModule().sendAndLog(besq);
+                            logToChat(thisSide + " (" + ee.playerName + ") has Set " + (ee.isReady?"Ready":"Not Ready") + " for Escrow Spawning.");
                             revisitSpawnReadiness();
                         }else{
                             JOptionPane.showMessageDialog(frame, "Send a squad to escrow first! Go to the 2.0 Squad Spawn in your player window.");
