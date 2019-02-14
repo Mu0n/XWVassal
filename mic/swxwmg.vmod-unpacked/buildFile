@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<VASSAL.launch.BasicModule VassalVersion="3.2.17" description="" name="Star Wars X-Wing Miniatures Game" nextPieceSlotId="13062" version="8.3.1">
+<VASSAL.launch.BasicModule VassalVersion="3.2.17" description="" name="Star Wars X-Wing Miniatures Game" nextPieceSlotId="13062" version="8.4.0">
     <mic.XWCounterFactory/>
     <VASSAL.build.module.Documentation>
         <VASSAL.build.module.documentation.AboutScreen fileName="Splash.PNG" title="About Module"/>
@@ -1758,11 +1758,11 @@
     </VASSAL.build.module.PieceWindow>
     <mic.XWCounterFactory/>
     <mic.ota.OTAContentsChecker/>
-    <mic.AutoSquadSpawn/>
+    <mic.AutoSquadSpawn2e/>
+    <mic.EscrowSquads/>
     <mic.EpicDeckTrayToggle/>
+    <mic.AutoSquadSpawn/>
     <mic.AnnouncementOnLog/>
     <mic.PatreonWindow/>
-    <mic.AutoSquadSpawn2e/>
     <mic.MouseShipGUI/>
-    <mic.EscrowSquads/>
 </VASSAL.launch.BasicModule>
