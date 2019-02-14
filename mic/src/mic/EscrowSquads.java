@@ -293,12 +293,12 @@ public class EscrowSquads extends AbstractConfigurable implements GameComponent 
         JLabel instructions = new JLabel("<html><body>IMPORTANT: both players must have a simultaneous active connection in the game room for this whole process to work<br>" +
                 "Do not send a squad to escrow before your opponent is present.<br>" +
                 "If someone joins late or loses connection, then 'Resend Own Squad' will help restore that person's escrow data.</body></html>");
-
+        instructions.setAlignmentX(Component.RIGHT_ALIGNMENT);
         panel.add(playersAreaPanel);
         panel.add(controlButtonPanel);
         panel.add(instructions);
         frame.add(panel);
-        frame.setPreferredSize(new Dimension(800,300));
+        frame.setPreferredSize(new Dimension(800,380));
         frame.setTitle("Escrow Squads");
         panel.setOpaque(true); // content panes must be opaque
         frame.pack();
