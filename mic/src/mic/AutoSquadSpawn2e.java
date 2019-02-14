@@ -294,10 +294,10 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
                         besq.execute();
                         frame.dispose();
                         if(!EscrowSquads.frame.isDisplayable()) {
-                            logToChat("spawn2e line 298 repoping");
                             EscrowSquads.showPopup();
                         }
                         else EscrowSquads.frame.toFront();
+                        logToChat(ee.playerSide + " (" + ee.playerName + ") has sent a squad to Escrow.");
                     }
                 }catch(Exception e2) {
                     logToChat("Player " + playerIndex + " tried to send a URL squad to escrow and failed.");
@@ -367,10 +367,11 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
                         besq.execute();
                         frame.dispose();
                         if(!EscrowSquads.frame.isDisplayable()) {
-                            logToChat("spawn2e line 372 repoping");
                             EscrowSquads.showPopup();
                         }
                         else EscrowSquads.frame.toFront();
+
+                        logToChat(ee.playerSide + " (" + ee.playerName + ") has sent a squad to Escrow.");
                     }
                 }catch(Exception e2){
                     logToChat("Player " + playerIndex + " tried to send a raw JSON (XWS format) to escrow and failed.");
@@ -622,6 +623,8 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
                         EscrowSquads.showPopup();
                     }
                     else EscrowSquads.frame.toFront();
+
+                    logToChat(ee.playerSide + " (" + ee.playerName + ") has sent a squad to Escrow.");
                 }catch(Exception e2){
                     logToChat("Player " + playerIndex + " tried to send a raw JSON (XWS format) to escrow and failed.");
                 }

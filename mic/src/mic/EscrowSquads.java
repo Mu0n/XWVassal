@@ -290,8 +290,13 @@ public class EscrowSquads extends AbstractConfigurable implements GameComponent 
         controlButtonPanel.add(spawnButton);
         controlButtonPanel.add(clearButton);
 
+        JLabel instructions = new JLabel("\"IMPORTANT: both players must have a simultaneous active connection in the game room for this whole process to work<br>" +
+                "Do not send a squad to escrow before your opponent is present.<br>" +
+                "If someone joins late or loses connection, then 'Resend Own Squad' will help restore that person's escrow data.</body></html>");
+
         panel.add(playersAreaPanel);
         panel.add(controlButtonPanel);
+        panel.add(instructions);
         frame.add(panel);
         frame.setPreferredSize(new Dimension(800,300));
         frame.setTitle("Escrow Squads");
@@ -352,7 +357,6 @@ public class EscrowSquads extends AbstractConfigurable implements GameComponent 
         populateEL();
 //create the popup for the first time, don't show it by default
         if(frame.getContentPane().getComponents().length == 0) {
-            logToChat("ES line 278 making popup for first time");
             escrowPopup();
         }
 
