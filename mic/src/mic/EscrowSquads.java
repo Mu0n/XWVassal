@@ -290,7 +290,7 @@ public class EscrowSquads extends AbstractConfigurable implements GameComponent 
         controlButtonPanel.add(spawnButton);
         controlButtonPanel.add(clearButton);
 
-        JLabel instructions = new JLabel("\"IMPORTANT: both players must have a simultaneous active connection in the game room for this whole process to work<br>" +
+        JLabel instructions = new JLabel("<html><body>IMPORTANT: both players must have a simultaneous active connection in the game room for this whole process to work<br>" +
                 "Do not send a squad to escrow before your opponent is present.<br>" +
                 "If someone joins late or loses connection, then 'Resend Own Squad' will help restore that person's escrow data.</body></html>");
 
