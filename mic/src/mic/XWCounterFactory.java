@@ -20,6 +20,7 @@ public class XWCounterFactory extends BasicCommandEncoder {
         GameModule.getGameModule().addCommandEncoder(new DialRevealCommand.Dial2eRevealEncoder());
         GameModule.getGameModule().addCommandEncoder(new DialHideCommand.Dial2eHideEncoder());
         GameModule.getGameModule().addCommandEncoder(new DialRotateCommand.Dial2eRotateEncoder());
+        GameModule.getGameModule().addCommandEncoder(new BroadcastEscrowSquadCommand.broadcastEscrowSquadCommandEncoder());
     }
 
     public Decorator createDecorator(String type, GamePiece inner) {
@@ -38,8 +39,6 @@ public class XWCounterFactory extends BasicCommandEncoder {
             piece = new ShipReposition(inner);
         }else if (type.startsWith(EmptyTest.ID)) {
             piece = new EmptyTest(inner);
-        }else if (type.startsWith(MouseShipGUI.ID)) {
-            piece = new MouseShipGUI(inner);
         }else if (type.startsWith(CritSpawner.ID)) {
             piece = new CritSpawner(inner);
         }else if (type.startsWith(StemDial.ID)) {

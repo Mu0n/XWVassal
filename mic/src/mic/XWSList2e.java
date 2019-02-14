@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
@@ -16,7 +17,7 @@ import java.util.Map;
  * 2) added a XWS2 String in the pilots static class - this will be used to uniquely identify a pilot with faction-ship-pilot-sku
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class XWSList2e {
+public class XWSList2e implements Serializable {
 
     @JsonProperty("name")
     private String name;
@@ -120,7 +121,7 @@ public class XWSList2e {
         pilots.add(newPilot);
     }
 
-    public static class XWSPilot {
+    public static class XWSPilot implements Serializable{
 
         public XWSPilot()
         {

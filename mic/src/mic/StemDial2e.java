@@ -335,7 +335,6 @@ public class StemDial2e extends Decorator implements EditablePiece {
 
         // construct the dial Layers trait (Embellishment class) layer by layer according to the previous Array of Arrays.
         protected void executeCommand() {
-
             // build the type string
             StringBuilder stateString = new StringBuilder();
             StringBuilder moveNamesString = new StringBuilder();
@@ -395,8 +394,6 @@ public class StemDial2e extends Decorator implements EditablePiece {
 
             fullDialEmb.mySetType(basicPieceString.toString());
             ringEmb.mySetType(factionRingString.toString());
-
-
         }
 
         // build the maneuvers layer
@@ -486,7 +483,7 @@ public class StemDial2e extends Decorator implements EditablePiece {
             }
 
             // get the back image
-           // String dialBackImage = dialBackImages.get(xwsShipName+"/"+faction);
+            // String dialBackImage = dialBackImages.get(xwsShipName+"/"+faction);
             String dialMaskImageName = "DialMask_"+coreFactionName+"_"+xwsShipName+".png";
 
             // if we don't have the image (unreleased ship), use a WIP image
@@ -518,7 +515,7 @@ public class StemDial2e extends Decorator implements EditablePiece {
 
 
             // get the dial hide image
-           // String dialHideImage = dialHideImages.get(xwsShipName);
+            // String dialHideImage = dialHideImages.get(xwsShipName);
             String dialHideImageName = "DialHide_"+xwsShipName+".png";
 
             // if we don't have the image (unreleased ship), use a WIP image
@@ -589,5 +586,4 @@ public class StemDial2e extends Decorator implements EditablePiece {
 
 
 }
-
 

@@ -25,8 +25,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import static mic.Util.*;
 
 
@@ -44,8 +42,6 @@ import static mic.Util.*;
  */
 public class AutoSquadSpawn2e extends AbstractConfigurable {
 
-
-    private VassalXWSPieceLoader2e slotLoader = new VassalXWSPieceLoader2e();
 
     private static java.util.Map<String, String> xwingdata2ToYasb2 = ImmutableMap.<String, String>builder()
             .put("Rebel Alliance","rebelalliance")
@@ -68,7 +64,7 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
         GameModule.getGameModule().sendAndLog(placeCommand);
     }
 
-    private Command spawnPieceCommand(GamePiece piece, Point position, Map playerMap) {
+    private static Command spawnPieceCommand(GamePiece piece, Point position, Map playerMap) {
         return playerMap.placeOrMerge(piece, position);
     }
 
@@ -179,9 +175,11 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
                 if(factionsWanted.isEmpty()) {
                     JFrame warnFrame = new JFrame();
                     JOptionPane.showMessageDialog(warnFrame, "Check at least 1 faction before opening the internal builder");
+
                     return;
                 }
                 internalSquadBuilder(playerIndex, factionsWanted, allShips, allUpgrades, allConditions);
+                frame.dispose();
             }
         });
 
@@ -259,6 +257,57 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
                 frame.dispose();
             }
         });
+        JButton escrowURLButton = new JButton("Send to Escrow");
+        escrowURLButton.setAlignmentX(Component.LEFT_ALIGNMENT);
+        escrowURLButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                //Load the list and check the validity
+                XWSList2e xwsList = LoadListFromURL(entryArea_0.getText());
+                try {
+                    validateList(xwsList, allShips);
+                } catch(Exception exc)
+                {
+                    logToChat("Unable to load URL list '%s': %s", entryArea_0.getText(), exc.toString());
+                    return;
+                }
+                if(xwsList == null || xwsList.getPilots() == null || xwsList.getPilots().size() == 0) {
+                    logToChat("URL list has detected no pilots in it.");
+                }
+                boolean canReadPoints = false;
+                try{
+                    int ptsTest = xwsList.getPoints();
+                    canReadPoints=true;
+                }catch(Exception exc2){
+                    canReadPoints=false;
+                }
+
+                try {
+                    //validity confirmed, send to escrow
+                    EscrowSquads.EscrowEntry ee;
+                    if (canReadPoints) {
+                        ee = new EscrowSquads.EscrowEntry("Player " + playerIndex, mic.Util.getCurrentPlayer().getName(), xwsList, "Squad from Web", xwsList.getPoints().toString(), false);
+                    } else
+                        ee = new EscrowSquads.EscrowEntry("Player " + playerIndex, mic.Util.getCurrentPlayer().getName(), xwsList, "Squad from Web", "n/a points", false);
+
+                    if (ee != null) {
+                        BroadcastEscrowSquadCommand besq = new BroadcastEscrowSquadCommand(ee, ee.isReady);
+                        besq.execute();
+                        frame.dispose();
+                        EscrowSquads.showPopup();
+                        logToChat(ee.playerSide + " (" + ee.playerName + ") has sent a squad to Escrow.");
+                    }
+                }catch(Exception e2) {
+                    logToChat("Player " + playerIndex + " tried to send a URL squad to escrow and failed.");
+                }
+            }
+        });
+        JButton whatIsEscrowButton = new JButton("What is Escrow?");
+        whatIsEscrowButton.setAlignmentX(Component.LEFT_ALIGNMENT);
+        whatIsEscrowButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                EscrowSquads.escrowInstructionsPopup();
+            }
+        });
 
         JButton xwsSpawnButton = new JButton("Spawn Squad from XWS");
         xwsSpawnButton.setAlignmentX(Component.LEFT_ALIGNMENT);
@@ -280,6 +329,58 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
                 frame.dispose();
             }
         });
+        JButton escrowXWSButton = new JButton("Send to Escrow");
+        escrowXWSButton.setAlignmentX(Component.LEFT_ALIGNMENT);
+        escrowXWSButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                //Load the list and check the validity
+                XWSList2e xwsList = loadListFromRawJson(entryArea.getText());
+                try{
+                    validateList(xwsList, allShips);
+                } catch (Exception exc) {
+                    logToChat("Unable to load raw JSON list '%s': %s", entryArea.getText(), exc.toString());
+                    return;
+                }
+                if (xwsList == null || xwsList.getPilots() == null || xwsList.getPilots().size() == 0) {
+                    logToChat("raw JSON list has no detected pilots in it.");
+                    return;
+                }
+                boolean canReadPoints = false;
+                try{
+                    int ptsTest = xwsList.getPoints();
+                    canReadPoints=true;
+                }catch(Exception exc2){
+                    canReadPoints=false;
+                }
+
+                try{ //validity confirmed, send to escrow
+                    EscrowSquads.EscrowEntry ee;
+                    if(canReadPoints){
+                        ee = new EscrowSquads.EscrowEntry("Player " + playerIndex, mic.Util.getCurrentPlayer().getName(), xwsList, "XWS format", xwsList.getPoints().toString(), false);
+                    }else  ee = new EscrowSquads.EscrowEntry("Player " + playerIndex, mic.Util.getCurrentPlayer().getName(), xwsList, "XWS format", "n/a points", false);
+
+                    if(ee!=null) {
+                        BroadcastEscrowSquadCommand besq = new BroadcastEscrowSquadCommand(ee, ee.isReady);
+                        besq.execute();
+                        frame.dispose();
+                        EscrowSquads.showPopup();
+
+                        logToChat(ee.playerSide + " (" + ee.playerName + ") has sent a squad to Escrow.");
+                    }
+                }catch(Exception e2){
+                    logToChat("Player " + playerIndex + " tried to send a raw JSON (XWS format) to escrow and failed.");
+                }
+
+            }
+        });
+        JButton whatIsEscrowButton2 = new JButton("What is Escrow?");
+        whatIsEscrowButton2.setAlignmentX(Component.LEFT_ALIGNMENT);
+        whatIsEscrowButton2.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                EscrowSquads.escrowInstructionsPopup();
+            }
+        });
+
         JLabel method2Label = new JLabel("Method 3 for spawning a list - use the internal squad builder (allows illegal, cross-faction lists if needed)");
         method2Label.setFont(new Font("Dialog", Font.PLAIN, 18));
         method2Label.setAlignmentX(Component.LEFT_ALIGNMENT);
@@ -290,6 +391,8 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
 
         method0ButtonsPanel.add(clearTextArea_0_Button);
         method0ButtonsPanel.add(urlSpawnButton);
+        method0ButtonsPanel.add(escrowURLButton);
+        method0ButtonsPanel.add(whatIsEscrowButton);
 
 
         JPanel method1ButtonsPanel = new JPanel();
@@ -298,6 +401,8 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
 
         method1ButtonsPanel.add(clearTextAreaButton);
         method1ButtonsPanel.add(xwsSpawnButton);
+        method1ButtonsPanel.add(escrowXWSButton);
+        method1ButtonsPanel.add(whatIsEscrowButton2);
 
 
         JLabel suggestionsHeaderLabel = new JLabel("Suggested Builders:");
@@ -484,12 +589,52 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
                 frame.dispose();
             }
         });
+        JButton escrowXWSButton = new JButton("Send to Escrow");
+        escrowXWSButton.setAlignmentX(Component.LEFT_ALIGNMENT);
+        escrowXWSButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                //Load the list and check the validity
+                XWSList2e xwsList = loadListFromRawJson(entryArea.getText());
+                try{
+                    validateList(xwsList, allShips);
+                } catch (Exception exc) {
+                    logToChat("Unable to load raw JSON list '%s': %s", entryArea.getText(), exc.toString());
+                    return;
+                }
+                if (xwsList == null || xwsList.getPilots() == null || xwsList.getPilots().size() == 0) {
+                    logToChat("raw JSON list has no detected pilots in it.");
+                    return;
+                }
+                //validity confirmed, send to escrow
+                try {
+                    EscrowSquads.EscrowEntry ee = new EscrowSquads.EscrowEntry("Player " + playerIndex, mic.Util.getCurrentPlayer().getName(), xwsList, "internal squad builder", "n/a points", false);
+                    BroadcastEscrowSquadCommand besq = new BroadcastEscrowSquadCommand(ee, ee.isReady);
+                    besq.execute();
+                    GameModule.getGameModule().sendAndLog(besq);
+                    frame.dispose();
+                    EscrowSquads.showPopup();
+
+                    logToChat(ee.playerSide + " (" + ee.playerName + ") has sent a squad to Escrow.");
+                }catch(Exception e2){
+                    logToChat("Player " + playerIndex + " tried to send a raw JSON (XWS format) to escrow and failed.");
+                }
+            }
+        });
+        JButton whatIsEscrowButton2 = new JButton("What is Escrow?");
+        whatIsEscrowButton2.setAlignmentX(Component.LEFT_ALIGNMENT);
+        whatIsEscrowButton2.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                EscrowSquads.escrowInstructionsPopup();
+            }
+        });
 
         JPanel buttonPanel = new JPanel();
         buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.X_AXIS));
 
         buttonPanel.add(createXWS2Button);
         buttonPanel.add(validateButton);
+        buttonPanel.add(escrowXWSButton);
+        buttonPanel.add(whatIsEscrowButton2);
 
         rootPanel.add(buttonPanel);
 
@@ -511,7 +656,7 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
     }
 
 
-    private Map getPlayerMap(int playerIndex) {
+    private static Map getPlayerMap(int playerIndex) {
         for (Map loopMap : GameModule.getGameModule().getComponentsOf(Map.class)) {
             if (("Player " + Integer.toString(playerIndex)).equals(loopMap.getMapName())) {
                 return loopMap;
@@ -520,7 +665,7 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
         return null;
     }
 
-    private void DealWithXWSList(XWSList2e xwsList, int playerIndex, List<XWS2Pilots> allPilots, XWS2Upgrades allUpgrades, List<XWS2Upgrades.Condition> allConditions) {
+    public static void DealWithXWSList(XWSList2e xwsList, int playerIndex, List<XWS2Pilots> allPilots, XWS2Upgrades allUpgrades, List<XWS2Upgrades.Condition> allConditions) {
 
         XWOTAUtils.checkOnlineOrder66();
         Map playerMap = getPlayerMap(playerIndex);
@@ -532,6 +677,7 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
         // If the list includes a yv666 with Hound's Tooth upgrade or modified YT-1300 with escape craft, add the necessary stuff
         //xwsList = handleHoundsToothIshThings(xwsList);
 
+        VassalXWSPieceLoader2e slotLoader = new VassalXWSPieceLoader2e();
         VassalXWSListPieces2e pieces = slotLoader.loadListFromXWS(xwsList, allPilots, allUpgrades, allConditions);
         List<GamePiece> shipBases = Lists.newArrayList();
 
