@@ -42,7 +42,7 @@ public class BroadcastEscrowSquadCommand extends Command {
     }
 
     protected void executeCommand() {
-        EscrowSquads.insertEntry(entry.playerSide, entry.playerName, entry.xwsSquad, entry.source, entry.points);
+        EscrowSquads.insertEntry(entry.playerSide, entry.playerName, entry.xwsSquad, entry.source, entry.points, entry.isReady);
     }
 
     protected Command myUndoCommand() {
@@ -74,7 +74,6 @@ public class BroadcastEscrowSquadCommand extends Command {
                 XWSList2e xwsList = (XWSList2e) deserializeBase64Obj(parts[2]);
                 Boolean readyDecoded = Boolean.parseBoolean(parts[5]);
                 EscrowSquads.EscrowEntry retEntry = new EscrowSquads.EscrowEntry(parts[0], parts[1], xwsList, parts[3], parts[4],readyDecoded);
-                logger.info("decoding pSide " + parts[0] + " pName " + parts[1] + " xwsList " + xwsList + " source " + parts[3]);
                 return new BroadcastEscrowSquadCommand(retEntry, readyDecoded);
             }catch(Exception e){
                 logger.info("Error decoding BroadcastEscrowSquadCommand - exception error");
@@ -86,18 +85,11 @@ public class BroadcastEscrowSquadCommand extends Command {
             if (!(c instanceof BroadcastEscrowSquadCommand)) {
                 return null;
             }
-            logToChatWithoutUndo("BESQ line 85 reached encode start");
             try{
                 BroadcastEscrowSquadCommand beq = (BroadcastEscrowSquadCommand) c;
                 Serializable serList = (Serializable) beq.entry.xwsSquad;
-
-                logger.info("encoding pSide " + beq.entry.playerSide + " pName " + beq.entry.playerName + " xwsList " + serializeToBase64(serList) + " source " + beq.entry.source);
-
-                logToChatWithoutUndo("BESQ line 92 reached encode end");
                 return commandPrefix + Joiner.on(itemDelim).join(beq.entry.playerSide, beq.entry.playerName, serializeToBase64(serList), beq.entry.source, beq.entry.points, ""+beq.isReady);
             }catch(Exception e) {
-
-                logToChatWithoutUndo("BESQ line 95 reached encode error");
                 logger.error("Error encoding BroadcastEscrowSquadCommand", e);
                 return null;
             }

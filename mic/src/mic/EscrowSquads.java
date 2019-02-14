@@ -72,7 +72,7 @@ public class EscrowSquads extends AbstractConfigurable implements GameComponent 
 
     public static List<EscrowEntry> getEscrowEntries(){ return escrowEntries; }
 
-    public static void insertEntry(String playerSide, String playerName, XWSList2e verifiedXWSSquad, String source, String squadPoints) {
+    public static void insertEntry(String playerSide, String playerName, XWSList2e verifiedXWSSquad, String source, String squadPoints, Boolean ready) {
         for(EscrowEntry ee : escrowEntries){
             if(ee.playerSide.equals(playerSide)){ //found the entry, simply update the squad info, leave the side and name intact
                 ee.playerSide = playerSide;
@@ -80,7 +80,7 @@ public class EscrowSquads extends AbstractConfigurable implements GameComponent 
                 ee.xwsSquad = verifiedXWSSquad;
                 ee.source = source;
                 ee.points = squadPoints;
-                ee.isReady = false;
+                ee.isReady = ready;
                 refreshEE();
                 refreshEL();
                 return;
