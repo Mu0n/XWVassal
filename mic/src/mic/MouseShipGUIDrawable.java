@@ -74,7 +74,11 @@ public class MouseShipGUIDrawable implements Drawable {
                 KeyStroke.getKeyStroke(KeyEvent.VK_8, KeyEvent.CTRL_DOWN_MASK, false));
         listOfInteractiveElements.add(brIconLeft);
 
-        miElement brIconLeftDown = new miElement("mi_barrelroll.png", ulX + cursorX, ulY + brIconLeft.image.getHeight() + cursorY + smallGapX,
+        miElement brIconLeftCenter = new miElement("mi_barrelroll.png", ulX+cursorX, ulY + brIconLeft.image.getHeight() + cursorY + smallGapX,
+                KeyStroke.getKeyStroke(KeyEvent.VK_R, KeyEvent.CTRL_DOWN_MASK, false));
+        listOfInteractiveElements.add(brIconLeftCenter);
+
+        miElement brIconLeftDown = new miElement("mi_barrelroll.png", ulX + cursorX, ulY + 2* brIconLeft.image.getHeight() + cursorY + 2* smallGapX,
                 KeyStroke.getKeyStroke(KeyEvent.VK_8, KeyEvent.CTRL_DOWN_MASK + KeyEvent.SHIFT_DOWN_MASK, false));
         listOfInteractiveElements.add(brIconLeftDown);
         cursorX += brIconLeft.image.getWidth() + smallGapX;
@@ -89,14 +93,28 @@ public class MouseShipGUIDrawable implements Drawable {
 
         miElement brIconRight = new miElement("mi_barrelroll.png", ulX + cursorX, ulY + cursorY,
                 KeyStroke.getKeyStroke(KeyEvent.VK_8, KeyEvent.ALT_DOWN_MASK, false));
-        miElement brIconRightDown = new miElement("mi_barrelroll.png", ulX + cursorX, ulY + cursorY + brIconRight.image.getHeight() + smallGapX,
+        miElement brIconRightCenter = new miElement("mi_barrelroll.png", ulX + cursorX, ulY + cursorY + brIconRight.image.getHeight() + smallGapX,
+                KeyStroke.getKeyStroke(KeyEvent.VK_R, KeyEvent.ALT_DOWN_MASK, false));
+        miElement brIconRightDown = new miElement("mi_barrelroll.png", ulX + cursorX, ulY + cursorY + 2*brIconRight.image.getHeight() + 2*smallGapX,
                 KeyStroke.getKeyStroke(KeyEvent.VK_8, KeyEvent.ALT_DOWN_MASK+ KeyEvent.SHIFT_DOWN_MASK, false));
         listOfInteractiveElements.add(brIconRight);
+        listOfInteractiveElements.add(brIconRightCenter);
         listOfInteractiveElements.add(brIconRightDown);
 
-        cursorX += brIconRight.image.getWidth() + padX;
+        cursorX += brIconRight.image.getWidth();
+
+        miElement addHull = new miElement("Token_Hull.png", ulX + cursorX+smallGapX, ulY+padY,
+                KeyStroke.getKeyStroke(KeyEvent.VK_H, KeyEvent.ALT_DOWN_MASK, false));
+        miElement removeHull = new miElement("Token_Hull.png", ulX + cursorX+smallGapX, ulY+padY+addHull.image.getHeight() + smallGapX,
+                KeyStroke.getKeyStroke(KeyEvent.VK_H, KeyEvent.ALT_DOWN_MASK + KeyEvent.CTRL_DOWN_MASK, false));
+        listOfInteractiveElements.add(addHull);
+        listOfInteractiveElements.add(removeHull);
+
+        cursorX += addHull.image.getWidth() + padX;
+
+
         if(shipGfx !=null && shipGfx.image!=null) cursorY += shipGfx.image.getHeight();
-        else cursorY += 2*brIconLeft.image.getHeight();
+        else cursorY += 3*brIconLeft.image.getHeight();
 
 
         totalWidth = cursorX + padX;
@@ -156,7 +174,7 @@ public class MouseShipGUIDrawable implements Drawable {
             });
             Rectangle rawR = elem.image.getData().getBounds();
             Shape s = af.createTransformedShape(rawR);
-            g2d.fillRect(s.getBounds().x, s.getBounds().y, s.getBounds().width, s.getBounds().height);
+            //g2d.fillRect(s.getBounds().x, s.getBounds().y, s.getBounds().width, s.getBounds().height);
         }
 
         /*  piece of code that can fetch the maneuver icons as seen on the dials

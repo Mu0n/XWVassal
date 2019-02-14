@@ -70,6 +70,8 @@ public class MouseShipGUI extends AbstractConfigurable {
             }
 
             public void mousePressed(MouseEvent e) {
+                if(!e.isControlDown()) return;
+
                 Collection<GamePiece> shipPieces = new ArrayList<GamePiece>();
                 GamePiece[] gpArray = theMap.getAllPieces();
                 // scan all game pieces, keep only the ones we're sure are ships
@@ -87,8 +89,14 @@ public class MouseShipGUI extends AbstractConfigurable {
                     for(GamePiece ship : shipPieces){
 
                         Shape theShape = getTransformedPieceShape(ship);
+                        Shape popupShape = new Rectangle(0,0,0,0);
+                                if(lastPopup !=null) {
+                                    //figure out the shape of the active popup and allows clicks in it
+                                    popupShape = new Rectangle(lastPopup.ulX, lastPopup.ulY, lastPopup.totalWidth, lastPopup.totalHeight);
+                                    popupShape = getTransformedShape(popupShape, ship);
+                                }
 
-                        if(theShape.contains(e.getX(),e.getY()))
+                        if(theShape.contains(e.getX(),e.getY()) || popupShape.contains(e.getX(), e.getY()))
                         {
                             if(activatedPiece != ship ){
                                 //gotta deactivate the last one before doing the new one
@@ -178,6 +186,21 @@ public class MouseShipGUI extends AbstractConfigurable {
         FreeRotator rotator = (FreeRotator) (Decorator.getDecorator(Decorator.getOutermost(piece), FreeRotator.class));
         double centerX = piece.getPosition().getX();
         double centerY = piece.getPosition().getY();
+        transformed = AffineTransform
+                .getRotateInstance(rotator.getAngleInRadians(), centerX, centerY)
+                .createTransformedShape(transformed);
+
+        return transformed;
+    }
+
+    private static Shape getTransformedShape(Shape rawShape, GamePiece sourcePiece) {
+        Shape transformed = AffineTransform
+                .getTranslateInstance(sourcePiece.getPosition().getX(), sourcePiece.getPosition().getY())
+                .createTransformedShape(rawShape);
+
+        FreeRotator rotator = (FreeRotator) (Decorator.getDecorator(Decorator.getOutermost(sourcePiece), FreeRotator.class));
+        double centerX = sourcePiece.getPosition().getX();
+        double centerY = sourcePiece.getPosition().getY();
         transformed = AffineTransform
                 .getRotateInstance(rotator.getAngleInRadians(), centerX, centerY)
                 .createTransformedShape(transformed);
