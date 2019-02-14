@@ -46,7 +46,8 @@ public class EscrowSquads extends AbstractConfigurable implements GameComponent 
                 "Step 3: the players then open the 'Escrow Squad' in their player window and click 'Set'<br>" +
                 "Step 4: When at least 2 players are 'Ready for Escrow', a player can click on the 'Spawn' button, all readied lists will spawn in their respective windows.<br>" +
                 "<br>"+
-                "IMPORTANT: both players must have an active connection in the game room for this whole process to work<br>"+
+                "IMPORTANT: both players must have a simultaneous active connection in the game room for this whole process to work<br>"+
+                "Do not send a squad to escrow before your opponent is present.<br>"+
                 "If someone joins late or loses connection, then 'Resend Own Squad' will help restore that person's escrow data.</body></html>");
 
         JButton gotItButton = new JButton("Got it!");
@@ -144,7 +145,8 @@ public class EscrowSquads extends AbstractConfigurable implements GameComponent 
             for(int i=1;i<=8;i++){
                 EscrowEntry ee = escrowEntries.get(i-1);
                 JLabel jl = escrowLabels.get(i-1);
-                jl.setText(ee.playerSide + " - " + ee.playerName + " - " + ee.xwsSquad + " - " + ee.source + (ee.isReady?" Ready for Escrow!":" Not ready for escrow."));
+                jl.setText(ee.playerSide + " - " + ee.playerName + " - " + (ee.xwsSquad==null?"(no squad entered)":"Verified Squad Present!")
+                        + " - " + ee.source + " || " + (ee.isReady?" READY for Escrow!":" NOT READY for escrow."));
             }
         }catch(Exception e){}
     }
@@ -260,9 +262,13 @@ public class EscrowSquads extends AbstractConfigurable implements GameComponent 
                 //turn readiness off
                 for(Integer j : spawningPlayers){
                     escrowEntries.get(j).isReady = false;
+                    BroadcastEscrowSquadCommand besq = new BroadcastEscrowSquadCommand(escrowEntries.get(j), escrowEntries.get(j).isReady);
+                    besq.execute();
+                    GameModule.getGameModule().sendAndLog(besq);
                 }
                 spawnButton.setEnabled(false);
                 revisitSpawnReadiness();
+                refreshEL();
             }
         });
         JButton clearButton = new JButton("Clear own Squad");
