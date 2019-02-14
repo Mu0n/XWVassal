@@ -246,17 +246,23 @@ public class EscrowSquads extends AbstractConfigurable implements GameComponent 
                 final XWS2Upgrades allUpgrades = XWS2Upgrades.loadFromLocal();
                 final List<XWS2Upgrades.Condition> allConditions = XWS2Upgrades.loadConditionsFromLocal();
 
-                int theSide = mic.Util.getCurrentPlayer().getSide();
+                List<Integer> spawningPlayers = Lists.newArrayList();
                 for(int i=0;i<8;i++){
-                    if(escrowEntries.get(i).playerSide.equals("Player " + theSide) && escrowEntries.get(i).xwsSquad !=null)
-                        AutoSquadSpawn2e.DealWithXWSList(escrowEntries.get(i).xwsSquad, theSide, allShips, allUpgrades, allConditions);
+                    if(escrowEntries.get(i).isReady && escrowEntries.get(i).xwsSquad !=null)
+                        AutoSquadSpawn2e.DealWithXWSList(escrowEntries.get(i).xwsSquad, i+1, allShips, allUpgrades, allConditions);
+                    spawningPlayers.add(i);
                 }
                 //After the lists spawn final, go into a final state:
                 //Make the labels simpler
                 //make the Set button inactive
                 //transform the players who just spawned's set button to a button that sends the XWS to sirjorj or another service
 
+                //turn readiness off
+                for(Integer j : spawningPlayers){
+                    escrowEntries.get(j).isReady = false;
+                }
                 spawnButton.setEnabled(false);
+                revisitSpawnReadiness();
             }
         });
         JButton clearButton = new JButton("Clear own Squad");
