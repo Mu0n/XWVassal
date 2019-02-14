@@ -43,8 +43,11 @@ public class EscrowSquads extends AbstractConfigurable implements GameComponent 
 
         JLabel instructions = new JLabel("<html><body>Step 1: each player goes to their respective player window and go into the 2nd edition Squad Spawn<br>"+
                 "Step 2: they enter a list and carefully hit the 'Send to Escrow' button instead of the 'Spawn Squad...' button.<br>"+
-                "Step 3: the players then open the Escrow Squad in their player window and select their opponent's player # and click 'Ready'<br>" +
-                "Step 4: When the last player to click on the 'Ready' button has done so and a match is found, both lists will spawn in their respective windows.<br></body></html>");
+                "Step 3: the players then open the 'Escrow Squad' in their player window and click 'Set'<br>" +
+                "Step 4: When at least 2 players are 'Ready for Escrow', a player can click on the 'Spawn' button, all readied lists will spawn in their respective windows.<br>" +
+                "<br>"+
+                "IMPORTANT: both players must have an active connection in the game room for this whole process to work<br>"+
+                "If someone joins late or loses connection, then 'Resend Own Squad' will help restore that person's escrow data.</body></html>");
 
         JButton gotItButton = new JButton("Got it!");
         gotItButton.addActionListener(new ActionListener() {
@@ -73,7 +76,7 @@ public class EscrowSquads extends AbstractConfigurable implements GameComponent 
         logToChat("ES line 67 number of Eentries " + escrowEntries.size());
         logToChat("ES line 67 number of Elabels " + escrowLabels.size());
         logToChat("ES line 67 inserting for playerSide:" + playerSide+":");
-        logToChat("ES line 67 sending xwslist " + verifiedXWSSquad.toString());
+        if(verifiedXWSSquad!=null) logToChat("ES line 67 sending xwslist " + verifiedXWSSquad.toString());
         logToChat("ES line 67 source "+ source);
         for(EscrowEntry ee : escrowEntries){
             logToChat("ES lines 69 checking out this side:" + ee.playerSide+":");
@@ -97,7 +100,10 @@ public class EscrowSquads extends AbstractConfigurable implements GameComponent 
         String thisName = mic.Util.getCurrentPlayer().getName();
         for(EscrowEntry ee : escrowEntries){
             if(ee.playerSide.equals(thisSide) && ee.playerName.equals(thisName)){ //found it!
-                ee.clearSquad();
+                EscrowEntry clearedEE = new EscrowEntry(ee.playerSide, ee.playerName, null, "", "", false);
+                BroadcastEscrowSquadCommand besq = new BroadcastEscrowSquadCommand(clearedEE, clearedEE.isReady);
+                besq.execute();
+                GameModule.getGameModule().sendAndLog(besq);
                 refreshEL();
             }
         }
@@ -425,13 +431,6 @@ public class EscrowSquads extends AbstractConfigurable implements GameComponent 
             source = reqSource;
             points = reqPoints;
             isReady = reqReady;
-        }
-
-        public void clearSquad(){
-            xwsSquad = null;
-            source="";
-            points="";
-            isReady = false;
         }
     }
 }
