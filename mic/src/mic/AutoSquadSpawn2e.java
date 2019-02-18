@@ -255,6 +255,7 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
                     logToChat("URL list has detected no pilots in it.");
                 }
                 DealWithXWSList(xwsList, playerIndex, allShips, allUpgrades, allConditions);
+                if(xwsList.getPoints()!=null && xwsList.getPoints()!=0) logToChat("The squad is " + xwsList.getPoints() + " points according to its source.");
                 frame.dispose();
             }
         });
@@ -328,6 +329,7 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
                     return;
                 }
                 DealWithXWSList(xwsList, playerIndex, allShips, allUpgrades, allConditions);
+                if(xwsList.getPoints()!=null && xwsList.getPoints()!=0) logToChat("The squad is " + xwsList.getPoints() + " points according to its source.");
                 frame.dispose();
             }
         });
