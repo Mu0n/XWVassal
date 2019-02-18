@@ -70,11 +70,12 @@ public class BroadcastEscrowSquadCommand extends Command {
                 2: pre-validated XWS string
                 3: source ("ffg", "yasb2", "internal", "xws")
                 4: squad points
-                5: module version
+                5: boolean to say if ready
+                6: module version
                  */
                 XWSList2e xwsList = (XWSList2e) deserializeBase64Obj(parts[2]);
                 Boolean readyDecoded = Boolean.parseBoolean(parts[5]);
-                EscrowSquads.EscrowEntry retEntry = new EscrowSquads.EscrowEntry(parts[0], parts[1], xwsList, parts[3], parts[4],readyDecoded, parts[5]);
+                EscrowSquads.EscrowEntry retEntry = new EscrowSquads.EscrowEntry(parts[0], parts[1], xwsList, parts[3], parts[4],readyDecoded, parts[6]);
                 return new BroadcastEscrowSquadCommand(retEntry, readyDecoded);
             }catch(Exception e){
                 logger.info("Error decoding BroadcastEscrowSquadCommand - exception error");
