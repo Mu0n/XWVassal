@@ -5,6 +5,7 @@ import VASSAL.build.AbstractConfigurable;
 import VASSAL.build.Buildable;
 import VASSAL.build.GameModule;
 import VASSAL.build.module.Map;
+import VASSAL.build.module.PlayerRoster;
 import VASSAL.build.module.documentation.HelpFile;
 import VASSAL.build.widget.PieceSlot;
 import VASSAL.command.Command;
@@ -803,8 +804,9 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
             // ======================================================
 
 
-            XWPlayerInfo owner  = getCurrentPlayer();
-            GamePiece dialPiece = GamePieceGenerator2e.generateDial(ship, owner, associatedShipID);
+            String ownerString = ""+playerIndex;
+
+            GamePiece dialPiece = GamePieceGenerator2e.generateDial(ship, ownerString, associatedShipID);
 
             int dialWidth = 0;
             try {

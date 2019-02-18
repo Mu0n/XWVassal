@@ -293,7 +293,7 @@ public class StemDial2e extends Decorator implements EditablePiece {
         List<String> newMoveList;
         String shipName;
         String faction = "";
-        int whoOwns = 0;
+        String whoOwns;
         String associatedShipID = "";
 
         DialGenerateCommand(String thisName, GamePiece piece, String thisFaction, List<XWS2Pilots> allShips) {
@@ -318,7 +318,7 @@ public class StemDial2e extends Decorator implements EditablePiece {
             this.piece = piece;
         }
 
-        DialGenerateCommand(List<String> aMoveList, String aShipName, GamePiece piece, String thisFaction, int owner, String targettingThisShipID) {
+        DialGenerateCommand(List<String> aMoveList, String aShipName, GamePiece piece, String thisFaction, String owner, String targettingThisShipID) {
             // more direcct approach where the move list and the ship name are dictated directly without a master list fetch
             faction = thisFaction;
             newMoveList = aMoveList;
@@ -329,7 +329,7 @@ public class StemDial2e extends Decorator implements EditablePiece {
             associatedShipID = targettingThisShipID;
         }
 
-        public int getOwner(){
+        public String getOwner(){
             return whoOwns;
         }
 
