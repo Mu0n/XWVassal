@@ -1,9 +1,11 @@
 package mic;
 
+import VASSAL.build.GameModule;
 import VASSAL.build.module.documentation.HelpFile;
 import VASSAL.command.Command;
 import VASSAL.command.CommandEncoder;
 import VASSAL.counters.*;
+import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableMap;
 import mic.ota.XWOTAUtils;
 import org.slf4j.Logger;
@@ -12,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -287,37 +290,53 @@ public class StemDial2e extends Decorator implements EditablePiece {
 
     //this is the command that takes a ship xws name, fetches the maneuver info and constructs the dial layer by layer
     public static class DialGenerateCommand extends Command {
+        String pieceId;
         GamePiece piece;
         static String xwsShipName = "";
-
         List<String> newMoveList;
         String shipName;
         String faction = "";
         String whoOwns;
         String associatedShipID = "";
 
-        DialGenerateCommand(String thisName, GamePiece piece, String thisFaction, List<XWS2Pilots> allShips) {
-
-            // fetch the maneuver array of arrays according to the xws name passed on from autospawn or other means
-            xwsShipName = thisName;
-            faction = thisFaction;
-            for(XWS2Pilots ship : allShips)
-            {
-                if(ship.getName().equals(thisName)) newMoveList = ship.getDial();
-                shipName = ship.getName();
+//this is the point of entry for encoding the info and sending it to someone else, some stuff that's not a String have to be re-found, such
+        // as the GamePiece object, the list of moves
+        DialGenerateCommand(String reqPieceId, String aShipName, String thisFaction, String owner, String targettingThisShipID) {
+            // hybrid approach, only send strings, strict minimum so anyone can receive this data and generate the dial on their own
+                            /* parts
+                0: shipXWSName
+                1: faction
+                2: who owns it (just the number of the player in string form from 1 to 8)
+                3: the unique UUID of the ship piece that's associated to it
+                 */
+            //fetch the unspecified-yet dial piece
+            pieceId = reqPieceId;
+            //find its GamePiece presence in the running module
+            Collection<GamePiece> allPieces = GameModule.getGameModule().getAllDescendantComponentsOf(GamePiece.class);
+            for(GamePiece gp : allPieces) {
+            if(gp.getId().equals(pieceId)) piece = gp;
             }
-            this.piece = piece;
+            //transfer over the xws name
+            xwsShipName = Canonicalizer.getCleanedName(aShipName);
+            //find the list of moves based on the xws name
+            List<XWS2Pilots> allShips = XWS2Pilots.loadFromLocal();
+            XWS2Pilots theShip = XWS2Pilots.getSpecificShipFromPilotXWS2(xwsShipName, allShips);
+            newMoveList = theShip.getDial();
 
-        }
-
-        DialGenerateCommand(List<String> aMoveList, String aShipName, GamePiece piece, String thisFaction) {
-            // more direcct approach where the move list and the ship name are dictated directly without a master list fetch
-            faction = thisFaction;
-            newMoveList = aMoveList;
+            //untreated ship name
             shipName = aShipName;
-            this.piece = piece;
+
+            //faction
+            faction = thisFaction;
+
+            //owner number in string format
+            whoOwns = owner;
+
+            //associated ship id
+            associatedShipID = targettingThisShipID;
         }
 
+        //this is the point of entry for the player who generates a dial
         DialGenerateCommand(List<String> aMoveList, String aShipName, GamePiece piece, String thisFaction, String owner, String targettingThisShipID) {
             // more direcct approach where the move list and the ship name are dictated directly without a master list fetch
             faction = thisFaction;
@@ -328,6 +347,8 @@ public class StemDial2e extends Decorator implements EditablePiece {
             xwsShipName = Canonicalizer.getCleanedName(shipName);
             associatedShipID = targettingThisShipID;
         }
+
+
 
         public String getOwner(){
             return whoOwns;
@@ -546,6 +567,7 @@ public class StemDial2e extends Decorator implements EditablePiece {
         public static class DialGeneratorEncoder implements CommandEncoder {
             private static final Logger logger = LoggerFactory.getLogger(StemDial2e.class);
             private static final String commandPrefix = "DialGeneratorEncoder=";
+            private static final String itemDelim = "\t";
 
             public static StemDial2e.DialGenerateCommand.DialGeneratorEncoder INSTANCE = new StemDial2e.DialGenerateCommand.DialGeneratorEncoder();
 
@@ -556,13 +578,20 @@ public class StemDial2e extends Decorator implements EditablePiece {
                 logger.info("Decoding DialGenerateCommand");
 
                 command = command.substring(commandPrefix.length());
+                String[] parts = command.split(itemDelim);
+                /* parts
+                0: pieceId of a stem dial piece not specified yet but generated and sent to everyone after it's made from a PieceSlot
+                1: shipXWSName
+                2: faction
+                3: who owns it (just the number of the player in string form from 1 to 8)
+                4: the unique UUID of the ship piece that's associated to it
+                 */
                 try {
-                    xwsShipName = command.toString();
+                    return new DialGenerateCommand(parts[0], parts[1], parts[2], parts[3], parts[4]);
                 } catch (Exception e) {
                     logger.error("Error decoding DialGenerateCommand", e);
                     return null;
                 }
-                return null;
             }
 
             public String encode(Command c) {
@@ -570,9 +599,9 @@ public class StemDial2e extends Decorator implements EditablePiece {
                     return null;
                 }
                 logger.info("Encoding DialGenerateCommand");
-                DialGenerateCommand dialGenCommand = (DialGenerateCommand) c;
+                DialGenerateCommand dgc = (DialGenerateCommand) c;
                 try {
-                    return commandPrefix + xwsShipName;
+                    return commandPrefix + Joiner.on(itemDelim).join(dgc.pieceId, dgc.xwsShipName, dgc.faction, dgc.whoOwns, dgc.associatedShipID);
                 } catch(Exception e) {
                     logger.error("Error encoding DialGenerateCommand", e);
                     return null;
