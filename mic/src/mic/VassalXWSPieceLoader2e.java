@@ -168,15 +168,16 @@ public class VassalXWSPieceLoader2e {
             }
             pieces.getShips().add(pilotPieces);
 
-            for (String xwsObstacleName : list.getObstacles()) {
-                Obstacles obstacle = Obstacles.forXwsName(xwsObstacleName);
-                if (!obstaclesPiecesMap.containsKey(obstacle)) {
-                    Util.logToChat("Unable to find vassal obstacle for xws obstacle '" + xwsObstacleName + "'");
-                    continue;
-                }
-                pieces.getObstacles().add(obstaclesPiecesMap.get(obstacle));
-            }
 
+
+        }
+        for (String xwsObstacleName : list.getObstacles()) {
+            Obstacles obstacle = Obstacles.forXwsName(xwsObstacleName);
+            if (!obstaclesPiecesMap.containsKey(obstacle)) {
+                Util.logToChat("Unable to find vassal obstacle for xws obstacle '" + xwsObstacleName + "'");
+                continue;
+            }
+            pieces.getObstacles().add(obstaclesPiecesMap.get(obstacle));
         }
         return pieces;
     }

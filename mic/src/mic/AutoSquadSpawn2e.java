@@ -993,6 +993,8 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
 
         int obstacleX = (int) dialstartPosition.getX() + totalDialsWidth - 30;
         int obstacleStartY = shipBaseY + 200;
+
+        logToChat("autospawn2e line 997 obstacles in the list nb: " + pieces.getObstaclesForDisplay().size());
         for (GamePiece obstacle : pieces.getObstaclesForDisplay()) {
             int halfSize = (int) (obstacle.boundingBox().getWidth() / 2.0);
             entireSpawnCommand.append(spawnPieceCommand(obstacle, new Point(obstacleX + halfSize, obstacleStartY), playerMap));
