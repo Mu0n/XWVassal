@@ -73,7 +73,7 @@ public class EscrowSquads extends AbstractConfigurable implements GameComponent 
 
     public static List<EscrowEntry> getEscrowEntries(){ return escrowEntries; }
 
-    public static void insertEntry(String playerSide, String playerName, XWSList2e verifiedXWSSquad, String source, String squadPoints, Boolean ready) {
+    public static void insertEntry(String playerSide, String playerName, XWSList2e verifiedXWSSquad, String source, String squadPoints, Boolean ready, String version) {
         for(EscrowEntry ee : escrowEntries){
             if(ee.playerSide.equals(playerSide)){ //found the entry, simply update the squad info, leave the side and name intact
                 ee.playerSide = playerSide;
@@ -82,6 +82,7 @@ public class EscrowSquads extends AbstractConfigurable implements GameComponent 
                 ee.source = source;
                 ee.points = squadPoints;
                 ee.isReady = ready;
+                ee.moduleVersion = version;
                 refreshEE();
                 refreshEL();
                 return;
@@ -94,7 +95,7 @@ public class EscrowSquads extends AbstractConfigurable implements GameComponent 
         String thisName = mic.Util.getCurrentPlayer().getName();
         for(EscrowEntry ee : escrowEntries){
             if(ee.playerSide.equals(thisSide) && ee.playerName.equals(thisName)){ //found it!
-                EscrowEntry clearedEE = new EscrowEntry(ee.playerSide, ee.playerName, null, "", "", false);
+                EscrowEntry clearedEE = new EscrowEntry(ee.playerSide, ee.playerName, null, "", "", false, "");
                 BroadcastEscrowSquadCommand besq = new BroadcastEscrowSquadCommand(clearedEE, clearedEE.isReady);
                 besq.execute();
                 GameModule.getGameModule().sendAndLog(besq);
@@ -127,7 +128,7 @@ public class EscrowSquads extends AbstractConfigurable implements GameComponent 
                     String detectedName = arrayOfPI[i-1].playerName;
                     nameToUse = detectedName;
                 }catch(Exception e){}
-                escrowEntries.add(new EscrowEntry("Player " + i, nameToUse, null, "", "", false));
+                escrowEntries.add(new EscrowEntry("Player " + i, nameToUse, null, "", "", false, ""));
             }
         }
     }
@@ -145,7 +146,9 @@ public class EscrowSquads extends AbstractConfigurable implements GameComponent 
             for(int i=1;i<=8;i++){
                 EscrowEntry ee = escrowEntries.get(i-1);
                 JLabel jl = escrowLabels.get(i-1);
-                jl.setText(ee.playerSide + " - " + ee.playerName + " - " + (ee.xwsSquad==null?"(no squad entered)":"Verified Squad Present!")
+                String versionString = " - ";
+                if(!ee.moduleVersion.equals("")) versionString = " - (v" + ee.moduleVersion + ") - ";
+                jl.setText(ee.playerSide + " - " + ee.playerName + versionString + (ee.xwsSquad==null?"(no squad entered)":"Verified Squad Present!")
                         + " - " + ee.source + " || " + (ee.isReady?" READY for Escrow!":" NOT READY for escrow."));
             }
         }catch(Exception e){}
@@ -161,6 +164,7 @@ public class EscrowSquads extends AbstractConfigurable implements GameComponent 
             try {
                 String detectedName = arrayOfPI[i].playerName;
                 String detectedSide = arrayOfPI[i].getSide();
+
                 String justSideNumberString = detectedSide.split("Player ")[1];
                 Integer justSideNumber = Integer.parseInt(justSideNumberString);
 
@@ -252,6 +256,7 @@ public class EscrowSquads extends AbstractConfigurable implements GameComponent 
                 for(int i=0;i<8;i++){
                     if(escrowEntries.get(i).isReady && escrowEntries.get(i).xwsSquad !=null)
                         AutoSquadSpawn2e.DealWithXWSList(escrowEntries.get(i).xwsSquad, i+1, allShips, allUpgrades, allConditions);
+                        if(!escrowEntries.get(i).points.equals("")) logToChat("The squad is " + escrowEntries.get(i).points + " points according to its source.");
                     spawningPlayers.add(i);
                 }
                 //After the lists spawn final, go into a final state:
@@ -414,14 +419,16 @@ public class EscrowSquads extends AbstractConfigurable implements GameComponent 
         String source="";
         String points="";
         Boolean isReady=false;
+        String moduleVersion="";
 
-        public EscrowEntry(String reqSide, String reqPlayerName, XWSList2e reqXWS, String reqSource, String reqPoints, Boolean reqReady){
+        public EscrowEntry(String reqSide, String reqPlayerName, XWSList2e reqXWS, String reqSource, String reqPoints, Boolean reqReady, String version){
             playerSide = reqSide;
             playerName = reqPlayerName;
             xwsSquad = reqXWS;
             source = reqSource;
             points = reqPoints;
             isReady = reqReady;
+            moduleVersion = version;
         }
     }
 }

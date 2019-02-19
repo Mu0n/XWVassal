@@ -232,6 +232,8 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
             KeyStroke checkForCommaReleased = KeyStroke.getKeyStroke(KeyEvent.VK_COMMA, 0, false);
             KeyStroke checkForPeriodReleased = KeyStroke.getKeyStroke(KeyEvent.VK_PERIOD, 0, false);
             KeyStroke checkForSuperCtrlRReleased = KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyEvent.CTRL_DOWN_MASK, false);
+            KeyStroke checkForC = KeyStroke.getKeyStroke(KeyEvent.VK_C, 0, false);
+
 
             boolean goingLeft = checkForCommaReleased.equals(stroke);
             boolean goingRight = checkForPeriodReleased.equals(stroke);
@@ -280,6 +282,26 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
 
                     result.execute();
                     return result;
+                }
+            }
+            else if(checkForC.equals(stroke)){ //collision resolution pass-through via the dial
+                String shipID = this.piece.getProperty("shipID").toString(); //gets the random UUID from the dial that was saved during spawning
+                Collection<GamePiece> pieces = GameModule.getGameModule().getGameState().getAllPieces();
+                Collection<GamePiece> piecesCopied = new ArrayList<GamePiece>(pieces);
+                for (final GamePiece pieceScanned : piecesCopied) {
+                    try{
+                        String micID = pieceScanned.getProperty("micID").toString();
+
+                        // logToChat("StemNuDial2e line 270 -ship=" +pieceScanned.getProperty("micID").toString());
+                        if (micID.equals(shipID) && pieceScanned.getMap().getMapName().equals("Contested Sector") && this.piece.getMap().getMapName().equals("Contested Sector")){
+                            Command doCCommand = pieceScanned.keyEvent(checkForC);
+                            doCCommand.execute();
+                            GameModule.getGameModule().sendAndLog(doCCommand);
+
+                        }
+                    }catch (Exception e){
+                        continue;
+                    }
                 }
             }
             else if(goingLeft || goingRight){ //rotate left, move-- or rotate right, move++
