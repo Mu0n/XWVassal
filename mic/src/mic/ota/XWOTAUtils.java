@@ -6,7 +6,9 @@ import VASSAL.tools.DataArchive;
 import VASSAL.tools.image.ImageUtils;
 import VASSAL.tools.io.FileArchive;
 import javafx.scene.chart.PieChart;
+import mic.Canonicalizer;
 import mic.Util;
+import mic.XWS2Pilots;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -28,6 +30,9 @@ public class XWOTAUtils {
 
     public static final String XWD2DATAFILE = "xwd2.zip";
     private static final String SHIP_BASE_ARC_IMAGE_PREFIX = "SBA_";
+    private static final String FRONT_ARC_XWD2_LABEL = "Front Arc";
+    private static final String AUX_ARC_XWD2_LABEL = "Rear Arc";
+    private static final String FULL_FRONT_ARC_XWD2_LABEL = "Full Front Arc";
 
     private static String[] actionOrder = {
             "cloak",
@@ -106,7 +111,7 @@ public class XWOTAUtils {
         return arcImagePrefixSB.toString();
     }
 
-    public static void buildBaseShipImage2e(String faction, String shipXWS, String size, String identifier, String shipImageName, ArchiveWriter writer)
+    public static void buildBaseShipImage2e(XWS2Pilots data, String faction, String shipXWS, String size, String identifier, String shipImageName, ArchiveWriter writer)
     {
         GameModule gameModule = GameModule.getGameModule();
         DataArchive dataArchive = gameModule.getDataArchive();
@@ -115,10 +120,9 @@ public class XWOTAUtils {
             BufferedImage newBaseImage = buildShipBase2e(size, dataArchive);
 
             //add the faction-decided arc color
-            String arcImageName = findArcImageName(size, faction);
-            newBaseImage = addShipToBaseShipImage2e(shipXWS, newBaseImage, dataArchive, arcImageName);
-            newBaseImage = addShipToBaseShipImage2e(shipXWS, newBaseImage, dataArchive, arcImageName);
-
+            String arcImageName = findArcImageName(data, size, faction);
+            if(arcImageName !=null) newBaseImage = addShipToBaseShipImage2e(shipXWS, newBaseImage, dataArchive, arcImageName);
+            if(arcImageName !=null) newBaseImage = addShipToBaseShipImage2e(shipXWS, newBaseImage, dataArchive, arcImageName);
 
             //add the ship gfx of the ship
             newBaseImage = addShipToBaseShipImage2e(shipXWS, newBaseImage, dataArchive, shipImageName);
@@ -133,11 +137,32 @@ public class XWOTAUtils {
 
     }
 
-    private static String findArcImageName(String size, String faction) {
+    private static String findArcImageName(XWS2Pilots data, String size, String faction) {
         String sb = "";
 
+        Boolean hasFrontArc = false;
+        Boolean hasAuxArc = false;
+        Boolean hasFullFrontArc = false;
+
+        List<XWS2Pilots.Stat2e> shipStats = data.getStats();
+        for(XWS2Pilots.Stat2e stat : shipStats){
+            try{
+                if(Canonicalizer.getCleanedName(stat.getArc()).equals(Canonicalizer.getCleanedName(FRONT_ARC_XWD2_LABEL))) hasFrontArc = true;
+                if(Canonicalizer.getCleanedName(stat.getArc()).equals(Canonicalizer.getCleanedName(AUX_ARC_XWD2_LABEL))) hasAuxArc = true;
+                if(Canonicalizer.getCleanedName(stat.getArc()).equals(Canonicalizer.getCleanedName(FULL_FRONT_ARC_XWD2_LABEL))) hasFullFrontArc = true;
+            }catch(Exception e){}
+        }
         if(faction.equals("separatistalliance")) faction="cis";
-        sb+=SHIP_BASE_ARC_IMAGE_PREFIX + faction + "_" + size + ".png";
+        sb+=SHIP_BASE_ARC_IMAGE_PREFIX + faction + "_" + size;
+        if(hasFullFrontArc) sb+="_FullFront";
+        else{
+            if(hasFrontArc) {
+                sb+= "_Front";
+                if(hasAuxArc) sb+="Rear";
+            }
+        }
+        sb+=".png";
+        if(!hasFrontArc && !hasAuxArc && !hasFullFrontArc) return null;
         return sb;
     }
 

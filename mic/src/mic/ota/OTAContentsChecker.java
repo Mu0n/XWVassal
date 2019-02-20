@@ -1158,7 +1158,7 @@ public class OTAContentsChecker extends AbstractConfigurable {
             //TODO implement huge ships this
             if(!shipData.getSize().equals("huge")) {
 
-                XWOTAUtils.buildBaseShipImage2e(shipBase.getFaction(), shipBase.getShipXws(),
+                XWOTAUtils.buildBaseShipImage2e(shipData, shipBase.getFaction(), shipBase.getShipXws(),
                         Canonicalizer.getCleanedName(shipData.getSize()),
                         shipBase.getIdentifier(),shipBase.getshipImageName(), writer);
                 needToSaveModule = true;
