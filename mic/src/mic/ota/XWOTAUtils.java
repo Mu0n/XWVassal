@@ -152,13 +152,11 @@ public class XWOTAUtils {
                 if(Canonicalizer.getCleanedName(stat.getArc()).equals(Canonicalizer.getCleanedName(FULL_FRONT_ARC_XWD2_LABEL))) hasFullFrontArc = true;
             }catch(Exception e){}
         }
-        if(faction.equals("separatistalliance")) faction="cis";
         sb+=SHIP_BASE_ARC_IMAGE_PREFIX + faction + "_" + size;
         if(hasFullFrontArc) sb+="_FullFront";
         else{
             if(hasFrontArc) {
-                sb+= "_Front";
-                if(hasAuxArc) sb+="Rear";
+                if(hasAuxArc) sb+="_Rear";
             }
         }
         sb+=".png";
