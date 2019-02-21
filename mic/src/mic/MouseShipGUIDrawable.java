@@ -83,9 +83,16 @@ public class MouseShipGUIDrawable implements Drawable {
         listOfInteractiveElements.add(brIconLeftDown);
         cursorX += brIconLeft.image.getWidth() + smallGapX;
 
-
         //add ship gfx, getShipImage deals with alt paint jobs and dual ships (just takes the first one it finds)
-        miElement shipGfx = new miElement(getShipImage(pilotShip, pilot),ulX+cursorX, ulY+cursorY, null);
+        int stateOfShipGfx = 0;
+        try{
+            int uLevel = Integer.parseInt(shipPiece.getProperty("ULevel").toString());
+            if(uLevel == 3 || uLevel == 4) stateOfShipGfx = 2;
+            if(uLevel == 1 || uLevel == 2) stateOfShipGfx = 1;
+        }catch(Exception e){
+
+        }
+        miElement shipGfx = new miElement(getShipImage(pilotShip, stateOfShipGfx),ulX+cursorX, ulY+cursorY, null);
         if(shipGfx!=null && shipGfx.image!=null) {
             listOfInteractiveElements.add(shipGfx);
             cursorX += shipGfx.image.getWidth() + smallGapX;
@@ -139,7 +146,7 @@ public class MouseShipGUIDrawable implements Drawable {
         totalHeight = cursorY + padY;
     }
 
-    private String getShipImage(XWS2Pilots pilotShip, XWS2Pilots.Pilot2e pilot) {
+    private String getShipImage(XWS2Pilots pilotShip, int dualState) {
 
         StringBuilder sb = new StringBuilder();
 
@@ -147,7 +154,8 @@ public class MouseShipGUIDrawable implements Drawable {
         sb.append(pilotShip.getCleanedName());
         if(pilotShip.hasDualBase()){
             sb.append("_");
-            sb.append(pilotShip.getBaseImage1Identifier());
+            if(dualState == 1) sb.append(pilotShip.getBaseImage1Identifier());
+            if(dualState == 2) sb.append(pilotShip.getBaseImage2Identifier());
         }
         sb.append(".png");
 
