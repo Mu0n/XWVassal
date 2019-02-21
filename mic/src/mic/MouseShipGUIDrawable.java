@@ -141,19 +141,17 @@ public class MouseShipGUIDrawable implements Drawable {
 
     private String getShipImage(XWS2Pilots pilotShip, XWS2Pilots.Pilot2e pilot) {
 
-        OTAMasterShips data = Util.loadRemoteJson(OTAContentsChecker.OTA_SHIPS_JSON_URL_2E, OTAMasterShips.class);
+        StringBuilder sb = new StringBuilder();
 
-        for(java.util.Map.Entry<String, OTAMasterShips.OTAShip> entry : data.getLoadedData(2).entrySet()){
-            if(pilotShip.hasDualBase()) {
-                if(entry.getValue().getXws().equals(pilotShip.getShipXWS())) return entry.getValue().getImage();
-            }
-
-            if(entry.getValue().getXws().equals(pilotShip.getShipXWS()) && entry.getValue().getIdentifier().equals(pilot.getXWS()))
-            {
-                return entry.getValue().getImage();
-            }
+        sb.append("S2e_");
+        sb.append(pilotShip.getCleanedName());
+        if(pilotShip.hasDualBase()){
+            sb.append("_");
+            sb.append(pilotShip.getBaseImage1Identifier());
         }
-        return "";
+        sb.append(".png");
+
+       return sb.toString();
     }
 
     public void draw(Graphics g, Map map) {
