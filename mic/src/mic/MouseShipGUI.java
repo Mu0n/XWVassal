@@ -8,12 +8,15 @@ import VASSAL.build.module.documentation.HelpFile;
 import VASSAL.command.Command;
 import VASSAL.counters.*;
 
+import javax.swing.*;
 import java.awt.*;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.geom.AffineTransform;
 import java.util.*;
 
+import static mic.Util.getCurrentPlayer;
 import static mic.Util.logToChat;
 
 /**
@@ -26,6 +29,7 @@ public class MouseShipGUI extends AbstractConfigurable {
     GamePiece activatedPiece; //ship piece whose popup is active
     MouseShipGUIDrawable lastPopup; //active popup drawable component with info on images, clickable areas, etc
     MouseListener ml;
+    Long DECAY_DELAY = 1000000000l;
 
     public String[] getAttributeNames() {
         return new String[0];
@@ -71,6 +75,21 @@ public class MouseShipGUI extends AbstractConfigurable {
 
             public void mousePressed(MouseEvent e) {
                 if(!e.isControlDown()) return;
+
+                mic.Util.XWPlayerInfo playerInfo = getCurrentPlayer();
+                VASSAL.build.module.Map playerMap = getPlayerMap(playerInfo.getSide());
+                GamePiece[] pieces = playerMap.getAllPieces();
+                String caughtTime ="";
+                GamePiece foundControllerPiece = null;
+                for(GamePiece p : pieces){
+                    if(p.getName().equals("clickChoiceController")) {
+                        caughtTime = p.getProperty("timeStampStart").toString();
+                        foundControllerPiece = p;
+                        break;
+                    }
+                }
+                if(System.nanoTime() < Long.parseLong(caughtTime) + DECAY_DELAY) return;
+
 
                 Collection<GamePiece> shipPieces = new ArrayList<GamePiece>();
                 GamePiece[] gpArray = theMap.getAllPieces();
@@ -141,6 +160,11 @@ public class MouseShipGUI extends AbstractConfigurable {
                                     logToChat("clickable x int= " +s.getBounds2D().getMinX() + " to " + s.getBounds2D().getMaxX() +
                                             " y int = "  +s.getBounds2D().getMinY() + " to " +s.getBounds2D().getMaxY());*/
                                     if(s.contains(e.getX(), e.getY())){
+
+                                        //Leave a nano time stamp in the player controller to restrict a step 2 of the mouse interface to activate too soon
+                                        foundControllerPiece.setProperty("timeStampStart", System.nanoTime()+"");
+
+                                        //send the appropriate command to the game piece
                                         Command moveShipCommand = activatedPiece.keyEvent(elem.associatedKeyStroke);
                                         moveShipCommand.execute();
                                         GameModule.getGameModule().sendAndLog(moveShipCommand);
@@ -176,7 +200,14 @@ public class MouseShipGUI extends AbstractConfigurable {
         };
         theMap.addLocalMouseListener(ml);
     }
-
+    private VASSAL.build.module.Map getPlayerMap(int playerIndex) {
+        for (VASSAL.build.module.Map loopMap : GameModule.getGameModule().getComponentsOf(VASSAL.build.module.Map.class)) {
+            if (("Player " + Integer.toString(playerIndex)).equals(loopMap.getMapName())) {
+                return loopMap;
+            }
+        }
+        return null;
+    }
     private static Shape getTransformedPieceShape(GamePiece piece) {
         Shape rawShape = piece.getShape();
         Shape transformed = AffineTransform

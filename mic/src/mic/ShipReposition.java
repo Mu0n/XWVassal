@@ -1107,14 +1107,10 @@ public class ShipReposition extends Decorator implements EditablePiece {
         for(GamePiece p : pieces){
             logToChat("piece " + p.getName());
             if(p.getName().equals("clickChoiceController")) {
-
                 Command stopIt = p.keyEvent(KeyStroke.getKeyStroke(KeyEvent.VK_O, KeyEvent.CTRL_DOWN_MASK, false));
-                stopIt.append(logToChatCommand("found it!"));
-
                 stopIt.execute();
                 GameModule.getGameModule().sendAndLog(stopIt);
             }
-
         }
     }
 
