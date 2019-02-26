@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<VASSAL.launch.BasicModule VassalVersion="3.2.17" description="" name="Star Wars X-Wing Miniatures Game" nextPieceSlotId="13063" version="8.4.1">
+<VASSAL.launch.BasicModule VassalVersion="3.2.17" description="" name="Star Wars X-Wing Miniatures Game" nextPieceSlotId="13064" version="8.4.1">
     <mic.XWCounterFactory/>
     <VASSAL.build.module.Documentation>
         <VASSAL.build.module.documentation.AboutScreen fileName="Splash.PNG" title="About Module"/>
@@ -938,7 +938,6 @@
         <VASSAL.build.module.map.CounterDetailViewer borderWidth="0" counterReportFormat="" delay="700" display="from all layers" emptyHexReportForma="$LocationName$" fgColor="0,0,0" fontSize="9" graphicsZoom="1.0" hotkey="32,130" layerList="" minDisplayPieces="2" propertyFilter="" showDeck="true" showMoveSelectde="true" showNoStack="true" showNonMovable="true" showgraph="true" showgraphsingle="false" showtext="false" showtextsingle="false" summaryReportFormat="$LocationName$" unrotatePieces="true" version="2" zoomlevel="1.0"/>
         <VASSAL.build.module.map.SetupStack name="Std Dam Counter" owningBoard="Player 1" useGridLocation="false" x="89" y="210">
             <VASSAL.build.widget.PieceSlot entryName="" gpid="3124" height="0" width="0">+/null/restrict;;false;true	label;;Change Label;28;;0,0,0;t;0;c;0;b;c;$pieceName$ ($label$);Dialog;1;0;TextLabel;\	piece;;;;/	$Player 1 Std Damage Deck Tray_numPieces$ \/ 33\	null;0;0;3124</VASSAL.build.widget.PieceSlot>
-            <VASSAL.build.widget.PieceSlot entryName="clickChoiceController" gpid="13062" height="0" width="0">+/null/setprop;clickChoice;false,0,100,false;:65\,130:P\,true,:79\,130:P\,false;;Current Zone\/Current Map\/Module;	piece;;;;clickChoiceController/	null;0;0;</VASSAL.build.widget.PieceSlot>
         </VASSAL.build.module.map.SetupStack>
         <VASSAL.build.module.map.SetupStack name="Huge 1 Fore Counter" owningBoard="Player 1" useGridLocation="false" x="229" y="-210">
             <VASSAL.build.widget.PieceSlot entryName="F1cnt" gpid="3125" height="0" width="0">+/null/restrict;;false;true	label;;Change Label;28;;0,0,0;t;0;c;0;b;c;$pieceName$ ($label$);Dialog;1;0;TextLabel;\	piece;;;;F1cnt/	$P1 Huge Ship 1 Fore Deck Tray_numPieces$ \/ 10\	null;0;0;3125</VASSAL.build.widget.PieceSlot>
@@ -957,6 +956,9 @@
         </VASSAL.build.module.map.SetupStack>
         <VASSAL.build.module.map.SetupStack name="Huge 3 Aft Counter" owningBoard="Player 1" useGridLocation="false" x="879" y="-210">
             <VASSAL.build.widget.PieceSlot entryName="A3cnt" gpid="3471" height="0" width="0">+/null/restrict;;false;true	label;;Change Label;28;;0,0,0;t;0;c;0;b;c;$pieceName$ ($label$);Dialog;1;0;TextLabel;\	piece;;;;A3cnt/	$P1 Huge Ship 3 Aft Deck Tray_numPieces$ \/ 10\	null;0;0;3471</VASSAL.build.widget.PieceSlot>
+        </VASSAL.build.module.map.SetupStack>
+        <VASSAL.build.module.map.SetupStack name="controller" owningBoard="Player 1" useGridLocation="false" x="0" y="0">
+            <VASSAL.build.widget.PieceSlot entryName="clickChoiceController" gpid="13062" height="0" width="0">+/null/setprop;clickChoice;false,0,100,false;:65\,130:P\,true,:79\,130:P\,false;;Current Zone\/Current Map\/Module;	piece;;;;clickChoiceController/	null;0;0;13062</VASSAL.build.widget.PieceSlot>
         </VASSAL.build.module.map.SetupStack>
     </VASSAL.build.module.PlayerHand>
     <VASSAL.build.module.PlayerHand allowMultiple="false" backgroundcolor="153,153,153" buttonName="" changeFormat="" color="204,0,0" createFormat="" edgeHeight="0" edgeWidth="0" hotkey="" icon="P2.png" launch="true" mapName="Player 2" markMoved="Never" markUnmovedIcon="/images/unmoved.gif" markUnmovedText="" markUnmovedTooltip="Mark all pieces on this map as not moved" moveKey="" moveToFormat="" moveWithinFormat="" side="Solitaire,Player 2" thickness="1" visible="true">
