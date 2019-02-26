@@ -1092,17 +1092,34 @@ public class ShipReposition extends Decorator implements EditablePiece {
     private void stopTripleChoiceMakeNextReady() {
         mic.Util.XWPlayerInfo playerInfo = getCurrentPlayer();
         VASSAL.build.module.Map playerMap = getPlayerMap(playerInfo.getSide());
-        playerMap.setAttribute("clickChoice","false");
-        logToChat("making it false");
-        logToChat("proof" + playerMap.getProperty("clickChoice").toString());
+        GamePiece[] pieces = playerMap.getAllPieces();
+        for(GamePiece p : pieces){
+            logToChat("piece " + p.getName());
+            if(p.getName().equals("clickChoiceController")) {
+
+                Command stopIt = p.keyEvent(KeyStroke.getKeyStroke(KeyEvent.VK_O, KeyEvent.CTRL_DOWN_MASK, false));
+                stopIt.append(logToChatCommand("found it!"));
+
+                stopIt.execute();
+                GameModule.getGameModule().sendAndLog(stopIt);
+            }
+
+        }
     }
 
     private void startTripleChoiceStopNewOnes() {
         mic.Util.XWPlayerInfo playerInfo = getCurrentPlayer();
         VASSAL.build.module.Map playerMap = getPlayerMap(playerInfo.getSide());
-        playerMap.setAttribute("clickChoice","true");
-        logToChat("making it true");
-        logToChat("proof" + playerMap.getProperty("clickChoice").toString());
+        GamePiece[] pieces = playerMap.getAllPieces();
+        for(GamePiece p : pieces){
+            if(p.getName().equals("clickChoiceController")){
+                Command startIt = p.keyEvent(KeyStroke.getKeyStroke(KeyEvent.VK_A, KeyEvent.CTRL_DOWN_MASK, false));
+                startIt.append(logToChatCommand("Stopping the barrel roll choices"));
+
+                startIt.execute();
+                GameModule.getGameModule().sendAndLog(startIt);
+            }
+        }
     }
 
     private VASSAL.build.module.Map getPlayerMap(int playerIndex) {
