@@ -958,7 +958,7 @@
             <VASSAL.build.widget.PieceSlot entryName="A3cnt" gpid="3471" height="0" width="0">+/null/restrict;;false;true	label;;Change Label;28;;0,0,0;t;0;c;0;b;c;$pieceName$ ($label$);Dialog;1;0;TextLabel;\	piece;;;;A3cnt/	$P1 Huge Ship 3 Aft Deck Tray_numPieces$ \/ 10\	null;0;0;3471</VASSAL.build.widget.PieceSlot>
         </VASSAL.build.module.map.SetupStack>
         <VASSAL.build.module.map.SetupStack name="controller" owningBoard="Player 1" useGridLocation="false" x="0" y="0">
-            <VASSAL.build.widget.PieceSlot entryName="clickChoiceController" gpid="13062" height="0" width="0">+/null/setprop;clickChoice;false,0,100,false;:65\,130:P\,true,:79\,130:P\,false;;Current Zone\/Current Map\/Module;	piece;;;;clickChoiceController/	null;0;0;13062</VASSAL.build.widget.PieceSlot>
+            <VASSAL.build.widget.PieceSlot entryName="clickChoiceController" gpid="13062" height="0" width="0">+/null/PROP;timeStampStart;false,0,100,false;	setprop;clickChoice;false,0,100,false;:65\,130:P\,true,:79\,130:P\,false;;Current Zone\/Current Map\/Module;\	piece;;;;clickChoiceController/0	\	null;0;0;13062</VASSAL.build.widget.PieceSlot>
         </VASSAL.build.module.map.SetupStack>
     </VASSAL.build.module.PlayerHand>
     <VASSAL.build.module.PlayerHand allowMultiple="false" backgroundcolor="153,153,153" buttonName="" changeFormat="" color="204,0,0" createFormat="" edgeHeight="0" edgeWidth="0" hotkey="" icon="P2.png" launch="true" mapName="Player 2" markMoved="Never" markUnmovedIcon="/images/unmoved.gif" markUnmovedText="" markUnmovedTooltip="Mark all pieces on this map as not moved" moveKey="" moveToFormat="" moveWithinFormat="" side="Solitaire,Player 2" thickness="1" visible="true">
