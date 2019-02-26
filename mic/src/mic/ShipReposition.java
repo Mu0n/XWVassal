@@ -633,7 +633,7 @@ public class ShipReposition extends Decorator implements EditablePiece {
                     if(theChosenOne != null){
                         //TODO move the ship according to the choice or send shortcut, I dunno
                         removeVisuals(finalMap);
-                        dealingWithClickChoicesDuringReposition = false;
+                        stopTripleChoiceMakeNextReady();
                         logToChat("YOU CHOSE TO BARREL ROLL FOOL");
                         closeMouseListener(finalMap, ml);
                     }
@@ -643,7 +643,7 @@ public class ShipReposition extends Decorator implements EditablePiece {
                 if(slightMisclick) return;
                 else{ //was not in any dot, any ship area, close the whole thing down
                     removeVisuals(finalMap);
-                    dealingWithClickChoicesDuringReposition = false;
+                    stopTripleChoiceMakeNextReady();
                     logToChat("ATTEMPT TO BR");
                     closeMouseListener(finalMap, ml);
                     return;
@@ -1038,11 +1038,13 @@ public class ShipReposition extends Decorator implements EditablePiece {
             // offer an out of this to cancel the visuals and the mouselistener checking for clicks
             //resume the resolution of a BR or DC and if an illegal position is chosen, spawn the template that was used for it
 
+
+
             if((repoShip.equals(RepoManeuver.BR1_Left_2E) ||
                     repoShip.equals(RepoManeuver.BR1_Left_AFAP_2E) ||
                             (repoShip.equals(RepoManeuver.BR1_Left_ABAP_2E)
-                    )&& dealingWithClickChoicesDuringReposition==false)){
-                dealingWithClickChoicesDuringReposition=true;
+                    )&& isATripleChoiceAllowed())){
+                startTripleChoiceStopNewOnes();
                 logToChatCommand("Offering 3 choices for barrel roll left");
                 final VASSAL.build.module.Map theMap = MouseShipGUI.getTheMainMap();
 
@@ -1078,6 +1080,39 @@ public class ShipReposition extends Decorator implements EditablePiece {
         return piece.keyEvent(stroke);
     }
 
+    private boolean isATripleChoiceAllowed() {
+        mic.Util.XWPlayerInfo playerInfo = getCurrentPlayer();
+        VASSAL.build.module.Map playerMap = getPlayerMap(playerInfo.getSide());
+        Boolean ret = Boolean.parseBoolean(playerMap.getProperty("clickChoice").toString());
+        logToChat("checking clickChoice: " + playerMap.getProperty("clickChoice").toString());
+        if(ret) return false;
+        else return true;
+    }
+
+    private void stopTripleChoiceMakeNextReady() {
+        mic.Util.XWPlayerInfo playerInfo = getCurrentPlayer();
+        VASSAL.build.module.Map playerMap = getPlayerMap(playerInfo.getSide());
+        playerMap.setAttribute("clickChoice","false");
+        logToChat("making it false");
+        logToChat("proof" + playerMap.getProperty("clickChoice").toString());
+    }
+
+    private void startTripleChoiceStopNewOnes() {
+        mic.Util.XWPlayerInfo playerInfo = getCurrentPlayer();
+        VASSAL.build.module.Map playerMap = getPlayerMap(playerInfo.getSide());
+        playerMap.setAttribute("clickChoice","true");
+        logToChat("making it true");
+        logToChat("proof" + playerMap.getProperty("clickChoice").toString());
+    }
+
+    private VASSAL.build.module.Map getPlayerMap(int playerIndex) {
+        for (VASSAL.build.module.Map loopMap : GameModule.getGameModule().getComponentsOf(VASSAL.build.module.Map.class)) {
+            if (("Player " + Integer.toString(playerIndex)).equals(loopMap.getMapName())) {
+                return loopMap;
+            }
+        }
+        return null;
+    }
 
     private List<BumpableWithShape> findCollidingEntities(Shape myTestShape, List<BumpableWithShape> otherShapes) {
         List<BumpableWithShape> shapes = Lists.newLinkedList();
