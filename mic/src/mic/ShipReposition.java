@@ -528,7 +528,6 @@ public class ShipReposition extends Decorator implements EditablePiece {
             double off1y_s = repoTemplate.getShipY();
             double off1y_s_dot = off1y_s + wideningFudgeFactorBetweenDots * size * 0.666f * DOT_FUDGE;
 
-            logToChatCommand("ship localy " + off1y_s + " doty " + off1y_s_dot);
             //STEP 7: rotate the offset1 dependant within the spawner's local coordinates
             double off1x_rot_s = rotX(off1x_s, off1y_s, sAngle);
             double off1y_rot_s = rotY(off1x_s, off1y_s, sAngle);
@@ -1040,12 +1039,14 @@ public class ShipReposition extends Decorator implements EditablePiece {
 
 
 
-            if((repoShip.equals(RepoManeuver.BR1_Left_2E) ||
+            if((
+                    repoShip.equals(RepoManeuver.BR1_Left_2E) ||
                     repoShip.equals(RepoManeuver.BR1_Left_AFAP_2E) ||
-                            (repoShip.equals(RepoManeuver.BR1_Left_ABAP_2E)
-                    )&& isATripleChoiceAllowed())){
+                    repoShip.equals(RepoManeuver.BR1_Left_ABAP_2E)
+                )
+                                    && isATripleChoiceAllowed()){
                 startTripleChoiceStopNewOnes();
-                logToChatCommand("Offering 3 choices for barrel roll left");
+                logToChat("Offering 3 choices for barrel roll left");
                 final VASSAL.build.module.Map theMap = MouseShipGUI.getTheMainMap();
 
                 List<RepoManeuver> barrelLeft = Lists.newArrayList( RepoManeuver.BR1_Left_AFAP_2E, RepoManeuver.BR1_Left_2E, RepoManeuver.BR1_Left_ABAP_2E);
@@ -1097,7 +1098,7 @@ public class ShipReposition extends Decorator implements EditablePiece {
             logToChat("piece " + p.getName());
             if(p.getName().equals("clickChoiceController")) {
 
-                Command stopIt = p.keyEvent(KeyStroke.getKeyStroke(KeyEvent.VK_O, KeyEvent.CTRL_DOWN_MASK, false));
+                Command stopIt = p.keyEvent(KeyStroke.getKeyStroke(KeyEvent.VK_A, KeyEvent.CTRL_DOWN_MASK, false));
                 stopIt.append(logToChatCommand("found it!"));
 
                 stopIt.execute();
@@ -1108,11 +1109,13 @@ public class ShipReposition extends Decorator implements EditablePiece {
     }
 
     private void startTripleChoiceStopNewOnes() {
+        logToChat("start Triple Choice sequence");
         mic.Util.XWPlayerInfo playerInfo = getCurrentPlayer();
         VASSAL.build.module.Map playerMap = getPlayerMap(playerInfo.getSide());
         GamePiece[] pieces = playerMap.getAllPieces();
         for(GamePiece p : pieces){
             if(p.getName().equals("clickChoiceController")){
+                logToChat("start: found controller");
                 Command startIt = p.keyEvent(KeyStroke.getKeyStroke(KeyEvent.VK_A, KeyEvent.CTRL_DOWN_MASK, false));
                 startIt.append(logToChatCommand("Stopping the barrel roll choices"));
 
