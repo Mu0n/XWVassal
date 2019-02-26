@@ -17,6 +17,7 @@ import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
 import java.awt.font.FontRenderContext;
 import java.awt.font.TextAttribute;
 import java.awt.font.TextLayout;
@@ -56,6 +57,7 @@ public class MouseShipGUIDrawable implements Drawable {
     int totalHeight;
     Collection<miElement> listOfInteractiveElements = Lists.newArrayList();
     double scale;
+    public MouseEvent summoningEvent;
 
     public MouseShipGUIDrawable(GamePiece shipPiece, Map map, XWS2Pilots pilotShip, XWS2Pilots.Pilot2e pilot){
         _shipPiece = shipPiece;
@@ -71,15 +73,15 @@ public class MouseShipGUIDrawable implements Drawable {
 
         //Barrel Roll test
         miElement brIconLeft = new miElement("mi_barrelroll.png", ulX + cursorX, ulY + cursorY,
-                KeyStroke.getKeyStroke(KeyEvent.VK_8, KeyEvent.CTRL_DOWN_MASK, false));
+                KeyStroke.getKeyStroke(KeyEvent.VK_R,KeyEvent.CTRL_DOWN_MASK+ KeyEvent.SHIFT_DOWN_MASK+KeyEvent.ALT_DOWN_MASK, false));
         listOfInteractiveElements.add(brIconLeft);
 
         miElement brIconLeftCenter = new miElement("mi_barrelroll.png", ulX+cursorX, ulY + brIconLeft.image.getHeight() + cursorY + smallGapX,
-                KeyStroke.getKeyStroke(KeyEvent.VK_R, KeyEvent.CTRL_DOWN_MASK, false));
+                KeyStroke.getKeyStroke(KeyEvent.VK_R, KeyEvent.CTRL_DOWN_MASK+ KeyEvent.SHIFT_DOWN_MASK+KeyEvent.ALT_DOWN_MASK, false));
         listOfInteractiveElements.add(brIconLeftCenter);
 
         miElement brIconLeftDown = new miElement("mi_barrelroll.png", ulX + cursorX, ulY + 2* brIconLeft.image.getHeight() + cursorY + 2* smallGapX,
-                KeyStroke.getKeyStroke(KeyEvent.VK_8, KeyEvent.CTRL_DOWN_MASK + KeyEvent.SHIFT_DOWN_MASK, false));
+                KeyStroke.getKeyStroke(KeyEvent.VK_R, KeyEvent.CTRL_DOWN_MASK+ KeyEvent.SHIFT_DOWN_MASK+KeyEvent.ALT_DOWN_MASK, false));
         listOfInteractiveElements.add(brIconLeftDown);
         cursorX += brIconLeft.image.getWidth() + smallGapX;
 

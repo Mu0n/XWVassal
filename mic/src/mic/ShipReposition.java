@@ -27,6 +27,7 @@ import java.awt.geom.Ellipse2D;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import static mic.Util.*;
 import static mic.Util.getBumpableCompareShape;
@@ -85,6 +86,8 @@ enum RepoManeuver {
     BR1_Left_AFAP_2E("BR Left as Forward as Possible", "524", -90.0f, -113.0f, 0.0f, 0.0f, -226.0f, -28.25f),
     BR1_Left_2E("BR Left", "524", -90.0f, -113.0f, 0.0f, 0.0f, -226.0f, 0.0f),
     BR1_Left_ABAP_2E("BR Left as Backward as Possible", "524", -90.0f, -113.0f, 0.0f, 0.0f, -226.0f, 28.25f),
+
+    BR1_Left_TripleChoices("","", 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
 
     BR1_Right_AFAP_2E("BR Right as Forward as Possible", "524", -90.0f, 113.0f, 0.0f, 0.0f, 226.0f, -28.25f),
     BR1_Right_2E("BR Right", "524", -90.0f, 113.0f, 0.0f, 0.0f, 226.0f, 0.0f),
@@ -243,6 +246,7 @@ public class ShipReposition extends Decorator implements EditablePiece {
             .put("CTRL 8", RepoManeuver.BR1_Left_AFAP_2E)
             .put("CTRL R", RepoManeuver.BR1_Left_2E)
             .put("CTRL SHIFT 8", RepoManeuver.BR1_Left_ABAP_2E)
+            .put("ALT CTRL SHIFT R", RepoManeuver.BR1_Left_TripleChoices)
             .put("ALT 8", RepoManeuver.BR1_Right_AFAP_2E)
             .put("ALT R", RepoManeuver.BR1_Right_2E)
             .put("ALT SHIFT 8", RepoManeuver.BR1_Right_ABAP_2E)
@@ -268,6 +272,13 @@ public class ShipReposition extends Decorator implements EditablePiece {
             .put("ALT 9", "Right Straight Decloak as Forward as Possible")
             .put("K", "Right Straight Decloak, centered")
             .put("ALT SHIFT 9", "Right Straight Decloak as Backward as Possible")
+            .build();
+
+    //Get back a Keystroke object
+    private static Map<RepoManeuver, KeyStroke> repoShipToKeyStroke_2e = ImmutableMap.<RepoManeuver, KeyStroke>builder()
+            .put(RepoManeuver.BR1_Left_AFAP_2E, KeyStroke.getKeyStroke(KeyEvent.VK_8,KeyEvent.CTRL_DOWN_MASK, false))
+            .put(RepoManeuver.BR1_Left_2E, KeyStroke.getKeyStroke(KeyEvent.VK_R,KeyEvent.CTRL_DOWN_MASK, false))
+            .put(RepoManeuver.BR1_Left_ABAP_2E, KeyStroke.getKeyStroke(KeyEvent.VK_8,KeyEvent.CTRL_DOWN_MASK + KeyEvent.SHIFT_DOWN_MASK, false))
             .build();
 
 
@@ -453,7 +464,7 @@ public class ShipReposition extends Decorator implements EditablePiece {
         removeVisuals(theMap);
 
         int wideningFudgeFactorBetweenDots = -1; //will go from -1 to 0 to 1 in the following loop
-        for(RepoManeuver repoTemplate : repoTemplates){
+        for(RepoManeuver repoTemplate : repoTemplates) {
 //Prep step, check if it's a medium ship, and only deal with regular barrel rolls, because it's all they can do anyway, rerouting to the correct RepoManeuver
             repoTemplate = swapToRepoManeuverIfMedOrLarge(repoTemplate, size, is2pointOh);
 
@@ -467,7 +478,7 @@ public class ShipReposition extends Decorator implements EditablePiece {
             double sAngle = this.getRotator().getAngle(); //ship angle
 
             //STEP 2: rotate the reposition template with both angles
-            FreeRotator fR = (FreeRotator)Decorator.getDecorator(piece, FreeRotator.class);
+            FreeRotator fR = (FreeRotator) Decorator.getDecorator(piece, FreeRotator.class);
             fR.setAngle(sAngle - tAngle);
 
             //Info Gathering: Offset 1, put to the side of the ship, local coords, adjusting for large base if it is found
@@ -485,11 +496,11 @@ public class ShipReposition extends Decorator implements EditablePiece {
 
             //STEP 4: translation into place
             shapeForOverlap = AffineTransform.
-                    getTranslateInstance((int)off1x_rot + (int)off2x, (int)off1y_rot + (int)off2y).
+                    getTranslateInstance((int) off1x_rot + (int) off2x, (int) off1y_rot + (int) off2y).
                     createTransformedShape(shapeForOverlap);
             double roundedAngle = convertAngleToGameLimits(sAngle - tAngle);
             shapeForOverlap = AffineTransform
-                    .getRotateInstance(Math.toRadians(-roundedAngle), (int)off1x_rot + (int)off2x, (int)off1y_rot + (int)off2y)
+                    .getRotateInstance(Math.toRadians(-roundedAngle), (int) off1x_rot + (int) off2x, (int) off1y_rot + (int) off2y)
                     .createTransformedShape(shapeForOverlap);
 
             //STEP 5: Check for overlap with an obstacle, if so, spawn it so the player sees it
@@ -497,7 +508,7 @@ public class ShipReposition extends Decorator implements EditablePiece {
 
             List<BumpableWithShape> obstacles = getBumpablesOnMap(false);
 
-            if(shapeForOverlap != null) {
+            if (shapeForOverlap != null) {
                 List<BumpableWithShape> overlappingObstacles = findCollidingEntities(shapeForOverlap, obstacles);
                 if (overlappingObstacles.size() > 0) {
                     for (BumpableWithShape bws : overlappingObstacles) {
@@ -516,8 +527,8 @@ public class ShipReposition extends Decorator implements EditablePiece {
             //Shape shapeForOverlap2 = getCopyOfShapeWithoutActionsForOverlapCheck(this.piece,repoTemplate );
             Shape shapeForOverlap2 = Decorator.getDecorator(Decorator.getOutermost(this), NonRectangular.class).getShape();
 
-            float diam = DOT_DIAMETER + (size-1) * DOT_FUDGE * 0.666f;
-            Shape dot = new Ellipse2D.Float(-diam/2, -diam/2, diam, diam);
+            float diam = DOT_DIAMETER + (size - 1) * DOT_FUDGE * 0.666f;
+            Shape dot = new Ellipse2D.Float(-diam / 2, -diam / 2, diam, diam);
 
             //Info Gathering: gets the angle from RepoManeuver which deals with degrees, local space with ship at 0,0, pointing up
             double tAngle2;
@@ -537,18 +548,18 @@ public class ShipReposition extends Decorator implements EditablePiece {
 
             //STEP 8: translation into place
             shapeForOverlap2 = AffineTransform.
-                    getTranslateInstance((int)off1x_rot_s + (int)off2x, (int)off1y_rot_s + (int)off2y).
+                    getTranslateInstance((int) off1x_rot_s + (int) off2x, (int) off1y_rot_s + (int) off2y).
                     createTransformedShape(shapeForOverlap2);
             double roundedAngle2 = convertAngleToGameLimits(tAngle2);
             shapeForOverlap2 = AffineTransform
-                    .getRotateInstance(Math.toRadians(-roundedAngle2), (int)off1x_rot_s + (int)off2x, (int)off1y_rot_s + (int)off2y)
+                    .getRotateInstance(Math.toRadians(-roundedAngle2), (int) off1x_rot_s + (int) off2x, (int) off1y_rot_s + (int) off2y)
                     .createTransformedShape(shapeForOverlap2);
 
             dot = AffineTransform.
-                    getTranslateInstance((int)off1x_rot_s_dot + (int)off2x, (int)off1y_rot_s_dot + (int)off2y).
+                    getTranslateInstance((int) off1x_rot_s_dot + (int) off2x, (int) off1y_rot_s_dot + (int) off2y).
                     createTransformedShape(dot);
             dot = AffineTransform
-                    .getRotateInstance(Math.toRadians(-roundedAngle2), (int)off1x_rot_s_dot + (int)off2x, (int)off1y_rot_s_dot + (int)off2y)
+                    .getRotateInstance(Math.toRadians(-roundedAngle2), (int) off1x_rot_s_dot + (int) off2x, (int) off1y_rot_s_dot + (int) off2y)
                     .createTransformedShape(dot);
 
             //STEP 9: Check for overlap with obstacles and ships with the final ship position
@@ -556,13 +567,12 @@ public class ShipReposition extends Decorator implements EditablePiece {
             boolean wantOverlapColor = false;
 
             String yourShipName = getShipStringForReports(true, this.getProperty("Pilot Name").toString(), this.getProperty("Craft ID #").toString());
-            if(shapeForOverlap2 != null){
+            if (shapeForOverlap2 != null) {
 
                 List<BumpableWithShape> overlappingShipOrObstacles = findCollidingEntities(shapeForOverlap2, shipsOrObstacles);
 
-                if(overlappingShipOrObstacles.size() > 0) {
-                    for(BumpableWithShape bws : overlappingShipOrObstacles)
-                    {
+                if (overlappingShipOrObstacles.size() > 0) {
+                    for (BumpableWithShape bws : overlappingShipOrObstacles) {
                         //TODO add repositionthing in red
                         wantOverlapColor = true;
 
@@ -576,10 +586,10 @@ public class ShipReposition extends Decorator implements EditablePiece {
 
             // STEP 9.5: Check for movement out of bounds
             boolean outsideCheck = checkIfOutOfBounds(yourShipName, shapeForOverlap2);
-            if(outsideCheck) wantOverlapColor = true;
+            if (outsideCheck) wantOverlapColor = true;
 
             //STEP 10: optional if there's any kind of overlap, produce both the template and initial ship position
-            if(spawnTemplate == true) {
+            if (spawnTemplate == true) {
                 //the template is needed, in case of any kind of overlap
                 //if(bigCommand !=null) bigCommand.append(getMap().placeOrMerge(piece, new Point((int)off1x_rot + (int)off2x, (int)off1y_rot + (int)off2y)));
                 //else bigCommand = getMap().placeOrMerge(piece, new Point((int)off1x_rot + (int)off2x, (int)off1y_rot + (int)off2y));
@@ -589,13 +599,9 @@ public class ShipReposition extends Decorator implements EditablePiece {
             }
             //STEP 11: reposition the ship
             //Add visuals according to the selection of repositioning
-            repositionChoiceVisual rpc = new repositionChoiceVisual(shapeForOverlap2, dot, wantOverlapColor);
+
+            repositionChoiceVisual rpc = new repositionChoiceVisual(shapeForOverlap2, dot, wantOverlapColor,repoShipToKeyStroke_2e.get(repoTemplate));
             rpcList.add(rpc);
-
-
-            //if(bigCommand != null) bigCommand.append(getMap().placeOrMerge(Decorator.getOutermost(this), new Point((int)off1x_rot_s + (int)off2x, (int)off1y_rot_s + (int)off2y)));
-            //else bigCommand = getMap().placeOrMerge(Decorator.getOutermost(this), new Point((int)off1x_rot_s + (int)off2x, (int)off1y_rot_s + (int)off2y));
-            //check if the templates is needed as well, in case of any kind of overlap
 
             //return bigCommand;
             wideningFudgeFactorBetweenDots++;
@@ -605,11 +611,11 @@ public class ShipReposition extends Decorator implements EditablePiece {
         for(repositionChoiceVisual r : rpcList){
             theMap.addDrawComponent(r);
         }
-        logToChatCommand("end of 3 choices. rpc list count" + rpcList.size());
         final VASSAL.build.module.Map finalMap = theMap;
         ml = new MouseListener() {
             int i=0;
             public void mouseClicked(MouseEvent e) {
+                if(e.isControlDown()) return;
 
                 List<repositionChoiceVisual> copiedList = Lists.newArrayList();
                 for(repositionChoiceVisual r : rpcList){
@@ -633,7 +639,9 @@ public class ShipReposition extends Decorator implements EditablePiece {
                         //TODO move the ship according to the choice or send shortcut, I dunno
                         removeVisuals(finalMap);
                         stopTripleChoiceMakeNextReady();
-                        logToChat("YOU CHOSE TO BARREL ROLL FOOL");
+                        Command doKey = piece.keyEvent(theChosenOne.getKeyStroke());
+                        doKey.execute();
+                        GameModule.getGameModule().sendAndLog(doKey);
                         closeMouseListener(finalMap, ml);
                     }
                 }catch(Exception exce){
@@ -643,7 +651,7 @@ public class ShipReposition extends Decorator implements EditablePiece {
                 else{ //was not in any dot, any ship area, close the whole thing down
                     removeVisuals(finalMap);
                     stopTripleChoiceMakeNextReady();
-                    logToChat("ATTEMPT TO BR");
+                    logToChat("Cancel the barrel roll");
                     closeMouseListener(finalMap, ml);
                     return;
                 }
@@ -676,6 +684,14 @@ public class ShipReposition extends Decorator implements EditablePiece {
         };
         theMap.addLocalMouseListenerFirst(ml);
     }
+
+    public static String getKeyStrokeFromRepoManeuver(RepoManeuver rp){
+        for (Map.Entry<String, RepoManeuver> entry : keyStrokeToRepositionShip_2e.entrySet()) {
+            if (entry.getValue()==rp) return entry.getKey();
+        }
+        return null;
+    }
+
 
     private Command repositionTheShip(RepoManeuver repoTemplate, boolean is2pointOh) {
         //Getting into this function, repoShip is associated with the template used to reposition the ship. We also need the non-mapped final ship tentative position
@@ -969,6 +985,7 @@ public class ShipReposition extends Decorator implements EditablePiece {
     @Override
     public Command keyEvent(KeyStroke stroke) {
 
+
         Boolean hasSomethingHappened  = false;
 
         //Test for 2.0 ship
@@ -1037,14 +1054,7 @@ public class ShipReposition extends Decorator implements EditablePiece {
             // offer an out of this to cancel the visuals and the mouselistener checking for clicks
             //resume the resolution of a BR or DC and if an illegal position is chosen, spawn the template that was used for it
 
-
-
-            if((
-                    repoShip.equals(RepoManeuver.BR1_Left_2E) ||
-                    repoShip.equals(RepoManeuver.BR1_Left_AFAP_2E) ||
-                    repoShip.equals(RepoManeuver.BR1_Left_ABAP_2E)
-                )
-                                    && isATripleChoiceAllowed()){
+            if(repoShip.equals(RepoManeuver.BR1_Left_TripleChoices) && isATripleChoiceAllowed()){
                 startTripleChoiceStopNewOnes();
                 logToChat("Offering 3 choices for barrel roll left");
                 final VASSAL.build.module.Map theMap = MouseShipGUI.getTheMainMap();
@@ -1052,7 +1062,7 @@ public class ShipReposition extends Decorator implements EditablePiece {
                 List<RepoManeuver> barrelLeft = Lists.newArrayList( RepoManeuver.BR1_Left_AFAP_2E, RepoManeuver.BR1_Left_2E, RepoManeuver.BR1_Left_ABAP_2E);
                 offerTripleChoices(barrelLeft, true, theMap);
                 return null;
-        }
+            }
 
             //detect that the ship's final position overlaps a ship or obstacle
             Command repoCommand = repositionTheShip(repoShip, is2pointohShip);
@@ -1098,7 +1108,7 @@ public class ShipReposition extends Decorator implements EditablePiece {
             logToChat("piece " + p.getName());
             if(p.getName().equals("clickChoiceController")) {
 
-                Command stopIt = p.keyEvent(KeyStroke.getKeyStroke(KeyEvent.VK_A, KeyEvent.CTRL_DOWN_MASK, false));
+                Command stopIt = p.keyEvent(KeyStroke.getKeyStroke(KeyEvent.VK_O, KeyEvent.CTRL_DOWN_MASK, false));
                 stopIt.append(logToChatCommand("found it!"));
 
                 stopIt.execute();
@@ -1115,7 +1125,6 @@ public class ShipReposition extends Decorator implements EditablePiece {
         GamePiece[] pieces = playerMap.getAllPieces();
         for(GamePiece p : pieces){
             if(p.getName().equals("clickChoiceController")){
-                logToChat("start: found controller");
                 Command startIt = p.keyEvent(KeyStroke.getKeyStroke(KeyEvent.VK_A, KeyEvent.CTRL_DOWN_MASK, false));
                 startIt.append(logToChatCommand("Stopping the barrel roll choices"));
 
@@ -1333,11 +1342,13 @@ public class ShipReposition extends Decorator implements EditablePiece {
         Color mouseOverColor = new Color(255,255,130);
         Color dotOverlappedColor = new Color(255,0,0);
         boolean isOverlapped = false;
+        KeyStroke theKey;
 
-        public repositionChoiceVisual(Shape translatedRotatedScaledShape, Shape centralDot, boolean wantOverlapColor){
+        public repositionChoiceVisual(Shape translatedRotatedScaledShape, Shape centralDot, boolean wantOverlapColor, KeyStroke wantKey){
             thePieceShape = translatedRotatedScaledShape;
             theDot = centralDot;
             isOverlapped = wantOverlapColor;
+            theKey = wantKey;
         }
 
         public void setMouseOvered(){
@@ -1364,6 +1375,10 @@ public class ShipReposition extends Decorator implements EditablePiece {
 
         public boolean drawAboveCounters() {
             return false;
+        }
+
+        public KeyStroke getKeyStroke() {
+            return theKey;
         }
     }
 /*
