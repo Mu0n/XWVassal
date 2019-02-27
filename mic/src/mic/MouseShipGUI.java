@@ -7,6 +7,7 @@ import VASSAL.build.module.Map;
 import VASSAL.build.module.documentation.HelpFile;
 import VASSAL.command.Command;
 import VASSAL.counters.*;
+import VASSAL.counters.Stack;
 
 import javax.swing.*;
 import java.awt.*;
@@ -15,9 +16,11 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.geom.AffineTransform;
 import java.util.*;
+import java.util.List;
 
 import static mic.Util.getCurrentPlayer;
 import static mic.Util.logToChat;
+import static mic.Util.logToChatWithoutUndo;
 
 /**
  * Created by Mic on 09/08/2017.
@@ -29,7 +32,7 @@ public class MouseShipGUI extends AbstractConfigurable {
     GamePiece activatedPiece; //ship piece whose popup is active
     MouseShipGUIDrawable lastPopup; //active popup drawable component with info on images, clickable areas, etc
     MouseListener ml;
-    Long DECAY_DELAY = 1000000000l;
+    static Long DECAY_DELAY = 1000000000l;
 
     public String[] getAttributeNames() {
         return new String[0];
@@ -66,6 +69,50 @@ public class MouseShipGUI extends AbstractConfigurable {
         return new Class[0];
     }
 
+
+    public static boolean canAClickBeProcessed(int side){
+        VASSAL.build.module.Map playerMap = getPlayerMap(side);
+        logToChat("side " + side);
+        GamePiece[] gpieces = playerMap.getAllPieces();
+        logToChat("number of pieces " + gpieces.length);
+        for(GamePiece g : gpieces){
+            if(g.getName().equals("clickChoiceController")){
+                Stack cStack = (Stack)g;
+                Iterator<GamePiece> gIt = cStack.getPiecesIterator();
+                String caughtTime = "";
+                while(gIt.hasNext()){
+                    try{
+                        caughtTime = gIt.next().getProperty("timeStampStart").toString();
+                        break;
+                    }catch(Exception e){
+                    }
+                }
+                if(caughtTime.equals("")) {
+                    g.setProperty("timeStampStart", Long.toString(System.nanoTime()));
+                    return true; //stamp wasn't populated yet, so it's first click, good to process
+                }
+                else {
+                    Long currentTime = System.nanoTime();
+                    if(currentTime > Long.parseLong(caughtTime) + DECAY_DELAY) return true; //enough time has elapsed, good to process
+                    else return false; //not enough time has elapsed
+                }
+            }
+        }
+        return false; //can't find the piece
+    }
+
+    public void leaveATimeStamp(int side){
+        VASSAL.build.module.Map playerMap = getPlayerMap(side);
+        List<GamePiece> gpieces = playerMap.getAllDescendantComponentsOf(GamePiece.class);
+        logToChat("number of pieces " + gpieces.size());
+        for(GamePiece g : gpieces){
+            if(g.getName().equals("clickChoiceController")){
+                g.setProperty("timeStampStart", Long.toString(System.nanoTime()));
+                return;
+            }
+        }
+    }
+
     public void addTo(Buildable parent) {
         final Map theMap = getTheMainMap();
         ml = new MouseListener() {
@@ -74,22 +121,12 @@ public class MouseShipGUI extends AbstractConfigurable {
             }
 
             public void mousePressed(MouseEvent e) {
+                //Restrict to control-clicks. May get removed in the future
                 if(!e.isControlDown()) return;
-
+                //Process only clicks that have enough elapsed time since the last click (the barrel roll GUI must have this as well)
+                logToChat(Long.toString(System.nanoTime()));
                 mic.Util.XWPlayerInfo playerInfo = getCurrentPlayer();
-                VASSAL.build.module.Map playerMap = getPlayerMap(playerInfo.getSide());
-                GamePiece[] pieces = playerMap.getAllPieces();
-                String caughtTime ="";
-                GamePiece foundControllerPiece = null;
-                for(GamePiece p : pieces){
-                    if(p.getName().equals("clickChoiceController")) {
-                        caughtTime = p.getProperty("timeStampStart").toString();
-                        foundControllerPiece = p;
-                        break;
-                    }
-                }
-                if(System.nanoTime() < Long.parseLong(caughtTime) + DECAY_DELAY) return;
-
+                if(canAClickBeProcessed(playerInfo.getSide())==false) return;
 
                 Collection<GamePiece> shipPieces = new ArrayList<GamePiece>();
                 GamePiece[] gpArray = theMap.getAllPieces();
@@ -162,7 +199,7 @@ public class MouseShipGUI extends AbstractConfigurable {
                                     if(s.contains(e.getX(), e.getY())){
 
                                         //Leave a nano time stamp in the player controller to restrict a step 2 of the mouse interface to activate too soon
-                                        foundControllerPiece.setProperty("timeStampStart", System.nanoTime()+"");
+                                        leaveATimeStamp(playerInfo.getSide());
 
                                         //send the appropriate command to the game piece
                                         Command moveShipCommand = activatedPiece.keyEvent(elem.associatedKeyStroke);
@@ -200,7 +237,7 @@ public class MouseShipGUI extends AbstractConfigurable {
         };
         theMap.addLocalMouseListener(ml);
     }
-    private VASSAL.build.module.Map getPlayerMap(int playerIndex) {
+    private static VASSAL.build.module.Map getPlayerMap(int playerIndex) {
         for (VASSAL.build.module.Map loopMap : GameModule.getGameModule().getComponentsOf(VASSAL.build.module.Map.class)) {
             if (("Player " + Integer.toString(playerIndex)).equals(loopMap.getMapName())) {
                 return loopMap;

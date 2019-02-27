@@ -27,8 +27,6 @@ import java.awt.geom.Ellipse2D;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
-
 import static mic.Util.*;
 import static mic.Util.getBumpableCompareShape;
 
@@ -611,6 +609,7 @@ public class ShipReposition extends Decorator implements EditablePiece {
         for(repositionChoiceVisual r : rpcList){
             theMap.addDrawComponent(r);
         }
+        final GamePiece shipToReposition = this.piece;
         final VASSAL.build.module.Map finalMap = theMap;
         ml = new MouseListener() {
             int i=0;
@@ -638,14 +637,14 @@ public class ShipReposition extends Decorator implements EditablePiece {
                     if(theChosenOne != null){
                         //TODO move the ship according to the choice or send shortcut, I dunno
                         removeVisuals(finalMap);
-                        stopTripleChoiceMakeNextReady();
-                        Command doKey = piece.keyEvent(theChosenOne.getKeyStroke());
-                        doKey.execute();
-                        GameModule.getGameModule().sendAndLog(doKey);
+                        Command endIt = stopTripleChoiceMakeNextReady();
+                        endIt.append(shipToReposition.keyEvent(theChosenOne.getKeyStroke()));
+                        endIt.execute();
+                        GameModule.getGameModule().sendAndLog(endIt);
                         closeMouseListener(finalMap, ml);
                     }
                 }catch(Exception exce){
-
+                    logToChat("caught an exception while resolving ship reposition");
                 }
                 if(slightMisclick) return;
                 else{ //was not in any dot, any ship area, close the whole thing down
@@ -1055,8 +1054,10 @@ public class ShipReposition extends Decorator implements EditablePiece {
             //resume the resolution of a BR or DC and if an illegal position is chosen, spawn the template that was used for it
 
             if(repoShip.equals(RepoManeuver.BR1_Left_TripleChoices) && isATripleChoiceAllowed()){
-                startTripleChoiceStopNewOnes();
-                logToChat("Offering 3 choices for barrel roll left");
+                Command startIt = startTripleChoiceStopNewOnes();
+                startIt.append(logToChatCommand("Offering 3 choices for barrel roll left"));
+                startIt.execute();
+                GameModule.getGameModule().sendAndLog(startIt);
                 final VASSAL.build.module.Map theMap = MouseShipGUI.getTheMainMap();
 
                 List<RepoManeuver> barrelLeft = Lists.newArrayList( RepoManeuver.BR1_Left_AFAP_2E, RepoManeuver.BR1_Left_2E, RepoManeuver.BR1_Left_ABAP_2E);
@@ -1095,39 +1096,36 @@ public class ShipReposition extends Decorator implements EditablePiece {
         mic.Util.XWPlayerInfo playerInfo = getCurrentPlayer();
         VASSAL.build.module.Map playerMap = getPlayerMap(playerInfo.getSide());
         Boolean ret = Boolean.parseBoolean(playerMap.getProperty("clickChoice").toString());
-        logToChat("checking clickChoice: " + playerMap.getProperty("clickChoice").toString());
         if(ret) return false;
         else return true;
     }
 
-    private void stopTripleChoiceMakeNextReady() {
+    private Command stopTripleChoiceMakeNextReady() {
+        Command result = null;
         mic.Util.XWPlayerInfo playerInfo = getCurrentPlayer();
         VASSAL.build.module.Map playerMap = getPlayerMap(playerInfo.getSide());
         GamePiece[] pieces = playerMap.getAllPieces();
         for(GamePiece p : pieces){
-            logToChat("piece " + p.getName());
             if(p.getName().equals("clickChoiceController")) {
-                Command stopIt = p.keyEvent(KeyStroke.getKeyStroke(KeyEvent.VK_O, KeyEvent.CTRL_DOWN_MASK, false));
-                stopIt.execute();
-                GameModule.getGameModule().sendAndLog(stopIt);
+                result = p.keyEvent(KeyStroke.getKeyStroke(KeyEvent.VK_O, KeyEvent.CTRL_DOWN_MASK, false));
+                return result;
             }
         }
+        return result;
     }
 
-    private void startTripleChoiceStopNewOnes() {
-        logToChat("start Triple Choice sequence");
+    private Command startTripleChoiceStopNewOnes() {
+        Command result = null;
         mic.Util.XWPlayerInfo playerInfo = getCurrentPlayer();
         VASSAL.build.module.Map playerMap = getPlayerMap(playerInfo.getSide());
         GamePiece[] pieces = playerMap.getAllPieces();
         for(GamePiece p : pieces){
             if(p.getName().equals("clickChoiceController")){
-                Command startIt = p.keyEvent(KeyStroke.getKeyStroke(KeyEvent.VK_A, KeyEvent.CTRL_DOWN_MASK, false));
-                startIt.append(logToChatCommand("Stopping the barrel roll choices"));
-
-                startIt.execute();
-                GameModule.getGameModule().sendAndLog(startIt);
+                result = p.keyEvent(KeyStroke.getKeyStroke(KeyEvent.VK_A, KeyEvent.CTRL_DOWN_MASK, false));
+                return result;
             }
         }
+        return result;
     }
 
     private VASSAL.build.module.Map getPlayerMap(int playerIndex) {
