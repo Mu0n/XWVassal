@@ -497,12 +497,13 @@ public class ShipReposition extends Decorator implements EditablePiece {
             double tAngle2;
             tAngle2 = repoTemplate.getShipAngle(); //repo maneuver's angle
 
-            //Info Gathering: Offset 1, put to the side of the ship, local coords, adjusting for large base if it is found
+            //Info Gathering: Offset 1, put to the side of the ship, local coords, get the final coords of the ship (and its dot)
             double off1x_s = repoTemplate.getShipX();
             double off1y_s = repoTemplate.getShipY();
             double off1y_s_dot = off1y_s + wideningFudgeFactorBetweenDots * size * 0.666f * DOT_FUDGE;
 
             //STEP 7: rotate the offset1 dependant within the spawner's local coordinates
+            //TODO gotta account for template additional forcing angle here; don't use only sAngle
             double off1x_rot_s = rotX(off1x_s, off1y_s, sAngle);
             double off1y_rot_s = rotY(off1x_s, off1y_s, sAngle);
 
@@ -510,27 +511,27 @@ public class ShipReposition extends Decorator implements EditablePiece {
             double off1y_rot_s_dot = rotY(off1x_s, off1y_s_dot, sAngle);
 
 
-            double roundedAngle = convertAngleToGameLimits(sAngle-tAngle);
-            shapeForOverlap2 = AffineTransform
-                    .getRotateInstance(Math.toRadians(-roundedAngle), 0,0)
-                    .createTransformedShape(shapeForOverlap2);
+            double roundedAngle = convertAngleToGameLimits(sAngle-tAngle2);
+            double roundedAngle2 = convertAngleToGameLimits(tAngle2);
+
+
             //STEP 8: translation into place
             shapeForOverlap2 = AffineTransform.
                     getTranslateInstance((int) off1x_rot_s + (int) off2x, (int) off1y_rot_s + (int) off2y).
                     createTransformedShape(shapeForOverlap2);
-            double roundedAngle2 = convertAngleToGameLimits(tAngle2);
+            shapeForOverlap2 = AffineTransform
+                    .getRotateInstance(Math.toRadians(-roundedAngle), (int) off1x_rot_s + (int) off2x,(int) off1y_rot_s + (int) off2y)
+                    .createTransformedShape(shapeForOverlap2);
 
+/*
             shapeForOverlap2 = AffineTransform
                     .getRotateInstance(Math.toRadians(-roundedAngle2), (int) off1x_rot_s + (int) off2x, (int) off1y_rot_s + (int) off2y)
                     .createTransformedShape(shapeForOverlap2);
 
-
+*/
             dot = AffineTransform.
                     getTranslateInstance((int) off1x_rot_s_dot + (int) off2x, (int) off1y_rot_s_dot + (int) off2y).
                     createTransformedShape(dot);
-            dot = AffineTransform
-                    .getRotateInstance(Math.toRadians(-roundedAngle2), (int) off1x_rot_s_dot + (int) off2x, (int) off1y_rot_s_dot + (int) off2y)
-                    .createTransformedShape(dot);
 
             //STEP 9: Check for overlap with obstacles and ships with the final ship position
             List<BumpableWithShape> shipsOrObstacles = getBumpablesOnMap(true);
@@ -555,7 +556,7 @@ public class ShipReposition extends Decorator implements EditablePiece {
             }
 
             // STEP 9.5: Check for movement out of bounds
-            boolean outsideCheck = checkIfOutOfBounds(yourShipName, shapeForOverlap2);
+            boolean outsideCheck = checkIfOutOfBounds(yourShipName, shapeForOverlap2, false);
             if (outsideCheck) wantOverlapColor = true;
 
             //STEP 10: optional if there's any kind of overlap, produce both the template and initial ship position
@@ -882,7 +883,7 @@ public class ShipReposition extends Decorator implements EditablePiece {
         }
 
         // STEP 9.5: Check for movement out of bounds
-        checkIfOutOfBounds(yourShipName, shapeForOverlap2);
+        checkIfOutOfBounds(yourShipName, shapeForOverlap2, true);
 
         //STEP 10: optional if there's any kind of overlap, produce both the template and initial ship position
         if(spawnTemplate == true) {
@@ -901,7 +902,7 @@ public class ShipReposition extends Decorator implements EditablePiece {
         return bigCommand;
     }
 
-    private boolean checkIfOutOfBounds(String yourShipName, Shape shapeForOutOfBounds) {
+    private boolean checkIfOutOfBounds(String yourShipName, Shape shapeForOutOfBounds, boolean andSayIt) {
         Rectangle mapArea = new Rectangle(0,0,0,0);
         try{
             Board b = getMap().getBoards().iterator().next();
@@ -919,7 +920,7 @@ public class ShipReposition extends Decorator implements EditablePiece {
                 shapeForOutOfBounds.getBounds().getY() < mapArea.getBounds().getY()) // too far to the top
         {
 
-            logToChatWithTime("* -- " + yourShipName + " flew out of bounds");
+            if(andSayIt) logToChatWithTime("* -- " + yourShipName + " flew out of bounds");
             this.previousCollisionVisualization.add(shapeForOutOfBounds);
             return true;
         }
