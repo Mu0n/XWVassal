@@ -98,6 +98,9 @@ enum RepoManeuver {
     BR2_Right_AFAP_2E("BR2 Right as Forward as Possible", "525", -90.0f, 169.5f, 0.0f, 0.0f, 339.0f, -28.25f),
     BR2_Right_2E("BR2 Right", "525", -90.0f, 169.5f, 0.0f, 0.0f, 339.0f, 0.0f),
     BR2_Right_ABAP_2E("BR2 Right as Backward as Possible", "525", -90.0f, 169.5f, 0.0f, 0.0f, 339.0f, 28.25f),
+
+    BR1_Right_TripleChoices("BR Right", "524", 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
+
     //medium normal BR
     BR1_Left_AFAP_Medium_2E("BR Left as Forward as Possible", "524", 0.0f, -113.75f, 0.0f, 0.0f, -227.5f, -56.5f),
     BR1_Left_Medium_2E("BR Left", "524", 0.0f, -113.75f, 0.0f, 0.0f, -227.5f, 0.0f),
@@ -248,6 +251,7 @@ public class ShipReposition extends Decorator implements EditablePiece {
             .put("ALT 8", RepoManeuver.BR1_Right_AFAP_2E)
             .put("ALT R", RepoManeuver.BR1_Right_2E)
             .put("ALT SHIFT 8", RepoManeuver.BR1_Right_ABAP_2E)
+            .put("ALT CTRL SHIFT O", RepoManeuver.BR1_Right_TripleChoices)
             .put("CTRL 9", RepoManeuver.BR2_Left_AFAP_2E)
             .put("J", RepoManeuver.BR2_Left_2E)
             .put("CTRL SHIFT 9", RepoManeuver.BR2_Left_ABAP_2E)
@@ -277,6 +281,22 @@ public class ShipReposition extends Decorator implements EditablePiece {
             .put(RepoManeuver.BR1_Left_AFAP_2E, KeyStroke.getKeyStroke(KeyEvent.VK_8,KeyEvent.CTRL_DOWN_MASK, false))
             .put(RepoManeuver.BR1_Left_2E, KeyStroke.getKeyStroke(KeyEvent.VK_R,KeyEvent.CTRL_DOWN_MASK, false))
             .put(RepoManeuver.BR1_Left_ABAP_2E, KeyStroke.getKeyStroke(KeyEvent.VK_8,KeyEvent.CTRL_DOWN_MASK + KeyEvent.SHIFT_DOWN_MASK, false))
+            .put(RepoManeuver.BR1_Left_AFAP_Medium_2E, KeyStroke.getKeyStroke(KeyEvent.VK_8,KeyEvent.CTRL_DOWN_MASK, false))
+            .put(RepoManeuver.BR1_Left_Medium_2E, KeyStroke.getKeyStroke(KeyEvent.VK_R,KeyEvent.CTRL_DOWN_MASK, false))
+            .put(RepoManeuver.BR1_Left_ABAP_Medium_2E, KeyStroke.getKeyStroke(KeyEvent.VK_8,KeyEvent.CTRL_DOWN_MASK + KeyEvent.SHIFT_DOWN_MASK, false))
+            .put(RepoManeuver.BR1_Left_AFAP_Large_2E, KeyStroke.getKeyStroke(KeyEvent.VK_8,KeyEvent.CTRL_DOWN_MASK, false))
+            .put(RepoManeuver.BR1_Left_Large_2E, KeyStroke.getKeyStroke(KeyEvent.VK_R,KeyEvent.CTRL_DOWN_MASK, false))
+            .put(RepoManeuver.BR1_Left_ABAP_Large_2E, KeyStroke.getKeyStroke(KeyEvent.VK_8,KeyEvent.CTRL_DOWN_MASK + KeyEvent.SHIFT_DOWN_MASK, false))
+
+            .put(RepoManeuver.BR1_Right_AFAP_2E, KeyStroke.getKeyStroke(KeyEvent.VK_8,KeyEvent.ALT_DOWN_MASK, false))
+            .put(RepoManeuver.BR1_Right_2E, KeyStroke.getKeyStroke(KeyEvent.VK_R,KeyEvent.ALT_DOWN_MASK, false))
+            .put(RepoManeuver.BR1_Right_ABAP_2E, KeyStroke.getKeyStroke(KeyEvent.VK_8,KeyEvent.ALT_DOWN_MASK + KeyEvent.SHIFT_DOWN_MASK, false))
+            .put(RepoManeuver.BR1_Right_AFAP_Medium_2E, KeyStroke.getKeyStroke(KeyEvent.VK_8,KeyEvent.ALT_DOWN_MASK, false))
+            .put(RepoManeuver.BR1_Right_Medium_2E, KeyStroke.getKeyStroke(KeyEvent.VK_R,KeyEvent.ALT_DOWN_MASK, false))
+            .put(RepoManeuver.BR1_Right_ABAP_Medium_2E, KeyStroke.getKeyStroke(KeyEvent.VK_8,KeyEvent.ALT_DOWN_MASK + KeyEvent.SHIFT_DOWN_MASK, false))
+            .put(RepoManeuver.BR1_Right_AFAP_Large_2E, KeyStroke.getKeyStroke(KeyEvent.VK_8,KeyEvent.ALT_DOWN_MASK, false))
+            .put(RepoManeuver.BR1_Right_Large_2E, KeyStroke.getKeyStroke(KeyEvent.VK_R,KeyEvent.ALT_DOWN_MASK, false))
+            .put(RepoManeuver.BR1_Right_ABAP_Large_2E, KeyStroke.getKeyStroke(KeyEvent.VK_8,KeyEvent.ALT_DOWN_MASK + KeyEvent.SHIFT_DOWN_MASK, false))
             .build();
 
 
@@ -455,7 +475,6 @@ public class ShipReposition extends Decorator implements EditablePiece {
 
     private void offerTripleChoices(List<RepoManeuver> repoTemplates, boolean is2pointOh, VASSAL.build.module.Map theMap) {
         //Getting into this function, repoShip is associated with the template used to reposition the ship. We also need the non-mapped final ship tentative position
-        Boolean spawnTemplate = false;
 
         int size = whichSizeShip(this, is2pointOh);
 
@@ -473,8 +492,8 @@ public class ShipReposition extends Decorator implements EditablePiece {
             repoTemplate = swapToRepoManeuverIfMedOrLarge(repoTemplate, size, is2pointOh);
 
             //STEP 1:
-            double tAngle;
-            tAngle = repoTemplate.getTemplateAngle(); //repo maneuver's angle
+            //double tAngle;
+            //tAngle = repoTemplate.getTemplateAngle(); //repo maneuver's angle
             //fR.setAngle(sAngle - tAngle);
 
             //Info Gathering: Offset 1, put to the side of the ship, local coords, adjusting for large base if it is found
@@ -559,15 +578,6 @@ public class ShipReposition extends Decorator implements EditablePiece {
             boolean outsideCheck = checkIfOutOfBounds(yourShipName, shapeForOverlap2, false);
             if (outsideCheck) wantOverlapColor = true;
 
-            //STEP 10: optional if there's any kind of overlap, produce both the template and initial ship position
-            if (spawnTemplate == true) {
-                //the template is needed, in case of any kind of overlap
-                //if(bigCommand !=null) bigCommand.append(getMap().placeOrMerge(piece, new Point((int)off1x_rot + (int)off2x, (int)off1y_rot + (int)off2y)));
-                //else bigCommand = getMap().placeOrMerge(piece, new Point((int)off1x_rot + (int)off2x, (int)off1y_rot + (int)off2y));
-                //clone the initial position
-                //GamePiece myClone = PieceCloner.getInstance().clonePiece(Decorator.getOutermost(this));
-                //bigCommand.append(getMap().placeOrMerge(myClone, new Point((int)off2x, (int)off2y)));
-            }
             //STEP 11: reposition the ship
             //Add visuals according to the selection of repositioning
 
@@ -852,12 +862,14 @@ public class ShipReposition extends Decorator implements EditablePiece {
         double off1y_rot_s = rotY(off1x_s, off1y_s, sAngle);
 
         //STEP 8: translation into place
+
+
+
         shapeForOverlap2 = AffineTransform.
-                getTranslateInstance((int)off1x_rot_s + (int)off2x, (int)off1y_rot_s + (int)off2y).
+                getTranslateInstance((int) off1x_rot_s + (int) off2x, (int) off1y_rot_s + (int) off2y).
                 createTransformedShape(shapeForOverlap2);
-        double roundedAngle2 = convertAngleToGameLimits(tAngle2);
         shapeForOverlap2 = AffineTransform
-                .getRotateInstance(Math.toRadians(-roundedAngle2), (int)off1x_rot_s + (int)off2x, (int)off1y_rot_s + (int)off2y)
+                .getRotateInstance(Math.toRadians(-roundedAngle), (int) off1x_rot_s + (int) off2x,(int) off1y_rot_s + (int) off2y)
                 .createTransformedShape(shapeForOverlap2);
 
         //STEP 9: Check for overlap with obstacles and ships with the final ship position
@@ -1043,7 +1055,18 @@ public class ShipReposition extends Decorator implements EditablePiece {
                 GameModule.getGameModule().sendAndLog(startIt);
 
                 final VASSAL.build.module.Map theMap = MouseShipGUI.getTheMainMap();
-                List<RepoManeuver> barrelLeft = Lists.newArrayList( RepoManeuver.BR1_Left_AFAP_2E, RepoManeuver.BR1_Left_2E, RepoManeuver.BR1_Left_ABAP_2E);
+                List<RepoManeuver> barrelLeft = Lists.newArrayList(RepoManeuver.BR1_Left_AFAP_2E, RepoManeuver.BR1_Left_2E, RepoManeuver.BR1_Left_ABAP_2E);
+                offerTripleChoices(barrelLeft, true, theMap);
+                return null;
+            }else if(repoShip.equals(RepoManeuver.BR1_Right_TripleChoices) && isATripleChoiceAllowed()){
+                Command startIt = startTripleChoiceStopNewOnes();
+                String contemplatingPlayerName = getCurrentPlayer().getName();
+                startIt.append(logToChatCommand(contemplatingPlayerName + " is contemplating 3 choices for barrel roll right"));
+                startIt.execute();
+                GameModule.getGameModule().sendAndLog(startIt);
+
+                final VASSAL.build.module.Map theMap = MouseShipGUI.getTheMainMap();
+                List<RepoManeuver> barrelLeft = Lists.newArrayList(RepoManeuver.BR1_Right_AFAP_2E, RepoManeuver.BR1_Right_2E, RepoManeuver.BR1_Right_ABAP_2E);
                 offerTripleChoices(barrelLeft, true, theMap);
                 return null;
             }
@@ -1346,7 +1369,7 @@ public class ShipReposition extends Decorator implements EditablePiece {
         }
 
         public boolean drawAboveCounters() {
-            return false;
+            return true;
         }
 
         public KeyStroke getKeyStroke() {

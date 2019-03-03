@@ -75,14 +75,7 @@ public class MouseShipGUIDrawable implements Drawable {
         miElement brIconLeft = new miElement("mi_barrelroll.png", ulX + cursorX, ulY + cursorY,
                 KeyStroke.getKeyStroke(KeyEvent.VK_R,KeyEvent.CTRL_DOWN_MASK+ KeyEvent.SHIFT_DOWN_MASK+KeyEvent.ALT_DOWN_MASK, false));
         listOfInteractiveElements.add(brIconLeft);
-
-        miElement brIconLeftCenter = new miElement("mi_barrelroll.png", ulX+cursorX, ulY + brIconLeft.image.getHeight() + cursorY + smallGapX,
-                KeyStroke.getKeyStroke(KeyEvent.VK_R, KeyEvent.CTRL_DOWN_MASK+ KeyEvent.SHIFT_DOWN_MASK+KeyEvent.ALT_DOWN_MASK, false));
-        listOfInteractiveElements.add(brIconLeftCenter);
-
-        miElement brIconLeftDown = new miElement("mi_barrelroll.png", ulX + cursorX, ulY + 2* brIconLeft.image.getHeight() + cursorY + 2* smallGapX,
-                KeyStroke.getKeyStroke(KeyEvent.VK_R, KeyEvent.CTRL_DOWN_MASK+ KeyEvent.SHIFT_DOWN_MASK+KeyEvent.ALT_DOWN_MASK, false));
-        listOfInteractiveElements.add(brIconLeftDown);
+;
         cursorX += brIconLeft.image.getWidth() + smallGapX;
 
         //add ship gfx, getShipImage deals with alt paint jobs and dual ships (just takes the first one it finds)
@@ -101,14 +94,8 @@ public class MouseShipGUIDrawable implements Drawable {
         }
 
         miElement brIconRight = new miElement("mi_barrelroll.png", ulX + cursorX, ulY + cursorY,
-                KeyStroke.getKeyStroke(KeyEvent.VK_8, KeyEvent.ALT_DOWN_MASK, false));
-        miElement brIconRightCenter = new miElement("mi_barrelroll.png", ulX + cursorX, ulY + cursorY + brIconRight.image.getHeight() + smallGapX,
-                KeyStroke.getKeyStroke(KeyEvent.VK_R, KeyEvent.ALT_DOWN_MASK, false));
-        miElement brIconRightDown = new miElement("mi_barrelroll.png", ulX + cursorX, ulY + cursorY + 2*brIconRight.image.getHeight() + 2*smallGapX,
-                KeyStroke.getKeyStroke(KeyEvent.VK_8, KeyEvent.ALT_DOWN_MASK+ KeyEvent.SHIFT_DOWN_MASK, false));
+                KeyStroke.getKeyStroke(KeyEvent.VK_O, KeyEvent.CTRL_DOWN_MASK+ KeyEvent.SHIFT_DOWN_MASK+KeyEvent.ALT_DOWN_MASK, false));
         listOfInteractiveElements.add(brIconRight);
-        listOfInteractiveElements.add(brIconRightCenter);
-        listOfInteractiveElements.add(brIconRightDown);
 
         cursorX += brIconRight.image.getWidth();
 
@@ -246,7 +233,7 @@ public class MouseShipGUIDrawable implements Drawable {
     }
 
     public boolean drawAboveCounters() {
-        return false;
+        return true;
     }
 
 
