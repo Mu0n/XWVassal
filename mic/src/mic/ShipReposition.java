@@ -103,18 +103,18 @@ enum RepoManeuver {
     BR2_Right_TripleChoices("BR2 Right","524", 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
 
     //medium normal BR
-    BR1_Left_AFAP_Medium_2E("BR Left as Forward as Possible", "524", 0.0f, -113.75f, 0.0f, 0.0f, -227.5f, -113.0f),
+    BR1_Left_AFAP_Medium_2E("BR Left as Forward as Possible", "524", 0.0f, -113.75f, 0.0f, 0.0f, -227.5f, -56.5f),
     BR1_Left_Medium_2E("BR Left", "524", 0.0f, -113.75f, 0.0f, 0.0f, -227.5f, 0.0f),
-    BR1_Left_ABAP_Medium_2E("BR Left as Backward as Possible", "524", 0.0f, -113.75f, 0.0f, 0.0f, -227.5f, 113.0f),
+    BR1_Left_ABAP_Medium_2E("BR Left as Backward as Possible", "524", 0.0f, -113.75f, 0.0f, 0.0f, -227.5f, 56.5f),
 
     BR1_Right_AFAP_Medium_2E("BR Right as Forward as Possible", "524", 0.0f, 113.75f, 0.0f, 0.0f, 227.5f, -56.5f),
     BR1_Right_Medium_2E("BR Right", "524", 0.0f, 113.75f, 0.0f, 0.0f, 227.5f, 0.0f),
     BR1_Right_ABAP_Medium_2E("BR Right as Backward as Possible", "524", 0.0f, 113.75f, 0.0f, 0.0f, 227.5f, 56.5f),
 
     //medium decloak using a standard
-    BRD_Left_AFAP_Medium_2E("Decloak Left as Forward as Possible", "524",0.0f, -113.75f, 0.0f, 0.0f, -227.5f, -113.0f),
+    BRD_Left_AFAP_Medium_2E("Decloak Left as Forward as Possible", "524",0.0f, -113.75f, 0.0f, 0.0f, -227.5f, -56.5f),
     BRD_Left_Medium_2E("Decloak Left", "524", 0.0f, -113.75f, 0.0f, 0.0f, -227.5f, 0.0f),
-    BRD_Left_ABAP_Medium_2E("Decloak Left as Backward as Possible", "524", 0.0f, -113.75f, 0.0f, 0.0f, -227.5f, 113.0f),
+    BRD_Left_ABAP_Medium_2E("Decloak Left as Backward as Possible", "524", 0.0f, -113.75f, 0.0f, 0.0f, -227.5f, 56.5f),
 
     BRD_Right_AFAP_Medium_2E("Decloak Right as Forward as Possible", "524", 0.0f, 113.75f, 0.0f, 0.0f, 227.5f, -56.5f),
     BRD_Right_Medium_2E("Decloak Right", "524", 0.0f, 113.75f, 0.0f, 0.0f, 227.5f, 0.0f),
@@ -398,9 +398,11 @@ public class ShipReposition extends Decorator implements EditablePiece {
     }
 
     private RepoManeuver swapToRepoManeuverIfMedOrLarge(RepoManeuver repoTemplate, int size, boolean is2pointOh){
+        logToChat("for realz about to check size " + size + " and 2.0=" + is2pointOh + " and repo name " + repoTemplate.name());
         if(size == 2){
             switch(repoTemplate){
                 case BR1_Left_AFAP_2E:
+                    logToChat("c'mon trigger asshole");
                     repoTemplate = RepoManeuver.BR1_Left_AFAP_Medium_2E;
                     break;
                 case BR1_Left_2E:
@@ -445,7 +447,7 @@ public class ShipReposition extends Decorator implements EditablePiece {
             }
         } //end of dealing with medium
         //Prep step, check if it's a large ship, and only deal with regular barrel rolls, because it's all they can do anyway, rerouting to the correct RepoManeuver
-        if(size == 3 && is2pointOh == true) {
+        else if(size == 3 && is2pointOh == true) {
             switch (repoTemplate) {
                 case BR1_Left_AFAP_2E:
                     repoTemplate = RepoManeuver.BR1_Left_AFAP_Large_2E;
@@ -513,11 +515,8 @@ public class ShipReposition extends Decorator implements EditablePiece {
         //Getting into this function, repoShip is associated with the template used to reposition the ship. We also need the non-mapped final ship tentative position
 
         int size = whichSizeShip(this, is2pointOh);
-
         removeVisuals(theMap);
-
         int wideningFudgeFactorBetweenDots = -1; //will go from -1 to 0 to 1 in the following loop
-
 
         // STEP 0: gather ship angle and rotator
         double sAngle = this.getRotator().getAngle(); //ship angle
@@ -525,8 +524,9 @@ public class ShipReposition extends Decorator implements EditablePiece {
 
         for(RepoManeuver repoTemplate : repoTemplates) { //loops over the list of potential repositions
 //Prep step, check if it's a medium ship, and only deal with regular barrel rolls, because it's all they can do anyway, rerouting to the correct RepoManeuver
+            logToChat("repo name before change: " + repoTemplate.name());
             repoTemplate = swapToRepoManeuverIfMedOrLarge(repoTemplate, size, is2pointOh);
-
+            logToChat("repo name after change: " + repoTemplate.name());
             //STEP 1:
             //double tAngle;
             //tAngle = repoTemplate.getTemplateAngle(); //repo maneuver's angle
@@ -672,7 +672,7 @@ public class ShipReposition extends Decorator implements EditablePiece {
                     Command stopItAll = stopTripleChoiceMakeNextReady();
                     String stoppingPlayerName = getCurrentPlayer().getName();
                     stopItAll.execute();
-                    logToChat(stoppingPlayerName + " is cancelling a left barrel roll");
+                    logToChat(stoppingPlayerName + " is cancelling a reposition");
 
                     closeMouseListener(finalMap, ml);
                     return;
@@ -721,7 +721,10 @@ public class ShipReposition extends Decorator implements EditablePiece {
 
         int size = whichSizeShip(this, is2pointOh);
         //Prep step, check if it's a medium ship, and only deal with regular barrel rolls, because it's all they can do anyway, rerouting to the correct RepoManeuver
-        swapToRepoManeuverIfMedOrLarge(repoTemplate, size, is2pointOh);
+        logToChat("repo name before change: " + repoTemplate.name());
+        repoTemplate = swapToRepoManeuverIfMedOrLarge(repoTemplate, size, is2pointOh);
+        logToChat("repo name after change: " + repoTemplate.name());
+        if(repoTemplate == null) return null;
 
         //STEP 1: Collision reposition template, centered as in in the image file, centered on 0,0 (upper left corner)
         GamePiece piece = newPiece(findPieceSlotByID(repoTemplate.getTemplateGpID()));
@@ -905,6 +908,7 @@ public class ShipReposition extends Decorator implements EditablePiece {
     public Command keyEvent(KeyStroke stroke) {
         //Test for 2.0 ship
         boolean is2pointohShip = this.getInner().getState().contains("this_is_2pointoh");
+        logToChat("is 2.0 " + is2pointohShip);
         //Any keystroke made on a ship will remove the orange shades
         previousCollisionVisualization = new MapVisualizations();
 
