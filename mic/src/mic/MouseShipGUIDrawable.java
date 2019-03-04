@@ -75,7 +75,11 @@ public class MouseShipGUIDrawable implements Drawable {
         miElement brIconLeft = new miElement("mi_barrelroll.png", ulX + cursorX, ulY + cursorY,
                 KeyStroke.getKeyStroke(KeyEvent.VK_R,KeyEvent.CTRL_DOWN_MASK+ KeyEvent.SHIFT_DOWN_MASK+KeyEvent.ALT_DOWN_MASK, false));
         listOfInteractiveElements.add(brIconLeft);
-;
+
+        miElement br2IconLeft = new miElement("mi_barrelroll2L.png", ulX + cursorX, ulY + cursorY + brIconLeft.image.getHeight()+padX,
+                KeyStroke.getKeyStroke(KeyEvent.VK_J, KeyEvent.CTRL_DOWN_MASK+ KeyEvent.SHIFT_DOWN_MASK+KeyEvent.ALT_DOWN_MASK, false));
+        listOfInteractiveElements.add(br2IconLeft);
+
         cursorX += brIconLeft.image.getWidth() + smallGapX;
 
         //add ship gfx, getShipImage deals with alt paint jobs and dual ships (just takes the first one it finds)
@@ -96,6 +100,10 @@ public class MouseShipGUIDrawable implements Drawable {
         miElement brIconRight = new miElement("mi_barrelroll.png", ulX + cursorX, ulY + cursorY,
                 KeyStroke.getKeyStroke(KeyEvent.VK_O, KeyEvent.CTRL_DOWN_MASK+ KeyEvent.SHIFT_DOWN_MASK+KeyEvent.ALT_DOWN_MASK, false));
         listOfInteractiveElements.add(brIconRight);
+
+        miElement br2IconRight = new miElement("mi_barrelroll2R.png", ulX + cursorX, ulY + cursorY + brIconRight.image.getHeight() + padX,
+                KeyStroke.getKeyStroke(KeyEvent.VK_K, KeyEvent.CTRL_DOWN_MASK + KeyEvent.SHIFT_DOWN_MASK + KeyEvent.ALT_DOWN_MASK, false));
+        listOfInteractiveElements.add(br2IconRight);
 
         cursorX += brIconRight.image.getWidth();
 

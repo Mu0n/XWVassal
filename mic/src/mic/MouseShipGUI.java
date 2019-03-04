@@ -32,7 +32,7 @@ public class MouseShipGUI extends AbstractConfigurable {
     GamePiece activatedPiece; //ship piece whose popup is active
     MouseShipGUIDrawable lastPopup; //active popup drawable component with info on images, clickable areas, etc
     MouseListener ml;
-    static Long DECAY_DELAY = 1000000000l;
+    static Long DECAY_DELAY = 400000000l;
 
     public String[] getAttributeNames() {
         return new String[0];

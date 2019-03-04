@@ -1,19 +1,15 @@
 package mic;
 
 import VASSAL.build.GameModule;
-import VASSAL.build.module.Chatter;
 import VASSAL.build.module.documentation.HelpFile;
 import VASSAL.build.module.map.Drawable;
 import VASSAL.build.module.map.boardPicker.Board;
 import VASSAL.build.widget.PieceSlot;
-import VASSAL.command.ChangeTracker;
 import VASSAL.command.Command;
-import VASSAL.command.MoveTracker;
 import VASSAL.configure.HotKeyConfigurer;
 import VASSAL.counters.*;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
-import javafx.scene.transform.Affine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,13 +20,10 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Ellipse2D;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import static mic.Util.*;
 import static mic.Util.getBumpableCompareShape;
-
-//import VASSAL.command.ChangeTracker;
 
 /**
  * Created by Mic on 07/08/2017.
@@ -80,7 +73,10 @@ enum RepoManeuver {
     BR1_Right_AFAP_Large("BR Right as Forward as Possible", "524", 0.0f, 141.25f, -56.5f, 0.0f, 283.0f, -113.0f),
     BR1_Right_ABAP_Large("BR Right as Backward as Possible", "524", 0.0f, 141.25f, 56.5f, 0.0f, 283.0f, 113.0f),
 
+    //
     //Section for 2.0 style barrel roll. AFAP and ABAP will be limited by the back and front edges and will spawn the template for habit building
+    //
+    //
     BR1_Left_AFAP_2E("BR Left as Forward as Possible", "524", -90.0f, -113.0f, 0.0f, 0.0f, -226.0f, -28.25f),
     BR1_Left_2E("BR Left", "524", -90.0f, -113.0f, 0.0f, 0.0f, -226.0f, 0.0f),
     BR1_Left_ABAP_2E("BR Left as Backward as Possible", "524", -90.0f, -113.0f, 0.0f, 0.0f, -226.0f, 28.25f),
@@ -90,33 +86,40 @@ enum RepoManeuver {
     BR1_Right_AFAP_2E("BR Right as Forward as Possible", "524", -90.0f, 113.0f, 0.0f, 0.0f, 226.0f, -28.25f),
     BR1_Right_2E("BR Right", "524", -90.0f, 113.0f, 0.0f, 0.0f, 226.0f, 0.0f),
     BR1_Right_ABAP_2E("BR Right as Backward as Possible", "524", -90.0f, 113.0f, 0.0f, 0.0f, 226.0f, 28.25f),
+
+    BR1_Right_TripleChoices("BR Right", "524", 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
+
     //small Zeta Ace BR
     BR2_Left_AFAP_2E("BR2 Left as Forward as Possible", "525", -90.0f, -169.5f, 0.0f, 0.0f, -339.0f, -28.25f),
     BR2_Left_2E("BR2 Left", "525", -90.0f, -169.5f, 0.0f, 0.0f, -339.0f, 0.0f),
     BR2_Left_ABAP_2E("BR2 Left as Backward as Possible", "525", -90.0f, -169.5f, 0.0f, 0.0f, -339.0f, 28.25f),
 
+    BR2_Left_TripleChoices("BR2 Left","524", 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
+
     BR2_Right_AFAP_2E("BR2 Right as Forward as Possible", "525", -90.0f, 169.5f, 0.0f, 0.0f, 339.0f, -28.25f),
     BR2_Right_2E("BR2 Right", "525", -90.0f, 169.5f, 0.0f, 0.0f, 339.0f, 0.0f),
     BR2_Right_ABAP_2E("BR2 Right as Backward as Possible", "525", -90.0f, 169.5f, 0.0f, 0.0f, 339.0f, 28.25f),
 
-    BR1_Right_TripleChoices("BR Right", "524", 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
+    BR2_Right_TripleChoices("BR2 Right","524", 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
 
     //medium normal BR
-    BR1_Left_AFAP_Medium_2E("BR Left as Forward as Possible", "524", 0.0f, -113.75f, 0.0f, 0.0f, -227.5f, -56.5f),
+    BR1_Left_AFAP_Medium_2E("BR Left as Forward as Possible", "524", 0.0f, -113.75f, 0.0f, 0.0f, -227.5f, -113.0f),
     BR1_Left_Medium_2E("BR Left", "524", 0.0f, -113.75f, 0.0f, 0.0f, -227.5f, 0.0f),
-    BR1_Left_ABAP_Medium_2E("BR Left as Backward as Possible", "524", 0.0f, -113.75f, 0.0f, 0.0f, -227.5f, 56.5f),
+    BR1_Left_ABAP_Medium_2E("BR Left as Backward as Possible", "524", 0.0f, -113.75f, 0.0f, 0.0f, -227.5f, 113.0f),
 
     BR1_Right_AFAP_Medium_2E("BR Right as Forward as Possible", "524", 0.0f, 113.75f, 0.0f, 0.0f, 227.5f, -56.5f),
     BR1_Right_Medium_2E("BR Right", "524", 0.0f, 113.75f, 0.0f, 0.0f, 227.5f, 0.0f),
     BR1_Right_ABAP_Medium_2E("BR Right as Backward as Possible", "524", 0.0f, 113.75f, 0.0f, 0.0f, 227.5f, 56.5f),
-    //medium decloak using a standard long barrel roll 1
-    BRD_Left_AFAP_Medium_2E("Decloak Left as Forward as Possible", "524",0.0f, -113.75f, 0.0f, 0.0f, -227.5f, -56.5f),
-    BRD_Left_Medium_2E("Decloak Left", "524", -90.0f, -142.0f, 0.0f, 0.0f, -284.0f, 0.0f),
-    BRD_Left_ABAP_Medium_2E("Decloak Left as Backward as Possible", "524", 0.0f, -113.75f, 0.0f, 0.0f, -227.5f, 56.5f),
+
+    //medium decloak using a standard
+    BRD_Left_AFAP_Medium_2E("Decloak Left as Forward as Possible", "524",0.0f, -113.75f, 0.0f, 0.0f, -227.5f, -113.0f),
+    BRD_Left_Medium_2E("Decloak Left", "524", 0.0f, -113.75f, 0.0f, 0.0f, -227.5f, 0.0f),
+    BRD_Left_ABAP_Medium_2E("Decloak Left as Backward as Possible", "524", 0.0f, -113.75f, 0.0f, 0.0f, -227.5f, 113.0f),
 
     BRD_Right_AFAP_Medium_2E("Decloak Right as Forward as Possible", "524", 0.0f, 113.75f, 0.0f, 0.0f, 227.5f, -56.5f),
-    BRD_Right_Medium_2E("Decloak Right", "524", -90.0f, 142.0f, 0.0f, 0.0f, 284.0f, 0.0f),
+    BRD_Right_Medium_2E("Decloak Right", "524", 0.0f, 113.75f, 0.0f, 0.0f, 227.5f, 0.0f),
     BRD_Right_ABAP_Medium_2E("Decloak Right as Backward as Possible", "524", 0.0f, 113.75f, 0.0f, 0.0f, 227.5f, 56.5f),
+
     //large normal BR
     BR1_Left_AFAP_Large_2E("BR Left as Forward as Possible", "524", 0.0f, -141.25f, 0.0f, 0.0f, -283.0f, -56.5f),
     BR1_Left_Large_2E("BR Left as Forward as Possible", "524", 0.0f, -141.25f, 0.0f, 0.0f, -283.0f, 0.0f),
@@ -127,11 +130,11 @@ enum RepoManeuver {
     BR1_Right_ABAP_Large_2E("BR Right as Backward as Possible", "524", 0.0f, 141.25f, 0.0f, 0.0f, 283.0f, 56.5f),
     //large decloak using a standard long barrel roll 1
     BRD_Left_AFAP_Large_2E("BR Left as Forward as Possible", "524", 0.0f, -141.25f, 0.0f, 0.0f, -283.0f, -56.5f),
-    BRD_Left_Large_2E("BR Left as Forward as Possible", "524", -90.0f, -169.5f, 0.0f, 0.0f, -339.0f, 0.0f),
+    BRD_Left_Large_2E("BR Left as Forward as Possible", "524", -90.0f, -169.5f, 0.0f, 0.0f, -283.0f, 0.0f),
     BRD_Left_ABAP_Large_2E("BR Left as Backward as Possible", "524", 0.0f, -141.25f, 0.0f, 0.0f, -283.0f, 56.5f),
 
     BRD_Right_AFAP_Large_2E("BR Right as Forward as Possible", "524", 0.0f, 141.25f, 0.0f, 0.0f, 283.0f, -56.5f),
-    BRD_Right_Large_2E("BR Right", "524", -90.0f, 169.5f, 0.0f, 0.0f, 339.0f, 0.0f),
+    BRD_Right_Large_2E("BR Right", "524", -90.0f, 169.5f, 0.0f, 0.0f, 283.0f, 0.0f),
     BRD_Right_ABAP_Large_2E("BR Right as Backward as Possible", "524", 0.0f, 141.25f, 0.0f, 0.0f, 283.0f, 56.5f)
     ;
 
@@ -248,16 +251,21 @@ public class ShipReposition extends Decorator implements EditablePiece {
             .put("CTRL R", RepoManeuver.BR1_Left_2E)
             .put("CTRL SHIFT 8", RepoManeuver.BR1_Left_ABAP_2E)
             .put("ALT CTRL SHIFT R", RepoManeuver.BR1_Left_TripleChoices)
+
             .put("ALT 8", RepoManeuver.BR1_Right_AFAP_2E)
             .put("ALT R", RepoManeuver.BR1_Right_2E)
             .put("ALT SHIFT 8", RepoManeuver.BR1_Right_ABAP_2E)
             .put("ALT CTRL SHIFT O", RepoManeuver.BR1_Right_TripleChoices)
+
             .put("CTRL 9", RepoManeuver.BR2_Left_AFAP_2E)
             .put("J", RepoManeuver.BR2_Left_2E)
             .put("CTRL SHIFT 9", RepoManeuver.BR2_Left_ABAP_2E)
+            .put("ALT CTRL SHIFT J", RepoManeuver.BR2_Left_TripleChoices)
+
             .put("ALT 9", RepoManeuver.BR2_Right_AFAP_2E)
             .put("K", RepoManeuver.BR2_Right_2E)
             .put("ALT SHIFT 9", RepoManeuver.BR2_Right_ABAP_2E)
+            .put("ALT CTRL SHIFT K", RepoManeuver.BR2_Right_TripleChoices)
             .build();
 
     //Names of the reposition
@@ -278,6 +286,7 @@ public class ShipReposition extends Decorator implements EditablePiece {
 
     //Get back a Keystroke object
     private static Map<RepoManeuver, KeyStroke> repoShipToKeyStroke_2e = ImmutableMap.<RepoManeuver, KeyStroke>builder()
+            //Barrel Roll Left
             .put(RepoManeuver.BR1_Left_AFAP_2E, KeyStroke.getKeyStroke(KeyEvent.VK_8,KeyEvent.CTRL_DOWN_MASK, false))
             .put(RepoManeuver.BR1_Left_2E, KeyStroke.getKeyStroke(KeyEvent.VK_R,KeyEvent.CTRL_DOWN_MASK, false))
             .put(RepoManeuver.BR1_Left_ABAP_2E, KeyStroke.getKeyStroke(KeyEvent.VK_8,KeyEvent.CTRL_DOWN_MASK + KeyEvent.SHIFT_DOWN_MASK, false))
@@ -288,6 +297,7 @@ public class ShipReposition extends Decorator implements EditablePiece {
             .put(RepoManeuver.BR1_Left_Large_2E, KeyStroke.getKeyStroke(KeyEvent.VK_R,KeyEvent.CTRL_DOWN_MASK, false))
             .put(RepoManeuver.BR1_Left_ABAP_Large_2E, KeyStroke.getKeyStroke(KeyEvent.VK_8,KeyEvent.CTRL_DOWN_MASK + KeyEvent.SHIFT_DOWN_MASK, false))
 
+            //Barrel Roll Right
             .put(RepoManeuver.BR1_Right_AFAP_2E, KeyStroke.getKeyStroke(KeyEvent.VK_8,KeyEvent.ALT_DOWN_MASK, false))
             .put(RepoManeuver.BR1_Right_2E, KeyStroke.getKeyStroke(KeyEvent.VK_R,KeyEvent.ALT_DOWN_MASK, false))
             .put(RepoManeuver.BR1_Right_ABAP_2E, KeyStroke.getKeyStroke(KeyEvent.VK_8,KeyEvent.ALT_DOWN_MASK + KeyEvent.SHIFT_DOWN_MASK, false))
@@ -297,6 +307,28 @@ public class ShipReposition extends Decorator implements EditablePiece {
             .put(RepoManeuver.BR1_Right_AFAP_Large_2E, KeyStroke.getKeyStroke(KeyEvent.VK_8,KeyEvent.ALT_DOWN_MASK, false))
             .put(RepoManeuver.BR1_Right_Large_2E, KeyStroke.getKeyStroke(KeyEvent.VK_R,KeyEvent.ALT_DOWN_MASK, false))
             .put(RepoManeuver.BR1_Right_ABAP_Large_2E, KeyStroke.getKeyStroke(KeyEvent.VK_8,KeyEvent.ALT_DOWN_MASK + KeyEvent.SHIFT_DOWN_MASK, false))
+
+            //Barrel Roll Left or straight decloak
+            .put(RepoManeuver.BR2_Left_AFAP_2E, KeyStroke.getKeyStroke(KeyEvent.VK_9,KeyEvent.CTRL_DOWN_MASK, false))
+            .put(RepoManeuver.BR2_Left_2E, KeyStroke.getKeyStroke(KeyEvent.VK_J,0, false))
+            .put(RepoManeuver.BR2_Left_ABAP_2E, KeyStroke.getKeyStroke(KeyEvent.VK_9,KeyEvent.CTRL_DOWN_MASK + KeyEvent.SHIFT_DOWN_MASK, false))
+            .put(RepoManeuver.BRD_Left_AFAP_Medium_2E, KeyStroke.getKeyStroke(KeyEvent.VK_8,KeyEvent.CTRL_DOWN_MASK, false))
+            .put(RepoManeuver.BRD_Left_Medium_2E, KeyStroke.getKeyStroke(KeyEvent.VK_R,KeyEvent.CTRL_DOWN_MASK, false))
+            .put(RepoManeuver.BRD_Left_ABAP_Medium_2E, KeyStroke.getKeyStroke(KeyEvent.VK_8,KeyEvent.CTRL_DOWN_MASK + KeyEvent.SHIFT_DOWN_MASK, false))
+            .put(RepoManeuver.BRD_Left_AFAP_Large_2E, KeyStroke.getKeyStroke(KeyEvent.VK_8,KeyEvent.CTRL_DOWN_MASK, false))
+            .put(RepoManeuver.BRD_Left_Large_2E, KeyStroke.getKeyStroke(KeyEvent.VK_R,KeyEvent.CTRL_DOWN_MASK, false))
+            .put(RepoManeuver.BRD_Left_ABAP_Large_2E, KeyStroke.getKeyStroke(KeyEvent.VK_8,KeyEvent.CTRL_DOWN_MASK + KeyEvent.SHIFT_DOWN_MASK, false))
+
+            //Barrel Roll Right or straight decloak
+            .put(RepoManeuver.BR2_Right_AFAP_2E, KeyStroke.getKeyStroke(KeyEvent.VK_9,KeyEvent.ALT_DOWN_MASK, false))
+            .put(RepoManeuver.BR2_Right_2E, KeyStroke.getKeyStroke(KeyEvent.VK_K,0, false))
+            .put(RepoManeuver.BR2_Right_ABAP_2E, KeyStroke.getKeyStroke(KeyEvent.VK_9,KeyEvent.ALT_DOWN_MASK + KeyEvent.SHIFT_DOWN_MASK, false))
+            .put(RepoManeuver.BRD_Right_AFAP_Medium_2E, KeyStroke.getKeyStroke(KeyEvent.VK_8,KeyEvent.ALT_DOWN_MASK, false))
+            .put(RepoManeuver.BRD_Right_Medium_2E, KeyStroke.getKeyStroke(KeyEvent.VK_R,KeyEvent.ALT_DOWN_MASK, false))
+            .put(RepoManeuver.BRD_Right_ABAP_Medium_2E, KeyStroke.getKeyStroke(KeyEvent.VK_8,KeyEvent.ALT_DOWN_MASK + KeyEvent.SHIFT_DOWN_MASK, false))
+            .put(RepoManeuver.BRD_Right_AFAP_Large_2E, KeyStroke.getKeyStroke(KeyEvent.VK_8,KeyEvent.ALT_DOWN_MASK, false))
+            .put(RepoManeuver.BRD_Right_Large_2E, KeyStroke.getKeyStroke(KeyEvent.VK_R,KeyEvent.ALT_DOWN_MASK, false))
+            .put(RepoManeuver.BRD_Right_ABAP_Large_2E, KeyStroke.getKeyStroke(KeyEvent.VK_8,KeyEvent.ALT_DOWN_MASK + KeyEvent.SHIFT_DOWN_MASK, false))
             .build();
 
 
@@ -377,6 +409,7 @@ public class ShipReposition extends Decorator implements EditablePiece {
                 case BR1_Left_ABAP_2E:
                     repoTemplate = RepoManeuver.BR1_Left_ABAP_Medium_2E;
                     break;
+
                 case BR1_Right_AFAP_2E:
                     repoTemplate = RepoManeuver.BR1_Right_AFAP_Medium_2E;
                     break;
@@ -386,6 +419,7 @@ public class ShipReposition extends Decorator implements EditablePiece {
                 case BR1_Right_ABAP_2E:
                     repoTemplate = RepoManeuver.BR1_Right_ABAP_Medium_2E;
                     break;
+
                 case BR2_Right_AFAP_2E:
                     repoTemplate = RepoManeuver.BRD_Right_AFAP_Medium_2E;
                     break;
@@ -395,7 +429,9 @@ public class ShipReposition extends Decorator implements EditablePiece {
                 case BR2_Right_ABAP_2E:
                     repoTemplate = RepoManeuver.BRD_Right_ABAP_Medium_2E;
                     break;
+
                 case BR2_Left_AFAP_2E:
+                    logToChat("will transform to BRD_LEFT_AFAP_MED");
                     repoTemplate = RepoManeuver.BRD_Left_AFAP_Medium_2E;
                     break;
                 case BR2_Left_2E:
@@ -685,112 +721,7 @@ public class ShipReposition extends Decorator implements EditablePiece {
 
         int size = whichSizeShip(this, is2pointOh);
         //Prep step, check if it's a medium ship, and only deal with regular barrel rolls, because it's all they can do anyway, rerouting to the correct RepoManeuver
-        if(size == 2){
-            switch(repoTemplate){
-                case BR1_Left_AFAP_2E:
-                    repoTemplate = RepoManeuver.BR1_Left_AFAP_Medium_2E;
-                    break;
-                case BR1_Left_2E:
-                    repoTemplate = RepoManeuver.BR1_Left_Medium_2E;
-                    break;
-                case BR1_Left_ABAP_2E:
-                    repoTemplate = RepoManeuver.BR1_Left_ABAP_Medium_2E;
-                    break;
-                case BR1_Right_AFAP_2E:
-                    repoTemplate = RepoManeuver.BR1_Right_AFAP_Medium_2E;
-                    break;
-                case BR1_Right_2E:
-                    repoTemplate = RepoManeuver.BR1_Right_Medium_2E;
-                    break;
-                case BR1_Right_ABAP_2E:
-                    repoTemplate = RepoManeuver.BR1_Right_ABAP_Medium_2E;
-                    break;
-                case BR2_Right_AFAP_2E:
-                    repoTemplate = RepoManeuver.BRD_Right_AFAP_Medium_2E;
-                    break;
-                case BR2_Right_2E:
-                    repoTemplate = RepoManeuver.BRD_Right_Medium_2E;
-                    break;
-                case BR2_Right_ABAP_2E:
-                    repoTemplate = RepoManeuver.BRD_Right_ABAP_Medium_2E;
-                    break;
-                case BR2_Left_AFAP_2E:
-                    repoTemplate = RepoManeuver.BRD_Left_AFAP_Medium_2E;
-                    break;
-                case BR2_Left_2E:
-                    repoTemplate = RepoManeuver.BRD_Left_Medium_2E;
-                    break;
-                case BR2_Left_ABAP_2E:
-                    repoTemplate = RepoManeuver.BRD_Left_ABAP_Medium_2E;
-                    break;
-                default:
-                    return null;
-            }
-        }
-
-        //Prep step, check if it's a large ship, and only deal with regular barrel rolls, because it's all they can do anyway, rerouting to the correct RepoManeuver
-        if(size == 3 && is2pointOh == true) {
-            switch (repoTemplate) {
-                case BR1_Left_AFAP_2E:
-                    repoTemplate = RepoManeuver.BR1_Left_AFAP_Large_2E;
-                    break;
-                case BR1_Left_2E:
-                    repoTemplate = RepoManeuver.BR1_Left_Large_2E;
-                    break;
-                case BR1_Left_ABAP_2E:
-                    repoTemplate = RepoManeuver.BR1_Left_ABAP_Large_2E;
-                    break;
-                case BR1_Right_AFAP_2E:
-                    repoTemplate = RepoManeuver.BR1_Right_AFAP_Large_2E;
-                    break;
-                case BR1_Right_2E:
-                    repoTemplate = RepoManeuver.BR1_Right_Large_2E;
-                    break;
-                case BR1_Right_ABAP_2E:
-                    repoTemplate = RepoManeuver.BR1_Right_ABAP_Large_2E;
-                    break;
-                case BR2_Right_AFAP_2E:
-                    repoTemplate = RepoManeuver.BRD_Right_AFAP_Large_2E;
-                    break;
-                case BR2_Right_2E:
-                    repoTemplate = RepoManeuver.BRD_Right_Large_2E;
-                    break;
-                case BR2_Right_ABAP_2E:
-                    repoTemplate = RepoManeuver.BRD_Right_ABAP_Large_2E;
-                    break;
-                case BR2_Left_AFAP_2E:
-                    repoTemplate = RepoManeuver.BRD_Left_AFAP_Large_2E;
-                    break;
-                case BR2_Left_2E:
-                    repoTemplate =  RepoManeuver.BRD_Left_Large_2E;
-                    break;
-                case BR2_Left_ABAP_2E:
-                    repoTemplate = RepoManeuver.BRD_Left_ABAP_Large_2E;
-                    break;
-                default:
-                    return null;
-            }
-        }
-
-        if(size == 3 && is2pointOh == false)
-        {
-            switch(repoTemplate){
-                case BR1_Left_AFAP:
-                    repoTemplate = RepoManeuver.BR1_Left_AFAP_Large;
-                    break;
-                case BR1_Left_ABAP:
-                    repoTemplate = RepoManeuver.BR1_Left_ABAP_Large;
-                    break;
-                case BR1_Right_AFAP:
-                    repoTemplate = RepoManeuver.BR1_Right_AFAP_Large;
-                    break;
-                case BR1_Right_ABAP:
-                    repoTemplate = RepoManeuver.BR1_Right_ABAP_Large;
-                    break;
-                default:
-                    return null;
-            }
-        }
+        swapToRepoManeuverIfMedOrLarge(repoTemplate, size, is2pointOh);
 
         //STEP 1: Collision reposition template, centered as in in the image file, centered on 0,0 (upper left corner)
         GamePiece piece = newPiece(findPieceSlotByID(repoTemplate.getTemplateGpID()));
@@ -1067,6 +998,28 @@ public class ShipReposition extends Decorator implements EditablePiece {
 
                 final VASSAL.build.module.Map theMap = MouseShipGUI.getTheMainMap();
                 List<RepoManeuver> barrelLeft = Lists.newArrayList(RepoManeuver.BR1_Right_AFAP_2E, RepoManeuver.BR1_Right_2E, RepoManeuver.BR1_Right_ABAP_2E);
+                offerTripleChoices(barrelLeft, true, theMap);
+                return null;
+            }else if(repoShip.equals(RepoManeuver.BR2_Left_TripleChoices) && isATripleChoiceAllowed()){
+                Command startIt = startTripleChoiceStopNewOnes();
+                String contemplatingPlayerName = getCurrentPlayer().getName();
+                startIt.append(logToChatCommand(contemplatingPlayerName + " is contemplating 3 choices for barrel roll 2 or decloak left"));
+                startIt.execute();
+                GameModule.getGameModule().sendAndLog(startIt);
+
+                final VASSAL.build.module.Map theMap = MouseShipGUI.getTheMainMap();
+                List<RepoManeuver> barrelLeft = Lists.newArrayList(RepoManeuver.BR2_Left_AFAP_2E, RepoManeuver.BR2_Left_2E, RepoManeuver.BR2_Left_ABAP_2E);
+                offerTripleChoices(barrelLeft, true, theMap);
+                return null;
+            }else if(repoShip.equals(RepoManeuver.BR2_Right_TripleChoices) && isATripleChoiceAllowed()){
+                Command startIt = startTripleChoiceStopNewOnes();
+                String contemplatingPlayerName = getCurrentPlayer().getName();
+                startIt.append(logToChatCommand(contemplatingPlayerName + " is contemplating 3 choices for barrel roll 2 or decloak right"));
+                startIt.execute();
+                GameModule.getGameModule().sendAndLog(startIt);
+
+                final VASSAL.build.module.Map theMap = MouseShipGUI.getTheMainMap();
+                List<RepoManeuver> barrelLeft = Lists.newArrayList(RepoManeuver.BR2_Right_AFAP_2E, RepoManeuver.BR2_Right_2E, RepoManeuver.BR2_Right_ABAP_2E);
                 offerTripleChoices(barrelLeft, true, theMap);
                 return null;
             }
