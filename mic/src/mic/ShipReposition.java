@@ -81,26 +81,52 @@ enum RepoManeuver {
     BR1_Left_2E("BR Left", "524", -90.0f, -113.0f, 0.0f, 0.0f, -226.0f, 0.0f),
     BR1_Left_ABAP_2E("BR Left as Backward as Possible", "524", -90.0f, -113.0f, 0.0f, 0.0f, -226.0f, 28.25f),
 
-    BR1_Left_TripleChoices("BR Left","524", 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
-
     BR1_Right_AFAP_2E("BR Right as Forward as Possible", "524", -90.0f, 113.0f, 0.0f, 0.0f, 226.0f, -28.25f),
     BR1_Right_2E("BR Right", "524", -90.0f, 113.0f, 0.0f, 0.0f, 226.0f, 0.0f),
     BR1_Right_ABAP_2E("BR Right as Backward as Possible", "524", -90.0f, 113.0f, 0.0f, 0.0f, 226.0f, 28.25f),
-
-    BR1_Right_TripleChoices("BR Right", "524", 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
 
     //small Zeta Ace BR
     BR2_Left_AFAP_2E("BR2 Left as Forward as Possible", "525", -90.0f, -169.5f, 0.0f, 0.0f, -339.0f, -28.25f),
     BR2_Left_2E("BR2 Left", "525", -90.0f, -169.5f, 0.0f, 0.0f, -339.0f, 0.0f),
     BR2_Left_ABAP_2E("BR2 Left as Backward as Possible", "525", -90.0f, -169.5f, 0.0f, 0.0f, -339.0f, 28.25f),
 
-    BR2_Left_TripleChoices("BR2 Left","524", 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
-
     BR2_Right_AFAP_2E("BR2 Right as Forward as Possible", "525", -90.0f, 169.5f, 0.0f, 0.0f, 339.0f, -28.25f),
     BR2_Right_2E("BR2 Right", "525", -90.0f, 169.5f, 0.0f, 0.0f, 339.0f, 0.0f),
     BR2_Right_ABAP_2E("BR2 Right as Backward as Possible", "525", -90.0f, 169.5f, 0.0f, 0.0f, 339.0f, 28.25f),
 
-    BR2_Right_TripleChoices("BR2 Right","524", 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
+    //small StarViper BR
+    BR1_Left_BankF_AFAP_2E("BR Bank Left Forward, as Forward as Possible", "517", 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
+    BR1_Left_BankF_2E("BR Bank Left Forward, centered", "517", 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
+    BR1_Left_BankF_ABAP_2E("BR Bank Left Forward, as Forward as Possible", "517", 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
+
+    BR1_Left_BankB_AFAP_2E("BR Bank Left Backward, as Forward as Possible", "517", 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
+    BR1_Left_BankB_2E("BR Bank Left Backward, centered", "517", 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
+    BR1_Left_BankB_ABAP_2E("BR Bank Left Backward, as Forward as Possible", "517", 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
+
+    BR1_Right_BankF_AFAP_2E("BR Bank Right Forward, as Forward as Possible", "517", 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
+    BR1_Right_BankF_2E("BR Bank Right Forward, centered", "517", 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
+    BR1_Right_BankF_ABAP_2E("BR Bank Right Forward, as Forward as Possible", "517", 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
+
+    BR1_Right_BankB_AFAP_2E("BR Bank Right Forward, as Forward as Possible", "517", 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
+    BR1_Right_BankB_2E("BR Bank Right Forward, centered", "517", 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
+    BR1_Right_BankB_ABAP_2E("BR Bank Right Forward, as Forward as Possible", "517", 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
+
+    //Echo BR
+    BR2_Left_BankF_AFAP_2E("BR2 Bank Left Forward, as Forward as Possible", "518", 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
+    BR2_Left_BankF_2E("BR2 Bank Left Forward, centered", "518", 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
+    BR2_Left_BankF_ABAP_2E("BR2 Bank Left Forward, as Forward as Possible", "518", 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
+
+    BR2_Left_BankB_AFAP_2E("BR2 Bank Left Backward, as Forward as Possible", "518", 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
+    BR2_Left_BankB_2E("BR2 Bank Left Backward, centered", "518", 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
+    BR2_Left_BankB_ABAP_2E("BR2 Bank Left Backward, as Forward as Possible", "518", 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
+
+    BR2_Right_BankF_AFAP_2E("BR2 Bank Right Forward, as Forward as Possible", "518", 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
+    BR2_Right_BankF_2E("BR2 Bank Right Forward, centered", "518", 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
+    BR2_Right_BankF_ABAP_2E("BR2 Bank Right Forward, as Forward as Possible", "518", 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
+
+    BR2_Right_BankB_AFAP_2E("BR2 Bank Right Forward, as Forward as Possible", "518", 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
+    BR2_Right_BankB_2E("BR2 Bank Right Forward, centered", "518", 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
+    BR2_Right_BankB_ABAP_2E("BR2 Bank Right Forward, as Forward as Possible", "518", 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
 
     //medium normal BR
     BR1_Left_AFAP_Medium_2E("BR Left as Forward as Possible", "524", 0.0f, -113.75f, 0.0f, 0.0f, -227.5f, -56.5f),
@@ -250,22 +276,19 @@ public class ShipReposition extends Decorator implements EditablePiece {
             .put("CTRL 8", RepoManeuver.BR1_Left_AFAP_2E)
             .put("CTRL R", RepoManeuver.BR1_Left_2E)
             .put("CTRL SHIFT 8", RepoManeuver.BR1_Left_ABAP_2E)
-            .put("ALT CTRL SHIFT R", RepoManeuver.BR1_Left_TripleChoices)
 
             .put("ALT 8", RepoManeuver.BR1_Right_AFAP_2E)
             .put("ALT R", RepoManeuver.BR1_Right_2E)
             .put("ALT SHIFT 8", RepoManeuver.BR1_Right_ABAP_2E)
-            .put("ALT CTRL SHIFT O", RepoManeuver.BR1_Right_TripleChoices)
 
             .put("CTRL 9", RepoManeuver.BR2_Left_AFAP_2E)
             .put("J", RepoManeuver.BR2_Left_2E)
             .put("CTRL SHIFT 9", RepoManeuver.BR2_Left_ABAP_2E)
-            .put("ALT CTRL SHIFT J", RepoManeuver.BR2_Left_TripleChoices)
 
             .put("ALT 9", RepoManeuver.BR2_Right_AFAP_2E)
             .put("K", RepoManeuver.BR2_Right_2E)
             .put("ALT SHIFT 9", RepoManeuver.BR2_Right_ABAP_2E)
-            .put("ALT CTRL SHIFT K", RepoManeuver.BR2_Right_TripleChoices)
+
             .build();
 
     //Names of the reposition
@@ -904,6 +927,68 @@ public class ShipReposition extends Decorator implements EditablePiece {
         rpcList.clear();
     }
 
+    public Command tripleChoiceDispatcher(int which){
+
+        if(!isATripleChoiceAllowed()) return null;
+
+        Command startIt = startTripleChoiceStopNewOnes();
+        List<RepoManeuver> repoChoices = Lists.newArrayList();
+        final VASSAL.build.module.Map theMap = MouseShipGUI.getTheMainMap();
+        String contemplatingPlayerName = getCurrentPlayer().getName();
+
+        switch(which){
+            //barrel roll left 1
+            case 1:
+                startIt.append(logToChatCommand(contemplatingPlayerName + " is contemplating 3 choices for barrel roll left"));
+                repoChoices = Lists.newArrayList(RepoManeuver.BR1_Left_AFAP_2E, RepoManeuver.BR1_Left_2E, RepoManeuver.BR1_Left_ABAP_2E);
+                break;
+            //barrel roll right 1
+            case 2:
+                startIt.append(logToChatCommand(contemplatingPlayerName + " is contemplating 3 choices for barrel roll right"));
+                repoChoices = Lists.newArrayList(RepoManeuver.BR1_Right_AFAP_2E, RepoManeuver.BR1_Right_2E, RepoManeuver.BR1_Right_ABAP_2E);
+                break;
+            //barrel roll left 2 / decloak
+            case 3:
+                startIt.append(logToChatCommand(contemplatingPlayerName + " is contemplating 3 choices for barrel roll 2 or decloak left"));
+                repoChoices = Lists.newArrayList(RepoManeuver.BR2_Left_AFAP_2E, RepoManeuver.BR2_Left_2E, RepoManeuver.BR2_Left_ABAP_2E);
+                break;
+            //barrel roll right 2 / decloak
+            case 4:
+                startIt.append(logToChatCommand(contemplatingPlayerName + " is contemplating 3 choices for barrel roll 2 or decloak right"));
+                repoChoices = Lists.newArrayList(RepoManeuver.BR2_Right_AFAP_2E, RepoManeuver.BR2_Right_2E, RepoManeuver.BR2_Right_ABAP_2E);
+                break;
+            //SV barrel roll left, forward
+            case 5:
+                startIt.append(logToChatCommand(contemplatingPlayerName + " is contemplating 3 choices for forward left bank barrel roll"));
+                repoChoices = Lists.newArrayList(RepoManeuver.BR1_Left_BankF_AFAP_2E, RepoManeuver.BR1_Left_BankF_2E, RepoManeuver.BR1_Left_BankF_ABAP_2E);
+                break;
+            //SV barrel roll left, backward
+            case 6:
+                startIt.append(logToChatCommand(contemplatingPlayerName + " is contemplating 3 choices for backward left bank barrel roll"));
+                repoChoices = Lists.newArrayList(RepoManeuver.BR1_Left_BankB_AFAP_2E, RepoManeuver.BR1_Left_BankB_2E, RepoManeuver.BR1_Left_BankB_ABAP_2E);
+                break;
+            //SV barrel roll right, forward
+            case 7:
+                startIt.append(logToChatCommand(contemplatingPlayerName + " is contemplating 3 choices for forward right bank barrel roll"));
+                repoChoices = Lists.newArrayList(RepoManeuver.BR1_Right_BankF_AFAP_2E, RepoManeuver.BR1_Right_BankF_2E, RepoManeuver.BR1_Right_BankF_ABAP_2E);
+                break;
+            //SV barrel roll right, backward
+            case 8:
+                startIt.append(logToChatCommand(contemplatingPlayerName + " is contemplating 3 choices for backward right bank barrel roll"));
+                repoChoices = Lists.newArrayList(RepoManeuver.BR1_Left_BankB_AFAP_2E, RepoManeuver.BR1_Left_BankB_2E, RepoManeuver.BR1_Left_BankB_ABAP_2E);
+                break;
+            //echo decloak left, forward
+            //echo decloak right, backward
+            //echo decloak right, forward
+            //echo decloak right, backward
+            //Tallon Roll Left
+            //Talllon Roll Right
+        }
+
+        offerTripleChoices(repoChoices, true, theMap);
+
+        return startIt;
+    }
     @Override
     public Command keyEvent(KeyStroke stroke) {
         //Test for 2.0 ship
@@ -975,59 +1060,6 @@ public class ShipReposition extends Decorator implements EditablePiece {
         RepoManeuver repoShip = getKeystrokeRepoManeuver(stroke, is2pointohShip);
         //Ship reposition requested
         if(repoShip != null  && stroke.isOnKeyRelease() == false) {
-            //TODO (2.0 only) intercept-detect the side of the barrel roll or decloak and start the 2nd step of waiting for a position choice:
-            // if no spot is detected, offer the blinking red (visuals are for the owner only)
-            // if 1-3 viable spots are detected, paint them blue, put clickable dots over legal ones AND illegal ones (ie tractored)
-            // offer an out of this to cancel the visuals and the mouselistener checking for clicks
-            //resume the resolution of a BR or DC and if an illegal position is chosen, spawn the template that was used for it
-
-            //Barrel Roll Left, triple choices
-            if(repoShip.equals(RepoManeuver.BR1_Left_TripleChoices) && isATripleChoiceAllowed()){
-                Command startIt = startTripleChoiceStopNewOnes();
-                String contemplatingPlayerName = getCurrentPlayer().getName();
-                startIt.append(logToChatCommand(contemplatingPlayerName + " is contemplating 3 choices for barrel roll left"));
-                startIt.execute();
-                GameModule.getGameModule().sendAndLog(startIt);
-
-                final VASSAL.build.module.Map theMap = MouseShipGUI.getTheMainMap();
-                List<RepoManeuver> barrelLeft = Lists.newArrayList(RepoManeuver.BR1_Left_AFAP_2E, RepoManeuver.BR1_Left_2E, RepoManeuver.BR1_Left_ABAP_2E);
-                offerTripleChoices(barrelLeft, true, theMap);
-                return null;
-            }else if(repoShip.equals(RepoManeuver.BR1_Right_TripleChoices) && isATripleChoiceAllowed()){
-                Command startIt = startTripleChoiceStopNewOnes();
-                String contemplatingPlayerName = getCurrentPlayer().getName();
-                startIt.append(logToChatCommand(contemplatingPlayerName + " is contemplating 3 choices for barrel roll right"));
-                startIt.execute();
-                GameModule.getGameModule().sendAndLog(startIt);
-
-                final VASSAL.build.module.Map theMap = MouseShipGUI.getTheMainMap();
-                List<RepoManeuver> barrelLeft = Lists.newArrayList(RepoManeuver.BR1_Right_AFAP_2E, RepoManeuver.BR1_Right_2E, RepoManeuver.BR1_Right_ABAP_2E);
-                offerTripleChoices(barrelLeft, true, theMap);
-                return null;
-            }else if(repoShip.equals(RepoManeuver.BR2_Left_TripleChoices) && isATripleChoiceAllowed()){
-                Command startIt = startTripleChoiceStopNewOnes();
-                String contemplatingPlayerName = getCurrentPlayer().getName();
-                startIt.append(logToChatCommand(contemplatingPlayerName + " is contemplating 3 choices for barrel roll 2 or decloak left"));
-                startIt.execute();
-                GameModule.getGameModule().sendAndLog(startIt);
-
-                final VASSAL.build.module.Map theMap = MouseShipGUI.getTheMainMap();
-                List<RepoManeuver> barrelLeft = Lists.newArrayList(RepoManeuver.BR2_Left_AFAP_2E, RepoManeuver.BR2_Left_2E, RepoManeuver.BR2_Left_ABAP_2E);
-                offerTripleChoices(barrelLeft, true, theMap);
-                return null;
-            }else if(repoShip.equals(RepoManeuver.BR2_Right_TripleChoices) && isATripleChoiceAllowed()){
-                Command startIt = startTripleChoiceStopNewOnes();
-                String contemplatingPlayerName = getCurrentPlayer().getName();
-                startIt.append(logToChatCommand(contemplatingPlayerName + " is contemplating 3 choices for barrel roll 2 or decloak right"));
-                startIt.execute();
-                GameModule.getGameModule().sendAndLog(startIt);
-
-                final VASSAL.build.module.Map theMap = MouseShipGUI.getTheMainMap();
-                List<RepoManeuver> barrelLeft = Lists.newArrayList(RepoManeuver.BR2_Right_AFAP_2E, RepoManeuver.BR2_Right_2E, RepoManeuver.BR2_Right_ABAP_2E);
-                offerTripleChoices(barrelLeft, true, theMap);
-                return null;
-            }
-
             //detect that the ship's final position overlaps a ship or obstacle
             Command repoCommand = repositionTheShip(repoShip, is2pointohShip);
             if(repoCommand == null) return piece.keyEvent(stroke); //somehow did not get a programmed reposition command

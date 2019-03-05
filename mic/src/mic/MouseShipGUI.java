@@ -202,9 +202,18 @@ public class MouseShipGUI extends AbstractConfigurable {
                                         leaveATimeStamp(playerInfo.getSide());
 
                                         //send the appropriate command to the game piece
-                                        Command moveShipCommand = activatedPiece.keyEvent(elem.associatedKeyStroke);
-                                        moveShipCommand.execute();
-                                        GameModule.getGameModule().sendAndLog(moveShipCommand);
+                                        Command moveShipCommand = null;
+                                        if(elem.associatedKeyStroke!=null) moveShipCommand = activatedPiece.keyEvent(elem.associatedKeyStroke); //direct keystroke keyboard shortcut
+                                        else if(elem.whichTripleChoice != 0) {
+                                            ShipReposition SR = findShipRepositionDecorator(activatedPiece);
+                                            moveShipCommand = SR.tripleChoiceDispatcher(elem.whichTripleChoice);
+                                        }
+                                        if(moveShipCommand!=null){
+                                            moveShipCommand.execute();
+                                            GameModule.getGameModule().sendAndLog(moveShipCommand);
+                                        } else{
+                                            logToChat("*-- Error: failed to execute a mouse GUI command.");
+                                        }
                                         break;
                                     }
                                 }
@@ -237,6 +246,11 @@ public class MouseShipGUI extends AbstractConfigurable {
         };
         theMap.addLocalMouseListener(ml);
     }
+
+    private ShipReposition findShipRepositionDecorator(GamePiece activatedPiece) {
+        return (ShipReposition)ShipReposition.getDecorator(activatedPiece,ShipReposition.class);
+    }
+
     private static VASSAL.build.module.Map getPlayerMap(int playerIndex) {
         for (VASSAL.build.module.Map loopMap : GameModule.getGameModule().getComponentsOf(VASSAL.build.module.Map.class)) {
             if (("Player " + Integer.toString(playerIndex)).equals(loopMap.getMapName())) {

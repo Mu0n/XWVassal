@@ -73,11 +73,11 @@ public class MouseShipGUIDrawable implements Drawable {
 
         //Barrel Roll test
         miElement brIconLeft = new miElement("mi_barrelroll.png", ulX + cursorX, ulY + cursorY,
-                KeyStroke.getKeyStroke(KeyEvent.VK_R,KeyEvent.CTRL_DOWN_MASK+ KeyEvent.SHIFT_DOWN_MASK+KeyEvent.ALT_DOWN_MASK, false));
+                null, 1);
         listOfInteractiveElements.add(brIconLeft);
 
         miElement br2IconLeft = new miElement("mi_barrelroll2L.png", ulX + cursorX, ulY + cursorY + brIconLeft.image.getHeight()+padX,
-                KeyStroke.getKeyStroke(KeyEvent.VK_J, KeyEvent.CTRL_DOWN_MASK+ KeyEvent.SHIFT_DOWN_MASK+KeyEvent.ALT_DOWN_MASK, false));
+                null, 3);
         listOfInteractiveElements.add(br2IconLeft);
 
         cursorX += brIconLeft.image.getWidth() + smallGapX;
@@ -91,29 +91,29 @@ public class MouseShipGUIDrawable implements Drawable {
         }catch(Exception e){
 
         }
-        miElement shipGfx = new miElement(getShipImage(pilotShip, stateOfShipGfx),ulX+cursorX, ulY+cursorY, null);
+        miElement shipGfx = new miElement(getShipImage(pilotShip, stateOfShipGfx),ulX+cursorX, ulY+cursorY, null,0);
         if(shipGfx!=null && shipGfx.image!=null) {
             listOfInteractiveElements.add(shipGfx);
             cursorX += shipGfx.image.getWidth() + smallGapX;
         }
 
         miElement brIconRight = new miElement("mi_barrelroll.png", ulX + cursorX, ulY + cursorY,
-                KeyStroke.getKeyStroke(KeyEvent.VK_O, KeyEvent.CTRL_DOWN_MASK+ KeyEvent.SHIFT_DOWN_MASK+KeyEvent.ALT_DOWN_MASK, false));
+                null, 2);
         listOfInteractiveElements.add(brIconRight);
 
         miElement br2IconRight = new miElement("mi_barrelroll2R.png", ulX + cursorX, ulY + cursorY + brIconRight.image.getHeight() + padX,
-                KeyStroke.getKeyStroke(KeyEvent.VK_K, KeyEvent.CTRL_DOWN_MASK + KeyEvent.SHIFT_DOWN_MASK + KeyEvent.ALT_DOWN_MASK, false));
+                null, 4);
         listOfInteractiveElements.add(br2IconRight);
 
         cursorX += brIconRight.image.getWidth();
 
         miElement hullGfx = new miElement("mi_hull.png", ulX + cursorX+smallGapX, ulY+padY,
-                null);
+                null,0);
         miElement addHull = new miElement("mi_plus.png", ulX + cursorX+ smallGapX + hullGfx.image.getWidth(), ulY+padY,
-                KeyStroke.getKeyStroke(KeyEvent.VK_H, KeyEvent.ALT_DOWN_MASK, false));
+                KeyStroke.getKeyStroke(KeyEvent.VK_H, KeyEvent.ALT_DOWN_MASK, false),0);
         miElement removeHull = new miElement("mi_minus.png", ulX + cursorX + 2*smallGapX + hullGfx.image.getWidth() + addHull.image.getWidth(),
                 ulY+padY,
-        KeyStroke.getKeyStroke(KeyEvent.VK_H, KeyEvent.ALT_DOWN_MASK + KeyEvent.CTRL_DOWN_MASK, false));
+        KeyStroke.getKeyStroke(KeyEvent.VK_H, KeyEvent.ALT_DOWN_MASK + KeyEvent.CTRL_DOWN_MASK, false),0);
 
         listOfInteractiveElements.add(hullGfx);
         listOfInteractiveElements.add(addHull);
@@ -121,12 +121,12 @@ public class MouseShipGUIDrawable implements Drawable {
 
         cursorY += hullGfx.image.getHeight() + smallGapX;
         miElement shieldGfx = new miElement("mi_shield.png", ulX + cursorX+smallGapX, ulY+padY+cursorY,
-                null);
+                null,0);
         miElement addShield = new miElement("mi_plus.png", ulX + cursorX+ smallGapX + hullGfx.image.getWidth(), ulY+padY+cursorY,
-                KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyEvent.ALT_DOWN_MASK, false));
+                KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyEvent.ALT_DOWN_MASK, false),0);
         miElement removeShield = new miElement("mi_minus.png", ulX + cursorX + 2*smallGapX + hullGfx.image.getWidth() + addHull.image.getWidth(),
                 ulY+padY+cursorY,
-                KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyEvent.ALT_DOWN_MASK + KeyEvent.CTRL_DOWN_MASK, false));
+                KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyEvent.ALT_DOWN_MASK + KeyEvent.CTRL_DOWN_MASK, false),0);
 
         listOfInteractiveElements.add(shieldGfx);
         listOfInteractiveElements.add(addShield);
@@ -276,10 +276,14 @@ public class MouseShipGUIDrawable implements Drawable {
 
         KeyStroke associatedKeyStroke;
 
-        public miElement(String fileName, int wantedX, int wantedY, KeyStroke wantedKeyStroke){
+        int whichTripleChoice = 0;
+
+
+        public miElement(String fileName, int wantedX, int wantedY, KeyStroke wantedKeyStroke, int wantedTripleChoice){
             x = wantedX;
             y = wantedY;
             associatedKeyStroke = wantedKeyStroke;
+            whichTripleChoice = wantedTripleChoice;
 
             //load the image
             try {
