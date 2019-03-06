@@ -33,7 +33,7 @@ public class FOVisualizationClear extends Command implements Drawable {
     protected void executeCommand() {
         final VASSAL.build.module.Map map = VASSAL.build.module.Map.getMapById("Map0");
         if (fovContent != null) {
-            map.removeDrawComponent(FOVisualizationClear.this);
+            map.removeDrawComponent(new FOVisualization(fovContent));
         }
     }
 
@@ -63,9 +63,10 @@ public class FOVisualizationClear extends Command implements Drawable {
                 return null;
             }
             String id = command.substring(commandPrefix.length());
-            logger.info("Decoded clear visualization with id = {}", id);
             try {
                 String[] parts = command.split(partDelim);
+
+                logger.info("Decoded clear visualization with id = {}", parts[0]);
                 if (parts.length != 3) {
                     throw new IllegalStateException("Invalid command format " + command);
                 }

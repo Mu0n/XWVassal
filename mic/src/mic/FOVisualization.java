@@ -54,13 +54,7 @@ public class FOVisualization extends Command implements Drawable {
 
     protected void executeCommand() {
         final VASSAL.build.module.Map map = VASSAL.build.module.Map.getMapById("Map0");
-        int count = getCount();
-        if (count > 0) {
-            map.addDrawComponent(this);
-        }
-        else {
-            map.removeDrawComponent(FOVisualization.this);
-        }
+        map.addDrawComponent(this);
         map.repaint();
     }
 
@@ -158,12 +152,13 @@ public class FOVisualization extends Command implements Drawable {
                 return null;
             }
 
-            logger.info("Decoding AutorangeVisualization");
 
             command = command.substring(commandPrefix.length());
 
             try {
                 String[] parts = command.split(partDelim);
+
+                logger.info("Decoding AutorangeVisualization id=" + parts[0]);
                 if (parts.length != 3) {
                     throw new IllegalStateException("Invalid command format " + command);
                 }
