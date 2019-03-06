@@ -69,7 +69,7 @@ public class DialRevealCommand extends Command {
             String pilotNameCheck = pieceInCommand.getProperty("Pilot Name").toString();
             String chosenMoveCheck = chosenMoveEmb.getProperty("Chosen Move_Name").toString();
 
-            if(pieceInCommand.getMap().equals(mapNameCheck)) Util.logToChatCommand("* - "+ revealerName + " reveals the dial for "
+            if(pieceInCommand.getMap().equals(mapNameCheck)) Util.logToChat("* - "+ revealerName + " reveals the dial for "
                     + craftIDCheck + " (" + pilotNameCheck + ") = "+ chosenMoveCheck + "*");
         }else { //reverse the reveal
 

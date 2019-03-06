@@ -156,7 +156,6 @@ public class Util {
             msg = String.format(msg, args);
         }
         Command c = new Chatter.DisplayText(GameModule.getGameModule().getChatter(), msg);
-        c.execute();
         return c;
     }
     public static GamePiece newPiece(PieceSlot slot) {

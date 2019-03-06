@@ -1,5 +1,6 @@
 package mic;
 
+import VASSAL.build.GameModule;
 import VASSAL.build.module.documentation.HelpFile;
 import VASSAL.build.module.map.Drawable;
 import VASSAL.command.Command;
@@ -10,6 +11,7 @@ import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import jdk.nashorn.internal.codegen.FieldObjectCreator;
 import mic.manuvers.ManeuverPaths;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,9 +19,6 @@ import org.slf4j.LoggerFactory;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
 import java.awt.font.FontRenderContext;
 import java.awt.font.TextAttribute;
 import java.awt.font.TextLayout;
@@ -68,7 +67,7 @@ Integer savedOption = 0;
     }
 }
 
-public class AutoRangeFinder extends Decorator implements EditablePiece, MouseListener, MouseMotionListener {
+public class AutoRangeFinder extends Decorator implements EditablePiece {
 
     private static Boolean DEBUGMODE = false;
     private static Boolean MULTILINES = false;
@@ -116,29 +115,15 @@ public class AutoRangeFinder extends Decorator implements EditablePiece, MouseLi
     Boolean isThisTheOne = false;
     boolean twoPointOh = false;
 
-    // Mouse stuff
-    protected Point anchor;
-    protected String anchorLocation = "";
-    protected String lastLocation = "";
-    protected Point lastAnchor = new Point();
-
-    public AutoRangeFinder() {
-        this(null);
-    }
-
     public AutoRangeFinder(GamePiece piece) {
         setInner(piece);
         this.testRotator = new FreeRotator("rotate;360;;;;;;;", null);
         this.fov = new FOVisualization();
        // launch();
         map = VASSAL.build.module.Map.getMapById("Map0");
-        map.getView().addMouseMotionListener(this);
-
     }
 
     protected void launch() {
-            map.pushMouseListener(this);
-            anchor.move(0, 0);
     }
 
     @Override
@@ -174,10 +159,7 @@ public class AutoRangeFinder extends Decorator implements EditablePiece, MouseLi
 
         ArrayList<RangeFindings> rfindings = new ArrayList<RangeFindings>(); //findings compiled here
 
-        Command bigCommand = piece.keyEvent(stroke);
-
         // check to see if the this code needs to respond to the event
-
         //identify which autorange option was used by using the static Map defined above in the globals, store it in an int
         whichOption = getKeystrokeToOptions(stroke);
         if (whichOption != -1 && stroke.isOnKeyRelease() == false) {
@@ -198,9 +180,11 @@ public class AutoRangeFinder extends Decorator implements EditablePiece, MouseLi
 
             //if the firing options were already activated, remove the visuals and exit right away
             if (this.fov != null && this.fov.getCount() > 0) {
-                bigCommand.append(clearVisu(map));
-                this.fov.execute();
-                return bigCommand;
+                Command bigCommand = clearVisu(map);
+                bigCommand.append(this.fov);
+                bigCommand.execute();
+                GameModule.getGameModule().sendAndLog(bigCommand);
+                return null;
             }
 
             twoPointOh = this.getInner().getState().contains("this_is_2pointoh");
@@ -226,20 +210,28 @@ public class AutoRangeFinder extends Decorator implements EditablePiece, MouseLi
 
             //draw visuals and announce the results in the chat
             Command bigAnnounceCommand = makeBigAnnounceCommand(bigAnnounce, rfindings);
-            bigCommand.append(bigAnnounceCommand);
+            Command bigCommand = bigAnnounceCommand;
             if(this.fov !=null && this.fov.getCount() > 0) {
                 bigCommand.append(this.fov);
-                this.fov.execute();
-                //logToChatCommand("launch execute");
-            }
-        } else if (KeyStroke.getKeyStroke(KeyEvent.VK_D, KeyEvent.CTRL_DOWN_MASK, false).equals(stroke)) {
+                bigCommand.execute();
+                GameModule.getGameModule().sendAndLog(bigCommand);
+                return null;
+            } // end of drawing visuals and announcing the results in the chatlog
+            bigCommand.execute();
+            GameModule.getGameModule().sendAndLog(bigCommand);
+            return null; // for some reason, there were no visuals to do, so send that message and don't send these special keystrokes to others classes/decorators
+        } //end of dealing with keystrokes that are linked to autorange lines
+        else if (KeyStroke.getKeyStroke(KeyEvent.VK_D, KeyEvent.CTRL_DOWN_MASK, false).equals(stroke)) {
             if (this.fov != null && this.fov.getCount() > 0) {
-                bigCommand.append(clearVisu(map));
-                this.fov.execute();
+                Command bigCommand = clearVisu(map);
+                bigCommand.append(this.fov);
+                bigCommand.execute();
+                GameModule.getGameModule().sendAndLog(bigCommand);
             }
-        }
+            return piece.keyEvent(stroke); //send the CTRL-D to deal with the ship whether there were visuals to remove or not
+        } //end of deleting a piece and remove its pending visuals if there are any
 
-        return bigCommand;
+        return piece.keyEvent(stroke); //did not find anything worth react to, so send back the key for others to deal with it
     }
 
     public void justRunLines(int savedOption){
@@ -2880,57 +2872,10 @@ public class AutoRangeFinder extends Decorator implements EditablePiece, MouseLi
         return ships;
     }
 
-    public void mouseClicked(MouseEvent e) {
-
-    }
-
-    public void mousePressed(MouseEvent e) {
-        if(DEBUGMODE == false) return;
-        Point p = e.getPoint();
-            anchor = p;
-            anchorLocation = map.localizedLocationName(anchor);
-            lastLocation = anchorLocation;
-        }
-
-
-    public void mouseReleased(MouseEvent e) {
-
-    }
-
-    public void mouseEntered(MouseEvent e) {
-
-    }
-
-    public void mouseExited(MouseEvent e) {
-
-    }
-
-    public void mouseDragged(MouseEvent e) {
-        if( DEBUGMODE == false) return;
-        if(isThisTheOne == false) return;
-
-        Point p = e.getPoint();
-        map.scrollAtEdge(p, 15);
-
-        Point mapAnchor = lastAnchor;
-
-        int fudge = this.piece.getShape().getBounds().width * 12;
-
-        this.piece.setPosition(p);
-        Rectangle r = new Rectangle(this.piece.getPosition().x-fudge,
-                this.piece.getPosition().y-fudge,
-                this.piece.getShape().getBounds().width+fudge*2,
-                this.piece.getShape().getBounds().height+fudge*2);
-        map.repaint(r);
-    }
-
-    public void mouseMoved(MouseEvent e) {
-
-    }
 
     public static class FOVisualizationClear extends Command {
 
-        private final String id;
+        String id;
 
         public FOVisualizationClear(String id) {
             this.id = id;
@@ -2952,6 +2897,7 @@ public class AutoRangeFinder extends Decorator implements EditablePiece, MouseLi
         public static class FOVisualizationClearEncoder implements CommandEncoder {
             private static final String prefix = "FoVisClearId=";
             private static final Logger logger = LoggerFactory.getLogger(FOVisualizationClearEncoder.class);
+            private static final String itemDelim = "\t";
 
             public Command decode(String command) {
                 if (command == null || !command.contains(prefix)) {
@@ -2966,15 +2912,17 @@ public class AutoRangeFinder extends Decorator implements EditablePiece, MouseLi
                 if(!(c instanceof FOVisualizationClear)) {
                     return null;
                 }
-                FOVisualizationClear visClear = (FOVisualizationClear) c;
-                logger.info("Encoded clear visualization with id = {}", visClear.id);
-                return prefix + visClear.id;
+                try{
+                    FOVisualizationClear visClear = (FOVisualizationClear) c;
+                    logger.info("Encoded clear visualization with id = {}", visClear.id);
+                    return prefix + itemDelim + visClear.id;
+                }catch(Exception e){
+                    logger.error("Error encoding FoVisClearId", e);
+                    return null;
+                }
             }
         }
-
     }
-
-
 
     public static class FOVisualization extends Command implements Drawable {
 
@@ -2996,7 +2944,10 @@ public class AutoRangeFinder extends Decorator implements EditablePiece, MouseLi
         }
 
         FOVisualization() {
-            this(UUID.randomUUID().toString());
+            this.id = UUID.randomUUID().toString();
+            this.shapes = new ArrayList<Shape>();
+            this.lines = new ArrayList<MicLine>();
+            this.shapesWithText = new ArrayList<ShapeWithText>();
         }
 
         public String getId() {
