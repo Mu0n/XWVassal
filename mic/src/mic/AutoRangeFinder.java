@@ -2864,10 +2864,10 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
 
 
     public static class FOVContent implements Serializable {
-        private final java.util.List<Shape> shapes;
-        private final java.util.List<AutoRangeFinder.ShapeWithText> shapesWithText;
-        private final java.util.List<AutoRangeFinder.MicLine> lines;
-        private final String id;
+        private java.util.List<Shape> shapes;
+        private java.util.List<AutoRangeFinder.ShapeWithText> shapesWithText;
+        private java.util.List<AutoRangeFinder.MicLine> lines;
+        private String id;
 
         FOVContent() { //constructor used at the creation of the GamePiece
             this.id = UUID.randomUUID().toString();
