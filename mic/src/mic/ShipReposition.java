@@ -993,7 +993,6 @@ public class ShipReposition extends Decorator implements EditablePiece {
     public Command keyEvent(KeyStroke stroke) {
         //Test for 2.0 ship
         boolean is2pointohShip = this.getInner().getState().contains("this_is_2pointoh");
-        logToChat("is 2.0 " + is2pointohShip);
         //Any keystroke made on a ship will remove the orange shades
         previousCollisionVisualization = new MapVisualizations();
 

@@ -24,21 +24,24 @@ import static mic.Util.serializeToBase64;
 
 public class FOVisualizationClear extends Command implements Drawable {
 
-    private final AutoRangeFinder.FOVContent fovContent;
+    private AutoRangeFinder.FOVContent fovContent;
+    private FOVisualization originalFovCommand;
 
-    public FOVisualizationClear(AutoRangeFinder.FOVContent fovc) {
+
+    public FOVisualizationClear(FOVisualization fovCommand, AutoRangeFinder.FOVContent fovc) {
+        this.originalFovCommand = fovCommand;
         this.fovContent = fovc;
     }
 
     protected void executeCommand() {
         final VASSAL.build.module.Map map = VASSAL.build.module.Map.getMapById("Map0");
         if (fovContent != null) {
-            map.removeDrawComponent(new FOVisualization(fovContent));
+            map.removeDrawComponent(originalFovCommand);
         }
     }
 
     protected Command myUndoCommand() {
-        return null;
+        return new FOVisualization(fovContent);
     }
 
     public void draw(Graphics g, Map map) {
@@ -67,19 +70,21 @@ public class FOVisualizationClear extends Command implements Drawable {
                 String[] parts = command.split(partDelim);
 
                 logger.info("Decoded clear visualization with id = {}", parts[0]);
-                if (parts.length != 3) {
+                if (parts.length != 4) {
                     throw new IllegalStateException("Invalid command format " + command);
                 }
                 AutoRangeFinder.FOVContent visContent = new AutoRangeFinder.FOVContent(parts[0]);
 
-                String[] encodedLines = parts[1].equals(nullPart) ? new String[0] : parts[1].split(itemDelim);
+                FOVisualization decodedFovCommand = (FOVisualization) deserializeBase64Obj(parts[1]);
+
+                String[] encodedLines = parts[2].equals(nullPart) ? new String[0] : parts[2].split(itemDelim);
                 logger.info("Decoding {} lines", encodedLines.length);
                 for (String base64Line : encodedLines) {
                     AutoRangeFinder.MicLine line = (AutoRangeFinder.MicLine) deserializeBase64Obj(base64Line);
                     visContent.addLine(line);
                 }
 
-                String[] encodedSwt = parts[2].equals(nullPart) ? new String[0] : parts[2].split(itemDelim);
+                String[] encodedSwt = parts[3].equals(nullPart) ? new String[0] : parts[3].split(itemDelim);
                 logger.info("Decoding {} shapesWithText", encodedLines.length);
                 for (String base64Shape : encodedSwt) {
                     AutoRangeFinder.ShapeWithText swt = (AutoRangeFinder.ShapeWithText) deserializeBase64Obj(base64Shape);
@@ -87,7 +92,7 @@ public class FOVisualizationClear extends Command implements Drawable {
                 }
 
                 logger.info("Decoded AutorangeVisualization clear with {} shapes", visContent.getShapes().size());
-                return new FOVisualizationClear(visContent);
+                return new FOVisualizationClear(decodedFovCommand, visContent);
             } catch (Exception e) {
                 logger.error("Error decoding AutorangeVisualization clear", e);
                 return null;
@@ -113,7 +118,9 @@ public class FOVisualizationClear extends Command implements Drawable {
                 }
                 String linesPart = lines.size() > 0 ? Joiner.on(itemDelim).join(lines) : null;
                 String swtPart = shapesWithText.size() > 0 ? Joiner.on(itemDelim).join(shapesWithText) : null;
-                return commandPrefix + Joiner.on(partDelim).useForNull(nullPart).join(visualization.getId(), linesPart, swtPart);
+
+                String fovCommandString = serializeToBase64(visualization.originalFovCommand);
+                return commandPrefix + Joiner.on(partDelim).useForNull(nullPart).join(visualization.getId(), fovCommandString, linesPart, swtPart);
             } catch (Exception e) {
                 logger.error("Error encoding autorange visualization clear", e);
                 return null;

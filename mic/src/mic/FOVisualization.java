@@ -1,5 +1,6 @@
 package mic;
 
+import VASSAL.build.GameModule;
 import VASSAL.build.module.map.Drawable;
 import VASSAL.command.Command;
 import VASSAL.command.CommandEncoder;
@@ -15,11 +16,14 @@ import java.awt.font.TextAttribute;
 import java.awt.font.TextLayout;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Line2D;
+import java.io.Serializable;
 import java.text.AttributedString;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
 import static mic.Util.deserializeBase64Obj;
+import static mic.Util.logToChat;
 import static mic.Util.serializeToBase64;
 
 /**
@@ -30,9 +34,10 @@ import static mic.Util.serializeToBase64;
  * A unique ID is generated upon creation and is used when it's time to shut the visual off with the
  * sister Command class, FOVisualizationClear
  */
-public class FOVisualization extends Command implements Drawable {
+public class FOVisualization extends Command implements Drawable, Serializable {
 
     private final AutoRangeFinder.FOVContent fovContent;
+    private boolean readyToDelete;
 
     public Color badLineColor = new Color(0, 121,255,110);
     public Color bestLineColor = new Color(246, 255, 41,255);
@@ -51,7 +56,6 @@ public class FOVisualization extends Command implements Drawable {
         return fovContent.getMicLines().size() + fovContent.getTextShapes().size();
     }
 
-
     protected void executeCommand() {
         final VASSAL.build.module.Map map = VASSAL.build.module.Map.getMapById("Map0");
         map.addDrawComponent(this);
@@ -59,7 +63,7 @@ public class FOVisualization extends Command implements Drawable {
     }
 
     protected Command myUndoCommand() {
-        return null;
+        return new FOVisualizationClear(this, fovContent);
     }
 
     public void draw(Graphics graphics, VASSAL.build.module.Map map) {
@@ -205,6 +209,7 @@ public class FOVisualization extends Command implements Drawable {
                 }
                 String linesPart = lines.size() > 0 ? Joiner.on(itemDelim).join(lines) : null;
                 String swtPart = shapesWithText.size() > 0 ? Joiner.on(itemDelim).join(shapesWithText) : null;
+
                 return commandPrefix + Joiner.on(partDelim).useForNull(nullPart).join(visualization.getId(), linesPart, swtPart);
             } catch (Exception e) {
                 logger.error("Error encoding autorange visualization", e);

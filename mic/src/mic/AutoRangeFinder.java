@@ -99,6 +99,7 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
     Boolean wantExtraBandsMorFA = false;
     int bestBandRange = 0;
     FOVContent fov;
+    FOVisualization fovCommand;
 
     Boolean isThisTheOne = false;
     boolean twoPointOh = false;
@@ -177,10 +178,10 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
                 FA.run();
             }
             //if the firing options were already activated, remove the visuals first and exit right away
-            if (this.fov != null && this.fov.getCount() > 0) {
-                bigCommand = new FOVisualizationClear(this.fov);
-                bigCommand.execute();
-                GameModule.getGameModule().sendAndLog(bigCommand);
+            if (this.fov != null && this.fov.getCount() > 0 && fovCommand != null) {
+                Command clearIt = new FOVisualizationClear(fovCommand, fov);
+                GameModule.getGameModule().sendAndLog(clearIt);
+                clearIt.execute(); //will toggle it
                 this.fov = new FOVContent();
                 return null;
             }
@@ -212,10 +213,10 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
             else bigCommand.append(mBAC);
 
             if(this.fov !=null && this.fov.getCount() > 0) {
-                FOVisualization showIt = new FOVisualization(this.fov);
-                bigCommand.append(showIt);
-                bigCommand.execute();
+                fovCommand = new FOVisualization(this.fov);
+                bigCommand.append(fovCommand);
                 GameModule.getGameModule().sendAndLog(bigCommand);
+                bigCommand.execute();
                 return null;
             } // end of drawing visuals and announcing the results in the chatlog
             bigCommand.execute();
@@ -223,10 +224,10 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
             return null; // for some reason, there were no visuals to do, so send that message and don't send these special keystrokes to others classes/decorators
         } //end of dealing with keystrokes that are linked to autorange lines
         else if (KeyStroke.getKeyStroke(KeyEvent.VK_D, KeyEvent.CTRL_DOWN_MASK, false).equals(stroke)) {
-            if (this.fov != null && this.fov.getCount() > 0) {
-                Command bigShutDown = new FOVisualizationClear(this.fov);
-                bigShutDown.execute();
-                GameModule.getGameModule().sendAndLog(bigShutDown);
+            if (this.fov != null && this.fov.getCount() > 0 && fovCommand!=null) {
+                Command clearIt = new FOVisualizationClear(fovCommand, fov);
+                clearIt.execute(); //will toggle it
+                GameModule.getGameModule().sendAndLog(clearIt);
             }
             return piece.keyEvent(stroke); //send the CTRL-D to deal with the ship whether there were visuals to remove or not
         } //end of deleting a piece and remove its pending visuals if there are any
@@ -2884,6 +2885,12 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
         }
         public String getId() {
             return this.id;
+        }
+
+        public void clear(){
+            this.shapes = new ArrayList<Shape>();
+            this.lines = new ArrayList<AutoRangeFinder.MicLine>();
+            this.shapesWithText = new ArrayList<AutoRangeFinder.ShapeWithText>();
         }
 
         public void add(Shape bumpable) {
