@@ -996,6 +996,7 @@ public class ShipReposition extends Decorator implements EditablePiece {
         //Any keystroke made on a ship will remove the orange shades
         previousCollisionVisualization = new MapVisualizations();
 
+
         //Deal with ALT-C, detect if there's something under the ship creating an overlap
         if (KeyStroke.getKeyStroke(KeyEvent.VK_C, KeyEvent.ALT_DOWN_MASK,false).equals(stroke)){
             List<BumpableWithShape> BWS = getBumpablesOnMap(true);

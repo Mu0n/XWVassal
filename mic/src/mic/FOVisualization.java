@@ -4,6 +4,7 @@ import VASSAL.build.GameModule;
 import VASSAL.build.module.map.Drawable;
 import VASSAL.command.Command;
 import VASSAL.command.CommandEncoder;
+import VASSAL.counters.GamePiece;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -37,16 +38,40 @@ import static mic.Util.serializeToBase64;
 public class FOVisualization extends Command implements Drawable, Serializable {
 
     private final AutoRangeFinder.FOVContent fovContent;
-    private boolean readyToDelete;
+    private GamePiece pieceInCommand;
+    private String pieceId;
 
     public Color badLineColor = new Color(0, 121,255,110);
     public Color bestLineColor = new Color(246, 255, 41,255);
     public Color shipsObstaclesColor = new Color(255,99,71, 150);
     public Color arcLineColor = new Color(246, 255, 41,180);
 
-    FOVisualization(AutoRangeFinder.FOVContent fovc) {
+    //point of entry for the player initiating the keystroke for autorange
+    FOVisualization(AutoRangeFinder.FOVContent fovc, GamePiece senderPiece) {
         this.fovContent = fovc;
+        pieceInCommand = senderPiece;
+        pieceId = pieceInCommand.getProperty("micID").toString(); //gets the random UUID from the ship that was saved during spawning
     }
+
+    //point of entry for other players who have to decode this command
+    FOVisualization(AutoRangeFinder.FOVContent fovc, String senderPieceId) {
+        this.fovContent = fovc;
+        pieceId = senderPieceId;
+
+        List<GamePiece> pieces = GameModule.getGameModule().getAllDescendantComponentsOf(GamePiece.class);
+        for(GamePiece p : pieces){
+            try{
+                String checkedUpId = p.getProperty("micID").toString();
+                if(checkedUpId.equals(senderPieceId)) {
+                    pieceInCommand = p;
+                    break;
+                }
+            }catch(Exception e){
+                continue;
+            }
+        }
+    }
+
 
     public String getId() {
         return this.fovContent.getId();
@@ -57,13 +82,22 @@ public class FOVisualization extends Command implements Drawable, Serializable {
     }
 
     protected void executeCommand() {
+        logToChat("executing show lines");
         final VASSAL.build.module.Map map = VASSAL.build.module.Map.getMapById("Map0");
+
         map.addDrawComponent(this);
         map.repaint();
+
+        //if not already present, find the piece that should be tied to this command and set it to this; this will be needed for players who need to decode this command
+        AutoRangeFinder ARF =(AutoRangeFinder)AutoRangeFinder.getDecorator(pieceInCommand,AutoRangeFinder.class);
+        if(ARF==null) logToChat("couldn't find the autorange decorator");
+        else{
+            if(ARF.fovCommand==null) ARF.populateFovCommand(this);
+        }
     }
 
     protected Command myUndoCommand() {
-        return new FOVisualizationClear(this, fovContent);
+        return null;
     }
 
     public void draw(Graphics graphics, VASSAL.build.module.Map map) {
@@ -162,20 +196,21 @@ public class FOVisualization extends Command implements Drawable, Serializable {
             try {
                 String[] parts = command.split(partDelim);
 
-                logger.info("Decoding AutorangeVisualization id=" + parts[0]);
-                if (parts.length != 3) {
+                logger.info("Decoding AutorangeVisualization id=" + parts[0] + " micId=" + parts[1]);
+                if (parts.length != 4) {
                     throw new IllegalStateException("Invalid command format " + command);
                 }
                 AutoRangeFinder.FOVContent visContent = new AutoRangeFinder.FOVContent(parts[0]);
+                String pieceIdToSend = parts[1];
 
-                String[] encodedLines = parts[1].equals(nullPart) ? new String[0] : parts[1].split(itemDelim);
+                String[] encodedLines = parts[2].equals(nullPart) ? new String[0] : parts[2].split(itemDelim);
                 logger.info("Decoding {} lines", encodedLines.length);
                 for (String base64Line : encodedLines) {
                     AutoRangeFinder.MicLine line = (AutoRangeFinder.MicLine) deserializeBase64Obj(base64Line);
                     visContent.addLine(line);
                 }
 
-                String[] encodedSwt = parts[2].equals(nullPart) ? new String[0] : parts[2].split(itemDelim);
+                String[] encodedSwt = parts[3].equals(nullPart) ? new String[0] : parts[3].split(itemDelim);
                 logger.info("Decoding {} shapesWithText", encodedLines.length);
                 for (String base64Shape : encodedSwt) {
                     AutoRangeFinder.ShapeWithText swt = (AutoRangeFinder.ShapeWithText) deserializeBase64Obj(base64Shape);
@@ -183,7 +218,7 @@ public class FOVisualization extends Command implements Drawable, Serializable {
                 }
 
                 logger.info("Decoded AutorangeVisualization with {} shapes", visContent.getShapes().size());
-                return new FOVisualization(visContent);
+                return new FOVisualization(visContent, pieceIdToSend);
             } catch (Exception e) {
                 logger.error("Error decoding AutorangeVisualization", e);
                 return null;
@@ -194,8 +229,8 @@ public class FOVisualization extends Command implements Drawable, Serializable {
             if (!(c instanceof FOVisualization)) {
                 return null;
             }
-            logger.info("Encoding autorange visualization");
             FOVisualization visualization = (FOVisualization) c;
+            logger.info("Encoding autorange visualization id=" + visualization.getId() + " micID=" + visualization.pieceId);
             try {
                 java.util.List<String> lines = Lists.newArrayList();
                 logger.info("Encoding {} lines", visualization.fovContent.getMicLines().size());
@@ -210,7 +245,7 @@ public class FOVisualization extends Command implements Drawable, Serializable {
                 String linesPart = lines.size() > 0 ? Joiner.on(itemDelim).join(lines) : null;
                 String swtPart = shapesWithText.size() > 0 ? Joiner.on(itemDelim).join(shapesWithText) : null;
 
-                return commandPrefix + Joiner.on(partDelim).useForNull(nullPart).join(visualization.getId(), linesPart, swtPart);
+                return commandPrefix + Joiner.on(partDelim).useForNull(nullPart).join(visualization.getId(), visualization.pieceId, linesPart, swtPart);
             } catch (Exception e) {
                 logger.error("Error encoding autorange visualization", e);
                 return null;

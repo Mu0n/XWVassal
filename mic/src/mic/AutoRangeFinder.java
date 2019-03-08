@@ -98,8 +98,8 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
     Point2D.Double bestACorner; //attacker's best corner. In use inside method that quickly calculates band lengths
     Boolean wantExtraBandsMorFA = false;
     int bestBandRange = 0;
-    FOVContent fov;
-    FOVisualization fovCommand;
+    public FOVContent fov;
+    public FOVisualization fovCommand;
 
     Boolean isThisTheOne = false;
     boolean twoPointOh = false;
@@ -154,10 +154,28 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
             }
 
  */
+    public void populateFovCommand(FOVisualization thisFovC){
+        fovCommand = thisFovC;
+    }
+
     public Command keyEvent(KeyStroke stroke) {
 
         ArrayList<RangeFindings> rfindings = new ArrayList<RangeFindings>(); //findings compiled here
         Command bigCommand = null;
+
+
+        if (KeyStroke.getKeyStroke(KeyEvent.VK_M, KeyEvent.SHIFT_DOWN_MASK,false).equals(stroke)){
+            if (this.fov != null && this.fov.getCount() > 0 && fovCommand != null) {
+
+                logToChat("toggle off end");
+                VASSAL.build.module.Map map = VASSAL.build.module.Map.getMapById("Map0");
+                map.removeDrawComponent(fovCommand);
+                map.repaint();
+                this.fov = new FOVContent();
+                fovCommand = null;
+                return null;
+            }
+        }
 
         // check to see if the this code needs to respond to the event
         //identify which autorange option was used by using the static Map defined above in the globals, store it in an int
@@ -177,12 +195,14 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
                 logToChat("whichOption = " + Integer.toString(whichOption));
                 FA.run();
             }
+
             //if the firing options were already activated, remove the visuals first and exit right away
             if (this.fov != null && this.fov.getCount() > 0 && fovCommand != null) {
-                Command clearIt = new FOVisualizationClear(fovCommand, fov);
+
+                logToChat("toggle off start micID=" + this.piece.getProperty("micID").toString());
+                Command clearIt = new FOVisualizationClear(this.piece);
+                clearIt.execute();
                 GameModule.getGameModule().sendAndLog(clearIt);
-                clearIt.execute(); //will toggle it
-                this.fov = new FOVContent();
                 return null;
             }
 
@@ -212,8 +232,9 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
             if(bigCommand ==null) bigCommand = mBAC;
             else bigCommand.append(mBAC);
 
-            if(this.fov !=null && this.fov.getCount() > 0) {
-                fovCommand = new FOVisualization(this.fov);
+            if(this.fov !=null && this.fov.getCount() > 0 && fovCommand == null) {
+                logToChat("entry");
+                fovCommand = new FOVisualization(this.fov, this.piece);
                 bigCommand.append(fovCommand);
                 GameModule.getGameModule().sendAndLog(bigCommand);
                 bigCommand.execute();
@@ -225,9 +246,10 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
         } //end of dealing with keystrokes that are linked to autorange lines
         else if (KeyStroke.getKeyStroke(KeyEvent.VK_D, KeyEvent.CTRL_DOWN_MASK, false).equals(stroke)) {
             if (this.fov != null && this.fov.getCount() > 0 && fovCommand!=null) {
-                Command clearIt = new FOVisualizationClear(fovCommand, fov);
-                clearIt.execute(); //will toggle it
+                Command clearIt = new FOVisualizationClear(this.piece);
+                clearIt.execute();
                 GameModule.getGameModule().sendAndLog(clearIt);
+                fovCommand = null;
             }
             return piece.keyEvent(stroke); //send the CTRL-D to deal with the ship whether there were visuals to remove or not
         } //end of deleting a piece and remove its pending visuals if there are any
