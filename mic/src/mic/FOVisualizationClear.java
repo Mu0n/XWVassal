@@ -68,9 +68,8 @@ public class FOVisualizationClear extends Command implements Drawable {
                 }
             }
 
-        Command finishHim = pieceInCommand.keyEvent(KeyStroke.getKeyStroke(KeyEvent.VK_M, KeyEvent.SHIFT_DOWN_MASK,false));
-        finishHim.execute();
-        GameModule.getGameModule().sendAndLog(finishHim);
+       Command c = pieceInCommand.keyEvent(KeyStroke.getKeyStroke(KeyEvent.VK_M, KeyEvent.SHIFT_DOWN_MASK,false));
+        c.execute();
     }
 
     protected Command myUndoCommand() {
