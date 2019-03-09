@@ -12,7 +12,9 @@ import com.google.common.collect.Maps;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.swing.*;
 import java.awt.*;
+import java.awt.event.KeyEvent;
 import java.awt.font.FontRenderContext;
 import java.awt.font.TextAttribute;
 import java.awt.font.TextLayout;
@@ -20,13 +22,12 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Line2D;
 import java.io.Serializable;
 import java.text.AttributedString;
-import java.util.LinkedList;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
+import java.util.Timer;
+import java.util.concurrent.atomic.AtomicInteger;
 
-import static mic.Util.deserializeBase64Obj;
-import static mic.Util.logToChat;
-import static mic.Util.serializeToBase64;
+import static mic.Util.*;
 
 /**
  * Created by Mic on 05/03/2019.
@@ -38,48 +39,56 @@ import static mic.Util.serializeToBase64;
  */
 public class FOVisualization extends Command {
 
-    private final AutoRangeFinder.FOVContent fovContent;
-    private GamePiece pieceInCommand;
+    private final FiringOptionsVisuals fovContent;
     final private String pieceId;
 
-    //point of entry for the player initiating the keystroke for autorange
-    FOVisualization(AutoRangeFinder.FOVContent fovc, GamePiece senderPiece) {
+    FOVisualization(FiringOptionsVisuals fovc, String senderPieceId) {
         this.fovContent = fovc;
-        pieceInCommand = senderPiece;
-        pieceId = pieceInCommand.getProperty("micID").toString(); //gets the random UUID from the ship that was saved during spawning
+        this.pieceId = senderPieceId;
     }
 
-    //point of entry for other players who have to decode this command
-    FOVisualization(AutoRangeFinder.FOVContent fovc, String senderPieceId) {
-        this.fovContent = fovc;
-        pieceId = senderPieceId;
-
-        List<GamePiece> pieces = GameModule.getGameModule().getAllDescendantComponentsOf(GamePiece.class);
+    private GamePiece findPieceFromMicID(String thisId){
+        Collection<GamePiece> pieces=  GameModule.getGameModule().getGameState().getAllPieces();
         for(GamePiece p : pieces){
             try{
                 String checkedUpId = p.getProperty("micID").toString();
-                if(checkedUpId.equals(senderPieceId)) {
-                    pieceInCommand = p;
-                    break;
+                logToChat(checkedUpId);
+                if(checkedUpId.equals(thisId)) {
+                    return p;
                 }
             }catch(Exception e){
                 continue;
             }
         }
-    }
-
-
-    public String getId() {
-        return this.fovContent.getId();
+        return null;
     }
 
     protected void executeCommand() {
-        logToChat("executing show lines");
+        final Timer timer = new Timer();
         final VASSAL.build.module.Map map = VASSAL.build.module.Map.getMapById("Map0");
+        final String copyOverId = this.pieceId;
 
-        map.addDrawComponent(this);
-        map.repaint();
+        timer.schedule(new TimerTask() {
 
+            int i=0;
+                           @Override
+                           public void run() {
+                               if(i==0){
+                               map.addDrawComponent(fovContent);
+                               map.repaint();
+                               i++;
+                               }
+                               else{
+                                   map.removeDrawComponent(fovContent);
+                                   map.repaint();
+                                   GamePiece p = findPieceFromMicID(copyOverId);
+                                   Command c = p.keyEvent(KeyStroke.getKeyStroke(KeyEvent.VK_M, KeyEvent.SHIFT_DOWN_MASK,false));
+                                   if(c!=null) c.execute();
+                                   timer.cancel();
+                               }
+                           }
+                       }, 0, 5000);
+/*
         //if not already present, find the piece that should be tied to this command and set it to this; this will be needed for players who need to decode this command
         GamePiece p = pieceInCommand;
 
@@ -95,8 +104,9 @@ public class FOVisualization extends Command {
 
         if(ARF2==null) logToChat("couldn't find the autorange decorator");
         else{
-            if(ARF2.fovCommand==null) ARF2.populateFovCommand(this);
+            if(ARF2.fovCommand==null) ARF2.populateFovCommand(this.fovContent);
         }
+        */
     }
 /*
   public static GamePiece getDecorator(GamePiece p, Class<?> type) {
@@ -133,21 +143,21 @@ public class FOVisualization extends Command {
             try {
                 String[] parts = command.split(partDelim);
 
-                logger.info("Decoding AutorangeVisualization id=" + parts[0] + " micId=" + parts[1]);
-                if (parts.length != 4) {
+                logger.info("Decoding AutorangeVisualization id=" + parts[0]);
+                if (parts.length != 3) {
                     throw new IllegalStateException("Invalid command format " + command);
                 }
-                AutoRangeFinder.FOVContent visContent = new AutoRangeFinder.FOVContent(parts[0]);
-                String pieceIdToSend = parts[1];
+                FiringOptionsVisuals visContent = new FiringOptionsVisuals();
+                String pieceIdToSend = parts[0];
 
-                String[] encodedLines = parts[2].equals(nullPart) ? new String[0] : parts[2].split(itemDelim);
+                String[] encodedLines = parts[1].equals(nullPart) ? new String[0] : parts[1].split(itemDelim);
                 logger.info("Decoding {} lines", encodedLines.length);
                 for (String base64Line : encodedLines) {
                     AutoRangeFinder.MicLine line = (AutoRangeFinder.MicLine) deserializeBase64Obj(base64Line);
                     visContent.addLine(line);
                 }
 
-                String[] encodedSwt = parts[3].equals(nullPart) ? new String[0] : parts[3].split(itemDelim);
+                String[] encodedSwt = parts[2].equals(nullPart) ? new String[0] : parts[2].split(itemDelim);
                 logger.info("Decoding {} shapesWithText", encodedLines.length);
                 for (String base64Shape : encodedSwt) {
                     AutoRangeFinder.ShapeWithText swt = (AutoRangeFinder.ShapeWithText) deserializeBase64Obj(base64Shape);
@@ -167,7 +177,7 @@ public class FOVisualization extends Command {
                 return null;
             }
             FOVisualization visualization = (FOVisualization) c;
-            logger.info("Encoding autorange visualization id=" + visualization.getId() + " micID=" + visualization.pieceId);
+            logger.info("Encoding autorange visualization micID=" + visualization.pieceId);
             try {
                 java.util.List<String> lines = Lists.newArrayList();
                 logger.info("Encoding {} lines", visualization.fovContent.getMicLines().size());
@@ -182,7 +192,7 @@ public class FOVisualization extends Command {
                 String linesPart = lines.size() > 0 ? Joiner.on(itemDelim).join(lines) : null;
                 String swtPart = shapesWithText.size() > 0 ? Joiner.on(itemDelim).join(shapesWithText) : null;
 
-                return commandPrefix + Joiner.on(partDelim).useForNull(nullPart).join(visualization.getId(), visualization.pieceId, linesPart, swtPart);
+                return commandPrefix + Joiner.on(partDelim).useForNull(nullPart).join(visualization.pieceId, linesPart, swtPart);
             } catch (Exception e) {
                 logger.error("Error encoding autorange visualization", e);
                 return null;

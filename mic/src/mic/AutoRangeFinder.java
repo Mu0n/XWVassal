@@ -98,7 +98,7 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
     Point2D.Double bestACorner; //attacker's best corner. In use inside method that quickly calculates band lengths
     Boolean wantExtraBandsMorFA = false;
     int bestBandRange = 0;
-    public FOVContent fov;
+    public FiringOptionsVisuals fov;
     public FOVisualization fovCommand;
 
     Boolean isThisTheOne = false;
@@ -109,7 +109,7 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
     public AutoRangeFinder(GamePiece piece) {
         setInner(piece);
         this.testRotator = new FreeRotator("rotate;360;;;;;;;", null);
-        this.fov = new FOVContent();
+        this.fov = new FiringOptionsVisuals();
        // launch();
         map = VASSAL.build.module.Map.getMapById("Map0");
     }
@@ -167,14 +167,12 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
 
         if (KeyStroke.getKeyStroke(KeyEvent.VK_M, KeyEvent.SHIFT_DOWN_MASK,false).equals(stroke)){
             if (this.fov != null && this.fov.getCount() > 0 && fovCommand != null) {
-
                 logToChat("toggle off end");
                 VASSAL.build.module.Map map = VASSAL.build.module.Map.getMapById("Map0");
-                map.removeDrawComponent(fovCommand);
                 map.repaint();
-                this.fov = new FOVContent();
+                this.fov = new FiringOptionsVisuals();
                 fovCommand = null;
-                return null;
+                return piece.keyEvent(stroke);
             }
         }
 
@@ -196,7 +194,7 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
                 logToChat("whichOption = " + Integer.toString(whichOption));
                 FA.run();
             }
-
+/*
             //if the firing options were already activated, remove the visuals first and exit right away
             if (this.fov != null && this.fov.getCount() > 0 && fovCommand != null) {
 
@@ -206,7 +204,7 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
                 GameModule.getGameModule().sendAndLog(clearIt);
                 return null;
             }
-
+*/
             twoPointOh = this.getInner().getState().contains("this_is_2pointoh");
 
             thisShip = new BumpableWithShape(this, "Ship",
@@ -233,9 +231,11 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
             if(bigCommand ==null) bigCommand = mBAC;
             else bigCommand.append(mBAC);
 
+            logToChat("about to enter this.fov null? " + (this.fov==null?"yes":"no" + " count=" + this.fov.getCount() + " fovCommand null?" + (fovCommand==null?"yes":"no")));
             if(this.fov !=null && this.fov.getCount() > 0 && fovCommand == null) {
                 logToChat("entry");
-                fovCommand = new FOVisualization(this.fov, this.piece);
+                String micID = this.piece.getProperty("micID").toString();
+                fovCommand = new FOVisualization(this.fov, micID);
                 bigCommand.append(fovCommand);
                 GameModule.getGameModule().sendAndLog(bigCommand);
                 bigCommand.execute();

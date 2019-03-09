@@ -18,9 +18,9 @@ import java.util.ArrayList;
  Contains on the drawables. Driven by FOVisualization
  */
 public class FiringOptionsVisuals implements Drawable, Serializable{
-    private java.util.List<Shape> shapes;
-    private java.util.List<AutoRangeFinder.ShapeWithText> shapesWithText;
-    private java.util.List<AutoRangeFinder.MicLine> lines;
+    public java.util.List<Shape> shapes;
+    public java.util.List<AutoRangeFinder.ShapeWithText> shapesWithText;
+    public java.util.List<AutoRangeFinder.MicLine> lines;
 
     public Color badLineColor = new Color(0, 121,255,110);
     public Color bestLineColor = new Color(246, 255, 41,255);
