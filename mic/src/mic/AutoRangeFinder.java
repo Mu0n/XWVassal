@@ -2886,61 +2886,6 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
         return ships;
     }
 
-
-    public static class FOVContent implements Serializable {
-        private java.util.List<Shape> shapes;
-        private java.util.List<AutoRangeFinder.ShapeWithText> shapesWithText;
-        private java.util.List<AutoRangeFinder.MicLine> lines;
-        private String id;
-
-        FOVContent() { //constructor used at the creation of the GamePiece
-            this.id = UUID.randomUUID().toString();
-            this.shapes = new ArrayList<Shape>();
-            this.lines = new ArrayList<AutoRangeFinder.MicLine>();
-            this.shapesWithText = new ArrayList<AutoRangeFinder.ShapeWithText>();
-        }
-
-        FOVContent(String wantThisId){ //constructor used when sending out commands, this will be reproduced here for all others
-            this.id = wantThisId;
-            this.shapes = new ArrayList<Shape>();
-            this.lines = new ArrayList<AutoRangeFinder.MicLine>();
-            this.shapesWithText = new ArrayList<AutoRangeFinder.ShapeWithText>();
-        }
-        public String getId() {
-            return this.id;
-        }
-
-        public void clear(){
-            this.shapes = new ArrayList<Shape>();
-            this.lines = new ArrayList<AutoRangeFinder.MicLine>();
-            this.shapesWithText = new ArrayList<AutoRangeFinder.ShapeWithText>();
-        }
-
-        public void add(Shape bumpable) {
-            this.shapes.add(bumpable);
-        }
-        public void addLine(AutoRangeFinder.MicLine line){
-            this.lines.add(line);
-        }
-        public void addShapeWithText(AutoRangeFinder.ShapeWithText swt){ this.shapesWithText.add(swt); }
-        public int getCount() {
-            return lines.size() + shapesWithText.size();
-        }
-
-        public java.util.List<Shape> getShapes() {
-            return this.shapes;
-        }
-
-        public java.util.List<AutoRangeFinder.ShapeWithText> getTextShapes() {
-            return this.shapesWithText;
-        }
-
-        public java.util.List<AutoRangeFinder.MicLine> getMicLines() {
-            return this.lines;
-        }
-    }
-
-
     public static class ShapeWithText implements Serializable {
         public String rangeString = "Range ";
         public int rangeLength = 0;
