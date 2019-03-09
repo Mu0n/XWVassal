@@ -4,6 +4,7 @@ import VASSAL.build.GameModule;
 import VASSAL.build.module.map.Drawable;
 import VASSAL.command.Command;
 import VASSAL.command.CommandEncoder;
+import VASSAL.counters.Decorator;
 import VASSAL.counters.GamePiece;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
@@ -39,7 +40,7 @@ public class FOVisualization extends Command implements Drawable, Serializable {
 
     private final AutoRangeFinder.FOVContent fovContent;
     private GamePiece pieceInCommand;
-    private String pieceId;
+    final private String pieceId;
 
     public Color badLineColor = new Color(0, 121,255,110);
     public Color bestLineColor = new Color(246, 255, 41,255);
@@ -89,13 +90,34 @@ public class FOVisualization extends Command implements Drawable, Serializable {
         map.repaint();
 
         //if not already present, find the piece that should be tied to this command and set it to this; this will be needed for players who need to decode this command
-        AutoRangeFinder ARF =(AutoRangeFinder)AutoRangeFinder.getDecorator(pieceInCommand,AutoRangeFinder.class);
-        if(ARF==null) logToChat("couldn't find the autorange decorator");
+        GamePiece p = pieceInCommand;
+
+        AutoRangeFinder ARF2 = null;
+        while(p instanceof Decorator){
+            if(((Decorator) p).getOuter().myGetType().equals("auto-range-finder")){
+                ARF2 = (AutoRangeFinder)((Decorator) p).getOuter();
+                break;
+            }
+            p = ((Decorator) p).getInner();
+        }
+        //AutoRangeFinder ARF =(AutoRangeFinder)AutoRangeFinder.getDecorator(pieceInCommand,AutoRangeFinder.class);
+
+        if(ARF2==null) logToChat("couldn't find the autorange decorator");
         else{
-            if(ARF.fovCommand==null) ARF.populateFovCommand(this);
+            if(ARF2.fovCommand==null) ARF2.populateFovCommand(this);
         }
     }
-
+/*
+  public static GamePiece getDecorator(GamePiece p, Class<?> type) {
+    while (p instanceof Decorator) {
+      if (type.isInstance(p)) {
+        return p;
+      }
+      p = ((Decorator) p).piece;
+    }
+    return null;
+  }
+ */
     protected Command myUndoCommand() {
         return null;
     }

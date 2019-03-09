@@ -158,6 +158,7 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
         fovCommand = thisFovC;
     }
 
+
     public Command keyEvent(KeyStroke stroke) {
 
         ArrayList<RangeFindings> rfindings = new ArrayList<RangeFindings>(); //findings compiled here
