@@ -379,6 +379,11 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
                     if(temp4!=null)atkShapes.add(temp4);
                     break;
                 case frontAuxArcOption:
+                    if(twoPointOh) {
+                        Shape temp99 = findInBetweenRectangle(thisShip, b, wantedWidth, turretArcOption);
+                        if(temp99!=null) atkShapes.add(temp99);
+                        break;
+                    }
                     Shape temp5 = findInBetweenRectangle(thisShip, b, wantedWidth, frontAuxArcOption);
                     if(temp5!=null)atkShapes.add(temp5);
                     if(wantExtraBandsMorFA){
@@ -2129,7 +2134,7 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
         double secondArcEdgePolarAngle = getEdgeAngle(rightMostStart, rightMostEnd) - fudgefactor; //edge most clockwise
 
         double firstAdjustment = 0.0;
-        if(Double.compare(firstArcEdgePolarAngle, 0.0 + fudgefactor) > 0 && Double.compare(firstArcEdgePolarAngle, Math.PI + fudgefactor) < 0) firstAdjustment = -Math.PI;
+        if(Double.compare(firstArcEdgePolarAngle, 0.0 + fudgefactor/2.0) > 0 && Double.compare(firstArcEdgePolarAngle, Math.PI + fudgefactor/2.0) < 0) firstAdjustment = -Math.PI;
         firstArcEdgePolarAngle += firstAdjustment;
         secondArcEdgePolarAngle += firstAdjustment;
 
@@ -2148,6 +2153,8 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
     private double getEdgeAngle(Point2D.Double start, Point2D.Double end) {
         double deltaX = end.x - start.x;
         double deltaY = end.y - start.y;
+        if(Double.compare(deltaY, 0.0)== 0
+                || (Double.compare(deltaY,0.0)>0 && Double.compare(deltaY, 0.0001)< 0)) deltaY += 0.0001; //avoids the 180,-180 divide
 
         return Math.atan2(deltaY, deltaX);
     }
