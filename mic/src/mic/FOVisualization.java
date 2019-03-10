@@ -52,7 +52,6 @@ public class FOVisualization extends Command {
         for(GamePiece p : pieces){
             try{
                 String checkedUpId = p.getProperty("micID").toString();
-                logToChat(checkedUpId);
                 if(checkedUpId.equals(thisId)) {
                     return p;
                 }
@@ -71,23 +70,28 @@ public class FOVisualization extends Command {
         timer.schedule(new TimerTask() {
 
             int i=0;
+            GamePiece p;
                            @Override
                            public void run() {
                                if(i==0){
                                map.addDrawComponent(fovContent);
                                map.repaint();
                                i++;
+                               p = findPieceFromMicID(copyOverId);
                                }
                                else{
-                                   map.removeDrawComponent(fovContent);
-                                   map.repaint();
-                                   GamePiece p = findPieceFromMicID(copyOverId);
-                                   Command c = p.keyEvent(KeyStroke.getKeyStroke(KeyEvent.VK_M, KeyEvent.SHIFT_DOWN_MASK,false));
-                                   if(c!=null) c.execute();
-                                   timer.cancel();
+                                   String isShowingLines = p.getProperty("isShowingLines").toString();
+                                   if(isShowingLines.equals("1")){
+                                       map.removeDrawComponent(fovContent);
+                                       map.repaint();
+                                       p.setProperty("isShowingLines","0");
+                                       Command c = p.keyEvent(KeyStroke.getKeyStroke(KeyEvent.VK_M, KeyEvent.SHIFT_DOWN_MASK,false));
+                                       if(c!=null) c.execute();
+                                       timer.cancel();
+                                   }
                                }
                            }
-                       }, 0, 5000);
+                       }, 0, 1000);
 /*
         //if not already present, find the piece that should be tied to this command and set it to this; this will be needed for players who need to decode this command
         GamePiece p = pieceInCommand;

@@ -167,9 +167,6 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
 
         if (KeyStroke.getKeyStroke(KeyEvent.VK_M, KeyEvent.SHIFT_DOWN_MASK,false).equals(stroke)){
             if (this.fov != null && this.fov.getCount() > 0 && fovCommand != null) {
-                logToChat("toggle off end");
-                VASSAL.build.module.Map map = VASSAL.build.module.Map.getMapById("Map0");
-                map.repaint();
                 this.fov = new FiringOptionsVisuals();
                 fovCommand = null;
                 return piece.keyEvent(stroke);
@@ -194,17 +191,16 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
                 logToChat("whichOption = " + Integer.toString(whichOption));
                 FA.run();
             }
-/*
-            //if the firing options were already activated, remove the visuals first and exit right away
-            if (this.fov != null && this.fov.getCount() > 0 && fovCommand != null) {
 
-                logToChat("toggle off start micID=" + this.piece.getProperty("micID").toString());
-                Command clearIt = new FOVisualizationClear(this.piece);
-                clearIt.execute();
-                GameModule.getGameModule().sendAndLog(clearIt);
+            //if the firing options were already activated, change the piece's isShowingLines to 1 to start the removal process
+            if (this.fov != null && this.fov.getCount() > 0 && fovCommand != null) {
+                String micID = this.piece.getProperty("micID").toString();
+                FOVisualizationClear fovclear = new FOVisualizationClear(micID);
+                fovclear.executeCommand();
+                GameModule.getGameModule().sendAndLog(fovclear);
                 return null;
             }
-*/
+
             twoPointOh = this.getInner().getState().contains("this_is_2pointoh");
 
             thisShip = new BumpableWithShape(this, "Ship",
@@ -233,7 +229,6 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
 
             logToChat("about to enter this.fov null? " + (this.fov==null?"yes":"no" + " count=" + this.fov.getCount() + " fovCommand null?" + (fovCommand==null?"yes":"no")));
             if(this.fov !=null && this.fov.getCount() > 0 && fovCommand == null) {
-                logToChat("entry");
                 String micID = this.piece.getProperty("micID").toString();
                 fovCommand = new FOVisualization(this.fov, micID);
                 bigCommand.append(fovCommand);
@@ -247,7 +242,8 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
         } //end of dealing with keystrokes that are linked to autorange lines
         else if (KeyStroke.getKeyStroke(KeyEvent.VK_D, KeyEvent.CTRL_DOWN_MASK, false).equals(stroke)) {
             if (this.fov != null && this.fov.getCount() > 0 && fovCommand!=null) {
-                Command clearIt = new FOVisualizationClear(this.piece);
+                String micID = this.piece.getProperty("micID").toString();
+                Command clearIt = new FOVisualizationClear(micID);
                 clearIt.execute();
                 GameModule.getGameModule().sendAndLog(clearIt);
                 fovCommand = null;
@@ -313,7 +309,7 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
                 break;
             case frontAuxArcOption:
                 if(twoPointOh == false) bestLine = findBestLineInFrontAuxArcs(D1, D2, D3, 3);
-                else Util.logToChat("2.0 full front arc options needed");
+                else findBestLineInFullFrontArc(D1, D2, D3, 3);;
                 break;
             case mobileSideArcOption:
                 bestLine = findBestLineInMobileArc(D1, D2, D3, 3);
@@ -1222,6 +1218,163 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
         return best;
     }
 
+    private MicLine findBestLineInFullFrontArc(Point2D.Double D1, Point2D.Double D2, Point2D.Double D3, int rangeInt) {
+        ArrayList<MicLine> lineList = new ArrayList<MicLine>(); //only need one list for this one
+
+        Point2D.Double LC = thisShip.getVertices().get(0);
+        Point2D.Double RC = thisShip.getVertices().get(1);
+
+        Point2D.Double center = new Point2D.Double(thisShip.bumpable.getPosition().x, thisShip.bumpable.getPosition().y);
+
+        //Prep segments along ships (attacker and defender) used to figure out some of the firing lines
+        //Left Edge
+        MicLine LE = new MicLine(A1, LC, false);
+        //Right Edge
+        MicLine RE = new MicLine(RC, A2, false);
+        //Front arc Edge
+        MicLine AA = new MicLine(LC, RC, false);
+        //Closest Defender Edge
+        MicLine DD = new MicLine(D1, D2, false);
+        //2nd closest defender edge
+        MicLine DD_2nd = new MicLine(D1, D3, false);
+
+
+        MicLine lineToVet; //temp MicLine object used for debug testing
+
+        //Left Corner Attacker to Closest Defender
+        MicLine LCD1 = new MicLine(LC, D1, false);
+        if(findSegmentCrossPoint(LCD1, new MicLine(center, E1, false), true)==null &&
+                findSegmentCrossPoint(LCD1, new MicLine(center, E2, false), true)==null){
+            lineToVet = vetThisLine(LCD1, "LCD1", 0.1);
+            if(lineToVet != null) lineList.add(lineToVet);
+        }
+
+        //Left Corner Attacker to 2nd closest Defender
+        MicLine LCD2 = new MicLine(LC, D2, false);
+        if(findSegmentCrossPoint(LCD2, new MicLine(center, E1, false), true)==null &&
+                findSegmentCrossPoint(LCD2, new MicLine(center, E2, false), true)==null){
+            lineToVet = vetThisLine(LCD2, "LCD2", 0.1);
+            if(lineToVet != null) lineList.add(lineToVet);
+        }
+        //Right Corner Attacker to Closest Defender
+        MicLine RCD1 = new MicLine(RC, D1, false);
+        if(findSegmentCrossPoint(LCD2, new MicLine(center, E1, false), true)==null &&
+                findSegmentCrossPoint(LCD2, new MicLine(center, E2, false), true)==null){
+            lineToVet = vetThisLine(RCD1, "RCD1", 0.1);
+            if(lineToVet != null) lineList.add(lineToVet);
+        }
+
+        //Right Corner Attacker to 2nd closest Defender
+        MicLine RCD2 = new MicLine(RC, D2, false);
+        if(findSegmentCrossPoint(LCD2, new MicLine(center, E1, false), true)==null &&
+                findSegmentCrossPoint(LCD2, new MicLine(center, E2, false), true)==null){
+            lineToVet = vetThisLine(RCD2, "RCD2", 0.1);
+            if(lineToVet != null) lineList.add(lineToVet);
+        }
+
+
+        //first arc edge
+        MicLine A1DD_arc_restricted = createLineAxtoDD_along_arc_edge(A1, E1, DD);
+        lineToVet = vetThisLine(A1DD_arc_restricted, "A1DD_ea", 0.5);
+        if(lineToVet != null) lineList.add(lineToVet);
+        //first arc edge to 2nd def edge
+        MicLine A1DD_arc_restricted_2nd = createLineAxtoDD_along_arc_edge(A1, E1, DD_2nd);
+        lineToVet = vetThisLine(A1DD_arc_restricted_2nd, "A1DD_2nd_ea", 0.7);
+        if(lineToVet != null) lineList.add(lineToVet);
+
+        //2nd arc edge
+        MicLine A2DD_arc_restricted = createLineAxtoDD_along_arc_edge(A2, E2, DD);
+        lineToVet = vetThisLine(A2DD_arc_restricted, "A2DD_ea", 0.5);
+        if(lineToVet != null) lineList.add(lineToVet);
+        //2nd arc edge to 2nd def edge
+        MicLine A2DD_arc_restricted_2nd = createLineAxtoDD_along_arc_edge(A2, E2, DD_2nd);
+        lineToVet = vetThisLine(A2DD_arc_restricted_2nd, "A2DD_2nd_ea", 0.7);
+        if(lineToVet != null) lineList.add(lineToVet);
+
+        //normal to defender's edges
+        //Closest attacker's point to the defender's closest edge
+        MicLine A1DD = createLinePtoAB(A1, DD, true);
+        lineToVet = vetThisLine(A1DD, "A1DD", 0.2);
+        if(lineToVet != null) lineList.add(lineToVet);
+
+        MicLine A2DD = createLinePtoAB(A2, DD, true);
+        lineToVet = vetThisLine(A2DD, "A2DD", 0.4);
+        if(lineToVet != null) lineList.add(lineToVet);
+
+        //Attacker's edge to defender's closest vertex
+        MicLine AAD1 = createLinePtoAB(D1, AA, false);
+        if(doesAAforInArcPassTest(AAD1, AA)== true && isRangeOk(AAD1, 1, rangeInt))
+        {
+            lineToVet = vetThisLine(AAD1, "AAD1", 0.8);
+            if(lineToVet != null) lineList.add(lineToVet);
+        }
+
+        //Attacker's left long edge to defender's closest vertex
+        MicLine LED1 = createLinePtoAB(D1, LE, false);
+        if(doesAAforInArcPassTest(LED1, LE)== true && isRangeOk(LED1, 1, rangeInt))
+        {
+            lineToVet = vetThisLine(LED1, "LED1", 0.8);
+            if(lineToVet != null) lineList.add(lineToVet);
+        }
+        //same but right side
+        MicLine RED1 = createLinePtoAB(D1, RE, false);
+        if(doesAAforInArcPassTest(RED1, RE)== true && isRangeOk(RED1, 1, rangeInt))
+        {
+            lineToVet = vetThisLine(RED1, "RED1", 0.8);
+            if(lineToVet != null) lineList.add(lineToVet);
+        }
+
+        //from the corners, normal
+        MicLine LCDD = createLinePtoAB(LC, DD, false);
+        if(findSegmentCrossPoint(LCDD, new MicLine(center, E1, false), true)==null){
+            lineToVet = vetThisLine(LCDD, "LCDD", 0.4);
+            if(lineToVet != null) lineList.add(lineToVet);
+        }
+        MicLine RCDD = createLinePtoAB(RC, DD, false);
+        if(findSegmentCrossPoint(RCDD, new MicLine(center, E2, false), true)==null) {
+            lineToVet = vetThisLine(RCDD, "RCDD", 0.4);
+            if(lineToVet != null) lineList.add(lineToVet);
+        }
+
+        ArrayList<MicLine> filteredList = new ArrayList<MicLine>();
+        ArrayList<MicLine> deadList = new ArrayList<MicLine>();
+
+        for(MicLine l: lineList)
+        {
+            if(isEdgeInArcInwardTweak(l, A1, E1, A2, E2) == true) filteredList.add(l);
+            else deadList.add(l);
+        }
+        //ALLLINES: if all lines have to been added to the visuals, then, uncomment this section
+        if(MULTILINES == true){
+            for(MicLine everyline : filteredList) {
+                fov.addLine(everyline);
+            }
+            for(MicLine l: deadList){
+                l.markedAsDead = true;
+                fov.addLine(l);
+            }
+        }
+        //end of section
+
+
+        //First criterium, find the best distance and make it the best Line
+        double bestDist = rangeInt * 282.5;
+        MicLine best = null;
+        for (MicLine l : filteredList) {
+            if (l.markedAsDead == false && Double.compare(bestDist, l.pixelLength) > 0) {
+                bestDist = l.pixelLength;
+                best = l;
+            }
+        }
+        //nothing under the requested range was found, no best lines can be submitted
+        if (best == null) {
+            return null;
+        }
+
+        best.isArcLine = true;
+        return best;
+    }
+
     private MicLine findBestLineInFrontAuxArcs(Point2D.Double D1, Point2D.Double D2, Point2D.Double D3, int rangeInt) {
         ArrayList<MicLine> lineList = new ArrayList<MicLine>(); //reserved for front arc lines
         ArrayList<MicLine> leftLineList = new ArrayList<MicLine>(); //reserved for left aux arc lines
@@ -1725,20 +1878,20 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
         }
         else if(whichOption == frontAuxArcOption && twoPointOh == true){
             A1 = thisShip.tPts.get(8);
-            A2 = thisShip.tPts.get(0);
+            A2 = thisShip.tPts.get(9);
 
             E1 = thisShip.tPts.get(10);
-            E2 = thisShip.tPts.get(2);
-
-            A3 = thisShip.tPts.get(1);
-            A4 = thisShip.tPts.get(9);
-
-            E3 = thisShip.tPts.get(3);
-            E4 = thisShip.tPts.get(11);
-
-            E2B = thisShip.tPts.get(16);
-            E3B = thisShip.tPts.get(17);
+            E2 = thisShip.tPts.get(11);
         }
+        /*
+        else if(whichOption == backFullArcOption && twoPointOh == true){
+            A1 = thisShip.tPts.get(8);
+            A2 = thisShip.tPts.get(9);
+
+            E1 = thisShip.tPts.get(10);
+            E2 = thisShip.tPts.get(11);
+        }
+         */
         else if(whichOption == mobileSideArcOption && twoPointOh == false){
                 //left side check
                 A1 = thisShip.tPts.get(5);
@@ -1964,7 +2117,30 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
         if(Double.compare(bestLinePolarAngle, -Math.PI + fudgefactor) < 0 ) bestLinePolarAngle += 2.0*Math.PI;
 
         //logToChat("1: " + Double.toString(firstArcEdgePolarAngle) + " line: " + Double.toString(bestLinePolarAngle) + " 2: " + Double.toString(secondArcEdgePolarAngle));
-       if(Double.compare(bestLinePolarAngle, firstArcEdgePolarAngle) < 0 || Double.compare(bestLinePolarAngle, secondArcEdgePolarAngle) > 0)
+        if(Double.compare(bestLinePolarAngle, firstArcEdgePolarAngle) < 0 || Double.compare(bestLinePolarAngle, secondArcEdgePolarAngle) > 0)
+            return false;
+        return true;
+    }
+
+    private boolean isEdgeInArcInwardTweak(MicLine theCandidateLine, Point2D.Double leftMostStart, Point2D.Double leftMostEnd, Point2D.Double rightMostStart, Point2D.Double  rightMostEnd)
+    {
+        double fudgefactor = 0.00001; //open up the arc just slightly to better allow along-the-arc firing lines
+        double firstArcEdgePolarAngle = getEdgeAngle(leftMostStart, leftMostEnd) + fudgefactor; //edge most counter-clockwise
+        double secondArcEdgePolarAngle = getEdgeAngle(rightMostStart, rightMostEnd) - fudgefactor; //edge most clockwise
+
+        double firstAdjustment = 0.0;
+        if(Double.compare(firstArcEdgePolarAngle, 0.0 + fudgefactor) > 0 && Double.compare(firstArcEdgePolarAngle, Math.PI + fudgefactor) < 0) firstAdjustment = -Math.PI;
+        firstArcEdgePolarAngle += firstAdjustment;
+        secondArcEdgePolarAngle += firstAdjustment;
+
+        double bestLinePolarAngle = getEdgeAngle(theCandidateLine.first, theCandidateLine.second);
+        bestLinePolarAngle += firstAdjustment;
+
+        if(Double.compare(secondArcEdgePolarAngle, -Math.PI + fudgefactor) < 0) secondArcEdgePolarAngle += 2.0*Math.PI;
+        if(Double.compare(bestLinePolarAngle, -Math.PI + fudgefactor) < 0 ) bestLinePolarAngle += 2.0*Math.PI;
+
+        logToChat("1: " + Double.toString(firstArcEdgePolarAngle) + " line: " + Double.toString(bestLinePolarAngle) + " 2: " + Double.toString(secondArcEdgePolarAngle));
+        if(Double.compare(bestLinePolarAngle, firstArcEdgePolarAngle) < 0 || Double.compare(bestLinePolarAngle, secondArcEdgePolarAngle) > 0)
             return false;
         return true;
     }

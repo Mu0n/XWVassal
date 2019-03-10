@@ -33,42 +33,28 @@ public class FOVisualizationClear extends Command implements Drawable {
     private GamePiece pieceInCommand;
     String pieceId;
 
-    //point of entry for the initiator of the keystroke that will remove the visuals
-    public FOVisualizationClear(GamePiece useThisPiece) {
-        pieceInCommand = useThisPiece;
-        try{
-            pieceId = useThisPiece.getProperty("micID").toString();
-        }catch(Exception e){
 
-        }
-        logToChat("entering FOVClear micID="+pieceId);
-    }
-
-    //point of entry for players decoding this command
     public FOVisualizationClear(String useThisPieceId) {
-
-        logToChat("decoding FOVClear micID="+pieceId);
         pieceId = useThisPieceId;
     }
 
-    protected void executeCommand() {
-        logToChat("executing clear lines micID=" + pieceId);
-            Collection<GamePiece> pieces = GameModule.getGameModule().getGameState().getAllPieces();
-            for (GamePiece piece : pieces) {
-                try{
-                    String testId = piece.getProperty("micID").toString();
-                    logToChat("micID="+testId + " equal to this? " + pieceId);
-                    if(testId.equals(pieceId)) {
-                        pieceInCommand = piece;
-                        logToChat("found the right piece!");
-                        break;
-                    }
-                }catch(Exception e) {
-                    continue;
+    private GamePiece findPieceFromMicID(String thisId){
+        Collection<GamePiece> pieces=  GameModule.getGameModule().getGameState().getAllPieces();
+        for(GamePiece p : pieces){
+            try{
+                String checkedUpId = p.getProperty("micID").toString();
+                if(checkedUpId.equals(thisId)) {
+                    return p;
                 }
+            }catch(Exception e){
+                continue;
             }
-            pieceInCommand.keyEvent(KeyStroke.getKeyStroke(KeyEvent.VK_M, KeyEvent.SHIFT_DOWN_MASK,false));
-
+        }
+        return null;
+    }
+    protected void executeCommand() {
+        GamePiece piece = findPieceFromMicID(this.pieceId);
+        piece.setProperty("isShowingLines","1");
     }
 
     protected Command myUndoCommand() {
