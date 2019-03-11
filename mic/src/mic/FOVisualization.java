@@ -74,12 +74,16 @@ public class FOVisualization extends Command {
                            @Override
                            public void run() {
                                if(i==0){
+                                   logToChatWithoutUndo("iteration " + i);
                                map.addDrawComponent(fovContent);
                                map.repaint();
                                i++;
                                p = FOVisualization.findPieceFromMicID(copyOverId);
+                               logToChatWithoutUndo("piece p " + p.toString());
                                }
                                else{
+
+                                   logToChatWithoutUndo("iteration " + i);
                                    String isShowingLines = p.getProperty("isShowingLines").toString();
                                    if(isShowingLines.equals("1")){
                                        map.removeDrawComponent(fovContent);
@@ -139,6 +143,7 @@ public class FOVisualization extends Command {
             }
             command = command.substring(commandPrefix.length());
 
+            logger.info("Decoding AutorangeVisualization id=" + command.toString());
             try {
                 String[] parts = command.split(partDelim);
 
@@ -148,7 +153,6 @@ public class FOVisualization extends Command {
                 }
                 FiringOptionsVisuals visContent = new FiringOptionsVisuals();
                 String pieceIdToSend = parts[0];
-
                 String[] encodedLines = parts[1].equals(nullPart) ? new String[0] : parts[1].split(itemDelim);
                 logger.info("Decoding {} lines", encodedLines.length);
                 for (String base64Line : encodedLines) {
@@ -191,7 +195,7 @@ public class FOVisualization extends Command {
                 String linesPart = lines.size() > 0 ? Joiner.on(itemDelim).join(lines) : null;
                 String swtPart = shapesWithText.size() > 0 ? Joiner.on(itemDelim).join(shapesWithText) : null;
 
-                return commandPrefix + Joiner.on(partDelim).useForNull(nullPart).join(visualization.pieceId, linesPart, swtPart);
+                return commandPrefix + Joiner.on(partDelim).useForNull(nullPart).join( visualization.pieceId,linesPart, swtPart);
             } catch (Exception e) {
                 logger.error("Error encoding autorange visualization", e);
                 return null;
