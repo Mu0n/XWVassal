@@ -201,7 +201,7 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
                 FOVisualizationClear fovclear = new FOVisualizationClear(micID);
                 GameModule.getGameModule().sendAndLog(fovclear);
                 fovclear.executeCommand();
-                return null;
+                return fovclear;
             }
 
             twoPointOh = this.getInner().getState().contains("this_is_2pointoh");
@@ -230,7 +230,7 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
             if(bigCommand ==null) bigCommand = mBAC;
             else bigCommand.append(mBAC);
 
-            logToChat("about to enter this.fov null? " + (this.fov==null?"yes":"no" + " count=" + this.fov.getCount() + " fovCommand null?" + (fovCommand==null?"yes":"no")));
+            logToChatWithoutUndo("about to enter this.fov null? " + (this.fov==null?"yes":"no" + " count=" + this.fov.getCount() + " fovCommand null?" + (fovCommand==null?"yes":"no")));
             if(this.fov !=null && this.fov.getCount() > 0 && fovCommand == null) {
 
                 logToChatWithoutUndo("locally reacting to making a visual appear");
@@ -241,11 +241,11 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
                 bigCommand.append(fovCommand);
                 bigCommand.execute();
                 GameModule.getGameModule().sendAndLog(bigCommand);
-                return null;
+                return bigCommand;
             } // end of drawing visuals and announcing the results in the chatlog
             bigCommand.execute();
             GameModule.getGameModule().sendAndLog(bigCommand);
-            return null; // for some reason, there were no visuals to do, so send that message and don't send these special keystrokes to others classes/decorators
+            return bigCommand; // for some reason, there were no visuals to do, so send that message and don't send these special keystrokes to others classes/decorators
         } //end of dealing with keystrokes that are linked to autorange lines
         else if (KeyStroke.getKeyStroke(KeyEvent.VK_D, KeyEvent.CTRL_DOWN_MASK, false).equals(stroke)) {
             if (this.fov != null && this.fov.getCount() > 0 && fovCommand!=null) {

@@ -80,7 +80,6 @@ public class FOVisualization extends Command {
                                map.repaint();
                                i++;
                                p = FOVisualization.findPieceFromMicID(copyOverId);
-                               logToChatWithoutUndo("piece p " + p.toString());
                                }
                                else{
 
