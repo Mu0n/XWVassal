@@ -49,12 +49,13 @@ public class FOVisualization extends Command {
 
     private static GamePiece findPieceFromMicID(String thisId){
         Collection<GamePiece> pieces=  GameModule.getGameModule().getGameState().getAllPieces();
-        for(GamePiece p : pieces){
+        GamePiece[] ps = (GamePiece[])pieces.toArray();
+        for(int j=0; j<pieces.size(); j++){
             try{
-                String checkedUpId = p.getProperty("micID").toString();
+                String checkedUpId = ps[j].getProperty("micID").toString();
                 if(checkedUpId.equals(thisId)) {
                     logToChatWithoutUndo("static method FOVCommand found the proper ship");
-                    return p;
+                    return ps[j];
                 }
             }catch(Exception e){
                 continue;
