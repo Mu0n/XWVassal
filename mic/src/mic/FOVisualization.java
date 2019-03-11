@@ -127,20 +127,16 @@ public class FOVisualization extends Command {
     }
 
     public static class AutorangeVisualizationEncoder implements CommandEncoder {
-        private static final Logger logger = LoggerFactory.getLogger(AutoRangeFinder.class);
+        private static final Logger logger = LoggerFactory.getLogger(AutorangeVisualizationEncoder.class);
         private static final String commandPrefix = "AutorangeVisualizationEncoder=";
         private static final String nullPart = "nullPart";
         private static final String partDelim = "!";
         private static final String itemDelim = "\t";
 
-        public static AutorangeVisualizationEncoder INSTANCE = new FOVisualization.AutorangeVisualizationEncoder();
-
         public Command decode(String command) {
             if (command == null || !command.contains(commandPrefix)) {
                 return null;
             }
-
-
             command = command.substring(commandPrefix.length());
 
             try {

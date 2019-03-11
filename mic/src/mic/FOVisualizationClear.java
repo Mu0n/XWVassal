@@ -71,9 +71,6 @@ public class FOVisualizationClear extends Command implements Drawable {
     public static class FOVisualizationClearEncoder implements CommandEncoder {
         private static final String commandPrefix = "FoVisClearId=";
         private static final Logger logger = LoggerFactory.getLogger(FOVisualizationClearEncoder.class);
-        private static final String partDelim = "!";
-        private static final String nullPart = "nullPart";
-        private static final String itemDelim = "\t";
 
         public Command decode(String command) {
             if (command == null || !command.contains(commandPrefix)) {
