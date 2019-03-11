@@ -49,7 +49,7 @@ public class FOVisualization extends Command {
 
     private static GamePiece findPieceFromMicID(String thisId){
         Collection<GamePiece> pieces=  GameModule.getGameModule().getGameState().getAllPieces();
-        GamePiece[] ps = (GamePiece[])pieces.toArray();
+        GamePiece[] ps = pieces.toArray(new GamePiece[pieces.size()]);
         for(int j=0; j<pieces.size(); j++){
             try{
                 String checkedUpId = ps[j].getProperty("micID").toString();
