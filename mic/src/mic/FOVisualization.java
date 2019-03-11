@@ -53,6 +53,7 @@ public class FOVisualization extends Command {
             try{
                 String checkedUpId = p.getProperty("micID").toString();
                 if(checkedUpId.equals(thisId)) {
+                    logToChatWithoutUndo("static method FOVCommand found the proper ship");
                     return p;
                 }
             }catch(Exception e){
