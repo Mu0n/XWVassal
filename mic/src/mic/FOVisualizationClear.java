@@ -28,44 +28,21 @@ import static mic.Util.serializeToBase64;
  * This is used to create a Command in order to clear visuals that were sent to the map's draw component with FOVisualization
  */
 
-public class FOVisualizationClear extends Command implements Drawable {
+public class FOVisualizationClear extends Command {
 
-    private GamePiece pieceInCommand;
     String pieceId;
-
 
     public FOVisualizationClear(String useThisPieceId) {
         pieceId = useThisPieceId;
     }
 
-    private GamePiece findPieceFromMicID(String thisId){
-        Collection<GamePiece> pieces=  GameModule.getGameModule().getGameState().getAllPieces();
-        for(GamePiece p : pieces){
-            try{
-                String checkedUpId = p.getProperty("micID").toString();
-                if(checkedUpId.equals(thisId)) {
-                    return p;
-                }
-            }catch(Exception e){
-                continue;
-            }
-        }
-        return null;
-    }
     protected void executeCommand() {
-        GamePiece piece = findPieceFromMicID(this.pieceId);
+        GamePiece piece = FOVisualization.findPieceFromMicID(this.pieceId);
         piece.setProperty("isShowingLines","1");
     }
 
     protected Command myUndoCommand() {
         return null;
-    }
-
-    public void draw(Graphics g, Map map) {
-
-    }
-    public boolean drawAboveCounters() {
-        return false;
     }
 
     public static class FOVisualizationClearEncoder implements CommandEncoder {

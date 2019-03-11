@@ -145,20 +145,6 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
         return -1;
     }
 
-/*
-            //if the firing options were already activated, remove the visuals
-            if (this.fov != null && this.fov.getCount() > 0) {
-                Command bigCommand = new FOVisualizationClear(this.fov);
-                bigCommand.execute();
-                GameModule.getGameModule().sendAndLog(bigCommand);
-            }
-
- */
-    public void populateFovCommand(FOVisualization thisFovC){
-        fovCommand = thisFovC;
-    }
-
-
     public Command keyEvent(KeyStroke stroke) {
 
         ArrayList<RangeFindings> rfindings = new ArrayList<RangeFindings>(); //findings compiled here

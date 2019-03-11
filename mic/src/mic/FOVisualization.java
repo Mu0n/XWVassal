@@ -47,7 +47,7 @@ public class FOVisualization extends Command {
         this.pieceId = senderPieceId;
     }
 
-    private static GamePiece findPieceFromMicID(String thisId){
+    public static GamePiece findPieceFromMicID(String thisId){
         Collection<GamePiece> pieces=  GameModule.getGameModule().getGameState().getAllPieces();
         GamePiece[] ps = pieces.toArray(new GamePiece[pieces.size()]);
         for(int j=0; j<pieces.size(); j++){
@@ -96,44 +96,15 @@ public class FOVisualization extends Command {
                                }
                            }
                        }, 0, 1000);
-/*
-        //if not already present, find the piece that should be tied to this command and set it to this; this will be needed for players who need to decode this command
-        GamePiece p = pieceInCommand;
-
-        AutoRangeFinder ARF2 = null;
-        while(p instanceof Decorator){
-            if(((Decorator) p).getOuter().myGetType().equals("auto-range-finder")){
-                ARF2 = (AutoRangeFinder)((Decorator) p).getOuter();
-                break;
-            }
-            p = ((Decorator) p).getInner();
-        }
-        //AutoRangeFinder ARF =(AutoRangeFinder)AutoRangeFinder.getDecorator(pieceInCommand,AutoRangeFinder.class);
-
-        if(ARF2==null) logToChat("couldn't find the autorange decorator");
-        else{
-            if(ARF2.fovCommand==null) ARF2.populateFovCommand(this.fovContent);
-        }
-        */
     }
-/*
-  public static GamePiece getDecorator(GamePiece p, Class<?> type) {
-    while (p instanceof Decorator) {
-      if (type.isInstance(p)) {
-        return p;
-      }
-      p = ((Decorator) p).piece;
-    }
-    return null;
-  }
- */
+
     protected Command myUndoCommand() {
         return null;
     }
 
-    public static class AutorangeVisualizationEncoder implements CommandEncoder {
-        private static final Logger logger = LoggerFactory.getLogger(AutorangeVisualizationEncoder.class);
-        private static final String commandPrefix = "AutorangeVisualizationEncoder=";
+    public static class FOVisualizationEncoder implements CommandEncoder {
+        private static final Logger logger = LoggerFactory.getLogger(FOVisualizationEncoder.class);
+        private static final String commandPrefix = "FOVisualizationEncoder=";
         private static final String nullPart = "nullPart";
         private static final String partDelim = "!";
         private static final String itemDelim = "\t";
@@ -144,11 +115,11 @@ public class FOVisualization extends Command {
             }
             command = command.substring(commandPrefix.length());
 
-            logger.info("Decoding AutorangeVisualization id=" + command.toString());
+            logger.info("Decoding FOVisualization id=" + command.toString());
             try {
                 String[] parts = command.split(partDelim);
 
-                logger.info("Decoding AutorangeVisualization id=" + parts[0]);
+                logger.info("Decoding FOVisualization id=" + parts[0]);
                 if (parts.length != 3) {
                     throw new IllegalStateException("Invalid command format " + command);
                 }
@@ -168,10 +139,10 @@ public class FOVisualization extends Command {
                     visContent.addShapeWithText(swt);
                 }
 
-                logger.info("Decoded AutorangeVisualization with {} shapes", visContent.getShapes().size());
+                logger.info("Decoded FOVisualization with {} shapes", visContent.getShapes().size());
                 return new FOVisualization(visContent, pieceIdToSend);
             } catch (Exception e) {
-                logger.error("Error decoding AutorangeVisualization", e);
+                logger.error("Error decoding FOVisualization", e);
                 return null;
             }
         }
@@ -181,7 +152,7 @@ public class FOVisualization extends Command {
                 return null;
             }
             FOVisualization visualization = (FOVisualization) c;
-            logger.info("Encoding autorange visualization micID=" + visualization.pieceId);
+            logger.info("Encoding FOVisualization micID=" + visualization.pieceId);
             try {
                 java.util.List<String> lines = Lists.newArrayList();
                 logger.info("Encoding {} lines", visualization.fovContent.getMicLines().size());
@@ -198,7 +169,7 @@ public class FOVisualization extends Command {
 
                 return commandPrefix + Joiner.on(partDelim).useForNull(nullPart).join( visualization.pieceId,linesPart, swtPart);
             } catch (Exception e) {
-                logger.error("Error encoding autorange visualization", e);
+                logger.error("Error encoding FOVisualization", e);
                 return null;
             }
         }
