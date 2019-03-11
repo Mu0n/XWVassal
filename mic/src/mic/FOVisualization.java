@@ -47,7 +47,7 @@ public class FOVisualization extends Command {
         this.pieceId = senderPieceId;
     }
 
-    private GamePiece findPieceFromMicID(String thisId){
+    private static GamePiece findPieceFromMicID(String thisId){
         Collection<GamePiece> pieces=  GameModule.getGameModule().getGameState().getAllPieces();
         for(GamePiece p : pieces){
             try{
@@ -77,14 +77,13 @@ public class FOVisualization extends Command {
                                map.addDrawComponent(fovContent);
                                map.repaint();
                                i++;
-                               p = findPieceFromMicID(copyOverId);
+                               p = FOVisualization.findPieceFromMicID(copyOverId);
                                }
                                else{
                                    String isShowingLines = p.getProperty("isShowingLines").toString();
                                    if(isShowingLines.equals("1")){
                                        map.removeDrawComponent(fovContent);
                                        map.repaint();
-                                       p.setProperty("isShowingLines","0");
                                        Command c = p.keyEvent(KeyStroke.getKeyStroke(KeyEvent.VK_M, KeyEvent.SHIFT_DOWN_MASK,false));
                                        if(c!=null) c.execute();
                                        timer.cancel();

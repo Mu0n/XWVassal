@@ -167,8 +167,10 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
 
         if (KeyStroke.getKeyStroke(KeyEvent.VK_M, KeyEvent.SHIFT_DOWN_MASK,false).equals(stroke)){
             if (this.fov != null && this.fov.getCount() > 0 && fovCommand != null) {
+                logToChatWithoutUndo("locally reacting to SHIFT-M");
                 this.fov = new FiringOptionsVisuals();
                 fovCommand = null;
+                this.piece.setProperty("isShowingLines","0");
                 return piece.keyEvent(stroke);
             }
         }
@@ -194,6 +196,8 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
 
             //if the firing options were already activated, change the piece's isShowingLines to 1 to start the removal process
             if (this.fov != null && this.fov.getCount() > 0 && fovCommand != null) {
+
+                logToChatWithoutUndo("locally reacting to 2nd trigger, starting up clean up process");
                 String micID = this.piece.getProperty("micID").toString();
                 FOVisualizationClear fovclear = new FOVisualizationClear(micID);
                 fovclear.executeCommand();
@@ -229,6 +233,10 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
 
             logToChat("about to enter this.fov null? " + (this.fov==null?"yes":"no" + " count=" + this.fov.getCount() + " fovCommand null?" + (fovCommand==null?"yes":"no")));
             if(this.fov !=null && this.fov.getCount() > 0 && fovCommand == null) {
+
+                logToChatWithoutUndo("locally reacting to making a visual appear");
+
+                //reading off the Piece's unique ID and sending it off in a FOVisualization command, which should make it appear for all
                 String micID = this.piece.getProperty("micID").toString();
                 fovCommand = new FOVisualization(this.fov, micID);
                 bigCommand.append(fovCommand);
