@@ -199,9 +199,9 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
                 logToChatWithoutUndo("locally reacting to 2nd trigger, starting up clean up process");
                 String micID = this.piece.getProperty("micID").toString();
                 FOVisualizationClear fovclear = new FOVisualizationClear(micID);
-                GameModule.getGameModule().sendAndLog(fovclear);
                 fovclear.executeCommand();
-                return fovclear;
+                GameModule.getGameModule().sendAndLog(fovclear);
+                return null;
             }
 
             twoPointOh = this.getInner().getState().contains("this_is_2pointoh");
@@ -238,14 +238,15 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
                 //reading off the Piece's unique ID and sending it off in a FOVisualization command, which should make it appear for all
                 String micID = this.piece.getProperty("micID").toString();
                 fovCommand = new FOVisualization(this.fov, micID);
-                bigCommand.append(fovCommand);
                 bigCommand.execute();
+                fovCommand.execute();
+                bigCommand.append(fovCommand);
                 GameModule.getGameModule().sendAndLog(bigCommand);
-                return bigCommand;
+                return null;
             } // end of drawing visuals and announcing the results in the chatlog
             bigCommand.execute();
             GameModule.getGameModule().sendAndLog(bigCommand);
-            return bigCommand; // for some reason, there were no visuals to do, so send that message and don't send these special keystrokes to others classes/decorators
+            return null; // for some reason, there were no visuals to do, so send that message and don't send these special keystrokes to others classes/decorators
         } //end of dealing with keystrokes that are linked to autorange lines
         else if (KeyStroke.getKeyStroke(KeyEvent.VK_D, KeyEvent.CTRL_DOWN_MASK, false).equals(stroke)) {
             if (this.fov != null && this.fov.getCount() > 0 && fovCommand!=null) {
