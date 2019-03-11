@@ -196,12 +196,11 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
 
             //if the firing options were already activated, change the piece's isShowingLines to 1 to start the removal process
             if (this.fov != null && this.fov.getCount() > 0 && fovCommand != null) {
-
                 logToChatWithoutUndo("locally reacting to 2nd trigger, starting up clean up process");
                 String micID = this.piece.getProperty("micID").toString();
                 FOVisualizationClear fovclear = new FOVisualizationClear(micID);
-                fovclear.executeCommand();
                 GameModule.getGameModule().sendAndLog(fovclear);
+                fovclear.executeCommand();
                 return null;
             }
 
@@ -240,8 +239,8 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
                 String micID = this.piece.getProperty("micID").toString();
                 fovCommand = new FOVisualization(this.fov, micID);
                 bigCommand.append(fovCommand);
-                GameModule.getGameModule().sendAndLog(bigCommand);
                 bigCommand.execute();
+                GameModule.getGameModule().sendAndLog(bigCommand);
                 return null;
             } // end of drawing visuals and announcing the results in the chatlog
             bigCommand.execute();
