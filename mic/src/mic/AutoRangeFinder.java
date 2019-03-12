@@ -224,10 +224,9 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
                 //reading off the Piece's unique ID and sending it off in a FOVisualization command, which should make it appear for all
                 String micID = this.piece.getProperty("micID").toString();
                 fovCommand = new FOVisualization(this.fov, micID);
-                bigCommand.execute();
+                fovCommand.append(bigCommand);
                 fovCommand.execute();
-                bigCommand.append(fovCommand);
-                GameModule.getGameModule().sendAndLog(bigCommand);
+                GameModule.getGameModule().sendAndLog(fovCommand);
                 return null;
             } // end of drawing visuals and announcing the results in the chatlog
             bigCommand.execute();
