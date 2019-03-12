@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -95,9 +96,9 @@ enum RepoManeuver {
     BR2_Right_ABAP_2E("BR2 Right as Backward as Possible", "525", -90.0f, 169.5f, 0.0f, 0.0f, 339.0f, 28.25f),
 
     //small StarViper BR
-    BR1_Left_BankF_AFAP_2E("BR Bank Left Forward, as Forward as Possible", "517", 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
-    BR1_Left_BankF_2E("BR Bank Left Forward, centered", "517", 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
-    BR1_Left_BankF_ABAP_2E("BR Bank Left Forward, as Forward as Possible", "517", 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
+    BR1_Left_BankF_AFAP_2E("BR Bank Left Forward, as Forward as Possible", "517", -45.0f, -137.0f, 0.0f, 45.0f, -237.5f, -124.0f),
+    BR1_Left_BankF_2E("BR Bank Left Forward, centered", "517", -45.0f, -137.0f, 0.0f, 45.0f, -257.5f, -104.0f),
+    BR1_Left_BankF_ABAP_2E("BR Bank Left Forward, as Forward as Possible", "517", -45.0f, -137.0f, 0.0f, 45.0f, -277.5f, -84.0f),
 
     BR1_Left_BankB_AFAP_2E("BR Bank Left Backward, as Forward as Possible", "517", 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
     BR1_Left_BankB_2E("BR Bank Left Backward, centered", "517", 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
@@ -289,6 +290,8 @@ public class ShipReposition extends Decorator implements EditablePiece {
             .put("K", RepoManeuver.BR2_Right_2E)
             .put("ALT SHIFT 9", RepoManeuver.BR2_Right_ABAP_2E)
 
+            .put("ALT J", RepoManeuver.BR1_Left_BankF_2E)
+
             .build();
 
     //Names of the reposition
@@ -305,6 +308,7 @@ public class ShipReposition extends Decorator implements EditablePiece {
             .put("ALT 9", "Right Straight Decloak as Forward as Possible")
             .put("K", "Right Straight Decloak, centered")
             .put("ALT SHIFT 9", "Right Straight Decloak as Backward as Possible")
+            .put("ALT J", "Left, Forward Bank, centered")
             .build();
 
     //Get back a Keystroke object
@@ -352,6 +356,9 @@ public class ShipReposition extends Decorator implements EditablePiece {
             .put(RepoManeuver.BRD_Right_AFAP_Large_2E, KeyStroke.getKeyStroke(KeyEvent.VK_8,KeyEvent.ALT_DOWN_MASK, false))
             .put(RepoManeuver.BRD_Right_Large_2E, KeyStroke.getKeyStroke(KeyEvent.VK_R,KeyEvent.ALT_DOWN_MASK, false))
             .put(RepoManeuver.BRD_Right_ABAP_Large_2E, KeyStroke.getKeyStroke(KeyEvent.VK_8,KeyEvent.ALT_DOWN_MASK + KeyEvent.SHIFT_DOWN_MASK, false))
+
+            //Barrel Roll Bank Left Forward
+            .put(RepoManeuver.BR1_Left_BankF_2E, KeyStroke.getKeyStroke(KeyEvent.VK_J, KeyEvent.ALT_DOWN_MASK, false))
             .build();
 
 
@@ -456,7 +463,6 @@ public class ShipReposition extends Decorator implements EditablePiece {
                     break;
 
                 case BR2_Left_AFAP_2E:
-                    logToChat("will transform to BRD_LEFT_AFAP_MED");
                     repoTemplate = RepoManeuver.BRD_Left_AFAP_Medium_2E;
                     break;
                 case BR2_Left_2E:
@@ -552,7 +558,7 @@ public class ShipReposition extends Decorator implements EditablePiece {
             logToChat("repo name after change: " + repoTemplate.name());
             //STEP 1:
             //double tAngle;
-            //tAngle = repoTemplate.getTemplateAngle(); //repo maneuver's angle
+            double tAngle = repoTemplate.getTemplateAngle(); //repo maneuver's angle
             //fR.setAngle(sAngle - tAngle);
 
             //Info Gathering: Offset 1, put to the side of the ship, local coords, adjusting for large base if it is found
@@ -578,15 +584,16 @@ public class ShipReposition extends Decorator implements EditablePiece {
             //Info Gathering: Offset 1, put to the side of the ship, local coords, get the final coords of the ship (and its dot)
             double off1x_s = repoTemplate.getShipX();
             double off1y_s = repoTemplate.getShipY();
-            double off1y_s_dot = off1y_s + wideningFudgeFactorBetweenDots * size * 0.666f * DOT_FUDGE;
+            double off1x_s_dot = off1x_s + wideningFudgeFactorBetweenDots * size * 0.666f * DOT_FUDGE * Math.sin(tAngle);
+            double off1y_s_dot = off1y_s + wideningFudgeFactorBetweenDots * size * 0.666f * DOT_FUDGE * Math.cos(tAngle);
 
             //STEP 7: rotate the offset1 dependant within the spawner's local coordinates
             //TODO gotta account for template additional forcing angle here; don't use only sAngle
             double off1x_rot_s = rotX(off1x_s, off1y_s, sAngle);
             double off1y_rot_s = rotY(off1x_s, off1y_s, sAngle);
 
-            double off1x_rot_s_dot = rotX(off1x_s, off1y_s_dot, sAngle);
-            double off1y_rot_s_dot = rotY(off1x_s, off1y_s_dot, sAngle);
+            double off1x_rot_s_dot = rotX(off1x_s_dot, off1y_s_dot, sAngle);
+            double off1y_rot_s_dot = rotY(off1x_s_dot, off1y_s_dot, sAngle);
 
 
             double roundedAngle = convertAngleToGameLimits(sAngle-tAngle2);

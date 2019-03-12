@@ -80,6 +80,10 @@ public class MouseShipGUIDrawable implements Drawable {
                 null, 3);
         listOfInteractiveElements.add(br2IconLeft);
 
+        miElement brLBFIconLeft = new miElement("mi_barrelroll2L.png", ulX + cursorX, ulY + cursorY + 2*brIconLeft.image.getHeight()+2*padX,
+                null, 5);
+        listOfInteractiveElements.add(brLBFIconLeft);
+
         cursorX += brIconLeft.image.getWidth() + smallGapX;
 
         //add ship gfx, getShipImage deals with alt paint jobs and dual ships (just takes the first one it finds)
