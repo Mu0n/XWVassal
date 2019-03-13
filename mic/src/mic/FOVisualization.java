@@ -47,14 +47,13 @@ public class FOVisualization extends Command {
         this.pieceId = senderPieceId;
     }
 
-    public static GamePiece findPieceFromMicID(String thisId){
+    public synchronized static GamePiece findPieceFromMicID(String thisId){
         Collection<GamePiece> pieces=  GameModule.getGameModule().getGameState().getAllPieces();
         GamePiece[] ps = pieces.toArray(new GamePiece[pieces.size()]);
-        for(int j=0; j<pieces.size(); j++){
+        for(int j=0; j<ps.length; j++){
             try{
                 String checkedUpId = ps[j].getProperty("micID").toString();
                 if(checkedUpId.equals(thisId)) {
-                    logToChatWithoutUndo("static method FOVCommand found the proper ship");
                     return ps[j];
                 }
             }catch(Exception e){
@@ -64,7 +63,7 @@ public class FOVisualization extends Command {
         return null;
     }
 
-    protected void executeCommand() {
+    protected synchronized void executeCommand() {
         final Timer timer = new Timer();
         final VASSAL.build.module.Map map = VASSAL.build.module.Map.getMapById("Map0");
         final String copyOverId = this.pieceId;
@@ -76,15 +75,12 @@ public class FOVisualization extends Command {
                            @Override
                            public void run() {
                                if(i==0){
-                                   logToChatWithoutUndo("iteration " + i);
                                map.addDrawComponent(fovContent);
                                map.repaint();
                                i++;
                                p = FOVisualization.findPieceFromMicID(copyOverId);
                                }
                                else{
-
-                                   logToChatWithoutUndo("iteration " + i);
                                    String isShowingLines = p.getProperty("isShowingLines").toString();
                                    if(isShowingLines.equals("1")){
                                        map.removeDrawComponent(fovContent);
@@ -151,6 +147,7 @@ public class FOVisualization extends Command {
             if (!(c instanceof FOVisualization)) {
                 return null;
             }
+
             FOVisualization visualization = (FOVisualization) c;
             logger.info("Encoding FOVisualization micID=" + visualization.pieceId);
             try {

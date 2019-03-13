@@ -36,7 +36,7 @@ public class FOVisualizationClear extends Command {
         pieceId = useThisPieceId;
     }
 
-    protected void executeCommand() {
+    protected synchronized void executeCommand() {
         GamePiece piece = FOVisualization.findPieceFromMicID(this.pieceId);
         piece.setProperty("isShowingLines","1");
     }
