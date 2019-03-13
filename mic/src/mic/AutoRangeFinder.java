@@ -213,8 +213,6 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
 
             //draw visuals and announce the results in the chat
             Command mBAC = makeBigAnnounceCommand(bigAnnounce, rfindings);
-            if(bigCommand ==null) bigCommand = mBAC;
-            else bigCommand.append(mBAC);
 
             logToChatWithoutUndo("about to enter this.fov null? " + (this.fov==null?"yes":"no" + " count=" + this.fov.getCount() + " fovCommand null?" + (fovCommand==null?"yes":"no")));
             if(this.fov !=null && this.fov.getCount() > 0 && fovCommand == null) {
@@ -224,7 +222,7 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
                 //reading off the Piece's unique ID and sending it off in a FOVisualization command, which should make it appear for all
                 String micID = this.piece.getProperty("micID").toString();
                 fovCommand = new FOVisualization(this.fov, micID);
-                fovCommand.append(bigCommand);
+                fovCommand.append(mBAC);
                 fovCommand.execute();
                 GameModule.getGameModule().sendAndLog(fovCommand);
                 return null;
