@@ -157,7 +157,7 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
                 this.fov = new FiringOptionsVisuals();
                 fovCommand = null;
                 this.piece.setProperty("isShowingLines","0");
-                return piece.keyEvent(stroke);
+                return null;
             }
         }
 
@@ -187,7 +187,7 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
                 FOVisualizationClear fovclear = new FOVisualizationClear(micID);
                 fovclear.executeCommand();
                 GameModule.getGameModule().sendAndLog(fovclear);
-                return null;
+                return fovclear;
             }
 
             twoPointOh = this.getInner().getState().contains("this_is_2pointoh");
@@ -224,11 +224,11 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
                 fovCommand.append(mBAC);
                 fovCommand.execute();
                 GameModule.getGameModule().sendAndLog(fovCommand);
-                return null;
+                return fovCommand;
             } // end of drawing visuals and announcing the results in the chatlog
             mBAC.execute();
             GameModule.getGameModule().sendAndLog(mBAC);
-            return null; // for some reason, there were no visuals to do, so send that message and don't send these special keystrokes to others classes/decorators
+            return mBAC; // for some reason, there were no visuals to do, so send that message and don't send these special keystrokes to others classes/decorators
         } //end of dealing with keystrokes that are linked to autorange lines
         else if (KeyStroke.getKeyStroke(KeyEvent.VK_D, KeyEvent.CTRL_DOWN_MASK, false).equals(stroke)) {
             if (this.fov != null && this.fov.getCount() > 0 && fovCommand!=null) {
