@@ -213,7 +213,6 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
 
             //draw visuals and announce the results in the chat
             Command mBAC = makeBigAnnounceCommand(bigAnnounce, rfindings);
-
             logToChatWithoutUndo("about to enter this.fov null? " + (this.fov==null?"yes":"no" + " count=" + this.fov.getCount() + " fovCommand null?" + (fovCommand==null?"yes":"no")));
             if(this.fov !=null && this.fov.getCount() > 0 && fovCommand == null) {
 
@@ -227,8 +226,8 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
                 GameModule.getGameModule().sendAndLog(fovCommand);
                 return null;
             } // end of drawing visuals and announcing the results in the chatlog
-            bigCommand.execute();
-            GameModule.getGameModule().sendAndLog(bigCommand);
+            mBAC.execute();
+            GameModule.getGameModule().sendAndLog(mBAC);
             return null; // for some reason, there were no visuals to do, so send that message and don't send these special keystrokes to others classes/decorators
         } //end of dealing with keystrokes that are linked to autorange lines
         else if (KeyStroke.getKeyStroke(KeyEvent.VK_D, KeyEvent.CTRL_DOWN_MASK, false).equals(stroke)) {
