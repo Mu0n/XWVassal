@@ -75,16 +75,20 @@ public class FOVisualization extends Command {
                            @Override
                            public void run() {
                                if(i==0){
-                               map.addDrawComponent(fovContent);
-                               map.repaint();
+                                   SwingUtilities.invokeLater(new Runnable() {
+                                       public void run() {
+                                           map.addDrawComponent(fovContent);
+                                           map.repaint();
+                                       }
+                                   });
                                i++;
                                }
                                else{
                                    String isShowingLines = (Decorator.getOutermost(this.p)).getProperty("isShowingLines").toString();
                                    if(isShowingLines.equals("0")){
-                                       map.removeDrawComponent(fovContent);
                                        SwingUtilities.invokeLater(new Runnable() {
                                            public void run() {
+                                               map.removeDrawComponent(fovContent);
                                                map.repaint();
                                            }
                                        });
