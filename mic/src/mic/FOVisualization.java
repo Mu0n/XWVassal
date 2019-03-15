@@ -71,7 +71,7 @@ public class FOVisualization extends Command {
         timer.schedule(new TimerTask() {
 
             int i=0;
-            GamePiece p = FOVisualization.findPieceFromMicID(copyOverId);;
+            GamePiece p = FOVisualization.findPieceFromMicID(copyOverId);
                            @Override
                            public void run() {
                                if(i==0){
