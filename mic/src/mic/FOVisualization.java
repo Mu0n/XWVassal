@@ -83,7 +83,11 @@ public class FOVisualization extends Command {
                                    String isShowingLines = (Decorator.getOutermost(this.p)).getProperty("isShowingLines").toString();
                                    if(isShowingLines.equals("0")){
                                        map.removeDrawComponent(fovContent);
-                                       map.repaint();
+                                       SwingUtilities.invokeLater(new Runnable() {
+                                           public void run() {
+                                               map.repaint();
+                                           }
+                                       });
                                        Command c = p.keyEvent(KeyStroke.getKeyStroke(KeyEvent.VK_M, KeyEvent.SHIFT_DOWN_MASK,false));
                                        if(c!=null) c.execute();
                                        timer.cancel();
