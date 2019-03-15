@@ -91,7 +91,7 @@ public class FOVisualization extends Command {
                                    }
                                }
                            }
-                       }, 0, 1000);
+                       }, 0, 200);
     }
 
     protected Command myUndoCommand() {
