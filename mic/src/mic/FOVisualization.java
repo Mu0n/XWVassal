@@ -82,7 +82,7 @@ public class FOVisualization extends Command {
                                }
                                else{
                                    String isShowingLines = p.getProperty("isShowingLines").toString();
-                                   if(isShowingLines.equals("1")){
+                                   if(isShowingLines.equals("0")){
                                        map.removeDrawComponent(fovContent);
                                        map.repaint();
                                        Command c = p.keyEvent(KeyStroke.getKeyStroke(KeyEvent.VK_M, KeyEvent.SHIFT_DOWN_MASK,false));

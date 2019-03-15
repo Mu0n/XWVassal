@@ -156,7 +156,6 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
                 logToChatWithoutUndo("locally reacting to SHIFT-M");
                 this.fov = new FiringOptionsVisuals();
                 fovCommand = null;
-                this.piece.setProperty("isShowingLines","0");
                 return null;
             }
         }
@@ -213,8 +212,10 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
 
             //draw visuals and announce the results in the chat
             Command mBAC = makeBigAnnounceCommand(bigAnnounce, rfindings);
+
+            String isShowingLines = this.piece.getProperty("isShowingLines").toString();
             logToChatWithoutUndo("about to enter this.fov null? " + (this.fov==null?"yes":"no" + " count=" + this.fov.getCount() + " fovCommand null?" + (fovCommand==null?"yes":"no")));
-            if(this.fov !=null && this.fov.getCount() > 0 && fovCommand == null) {
+            if(this.fov !=null && this.fov.getCount() > 0 && fovCommand == null && isShowingLines.equals("1")) {
 
                 logToChatWithoutUndo("locally reacting to making a visual appear");
 
