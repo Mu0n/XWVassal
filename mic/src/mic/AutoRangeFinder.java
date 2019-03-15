@@ -164,7 +164,7 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
         //identify which autorange option was used by using the static Map defined above in the globals, store it in an int
         whichOption = getKeystrokeToOptions(stroke);
         if (whichOption != -1 && stroke.isOnKeyRelease() == false) {
-            if(isShowingLines.equals("1") && fovCommand != null) return null; //not ready to deal with anything until the normal vassal editor trigger has worked and changed this to "0"
+            if(isShowingLines.equals("1") && fovCommand != null) return piece.keyEvent(stroke); //not ready to deal with anything until the normal vassal editor trigger has worked and changed this to "0"
 
             if(whichOption == 12) {
                 MULTILINES = true;
