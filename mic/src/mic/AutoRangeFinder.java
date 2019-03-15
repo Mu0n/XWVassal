@@ -164,6 +164,7 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
         //identify which autorange option was used by using the static Map defined above in the globals, store it in an int
         whichOption = getKeystrokeToOptions(stroke);
         if (whichOption != -1 && stroke.isOnKeyRelease() == false) {
+            logToChat("isShowingLines " + isShowingLines);
             if(isShowingLines.equals("1") && fovCommand != null) return piece.keyEvent(stroke); //not ready to deal with anything until the normal vassal editor trigger has worked and changed this to "0"
 
             if(whichOption == 12) {
@@ -204,7 +205,7 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
             //draw visuals and announce the results in the chat
             Command mBAC = makeBigAnnounceCommand(bigAnnounce, rfindings);
 
-            logToChatWithoutUndo("about to enter this.fov null? " + (this.fov==null?"yes":"no" + " count=" + this.fov.getCount() + " fovCommand null?" + (fovCommand==null?"yes":"no")));
+            logToChatWithoutUndo("about to enter. this.fov null? " + (this.fov==null?"yes":"no" + " count=" + this.fov.getCount() + " fovCommand null?" + (fovCommand==null?"yes":"no")));
             if(this.fov !=null && this.fov.getCount() > 0 && fovCommand == null && isShowingLines.equals("1")) {
 
                 logToChatWithoutUndo("locally reacting to making a visual appear");
