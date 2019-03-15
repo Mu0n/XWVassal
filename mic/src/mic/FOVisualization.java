@@ -81,7 +81,7 @@ public class FOVisualization extends Command {
                                p = FOVisualization.findPieceFromMicID(copyOverId);
                                }
                                else{
-                                   String isShowingLines = p.getProperty("isShowingLines").toString();
+                                   String isShowingLines = (Decorator.getOutermost(this.p)).getProperty("isShowingLines").toString();
                                    if(isShowingLines.equals("0")){
                                        map.removeDrawComponent(fovContent);
                                        map.repaint();
