@@ -165,8 +165,8 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
         whichOption = getKeystrokeToOptions(stroke);
         if (whichOption != -1 && stroke.isOnKeyRelease() == false) {
             logToChat("isShowingLines " + isShowingLines);
-            if(isShowingLines.equals("1") && fovCommand != null) return piece.keyEvent(stroke); //not ready to deal with anything until the normal vassal editor trigger has worked and changed this to "0"
-
+            if(isShowingLines.equals("1") && fovCommand != null & this.fov !=null && this.fov.getCount() > 0) return piece.keyEvent(stroke); //not ready to deal with anything until the normal vassal editor trigger has worked and changed this to "0"
+            else if(isShowingLines.equals("0") && this.fov !=null && this.fov.getCount() > 0) return piece.keyEvent(stroke); //the line garbage collector has not done its job yet, don't enter now.
             if(whichOption == 12) {
                 MULTILINES = true;
             }
