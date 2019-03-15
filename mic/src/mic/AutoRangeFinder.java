@@ -214,11 +214,11 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
                 fovCommand.append(mBAC);
                 fovCommand.execute();
                 GameModule.getGameModule().sendAndLog(fovCommand);
-                return fovCommand;
+                return null;
             } // end of drawing visuals and announcing the results in the chatlog
             mBAC.execute();
             GameModule.getGameModule().sendAndLog(mBAC);
-            return mBAC; // for some reason, there were no visuals to do, so send that message and don't send these special keystrokes to others classes/decorators
+            return null; // for some reason, there were no visuals to do, so send that message and don't send these special keystrokes to others classes/decorators
         } //end of dealing with keystrokes that are linked to autorange lines
         else if (KeyStroke.getKeyStroke(KeyEvent.VK_D, KeyEvent.CTRL_DOWN_MASK, false).equals(stroke)) {
             if (this.fov != null && this.fov.getCount() > 0 && fovCommand!=null) {
