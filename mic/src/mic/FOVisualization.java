@@ -1,31 +1,20 @@
 package mic;
 
 import VASSAL.build.GameModule;
-import VASSAL.build.module.map.Drawable;
 import VASSAL.command.Command;
 import VASSAL.command.CommandEncoder;
 import VASSAL.counters.Decorator;
 import VASSAL.counters.GamePiece;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.swing.*;
-import java.awt.*;
 import java.awt.event.KeyEvent;
-import java.awt.font.FontRenderContext;
-import java.awt.font.TextAttribute;
-import java.awt.font.TextLayout;
-import java.awt.geom.AffineTransform;
-import java.awt.geom.Line2D;
-import java.io.Serializable;
-import java.text.AttributedString;
 import java.util.*;
 import java.util.List;
 import java.util.Timer;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import static mic.Util.*;
 

@@ -294,6 +294,30 @@ public class ShipReposition extends Decorator implements EditablePiece {
 
             .build();
 
+    //Better map for the multitudes of triple choices for repositioning in 2E
+    private static Map<String, RepoManeuver> newNameToRepoManeuver = ImmutableMap.<String, RepoManeuver>builder()
+            .put("Left Barrel Roll as Forward as Possible", RepoManeuver.BR1_Left_AFAP_2E)
+            .put("Left Barrel Roll, centered", RepoManeuver.BR1_Left_2E)
+            .put("Left Barrel Roll as Backward as Possible", RepoManeuver.BR1_Left_ABAP_2E)
+
+            .put("Right Barrel Roll as Forward as Possible", RepoManeuver.BR1_Right_AFAP_2E)
+            .put("Right Barrel Roll, centered", RepoManeuver.BR1_Right_2E)
+            .put("Right Barrel Roll as Backward as Possible", RepoManeuver.BR1_Right_ABAP_2E)
+
+            .put("Left Straight Decloak as Forward as Possible", RepoManeuver.BR2_Left_AFAP_2E)
+            .put("Left Straight Decloak, centered", RepoManeuver.BR2_Left_2E)
+            .put("Left Straight Decloak as Backward as Possible", RepoManeuver.BR2_Left_ABAP_2E)
+
+            .put("Right Straight Decloak as Forward as Possible", RepoManeuver.BR2_Right_AFAP_2E)
+            .put("Right Straight Decloak, centered", RepoManeuver.BR2_Right_2E)
+            .put("Right Straight Decloak as Backward as Possible", RepoManeuver.BR2_Right_ABAP_2E)
+
+            .put("Left, Forward Bank, as Forward as Possible", RepoManeuver.BR1_Left_BankF_2E)
+            .put("Left, Forward Bank, centered", RepoManeuver.BR1_Left_BankF_2E)
+            .put("Left, Forward Bank, as Backward as Possible", RepoManeuver.BR1_Left_BankB_2E)
+
+            .build();
+
     //Names of the reposition
     private static Map<String, String> keyStrokeToName_2e = ImmutableMap.<String, String>builder()
             .put("CTRL 8", "Left Barrel Roll as Forward as Possible")
@@ -301,7 +325,7 @@ public class ShipReposition extends Decorator implements EditablePiece {
             .put("CTRL SHIFT 8", "Left Barrel Roll as Backward as Possible")
             .put("ALT 8", "Right Barrel Roll as Forward as Possible")
             .put("ALT R", "Right Barrel Roll, centered")
-            .put("ALT SHIFT 8", "Left Barrel Roll as Backward as Possible")
+            .put("ALT SHIFT 8", "Right Barrel Roll as Backward as Possible")
             .put("CTRL 9", "Left Straight Decloak as Forward as Possible")
             .put("J", "Left Straight Decloak, centered")
             .put("CTRL SHIFT 9", "Left Straight Decloak as Backward as Possible")
@@ -553,9 +577,9 @@ public class ShipReposition extends Decorator implements EditablePiece {
 
         for(RepoManeuver repoTemplate : repoTemplates) { //loops over the list of potential repositions
 //Prep step, check if it's a medium ship, and only deal with regular barrel rolls, because it's all they can do anyway, rerouting to the correct RepoManeuver
-            logToChat("repo name before change: " + repoTemplate.name());
+            //logToChat("repo name before change: " + repoTemplate.name());
             repoTemplate = swapToRepoManeuverIfMedOrLarge(repoTemplate, size, is2pointOh);
-            logToChat("repo name after change: " + repoTemplate.name());
+            //logToChat("repo name after change: " + repoTemplate.name());
             //STEP 1:
             //double tAngle;
             double tAngle = repoTemplate.getTemplateAngle(); //repo maneuver's angle
@@ -581,11 +605,15 @@ public class ShipReposition extends Decorator implements EditablePiece {
             double tAngle2;
             tAngle2 = repoTemplate.getShipAngle(); //repo maneuver's angle
 
+            double roundedAngle = convertAngleToGameLimits(sAngle-tAngle2);
+
             //Info Gathering: Offset 1, put to the side of the ship, local coords, get the final coords of the ship (and its dot)
             double off1x_s = repoTemplate.getShipX();
             double off1y_s = repoTemplate.getShipY();
-            double off1x_s_dot = off1x_s + wideningFudgeFactorBetweenDots * size * 0.666f * DOT_FUDGE * Math.sin(tAngle);
-            double off1y_s_dot = off1y_s + wideningFudgeFactorBetweenDots * size * 0.666f * DOT_FUDGE * Math.cos(tAngle);
+            double off3x = - wideningFudgeFactorBetweenDots * size * 0.666f * DOT_FUDGE * Math.sin(Math.toRadians(tAngle2));
+            double off3y = wideningFudgeFactorBetweenDots * size * 0.666f * DOT_FUDGE * Math.cos(Math.toRadians(tAngle2));
+            double off1x_s_dot = off1x_s + off3x;
+            double off1y_s_dot = off1y_s + off3y;
 
             //STEP 7: rotate the offset1 dependant within the spawner's local coordinates
             //TODO gotta account for template additional forcing angle here; don't use only sAngle
@@ -596,8 +624,6 @@ public class ShipReposition extends Decorator implements EditablePiece {
             double off1y_rot_s_dot = rotY(off1x_s_dot, off1y_s_dot, sAngle);
 
 
-            double roundedAngle = convertAngleToGameLimits(sAngle-tAngle2);
-            double roundedAngle2 = convertAngleToGameLimits(tAngle2);
 
 
             //STEP 8: translation into place
@@ -1254,6 +1280,14 @@ public class ShipReposition extends Decorator implements EditablePiece {
                 return keyStrokeToRepositionShip_2e.get(hotKey);
             }
         }
+        return null;
+    }
+
+    //There were too many hotkeys for the mouse GUI, so it uses names instead
+    private RepoManeuver getNewSystemRepoManeuver(String name) {
+        if (newNameToRepositionShip_2e.containsKey(name)) {
+            return newNameToRepositionShip_2e.get(name);
+            }
         return null;
     }
 
