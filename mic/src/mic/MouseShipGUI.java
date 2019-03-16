@@ -204,7 +204,7 @@ public class MouseShipGUI extends AbstractConfigurable {
                                         Command moveShipCommand = null;
                                         if(elem.associatedKeyStroke!=null) moveShipCommand = activatedPiece.keyEvent(elem.associatedKeyStroke); //direct keystroke keyboard shortcut
                                         else if(elem.whichTripleChoice != 0) {
-                                            ShipReposition SR = findShipRepositionDecorator(activatedPiece);
+                                            ShipReposition SR = ShipReposition.findShipRepositionDecorator(activatedPiece);
                                             moveShipCommand = SR.tripleChoiceDispatcher(elem.whichTripleChoice);
                                         }
                                         if(moveShipCommand!=null){
@@ -238,9 +238,7 @@ public class MouseShipGUI extends AbstractConfigurable {
         theMap.addLocalMouseListener(ml);
     }
 
-    private ShipReposition findShipRepositionDecorator(GamePiece activatedPiece) {
-        return (ShipReposition)ShipReposition.getDecorator(activatedPiece,ShipReposition.class);
-    }
+
 
     private static VASSAL.build.module.Map getPlayerMap(int playerIndex) {
         for (VASSAL.build.module.Map loopMap : GameModule.getGameModule().getComponentsOf(VASSAL.build.module.Map.class)) {

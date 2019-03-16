@@ -83,6 +83,9 @@ public class MouseShipGUIDrawable implements Drawable {
         miElement brLBFIconLeft = new miElement("mi_barrelroll2L.png", ulX + cursorX, ulY + cursorY + 2*brIconLeft.image.getHeight()+2*padX,
                 null, 5);
         listOfInteractiveElements.add(brLBFIconLeft);
+        miElement brLBBIconLeft = new miElement("mi_barrelroll2L.png", ulX + cursorX, ulY + cursorY + 3*brIconLeft.image.getHeight()+3*padX,
+                null, 6);
+        listOfInteractiveElements.add(brLBBIconLeft);
 
         cursorX += brIconLeft.image.getWidth() + smallGapX;
 
