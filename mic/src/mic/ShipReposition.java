@@ -452,11 +452,9 @@ public class ShipReposition extends Decorator implements EditablePiece {
     }
 
     private RepoManeuver swapToRepoManeuverIfMedOrLarge(RepoManeuver repoTemplate, int size, boolean is2pointOh){
-        logToChat("for realz about to check size " + size + " and 2.0=" + is2pointOh + " and repo name " + repoTemplate.name());
         if(size == 2){
             switch(repoTemplate){
                 case BR1_Left_AFAP_2E:
-                    logToChat("c'mon trigger asshole");
                     repoTemplate = RepoManeuver.BR1_Left_AFAP_Medium_2E;
                     break;
                 case BR1_Left_2E:
@@ -1062,9 +1060,9 @@ public class ShipReposition extends Decorator implements EditablePiece {
             }
         } //End of dealing with ALT-C
 
-        //Deal with a dropping of a maneuver. May only exist for 1.0 eventually!
-        RepoManeuver repoTemplateDrop = getKeystrokeTemplateDrop(stroke, is2pointohShip);
-        if (repoTemplateDrop != null && stroke.isOnKeyRelease() == false) {
+        //Deal with a dropping of a maneuver. only exists for 1.0 now
+        RepoManeuver repoTemplateDrop = getKeystrokeTemplateDrop(stroke);
+        if (is2pointohShip == false && repoTemplateDrop != null && stroke.isOnKeyRelease() == false) {
             Command result = spawnRepoTemplate(repoTemplateDrop);
 
             List<BumpableWithShape> obstacles = getBumpablesOnMap(false);
@@ -1234,19 +1232,12 @@ public class ShipReposition extends Decorator implements EditablePiece {
         return this.testRotator.getAngle();
     }
 
-    private RepoManeuver getKeystrokeTemplateDrop(KeyStroke keyStroke, boolean is2pointohShip) {
+    private RepoManeuver getKeystrokeTemplateDrop(KeyStroke keyStroke) {
         String hotKey = HotKeyConfigurer.getString(keyStroke);
-
-        if(is2pointohShip == false){
             if (keyStrokeToDropTemplate.containsKey(hotKey)) {
                 return keyStrokeToDropTemplate.get(hotKey);
             }
-        }
-        else {
-            if (keyStrokeToDropTemplate2e.containsKey(hotKey)) {
-                return keyStrokeToDropTemplate2e.get(hotKey);
-            }
-        }
+
         return null;
     }
 
@@ -1368,6 +1359,7 @@ public class ShipReposition extends Decorator implements EditablePiece {
         Color dotOverlappedColor = new Color(255,0,0);
         boolean isOverlapped = false;
         KeyStroke theKey;
+        String inStringForm;
 
         public repositionChoiceVisual(Shape translatedRotatedScaledShape, Shape centralDot, boolean wantOverlapColor, KeyStroke wantKey){
             thePieceShape = translatedRotatedScaledShape;
@@ -1405,5 +1397,7 @@ public class ShipReposition extends Decorator implements EditablePiece {
         public KeyStroke getKeyStroke() {
             return theKey;
         }
+
+        public String getInStringForm() { return inStringForm; }
     }
 }

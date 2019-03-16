@@ -104,7 +104,6 @@ public class MouseShipGUI extends AbstractConfigurable {
     public void leaveATimeStamp(int side){
         VASSAL.build.module.Map playerMap = getPlayerMap(side);
         List<GamePiece> gpieces = playerMap.getAllDescendantComponentsOf(GamePiece.class);
-        logToChat("number of pieces " + gpieces.size());
         for(GamePiece g : gpieces){
             if(g.getName().equals("clickChoiceController")){
                 g.setProperty("timeStampStart", Long.toString(System.nanoTime()));
@@ -229,19 +228,11 @@ public class MouseShipGUI extends AbstractConfigurable {
                     }
                 }
             }
-
             public void mouseReleased(MouseEvent e) {
-
             }
-
             public void mouseEntered(MouseEvent e) {
-
-
-
             }
-
             public void mouseExited(MouseEvent e) {
-
             }
         };
         theMap.addLocalMouseListener(ml);
@@ -274,7 +265,6 @@ public class MouseShipGUI extends AbstractConfigurable {
 
         return transformed;
     }
-
     private static Shape getTransformedShape(Shape rawShape, GamePiece sourcePiece) {
         Shape transformed = AffineTransform
                 .getTranslateInstance(sourcePiece.getPosition().getX(), sourcePiece.getPosition().getY())
@@ -289,7 +279,6 @@ public class MouseShipGUI extends AbstractConfigurable {
 
         return transformed;
     }
-
     static public Map getTheMainMap(){
         for (Map loopMap : GameModule.getGameModule().getComponentsOf(Map.class)) {
             if (("Contested Sector").equals(loopMap.getMapName())) {
