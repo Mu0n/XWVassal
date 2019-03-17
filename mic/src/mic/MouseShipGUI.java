@@ -72,9 +72,7 @@ public class MouseShipGUI extends AbstractConfigurable {
 
     public static boolean canAClickBeProcessed(int side){
         VASSAL.build.module.Map playerMap = getPlayerMap(side);
-        logToChat("side " + side);
         GamePiece[] gpieces = playerMap.getAllPieces();
-        logToChat("number of pieces " + gpieces.length);
         for(GamePiece g : gpieces){
             if(g.getName().equals("clickChoiceController")){
                 Stack cStack = (Stack)g;
@@ -123,7 +121,6 @@ public class MouseShipGUI extends AbstractConfigurable {
                 //Restrict to control-clicks. May get removed in the future
                 if(!e.isControlDown()) return;
                 //Process only clicks that have enough elapsed time since the last click (the barrel roll GUI must have this as well)
-                logToChat(Long.toString(System.nanoTime()));
                 mic.Util.XWPlayerInfo playerInfo = getCurrentPlayer();
                 if(canAClickBeProcessed(playerInfo.getSide())==false) return;
 
