@@ -648,6 +648,10 @@ public class ShipReposition extends Decorator implements EditablePiece {
             repoTemplate = swapToRepoManeuverIfMedOrLarge(repoTemplate, size, is2pointOh);
             //logToChat("repo name after change: " + repoTemplate.name());
 
+            if(repoTemplate == null) {
+                logToChat("--- Error: this size " + size + " ship can't perform this reposition.");
+                return 0;
+            }
             //STEP 1:
             //Info Gathering: Offset 2 get the center global coordinates of the ship calling this op
             double off2x = this.getPosition().getX();
