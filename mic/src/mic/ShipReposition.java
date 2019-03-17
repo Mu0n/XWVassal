@@ -650,7 +650,7 @@ public class ShipReposition extends Decorator implements EditablePiece {
 
             if(repoTemplate == null) {
                 logToChat("--- Error: this size " + size + " ship can't perform this reposition.");
-                return 0;
+                return -1;
             }
             //STEP 1:
             //Info Gathering: Offset 2 get the center global coordinates of the ship calling this op
@@ -1141,6 +1141,7 @@ public class ShipReposition extends Decorator implements EditablePiece {
 
         int nbOfRedDots = offerTripleChoices(repoChoices, true, theMap);
         startIt.append(logToChatCommand("* --- There are " + (3-nbOfRedDots) + " valid position(s) to pick from." ));
+        if(nbOfRedDots==-1) return null;
         return startIt;
     }
 
