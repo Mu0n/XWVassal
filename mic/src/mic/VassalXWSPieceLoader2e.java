@@ -20,7 +20,7 @@ import java.util.Map;
 public class VassalXWSPieceLoader2e {
 
     private static List<String> obstacleTabNames = Lists.newArrayList(
-            "Asteroids", "TFA_Asteroids", "Debris"
+            "Asteroids", "TFA_Asteroids", "Debris", "Gas_Clouds"
     );
 
     Map<String, PieceSlot> tokenPiecesMap = Maps.newHashMap();

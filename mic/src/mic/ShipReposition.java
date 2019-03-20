@@ -891,7 +891,7 @@ public class ShipReposition extends Decorator implements EditablePiece {
                 {
                     previousCollisionVisualization.add(bws.shape);
 
-                    String overlapOnFinalWarn = "*** Warning: " + yourShipName + "'s final reposition location currently overlaps a Ship or Obstacle. You can attempt to move it into a legal position and check if it still overlaps with 'alt-c'.";
+                    String overlapOnFinalWarn = "*** Warning: " + yourShipName + "'s final reposition location currently overlaps a Ship or Obstacle.";
                     if(bigCommand !=null) bigCommand.append(logToChatCommand(overlapOnFinalWarn));
                     else bigCommand = logToChatCommand(overlapOnFinalWarn);
                 }
@@ -1339,7 +1339,13 @@ public class ShipReposition extends Decorator implements EditablePiece {
                 bumpables.add(new BumpableWithShape((Decorator)piece,"Debris","2".equals(testFlipString), false));
             } else if (piece.getState().contains("this_is_a_bomb")) {
                 bumpables.add(new BumpableWithShape((Decorator)piece, "Mine", false, false));
-            } else if(wantShipsToo == true && piece.getState().contains("this_is_a_ship")){
+            } else if (piece.getState().contains("this_is_a_gascloud")) {
+                String testFlipString = "";
+                try{
+                    testFlipString = ((Decorator) piece).getDecorator(piece,piece.getClass()).getProperty("whichShape").toString();
+                } catch (Exception e) {}
+                bumpables.add(new BumpableWithShape((Decorator)piece, "GasCloud", "2".equals(testFlipString), false));
+            }else if(wantShipsToo == true && piece.getState().contains("this_is_a_ship")){
                 //MrMurphM
                 //    GamePiece newPiece = PieceCloner.getInstance().clonePiece(piece);
                 //    newPiece.setPosition(piece.getPosition());

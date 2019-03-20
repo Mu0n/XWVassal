@@ -282,6 +282,12 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
                 cvFoundHere.add(bumpedBumpable.shape);
                 this.previousCollisionVisualization.add(bumpedBumpable.shape);
                 howManyBumped++;
+            } else if (bumpedBumpable.type.equals("GasCloud")) {
+                String bumpAlertString = "* --- Overlap detected with " + yourShipName + "'s maneuver template and a gas cloud.";
+                logToChatWithTime(bumpAlertString);
+                cvFoundHere.add(bumpedBumpable.shape);
+                this.previousCollisionVisualization.add(bumpedBumpable.shape);
+                howManyBumped++;
             } else if (bumpedBumpable.type.equals("Mine")) {
                 String bumpAlertString = "* --- Overlap detected with " + yourShipName + "'s maneuver template and a mine.";
                 logToChatWithTime(bumpAlertString);
@@ -596,7 +602,13 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
                     testFlipString = ((Decorator) piece).getDecorator(piece,piece.getClass()).getProperty("whichShape").toString();
                 } catch (Exception e) {}
                 bumpables.add(new BumpableWithShape((Decorator)piece,"Debris","2".equals(testFlipString),false));
-            } else if (piece.getState().contains("this_is_a_bomb")) {
+            } else if (piece.getState().contains("this_is_a_gascloud")) {
+                String testFlipString = "";
+                try{
+                    testFlipString = ((Decorator) piece).getDecorator(piece,piece.getClass()).getProperty("whichShape").toString();
+                } catch (Exception e) {}
+                bumpables.add(new BumpableWithShape((Decorator)piece, "GasCloud", "2".equals(testFlipString), false));
+            }else if (piece.getState().contains("this_is_a_bomb")) {
                 bumpables.add(new BumpableWithShape((Decorator)piece, "Mine", false, false));
             }
         }
