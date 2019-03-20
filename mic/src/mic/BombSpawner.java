@@ -48,8 +48,8 @@ enum BombToken {
     ProtonBomb("Proton Bomb", "Bomb", "1269", 0.0f, 40.0f),
     ThermalDetonator("Thermal Detonator", "Bomb", "8867", 0.0f, 40.0f),
     Bomblet("Bomblet", "Bomb", "11774", 0.0f, 40.0f),
-    BuzzDroidSwarm("Buzz Droid Swarm", "Remote", "", 0.0f, 40.0f),
-    DRK1ProbeDroid("DRK-1 Probe Droid", "Remote", "", 0.0f, 40.0f);
+    BuzzDroidSwarm("Buzz Droid Swarm", "Remote", "13069", 0.0f, 40.0f),
+    DRK1ProbeDroid("DRK-1 Probe Droid", "Remote", "13068", 0.0f, 40.0f);
 
     private final String bombName;
     private final String bombType;
@@ -164,6 +164,8 @@ public class BombSpawner extends Decorator implements EditablePiece {
             .put("CTRL P", BombToken.ProtonBomb)
             .put("CTRL H", BombToken.ThermalDetonator)
             .put("CTRL B", BombToken.Bomblet)
+            .put("CTRL W", BombToken.BuzzDroidSwarm)
+            .put("CTRL R", BombToken.DRK1ProbeDroid)
             .build();
 
     public BombSpawner() {
