@@ -173,6 +173,7 @@ public class MouseShipGUI extends AbstractConfigurable {
                             MouseShipGUIDrawable msgd = new MouseShipGUIDrawable( ship, theMap, pilotShip, pilot);
                             theMap.addDrawComponent(msgd);
                             theMap.repaint();
+                            logToChat("*-- Welcome to the beta Mouse Graphical Interface. You got here by ctrl-left clicking on a ship. You can ctrl-left-click on the icons to perform \"things\" on the ship.");
 
                             //save this ship and popup Drawable for future behavior
                             activatedPiece = ship;
@@ -193,7 +194,15 @@ public class MouseShipGUI extends AbstractConfigurable {
                                     logToChat("clickable x int= " +s.getBounds2D().getMinX() + " to " + s.getBounds2D().getMaxX() +
                                             " y int = "  +s.getBounds2D().getMinY() + " to " +s.getBounds2D().getMaxY());*/
                                     if(s.contains(e.getX(), e.getY())){
-
+// clicked on the close button, exit
+                                        if(elem.getTripleChoice()==-66){
+                                            activatedPiece = null;
+                                            if(lastPopup!=null) {
+                                                theMap.removeDrawComponent(lastPopup);
+                                                lastPopup=null;
+                                            }
+                                            return;
+                                        }
                                         //Leave a nano time stamp in the player controller to restrict a step 2 of the mouse interface to activate too soon
                                         leaveATimeStamp(playerInfo.getSide());
 
@@ -205,6 +214,7 @@ public class MouseShipGUI extends AbstractConfigurable {
                                             moveShipCommand = SR.tripleChoiceDispatcher(elem.whichTripleChoice);
                                         }
                                         if(moveShipCommand!=null){
+                                            logToChat("Please click on a dot to reposition the ship. White dots = legal position. Red dots = illegal obstructed positions.");
                                             moveShipCommand.execute();
                                             GameModule.getGameModule().sendAndLog(moveShipCommand);
                                         } else{
@@ -216,11 +226,7 @@ public class MouseShipGUI extends AbstractConfigurable {
                             }
 
 
-                            activatedPiece = null;
-                            if(lastPopup!=null) {
-                                theMap.removeDrawComponent(lastPopup);
-                                lastPopup=null;
-                            }
+
                         }
                     }
                 }

@@ -125,7 +125,7 @@ public class MouseShipGUIDrawable implements Drawable {
             listOfInteractiveElements.add(brRBBIconRight);
         }
 
-        cursorX += brIconRight.image.getWidth();
+        cursorX += brIconRight.image.getWidth() + padX;
 
         miElement hullGfx = new miElement("mi_hull.png", ulX + cursorX+smallGapX, ulY+padY,
                 null,0);
@@ -154,6 +154,10 @@ public class MouseShipGUIDrawable implements Drawable {
 
         cursorX += hullGfx.image.getWidth() + addHull.image.getWidth() + removeHull.image.getWidth();
 
+        miElement closeGfx = new miElement("mi_close.png",  ulX + cursorX, ulY + padY, null, -66);
+        listOfInteractiveElements.add(closeGfx);
+
+        cursorX += closeGfx.image.getWidth();
 
         if(shipGfx !=null && shipGfx.image!=null) cursorY += shipGfx.image.getHeight();
         else cursorY += 3*brIconLeft.image.getHeight();
@@ -305,6 +309,7 @@ public class MouseShipGUIDrawable implements Drawable {
             associatedKeyStroke = wantedKeyStroke;
             whichTripleChoice = wantedTripleChoice;
 
+
             //load the image
             try {
                 GameModule gameModule = GameModule.getGameModule();
@@ -319,7 +324,9 @@ public class MouseShipGUIDrawable implements Drawable {
                 Util.logToChat("Failed to load GUI image " + fileName);
             }
         }
-
+        public int getTripleChoice(){
+            return whichTripleChoice;
+        }
         public AffineTransform getTransformForClick(double scale){
             AffineTransform affineTransform = new AffineTransform();
             affineTransform.translate(x, y);
