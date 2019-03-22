@@ -219,6 +219,8 @@ public class MouseShipGUI extends AbstractConfigurable {
                                             GameModule.getGameModule().sendAndLog(moveShipCommand);
                                         } else{
                                             logToChat("*-- Error: failed to execute a mouse GUI command.");
+                                            theMap.removeDrawComponent(lastPopup);
+                                            lastPopup=null;
                                         }
                                         break;
                                     }
