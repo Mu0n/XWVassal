@@ -119,7 +119,7 @@ public class MouseShipGUI extends AbstractConfigurable {
 
             public void mousePressed(MouseEvent e) {
                 //Restrict to control-clicks. May get removed in the future
-                if(!e.isControlDown()) return;
+                //if(!e.isControlDown()) return;
                 //Process only clicks that have enough elapsed time since the last click (the barrel roll GUI must have this as well)
                 mic.Util.XWPlayerInfo playerInfo = getCurrentPlayer();
                 if(canAClickBeProcessed(playerInfo.getSide())==false) return;
@@ -173,7 +173,7 @@ public class MouseShipGUI extends AbstractConfigurable {
                             MouseShipGUIDrawable msgd = new MouseShipGUIDrawable( ship, theMap, pilotShip, pilot);
                             theMap.addDrawComponent(msgd);
                             theMap.repaint();
-                            logToChat("*-- Welcome to the beta Mouse Graphical Interface. You got here by ctrl-left clicking on a ship. You can ctrl-left-click on the icons to perform \"things\" on the ship.");
+                            logToChat("*-- Welcome to the beta Mouse Graphical Interface. You got here by ctrl-left clicking on a ship. You can left-click on the icons to perform \"things\" on the ship. Click on the red X to close the popup");
 
                             //save this ship and popup Drawable for future behavior
                             activatedPiece = ship;
