@@ -831,6 +831,8 @@ public class ShipReposition extends Decorator implements EditablePiece {
 
         //Info Gathering: angle and position of the ship
         double globalShipAngle = this.getRotator().getAngle(); //ship angle
+        double templateAngle = repoTemplate.getTemplateAngle(); //repo maneuver's angle
+
         double off2x = this.getPosition().getX();
         double off2y = this.getPosition().getY();
         //Info Gathering: Offset 1, put to the side of the ship, local coords, adjusting for large base if it is found
@@ -844,7 +846,8 @@ public class ShipReposition extends Decorator implements EditablePiece {
         GamePiece templatePiece = newPiece(findPieceSlotByID(repoTemplate.getTemplateGpID()));
 
         shapeForTemplate = repositionedTemplateShape(repoTemplate);
-
+        FreeRotator fR = (FreeRotator)Decorator.getDecorator(templatePiece, FreeRotator.class);
+        fR.setAngle(globalShipAngle + templateAngle);
         //STEP 5: Check for overlap with an obstacle, if so, spawn it so the player sees it
         Command bigCommand = null;
 
