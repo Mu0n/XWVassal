@@ -49,8 +49,7 @@ enum BombToken {
     ThermalDetonator("Thermal Detonator", "Bomb", "8867", 0.0f, 40.0f),
     Bomblet("Bomblet", "Bomb", "11774", 0.0f, 40.0f),
     BuzzDroidSwarm("Buzz Droid Swarm", "Remote", "13069", 0.0f, 53.0f),
-    DRK1ProbeDroid("DRK-1 Probe Droid", "Remote", "13068", 0.0f, 62.0f),
-    SpareParts("Spare Parts", "Debris", "13071", 0.0f, 40.0f);
+    DRK1ProbeDroid("DRK-1 Probe Droid", "Remote", "13068", 0.0f, 62.0f);
 
     private final String bombName;
     private final String bombType;
