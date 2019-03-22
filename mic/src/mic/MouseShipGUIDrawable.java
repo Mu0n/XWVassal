@@ -76,16 +76,19 @@ public class MouseShipGUIDrawable implements Drawable {
                 null, 1);
         listOfInteractiveElements.add(brIconLeft);
 
-        miElement br2IconLeft = new miElement("mi_barrelroll2L.png", ulX + cursorX, ulY + cursorY + brIconLeft.image.getHeight()+padX,
-                null, 3);
-        listOfInteractiveElements.add(br2IconLeft);
+        if(pilotShip.getSize()=="Small"){
 
-        miElement brLBFIconLeft = new miElement("mi_barrelroll_lb.png", ulX + cursorX, ulY + cursorY + 2*brIconLeft.image.getHeight()+2*padX,
-                null, 5);
-        listOfInteractiveElements.add(brLBFIconLeft);
-        miElement brLBBIconLeft = new miElement("mi_barrelroll_lbb.png", ulX + cursorX, ulY + cursorY + 3*brIconLeft.image.getHeight()+3*padX,
-                null, 6);
-        listOfInteractiveElements.add(brLBBIconLeft);
+            miElement br2IconLeft = new miElement("mi_barrelroll2L.png", ulX + cursorX, ulY + cursorY + brIconLeft.image.getHeight()+padX,
+                    null, 3);
+            listOfInteractiveElements.add(br2IconLeft);
+
+            miElement brLBFIconLeft = new miElement("mi_barrelroll_lb.png", ulX + cursorX, ulY + cursorY + 2*brIconLeft.image.getHeight()+2*padX,
+                    null, 5);
+            listOfInteractiveElements.add(brLBFIconLeft);
+            miElement brLBBIconLeft = new miElement("mi_barrelroll_lbb.png", ulX + cursorX, ulY + cursorY + 3*brIconLeft.image.getHeight()+3*padX,
+                    null, 6);
+            listOfInteractiveElements.add(brLBBIconLeft);
+        }
 
         cursorX += brIconLeft.image.getWidth() + smallGapX;
 
@@ -108,17 +111,19 @@ public class MouseShipGUIDrawable implements Drawable {
                 null, 2);
         listOfInteractiveElements.add(brIconRight);
 
-        miElement br2IconRight = new miElement("mi_barrelroll2R.png", ulX + cursorX, ulY + cursorY + brIconRight.image.getHeight() + padX,
-                null, 4);
-        listOfInteractiveElements.add(br2IconRight);
+        if(pilotShip.getSize()=="Small") {
+            miElement br2IconRight = new miElement("mi_barrelroll2R.png", ulX + cursorX, ulY + cursorY + brIconRight.image.getHeight() + padX,
+                    null, 4);
+            listOfInteractiveElements.add(br2IconRight);
 
-        miElement brRBFIconRight = new miElement("mi_barrelroll_rb.png", ulX + cursorX, ulY + cursorY + 2*brIconRight.image.getHeight() + 2*padX,
-                null, 7);
-        listOfInteractiveElements.add(brRBFIconRight);
+            miElement brRBFIconRight = new miElement("mi_barrelroll_rb.png", ulX + cursorX, ulY + cursorY + 2*brIconRight.image.getHeight() + 2*padX,
+                    null, 7);
+            listOfInteractiveElements.add(brRBFIconRight);
 
-        miElement brRBBIconRight = new miElement("mi_barrelroll_rbb.png", ulX + cursorX, ulY + cursorY + 3*brIconRight.image.getHeight() + 3*padX,
-                null, 8);
-        listOfInteractiveElements.add(brRBBIconRight);
+            miElement brRBBIconRight = new miElement("mi_barrelroll_rbb.png", ulX + cursorX, ulY + cursorY + 3*brIconRight.image.getHeight() + 3*padX,
+                    null, 8);
+            listOfInteractiveElements.add(brRBBIconRight);
+        }
 
         cursorX += brIconRight.image.getWidth();
 
