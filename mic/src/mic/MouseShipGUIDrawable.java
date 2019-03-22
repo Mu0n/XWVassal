@@ -76,7 +76,7 @@ public class MouseShipGUIDrawable implements Drawable {
                 null, 1);
         listOfInteractiveElements.add(brIconLeft);
 
-        if(pilotShip.getSize()=="Small"){
+        if(pilotShip.getSize().equals("Small")){
 
             miElement br2IconLeft = new miElement("mi_barrelroll2L.png", ulX + cursorX, ulY + cursorY + brIconLeft.image.getHeight()+padX,
                     null, 3);
@@ -111,7 +111,7 @@ public class MouseShipGUIDrawable implements Drawable {
                 null, 2);
         listOfInteractiveElements.add(brIconRight);
 
-        if(pilotShip.getSize()=="Small") {
+        if(pilotShip.getSize().equals("Small")) {
             miElement br2IconRight = new miElement("mi_barrelroll2R.png", ulX + cursorX, ulY + cursorY + brIconRight.image.getHeight() + padX,
                     null, 4);
             listOfInteractiveElements.add(br2IconRight);
