@@ -80,10 +80,10 @@ public class MouseShipGUIDrawable implements Drawable {
                 null, 3);
         listOfInteractiveElements.add(br2IconLeft);
 
-        miElement brLBFIconLeft = new miElement("mi_barrelroll2L.png", ulX + cursorX, ulY + cursorY + 2*brIconLeft.image.getHeight()+2*padX,
+        miElement brLBFIconLeft = new miElement("mi_barrelroll_lb.png", ulX + cursorX, ulY + cursorY + 2*brIconLeft.image.getHeight()+2*padX,
                 null, 5);
         listOfInteractiveElements.add(brLBFIconLeft);
-        miElement brLBBIconLeft = new miElement("mi_barrelroll2L.png", ulX + cursorX, ulY + cursorY + 3*brIconLeft.image.getHeight()+3*padX,
+        miElement brLBBIconLeft = new miElement("mi_barrelroll_lbb.png", ulX + cursorX, ulY + cursorY + 3*brIconLeft.image.getHeight()+3*padX,
                 null, 6);
         listOfInteractiveElements.add(brLBBIconLeft);
 
@@ -112,11 +112,11 @@ public class MouseShipGUIDrawable implements Drawable {
                 null, 4);
         listOfInteractiveElements.add(br2IconRight);
 
-        miElement brRBFIconRight = new miElement("mi_barrelroll2R.png", ulX + cursorX, ulY + cursorY + 2*brIconRight.image.getHeight() + 2*padX,
+        miElement brRBFIconRight = new miElement("mi_barrelroll_rb.png", ulX + cursorX, ulY + cursorY + 2*brIconRight.image.getHeight() + 2*padX,
                 null, 7);
         listOfInteractiveElements.add(brRBFIconRight);
 
-        miElement brRBBIconRight = new miElement("mi_barrelroll2R.png", ulX + cursorX, ulY + cursorY + 3*brIconRight.image.getHeight() + 3*padX,
+        miElement brRBBIconRight = new miElement("mi_barrelroll_rbb.png", ulX + cursorX, ulY + cursorY + 3*brIconRight.image.getHeight() + 3*padX,
                 null, 8);
         listOfInteractiveElements.add(brRBBIconRight);
 
