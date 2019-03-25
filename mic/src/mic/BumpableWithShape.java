@@ -385,7 +385,7 @@ public class BumpableWithShape {
         double centerY = bumpable.getPosition().getY();
 
         FreeRotator testRotator = new FreeRotator("rotate;360;;;;;;;", null);
-        testRotator.setAngle(rotator.getAngle());
+        testRotator.setAngle(rotator.getAngleInRadians());
 
 
         transformed = AffineTransform
