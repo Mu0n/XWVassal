@@ -51,7 +51,7 @@ enum BombToken {
     BuzzDroidSwarm("Buzz Droid Swarm", "Remote", "13069", 0.0f, 53.0f),
     DRK1ProbeDroid("DRK-1 Probe Droid", "Remote", "13068", 0.0f, 62.0f),
     CargoDebris("Cargo", "Debris", "12871", 0.0f, 82.5f),
-    SpareParts("Spare Parts", "Debris", "", 0.0f, -62.5f);
+    SpareParts("Spare Parts", "Debris", "13071", 0.0f, -43.5f);
 
     private final String bombName;
     private final String bombType;
@@ -169,6 +169,7 @@ public class BombSpawner extends Decorator implements EditablePiece {
             .put("CTRL W", BombToken.BuzzDroidSwarm)
             .put("CTRL R", BombToken.DRK1ProbeDroid)
             .put("CTRL G", BombToken.CargoDebris)
+            .put("CTRL A", BombToken.SpareParts)
             .build();
 
     public BombSpawner() {
