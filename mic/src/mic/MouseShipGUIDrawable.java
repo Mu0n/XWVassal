@@ -129,10 +129,10 @@ public class MouseShipGUIDrawable implements Drawable {
 
         miElement hullGfx = new miElement("mi_hull.png", ulX + cursorX+smallGapX, ulY+padY,
                 null,0);
-        miElement addHull = new miElement("mi_plus.png", ulX + cursorX+ smallGapX + hullGfx.image.getWidth(), ulY+padY,
+        miElement addHull = new miElement("mi_plus.png", ulX + cursorX+ smallGapX + hullGfx.image.getWidth(), ulY+padY+hullGfx.image.getHeight()/2-16,
                 KeyStroke.getKeyStroke(KeyEvent.VK_H, KeyEvent.ALT_DOWN_MASK, false),0);
         miElement removeHull = new miElement("mi_minus.png", ulX + cursorX + 2*smallGapX + hullGfx.image.getWidth() + addHull.image.getWidth(),
-                ulY+padY,
+                ulY+padY+hullGfx.image.getHeight()/2-16,
         KeyStroke.getKeyStroke(KeyEvent.VK_H, KeyEvent.ALT_DOWN_MASK + KeyEvent.CTRL_DOWN_MASK, false),0);
 
         listOfInteractiveElements.add(hullGfx);
@@ -140,17 +140,42 @@ public class MouseShipGUIDrawable implements Drawable {
         listOfInteractiveElements.add(removeHull);
 
         cursorY += hullGfx.image.getHeight() + smallGapX;
+
         miElement shieldGfx = new miElement("mi_shield.png", ulX + cursorX+smallGapX, ulY+padY+cursorY,
                 null,0);
-        miElement addShield = new miElement("mi_plus.png", ulX + cursorX+ smallGapX + hullGfx.image.getWidth(), ulY+padY+cursorY,
+        miElement addShield = new miElement("mi_plus.png", ulX + cursorX+ smallGapX + hullGfx.image.getWidth(), ulY+padY+cursorY+shieldGfx.image.getHeight()/2-16,
                 KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyEvent.ALT_DOWN_MASK, false),0);
         miElement removeShield = new miElement("mi_minus.png", ulX + cursorX + 2*smallGapX + hullGfx.image.getWidth() + addHull.image.getWidth(),
-                ulY+padY+cursorY,
+                ulY+padY+cursorY+shieldGfx.image.getHeight()/2-16,
                 KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyEvent.ALT_DOWN_MASK + KeyEvent.CTRL_DOWN_MASK, false),0);
 
         listOfInteractiveElements.add(shieldGfx);
         listOfInteractiveElements.add(addShield);
         listOfInteractiveElements.add(removeShield);
+
+        miElement chargeGfx = new miElement("mi_charge.png", ulX + cursorX+smallGapX, ulY+2*padY+2*cursorY,
+                null,0);
+        miElement addCharge = new miElement("mi_plus.png", ulX + cursorX+ smallGapX + hullGfx.image.getWidth(), ulY+2*padY+2*cursorY+2*shieldGfx.image.getHeight()/2-16,
+                KeyStroke.getKeyStroke(KeyEvent.VK_C, KeyEvent.SHIFT_DOWN_MASK, false),0);
+        miElement removeCharge = new miElement("mi_minus.png", ulX + cursorX + 2*smallGapX + hullGfx.image.getWidth() + addHull.image.getWidth(),
+                ulY+2*padY+2*cursorY+2*shieldGfx.image.getHeight()/2-16,
+                KeyStroke.getKeyStroke(KeyEvent.VK_C, KeyEvent.CTRL_DOWN_MASK + KeyEvent.SHIFT_DOWN_MASK, false),0);
+
+        listOfInteractiveElements.add(chargeGfx);
+        listOfInteractiveElements.add(addCharge);
+        listOfInteractiveElements.add(removeCharge);
+
+        miElement forceGfx = new miElement("mi_force.png", ulX + cursorX+smallGapX, ulY+3*padY+3*cursorY,
+                null,0);
+        miElement addForce = new miElement("mi_plus.png", ulX + cursorX+ smallGapX + hullGfx.image.getWidth(), ulY+3*padY+3*cursorY+3*shieldGfx.image.getHeight()/2-16,
+                KeyStroke.getKeyStroke(KeyEvent.VK_I, KeyEvent.SHIFT_DOWN_MASK, false),0);
+        miElement removeForce = new miElement("mi_minus.png", ulX + cursorX + 2*smallGapX + hullGfx.image.getWidth() + addHull.image.getWidth(),
+                ulY+3*padY+3*cursorY+3*shieldGfx.image.getHeight()/2-16,
+                KeyStroke.getKeyStroke(KeyEvent.VK_I, KeyEvent.SHIFT_DOWN_MASK + KeyEvent.CTRL_DOWN_MASK, false),0);
+
+        listOfInteractiveElements.add(chargeGfx);
+        listOfInteractiveElements.add(addCharge);
+        listOfInteractiveElements.add(removeCharge);
 
         cursorX += hullGfx.image.getWidth() + addHull.image.getWidth() + removeHull.image.getWidth();
 

@@ -1151,7 +1151,6 @@ public class ShipReposition extends Decorator implements EditablePiece {
         if(nbOfRedDots==-1) return null;
         return startIt;
     }
-
     //used at the end of triple choice sequences. Lots less to deal with
     public Command newNonKeyEvent(String choice){
         previousCollisionVisualization = new MapVisualizations();
