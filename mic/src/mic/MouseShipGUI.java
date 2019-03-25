@@ -158,7 +158,7 @@ public class MouseShipGUI extends AbstractConfigurable {
                                         //First class of GUI-driven commands: Direct keystroke commands, keep the GUI up
                                         if(elem.associatedKeyStroke!=null) {
                                             Command directKeyStroke = activatedPiece.keyEvent(elem.associatedKeyStroke);
-                                            directKeyStroke.execute();
+                                            //directKeyStroke.execute();
                                             GameModule.getGameModule().sendAndLog(directKeyStroke);
                                             e.consume();
                                         }
