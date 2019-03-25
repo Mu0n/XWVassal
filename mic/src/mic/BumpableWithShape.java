@@ -383,8 +383,13 @@ public class BumpableWithShape {
         FreeRotator rotator = (FreeRotator) (Decorator.getDecorator(Decorator.getOutermost(bumpable), FreeRotator.class));
         double centerX = bumpable.getPosition().getX();
         double centerY = bumpable.getPosition().getY();
+
+        FreeRotator testRotator = new FreeRotator("rotate;360;;;;;;;", null);
+        testRotator.setAngle(rotator.getAngle());
+
+
         transformed = AffineTransform
-                .getRotateInstance(rotator.getAngleInRadians(), centerX, centerY)
+                .getRotateInstance(testRotator.getAngle(), centerX, centerY)
                 .createTransformedShape(transformed);
 
         return transformed;
