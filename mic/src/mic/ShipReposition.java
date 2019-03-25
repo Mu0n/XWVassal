@@ -733,8 +733,8 @@ public class ShipReposition extends Decorator implements EditablePiece {
         final VASSAL.build.module.Map finalMap = theMap;
         ml = new MouseListener() {
             int i=0;
-            public void mouseClicked(MouseEvent e) {
-                if(e.isControlDown()) return;
+            public void mousePressed(MouseEvent e) {
+                if(e.isConsumed()) return;
 
                 List<repositionChoiceVisual> copiedList = Lists.newArrayList();
                 for(repositionChoiceVisual r : rpcList){
@@ -764,6 +764,7 @@ public class ShipReposition extends Decorator implements EditablePiece {
                         SR.newNonKeyEvent(theChosenOne.inStringForm);
 
                         closeMouseListener(finalMap, ml);
+                        return;
                     }
                 }catch(Exception exce){
                     logToChat("caught an exception while resolving ship reposition");
@@ -775,14 +776,14 @@ public class ShipReposition extends Decorator implements EditablePiece {
                     Command stopItAll = stopTripleChoiceMakeNextReady();
                     String stoppingPlayerName = getCurrentPlayer().getName();
                     stopItAll.execute();
-                    logToChat(stoppingPlayerName + " is cancelling a reposition");
+                    logToChat("*-- " + stoppingPlayerName + " is cancelling a reposition");
 
                     closeMouseListener(finalMap, ml);
                     return;
                 }
             }
 
-            public void mousePressed(MouseEvent e) {
+            public void mouseClicked(MouseEvent e) {
 
             }
 
@@ -1067,65 +1068,66 @@ public class ShipReposition extends Decorator implements EditablePiece {
         final VASSAL.build.module.Map theMap = MouseShipGUI.getTheMainMap();
         String contemplatingPlayerName = getCurrentPlayer().getName();
 
+        StringBuilder sb = new StringBuilder("*--- ");
         switch(which){
             //barrel roll left 1
             case 1:
-                startIt.append(logToChatCommand(contemplatingPlayerName + " is contemplating 3 choices for barrel roll left"));
+                sb.append(contemplatingPlayerName + " is contemplating 3 choices for barrel roll left");
                 repoChoices = Lists.newArrayList(RepoManeuver.BR1_Left_AFAP_2E, RepoManeuver.BR1_Left_2E, RepoManeuver.BR1_Left_ABAP_2E);
                 break;
             //barrel roll right 1
             case 2:
-                startIt.append(logToChatCommand(contemplatingPlayerName + " is contemplating 3 choices for barrel roll right"));
+                sb.append(contemplatingPlayerName + " is contemplating 3 choices for barrel roll right");
                 repoChoices = Lists.newArrayList(RepoManeuver.BR1_Right_AFAP_2E, RepoManeuver.BR1_Right_2E, RepoManeuver.BR1_Right_ABAP_2E);
                 break;
             //barrel roll left 2 / decloak
             case 3:
-                startIt.append(logToChatCommand(contemplatingPlayerName + " is contemplating 3 choices for barrel roll 2 or decloak left"));
+                sb.append(contemplatingPlayerName + " is contemplating 3 choices for barrel roll 2 or decloak left");
                 repoChoices = Lists.newArrayList(RepoManeuver.BR2_Left_AFAP_2E, RepoManeuver.BR2_Left_2E, RepoManeuver.BR2_Left_ABAP_2E);
                 break;
             //barrel roll right 2 / decloak
             case 4:
-                startIt.append(logToChatCommand(contemplatingPlayerName + " is contemplating 3 choices for barrel roll 2 or decloak right"));
+                sb.append(contemplatingPlayerName + " is contemplating 3 choices for barrel roll 2 or decloak right");
                 repoChoices = Lists.newArrayList(RepoManeuver.BR2_Right_AFAP_2E, RepoManeuver.BR2_Right_2E, RepoManeuver.BR2_Right_ABAP_2E);
                 break;
             //SV barrel roll left, forward
             case 5:
-                startIt.append(logToChatCommand(contemplatingPlayerName + " is contemplating 3 choices for barrel roll left with forward bank"));
+                sb.append(contemplatingPlayerName + " is contemplating 3 choices for barrel roll left with forward bank");
                 repoChoices = Lists.newArrayList(RepoManeuver.BR1_Left_BankF_AFAP_2E, RepoManeuver.BR1_Left_BankF_2E, RepoManeuver.BR1_Left_BankF_ABAP_2E);
                 break;
             //SV barrel roll left, backward
             case 6:
-                startIt.append(logToChatCommand(contemplatingPlayerName + " is contemplating 3 choices for barrel roll left with backward bank"));
+                sb.append(contemplatingPlayerName + " is contemplating 3 choices for barrel roll left with backward bank");
                 repoChoices = Lists.newArrayList(RepoManeuver.BR1_Left_BankB_AFAP_2E, RepoManeuver.BR1_Left_BankB_2E, RepoManeuver.BR1_Left_BankB_ABAP_2E);
                 break;
             //SV barrel roll right, forward
             case 7:
-                startIt.append(logToChatCommand(contemplatingPlayerName + " is contemplating 3 choices for barrel roll right with forward bank"));
+                sb.append(contemplatingPlayerName + " is contemplating 3 choices for barrel roll right with forward bank");
                 repoChoices = Lists.newArrayList(RepoManeuver.BR1_Right_BankF_AFAP_2E, RepoManeuver.BR1_Right_BankF_2E, RepoManeuver.BR1_Right_BankF_ABAP_2E);
                 break;
             //SV barrel roll right, backward
             case 8:
-                startIt.append(logToChatCommand(contemplatingPlayerName + " is contemplating 3 choices for barrel roll right with backward bank"));
+                sb.append(contemplatingPlayerName + " is contemplating 3 choices for barrel roll right with backward bank");
                 repoChoices = Lists.newArrayList(RepoManeuver.BR1_Right_BankB_AFAP_2E, RepoManeuver.BR1_Right_BankB_2E, RepoManeuver.BR1_Right_BankB_ABAP_2E);
                 break;
             //echo decloak left, forward
             case 9:
-                startIt.append(logToChatCommand(contemplatingPlayerName + " is contemplating 3 choices for barrel roll left with forward bank 2 (Echo style decloak)"));
+                sb.append(contemplatingPlayerName + " is contemplating 3 choices for barrel roll left with forward bank 2 (Echo style decloak)");
                 repoChoices = Lists.newArrayList(RepoManeuver.BR2_Left_BankF_AFAP_2E, RepoManeuver.BR2_Left_BankF_2E, RepoManeuver.BR2_Left_BankF_ABAP_2E);
                 break;
             //echo decloak right, forward
             case 10:
-                startIt.append(logToChatCommand(contemplatingPlayerName + " is contemplating 3 choices for barrel roll right with forward bank 2 (Echo style decloak)"));
+                sb.append(contemplatingPlayerName + " is contemplating 3 choices for barrel roll right with forward bank 2 (Echo style decloak)");
                 repoChoices = Lists.newArrayList(RepoManeuver.BR2_Right_BankF_AFAP_2E, RepoManeuver.BR2_Right_BankF_2E, RepoManeuver.BR2_Right_BankF_ABAP_2E);
                 break;
             //echo decloak left, backward
             case 11:
-                startIt.append(logToChatCommand(contemplatingPlayerName + " is contemplating 3 choices for barrel roll left with backward bank 2 (Echo style decloak)"));
+                sb.append(contemplatingPlayerName + " is contemplating 3 choices for barrel roll left with backward bank 2 (Echo style decloak)");
                 repoChoices = Lists.newArrayList(RepoManeuver.BR2_Left_BankB_AFAP_2E, RepoManeuver.BR2_Left_BankB_2E, RepoManeuver.BR2_Left_BankB_ABAP_2E);
                 break;
             //echo decloak right, backward
             case 12:
-                startIt.append(logToChatCommand(contemplatingPlayerName + " is contemplating 3 choices for barrel roll right with backward bank 2 (Echo style decloak)"));
+                sb.append(contemplatingPlayerName + " is contemplating 3 choices for barrel roll right with backward bank 2 (Echo style decloak)");
                 repoChoices = Lists.newArrayList(RepoManeuver.BR2_Right_BankB_AFAP_2E, RepoManeuver.BR2_Right_BankB_2E, RepoManeuver.BR2_Right_BankB_ABAP_2E);
                 break;
             //Tallon Roll Left 1
@@ -1143,7 +1145,8 @@ public class ShipReposition extends Decorator implements EditablePiece {
         }
 
         int nbOfRedDots = offerTripleChoices(repoChoices, true, theMap);
-        startIt.append(logToChatCommand("* --- There are " + (3-nbOfRedDots) + " valid position(s) to pick from." ));
+        sb.append(". There are " + (3-nbOfRedDots) + " valid position"+(nbOfRedDots>1?"s":"")+" to pick from." );
+        startIt.append(logToChatCommand(sb.toString()));
         if(nbOfRedDots==-1) return null;
         return startIt;
     }
