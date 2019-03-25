@@ -23,6 +23,7 @@ public class VassalXWSPieceLoader2e {
             "Asteroids", "TFA_Asteroids", "Debris", "Gas_Clouds"
     );
 
+
     Map<String, PieceSlot> tokenPiecesMap = Maps.newHashMap();
     Map<Obstacles, PieceSlot> obstaclesPiecesMap = Maps.newHashMap();
     // Map<String, VassalXWSPilotPieces2e.Condition> conditionPiecesMap = Maps.newHashMap();
@@ -214,14 +215,15 @@ public class VassalXWSPieceLoader2e {
                 continue;
             }
             switch (parentType) {
+
                 //this first case only used for rocks anymore
                 case chits:
                     loadChits(listWidget);
                     break;
                 case secondeditiontokens:
+                case remotes:
                     load2eTokens(listWidget);
                     break;
-
             }
         }
     }
@@ -273,7 +275,9 @@ public class VassalXWSPieceLoader2e {
 
     private enum ListParentType {
         chits("Chits"),
-        secondeditiontokens("SecondEdition");
+        secondeditiontokens("SecondEdition"),
+        debris("Debris"),
+        remotes("Remotes");
 
         private String widgetName;
 
