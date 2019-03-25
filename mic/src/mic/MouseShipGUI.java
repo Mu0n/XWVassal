@@ -119,11 +119,11 @@ public class MouseShipGUI extends AbstractConfigurable {
 
             public void mousePressed(MouseEvent e) {
                 //if a popup isn't up yet, restrict this whole thing to ctrl-clicks to activate it
-                if(!e.isControlDown() && activatedPiece == null) return;
+                //if(!e.isControlDown() && activatedPiece == null) return;
                 if(e.isConsumed()) return;
                 //Process only clicks that have enough elapsed time since the last click (the barrel roll GUI must have this as well)
                 mic.Util.XWPlayerInfo playerInfo = getCurrentPlayer();
-                if(canAClickBeProcessed(playerInfo.getSide())==false) return;
+                //if(canAClickBeProcessed(playerInfo.getSide())==false) return;
 
                 Collection<GamePiece> shipPieces = new ArrayList<GamePiece>();
                 GamePiece[] gpArray = theMap.getAllPieces();
@@ -174,14 +174,14 @@ public class MouseShipGUI extends AbstractConfigurable {
                             MouseShipGUIDrawable msgd = new MouseShipGUIDrawable( ship, theMap, pilotShip, pilot);
                             theMap.addDrawComponent(msgd);
                             theMap.repaint();
-                            logToChat("*-- Welcome to the beta Mouse Graphical Interface. You got here by ctrl-left clicking on a ship. You can left-click on the icons to perform \"things\" on the ship. Click on the red X to close the popup");
+                            logToChatWithoutUndo("*-- Welcome to the beta Mouse Graphical Interface. You got here by ctrl-left clicking on a ship. You can left-click on the icons to perform \"things\" on the ship. Click on the red X to close the popup");
 
                             //save this ship and popup Drawable for future behavior
                             activatedPiece = ship;
                             lastPopup=msgd;
                             e.consume();
                             break;
-                        }
+                        } //end of ship clicks
                         else{ // clicked outside of a ship, check first if you clicked one of the areas
                               // else deactivate the popup and remove the component
                             if(activatedPiece != null && lastPopup != null)
@@ -207,37 +207,46 @@ public class MouseShipGUI extends AbstractConfigurable {
                                             return;
                                         }
                                         //Leave a nano time stamp in the player controller to restrict a step 2 of the mouse interface to activate too soon
-                                        leaveATimeStamp(playerInfo.getSide());
+                                        //leaveATimeStamp(playerInfo.getSide());
 
                                         //send the appropriate command to the game piece
                                         Command moveShipCommand = null;
-                                        if(elem.associatedKeyStroke!=null) moveShipCommand = activatedPiece.keyEvent(elem.associatedKeyStroke); //direct keystroke keyboard shortcut
-                                        else if(elem.whichTripleChoice != 0) {
+
+                                        //First class of GUI-driven commands: Direct keystroke commands
+                                        if(elem.associatedKeyStroke!=null) moveShipCommand = activatedPiece.keyEvent(elem.associatedKeyStroke);
+                                        //Second class of GUI-driven commands: Goes to a 2nd step with triple click choices:
+                                        else if(elem.whichTripleChoice > 0) {
                                             ShipReposition SR = ShipReposition.findShipRepositionDecorator(activatedPiece);
                                             moveShipCommand = SR.tripleChoiceDispatcher(elem.whichTripleChoice);
                                         }
+
+                                        //Checking what we have and resolution
                                         if(moveShipCommand!=null){
-                                            logToChat("Please click on a dot to reposition the ship. White dots = legal position. Red dots = illegal obstructed positions.");
+                                            //Local instructions if it's of the second class
+                                            if(elem.whichTripleChoice>0){
+                                                logToChatWithoutUndo("Please click on a dot to reposition the ship. White dots = legal position. Red dots = illegal obstructed positions.");
+                                                theMap.removeDrawComponent(lastPopup);
+                                                lastPopup=null;
+                                            }
+                                            //Executing a non-null command
                                             moveShipCommand.execute();
                                             GameModule.getGameModule().sendAndLog(moveShipCommand);
                                             e.consume();
                                         } else{
                                             logToChat("*-- Error: failed to execute a mouse GUI command.");
+                                            activatedPiece=null;
                                             theMap.removeDrawComponent(lastPopup);
                                             lastPopup=null;
                                             e.consume();
                                         }
                                         break;
-                                    }
-                                }
-                            }
-
-
-
-                        }
-                    }
-                }
-            }
+                                    }//end of scanning a particular element (click was detected inside its shape)
+                                } //end of scanning all the mouse interface elements for clicks
+                            } //end of non-ship clicks while a ship is activated
+                        }//end of non-ship clicks
+                    }//end of scanning ship per ship
+                } //end of reacting if there's at least 1 ship on the map
+            } //end of mousePressed Event
             public void mouseReleased(MouseEvent e) {
             }
             public void mouseEntered(MouseEvent e) {
