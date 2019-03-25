@@ -47,7 +47,11 @@ enum BombToken {
     SeismicCharge("Seismic Charge", "Bomb", "3665", 0.0f, 40.0f),
     ProtonBomb("Proton Bomb", "Bomb", "1269", 0.0f, 40.0f),
     ThermalDetonator("Thermal Detonator", "Bomb", "8867", 0.0f, 40.0f),
-    Bomblet("Bomblet", "Bomb", "11774", 0.0f, 40.0f);
+    Bomblet("Bomblet", "Bomb", "11774", 0.0f, 40.0f),
+    BuzzDroidSwarm("Buzz Droid Swarm", "Remote", "13069", 0.0f, 53.0f),
+    DRK1ProbeDroid("DRK-1 Probe Droid", "Remote", "13068", 0.0f, 62.0f),
+    CargoDebris("Cargo", "Debris", "12871", 0.0f, 82.5f),
+    SpareParts("Spare Parts", "Debris", "13071", 0.0f, -43.5f);
 
     private final String bombName;
     private final String bombType;
@@ -162,6 +166,10 @@ public class BombSpawner extends Decorator implements EditablePiece {
             .put("CTRL P", BombToken.ProtonBomb)
             .put("CTRL H", BombToken.ThermalDetonator)
             .put("CTRL B", BombToken.Bomblet)
+            .put("CTRL W", BombToken.BuzzDroidSwarm)
+            .put("CTRL R", BombToken.DRK1ProbeDroid)
+            .put("CTRL G", BombToken.CargoDebris)
+            .put("CTRL A", BombToken.SpareParts)
             .build();
 
     public BombSpawner() {
@@ -294,11 +302,6 @@ public class BombSpawner extends Decorator implements EditablePiece {
         //Any keystroke made on a ship will remove the orange shades
         previousCollisionVisualization = new MapVisualizations();
 
-        ChangeTracker changeTracker = new ChangeTracker(this);
-        final Command result = changeTracker.getChangeCommand();
-        MoveTracker moveTracker = new MoveTracker(Decorator.getOutermost(this));
-        result.append(moveTracker.getMoveCommand());
-
         BombManeuver bombDropTemplate = getKeystrokeBombManeuver(stroke);
         // Is this a keystroke for a maneuver? Deal with the 'no' cases first
         if (bombDropTemplate == null) {
@@ -314,15 +317,14 @@ public class BombSpawner extends Decorator implements EditablePiece {
                     String selectedMove = thBS.getProperty("selectedMove").toString();
 
                     //prepare the drop command and get the shape ready for overlap detection
-                    Command placeBombCommand = spawnBomb(droppedBomb, getBombManeuverFromProperty(selectedMove));
-                    result.append(placeBombCommand);
+                    Command result = spawnBomb(droppedBomb, getBombManeuverFromProperty(selectedMove));
                     if("Cluster Mine".equals(droppedBomb.getBombName())) {
                         //do the side ones too, their shapes are all added in the shapesForOverlap array inside the spawnBomb method
                         Command leftBomb = spawnBomb(BombToken.ClusterMineLeft, getBombManeuverFromProperty(selectedMove));
                         Command rightBomb = spawnBomb(BombToken.ClusterMineRight, getBombManeuverFromProperty(selectedMove));
                         result.append(leftBomb);
                         result.append(rightBomb);
-                    }
+                    } //end of dealing with extras for the cluster mine
                     boolean isCollisionOccuring = false;
                     for(Shape sh : shapesForOverlap ){
                         List<BumpableWithShape> overlappingShips = findCollidingEntities(sh, otherShipShapes);
@@ -341,19 +343,23 @@ public class BombSpawner extends Decorator implements EditablePiece {
                     // if a collision has been found, start painting the shapes and flash them with a timer, mark the bomb spawner for deletion after this has gone through.
                     if(isCollisionOccuring == true && this.previousCollisionVisualization != null &&  this.previousCollisionVisualization.getShapes().size() > 0){
                         result.append(previousCollisionVisualization);
-                        previousCollisionVisualization.execute();
 
                         KeyStroke deleteyourself = KeyStroke.getKeyStroke(KeyEvent.VK_D, InputEvent.CTRL_DOWN_MASK, false);
                         Command goToHell = keyEvent(deleteyourself);
                         result.append(goToHell);
 
-                        return result;
+                        result.execute();
+                        GameModule.getGameModule().sendAndLog(result);
+                        return null;
                     }
                     else { //mine was dropped, no collision found
                         KeyStroke deleteyourself = KeyStroke.getKeyStroke(KeyEvent.VK_D, InputEvent.CTRL_DOWN_MASK, false);
                         Command goToHell = keyEvent(deleteyourself);
                         result.append(goToHell);
-                        return result;
+
+                        result.execute();
+                        GameModule.getGameModule().sendAndLog(result);
+                        return null;
                     }
 
                 }
@@ -361,18 +367,20 @@ public class BombSpawner extends Decorator implements EditablePiece {
                 else{
                     GamePiece thBS = getInner();
                     String selectedMove = thBS.getProperty("selectedMove").toString();
-                    Command placeBombCommand = spawnBomb(droppedBomb, getBombManeuverFromProperty(selectedMove));
+                    Command result = spawnBomb(droppedBomb, getBombManeuverFromProperty(selectedMove));
 
-                    result.append(placeBombCommand);
                     KeyStroke deleteyourself = KeyStroke.getKeyStroke(KeyEvent.VK_D, InputEvent.CTRL_DOWN_MASK, false);
                     Command goToHell = keyEvent(deleteyourself);
                     result.append(goToHell);
 
-                    return result;
+                    result.execute();
+                    GameModule.getGameModule().sendAndLog(result);
+                    return null;
                 } // end of dealing with a non-mine drop
             } //end of dealing with the keystroke for any drop
         } // end of dealing with any keystroke, none found interesting
-        return piece.keyEvent(stroke);
+        return piece.keyEvent(stroke); //let it deal with maneuver changes with vassal editor triggers IIRC?
+
     }
 
 

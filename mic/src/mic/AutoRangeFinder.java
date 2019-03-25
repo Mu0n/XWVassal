@@ -1,31 +1,19 @@
 package mic;
 
+import VASSAL.build.GameModule;
 import VASSAL.build.module.documentation.HelpFile;
-import VASSAL.build.module.map.Drawable;
 import VASSAL.command.Command;
-import VASSAL.command.CommandEncoder;
 import VASSAL.configure.HotKeyConfigurer;
 import VASSAL.counters.*;
-import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import mic.manuvers.ManeuverPaths;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
-import java.awt.font.FontRenderContext;
-import java.awt.font.TextAttribute;
-import java.awt.font.TextLayout;
 import java.awt.geom.*;
 import java.io.*;
-import java.text.AttributedString;
 import java.util.*;
 import java.util.List;
 import java.util.Map;
@@ -33,7 +21,6 @@ import java.util.Timer;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static mic.Util.*;
-import static mic.Util.serializeToBase64;
 
 /**
  * Created by Mic on 23/03/2017.
@@ -58,7 +45,7 @@ Integer savedOption = 0;
             @Override
             public void run() {
                 try{
-                    myARF.justRunLines(savedOption);
+                    //myARF.justRunLines(savedOption);
                 } catch (Exception e) {
                 }
             }
@@ -68,7 +55,7 @@ Integer savedOption = 0;
     }
 }
 
-public class AutoRangeFinder extends Decorator implements EditablePiece, MouseListener, MouseMotionListener {
+public class AutoRangeFinder extends Decorator implements EditablePiece {
 
     private static Boolean DEBUGMODE = false;
     private static Boolean MULTILINES = false;
@@ -88,7 +75,6 @@ public class AutoRangeFinder extends Decorator implements EditablePiece, MouseLi
     private ShipPositionState prevPosition = null;
     private ManeuverPaths lastManeuver = null;
     private FreeRotator myRotator = null;
-    public FOVisualization fov = null;
     private static Map<String, Integer> keyStrokeToOptions = ImmutableMap.<String, Integer>builder()
             .put("CTRL SHIFT F", frontArcOption) //primary arc
             .put("CTRL SHIFT L", turretArcOption) //turret/TL
@@ -112,33 +98,23 @@ public class AutoRangeFinder extends Decorator implements EditablePiece, MouseLi
     Point2D.Double bestACorner; //attacker's best corner. In use inside method that quickly calculates band lengths
     Boolean wantExtraBandsMorFA = false;
     int bestBandRange = 0;
+    public FiringOptionsVisuals fov;
+    public FOVisualization fovCommand;
 
     Boolean isThisTheOne = false;
     boolean twoPointOh = false;
-
-    // Mouse stuff
-    protected Point anchor;
-    protected String anchorLocation = "";
-    protected String lastLocation = "";
-    protected Point lastAnchor = new Point();
-
     public AutoRangeFinder() {
         this(null);
     }
-
     public AutoRangeFinder(GamePiece piece) {
         setInner(piece);
         this.testRotator = new FreeRotator("rotate;360;;;;;;;", null);
-        this.fov = new FOVisualization();
+        this.fov = new FiringOptionsVisuals();
        // launch();
         map = VASSAL.build.module.Map.getMapById("Map0");
-        map.getView().addMouseMotionListener(this);
-
     }
 
     protected void launch() {
-            map.pushMouseListener(this);
-            anchor.move(0, 0);
     }
 
     @Override
@@ -169,19 +145,26 @@ public class AutoRangeFinder extends Decorator implements EditablePiece, MouseLi
         return -1;
     }
 
-
     public Command keyEvent(KeyStroke stroke) {
 
         ArrayList<RangeFindings> rfindings = new ArrayList<RangeFindings>(); //findings compiled here
 
-        Command bigCommand = piece.keyEvent(stroke);
+        String isShowingLines = (Decorator.getOutermost(this.piece)).getProperty("isShowingLines").toString();
+
+        if (KeyStroke.getKeyStroke(KeyEvent.VK_M, KeyEvent.SHIFT_DOWN_MASK,false).equals(stroke)){
+            if (this.fov != null && this.fov.getCount() > 0 && fovCommand != null) {
+                this.fov = new FiringOptionsVisuals();
+                fovCommand = null;
+                return null;
+            }
+        }
 
         // check to see if the this code needs to respond to the event
-
         //identify which autorange option was used by using the static Map defined above in the globals, store it in an int
         whichOption = getKeystrokeToOptions(stroke);
         if (whichOption != -1 && stroke.isOnKeyRelease() == false) {
-
+            if(isShowingLines.equals("1") && fovCommand != null & this.fov !=null && this.fov.getCount() > 0) return piece.keyEvent(stroke); //not ready to deal with anything until the normal vassal editor trigger has worked and changed this to "0"
+            else if(isShowingLines.equals("0") && this.fov !=null && this.fov.getCount() > 0) return piece.keyEvent(stroke); //the line garbage collector has not done its job yet, don't enter now.
             if(whichOption == 12) {
                 MULTILINES = true;
             }
@@ -194,13 +177,6 @@ public class AutoRangeFinder extends Decorator implements EditablePiece, MouseLi
                 FluidAnim FA = new FluidAnim(this, whichOption);
                 logToChat("whichOption = " + Integer.toString(whichOption));
                 FA.run();
-            }
-
-            //if the firing options were already activated, remove the visuals and exit right away
-            if (this.fov != null && this.fov.getCount() > 0) {
-                bigCommand.append(clearVisu(map));
-                this.fov.execute();
-                return bigCommand;
             }
 
             twoPointOh = this.getInner().getState().contains("this_is_2pointoh");
@@ -225,24 +201,35 @@ public class AutoRangeFinder extends Decorator implements EditablePiece, MouseLi
             }
 
             //draw visuals and announce the results in the chat
-            Command bigAnnounceCommand = makeBigAnnounceCommand(bigAnnounce, rfindings);
-            bigCommand.append(bigAnnounceCommand);
-            if(this.fov !=null && this.fov.getCount() > 0) {
-                bigCommand.append(this.fov);
-                this.fov.execute();
-                //logToChatCommand("launch execute");
-            }
-        } else if (KeyStroke.getKeyStroke(KeyEvent.VK_D, KeyEvent.CTRL_DOWN_MASK, false).equals(stroke)) {
-            if (this.fov != null && this.fov.getCount() > 0) {
-                bigCommand.append(clearVisu(map));
-                this.fov.execute();
-            }
-        }
+            Command mBAC = makeBigAnnounceCommand(bigAnnounce, rfindings);
 
-        return bigCommand;
+            if(this.fov !=null && this.fov.getCount() > 0 && fovCommand == null && isShowingLines.equals("1")) {
+                //reading off the Piece's unique ID and sending it off in a FOVisualization command, which should make it appear for all
+                String micID = this.piece.getProperty("micID").toString();
+                fovCommand = new FOVisualization(this.fov, micID);
+                fovCommand.append(mBAC);
+                fovCommand.execute();
+                GameModule.getGameModule().sendAndLog(fovCommand);
+                return null;
+            } // end of drawing visuals and announcing the results in the chatlog
+            mBAC.execute();
+            GameModule.getGameModule().sendAndLog(mBAC);
+            return null; // for some reason, there were no visuals to do, so send that message and don't send these special keystrokes to others classes/decorators
+        } //end of dealing with keystrokes that are linked to autorange lines
+        else if (KeyStroke.getKeyStroke(KeyEvent.VK_D, KeyEvent.CTRL_DOWN_MASK, false).equals(stroke)) {
+            if (this.fov != null && this.fov.getCount() > 0 && fovCommand!=null) {
+                fovCommand = null;
+                Command clearIt = this.piece.keyEvent(KeyStroke.getKeyStroke(KeyEvent.VK_M, KeyEvent.SHIFT_DOWN_MASK,false));;
+                clearIt.execute();
+                GameModule.getGameModule().sendAndLog(clearIt);
+            }
+            return piece.keyEvent(stroke); //send the CTRL-D to deal with the ship whether there were visuals to remove or not
+        } //end of deleting a piece and remove its pending visuals if there are any
+
+        return piece.keyEvent(stroke); //did not find anything worth react to, so send back the key for others to deal with it
     }
 
-    public void justRunLines(int savedOption){
+   /* public void justRunLines(int savedOption){
         whichOption = savedOption;
         ArrayList<RangeFindings> rfindings = new ArrayList<RangeFindings>();
         //if the firing options were already activated, remove the visuals and exit right away
@@ -277,17 +264,7 @@ public class AutoRangeFinder extends Decorator implements EditablePiece, MouseLi
             //logToChatCommand("launch execute");
         }
     }
-
-    private FOVisualizationClear clearVisu(VASSAL.build.module.Map itsMap) {
-        if(this.fov != null) {
-            itsMap.removeDrawComponent(this.fov);
-            this.fov.shapes.clear();
-            this.fov.lines.clear();
-            this.fov.shapesWithText.clear();
-            return new FOVisualizationClear(this.fov.getId());
-        }
-        return null;
-    }
+*/
 
     private void figureOutAutoRange(BumpableWithShape b, ArrayList<RangeFindings> rfindings) {
         Point2D.Double D1 = findClosestVertex(b, thisShip);
@@ -307,7 +284,7 @@ public class AutoRangeFinder extends Decorator implements EditablePiece, MouseLi
                 break;
             case frontAuxArcOption:
                 if(twoPointOh == false) bestLine = findBestLineInFrontAuxArcs(D1, D2, D3, 3);
-                else Util.logToChat("2.0 full front arc options needed");
+                else findBestLineInFullFrontArc(D1, D2, D3, 3);;
                 break;
             case mobileSideArcOption:
                 bestLine = findBestLineInMobileArc(D1, D2, D3, 3);
@@ -377,6 +354,11 @@ public class AutoRangeFinder extends Decorator implements EditablePiece, MouseLi
                     if(temp4!=null)atkShapes.add(temp4);
                     break;
                 case frontAuxArcOption:
+                    if(twoPointOh) {
+                        Shape temp99 = findInBetweenRectangle(thisShip, b, wantedWidth, turretArcOption);
+                        if(temp99!=null) atkShapes.add(temp99);
+                        break;
+                    }
                     Shape temp5 = findInBetweenRectangle(thisShip, b, wantedWidth, frontAuxArcOption);
                     if(temp5!=null)atkShapes.add(temp5);
                     if(wantExtraBandsMorFA){
@@ -1216,6 +1198,163 @@ public class AutoRangeFinder extends Decorator implements EditablePiece, MouseLi
         return best;
     }
 
+    private MicLine findBestLineInFullFrontArc(Point2D.Double D1, Point2D.Double D2, Point2D.Double D3, int rangeInt) {
+        ArrayList<MicLine> lineList = new ArrayList<MicLine>(); //only need one list for this one
+
+        Point2D.Double LC = thisShip.getVertices().get(0);
+        Point2D.Double RC = thisShip.getVertices().get(1);
+
+        Point2D.Double center = new Point2D.Double(thisShip.bumpable.getPosition().x, thisShip.bumpable.getPosition().y);
+
+        //Prep segments along ships (attacker and defender) used to figure out some of the firing lines
+        //Left Edge
+        MicLine LE = new MicLine(A1, LC, false);
+        //Right Edge
+        MicLine RE = new MicLine(RC, A2, false);
+        //Front arc Edge
+        MicLine AA = new MicLine(LC, RC, false);
+        //Closest Defender Edge
+        MicLine DD = new MicLine(D1, D2, false);
+        //2nd closest defender edge
+        MicLine DD_2nd = new MicLine(D1, D3, false);
+
+
+        MicLine lineToVet; //temp MicLine object used for debug testing
+
+        //Left Corner Attacker to Closest Defender
+        MicLine LCD1 = new MicLine(LC, D1, false);
+        if(findSegmentCrossPoint(LCD1, new MicLine(center, E1, false), true)==null &&
+                findSegmentCrossPoint(LCD1, new MicLine(center, E2, false), true)==null){
+            lineToVet = vetThisLine(LCD1, "LCD1", 0.1);
+            if(lineToVet != null) lineList.add(lineToVet);
+        }
+
+        //Left Corner Attacker to 2nd closest Defender
+        MicLine LCD2 = new MicLine(LC, D2, false);
+        if(findSegmentCrossPoint(LCD2, new MicLine(center, E1, false), true)==null &&
+                findSegmentCrossPoint(LCD2, new MicLine(center, E2, false), true)==null){
+            lineToVet = vetThisLine(LCD2, "LCD2", 0.1);
+            if(lineToVet != null) lineList.add(lineToVet);
+        }
+        //Right Corner Attacker to Closest Defender
+        MicLine RCD1 = new MicLine(RC, D1, false);
+        if(findSegmentCrossPoint(LCD2, new MicLine(center, E1, false), true)==null &&
+                findSegmentCrossPoint(LCD2, new MicLine(center, E2, false), true)==null){
+            lineToVet = vetThisLine(RCD1, "RCD1", 0.1);
+            if(lineToVet != null) lineList.add(lineToVet);
+        }
+
+        //Right Corner Attacker to 2nd closest Defender
+        MicLine RCD2 = new MicLine(RC, D2, false);
+        if(findSegmentCrossPoint(LCD2, new MicLine(center, E1, false), true)==null &&
+                findSegmentCrossPoint(LCD2, new MicLine(center, E2, false), true)==null){
+            lineToVet = vetThisLine(RCD2, "RCD2", 0.1);
+            if(lineToVet != null) lineList.add(lineToVet);
+        }
+
+
+        //first arc edge
+        MicLine A1DD_arc_restricted = createLineAxtoDD_along_arc_edge(A1, E1, DD);
+        lineToVet = vetThisLine(A1DD_arc_restricted, "A1DD_ea", 0.5);
+        if(lineToVet != null) lineList.add(lineToVet);
+        //first arc edge to 2nd def edge
+        MicLine A1DD_arc_restricted_2nd = createLineAxtoDD_along_arc_edge(A1, E1, DD_2nd);
+        lineToVet = vetThisLine(A1DD_arc_restricted_2nd, "A1DD_2nd_ea", 0.7);
+        if(lineToVet != null) lineList.add(lineToVet);
+
+        //2nd arc edge
+        MicLine A2DD_arc_restricted = createLineAxtoDD_along_arc_edge(A2, E2, DD);
+        lineToVet = vetThisLine(A2DD_arc_restricted, "A2DD_ea", 0.5);
+        if(lineToVet != null) lineList.add(lineToVet);
+        //2nd arc edge to 2nd def edge
+        MicLine A2DD_arc_restricted_2nd = createLineAxtoDD_along_arc_edge(A2, E2, DD_2nd);
+        lineToVet = vetThisLine(A2DD_arc_restricted_2nd, "A2DD_2nd_ea", 0.7);
+        if(lineToVet != null) lineList.add(lineToVet);
+
+        //normal to defender's edges
+        //Closest attacker's point to the defender's closest edge
+        MicLine A1DD = createLinePtoAB(A1, DD, true);
+        lineToVet = vetThisLine(A1DD, "A1DD", 0.2);
+        if(lineToVet != null) lineList.add(lineToVet);
+
+        MicLine A2DD = createLinePtoAB(A2, DD, true);
+        lineToVet = vetThisLine(A2DD, "A2DD", 0.4);
+        if(lineToVet != null) lineList.add(lineToVet);
+
+        //Attacker's edge to defender's closest vertex
+        MicLine AAD1 = createLinePtoAB(D1, AA, false);
+        if(doesAAforInArcPassTest(AAD1, AA)== true && isRangeOk(AAD1, 1, rangeInt))
+        {
+            lineToVet = vetThisLine(AAD1, "AAD1", 0.8);
+            if(lineToVet != null) lineList.add(lineToVet);
+        }
+
+        //Attacker's left long edge to defender's closest vertex
+        MicLine LED1 = createLinePtoAB(D1, LE, false);
+        if(doesAAforInArcPassTest(LED1, LE)== true && isRangeOk(LED1, 1, rangeInt))
+        {
+            lineToVet = vetThisLine(LED1, "LED1", 0.8);
+            if(lineToVet != null) lineList.add(lineToVet);
+        }
+        //same but right side
+        MicLine RED1 = createLinePtoAB(D1, RE, false);
+        if(doesAAforInArcPassTest(RED1, RE)== true && isRangeOk(RED1, 1, rangeInt))
+        {
+            lineToVet = vetThisLine(RED1, "RED1", 0.8);
+            if(lineToVet != null) lineList.add(lineToVet);
+        }
+
+        //from the corners, normal
+        MicLine LCDD = createLinePtoAB(LC, DD, false);
+        if(findSegmentCrossPoint(LCDD, new MicLine(center, E1, false), true)==null){
+            lineToVet = vetThisLine(LCDD, "LCDD", 0.4);
+            if(lineToVet != null) lineList.add(lineToVet);
+        }
+        MicLine RCDD = createLinePtoAB(RC, DD, false);
+        if(findSegmentCrossPoint(RCDD, new MicLine(center, E2, false), true)==null) {
+            lineToVet = vetThisLine(RCDD, "RCDD", 0.4);
+            if(lineToVet != null) lineList.add(lineToVet);
+        }
+
+        ArrayList<MicLine> filteredList = new ArrayList<MicLine>();
+        ArrayList<MicLine> deadList = new ArrayList<MicLine>();
+
+        for(MicLine l: lineList)
+        {
+            if(isEdgeInArcInwardTweak(l, A1, E1, A2, E2) == true) filteredList.add(l);
+            else deadList.add(l);
+        }
+        //ALLLINES: if all lines have to been added to the visuals, then, uncomment this section
+        if(MULTILINES == true){
+            for(MicLine everyline : filteredList) {
+                fov.addLine(everyline);
+            }
+            for(MicLine l: deadList){
+                l.markedAsDead = true;
+                fov.addLine(l);
+            }
+        }
+        //end of section
+
+
+        //First criterium, find the best distance and make it the best Line
+        double bestDist = rangeInt * 282.5;
+        MicLine best = null;
+        for (MicLine l : filteredList) {
+            if (l.markedAsDead == false && Double.compare(bestDist, l.pixelLength) > 0) {
+                bestDist = l.pixelLength;
+                best = l;
+            }
+        }
+        //nothing under the requested range was found, no best lines can be submitted
+        if (best == null) {
+            return null;
+        }
+
+        best.isArcLine = true;
+        return best;
+    }
+
     private MicLine findBestLineInFrontAuxArcs(Point2D.Double D1, Point2D.Double D2, Point2D.Double D3, int rangeInt) {
         ArrayList<MicLine> lineList = new ArrayList<MicLine>(); //reserved for front arc lines
         ArrayList<MicLine> leftLineList = new ArrayList<MicLine>(); //reserved for left aux arc lines
@@ -1719,20 +1858,20 @@ public class AutoRangeFinder extends Decorator implements EditablePiece, MouseLi
         }
         else if(whichOption == frontAuxArcOption && twoPointOh == true){
             A1 = thisShip.tPts.get(8);
-            A2 = thisShip.tPts.get(0);
+            A2 = thisShip.tPts.get(9);
 
             E1 = thisShip.tPts.get(10);
-            E2 = thisShip.tPts.get(2);
-
-            A3 = thisShip.tPts.get(1);
-            A4 = thisShip.tPts.get(9);
-
-            E3 = thisShip.tPts.get(3);
-            E4 = thisShip.tPts.get(11);
-
-            E2B = thisShip.tPts.get(16);
-            E3B = thisShip.tPts.get(17);
+            E2 = thisShip.tPts.get(11);
         }
+        /*
+        else if(whichOption == backFullArcOption && twoPointOh == true){
+            A1 = thisShip.tPts.get(8);
+            A2 = thisShip.tPts.get(9);
+
+            E1 = thisShip.tPts.get(10);
+            E2 = thisShip.tPts.get(11);
+        }
+         */
         else if(whichOption == mobileSideArcOption && twoPointOh == false){
                 //left side check
                 A1 = thisShip.tPts.get(5);
@@ -1958,7 +2097,30 @@ public class AutoRangeFinder extends Decorator implements EditablePiece, MouseLi
         if(Double.compare(bestLinePolarAngle, -Math.PI + fudgefactor) < 0 ) bestLinePolarAngle += 2.0*Math.PI;
 
         //logToChat("1: " + Double.toString(firstArcEdgePolarAngle) + " line: " + Double.toString(bestLinePolarAngle) + " 2: " + Double.toString(secondArcEdgePolarAngle));
-       if(Double.compare(bestLinePolarAngle, firstArcEdgePolarAngle) < 0 || Double.compare(bestLinePolarAngle, secondArcEdgePolarAngle) > 0)
+        if(Double.compare(bestLinePolarAngle, firstArcEdgePolarAngle) < 0 || Double.compare(bestLinePolarAngle, secondArcEdgePolarAngle) > 0)
+            return false;
+        return true;
+    }
+
+    private boolean isEdgeInArcInwardTweak(MicLine theCandidateLine, Point2D.Double leftMostStart, Point2D.Double leftMostEnd, Point2D.Double rightMostStart, Point2D.Double  rightMostEnd)
+    {
+        double fudgefactor = 0.00001; //open up the arc just slightly to better allow along-the-arc firing lines
+        double firstArcEdgePolarAngle = getEdgeAngle(leftMostStart, leftMostEnd) + fudgefactor; //edge most counter-clockwise
+        double secondArcEdgePolarAngle = getEdgeAngle(rightMostStart, rightMostEnd) - fudgefactor; //edge most clockwise
+
+        double firstAdjustment = 0.0;
+        if(Double.compare(firstArcEdgePolarAngle, 0.0 + fudgefactor/2.0) > 0 && Double.compare(firstArcEdgePolarAngle, Math.PI + fudgefactor/2.0) < 0) firstAdjustment = -Math.PI;
+        firstArcEdgePolarAngle += firstAdjustment;
+        secondArcEdgePolarAngle += firstAdjustment;
+
+        double bestLinePolarAngle = getEdgeAngle(theCandidateLine.first, theCandidateLine.second);
+        bestLinePolarAngle += firstAdjustment;
+
+        if(Double.compare(secondArcEdgePolarAngle, -Math.PI + fudgefactor) < 0) secondArcEdgePolarAngle += 2.0*Math.PI;
+        if(Double.compare(bestLinePolarAngle, -Math.PI + fudgefactor) < 0 ) bestLinePolarAngle += 2.0*Math.PI;
+
+        logToChat("1: " + Double.toString(firstArcEdgePolarAngle) + " line: " + Double.toString(bestLinePolarAngle) + " 2: " + Double.toString(secondArcEdgePolarAngle));
+        if(Double.compare(bestLinePolarAngle, firstArcEdgePolarAngle) < 0 || Double.compare(bestLinePolarAngle, secondArcEdgePolarAngle) > 0)
             return false;
         return true;
     }
@@ -1966,6 +2128,8 @@ public class AutoRangeFinder extends Decorator implements EditablePiece, MouseLi
     private double getEdgeAngle(Point2D.Double start, Point2D.Double end) {
         double deltaX = end.x - start.x;
         double deltaY = end.y - start.y;
+        if(Double.compare(deltaY, 0.0)== 0
+                || (Double.compare(deltaY,0.0)>0 && Double.compare(deltaY, 0.0001)< 0)) deltaY += 0.0001; //avoids the 180,-180 divide
 
         return Math.atan2(deltaY, deltaX);
     }
@@ -2437,6 +2601,12 @@ public class AutoRangeFinder extends Decorator implements EditablePiece, MouseLi
                     testFlipString = ((Decorator) piece).getDecorator(piece,piece.getClass()).getProperty("whichShape").toString();
                 } catch (Exception e) {}
                 bumpables.add(new BumpableWithShape((Decorator)piece,"Debris","2".equals(testFlipString), false));
+            }else if (piece.getState().contains("this_is_a_gascloud")) {
+                String testFlipString = "";
+                try{
+                    testFlipString = ((Decorator) piece).getDecorator(piece,piece.getClass()).getProperty("whichShape").toString();
+                } catch (Exception e) {}
+                bumpables.add(new BumpableWithShape((Decorator)piece, "GasCloud", "2".equals(testFlipString), false));
             }
         }
         return bumpables;
@@ -2879,333 +3049,6 @@ public class AutoRangeFinder extends Decorator implements EditablePiece, MouseLi
         }
         return ships;
     }
-
-    public void mouseClicked(MouseEvent e) {
-
-    }
-
-    public void mousePressed(MouseEvent e) {
-        if(DEBUGMODE == false) return;
-        Point p = e.getPoint();
-            anchor = p;
-            anchorLocation = map.localizedLocationName(anchor);
-            lastLocation = anchorLocation;
-        }
-
-
-    public void mouseReleased(MouseEvent e) {
-
-    }
-
-    public void mouseEntered(MouseEvent e) {
-
-    }
-
-    public void mouseExited(MouseEvent e) {
-
-    }
-
-    public void mouseDragged(MouseEvent e) {
-        if( DEBUGMODE == false) return;
-        if(isThisTheOne == false) return;
-
-        Point p = e.getPoint();
-        map.scrollAtEdge(p, 15);
-
-        Point mapAnchor = lastAnchor;
-
-        int fudge = this.piece.getShape().getBounds().width * 12;
-
-        this.piece.setPosition(p);
-        Rectangle r = new Rectangle(this.piece.getPosition().x-fudge,
-                this.piece.getPosition().y-fudge,
-                this.piece.getShape().getBounds().width+fudge*2,
-                this.piece.getShape().getBounds().height+fudge*2);
-        map.repaint(r);
-    }
-
-    public void mouseMoved(MouseEvent e) {
-
-    }
-
-    public static class FOVisualizationClear extends Command {
-
-        private final String id;
-
-        public FOVisualizationClear(String id) {
-            this.id = id;
-        }
-
-        protected void executeCommand() {
-            final VASSAL.build.module.Map map = VASSAL.build.module.Map.getMapById("Map0");
-            FOVisualization component = FOVisualization.AutorangeVisualizationEncoder.INSTANCE.getVisualizations().get(this.id);
-            if (component != null) {
-                map.removeDrawComponent(component);
-                FOVisualization.AutorangeVisualizationEncoder.INSTANCE.getVisualizations().remove(this.id);
-            }
-        }
-
-        protected Command myUndoCommand() {
-            return null;
-        }
-
-        public static class FOVisualizationClearEncoder implements CommandEncoder {
-            private static final String prefix = "FoVisClearId=";
-            private static final Logger logger = LoggerFactory.getLogger(FOVisualizationClearEncoder.class);
-
-            public Command decode(String command) {
-                if (command == null || !command.contains(prefix)) {
-                    return null;
-                }
-                String id = command.substring(prefix.length());
-                logger.info("Decoded clear visualization with id = {}", id);
-                return new FOVisualizationClear(id);
-            }
-
-            public String encode(Command c) {
-                if(!(c instanceof FOVisualizationClear)) {
-                    return null;
-                }
-                FOVisualizationClear visClear = (FOVisualizationClear) c;
-                logger.info("Encoded clear visualization with id = {}", visClear.id);
-                return prefix + visClear.id;
-            }
-        }
-
-    }
-
-
-
-    public static class FOVisualization extends Command implements Drawable {
-
-        private final List<Shape> shapes;
-        private final List<ShapeWithText> shapesWithText;
-        private final List<MicLine> lines;
-        private final String id;
-
-        public Color badLineColor = new Color(0, 121,255,110);
-        public Color bestLineColor = new Color(246, 255, 41,255);
-        public Color shipsObstaclesColor = new Color(255,99,71, 150);
-        public Color arcLineColor = new Color(246, 255, 41,180);
-
-        FOVisualization(String id) {
-            this.id = id;
-            this.shapes = new ArrayList<Shape>();
-            this.lines = new ArrayList<MicLine>();
-            this.shapesWithText = new ArrayList<ShapeWithText>();
-        }
-
-        FOVisualization() {
-            this(UUID.randomUUID().toString());
-        }
-
-        public String getId() {
-            return this.id;
-        }
-
-        public void add(Shape bumpable) {
-            this.shapes.add(bumpable);
-        }
-        public void addLine(MicLine line){
-            this.lines.add(line);
-        }
-        public void addShapeWithText(ShapeWithText swt){ this.shapesWithText.add(swt); }
-        public int getCount() {
-            return lines.size() + shapesWithText.size();
-        }
-
-
-        protected void executeCommand() {
-            final VASSAL.build.module.Map map = VASSAL.build.module.Map.getMapById("Map0");
-            int count = getCount();
-            if (count > 0) {
-                map.addDrawComponent(this);
-            }
-            else {
-                map.removeDrawComponent(FOVisualization.this);
-            }
-            map.repaint();
-        }
-
-        protected Command myUndoCommand() {
-            return null;
-        }
-
-        public void draw(Graphics graphics, VASSAL.build.module.Map map) {
-            Graphics2D graphics2D = (Graphics2D) graphics;
-
-            Object prevAntiAliasing = graphics2D.getRenderingHint(RenderingHints.KEY_ANTIALIASING);
-            graphics2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-
-            double scale = map.getZoom();
-            AffineTransform scaler = AffineTransform.getScaleInstance(scale, scale);
-
-            graphics2D.setColor(shipsObstaclesColor);
-            for (Shape shape : shapes) {
-                graphics2D.fill(scaler.createTransformedShape(shape));
-
-            }
-
-            for(ShapeWithText SWT : shapesWithText){
-                graphics2D.setColor(badLineColor);
-                graphics2D.fill(scaler.createTransformedShape(SWT.shape));
-
-                drawText(SWT.rangeString, scale, SWT.x, SWT.y, graphics2D);
-            }
-
-            int colorNb = 100;
-            for(MicLine line : lines){
-                if(line.isBestLine == true) graphics2D.setColor(bestLineColor);
-                else graphics2D.setColor(badLineColor);
-
-                if(line.isArcLine == true) graphics2D.setColor(arcLineColor);
-
-                /*ALLLines COlor Hijack*/
-                if(line.markedAsDead == true) graphics2D.setColor(new Color(255,0,0,255));
-                else {
-                    Color gradiant = new Color(colorNb, colorNb, 255, 255);
-                    if(colorNb < 250) colorNb += 5;
-                    graphics2D.setColor(gradiant);
-                }
-                if(line.isBestLine == true && line.markedAsDead == false) graphics2D.setColor(arcLineColor);
-                  /*end*/
-
-
-                Line2D.Double lineShape = new Line2D.Double(line.first, line.second);
-                graphics2D.draw(scaler.createTransformedShape(lineShape));
-
-                drawText(line.rangeString, scale, line.centerX, line.centerY, graphics2D);
-            }
-            graphics2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING, prevAntiAliasing);
-            map.repaint(true);
-        }
-
-
-        private static void drawText(String text, double scale, double x, double y, Graphics2D graphics2D) {
-            AttributedString attstring = new AttributedString(text);
-            attstring.addAttribute(TextAttribute.FONT, new Font("Arial", 0,55));
-            attstring.addAttribute(TextAttribute.RUN_DIRECTION, TextAttribute.RUN_DIRECTION_LTR);
-            FontRenderContext frc = graphics2D.getFontRenderContext();
-            TextLayout t = new TextLayout(attstring.getIterator(), frc);
-            Shape textShape = t.getOutline(null);
-
-            textShape = AffineTransform.getTranslateInstance(x, y)
-                    .createTransformedShape(textShape);
-            textShape = AffineTransform.getScaleInstance(scale, scale)
-                    .createTransformedShape(textShape);
-            graphics2D.setColor(Color.white);
-            graphics2D.fill(textShape);
-
-            if (scale > 0.60) {
-                // stroke makes it muddy at low scale
-                graphics2D.setColor(Color.black);
-                graphics2D.setStroke(new BasicStroke(0.8f));
-                graphics2D.draw(textShape);
-            }
-        }
-
-        public List<Shape> getShapes() {
-            return this.shapes;
-        }
-
-        public List<ShapeWithText> getTextShapes() {
-            return this.shapesWithText;
-        }
-
-        public List<MicLine> getMicLines() {
-            return this.lines;
-        }
-
-        public boolean drawAboveCounters() {
-            return true;
-        }
-
-        public static class AutorangeVisualizationEncoder implements CommandEncoder {
-            private static final Logger logger = LoggerFactory.getLogger(AutoRangeFinder.class);
-            private static final String commandPrefix = "AutorangeVisualizationEncoder=";
-            private static final String nullPart = "nullPart";
-            private static final String partDelim = "!";
-            private static final String itemDelim = "\t";
-
-            public static AutorangeVisualizationEncoder INSTANCE = new AutorangeVisualizationEncoder();
-
-            private Map<String, FOVisualization> visualizationsById = Maps.newHashMap();
-
-            public Map<String, FOVisualization> getVisualizations() {
-                return this.visualizationsById;
-            }
-
-            public Command decode(String command) {
-                if (command == null || !command.contains(commandPrefix)) {
-                    return null;
-                }
-
-                logger.info("Decoding AutorangeVisualization");
-
-                command = command.substring(commandPrefix.length());
-
-                try {
-                    String[] parts = command.split(partDelim);
-                    if (parts.length != 3) {
-                        throw new IllegalStateException("Invalid command format " + command);
-                    }
-                    FOVisualization visualization = new FOVisualization(parts[0]);
-
-                    String[] encodedLines = parts[1].equals(nullPart) ? new String[0] : parts[1].split(itemDelim);
-                    logger.info("Decoding {} lines", encodedLines.length);
-                    for (String base64Line : encodedLines) {
-                        MicLine line = (MicLine) deserializeBase64Obj(base64Line);
-                        visualization.addLine(line);
-                    }
-
-                    String[] encodedSwt = parts[2].equals(nullPart) ? new String[0] : parts[2].split(itemDelim);
-                    logger.info("Decoding {} shapesWithText", encodedLines.length);
-                    for (String base64Shape : encodedSwt) {
-                        ShapeWithText swt = (ShapeWithText) deserializeBase64Obj(base64Shape);
-                        visualization.addShapeWithText(swt);
-                    }
-
-                    this.visualizationsById.put(visualization.getId(), visualization);
-
-                    logger.info("Decoded AutorangeVisualization with {} shapes", visualization.getShapes().size());
-                    return visualization;
-                } catch (Exception e) {
-                    logger.error("Error decoding AutorangeVisualization", e);
-                    return null;
-                }
-            }
-
-            public String encode(Command c) {
-                if (!(c instanceof FOVisualization)) {
-                    return null;
-                }
-                logger.info("Encoding autorange visualization");
-                FOVisualization visualization = (FOVisualization) c;
-                try {
-                    List<String> lines = Lists.newArrayList();
-                    logger.info("Encoding {} lines", visualization.getMicLines().size());
-                    for (MicLine line : visualization.getMicLines()) {
-                        lines.add(serializeToBase64(line));
-                    }
-                    List<String> shapesWithText = Lists.newArrayList();
-                    logger.info("Encoding {} shapesWithText", visualization.getTextShapes().size());
-                    for(ShapeWithText swt : visualization.getTextShapes()) {
-                        shapesWithText.add(serializeToBase64(swt));
-                    }
-                    String linesPart = lines.size() > 0 ? Joiner.on(itemDelim).join(lines) : null;
-                    String swtPart = shapesWithText.size() > 0 ? Joiner.on(itemDelim).join(shapesWithText) : null;
-                    return commandPrefix + Joiner.on(partDelim).useForNull(nullPart).join(visualization.getId(), linesPart, swtPart);
-                } catch (Exception e) {
-                    logger.error("Error encoding autorange visualization", e);
-                    return null;
-                }
-            }
-        }
-
-
-    }
-
-
 
     public static class ShapeWithText implements Serializable {
         public String rangeString = "Range ";

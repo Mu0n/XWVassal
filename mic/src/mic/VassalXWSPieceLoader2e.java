@@ -20,8 +20,9 @@ import java.util.Map;
 public class VassalXWSPieceLoader2e {
 
     private static List<String> obstacleTabNames = Lists.newArrayList(
-            "Asteroids", "TFA_Asteroids", "Debris"
+            "Asteroids", "TFA_Asteroids", "Debris", "Gas_Clouds"
     );
+
 
     Map<String, PieceSlot> tokenPiecesMap = Maps.newHashMap();
     Map<Obstacles, PieceSlot> obstaclesPiecesMap = Maps.newHashMap();
@@ -168,15 +169,16 @@ public class VassalXWSPieceLoader2e {
             }
             pieces.getShips().add(pilotPieces);
 
-            for (String xwsObstacleName : list.getObstacles()) {
-                Obstacles obstacle = Obstacles.forXwsName(xwsObstacleName);
-                if (!obstaclesPiecesMap.containsKey(obstacle)) {
-                    Util.logToChat("Unable to find vassal obstacle for xws obstacle '" + xwsObstacleName + "'");
-                    continue;
-                }
-                pieces.getObstacles().add(obstaclesPiecesMap.get(obstacle));
-            }
 
+
+        }
+        for (String xwsObstacleName : list.getObstacles()) {
+            Obstacles obstacle = Obstacles.forXwsName(xwsObstacleName);
+            if (!obstaclesPiecesMap.containsKey(obstacle)) {
+                Util.logToChat("Unable to find vassal obstacle for xws obstacle '" + xwsObstacleName + "'");
+                continue;
+            }
+            pieces.getObstacles().add(obstaclesPiecesMap.get(obstacle));
         }
         return pieces;
     }
@@ -213,14 +215,15 @@ public class VassalXWSPieceLoader2e {
                 continue;
             }
             switch (parentType) {
+
                 //this first case only used for rocks anymore
                 case chits:
                     loadChits(listWidget);
                     break;
                 case secondeditiontokens:
+                case remotes:
                     load2eTokens(listWidget);
                     break;
-
             }
         }
     }
@@ -272,7 +275,9 @@ public class VassalXWSPieceLoader2e {
 
     private enum ListParentType {
         chits("Chits"),
-        secondeditiontokens("SecondEdition");
+        secondeditiontokens("SecondEdition"),
+        debris("Debris"),
+        remotes("Remotes");
 
         private String widgetName;
 

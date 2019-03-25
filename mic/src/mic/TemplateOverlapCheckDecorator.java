@@ -136,6 +136,11 @@ public class TemplateOverlapCheckDecorator extends Decorator implements Editable
                     logToChatWithTime(bumpAlertString);
                     this.previousCollisionVisualization.add(bumpedBumpable.shape);
                     howManyBumped++;
+                }else if (bumpedBumpable.type.equals("GasCloud")) {
+                    String bumpAlertString = "* --- Overlap detected with your template and a gas cloud.";
+                    logToChatWithTime(bumpAlertString);
+                    this.previousCollisionVisualization.add(bumpedBumpable.shape);
+                    howManyBumped++;
                 }
             }
         }
@@ -262,7 +267,13 @@ public class TemplateOverlapCheckDecorator extends Decorator implements Editable
                     testFlipString = ((Decorator) piece).getDecorator(piece,piece.getClass()).getProperty("whichShape").toString();
                 } catch (Exception e) {}
                 bumpables.add(new BumpableWithShape((Decorator)piece,"Debris","2".equals(testFlipString),false));
-            } else if (piece.getState().contains("this_is_a_bomb")) {
+            } else if (piece.getState().contains("this_is_a_gascloud")) {
+                String testFlipString = "";
+                try{
+                    testFlipString = ((Decorator) piece).getDecorator(piece,piece.getClass()).getProperty("whichShape").toString();
+                } catch (Exception e) {}
+                bumpables.add(new BumpableWithShape((Decorator)piece, "GasCloud", "2".equals(testFlipString), false));
+            }else if (piece.getState().contains("this_is_a_bomb")) {
                 bumpables.add(new BumpableWithShape((Decorator)piece, "Mine", false,false));
             }
         }

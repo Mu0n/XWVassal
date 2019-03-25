@@ -1,13 +1,12 @@
 package mic;
 
 import VASSAL.build.GameModule;
-import VASSAL.build.module.Chatter;
 import VASSAL.build.module.documentation.HelpFile;
+import VASSAL.build.module.map.Drawable;
 import VASSAL.build.module.map.boardPicker.Board;
 import VASSAL.build.widget.PieceSlot;
 import VASSAL.command.ChangeTracker;
 import VASSAL.command.Command;
-import VASSAL.command.MoveTracker;
 import VASSAL.configure.HotKeyConfigurer;
 import VASSAL.counters.*;
 import com.google.common.collect.ImmutableMap;
@@ -18,13 +17,14 @@ import org.slf4j.LoggerFactory;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.Ellipse2D;
 import java.util.List;
 import java.util.Map;
-
 import static mic.Util.*;
-
-//import VASSAL.command.ChangeTracker;
+import static mic.Util.getBumpableCompareShape;
 
 /**
  * Created by Mic on 07/08/2017.
@@ -74,7 +74,10 @@ enum RepoManeuver {
     BR1_Right_AFAP_Large("BR Right as Forward as Possible", "524", 0.0f, 141.25f, -56.5f, 0.0f, 283.0f, -113.0f),
     BR1_Right_ABAP_Large("BR Right as Backward as Possible", "524", 0.0f, 141.25f, 56.5f, 0.0f, 283.0f, 113.0f),
 
+    //
     //Section for 2.0 style barrel roll. AFAP and ABAP will be limited by the back and front edges and will spawn the template for habit building
+    //
+    //
     BR1_Left_AFAP_2E("BR Left as Forward as Possible", "524", -90.0f, -113.0f, 0.0f, 0.0f, -226.0f, -28.25f),
     BR1_Left_2E("BR Left", "524", -90.0f, -113.0f, 0.0f, 0.0f, -226.0f, 0.0f),
     BR1_Left_ABAP_2E("BR Left as Backward as Possible", "524", -90.0f, -113.0f, 0.0f, 0.0f, -226.0f, 28.25f),
@@ -82,6 +85,7 @@ enum RepoManeuver {
     BR1_Right_AFAP_2E("BR Right as Forward as Possible", "524", -90.0f, 113.0f, 0.0f, 0.0f, 226.0f, -28.25f),
     BR1_Right_2E("BR Right", "524", -90.0f, 113.0f, 0.0f, 0.0f, 226.0f, 0.0f),
     BR1_Right_ABAP_2E("BR Right as Backward as Possible", "524", -90.0f, 113.0f, 0.0f, 0.0f, 226.0f, 28.25f),
+
     //small Zeta Ace BR
     BR2_Left_AFAP_2E("BR2 Left as Forward as Possible", "525", -90.0f, -169.5f, 0.0f, 0.0f, -339.0f, -28.25f),
     BR2_Left_2E("BR2 Left", "525", -90.0f, -169.5f, 0.0f, 0.0f, -339.0f, 0.0f),
@@ -90,6 +94,41 @@ enum RepoManeuver {
     BR2_Right_AFAP_2E("BR2 Right as Forward as Possible", "525", -90.0f, 169.5f, 0.0f, 0.0f, 339.0f, -28.25f),
     BR2_Right_2E("BR2 Right", "525", -90.0f, 169.5f, 0.0f, 0.0f, 339.0f, 0.0f),
     BR2_Right_ABAP_2E("BR2 Right as Backward as Possible", "525", -90.0f, 169.5f, 0.0f, 0.0f, 339.0f, 28.25f),
+
+    //small StarViper BR
+    BR1_Left_BankF_AFAP_2E("BR Bank Left Forward, as Forward as Possible", "517", -135.0f, -132.0f, -21.0f, 45.0f, -237.5f, -124.0f),
+    BR1_Left_BankF_2E("BR Bank Left Forward, centered", "517", -135.0f, -132.0f, -21.0f, 45.0f, -257.5f, -104.0f),
+    BR1_Left_BankF_ABAP_2E("BR Bank Left Forward, as Forward as Possible", "517", -135.0f, -132.0f, -21.0f, 45.0f, -277.5f, -84.0f),
+
+    BR1_Left_BankB_AFAP_2E("BR Bank Left Backward, as Forward as Possible", "517", 90.0f, -146.0f, 29.0f, -45.0f, -277.5f, 87.0f),
+    BR1_Left_BankB_2E("BR Bank Left Backward, centered", "517", 90.0f, -146.0f, 29.0f, -45.0f, -257.5f, 107.0f),
+    BR1_Left_BankB_ABAP_2E("BR Bank Left Backward, as Forward as Possible", "517", 90.0f, -146.0f, 29.0f, -45.0f, -237.5f, 127.0f),
+
+    BR1_Right_BankF_AFAP_2E("BR Bank Right Forward, as Forward as Possible", "517", -90.0f, 147.0f, -28.0f, -45.0f, 237.5f, -124.0f),
+    BR1_Right_BankF_2E("BR Bank Right Forward, centered", "517", -90.0f, 147.0f, -28.0f, -45.0f, 257.5f, -104.0f),
+    BR1_Right_BankF_ABAP_2E("BR Bank Right Forward, as Forward as Possible", "517", -90.0f, 147.0f, -28.0f, -45.0f, 277.5f, -84.0f),
+
+    BR1_Right_BankB_AFAP_2E("BR Bank Right Forward, as Forward as Possible", "517", 45.0f, 134.0f, 22.0f, 45.0f, 277.5f, 87.0f),
+    BR1_Right_BankB_2E("BR Bank Right Forward, centered", "517", 45.0f, 134.0f, 22.0f, 45.0f, 257.5f, 107.0f),
+    BR1_Right_BankB_ABAP_2E("BR Bank Right Forward, as Forward as Possible", "517", 45.0f, 134.0f, 22.0f, 45.0f, 237.5f, 127.0f),
+
+    //Echo BR
+    BR2_Left_BankF_AFAP_2E("BR2 Bank Left Forward, as Forward as Possible", "519", -135.0f, -132.0f, -21.0f, 45.0f, -237.5f, -124.0f),
+    BR2_Left_BankF_2E("BR2 Bank Left Forward, centered", "519", -135.0f, -132.0f, -21.0f, 45.0f, -257.5f, -104.0f),
+    BR2_Left_BankF_ABAP_2E("BR2 Bank Left Forward, as Forward as Possible", "519", -135.0f, -132.0f, -21.0f, 45.0f, -277.5f, -84.0f),
+
+    BR2_Left_BankB_AFAP_2E("BR2 Bank Left Backward, as Forward as Possible", "519", 90.0f, -146.0f, 29.0f, -45.0f, -277.5f, 87.0f),
+    BR2_Left_BankB_2E("BR2 Bank Left Backward, centered", "519", 90.0f, -146.0f, 29.0f, -45.0f, -257.5f, 107.0f),
+    BR2_Left_BankB_ABAP_2E("BR2 Bank Left Backward, as Forward as Possible", "519", 90.0f, -146.0f, 29.0f, -45.0f, -237.5f, 127.0f),
+
+    BR2_Right_BankF_AFAP_2E("BR2 Bank Right Forward, as Forward as Possible", "519", -90.0f, 147.0f, -28.0f, -45.0f, 237.5f, -124.0f),
+    BR2_Right_BankF_2E("BR2 Bank Right Forward, centered", "519", -90.0f, 147.0f, -28.0f, -45.0f, 257.5f, -104.0f),
+    BR2_Right_BankF_ABAP_2E("BR2 Bank Right Forward, as Forward as Possible", "519", -90.0f, 147.0f, -28.0f, -45.0f, 277.5f, -84.0f),
+
+    BR2_Right_BankB_AFAP_2E("BR2 Bank Right Forward, as Forward as Possible", "519", 45.0f, 134.0f, 22.0f, 45.0f, 277.5f, 87.0f),
+    BR2_Right_BankB_2E("BR2 Bank Right Forward, centered", "519", 45.0f, 134.0f, 22.0f, 45.0f, 257.5f, 107.0f),
+    BR2_Right_BankB_ABAP_2E("BR2 Bank Right Forward, as Forward as Possible", "519", 45.0f, 134.0f, 22.0f, 45.0f, 237.5f, 127.0f),
+
     //medium normal BR
     BR1_Left_AFAP_Medium_2E("BR Left as Forward as Possible", "524", 0.0f, -113.75f, 0.0f, 0.0f, -227.5f, -56.5f),
     BR1_Left_Medium_2E("BR Left", "524", 0.0f, -113.75f, 0.0f, 0.0f, -227.5f, 0.0f),
@@ -98,14 +137,16 @@ enum RepoManeuver {
     BR1_Right_AFAP_Medium_2E("BR Right as Forward as Possible", "524", 0.0f, 113.75f, 0.0f, 0.0f, 227.5f, -56.5f),
     BR1_Right_Medium_2E("BR Right", "524", 0.0f, 113.75f, 0.0f, 0.0f, 227.5f, 0.0f),
     BR1_Right_ABAP_Medium_2E("BR Right as Backward as Possible", "524", 0.0f, 113.75f, 0.0f, 0.0f, 227.5f, 56.5f),
-    //medium decloak using a standard long barrel roll 1
+
+    //medium decloak using a standard
     BRD_Left_AFAP_Medium_2E("Decloak Left as Forward as Possible", "524",0.0f, -113.75f, 0.0f, 0.0f, -227.5f, -56.5f),
-    BRD_Left_Medium_2E("Decloak Left", "524", -90.0f, -142.0f, 0.0f, 0.0f, -284.0f, 0.0f),
+    BRD_Left_Medium_2E("Decloak Left", "524", 0.0f, -113.75f, 0.0f, 0.0f, -227.5f, 0.0f),
     BRD_Left_ABAP_Medium_2E("Decloak Left as Backward as Possible", "524", 0.0f, -113.75f, 0.0f, 0.0f, -227.5f, 56.5f),
 
     BRD_Right_AFAP_Medium_2E("Decloak Right as Forward as Possible", "524", 0.0f, 113.75f, 0.0f, 0.0f, 227.5f, -56.5f),
-    BRD_Right_Medium_2E("Decloak Right", "524", -90.0f, 142.0f, 0.0f, 0.0f, 284.0f, 0.0f),
+    BRD_Right_Medium_2E("Decloak Right", "524", 0.0f, 113.75f, 0.0f, 0.0f, 227.5f, 0.0f),
     BRD_Right_ABAP_Medium_2E("Decloak Right as Backward as Possible", "524", 0.0f, 113.75f, 0.0f, 0.0f, 227.5f, 56.5f),
+
     //large normal BR
     BR1_Left_AFAP_Large_2E("BR Left as Forward as Possible", "524", 0.0f, -141.25f, 0.0f, 0.0f, -283.0f, -56.5f),
     BR1_Left_Large_2E("BR Left as Forward as Possible", "524", 0.0f, -141.25f, 0.0f, 0.0f, -283.0f, 0.0f),
@@ -116,11 +157,11 @@ enum RepoManeuver {
     BR1_Right_ABAP_Large_2E("BR Right as Backward as Possible", "524", 0.0f, 141.25f, 0.0f, 0.0f, 283.0f, 56.5f),
     //large decloak using a standard long barrel roll 1
     BRD_Left_AFAP_Large_2E("BR Left as Forward as Possible", "524", 0.0f, -141.25f, 0.0f, 0.0f, -283.0f, -56.5f),
-    BRD_Left_Large_2E("BR Left as Forward as Possible", "524", -90.0f, -169.5f, 0.0f, 0.0f, -339.0f, 0.0f),
+    BRD_Left_Large_2E("BR Left as Forward as Possible", "524", -90.0f, -169.5f, 0.0f, 0.0f, -283.0f, 0.0f),
     BRD_Left_ABAP_Large_2E("BR Left as Backward as Possible", "524", 0.0f, -141.25f, 0.0f, 0.0f, -283.0f, 56.5f),
 
     BRD_Right_AFAP_Large_2E("BR Right as Forward as Possible", "524", 0.0f, 141.25f, 0.0f, 0.0f, 283.0f, -56.5f),
-    BRD_Right_Large_2E("BR Right", "524", -90.0f, 169.5f, 0.0f, 0.0f, 339.0f, 0.0f),
+    BRD_Right_Large_2E("BR Right", "524", -90.0f, 169.5f, 0.0f, 0.0f, 283.0f, 0.0f),
     BRD_Right_ABAP_Large_2E("BR Right as Backward as Possible", "524", 0.0f, 141.25f, 0.0f, 0.0f, 283.0f, 56.5f)
     ;
 
@@ -177,14 +218,21 @@ enum RepoManeuver {
 public class ShipReposition extends Decorator implements EditablePiece {
     private static final Logger logger = LoggerFactory.getLogger(ShipReposition.class);
 
+    public static float DOT_DIAMETER = 30.0f;
+    public static float DOT_FUDGE = 30.0f;
+
     public static final String ID = "ShipReposition";
     private FreeRotator myRotator = null;
     public MapVisualizations previousCollisionVisualization = null;
 
     private final FreeRotator testRotator;
-    private Shape shapeForOverlap;
+    private Shape shapeForTemplate;
     static final int NBFLASHES = 5; //use the same flash functionality if a mine is spawned on a ship
     static final int DELAYBETWEENFLASHES = 150;
+
+    MouseListener ml;
+    Boolean dealingWithClickChoicesDuringReposition = false;
+    List<repositionChoiceVisual> rpcList = Lists.newArrayList();
 
     private static Map<String, RepoManeuver> keyStrokeToDropTemplate = ImmutableMap.<String, RepoManeuver>builder()
             .put("CTRL R", RepoManeuver.BR1_Left_Mid)
@@ -229,16 +277,102 @@ public class ShipReposition extends Decorator implements EditablePiece {
             .put("CTRL 8", RepoManeuver.BR1_Left_AFAP_2E)
             .put("CTRL R", RepoManeuver.BR1_Left_2E)
             .put("CTRL SHIFT 8", RepoManeuver.BR1_Left_ABAP_2E)
+
             .put("ALT 8", RepoManeuver.BR1_Right_AFAP_2E)
             .put("ALT R", RepoManeuver.BR1_Right_2E)
             .put("ALT SHIFT 8", RepoManeuver.BR1_Right_ABAP_2E)
+
             .put("CTRL 9", RepoManeuver.BR2_Left_AFAP_2E)
             .put("J", RepoManeuver.BR2_Left_2E)
             .put("CTRL SHIFT 9", RepoManeuver.BR2_Left_ABAP_2E)
+
             .put("ALT 9", RepoManeuver.BR2_Right_AFAP_2E)
             .put("K", RepoManeuver.BR2_Right_2E)
             .put("ALT SHIFT 9", RepoManeuver.BR2_Right_ABAP_2E)
             .build();
+
+    //Latest 2.0: Better map for the multitudes of triple choices for repositioning in 2E
+    private static Map<String, RepoManeuver> newNameToRepoManeuver = ImmutableMap.<String, RepoManeuver>builder()
+            .put("Left Barrel Roll as Forward as Possible", RepoManeuver.BR1_Left_AFAP_2E)
+            .put("Left Barrel Roll, centered", RepoManeuver.BR1_Left_2E)
+            .put("Left Barrel Roll as Backward as Possible", RepoManeuver.BR1_Left_ABAP_2E)
+
+            .put("Right Barrel Roll as Forward as Possible", RepoManeuver.BR1_Right_AFAP_2E)
+            .put("Right Barrel Roll, centered", RepoManeuver.BR1_Right_2E)
+            .put("Right Barrel Roll as Backward as Possible", RepoManeuver.BR1_Right_ABAP_2E)
+
+            .put("Left Straight Decloak/BR2 as Forward as Possible", RepoManeuver.BR2_Left_AFAP_2E)
+            .put("Left Straight Decloak/BR2, centered", RepoManeuver.BR2_Left_2E)
+            .put("Left Straight Decloak/BR2 as Backward as Possible", RepoManeuver.BR2_Left_ABAP_2E)
+
+            .put("Right Straight Decloak/BR2 as Forward as Possible", RepoManeuver.BR2_Right_AFAP_2E)
+            .put("Right Straight Decloak/BR2, centered", RepoManeuver.BR2_Right_2E)
+            .put("Right Straight Decloak/BR2 as Backward as Possible", RepoManeuver.BR2_Right_ABAP_2E)
+
+            .put("Left, Forward Bank, as Forward as Possible", RepoManeuver.BR1_Left_BankF_AFAP_2E)
+            .put("Left, Forward Bank, centered", RepoManeuver.BR1_Left_BankF_2E)
+            .put("Left, Forward Bank, as Backward as Possible", RepoManeuver.BR1_Left_BankF_ABAP_2E)
+            .put("Left, Backward Bank, as Forward as Possible", RepoManeuver.BR1_Left_BankB_AFAP_2E)
+            .put("Left, Backward Bank, centered", RepoManeuver.BR1_Left_BankB_2E)
+            .put("Left, Backward Bank, as Backward as Possible", RepoManeuver.BR1_Left_BankB_ABAP_2E)
+
+            .put("Right, Forward Bank, as Forward as Possible", RepoManeuver.BR1_Right_BankF_AFAP_2E)
+            .put("Right, Forward Bank, centered", RepoManeuver.BR1_Right_BankF_2E)
+            .put("Right, Forward Bank, as Backward as Possible", RepoManeuver.BR1_Right_BankF_ABAP_2E)
+            .put("Right, Backward Bank, as Forward as Possible", RepoManeuver.BR1_Right_BankB_AFAP_2E)
+            .put("Right, Backward Bank, centered", RepoManeuver.BR1_Right_BankB_2E)
+            .put("Right, Backward Bank, as Backward as Possible", RepoManeuver.BR1_Right_BankB_ABAP_2E)
+
+            .build();
+    //Latest 2.0: Get back the String (reverse map)
+    private static Map<RepoManeuver, String> repoShipToString = ImmutableMap.<RepoManeuver, String>builder()
+            //Barrel Roll Left
+            .put(RepoManeuver.BR1_Left_AFAP_2E, "Left Barrel Roll as Forward as Possible")
+            .put(RepoManeuver.BR1_Left_2E, "Left Barrel Roll, centered")
+            .put(RepoManeuver.BR1_Left_ABAP_2E, "Left Barrel Roll as Backward as Possible")
+            .put(RepoManeuver.BR1_Left_AFAP_Medium_2E, "Left Barrel Roll as Forward as Possible")
+            .put(RepoManeuver.BR1_Left_Medium_2E, "Left Barrel Roll, centered")
+            .put(RepoManeuver.BR1_Left_ABAP_Medium_2E, "Left Barrel Roll as Backward as Possible")
+            .put(RepoManeuver.BR1_Left_AFAP_Large_2E, "Left Barrel Roll as Forward as Possible")
+            .put(RepoManeuver.BR1_Left_Large_2E, "Left Barrel Roll, centered")
+            .put(RepoManeuver.BR1_Left_ABAP_Large_2E, "Left Barrel Roll as Backward as Possible")
+            //Barrel Roll Right
+            .put(RepoManeuver.BR1_Right_AFAP_2E, "Right Barrel Roll as Forward as Possible")
+            .put(RepoManeuver.BR1_Right_2E, "Right Barrel Roll, centered")
+            .put(RepoManeuver.BR1_Right_ABAP_2E, "Right Barrel Roll as Backward as Possible")
+            .put(RepoManeuver.BR1_Right_AFAP_Medium_2E, "Right Barrel Roll as Forward as Possible")
+            .put(RepoManeuver.BR1_Right_Medium_2E, "Right Barrel Roll, centered")
+            .put(RepoManeuver.BR1_Right_ABAP_Medium_2E, "Right Barrel Roll as Backward as Possible")
+            .put(RepoManeuver.BR1_Right_AFAP_Large_2E, "Right Barrel Roll as Forward as Possible")
+            .put(RepoManeuver.BR1_Right_Large_2E, "Right Barrel Roll, centered")
+            .put(RepoManeuver.BR1_Right_ABAP_Large_2E, "Right Barrel Roll as Backward as Possible")
+            //Barrel Roll 2 Left / Decloak
+            .put(RepoManeuver.BR2_Left_AFAP_2E, "Left Straight Decloak/BR2 as Forward as Possible")
+            .put(RepoManeuver.BR2_Left_2E, "Left Straight Decloak/BR2, centered")
+            .put(RepoManeuver.BR2_Left_ABAP_2E, "Left Straight Decloak/BR2 as Backward as Possible")
+            //Barrel Roll 2 Right / Decloak
+            .put(RepoManeuver.BR2_Right_AFAP_2E, "Right Straight Decloak/BR2 as Forward as Possible")
+            .put(RepoManeuver.BR2_Right_2E, "Right Straight Decloak/BR2, centered")
+            .put(RepoManeuver.BR2_Right_ABAP_2E, "Right Straight Decloak/BR2 as Backward as Possible")
+            //Barrel Roll Bank Left (StarViper style)
+            .put(RepoManeuver.BR1_Left_BankF_AFAP_2E, "Left, Forward Bank, as Forward as Possible")
+            .put(RepoManeuver.BR1_Left_BankF_2E, "Left, Forward Bank, centered")
+            .put(RepoManeuver.BR1_Left_BankF_ABAP_2E, "Left, Forward Bank, as Backward as Possible")
+            .put(RepoManeuver.BR1_Left_BankB_AFAP_2E, "Left, Backward Bank, as Forward as Possible")
+            .put(RepoManeuver.BR1_Left_BankB_2E, "Left, Backward Bank, centered")
+            .put(RepoManeuver.BR1_Left_BankB_ABAP_2E, "Left, Backward Bank, as Backward as Possible")
+
+            //Barrel Roll Bank Right (StarViper style)
+            .put(RepoManeuver.BR1_Right_BankF_AFAP_2E, "Right, Forward Bank, as Forward as Possible")
+            .put(RepoManeuver.BR1_Right_BankF_2E, "Right, Forward Bank, centered")
+            .put(RepoManeuver.BR1_Right_BankF_ABAP_2E, "Right, Forward Bank, as Backward as Possible")
+            .put(RepoManeuver.BR1_Right_BankB_AFAP_2E, "Right, Backward Bank, as Forward as Possible")
+            .put(RepoManeuver.BR1_Right_BankB_2E, "Right, Backward Bank, centered")
+            .put(RepoManeuver.BR1_Right_BankB_ABAP_2E, "Right, Backward Bank, as Backward as Possible")
+            .build();
+
+
+
 
     //Names of the reposition
     private static Map<String, String> keyStrokeToName_2e = ImmutableMap.<String, String>builder()
@@ -247,13 +381,65 @@ public class ShipReposition extends Decorator implements EditablePiece {
             .put("CTRL SHIFT 8", "Left Barrel Roll as Backward as Possible")
             .put("ALT 8", "Right Barrel Roll as Forward as Possible")
             .put("ALT R", "Right Barrel Roll, centered")
-            .put("ALT SHIFT 8", "Left Barrel Roll as Backward as Possible")
+            .put("ALT SHIFT 8", "Right Barrel Roll as Backward as Possible")
             .put("CTRL 9", "Left Straight Decloak as Forward as Possible")
             .put("J", "Left Straight Decloak, centered")
             .put("CTRL SHIFT 9", "Left Straight Decloak as Backward as Possible")
             .put("ALT 9", "Right Straight Decloak as Forward as Possible")
             .put("K", "Right Straight Decloak, centered")
             .put("ALT SHIFT 9", "Right Straight Decloak as Backward as Possible")
+            .put("ALT J", "Left, Forward Bank, centered")
+            .build();
+
+
+    //Get back a Keystroke object
+    private static Map<RepoManeuver, KeyStroke> repoShipToKeyStroke_2e = ImmutableMap.<RepoManeuver, KeyStroke>builder()
+            //Barrel Roll Left
+            .put(RepoManeuver.BR1_Left_AFAP_2E, KeyStroke.getKeyStroke(KeyEvent.VK_8,KeyEvent.CTRL_DOWN_MASK, false))
+            .put(RepoManeuver.BR1_Left_2E, KeyStroke.getKeyStroke(KeyEvent.VK_R,KeyEvent.CTRL_DOWN_MASK, false))
+            .put(RepoManeuver.BR1_Left_ABAP_2E, KeyStroke.getKeyStroke(KeyEvent.VK_8,KeyEvent.CTRL_DOWN_MASK + KeyEvent.SHIFT_DOWN_MASK, false))
+            .put(RepoManeuver.BR1_Left_AFAP_Medium_2E, KeyStroke.getKeyStroke(KeyEvent.VK_8,KeyEvent.CTRL_DOWN_MASK, false))
+            .put(RepoManeuver.BR1_Left_Medium_2E, KeyStroke.getKeyStroke(KeyEvent.VK_R,KeyEvent.CTRL_DOWN_MASK, false))
+            .put(RepoManeuver.BR1_Left_ABAP_Medium_2E, KeyStroke.getKeyStroke(KeyEvent.VK_8,KeyEvent.CTRL_DOWN_MASK + KeyEvent.SHIFT_DOWN_MASK, false))
+            .put(RepoManeuver.BR1_Left_AFAP_Large_2E, KeyStroke.getKeyStroke(KeyEvent.VK_8,KeyEvent.CTRL_DOWN_MASK, false))
+            .put(RepoManeuver.BR1_Left_Large_2E, KeyStroke.getKeyStroke(KeyEvent.VK_R,KeyEvent.CTRL_DOWN_MASK, false))
+            .put(RepoManeuver.BR1_Left_ABAP_Large_2E, KeyStroke.getKeyStroke(KeyEvent.VK_8,KeyEvent.CTRL_DOWN_MASK + KeyEvent.SHIFT_DOWN_MASK, false))
+
+            //Barrel Roll Right
+            .put(RepoManeuver.BR1_Right_AFAP_2E, KeyStroke.getKeyStroke(KeyEvent.VK_8,KeyEvent.ALT_DOWN_MASK, false))
+            .put(RepoManeuver.BR1_Right_2E, KeyStroke.getKeyStroke(KeyEvent.VK_R,KeyEvent.ALT_DOWN_MASK, false))
+            .put(RepoManeuver.BR1_Right_ABAP_2E, KeyStroke.getKeyStroke(KeyEvent.VK_8,KeyEvent.ALT_DOWN_MASK + KeyEvent.SHIFT_DOWN_MASK, false))
+            .put(RepoManeuver.BR1_Right_AFAP_Medium_2E, KeyStroke.getKeyStroke(KeyEvent.VK_8,KeyEvent.ALT_DOWN_MASK, false))
+            .put(RepoManeuver.BR1_Right_Medium_2E, KeyStroke.getKeyStroke(KeyEvent.VK_R,KeyEvent.ALT_DOWN_MASK, false))
+            .put(RepoManeuver.BR1_Right_ABAP_Medium_2E, KeyStroke.getKeyStroke(KeyEvent.VK_8,KeyEvent.ALT_DOWN_MASK + KeyEvent.SHIFT_DOWN_MASK, false))
+            .put(RepoManeuver.BR1_Right_AFAP_Large_2E, KeyStroke.getKeyStroke(KeyEvent.VK_8,KeyEvent.ALT_DOWN_MASK, false))
+            .put(RepoManeuver.BR1_Right_Large_2E, KeyStroke.getKeyStroke(KeyEvent.VK_R,KeyEvent.ALT_DOWN_MASK, false))
+            .put(RepoManeuver.BR1_Right_ABAP_Large_2E, KeyStroke.getKeyStroke(KeyEvent.VK_8,KeyEvent.ALT_DOWN_MASK + KeyEvent.SHIFT_DOWN_MASK, false))
+
+            //Barrel Roll Left or straight decloak
+            .put(RepoManeuver.BR2_Left_AFAP_2E, KeyStroke.getKeyStroke(KeyEvent.VK_9,KeyEvent.CTRL_DOWN_MASK, false))
+            .put(RepoManeuver.BR2_Left_2E, KeyStroke.getKeyStroke(KeyEvent.VK_J,0, false))
+            .put(RepoManeuver.BR2_Left_ABAP_2E, KeyStroke.getKeyStroke(KeyEvent.VK_9,KeyEvent.CTRL_DOWN_MASK + KeyEvent.SHIFT_DOWN_MASK, false))
+            .put(RepoManeuver.BRD_Left_AFAP_Medium_2E, KeyStroke.getKeyStroke(KeyEvent.VK_8,KeyEvent.CTRL_DOWN_MASK, false))
+            .put(RepoManeuver.BRD_Left_Medium_2E, KeyStroke.getKeyStroke(KeyEvent.VK_R,KeyEvent.CTRL_DOWN_MASK, false))
+            .put(RepoManeuver.BRD_Left_ABAP_Medium_2E, KeyStroke.getKeyStroke(KeyEvent.VK_8,KeyEvent.CTRL_DOWN_MASK + KeyEvent.SHIFT_DOWN_MASK, false))
+            .put(RepoManeuver.BRD_Left_AFAP_Large_2E, KeyStroke.getKeyStroke(KeyEvent.VK_8,KeyEvent.CTRL_DOWN_MASK, false))
+            .put(RepoManeuver.BRD_Left_Large_2E, KeyStroke.getKeyStroke(KeyEvent.VK_R,KeyEvent.CTRL_DOWN_MASK, false))
+            .put(RepoManeuver.BRD_Left_ABAP_Large_2E, KeyStroke.getKeyStroke(KeyEvent.VK_8,KeyEvent.CTRL_DOWN_MASK + KeyEvent.SHIFT_DOWN_MASK, false))
+
+            //Barrel Roll Right or straight decloak
+            .put(RepoManeuver.BR2_Right_AFAP_2E, KeyStroke.getKeyStroke(KeyEvent.VK_9,KeyEvent.ALT_DOWN_MASK, false))
+            .put(RepoManeuver.BR2_Right_2E, KeyStroke.getKeyStroke(KeyEvent.VK_K,0, false))
+            .put(RepoManeuver.BR2_Right_ABAP_2E, KeyStroke.getKeyStroke(KeyEvent.VK_9,KeyEvent.ALT_DOWN_MASK + KeyEvent.SHIFT_DOWN_MASK, false))
+            .put(RepoManeuver.BRD_Right_AFAP_Medium_2E, KeyStroke.getKeyStroke(KeyEvent.VK_8,KeyEvent.ALT_DOWN_MASK, false))
+            .put(RepoManeuver.BRD_Right_Medium_2E, KeyStroke.getKeyStroke(KeyEvent.VK_R,KeyEvent.ALT_DOWN_MASK, false))
+            .put(RepoManeuver.BRD_Right_ABAP_Medium_2E, KeyStroke.getKeyStroke(KeyEvent.VK_8,KeyEvent.ALT_DOWN_MASK + KeyEvent.SHIFT_DOWN_MASK, false))
+            .put(RepoManeuver.BRD_Right_AFAP_Large_2E, KeyStroke.getKeyStroke(KeyEvent.VK_8,KeyEvent.ALT_DOWN_MASK, false))
+            .put(RepoManeuver.BRD_Right_Large_2E, KeyStroke.getKeyStroke(KeyEvent.VK_R,KeyEvent.ALT_DOWN_MASK, false))
+            .put(RepoManeuver.BRD_Right_ABAP_Large_2E, KeyStroke.getKeyStroke(KeyEvent.VK_8,KeyEvent.ALT_DOWN_MASK + KeyEvent.SHIFT_DOWN_MASK, false))
+
+            //Barrel Roll Bank Left Forward
+            .put(RepoManeuver.BR1_Left_BankF_2E, KeyStroke.getKeyStroke(KeyEvent.VK_J, KeyEvent.ALT_DOWN_MASK, false))
             .build();
 
 
@@ -286,7 +472,7 @@ public class ShipReposition extends Decorator implements EditablePiece {
 
         //STEP 1: Collision reposition template, centered as in in the image file, centered on 0,0 (upper left corner)
         GamePiece piece = newPiece(findPieceSlotByID(theManeu.getTemplateGpID()));
-        shapeForOverlap = piece.getShape();
+        shapeForTemplate = piece.getShape();
 
         //Info Gathering: gets the angle from ManeuverPaths which deals with degrees, local space with ship at 0,0, pointing up
         double tAngle;
@@ -311,23 +497,18 @@ public class ShipReposition extends Decorator implements EditablePiece {
         //STEP 4: translation into place
         Command placeCommand = getMap().placeOrMerge(piece, new Point((int)off1x_rot + (int)off2x, (int)off1y_rot + (int)off2y));
 
-        shapeForOverlap = AffineTransform.
+        shapeForTemplate = AffineTransform.
                 getTranslateInstance((int)off1x_rot + (int)off2x, (int)off1y_rot + (int)off2y).
-                createTransformedShape(shapeForOverlap);
+                createTransformedShape(shapeForTemplate);
         double roundedAngle = convertAngleToGameLimits(sAngle - tAngle);
-        shapeForOverlap = AffineTransform
+        shapeForTemplate = AffineTransform
                 .getRotateInstance(Math.toRadians(-roundedAngle), (int)off1x_rot + (int)off2x, (int)off1y_rot + (int)off2y)
-                .createTransformedShape(shapeForOverlap);
+                .createTransformedShape(shapeForTemplate);
 
         return placeCommand;
     }
 
-    private Command repositionTheShip(RepoManeuver repoTemplate, boolean is2pointOh) {
-        //Getting into this function, repoShip is associated with the template used to reposition the ship. We also need the non-mapped final ship tentative position
-        Boolean spawnTemplate = false;
-
-        int size = whichSizeShip(this, is2pointOh);
-        //Prep step, check if it's a medium ship, and only deal with regular barrel rolls, because it's all they can do anyway, rerouting to the correct RepoManeuver
+    private RepoManeuver swapToRepoManeuverIfMedOrLarge(RepoManeuver repoTemplate, int size, boolean is2pointOh){
         if(size == 2){
             switch(repoTemplate){
                 case BR1_Left_AFAP_2E:
@@ -339,6 +520,7 @@ public class ShipReposition extends Decorator implements EditablePiece {
                 case BR1_Left_ABAP_2E:
                     repoTemplate = RepoManeuver.BR1_Left_ABAP_Medium_2E;
                     break;
+
                 case BR1_Right_AFAP_2E:
                     repoTemplate = RepoManeuver.BR1_Right_AFAP_Medium_2E;
                     break;
@@ -348,6 +530,7 @@ public class ShipReposition extends Decorator implements EditablePiece {
                 case BR1_Right_ABAP_2E:
                     repoTemplate = RepoManeuver.BR1_Right_ABAP_Medium_2E;
                     break;
+
                 case BR2_Right_AFAP_2E:
                     repoTemplate = RepoManeuver.BRD_Right_AFAP_Medium_2E;
                     break;
@@ -357,6 +540,7 @@ public class ShipReposition extends Decorator implements EditablePiece {
                 case BR2_Right_ABAP_2E:
                     repoTemplate = RepoManeuver.BRD_Right_ABAP_Medium_2E;
                     break;
+
                 case BR2_Left_AFAP_2E:
                     repoTemplate = RepoManeuver.BRD_Left_AFAP_Medium_2E;
                     break;
@@ -369,10 +553,9 @@ public class ShipReposition extends Decorator implements EditablePiece {
                 default:
                     return null;
             }
-        }
-
+        } //end of dealing with medium
         //Prep step, check if it's a large ship, and only deal with regular barrel rolls, because it's all they can do anyway, rerouting to the correct RepoManeuver
-        if(size == 3 && is2pointOh == true) {
+        else if(size == 3 && is2pointOh == true) {
             switch (repoTemplate) {
                 case BR1_Left_AFAP_2E:
                     repoTemplate = RepoManeuver.BR1_Left_AFAP_Large_2E;
@@ -413,8 +596,7 @@ public class ShipReposition extends Decorator implements EditablePiece {
                 default:
                     return null;
             }
-        }
-
+        } //end of dealing with 2.0 large
         if(size == 3 && is2pointOh == false)
         {
             switch(repoTemplate){
@@ -433,19 +615,337 @@ public class ShipReposition extends Decorator implements EditablePiece {
                 default:
                     return null;
             }
+        } //end of dealing with 1.0 large
+        return repoTemplate;
+    }
+
+    private int offerTripleChoices(List<RepoManeuver> repoTemplates, boolean is2pointOh, VASSAL.build.module.Map theMap) {
+        //Getting into this function, repoShip is associated with the template used to reposition the ship. We also need the non-mapped final ship tentative position
+
+        int size = whichSizeShip(this, is2pointOh);
+        removeVisuals(theMap);
+        int wideningFudgeFactorBetweenDots = -1; //will go from -1 to 0 to 1 in the following loop
+
+        // STEP 0: gather ship angle and rotator
+        double shipAngle = this.getRotator().getAngle(); //ship angle
+        //FreeRotator fR = (FreeRotator) Decorator.getDecorator(piece, FreeRotator.class);
+
+        int nbOfRedDots = 0;
+
+        List<BumpableWithShape> obstacles = getBumpablesOnMap(false);
+        Boolean condemnAllDots = false;
+        shapeForTemplate = repositionedTemplateShape(repoTemplates.get(0)); //using the first of the list will do, since all 3 use the same template information
+        if(shapeForTemplate != null) {
+            List<BumpableWithShape> overlappingObstacles = findCollidingEntities(shapeForTemplate, obstacles);
+            if (overlappingObstacles.size() > 0) {
+                condemnAllDots = true;
+            }
         }
 
+        for(RepoManeuver repoTemplate : repoTemplates) { //loops over the list of potential repositions
+//Prep step, check if it's a medium ship, and only deal with regular barrel rolls, because it's all they can do anyway, rerouting to the correct RepoManeuver
+            //logToChat("repo name before change: " + repoTemplate.name());
+            repoTemplate = swapToRepoManeuverIfMedOrLarge(repoTemplate, size, is2pointOh);
+            //logToChat("repo name after change: " + repoTemplate.name());
+
+            if(repoTemplate == null) {
+                logToChat("--- Error: this size " + size + " ship can't perform this reposition.");
+                return -1;
+            }
+            //STEP 1:
+            //Info Gathering: Offset 2 get the center global coordinates of the ship calling this op
+            double off2x = this.getPosition().getX();
+            double off2y = this.getPosition().getY();
+
+            //STEP 2: Gather info for ship's final wanted position
+            // spawn a copy of the ship without the actions
+            Shape shapeForShipOverlap = repositionedShape(repoTemplate);
+
+            float diam = DOT_DIAMETER + (size - 1) * DOT_FUDGE * 0.666f;
+            Shape dot = new Ellipse2D.Float(-diam / 2, -diam / 2, diam, diam);
+
+            //Info Gathering: gets the angle from RepoManeuver which deals with degrees, local space with ship at 0,0, pointing up
+            double templateTurnsShipAngle = repoTemplate.getShipAngle(); //repo maneuver's angle
+
+            //Info Gathering: Offset 1, put to the side of the ship, local coords, get the final coords of the ship (and its dot)
+            double off1x_s = repoTemplate.getShipX();
+            double off1y_s = repoTemplate.getShipY();
+            double off3x = 0.0f;
+            double off3y = wideningFudgeFactorBetweenDots * size * 0.666f * DOT_FUDGE;
+            double off3x_t_rot = rotX(off3x, off3y, -templateTurnsShipAngle);
+            double off3y_t_rot = rotY(off3x, off3y, -templateTurnsShipAngle);
+            double off1x_s_dot = off1x_s + off3x_t_rot;
+            double off1y_s_dot = off1y_s + off3y_t_rot;
+
+            //STEP 7: rotate the offset1 dependant within the spawner's local coordinates
+
+            double off1x_rot_s_dot = rotX(off1x_s_dot, off1y_s_dot, shipAngle);
+            double off1y_rot_s_dot = rotY(off1x_s_dot, off1y_s_dot, shipAngle);
+
+            dot = AffineTransform.
+                    getTranslateInstance((int) off1x_rot_s_dot + (int) off2x, (int) off1y_rot_s_dot + (int) off2y).
+                    createTransformedShape(dot);
+
+
+
+            //STEP 9: Check for overlap with obstacles and ships with the final ship position
+            List<BumpableWithShape> shipsOrObstacles = getBumpablesOnMap(true);
+            boolean wantOverlapColor = false;
+
+            if(condemnAllDots==true){
+                wantOverlapColor = true;
+            }
+            else{ //this dot might still be white, or maybe not.
+                String yourShipName = getShipStringForReports(true, this.getProperty("Pilot Name").toString(), this.getProperty("Craft ID #").toString());
+                if (shapeForShipOverlap != null) {
+
+                    List<BumpableWithShape> overlappingShipOrObstacles = findCollidingEntities(shapeForShipOverlap, shipsOrObstacles);
+
+                    if (overlappingShipOrObstacles.size() > 0) {
+                        for (BumpableWithShape bws : overlappingShipOrObstacles) {
+                            wantOverlapColor = true;
+                        }
+                    }
+                }
+
+                // STEP 9.5: Check for movement out of bounds
+                boolean outsideCheck = checkIfOutOfBounds(yourShipName, shapeForShipOverlap, false, false);
+                if (outsideCheck) wantOverlapColor = true;
+            }
+
+            //STEP 11: reposition the ship
+            //Add visuals according to the selection of repositioning
+
+            repositionChoiceVisual rpc = new repositionChoiceVisual(shapeForShipOverlap, dot, wantOverlapColor,repoShipToString.get(repoTemplate));
+            rpcList.add(rpc);
+
+            //return bigCommand;
+            wideningFudgeFactorBetweenDots++;
+            if(wantOverlapColor == true) nbOfRedDots++;
+        } // end of loop around the 3 templates used in the repositions
+
+        //FINAL STEP: add the visuala to the map and the mouse listener
+        for(repositionChoiceVisual r : rpcList){
+            theMap.addDrawComponent(r);
+        }
+
+        final Decorator shipToReposition = this;
+        final VASSAL.build.module.Map finalMap = theMap;
+        ml = new MouseListener() {
+            int i=0;
+            public void mousePressed(MouseEvent e) {
+                if(e.isConsumed()) return;
+
+                List<repositionChoiceVisual> copiedList = Lists.newArrayList();
+                for(repositionChoiceVisual r : rpcList){
+                    copiedList.add(r);
+                }
+                //When it gets the answer, gracefully close the mouse listenener and remove the visuals
+                repositionChoiceVisual theChosenOne = null;
+                boolean slightMisclick = false;
+
+                for(repositionChoiceVisual r : copiedList){
+                    if(r.theDot.contains(e.getX(),e.getY())){
+                        theChosenOne = r;
+                        break;
+                    } else if(r.thePieceShape.contains(e.getX(), e.getY()))
+                    {
+                        slightMisclick = true; //in the ship area but not inside the dot, allow the whole thing to survive
+                    }
+                }
+                try{
+                    if(theChosenOne != null){
+                        removeVisuals(finalMap);
+                        Command endIt = stopTripleChoiceMakeNextReady();
+                        endIt.execute();
+                        //Change this line to another function that can deal with strings instead
+                        //shipToReposition.keyEvent(theChosenOne.getKeyStroke());
+                        ShipReposition SR = findShipRepositionDecorator(shipToReposition);
+                        SR.newNonKeyEvent(theChosenOne.inStringForm);
+
+                        closeMouseListener(finalMap, ml);
+                        return;
+                    }
+                }catch(Exception exce){
+                    logToChat("caught an exception while resolving ship reposition");
+                }
+
+                if(slightMisclick) return; //misclick outside of a dot, but inside the ship shapes, do nothing, don't dismiss the GUI
+                else{ //was not in any dot, any ship area, close the whole thing down
+                    removeVisuals(finalMap);
+                    Command stopItAll = stopTripleChoiceMakeNextReady();
+                    String stoppingPlayerName = getCurrentPlayer().getName();
+                    stopItAll.execute();
+                    logToChat("*-- " + stoppingPlayerName + " is cancelling a reposition");
+
+                    closeMouseListener(finalMap, ml);
+                    return;
+                }
+            }
+
+            public void mouseClicked(MouseEvent e) {
+
+            }
+
+            public void mouseReleased(MouseEvent e) {
+
+            }
+
+            public void mouseEntered(MouseEvent e) {
+                for(repositionChoiceVisual rpc : rpcList){
+                    if(rpc.theDot.contains(e.getPoint())){
+                        rpc.setMouseOvered();
+                        logToChat("$*/*$(*%($/%*($%*/*($%*/");
+                    }
+                }
+            }
+
+            public void mouseExited(MouseEvent e) {
+                for(repositionChoiceVisual rpc : rpcList){
+                    if(!rpc.theDot.contains(e.getPoint())){
+                        rpc.unsetMouseOvered();
+                    }
+                }
+            }
+        };
+        theMap.addLocalMouseListenerFirst(ml);
+
+        return nbOfRedDots;
+    }
+
+    public static String getKeyStrokeFromRepoManeuver(RepoManeuver rp){
+        for (Map.Entry<String, RepoManeuver> entry : keyStrokeToRepositionShip_2e.entrySet()) {
+            if (entry.getValue()==rp) return entry.getKey();
+        }
+        return null;
+    }
+
+
+    private Command repositionTheShip(RepoManeuver repoTemplate, boolean is2pointOh) {
+        //Getting into this function, repoShip is associated with the template used to reposition the ship. We also need the non-mapped final ship tentative position
+        Boolean spawnTemplate = false;
+
+        int size = whichSizeShip(this, is2pointOh);
+        //Prep step, check if it's a medium ship, and only deal with regular barrel rolls, because it's all they can do anyway, rerouting to the correct RepoManeuver
+        repoTemplate = swapToRepoManeuverIfMedOrLarge(repoTemplate, size, is2pointOh);
+        if(repoTemplate == null) return null;
+
+        //Info Gathering: angle and position of the ship
+        double globalShipAngle = this.getRotator().getAngle(); //ship angle
+        double templateAngle = repoTemplate.getTemplateAngle(); //repo maneuver's angle
+
+        double off2x = this.getPosition().getX();
+        double off2y = this.getPosition().getY();
+        //Info Gathering: Offset 1, put to the side of the ship, local coords, adjusting for large base if it is found
+        double off1x = repoTemplate.getOffsetX();
+        double off1y = repoTemplate.getOffsetY();
+        //STEP 3: rotate the offset1 dependant within the spawner's local coordinates
+        double off1x_rot = rotX(off1x, off1y, globalShipAngle);
+        double off1y_rot = rotY(off1x, off1y, globalShipAngle);
+        //Info Gathering: gets the angle from repoTemplate which deals with degrees, local space with ship at 0,0, pointing up
+        double templateTurnsShipAngle = repoTemplate.getShipAngle(); //get the extra angle caused by the template to the ship
+        GamePiece templatePiece = newPiece(findPieceSlotByID(repoTemplate.getTemplateGpID()));
+
+        shapeForTemplate = repositionedTemplateShape(repoTemplate);
+        FreeRotator fR = (FreeRotator)Decorator.getDecorator(templatePiece, FreeRotator.class);
+        fR.setAngle(globalShipAngle + templateAngle);
+        //STEP 5: Check for overlap with an obstacle, if so, spawn it so the player sees it
+        Command bigCommand = null;
+
+        List<BumpableWithShape> obstacles = getBumpablesOnMap(false);
+
+        if(shapeForTemplate != null) {
+            List<BumpableWithShape> overlappingObstacles = findCollidingEntities(shapeForTemplate, obstacles);
+            if (overlappingObstacles.size() > 0) {
+                for (BumpableWithShape bws : overlappingObstacles) {
+                    previousCollisionVisualization.add(bws.shape);
+                    String overlapWarn = "*** Warning: reposition template currently overlaps an obstacle.";
+                    if(bigCommand != null) bigCommand.append(logToChatCommand(overlapWarn));
+                    else bigCommand = logToChatCommand(overlapWarn);
+                }
+                previousCollisionVisualization.add(shapeForTemplate);
+                spawnTemplate = true; //we'll want the template
+            }
+        }
+        //STEP 6: Gather info for ship's final wanted position
+
+        // spawn a copy of the ship without the actions
+        //Shape shapeForOverlap2 = getCopyOfShapeWithoutActionsForOverlapCheck(this.piece,repoTemplate );
+        Shape shapeForShip = repositionedShape(repoTemplate);
+
+        //Info Gathering: Offset 1, put to the side of the ship, local coords, adjusting for large base if it is found
+        double off1x_s = repoTemplate.getShipX();
+        double off1y_s = repoTemplate.getShipY();
+
+        //STEP 7: rotate the offset1 dependant within the spawner's local coordinates
+        double off1x_rot_s = rotX(off1x_s, off1y_s, globalShipAngle);
+        double off1y_rot_s = rotY(off1x_s, off1y_s, globalShipAngle);
+
+
+        //STEP 9: Check for overlap with obstacles and ships with the final ship position
+        List<BumpableWithShape> shipsOrObstacles = getBumpablesOnMap(true);
+
+        String yourShipName = getShipStringForReports(true, this.getProperty("Pilot Name").toString(), this.getProperty("Craft ID #").toString());
+        if(shapeForShip != null){
+
+            List<BumpableWithShape> overlappingShipOrObstacles = findCollidingEntities(shapeForShip, shipsOrObstacles);
+
+            if(overlappingShipOrObstacles.size() > 0) {
+                for(BumpableWithShape bws : overlappingShipOrObstacles)
+                {
+                    previousCollisionVisualization.add(bws.shape);
+
+                    String overlapOnFinalWarn = "*** Warning: " + yourShipName + "'s final reposition location currently overlaps a Ship or Obstacle.";
+                    if(bigCommand !=null) bigCommand.append(logToChatCommand(overlapOnFinalWarn));
+                    else bigCommand = logToChatCommand(overlapOnFinalWarn);
+                }
+                previousCollisionVisualization.add(shapeForShip);
+                spawnTemplate = true; //we'll want the template
+            }
+        }
+
+        // STEP 9.5: Check for movement out of bounds
+        checkIfOutOfBounds(yourShipName, shapeForShip, true, true);
+
+        //STEP 10: optional if there's any kind of overlap, produce both the template and initial ship position
+        if(spawnTemplate == true) {
+            //the template is needed, in case of any kind of overlap
+            if(bigCommand !=null) bigCommand.append(getMap().placeOrMerge(templatePiece, new Point((int)off1x_rot + (int)off2x, (int)off1y_rot + (int)off2y)));
+            else bigCommand = getMap().placeOrMerge(templatePiece, new Point((int)off1x_rot + (int)off2x, (int)off1y_rot + (int)off2y));
+            //clone the initial position
+            GamePiece myClone = PieceCloner.getInstance().clonePiece(Decorator.getOutermost(this));
+
+            bigCommand.append(getMap().placeOrMerge(myClone, new Point((int)off2x, (int)off2y)));
+        }
+
+        //STEP 11: reposition the ship
+        //Set the ship's final angle
+        ChangeTracker changeTracker = new ChangeTracker(this);
+        FreeRotator fRShip = (FreeRotator)Decorator.getDecorator(this.piece, FreeRotator.class);
+        fRShip.setAngle(globalShipAngle - templateTurnsShipAngle);
+        Command changeRotationCommand = changeTracker.getChangeCommand();
+        if(bigCommand !=null) bigCommand.append(changeRotationCommand);
+        else bigCommand = changeRotationCommand;
+
+        //Ship's final translation command
+        if(bigCommand != null) bigCommand.append(getMap().placeOrMerge(Decorator.getOutermost(this), new Point((int)off1x_rot_s + (int)off2x, (int)off1y_rot_s + (int)off2y)));
+        else bigCommand = getMap().placeOrMerge(Decorator.getOutermost(this), new Point((int)off1x_rot_s + (int)off2x, (int)off1y_rot_s + (int)off2y));
+
+        return bigCommand;
+    }
+
+    private Shape repositionedTemplateShape(RepoManeuver repoTemplate){
         //STEP 1: Collision reposition template, centered as in in the image file, centered on 0,0 (upper left corner)
-        GamePiece piece = newPiece(findPieceSlotByID(repoTemplate.getTemplateGpID()));
-        shapeForOverlap = piece.getShape();
+        GamePiece templatePiece = newPiece(findPieceSlotByID(repoTemplate.getTemplateGpID()));
+
+        shapeForTemplate = templatePiece.getShape();
 
         //Info Gathering: gets the angle from repoTemplate which deals with degrees, local space with ship at 0,0, pointing up
-        double tAngle;
-        tAngle = repoTemplate.getTemplateAngle(); //repo maneuver's angle
-        double sAngle = this.getRotator().getAngle(); //ship angle
+        double templateAngle = repoTemplate.getTemplateAngle(); //repo maneuver's angle
+        double globalShipAngle = this.getRotator().getAngle(); //ship angle
         //STEP 2: rotate the reposition template with both angles
-        FreeRotator fR = (FreeRotator)Decorator.getDecorator(piece, FreeRotator.class);
-        fR.setAngle(sAngle - tAngle);
+        FreeRotator fR = (FreeRotator)Decorator.getDecorator(templatePiece, FreeRotator.class);
+        fR.setAngle(globalShipAngle + templateAngle);
 
         //Info Gathering: Offset 1, put to the side of the ship, local coords, adjusting for large base if it is found
         double off1x = repoTemplate.getOffsetX();
@@ -456,105 +956,53 @@ public class ShipReposition extends Decorator implements EditablePiece {
         double off2y = this.getPosition().getY();
 
         //STEP 3: rotate the offset1 dependant within the spawner's local coordinates
-        double off1x_rot = rotX(off1x, off1y, sAngle);
-        double off1y_rot = rotY(off1x, off1y, sAngle);
+        double off1x_rot = rotX(off1x, off1y, globalShipAngle);
+        double off1y_rot = rotY(off1x, off1y, globalShipAngle);
 
         //STEP 4: translation into place
-        shapeForOverlap = AffineTransform.
+        shapeForTemplate = AffineTransform.
                 getTranslateInstance((int)off1x_rot + (int)off2x, (int)off1y_rot + (int)off2y).
-                createTransformedShape(shapeForOverlap);
-        double roundedAngle = convertAngleToGameLimits(sAngle - tAngle);
-        shapeForOverlap = AffineTransform
+                createTransformedShape(shapeForTemplate);
+        double roundedAngle = convertAngleToGameLimits(globalShipAngle + templateAngle);
+        shapeForTemplate = AffineTransform
                 .getRotateInstance(Math.toRadians(-roundedAngle), (int)off1x_rot + (int)off2x, (int)off1y_rot + (int)off2y)
-                .createTransformedShape(shapeForOverlap);
+                .createTransformedShape(shapeForTemplate);
 
-        //STEP 5: Check for overlap with an obstacle, if so, spawn it so the player sees it
-        Command bigCommand = null;
-
-        List<BumpableWithShape> obstacles = getBumpablesOnMap(false);
-
-        if(shapeForOverlap != null) {
-            List<BumpableWithShape> overlappingObstacles = findCollidingEntities(shapeForOverlap, obstacles);
-            if (overlappingObstacles.size() > 0) {
-                for (BumpableWithShape bws : overlappingObstacles) {
-                    previousCollisionVisualization.add(bws.shape);
-                    String overlapWarn = "*** Warning: reposition template currently overlaps an obstacle. You can attempt to move it into a legal position and check if it still overlaps with 'c'.";
-                    if(bigCommand != null) bigCommand.append(logToChatCommand(overlapWarn));
-                    else bigCommand = logToChatCommand(overlapWarn);
-                }
-                previousCollisionVisualization.add(shapeForOverlap);
-                spawnTemplate = true; //we'll want the template
-            }
-        }
-        //STEP 6: Gather info for ship's final wanted position
+        return shapeForTemplate;
+    }
+    private Shape repositionedShape(RepoManeuver repoTemplate){
+        double globalShipAngle = this.getRotator().getAngle(); //ship angle
+        double templateTurnsShipAngle = repoTemplate.getShipAngle(); //template making the ship turn angle
+        //Info Gathering: Offset 2 get the center global coordinates of the ship calling this op
+        double off2x = this.getPosition().getX();
+        double off2y = this.getPosition().getY();
 
         // spawn a copy of the ship without the actions
-        Shape shapeForOverlap2 = getCopyOfShapeWithoutActionsForOverlapCheck(this.piece,repoTemplate );
-
-        //Info Gathering: gets the angle from RepoManeuver which deals with degrees, local space with ship at 0,0, pointing up
-        double tAngle2;
-        tAngle2 = repoTemplate.getShipAngle(); //repo maneuver's angle
+        //Shape shapeForOverlap2 = getCopyOfShapeWithoutActionsForOverlapCheck(this.piece,repoTemplate );
+        Shape shapeForShip = Decorator.getDecorator(Decorator.getOutermost(this), NonRectangular.class).getShape();
 
         //Info Gathering: Offset 1, put to the side of the ship, local coords, adjusting for large base if it is found
         double off1x_s = repoTemplate.getShipX();
         double off1y_s = repoTemplate.getShipY();
 
         //STEP 7: rotate the offset1 dependant within the spawner's local coordinates
-        double off1x_rot_s = rotX(off1x_s, off1y_s, sAngle);
-        double off1y_rot_s = rotY(off1x_s, off1y_s, sAngle);
+        double off1x_rot_s = rotX(off1x_s, off1y_s, globalShipAngle);
+        double off1y_rot_s = rotY(off1x_s, off1y_s, globalShipAngle);
+
+        double roundedAngle = convertAngleToGameLimits(globalShipAngle - templateTurnsShipAngle);
 
         //STEP 8: translation into place
-        shapeForOverlap2 = AffineTransform.
-                getTranslateInstance((int)off1x_rot_s + (int)off2x, (int)off1y_rot_s + (int)off2y).
-                createTransformedShape(shapeForOverlap2);
-        double roundedAngle2 = convertAngleToGameLimits(tAngle2);
-        shapeForOverlap2 = AffineTransform
-                .getRotateInstance(Math.toRadians(-roundedAngle2), (int)off1x_rot_s + (int)off2x, (int)off1y_rot_s + (int)off2y)
-                .createTransformedShape(shapeForOverlap2);
+        shapeForShip = AffineTransform.
+                getTranslateInstance((int) off1x_rot_s + (int) off2x, (int) off1y_rot_s + (int) off2y).
+                createTransformedShape(shapeForShip);
+        shapeForShip = AffineTransform
+                .getRotateInstance(Math.toRadians(-roundedAngle), (int) off1x_rot_s + (int) off2x,(int) off1y_rot_s + (int) off2y)
+                .createTransformedShape(shapeForShip);
 
-        //STEP 9: Check for overlap with obstacles and ships with the final ship position
-        List<BumpableWithShape> shipsOrObstacles = getBumpablesOnMap(true);
-
-        String yourShipName = getShipStringForReports(true, this.getProperty("Pilot Name").toString(), this.getProperty("Craft ID #").toString());
-        if(shapeForOverlap2 != null){
-
-            List<BumpableWithShape> overlappingShipOrObstacles = findCollidingEntities(shapeForOverlap2, shipsOrObstacles);
-
-            if(overlappingShipOrObstacles.size() > 0) {
-                for(BumpableWithShape bws : overlappingShipOrObstacles)
-                {
-                    previousCollisionVisualization.add(bws.shape);
-
-                    String overlapOnFinalWarn = "*** Warning: " + yourShipName + "'s final reposition location currently overlaps a Ship or Obstacle. You can attempt to move it into a legal position and check if it still overlaps with 'alt-c'.";
-                    if(bigCommand !=null) bigCommand.append(logToChatCommand(overlapOnFinalWarn));
-                    else bigCommand = logToChatCommand(overlapOnFinalWarn);
-                }
-                previousCollisionVisualization.add(shapeForOverlap2);
-                spawnTemplate = true; //we'll want the template
-            }
-        }
-
-        // STEP 9.5: Check for movement out of bounds
-        checkIfOutOfBounds(yourShipName, shapeForOverlap2);
-
-        //STEP 10: optional if there's any kind of overlap, produce both the template and initial ship position
-        if(spawnTemplate == true) {
-            //the template is needed, in case of any kind of overlap
-            if(bigCommand !=null) bigCommand.append(getMap().placeOrMerge(piece, new Point((int)off1x_rot + (int)off2x, (int)off1y_rot + (int)off2y)));
-            else bigCommand = getMap().placeOrMerge(piece, new Point((int)off1x_rot + (int)off2x, (int)off1y_rot + (int)off2y));
-            //clone the initial position
-            GamePiece myClone = PieceCloner.getInstance().clonePiece(Decorator.getOutermost(this));
-            bigCommand.append(getMap().placeOrMerge(myClone, new Point((int)off2x, (int)off2y)));
-        }
-        //STEP 11: reposition the ship
-        if(bigCommand != null) bigCommand.append(getMap().placeOrMerge(Decorator.getOutermost(this), new Point((int)off1x_rot_s + (int)off2x, (int)off1y_rot_s + (int)off2y)));
-        else bigCommand = getMap().placeOrMerge(Decorator.getOutermost(this), new Point((int)off1x_rot_s + (int)off2x, (int)off1y_rot_s + (int)off2y));
-        //check if the templates is needed as well, in case of any kind of overlap
-
-        return bigCommand;
+        return shapeForShip;
     }
 
-    private void checkIfOutOfBounds(String yourShipName, Shape shapeForOutOfBounds) {
+    private boolean checkIfOutOfBounds(String yourShipName, Shape shapeForOutOfBounds, boolean andSayIt, boolean wantShapes) {
         Rectangle mapArea = new Rectangle(0,0,0,0);
         try{
             Board b = getMap().getBoards().iterator().next();
@@ -572,10 +1020,14 @@ public class ShipReposition extends Decorator implements EditablePiece {
                 shapeForOutOfBounds.getBounds().getY() < mapArea.getBounds().getY()) // too far to the top
         {
 
-            logToChatWithTime("* -- " + yourShipName + " flew out of bounds");
-            this.previousCollisionVisualization.add(shapeForOutOfBounds);
+            if(andSayIt) logToChatWithTime("* -- " + yourShipName + " flew out of bounds");
+            if(wantShapes) this.previousCollisionVisualization.add(shapeForOutOfBounds);
+            return true;
         }
+
+        return false;
     }
+
 
     private Shape getCopyOfShapeWithoutActionsForOverlapCheck(GamePiece oldPiece,RepoManeuver repoTemplate ) {
         // Copy the old piece, but don't set the State
@@ -595,102 +1047,271 @@ public class ShipReposition extends Decorator implements EditablePiece {
         return newPiece.getShape();
     }
 
+
+    private void closeMouseListener(VASSAL.build.module.Map aMap, MouseListener aML){
+        aMap.removeLocalMouseListener(aML);
+    }
+
+    private void removeVisuals(VASSAL.build.module.Map aMapm){
+        for(repositionChoiceVisual r : rpcList){
+            aMapm.removeDrawComponent(r);
+        }
+        rpcList.clear();
+    }
+
+    public Command tripleChoiceDispatcher(int which, String pilotName){
+
+        if(!isATripleChoiceAllowed()) return null;
+
+        Command startIt = startTripleChoiceStopNewOnes();
+        List<RepoManeuver> repoChoices = Lists.newArrayList();
+        final VASSAL.build.module.Map theMap = MouseShipGUI.getTheMainMap();
+        String contemplatingPlayerName = getCurrentPlayer().getName();
+
+        StringBuilder sb = new StringBuilder("*--- ");
+        switch(which){
+            //barrel roll left 1
+            case 1:
+                sb.append(contemplatingPlayerName + " is contemplating 3 choices for barrel roll left for " + pilotName);
+                repoChoices = Lists.newArrayList(RepoManeuver.BR1_Left_AFAP_2E, RepoManeuver.BR1_Left_2E, RepoManeuver.BR1_Left_ABAP_2E);
+                break;
+            //barrel roll right 1
+            case 2:
+                sb.append(contemplatingPlayerName + " is contemplating 3 choices for barrel roll right for " + pilotName);
+                repoChoices = Lists.newArrayList(RepoManeuver.BR1_Right_AFAP_2E, RepoManeuver.BR1_Right_2E, RepoManeuver.BR1_Right_ABAP_2E);
+                break;
+            //barrel roll left 2 / decloak
+            case 3:
+                sb.append(contemplatingPlayerName + " is contemplating 3 choices for barrel roll 2 or decloak left for " + pilotName);
+                repoChoices = Lists.newArrayList(RepoManeuver.BR2_Left_AFAP_2E, RepoManeuver.BR2_Left_2E, RepoManeuver.BR2_Left_ABAP_2E);
+                break;
+            //barrel roll right 2 / decloak
+            case 4:
+                sb.append(contemplatingPlayerName + " is contemplating 3 choices for barrel roll 2 or decloak right for " + pilotName);
+                repoChoices = Lists.newArrayList(RepoManeuver.BR2_Right_AFAP_2E, RepoManeuver.BR2_Right_2E, RepoManeuver.BR2_Right_ABAP_2E);
+                break;
+            //SV barrel roll left, forward
+            case 5:
+                sb.append(contemplatingPlayerName + " is contemplating 3 choices for barrel roll left with forward bank for " + pilotName);
+                repoChoices = Lists.newArrayList(RepoManeuver.BR1_Left_BankF_AFAP_2E, RepoManeuver.BR1_Left_BankF_2E, RepoManeuver.BR1_Left_BankF_ABAP_2E);
+                break;
+            //SV barrel roll left, backward
+            case 6:
+                sb.append(contemplatingPlayerName + " is contemplating 3 choices for barrel roll left with backward bank for " + pilotName);
+                repoChoices = Lists.newArrayList(RepoManeuver.BR1_Left_BankB_AFAP_2E, RepoManeuver.BR1_Left_BankB_2E, RepoManeuver.BR1_Left_BankB_ABAP_2E);
+                break;
+            //SV barrel roll right, forward
+            case 7:
+                sb.append(contemplatingPlayerName + " is contemplating 3 choices for barrel roll right with forward bank for " + pilotName);
+                repoChoices = Lists.newArrayList(RepoManeuver.BR1_Right_BankF_AFAP_2E, RepoManeuver.BR1_Right_BankF_2E, RepoManeuver.BR1_Right_BankF_ABAP_2E);
+                break;
+            //SV barrel roll right, backward
+            case 8:
+                sb.append(contemplatingPlayerName + " is contemplating 3 choices for barrel roll right with backward bank for " + pilotName);
+                repoChoices = Lists.newArrayList(RepoManeuver.BR1_Right_BankB_AFAP_2E, RepoManeuver.BR1_Right_BankB_2E, RepoManeuver.BR1_Right_BankB_ABAP_2E);
+                break;
+            //echo decloak left, forward
+            case 9:
+                sb.append(contemplatingPlayerName + " is contemplating 3 choices for barrel roll left with forward bank 2 (Echo style decloak) for " + pilotName);
+                repoChoices = Lists.newArrayList(RepoManeuver.BR2_Left_BankF_AFAP_2E, RepoManeuver.BR2_Left_BankF_2E, RepoManeuver.BR2_Left_BankF_ABAP_2E);
+                break;
+            //echo decloak right, forward
+            case 10:
+                sb.append(contemplatingPlayerName + " is contemplating 3 choices for barrel roll right with forward bank 2 (Echo style decloak) for " + pilotName);
+                repoChoices = Lists.newArrayList(RepoManeuver.BR2_Right_BankF_AFAP_2E, RepoManeuver.BR2_Right_BankF_2E, RepoManeuver.BR2_Right_BankF_ABAP_2E);
+                break;
+            //echo decloak left, backward
+            case 11:
+                sb.append(contemplatingPlayerName + " is contemplating 3 choices for barrel roll left with backward bank 2 (Echo style decloak) for " + pilotName);
+                repoChoices = Lists.newArrayList(RepoManeuver.BR2_Left_BankB_AFAP_2E, RepoManeuver.BR2_Left_BankB_2E, RepoManeuver.BR2_Left_BankB_ABAP_2E);
+                break;
+            //echo decloak right, backward
+            case 12:
+                sb.append(contemplatingPlayerName + " is contemplating 3 choices for barrel roll right with backward bank 2 (Echo style decloak) for " + pilotName);
+                repoChoices = Lists.newArrayList(RepoManeuver.BR2_Right_BankB_AFAP_2E, RepoManeuver.BR2_Right_BankB_2E, RepoManeuver.BR2_Right_BankB_ABAP_2E);
+                break;
+            //Tallon Roll Left 1
+            //Tallon Roll Left 2
+            //Tallon Roll Left 3
+            //Tallon Roll Right 1
+            //Tallon Roll Right 2
+            //Tallon Roll Right 3
+            //Segnor's Loop Left 1
+            //Segnor's Loop Left 2
+            //Segnor's Loop Left 3
+            //Segnor's Loop Right 1
+            //Segnor's Loop Right 2
+            //Segnor's Loop Right 3
+        }
+
+        int nbOfRedDots = offerTripleChoices(repoChoices, true, theMap);
+        sb.append(". There are " + (3-nbOfRedDots) + " valid position"+(nbOfRedDots>1?"s":"")+" to pick from." );
+        if(startIt!=null) startIt.append(logToChatCommand(sb.toString()));
+        else startIt = logToChatCommand(sb.toString());
+        if(nbOfRedDots==-1) return null;
+        return startIt;
+    }
+    //used at the end of triple choice sequences. Lots less to deal with
+    public Command newNonKeyEvent(String choice){
+        previousCollisionVisualization = new MapVisualizations();
+        //Deal with ship repositioning, including overlap detection for the templates used, including the triple choice keystrokes that lead to a mouse GUI
+        RepoManeuver repoShip = getNewSystemRepoManeuver(choice);
+        //Ship reposition requested
+        if(repoShip != null) {
+            //detect that the ship's final position overlaps a ship or obstacle
+            Command repoCommand = repositionTheShip(repoShip ,true); //only exists for 2.0 so is2pointohShip is true
+            if(repoCommand == null) return null; //somehow did not get a programmed reposition command
+            else{
+                repoCommand.append(logToChatCommand("*** " + this.getProperty("Pilot Name").toString() +
+                        " has repositioned" + " with " + choice));
+
+                if(this.previousCollisionVisualization != null &&  this.previousCollisionVisualization.getShapes().size() > 0){
+                    repoCommand.append(previousCollisionVisualization);
+                }
+                repoCommand.execute();
+                GameModule.getGameModule().sendAndLog(repoCommand);
+                return null;
+            }
+            //detect that the template used overlaps an obstacle
+        } // end of dealing with ship repositions
+        return null;
+    }
+
     @Override
     public Command keyEvent(KeyStroke stroke) {
-
-        Boolean hasSomethingHappened  = false;
-
         //Test for 2.0 ship
         boolean is2pointohShip = this.getInner().getState().contains("this_is_2pointoh");
         //Any keystroke made on a ship will remove the orange shades
         previousCollisionVisualization = new MapVisualizations();
 
-        ChangeTracker changeTracker = new ChangeTracker(this);
-        Command result = changeTracker.getChangeCommand();
-        MoveTracker moveTracker = new MoveTracker(Decorator.getOutermost(this));
-        result.append(moveTracker.getMoveCommand());
-
+        //Deal with ALT-C, detect if there's something under the ship creating an overlap
         if (KeyStroke.getKeyStroke(KeyEvent.VK_C, KeyEvent.ALT_DOWN_MASK,false).equals(stroke)){
             List<BumpableWithShape> BWS = getBumpablesOnMap(true);
             Shape shipShape = getBumpableCompareShape(this);
             List<BumpableWithShape> overlappingObstacles = findCollidingEntities(shipShape, BWS);
             if(overlappingObstacles.size() > 0) {
-                hasSomethingHappened = true;
+                Command result = null;
                 for(BumpableWithShape bws : overlappingObstacles)
                 {
                     previousCollisionVisualization.add(bws.shape);
                     String yourShipName = getShipStringForReports(true, this.getProperty("Pilot Name").toString(), this.getProperty("Craft ID #").toString());
-                    logToChat("*** Warning: " + yourShipName + " overlaps a " + bws.type + ".");
+                    if(result==null) result = logToChatCommand("*** Warning: " + yourShipName + " overlaps a " + bws.type + ".");
+                    else result.append(logToChatCommand("*** Warning: " + yourShipName + " overlaps a " + bws.type + "."));
                 }
                 previousCollisionVisualization.add(shipShape);
+                if(this.previousCollisionVisualization != null &&  this.previousCollisionVisualization.getShapes().size() > 0){
+                    if(result==null) result = previousCollisionVisualization;
+                    else result.append(previousCollisionVisualization);
+                }
+                if(result!=null) {
+                    result.execute();
+                    GameModule.getGameModule().sendAndLog(result);
+                }
+                return null;
             }
             else {
                 String yourShipName = getShipStringForReports(true, this.getProperty("Pilot Name").toString(), this.getProperty("Craft ID #").toString());
                 logToChatWithTime(yourShipName + " does not overlap with an obstacle, ship or mine.");
+                return null;
             }
-        }
+        } //End of dealing with ALT-C
 
-
-        RepoManeuver repoTemplateDrop = getKeystrokeTemplateDrop(stroke, is2pointohShip);
-        if (repoTemplateDrop != null && stroke.isOnKeyRelease() == false) {
-            hasSomethingHappened = true;
-            Command tempCommand = spawnRepoTemplate(repoTemplateDrop);
-            result.append(tempCommand);
+        //Deal with a dropping of a maneuver. only exists for 1.0 now
+        RepoManeuver repoTemplateDrop = getKeystrokeTemplateDrop(stroke);
+        if (is2pointohShip == false && repoTemplateDrop != null && stroke.isOnKeyRelease() == false) {
+            Command result = spawnRepoTemplate(repoTemplateDrop);
 
             List<BumpableWithShape> obstacles = getBumpablesOnMap(false);
 
-
-            if(shapeForOverlap != null){
-                List<BumpableWithShape> overlappingObstacles = findCollidingEntities(shapeForOverlap, obstacles);
+            if(shapeForTemplate != null){
+                List<BumpableWithShape> overlappingObstacles = findCollidingEntities(shapeForTemplate, obstacles);
                 if(overlappingObstacles.size() > 0) {
                     for(BumpableWithShape bws : overlappingObstacles)
                     {
                         previousCollisionVisualization.add(bws.shape);
-                        logToChat("*** Warning: reposition template currently overlaps an obstacle");
+                        result.append(logToChatCommand("*** Warning: reposition template currently overlaps an obstacle"));
                     }
-                    previousCollisionVisualization.add(shapeForOverlap);
+                    previousCollisionVisualization.add(shapeForTemplate);
                 }
             }
-            result.append(piece.keyEvent(stroke));
-        }
+            if(this.previousCollisionVisualization != null &&  this.previousCollisionVisualization.getShapes().size() > 0){
+                result.append(previousCollisionVisualization);
+            }
+            result.execute();
+            GameModule.getGameModule().sendAndLog(result);
+            return null;
+        } // End of dropping a maneuver template
 
 
-
+        //Deal with ship repositioning, including overlap detection for the templates used, including the triple choice keystrokes that lead to a mouse GUI
         RepoManeuver repoShip = getKeystrokeRepoManeuver(stroke, is2pointohShip);
         //Ship reposition requested
         if(repoShip != null  && stroke.isOnKeyRelease() == false) {
-            hasSomethingHappened = true;
-            /*
-            if (this.previousCollisionVisualization != null && this.previousCollisionVisualization.getCount() > 0) {
-                getMap().removeDrawComponent(this.previousCollisionVisualization);
-                this.previousCollisionVisualization.shapes.clear();
-            }*/
-
             //detect that the ship's final position overlaps a ship or obstacle
             Command repoCommand = repositionTheShip(repoShip, is2pointohShip);
-            if(repoCommand == null) return piece.keyEvent(stroke);
+            if(repoCommand == null) return piece.keyEvent(stroke); //somehow did not get a programmed reposition command
             else{
-                result.append(repoCommand);
-                result.append(new Chatter.DisplayText(GameModule.getGameModule().getChatter(),"*** " + this.getProperty("Pilot Name").toString() +
+                repoCommand.append(logToChatCommand("*** " + this.getProperty("Pilot Name").toString() +
                         " has repositioned" + (is2pointohShip?" with " + getRepositionNameMappedToKeyStroke(stroke, true):"")));
-                //result.append(piece.keyEvent(stroke));
-                if(this.previousCollisionVisualization != null &&  this.previousCollisionVisualization.getShapes().size() > 0){
-                    result.append(previousCollisionVisualization);
-                    previousCollisionVisualization.execute();
 
+                if(this.previousCollisionVisualization != null &&  this.previousCollisionVisualization.getShapes().size() > 0){
+                    repoCommand.append(previousCollisionVisualization);
                 }
-                return result;
+                repoCommand.execute();
+                GameModule.getGameModule().sendAndLog(repoCommand);
+                return null;
             }
             //detect that the template used overlaps an obstacle
 
-        }
-        if(this.previousCollisionVisualization != null &&  this.previousCollisionVisualization.getShapes().size() > 0){
-            result.append(previousCollisionVisualization);
-            previousCollisionVisualization.execute();
-            return result;
-        }
-        if(hasSomethingHappened == true) return result;
+        } // end of dealing with ship repositions
+
+        //no wanted key event was detected, send it to other objects
         return piece.keyEvent(stroke);
+    }
+
+    private boolean isATripleChoiceAllowed() {
+        mic.Util.XWPlayerInfo playerInfo = getCurrentPlayer();
+        VASSAL.build.module.Map playerMap = getPlayerMap(playerInfo.getSide());
+        Boolean ret = Boolean.parseBoolean(playerMap.getProperty("clickChoice").toString());
+        if(ret) return false;
+        else return true;
+    }
+
+    private Command stopTripleChoiceMakeNextReady() {
+        Command result = null;
+        mic.Util.XWPlayerInfo playerInfo = getCurrentPlayer();
+        VASSAL.build.module.Map playerMap = getPlayerMap(playerInfo.getSide());
+        GamePiece[] pieces = playerMap.getAllPieces();
+        for(GamePiece p : pieces){
+            if(p.getName().equals("clickChoiceController")) {
+                result = p.keyEvent(KeyStroke.getKeyStroke(KeyEvent.VK_O, KeyEvent.CTRL_DOWN_MASK, false));
+                return result;
+            }
+        }
+        return result;
+    }
+
+    private Command startTripleChoiceStopNewOnes() {
+        Command result = null;
+        mic.Util.XWPlayerInfo playerInfo = getCurrentPlayer();
+        VASSAL.build.module.Map playerMap = getPlayerMap(playerInfo.getSide());
+        GamePiece[] pieces = playerMap.getAllPieces();
+        for(GamePiece p : pieces){
+            if(p.getName().equals("clickChoiceController")){
+                result = p.keyEvent(KeyStroke.getKeyStroke(KeyEvent.VK_A, KeyEvent.CTRL_DOWN_MASK, false));
+                return result;
+            }
+        }
+        return result;
+    }
+
+    private VASSAL.build.module.Map getPlayerMap(int playerIndex) {
+        for (VASSAL.build.module.Map loopMap : GameModule.getGameModule().getComponentsOf(VASSAL.build.module.Map.class)) {
+            if (("Player " + Integer.toString(playerIndex)).equals(loopMap.getMapName())) {
+                return loopMap;
+            }
+        }
+        return null;
     }
 
     private List<BumpableWithShape> findCollidingEntities(Shape myTestShape, List<BumpableWithShape> otherShapes) {
@@ -724,7 +1345,13 @@ public class ShipReposition extends Decorator implements EditablePiece {
                 bumpables.add(new BumpableWithShape((Decorator)piece,"Debris","2".equals(testFlipString), false));
             } else if (piece.getState().contains("this_is_a_bomb")) {
                 bumpables.add(new BumpableWithShape((Decorator)piece, "Mine", false, false));
-            } else if(wantShipsToo == true && piece.getState().contains("this_is_a_ship")){
+            } else if (piece.getState().contains("this_is_a_gascloud")) {
+                String testFlipString = "";
+                try{
+                    testFlipString = ((Decorator) piece).getDecorator(piece,piece.getClass()).getProperty("whichShape").toString();
+                } catch (Exception e) {}
+                bumpables.add(new BumpableWithShape((Decorator)piece, "GasCloud", "2".equals(testFlipString), false));
+            }else if(wantShipsToo == true && piece.getState().contains("this_is_a_ship")){
                 //MrMurphM
                 //    GamePiece newPiece = PieceCloner.getInstance().clonePiece(piece);
                 //    newPiece.setPosition(piece.getPosition());
@@ -767,19 +1394,12 @@ public class ShipReposition extends Decorator implements EditablePiece {
         return this.testRotator.getAngle();
     }
 
-    private RepoManeuver getKeystrokeTemplateDrop(KeyStroke keyStroke, boolean is2pointohShip) {
+    private RepoManeuver getKeystrokeTemplateDrop(KeyStroke keyStroke) {
         String hotKey = HotKeyConfigurer.getString(keyStroke);
-
-        if(is2pointohShip == false){
             if (keyStrokeToDropTemplate.containsKey(hotKey)) {
                 return keyStrokeToDropTemplate.get(hotKey);
             }
-        }
-        else {
-            if (keyStrokeToDropTemplate2e.containsKey(hotKey)) {
-                return keyStrokeToDropTemplate2e.get(hotKey);
-            }
-        }
+
         return null;
     }
 
@@ -813,6 +1433,14 @@ public class ShipReposition extends Decorator implements EditablePiece {
                 return keyStrokeToRepositionShip_2e.get(hotKey);
             }
         }
+        return null;
+    }
+
+    //There were too many hotkeys for the mouse GUI, so it uses names instead
+    private RepoManeuver getNewSystemRepoManeuver(String name) {
+        if (newNameToRepoManeuver.containsKey(name)) {
+            return newNameToRepoManeuver.get(name);
+            }
         return null;
     }
 
@@ -882,58 +1510,60 @@ public class ShipReposition extends Decorator implements EditablePiece {
         return this.piece.getName();
     }
 
-/*
-    private static class CollisionVisualization implements Drawable {
+    private static class repositionChoiceVisual implements Drawable {
+        Shape thePieceShape;
+        Shape theDot;
+        Boolean mouseOvered = false;
+        Color bumpColor = new Color(255,99,71, 60);
+        Color validColor = new Color(0,255,130, 60);
+        Color dotColor = new Color(255,255,200);
+        Color mouseOverColor = new Color(255,255,130);
+        Color dotOverlappedColor = new Color(255,0,0);
+        boolean isOverlapped = false;
+        KeyStroke theKey;
+        String inStringForm;
 
-        private final List<Shape> shapes;
-        private boolean tictoc = false;
-        Color myO = new Color(0, 255, 38, 150);
-
-        CollisionVisualization() {
-            this.shapes = new ArrayList<Shape>();
+        public repositionChoiceVisual(Shape translatedRotatedScaledShape, Shape centralDot, boolean wantOverlapColor, String choice){
+            thePieceShape = translatedRotatedScaledShape;
+            theDot = centralDot;
+            isOverlapped = wantOverlapColor;
+            inStringForm = choice;
         }
-        CollisionVisualization(Shape shipShape) {
-            this.shapes = new ArrayList<Shape>();
-            this.shapes.add(shipShape);
-        }
 
-        public void add(Shape bumpable) {
-            this.shapes.add(bumpable);
+        public void setMouseOvered(){
+            mouseOvered = true;
         }
+        public void unsetMouseOvered(){
+            mouseOvered = false;
+        }
+        public void draw(Graphics g, VASSAL.build.module.Map map) {
+            Graphics2D graphics2D = (Graphics2D) g;
 
-        public int getCount() {
-            int count = 0;
-            Iterator<Shape> it = this.shapes.iterator();
-            while(it.hasNext()) {
-                count++;
-                it.next();
+            AffineTransform scaler = AffineTransform.getScaleInstance(map.getZoom(), map.getZoom());
+
+            graphics2D.setColor(validColor);
+            graphics2D.fill(scaler.createTransformedShape(thePieceShape));
+            if(isOverlapped) graphics2D.setColor(dotOverlappedColor);
+            else graphics2D.setColor(dotColor);
+            graphics2D.fill(scaler.createTransformedShape(theDot));
+            if(mouseOvered){
+                graphics2D.setColor(mouseOverColor);
+                graphics2D.draw(theDot);
             }
-            return count;
-        }
-
-        public void draw(Graphics graphics, VASSAL.build.module.Map map) {
-            Graphics2D graphics2D = (Graphics2D) graphics;
-            if(tictoc == false)
-            {
-                graphics2D.setColor(myO);
-                AffineTransform scaler = AffineTransform.getScaleInstance(map.getZoom(), map.getZoom());
-                for (Shape shape : shapes) {
-                    graphics2D.fill(scaler.createTransformedShape(shape));
-                }
-                tictoc = true;
-            }
-            else {
-                map.getView().repaint();
-                tictoc = false;
-            }
-
-
-
         }
 
         public boolean drawAboveCounters() {
             return true;
         }
+
+        public KeyStroke getKeyStroke() {
+            return theKey;
+        }
+
+        public String getInStringForm() { return inStringForm; }
     }
-    */
+
+    public static ShipReposition findShipRepositionDecorator(GamePiece activatedPiece) {
+        return (ShipReposition)ShipReposition.getDecorator(activatedPiece,ShipReposition.class);
+    }
 }

@@ -21,7 +21,10 @@ public enum Obstacles {
     core2asteroid2("Asteroid 10"),
     core2asteroid3("Asteroid 8"),
     core2asteroid4("Asteroid 7"),
-    core2asteroid5("Asteroid 9");
+    core2asteroid5("Asteroid 9"),
+    gascloud1("Gas Cloud 1"),
+    gascloud2("Gas Cloud 2"),
+    gascloud3("Gas Cloud 3");
 
     private final String vassalName;
 

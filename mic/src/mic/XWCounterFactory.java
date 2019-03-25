@@ -14,8 +14,8 @@ public class XWCounterFactory extends BasicCommandEncoder {
         // This is only done here since this is something loaded early on
         // and I have no better idea of where it should go
         GameModule.getGameModule().addCommandEncoder(new MapVisualizations.CollsionVisualizationEncoder());
-        GameModule.getGameModule().addCommandEncoder(AutoRangeFinder.FOVisualization.AutorangeVisualizationEncoder.INSTANCE);
-        GameModule.getGameModule().addCommandEncoder(new AutoRangeFinder.FOVisualizationClear.FOVisualizationClearEncoder());
+        GameModule.getGameModule().addCommandEncoder(new FOVisualization.FOVisualizationEncoder());
+        GameModule.getGameModule().addCommandEncoder(new FOVisualizationClear.FOVisualizationClearEncoder());
         GameModule.getGameModule().addCommandEncoder(new StemDial.DialGenerateCommand.DialGeneratorEncoder());
         GameModule.getGameModule().addCommandEncoder(new DialRevealCommand.Dial2eRevealEncoder());
         GameModule.getGameModule().addCommandEncoder(new DialHideCommand.Dial2eHideEncoder());

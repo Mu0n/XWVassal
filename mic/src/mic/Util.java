@@ -156,7 +156,6 @@ public class Util {
             msg = String.format(msg, args);
         }
         Command c = new Chatter.DisplayText(GameModule.getGameModule().getChatter(), msg);
-        c.execute();
         return c;
     }
     public static GamePiece newPiece(PieceSlot slot) {
@@ -302,6 +301,42 @@ public class Util {
         return transformed;
     }
 
+
+    public static Shape getCenteredDot(Decorator bumpable, int which, Shape finalShipShape) {
+        float diameter = 50.0f;
+        float gapFromSide = 6.0f;
+
+        double scaleFactor = 1.0f;
+        double x=0.0f;
+        double y=0.0f;
+        switch(which){
+            case 1:
+                x = gapFromSide;
+                y = gapFromSide;
+                break;
+            case 2:
+                x = bumpable.getShape().getBounds().getMaxX() - gapFromSide;
+                y = bumpable.getShape().getBounds().getCenterY();
+                break;
+            case 3:
+                x = gapFromSide;
+                y = bumpable.getShape().getBounds().getMaxY() - gapFromSide;
+                break;
+        }
+        Shape dot = new Ellipse2D.Float(-diameter/2, -diameter/2, diameter, diameter);
+
+        Shape transformed = AffineTransform
+                .getTranslateInstance(bumpable.getPosition().x + x, bumpable.getPosition().y + y)
+                .createTransformedShape(dot);
+        FreeRotator rotator = (FreeRotator) (Decorator.getDecorator(Decorator.getOutermost(bumpable), FreeRotator.class));
+        double centerX = bumpable.getPosition().getX();
+        double centerY = bumpable.getPosition().getY();
+        transformed = AffineTransform
+                .getRotateInstance(rotator.getAngleInRadians(), centerX, centerY)
+                .createTransformedShape(transformed);
+
+        return transformed;
+    }
 
     public static Shape getRawShape(Decorator bumpable) {
         return Decorator.getDecorator(Decorator.getOutermost(bumpable), NonRectangular.class).getShape();
