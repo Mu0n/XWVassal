@@ -164,7 +164,7 @@ public class MouseShipGUI extends AbstractConfigurable {
                                         }
                                         //Second class of GUI-driven commands: Goes to a 2nd step with triple click choices:
                                         else if(elem.whichTripleChoice > 0) {
-                                            logToChatWithoutUndo("Please click on a dot to reposition the ship. White dots = legal position. Red dots = illegal obstructed positions.");
+                                            logToChatWithoutUndo("Please click on a dot to reposition the ship. White dots = legal position. Red dots = illegal obstructed positions. Click on empty space to cancel this.");
 
                                             e.consume();
                                             ShipReposition SR = ShipReposition.findShipRepositionDecorator(activatedPiece);
