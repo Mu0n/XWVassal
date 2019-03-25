@@ -168,7 +168,7 @@ public class MouseShipGUI extends AbstractConfigurable {
 
                                             e.consume();
                                             ShipReposition SR = ShipReposition.findShipRepositionDecorator(activatedPiece);
-                                            Command tripleChoiceCommand = SR.tripleChoiceDispatcher(elem.whichTripleChoice);
+                                            Command tripleChoiceCommand = SR.tripleChoiceDispatcher(elem.whichTripleChoice, activatedPiece.getProperty("Pilot Name").toString());
 
                                             tripleChoiceCommand.execute();
                                             GameModule.getGameModule().sendAndLog(tripleChoiceCommand);

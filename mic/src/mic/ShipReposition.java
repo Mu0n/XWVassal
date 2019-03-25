@@ -1059,7 +1059,7 @@ public class ShipReposition extends Decorator implements EditablePiece {
         rpcList.clear();
     }
 
-    public Command tripleChoiceDispatcher(int which){
+    public Command tripleChoiceDispatcher(int which, String pilotName){
 
         if(!isATripleChoiceAllowed()) return null;
 
@@ -1072,62 +1072,62 @@ public class ShipReposition extends Decorator implements EditablePiece {
         switch(which){
             //barrel roll left 1
             case 1:
-                sb.append(contemplatingPlayerName + " is contemplating 3 choices for barrel roll left");
+                sb.append(contemplatingPlayerName + " is contemplating 3 choices for barrel roll left for " + pilotName);
                 repoChoices = Lists.newArrayList(RepoManeuver.BR1_Left_AFAP_2E, RepoManeuver.BR1_Left_2E, RepoManeuver.BR1_Left_ABAP_2E);
                 break;
             //barrel roll right 1
             case 2:
-                sb.append(contemplatingPlayerName + " is contemplating 3 choices for barrel roll right");
+                sb.append(contemplatingPlayerName + " is contemplating 3 choices for barrel roll right for " + pilotName);
                 repoChoices = Lists.newArrayList(RepoManeuver.BR1_Right_AFAP_2E, RepoManeuver.BR1_Right_2E, RepoManeuver.BR1_Right_ABAP_2E);
                 break;
             //barrel roll left 2 / decloak
             case 3:
-                sb.append(contemplatingPlayerName + " is contemplating 3 choices for barrel roll 2 or decloak left");
+                sb.append(contemplatingPlayerName + " is contemplating 3 choices for barrel roll 2 or decloak left for " + pilotName);
                 repoChoices = Lists.newArrayList(RepoManeuver.BR2_Left_AFAP_2E, RepoManeuver.BR2_Left_2E, RepoManeuver.BR2_Left_ABAP_2E);
                 break;
             //barrel roll right 2 / decloak
             case 4:
-                sb.append(contemplatingPlayerName + " is contemplating 3 choices for barrel roll 2 or decloak right");
+                sb.append(contemplatingPlayerName + " is contemplating 3 choices for barrel roll 2 or decloak right for " + pilotName);
                 repoChoices = Lists.newArrayList(RepoManeuver.BR2_Right_AFAP_2E, RepoManeuver.BR2_Right_2E, RepoManeuver.BR2_Right_ABAP_2E);
                 break;
             //SV barrel roll left, forward
             case 5:
-                sb.append(contemplatingPlayerName + " is contemplating 3 choices for barrel roll left with forward bank");
+                sb.append(contemplatingPlayerName + " is contemplating 3 choices for barrel roll left with forward bank for " + pilotName);
                 repoChoices = Lists.newArrayList(RepoManeuver.BR1_Left_BankF_AFAP_2E, RepoManeuver.BR1_Left_BankF_2E, RepoManeuver.BR1_Left_BankF_ABAP_2E);
                 break;
             //SV barrel roll left, backward
             case 6:
-                sb.append(contemplatingPlayerName + " is contemplating 3 choices for barrel roll left with backward bank");
+                sb.append(contemplatingPlayerName + " is contemplating 3 choices for barrel roll left with backward bank for " + pilotName);
                 repoChoices = Lists.newArrayList(RepoManeuver.BR1_Left_BankB_AFAP_2E, RepoManeuver.BR1_Left_BankB_2E, RepoManeuver.BR1_Left_BankB_ABAP_2E);
                 break;
             //SV barrel roll right, forward
             case 7:
-                sb.append(contemplatingPlayerName + " is contemplating 3 choices for barrel roll right with forward bank");
+                sb.append(contemplatingPlayerName + " is contemplating 3 choices for barrel roll right with forward bank for " + pilotName);
                 repoChoices = Lists.newArrayList(RepoManeuver.BR1_Right_BankF_AFAP_2E, RepoManeuver.BR1_Right_BankF_2E, RepoManeuver.BR1_Right_BankF_ABAP_2E);
                 break;
             //SV barrel roll right, backward
             case 8:
-                sb.append(contemplatingPlayerName + " is contemplating 3 choices for barrel roll right with backward bank");
+                sb.append(contemplatingPlayerName + " is contemplating 3 choices for barrel roll right with backward bank for " + pilotName);
                 repoChoices = Lists.newArrayList(RepoManeuver.BR1_Right_BankB_AFAP_2E, RepoManeuver.BR1_Right_BankB_2E, RepoManeuver.BR1_Right_BankB_ABAP_2E);
                 break;
             //echo decloak left, forward
             case 9:
-                sb.append(contemplatingPlayerName + " is contemplating 3 choices for barrel roll left with forward bank 2 (Echo style decloak)");
+                sb.append(contemplatingPlayerName + " is contemplating 3 choices for barrel roll left with forward bank 2 (Echo style decloak) for " + pilotName);
                 repoChoices = Lists.newArrayList(RepoManeuver.BR2_Left_BankF_AFAP_2E, RepoManeuver.BR2_Left_BankF_2E, RepoManeuver.BR2_Left_BankF_ABAP_2E);
                 break;
             //echo decloak right, forward
             case 10:
-                sb.append(contemplatingPlayerName + " is contemplating 3 choices for barrel roll right with forward bank 2 (Echo style decloak)");
+                sb.append(contemplatingPlayerName + " is contemplating 3 choices for barrel roll right with forward bank 2 (Echo style decloak) for " + pilotName);
                 repoChoices = Lists.newArrayList(RepoManeuver.BR2_Right_BankF_AFAP_2E, RepoManeuver.BR2_Right_BankF_2E, RepoManeuver.BR2_Right_BankF_ABAP_2E);
                 break;
             //echo decloak left, backward
             case 11:
-                sb.append(contemplatingPlayerName + " is contemplating 3 choices for barrel roll left with backward bank 2 (Echo style decloak)");
+                sb.append(contemplatingPlayerName + " is contemplating 3 choices for barrel roll left with backward bank 2 (Echo style decloak) for " + pilotName);
                 repoChoices = Lists.newArrayList(RepoManeuver.BR2_Left_BankB_AFAP_2E, RepoManeuver.BR2_Left_BankB_2E, RepoManeuver.BR2_Left_BankB_ABAP_2E);
                 break;
             //echo decloak right, backward
             case 12:
-                sb.append(contemplatingPlayerName + " is contemplating 3 choices for barrel roll right with backward bank 2 (Echo style decloak)");
+                sb.append(contemplatingPlayerName + " is contemplating 3 choices for barrel roll right with backward bank 2 (Echo style decloak) for " + pilotName);
                 repoChoices = Lists.newArrayList(RepoManeuver.BR2_Right_BankB_AFAP_2E, RepoManeuver.BR2_Right_BankB_2E, RepoManeuver.BR2_Right_BankB_ABAP_2E);
                 break;
             //Tallon Roll Left 1
