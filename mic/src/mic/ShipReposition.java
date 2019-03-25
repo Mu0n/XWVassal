@@ -1146,7 +1146,8 @@ public class ShipReposition extends Decorator implements EditablePiece {
 
         int nbOfRedDots = offerTripleChoices(repoChoices, true, theMap);
         sb.append(". There are " + (3-nbOfRedDots) + " valid position"+(nbOfRedDots>1?"s":"")+" to pick from." );
-        startIt.append(logToChatCommand(sb.toString()));
+        if(startIt!=null) startIt.append(logToChatCommand(sb.toString()));
+        else startIt = logToChatCommand(sb.toString());
         if(nbOfRedDots==-1) return null;
         return startIt;
     }
