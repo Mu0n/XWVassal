@@ -385,11 +385,11 @@ public class BumpableWithShape {
         double centerY = bumpable.getPosition().getY();
 
         FreeRotator testRotator = new FreeRotator("rotate;360;;;;;;;", null);
-        testRotator.setAngle(rotator.getAngleInRadians());
+        testRotator.setAngle(rotator.getAngle());
 
 
         transformed = AffineTransform
-                .getRotateInstance(testRotator.getAngle(), centerX, centerY)
+                .getRotateInstance(-Math.toRadians(testRotator.getAngle()), centerX, centerY)
                 .createTransformedShape(transformed);
 
         return transformed;
@@ -402,10 +402,15 @@ public class BumpableWithShape {
                 .createTransformedShape(transformed);
 
         FreeRotator rotator = (FreeRotator) (Decorator.getDecorator(Decorator.getOutermost(bumpable), FreeRotator.class));
+
+        FreeRotator testRotator = new FreeRotator("rotate;360;;;;;;;", null);
+        testRotator.setAngle(rotator.getAngle());
+
+
         double centerX = bumpable.getPosition().getX();
         double centerY = bumpable.getPosition().getY();
         transformed = AffineTransform
-                .getRotateInstance(rotator.getAngleInRadians(), centerX, centerY)
+                .getRotateInstance(-Math.toRadians(testRotator.getAngle()), centerX, centerY)
                 .createTransformedShape(transformed);
 
         return transformed;
