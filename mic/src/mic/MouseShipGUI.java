@@ -118,8 +118,9 @@ public class MouseShipGUI extends AbstractConfigurable {
             }
 
             public void mousePressed(MouseEvent e) {
-                //Restrict to control-clicks. May get removed in the future
-                //if(!e.isControlDown()) return;
+                //if a popup isn't up yet, restrict this whole thing to ctrl-clicks to activate it
+                if(!e.isControlDown() && activatedPiece == null) return;
+                if(e.isConsumed()) return;
                 //Process only clicks that have enough elapsed time since the last click (the barrel roll GUI must have this as well)
                 mic.Util.XWPlayerInfo playerInfo = getCurrentPlayer();
                 if(canAClickBeProcessed(playerInfo.getSide())==false) return;
@@ -178,6 +179,7 @@ public class MouseShipGUI extends AbstractConfigurable {
                             //save this ship and popup Drawable for future behavior
                             activatedPiece = ship;
                             lastPopup=msgd;
+                            e.consume();
                             break;
                         }
                         else{ // clicked outside of a ship, check first if you clicked one of the areas
@@ -200,6 +202,7 @@ public class MouseShipGUI extends AbstractConfigurable {
                                             if(lastPopup!=null) {
                                                 theMap.removeDrawComponent(lastPopup);
                                                 lastPopup=null;
+                                                e.consume();
                                             }
                                             return;
                                         }
@@ -217,10 +220,12 @@ public class MouseShipGUI extends AbstractConfigurable {
                                             logToChat("Please click on a dot to reposition the ship. White dots = legal position. Red dots = illegal obstructed positions.");
                                             moveShipCommand.execute();
                                             GameModule.getGameModule().sendAndLog(moveShipCommand);
+                                            e.consume();
                                         } else{
                                             logToChat("*-- Error: failed to execute a mouse GUI command.");
                                             theMap.removeDrawComponent(lastPopup);
                                             lastPopup=null;
+                                            e.consume();
                                         }
                                         break;
                                     }

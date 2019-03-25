@@ -154,10 +154,10 @@ public class MouseShipGUIDrawable implements Drawable {
 
         cursorX += hullGfx.image.getWidth() + addHull.image.getWidth() + removeHull.image.getWidth();
 
-        miElement closeGfx = new miElement("mi_close.png",  ulX + cursorX, ulY + padY, null, -66);
+        miElement closeGfx = new miElement("mi_close.png",  ulX + cursorX + padX, ulY + padY, null, -66);
         listOfInteractiveElements.add(closeGfx);
 
-        cursorX += closeGfx.image.getWidth();
+        cursorX += closeGfx.image.getWidth() + padX;
 
         if(shipGfx !=null && shipGfx.image!=null) cursorY += shipGfx.image.getHeight();
         else cursorY += 3*brIconLeft.image.getHeight();
