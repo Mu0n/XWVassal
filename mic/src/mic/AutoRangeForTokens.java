@@ -65,7 +65,6 @@ public class AutoRangeForTokens extends Decorator implements EditablePiece {
             .put("CTRL SHIFT O", findObstacles) //find only obstacles
             .build();
 
-
     public AutoRangeForTokens() {
         this(null);
     }
@@ -133,6 +132,13 @@ public class AutoRangeForTokens extends Decorator implements EditablePiece {
             //add the obstacles to the detection
             if(whichOption == findObstacles || whichOption == findObstaclesShips) {
             }
+
+            Command resultCommand = makeBigAnnounceCommand(bigAnnounce, rfindings);
+            if(resultCommand!=null) {
+                resultCommand.execute();
+                GameModule.getGameModule().sendAndLog(resultCommand);
+                return null;
+            }
         }
 
         return piece.keyEvent(stroke); //did not find anything worth react to, so send back the key for others to deal with it
@@ -186,6 +192,44 @@ public class AutoRangeForTokens extends Decorator implements EditablePiece {
                 break;
         }
     }
+    private Command makeBigAnnounceCommand(String bigAnnounce, ArrayList<AutoRangeFinder.RangeFindings> rfindings) {
+        String range1String = "";
+        String range2String = "";
+        String range3String = "";
+        String range0String = "";
+
+        boolean hasR1 = false;
+        boolean hasR2 = false;
+        boolean hasR3 = false;
+        boolean hasR0 = false;
+
+        for (AutoRangeFinder.RangeFindings rf : rfindings) {
+            if (rf.range == 0) {
+                hasR0 = true;
+                range0String += rf.fullName;
+            }
+            if (rf.range == 1) {
+                hasR1 = true;
+                range1String += rf.fullName;
+            }
+            if (rf.range == 2) {
+                hasR2 = true;
+                range2String += rf.fullName;
+            }
+            if (rf.range == 3) {
+                hasR3 = true;
+                range3String += rf.fullName;
+            }
+        }
+
+        String result = bigAnnounce + (hasR0 ? "*** Range 0: " + range0String + "\n" : "") +
+                (hasR1 ? "*** Range 1: " + range1String + "\n" : "") +
+                (hasR2 ? "*** Range 2: " + range2String + "\n" : "") +
+                (hasR3 ? "*** Range 3: " + range3String + "\n" : "");
+        if (hasR0 == false && hasR1 == false && hasR2 == false && hasR3 == false) result = "Nothing in range.";
+
+        return logToChatCommand(result);
+    }
     private List<BumpableWithShape> getOtherShipsOnMap() {
         List<BumpableWithShape> ships = Lists.newArrayList();
 
@@ -199,6 +243,7 @@ public class AutoRangeForTokens extends Decorator implements EditablePiece {
         }
         return ships;
     }
+
 
     public String getDescription() {
         return "Custom range detection for tokens (mic.AutoRangeForTokens)";
