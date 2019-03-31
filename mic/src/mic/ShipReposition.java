@@ -757,7 +757,7 @@ public class ShipReposition extends Decorator implements EditablePiece {
                     if(theChosenOne != null){
                         removeVisuals(finalMap);
                         Command endIt = stopTripleChoiceMakeNextReady();
-                        endIt.execute();
+                        if(endIt!=null) endIt.execute();
                         //Change this line to another function that can deal with strings instead
                         //shipToReposition.keyEvent(theChosenOne.getKeyStroke());
                         ShipReposition SR = findShipRepositionDecorator(shipToReposition);
@@ -767,7 +767,10 @@ public class ShipReposition extends Decorator implements EditablePiece {
                         return;
                     }
                 }catch(Exception exce){
+                    removeVisuals(finalMap);
                     logToChat("caught an exception while resolving ship reposition");
+                    closeMouseListener(finalMap, ml);
+                    return;
                 }
 
                 if(slightMisclick) return; //misclick outside of a dot, but inside the ship shapes, do nothing, don't dismiss the GUI
@@ -775,7 +778,7 @@ public class ShipReposition extends Decorator implements EditablePiece {
                     removeVisuals(finalMap);
                     Command stopItAll = stopTripleChoiceMakeNextReady();
                     String stoppingPlayerName = getCurrentPlayer().getName();
-                    stopItAll.execute();
+                    if(stopItAll!=null) stopItAll.execute();
                     logToChat("*-- " + stoppingPlayerName + " is cancelling a reposition");
 
                     closeMouseListener(finalMap, ml);
