@@ -65,6 +65,10 @@ public class AutoRangeForTokens extends Decorator implements EditablePiece {
             .put("CTRL SHIFT O", findObstacles) //find only obstacles
             .build();
 
+
+    public AutoRangeForTokens() {
+        this(null);
+    }
     public AutoRangeForTokens(GamePiece piece) {
         setInner(piece);
         this.testRotator = new FreeRotator("rotate;360;;;;;;;", null);
