@@ -81,11 +81,11 @@ public class AutoRangeForTokens extends Decorator implements EditablePiece {
     }
 
     public String myGetState() {
-        return null;
+        return "";
     }
 
     public String myGetType() {
-        return null;
+        return ID;
     }
 
     private int getKeystrokeToOptions(KeyStroke keyStroke) {
