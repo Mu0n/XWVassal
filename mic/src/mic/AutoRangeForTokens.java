@@ -25,21 +25,18 @@ import static mic.Util.rotY;
  */
 
 enum ImagesUsedForRanges {
-    ProbeDroid("DRK-1 Probe Droid","Probe-range1","Probe-range2","Probe-range");
+    ProbeDroid("Probe-range1","Probe-range2","Probe-range");
 
-    private final String pieceName;
     private final String r1Img;
     private final String r2Img;
     private final String r3Img;
 
-    ImagesUsedForRanges(String pName, String r1, String r2, String r3){
-        pieceName = pName;
+    ImagesUsedForRanges(String r1, String r2, String r3){
         r1Img = r1;
         r2Img = r2;
         r3Img = r3;
     }
 
-    public String getPieceName(){ return pieceName; }
     public String getR1Img(){ return r1Img; }
     public String getR2Img(){ return r2Img; }
     public String getR3Img(){ return r3Img; }
@@ -63,6 +60,9 @@ public class AutoRangeForTokens extends Decorator implements EditablePiece {
             .put("CTRL SHIFT L", findObstaclesShips) //find obstacles and ships
             .put("CTRL SHIFT S", findShips) //find only ships
             .put("CTRL SHIFT O", findObstacles) //find only obstacles
+            .build();
+    private static Map<String, ImagesUsedForRanges> pieceNameToImgs = ImmutableMap.<String, ImagesUsedForRanges>builder()
+            .put("DRK-1 Probe Droid", ImagesUsedForRanges.ProbeDroid)
             .build();
 
     public AutoRangeForTokens() {
@@ -94,6 +94,22 @@ public class AutoRangeForTokens extends Decorator implements EditablePiece {
         }
         return -1;
     }
+    private String getAssociatedImage(String name, int range){
+        if(pieceNameToImgs.containsKey(name)){
+            switch(range){
+                case 1:
+                    return pieceNameToImgs.get(name).getR1Img() +".png";
+                    break;
+                case 2:
+                    return pieceNameToImgs.get(name).getR2Img() +".png";
+                    break;
+                case 3:
+                default:
+                    return pieceNameToImgs.get(name).getR3Img() +".png";
+                    break;
+            }
+        }
+    }
 
     protected KeyCommand[] myGetKeyCommands() {
         return new KeyCommand[0];
@@ -115,6 +131,9 @@ public class AutoRangeForTokens extends Decorator implements EditablePiece {
         if(whichOption != -1){
             prepAnnouncementStart();
             Shape shapeOfPieceItself = this.piece.getShape();
+            Shape shapeForRange1 = repositionedOriginShape(getAssociatedImage(this.piece.getName(),1));
+            Shape shapeForRange2 = repositionedOriginShape(getAssociatedImage(this.piece.getName(),2));
+            Shape shapeForRange3 = repositionedOriginShape(getAssociatedImage(this.piece.getName(),3));
 
             //add the ships to the detection
             if(whichOption == findShips || whichOption == findObstaclesShips) {
@@ -124,8 +143,25 @@ public class AutoRangeForTokens extends Decorator implements EditablePiece {
                 //Loop over every other target ship
                 List<BumpableWithShape> BWS = getOtherShipsOnMap();
                 for (BumpableWithShape b : BWS) {
-                    //Preliminary check, eliminate attempt to calculate this if the target is overlapping the attacker, could lead to exception error
-                    if (shapesOverlap(shapeOfPieceItself, b.shape)) rfindings.add(new RangeFindings(0, "a ship"));
+                    //Range 0 check
+                    if (shapesOverlap(shapeOfPieceItself, b.shape)) {
+                        rfindings.add(new RangeFindings(0, b.pilotName));
+                        continue;
+                    }
+                    //Range 1 check
+                    if(shapesOverlap(shapeForRange1, b.shape)){
+                        rfindings.add(new RangeFindings(1, b.pilotName));
+                        continue;
+                    }
+                    //Range 2 check
+                    if(shapesOverlap(shapeForRange2,  b.shape)){
+                        rfindings.add(new RangeFindings(2, b.pilotName));
+                        continue;
+                    }
+                    //Range 3 check
+                    if(shapesOverlap(shapeForRange3, b.shape)){
+                        rfindings.add(new RangeFindings(3, b.pilotName));
+                    }
                 }
             }
 
@@ -133,18 +169,14 @@ public class AutoRangeForTokens extends Decorator implements EditablePiece {
             if(whichOption == findObstacles || whichOption == findObstaclesShips) {
             }
 
-            Command resultCommand = makeBigAnnounceCommand(bigAnnounce, rfindings);
-            if(resultCommand!=null) {
-                resultCommand.execute();
-                GameModule.getGameModule().sendAndLog(resultCommand);
-                return null;
-            }
+            makeBigAnnounceCommand(bigAnnounce, rfindings);
+
         }
 
         return piece.keyEvent(stroke); //did not find anything worth react to, so send back the key for others to deal with it
     }
-    private Shape repositionedOriginShape(ImagesUsedForRanges iufr){
-        Shape finalShape = Util.getImageShape(iufr.getR1Img() + ".png");
+    private Shape repositionedOriginShape(String fileName){
+        Shape finalShape = Util.getImageShape(fileName);
 
         //Info Gathering: gets the angle from repoTemplate which deals with degrees, local space with ship at 0,0, pointing up
         //double globalShipAngle = this.getRotator().getAngle(); //ship angle
@@ -192,7 +224,7 @@ public class AutoRangeForTokens extends Decorator implements EditablePiece {
                 break;
         }
     }
-    private Command makeBigAnnounceCommand(String bigAnnounce, ArrayList<RangeFindings> rfindings) {
+    private void makeBigAnnounceCommand(String bigAnnounce, ArrayList<RangeFindings> rfindings) {
         String range1String = "";
         String range2String = "";
         String range3String = "";
@@ -228,7 +260,7 @@ public class AutoRangeForTokens extends Decorator implements EditablePiece {
                 (hasR3 ? "*** Range 3: " + range3String + "\n" : "");
         if (hasR0 == false && hasR1 == false && hasR2 == false && hasR3 == false) result = "Nothing in range.";
 
-        return logToChatCommand(result);
+        logToChat(result);
     }
     private List<BumpableWithShape> getOtherShipsOnMap() {
         List<BumpableWithShape> ships = Lists.newArrayList();
