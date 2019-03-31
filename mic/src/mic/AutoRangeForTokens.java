@@ -197,7 +197,7 @@ public class AutoRangeForTokens extends Decorator implements EditablePiece {
     }
 
     public String getDescription() {
-        return null;
+        return "Custom range detection for tokens (mic.AutoRangeForTokens)";
     }
 
     public void mySetType(String type) {
