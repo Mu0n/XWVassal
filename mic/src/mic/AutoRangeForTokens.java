@@ -57,7 +57,7 @@ public class AutoRangeForTokens extends Decorator implements EditablePiece {
 
     int whichOption = -1; //which autorange option. See the Map above. -1 if none is selected.
 
-    public static final String ID = "auto-range-finder-for-obstacles";
+    public static final String ID = "RangeForObstacles";
 
     private static Map<String, Integer> keyStrokeToOptions = ImmutableMap.<String, Integer>builder()
             .put("CTRL SHIFT L", findObstaclesShips) //find obstacles and ships
@@ -105,7 +105,7 @@ public class AutoRangeForTokens extends Decorator implements EditablePiece {
 
     public Command keyEvent(KeyStroke stroke) {
 
-        ArrayList<AutoRangeFinder.RangeFindings> rfindings = new ArrayList<AutoRangeFinder.RangeFindings>(); //findings compiled here
+        ArrayList<RangeFindings> rfindings = new ArrayList<RangeFindings>(); //findings compiled here
 
         // check to see if the this code needs to respond to the event
         //identify which autorange option was used by using the static Map defined above in the globals, store it in an int
@@ -125,7 +125,7 @@ public class AutoRangeForTokens extends Decorator implements EditablePiece {
                 List<BumpableWithShape> BWS = getOtherShipsOnMap();
                 for (BumpableWithShape b : BWS) {
                     //Preliminary check, eliminate attempt to calculate this if the target is overlapping the attacker, could lead to exception error
-                    if (shapesOverlap(shapeOfPieceItself, b.shape)) rfindings.add(new AutoRangeFinder.RangeFindings(0, "a ship"));
+                    if (shapesOverlap(shapeOfPieceItself, b.shape)) rfindings.add(new RangeFindings(0, "a ship"));
                 }
             }
 
@@ -192,7 +192,7 @@ public class AutoRangeForTokens extends Decorator implements EditablePiece {
                 break;
         }
     }
-    private Command makeBigAnnounceCommand(String bigAnnounce, ArrayList<AutoRangeFinder.RangeFindings> rfindings) {
+    private Command makeBigAnnounceCommand(String bigAnnounce, ArrayList<RangeFindings> rfindings) {
         String range1String = "";
         String range2String = "";
         String range3String = "";
@@ -203,7 +203,7 @@ public class AutoRangeForTokens extends Decorator implements EditablePiece {
         boolean hasR3 = false;
         boolean hasR0 = false;
 
-        for (AutoRangeFinder.RangeFindings rf : rfindings) {
+        for (RangeFindings rf : rfindings) {
             if (rf.range == 0) {
                 hasR0 = true;
                 range0String += rf.fullName;
@@ -272,4 +272,19 @@ public class AutoRangeForTokens extends Decorator implements EditablePiece {
     public String getName() {
         return this.piece.getName();
     }
+
+    public static class RangeFindings {
+        public int range=0;
+        public String fullName="";
+        public boolean isObstructed=false;
+
+        public RangeFindings(){ /* To allow serizliation */ }
+        public RangeFindings(int range, String fullName){
+            this.fullName = fullName;
+            this.range = range;
+            this.isObstructed = false;
+        }
+    }
+
+
 }
