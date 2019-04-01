@@ -110,6 +110,7 @@ public class BumpableWithShape {
         this.shape = wantFlip ? getBumpableCompareShapeButFlip(bumpable) : getBumpableCompareShape(bumpable);
         this.type = type;
         this.chassis = figureOutChassis(is2pointoh);
+        this.pilotName = Decorator.getInnermost(bumpable).getName();
     }
     BumpableWithShape(Decorator bumpable, String type, String pilotName, String shipName, boolean is2pointoh) {
         this.bumpable = bumpable;

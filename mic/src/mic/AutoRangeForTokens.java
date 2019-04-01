@@ -55,6 +55,7 @@ public class AutoRangeForTokens extends Decorator implements EditablePiece {
 
     String bigAnnounce = "";
     private final FreeRotator testRotator;
+    private FreeRotator myRotator = null;
 
     int whichOption = -1; //which autorange option. See the Map above. -1 if none is selected.
 
@@ -138,13 +139,13 @@ public class AutoRangeForTokens extends Decorator implements EditablePiece {
             prepAnnouncementStart();
             Shape shapeOfPieceItself = getRawShape(this);;
 
+            Shape tShapeR0 = getTransformedShape(shapeOfPieceItself);
+            Shape tShapeR1 = getTransformedShape(shapeForRange1);
+            Shape tShapeR2 = getTransformedShape(shapeForRange2);
+            Shape tShapeR3 = getTransformedShape(shapeForRange3);
+
             //add the ships to the detection
             if(whichOption == findShips || whichOption == findObstaclesShips) {
-
-                Shape tShapeR0 = getTransformedShape(shapeOfPieceItself);
-                Shape tShapeR1 = getTransformedShape(shapeForRange1);
-                Shape tShapeR2 = getTransformedShape(shapeForRange2);
-                Shape tShapeR3 = getTransformedShape(shapeForRange3);
 
                 //Loop over every other target ship
                 List<BumpableWithShape> BWS = getOtherShipsOnMap();
@@ -173,6 +174,29 @@ public class AutoRangeForTokens extends Decorator implements EditablePiece {
 
             //add the obstacles to the detection
             if(whichOption == findObstacles || whichOption == findObstaclesShips) {
+                //Loop over every other target ship
+                List<BumpableWithShape> BWS = getBumpablesOnMap(false);
+                for (BumpableWithShape b : BWS) {
+                    //Range 0 check
+                    if (shapesOverlap(tShapeR0, b.shape)) {
+                        rfindings.add(new RangeFindings(0, b.pilotName));
+                        continue;
+                    }
+                    //Range 1 check
+                    if(shapeForRange1 !=null && shapesOverlap(tShapeR1, b.shape)){
+                        rfindings.add(new RangeFindings(1, b.pilotName));
+                        continue;
+                    }
+                    //Range 2 check
+                    if(shapeForRange2 !=null && shapesOverlap(tShapeR2,  b.shape)){
+                        rfindings.add(new RangeFindings(2, b.pilotName));
+                        continue;
+                    }
+                    //Range 3 check
+                    if(shapeForRange3 !=null && shapesOverlap(tShapeR3, b.shape)){
+                        rfindings.add(new RangeFindings(3, b.pilotName));
+                    }
+                }
             }
 
             makeBigAnnounceCommand(bigAnnounce, rfindings);
@@ -181,6 +205,55 @@ public class AutoRangeForTokens extends Decorator implements EditablePiece {
         return piece.keyEvent(stroke); //did not find anything worth react to, so send back the key for others to deal with it
     }
 
+    private List<BumpableWithShape> getBumpablesOnMap(Boolean wantShipsToo) {
+
+        List<BumpableWithShape> bumpables = Lists.newArrayList();
+
+        GamePiece[] pieces = getMap().getAllPieces();
+        for (GamePiece piece : pieces) {
+            if (piece.getState().contains("this_is_an_asteroid")) {
+                // comment out this line and the next three that add to bumpables if bumps other than with ships shouldn't be detected yet
+                String testFlipString = "";
+                try{
+                    testFlipString = ((Decorator) piece).getDecorator(piece,piece.getClass()).getProperty("whichShape").toString();
+                } catch (Exception e) {}
+                bumpables.add(new BumpableWithShape((Decorator)piece, "Asteroid", "2".equals(testFlipString), false));
+            } else if (piece.getState().contains("this_is_a_debris")) {
+                String testFlipString = "";
+                try{
+                    testFlipString = ((Decorator) piece).getDecorator(piece,piece.getClass()).getProperty("whichShape").toString();
+                } catch (Exception e) {}
+                bumpables.add(new BumpableWithShape((Decorator)piece,"Debris","2".equals(testFlipString), false));
+            } else if (piece.getState().contains("this_is_a_bomb")) {
+                bumpables.add(new BumpableWithShape((Decorator)piece, "Mine", false, false));
+            } else if (piece.getState().contains("this_is_a_gascloud")) {
+                String testFlipString = "";
+                try{
+                    testFlipString = ((Decorator) piece).getDecorator(piece,piece.getClass()).getProperty("whichShape").toString();
+                } catch (Exception e) {}
+                bumpables.add(new BumpableWithShape((Decorator)piece, "GasCloud", "2".equals(testFlipString), false));
+            }else if (piece.getState().contains("this_is_a_remote")) {
+                String testFlipString = "";
+                try{
+                    testFlipString = ((Decorator) piece).getDecorator(piece,piece.getClass()).getProperty("whichShape").toString();
+                } catch (Exception e) {}
+                bumpables.add(new BumpableWithShape((Decorator)piece, "Remote", "2".equals(testFlipString), false));
+            }else if(wantShipsToo == true && piece.getState().contains("this_is_a_ship")){
+                //MrMurphM
+                //    GamePiece newPiece = PieceCloner.getInstance().clonePiece(piece);
+                //    newPiece.setPosition(piece.getPosition());
+                //END
+                BumpableWithShape tentativeBumpable = new BumpableWithShape((Decorator)piece, "Ship",false,
+                        this.getInner().getState().contains("this_is_2pointoh"));
+                if (getId().equals(tentativeBumpable.bumpable.getId())) {
+                    continue;
+                }
+                bumpables.add(tentativeBumpable);
+
+            }
+        }
+        return bumpables;
+    }
     private void verifyBasicShapes() {
         if(shapeForRange1==null || shapeForRange2 ==null || shapeForRange3 ==null) logToChat("* -- Generating shapes for the first range check of this token, this will take a few seconds (and will only be done the first time).");
 
@@ -208,7 +281,7 @@ public class AutoRangeForTokens extends Decorator implements EditablePiece {
 
     private Shape getTransformedShape(Shape rawShape){
         //Info Gathering: gets the angle from repoTemplate which deals with degrees, local space with ship at 0,0, pointing up
-        double globalShipAngle = this.testRotator.getAngle(); //ship angle
+        double globalShipAngle = getRotator().getAngle(); //ship angle
 
         //Step 1: Translation
         double offx = this.getPosition().getX();
@@ -230,7 +303,12 @@ public class AutoRangeForTokens extends Decorator implements EditablePiece {
         this.testRotator.setAngle(angle);
         return this.testRotator.getAngle();
     }
-
+    private FreeRotator getRotator() {
+        if (this.myRotator == null) {
+            this.myRotator = ((FreeRotator) Decorator.getDecorator(getOutermost(this), FreeRotator.class));
+        }
+        return this.myRotator;
+    }
     private void prepAnnouncementStart() {
         //prepares the initial part of the chat window string that announces the firing options
         //bigAnnounce = "*** Calculating ranges from " + this.piece.getName() + " to ";
