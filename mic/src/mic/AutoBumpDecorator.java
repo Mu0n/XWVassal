@@ -243,7 +243,7 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
             //don't check for collisions in windows other than the main map
             if(!"Contested Sector".equals(getMap().getMapName())) return innerCommand;
 
-            innerCommand.append(logToChatWithTimeCommand("* --- " + yourShipName + " performs move: " + path.getFullName()));
+            innerCommand.append(logToChatWithTimeCommandNoExecute("* --- " + yourShipName + " performs move: " + path.getFullName()));
 
             //Check for template shape overlap with mines, asteroids, debris
             checkTemplateOverlap(lastMoveShapeUsed, otherBumpableShapes);
