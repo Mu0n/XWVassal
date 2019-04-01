@@ -26,7 +26,28 @@ enum ImagesUsedForRanges {
     GasCloud1("Gascloud1_r1","Gascloud1_r2","Gascloud1_TL"),
     GasCloud2("Gascloud2_r1","Gascloud2_r2","Gascloud2_TL"),
     GasCloud3("Gascloud3_r1","Gascloud3_r2","Gascloud3_TL"),
-    BuzzDroid("","","");
+    BuzzDroid("","",""),
+    Asteroid1("","",""),
+    Asteroid2("","",""),
+    Asteroid3("","",""),
+    Asteroid4("","",""),
+    Asteroid5("","",""),
+    Asteroid6("","",""),
+    Asteroid7("","",""),
+    Asteroid8("","",""),
+    Asteroid9("","",""),
+    Asteroid10("","",""),
+    Asteroid11("","",""),
+    Asteroid12("","",""),
+    Container("","",""),
+    Debris1("","",""),
+    Debris2("","",""),
+    Debris3("","",""),
+    Debris4("","",""),
+    Debris5("","",""),
+    Debris6("","",""),
+    Cargo("","",""),
+    SpareParts("","","");
 
     private final String r1Img;
     private final String r2Img;
@@ -68,11 +89,32 @@ public class AutoRangeForTokens extends Decorator implements EditablePiece {
             .put("CTRL SHIFT O", findObstacles) //find only obstacles
             .build();
     private static Map<String, ImagesUsedForRanges> pieceNameToImgs = ImmutableMap.<String, ImagesUsedForRanges>builder()
+            .put("Asteroid 1", ImagesUsedForRanges.Asteroid1)
+            .put("Asteroid 2", ImagesUsedForRanges.Asteroid2)
+            .put("Asteroid 3", ImagesUsedForRanges.Asteroid3)
+            .put("Asteroid 4", ImagesUsedForRanges.Asteroid4)
+            .put("Asteroid 5", ImagesUsedForRanges.Asteroid5)
+            .put("Asteroid 6", ImagesUsedForRanges.Asteroid6)
+            .put("Asteroid 7", ImagesUsedForRanges.Asteroid7)
+            .put("Asteroid 8", ImagesUsedForRanges.Asteroid8)
+            .put("Asteroid 9", ImagesUsedForRanges.Asteroid9)
+            .put("Asteroid 10", ImagesUsedForRanges.Asteroid10)
+            .put("Asteroid 11", ImagesUsedForRanges.Asteroid11)
+            .put("Asteroid 12", ImagesUsedForRanges.Asteroid12)
+            .put("Container", ImagesUsedForRanges.Container)
+            .put("Debris 1", ImagesUsedForRanges.Debris1)
+            .put("Debris 2", ImagesUsedForRanges.Debris2)
+            .put("Debris 3", ImagesUsedForRanges.Debris3)
+            .put("Debris 4", ImagesUsedForRanges.Debris4)
+            .put("Debris 5", ImagesUsedForRanges.Debris5)
+            .put("Debris 6", ImagesUsedForRanges.Debris6)
+            .put("Cargo", ImagesUsedForRanges.Cargo)
+            .put("Spare Parts", ImagesUsedForRanges.SpareParts)
             .put("DRK-1 Probe Droid", ImagesUsedForRanges.ProbeDroid)
-            .put("Gas Cloud 1", ImagesUsedForRanges.ProbeDroid.GasCloud1)
-            .put("Gas Cloud 2", ImagesUsedForRanges.ProbeDroid.GasCloud2)
-            .put("Gas Cloud 3", ImagesUsedForRanges.ProbeDroid.GasCloud3)
             .put("Buzz Droid Swarm", ImagesUsedForRanges.BuzzDroid)
+            .put("Gas Cloud 1", ImagesUsedForRanges.GasCloud1)
+            .put("Gas Cloud 2", ImagesUsedForRanges.GasCloud2)
+            .put("Gas Cloud 3", ImagesUsedForRanges.GasCloud3)
             .build();
 
     public AutoRangeForTokens() {
