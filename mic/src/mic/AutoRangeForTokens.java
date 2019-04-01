@@ -25,7 +25,8 @@ enum ImagesUsedForRanges {
     ProbeDroid("Probe-range1","Probe-range2","Probe-range"),
     GasCloud1("Gascloud1_r1","Gascloud1_r2","Gascloud1_TL"),
     GasCloud2("Gascloud2_r1","Gascloud2_r2","Gascloud2_TL"),
-    GasCloud3("Gascloud3_r1","Gascloud3_r2","Gascloud3_TL");
+    GasCloud3("Gascloud3_r1","Gascloud3_r2","Gascloud3_TL"),
+    BuzzDroid("","","");
 
     private final String r1Img;
     private final String r2Img;
@@ -71,6 +72,7 @@ public class AutoRangeForTokens extends Decorator implements EditablePiece {
             .put("Gas Cloud 1", ImagesUsedForRanges.ProbeDroid.GasCloud1)
             .put("Gas Cloud 2", ImagesUsedForRanges.ProbeDroid.GasCloud2)
             .put("Gas Cloud 3", ImagesUsedForRanges.ProbeDroid.GasCloud3)
+            .put("Buzz Droid Swarm", ImagesUsedForRanges.BuzzDroid)
             .build();
 
     public AutoRangeForTokens() {
