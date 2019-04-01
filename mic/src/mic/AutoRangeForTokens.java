@@ -137,7 +137,6 @@ public class AutoRangeForTokens extends Decorator implements EditablePiece {
             verifyBasicShapes();
             prepAnnouncementStart();
             Shape shapeOfPieceItself = getRawShape(this);;
-            //logToChat("ARFT line 132 piece name " + this.piece.getName());
 
             //add the ships to the detection
             if(whichOption == findShips || whichOption == findObstaclesShips) {
@@ -185,14 +184,16 @@ public class AutoRangeForTokens extends Decorator implements EditablePiece {
     private void verifyBasicShapes() {
         if(shapeForRange1==null || shapeForRange2 ==null || shapeForRange3 ==null) logToChat("* -- Generating shapes for the first range check of this token, this will take a few seconds (and will only be done the first time).");
 
+        String pieceName = (Decorator.getInnermost(this)).getName();
+
         if(shapeForRange1==null){
-            shapeForRange1 = getRawShapeFromFile(getAssociatedImage(this.piece.getName(),1));
+            shapeForRange1 = getRawShapeFromFile(getAssociatedImage(pieceName,1));
         }
         if(shapeForRange2==null){
-            shapeForRange2 = getRawShapeFromFile(getAssociatedImage(this.piece.getName(),2));
+            shapeForRange2 = getRawShapeFromFile(getAssociatedImage(pieceName,2));
         }
         if(shapeForRange3==null){
-            shapeForRange3 = getRawShapeFromFile(getAssociatedImage(this.piece.getName(),3));
+            shapeForRange3 = getRawShapeFromFile(getAssociatedImage(pieceName,3));
         }
 
     }
@@ -235,7 +236,7 @@ public class AutoRangeForTokens extends Decorator implements EditablePiece {
         //bigAnnounce = "*** Calculating ranges from " + this.piece.getName() + " to ";
 
 
-        GamePiece outermost = Decorator.getOutermost(this);
+        GamePiece outermost = Decorator.getInnermost(this);
 
         String originPieceName = outermost.getName();
         //String[] parts = originPieceName.split("\\(");
