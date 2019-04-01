@@ -230,7 +230,7 @@ public class AutoRangeForTokens extends Decorator implements EditablePiece {
         String originPieceName = this.piece.getName();
         String[] parts = originPieceName.split("\\(");
         String finalName = (parts.length>1?parts[0]:originPieceName);
-        String firstAnnounce = "*** Calculating ranges to " + finalName;
+        String firstAnnounce = "*** Calculating ranges from " + finalName + " to ";
 
         switch (whichOption) {
             case findObstaclesShips:
