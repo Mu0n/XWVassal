@@ -130,12 +130,13 @@ public class AutoRangeForTokens extends Decorator implements EditablePiece {
         if(whichOption != -1 && stroke.isOnKeyRelease()==false){
             verifyBasicShapes();
             prepAnnouncementStart();
-            Shape shapeOfPieceItself = this.piece.getShape();
-            logToChat("ARFT line 132 piece name " + this.piece.getName());
+            Shape shapeOfPieceItself = getRawShape(this);;
+            //logToChat("ARFT line 132 piece name " + this.piece.getName());
 
             //add the ships to the detection
             if(whichOption == findShips || whichOption == findObstaclesShips) {
 
+                Shape tShapeR0 = getTransformedShape(shapeOfPieceItself);
                 Shape tShapeR1 = getTransformedShape(shapeForRange1);
                 Shape tShapeR2 = getTransformedShape(shapeForRange2);
                 Shape tShapeR3 = getTransformedShape(shapeForRange3);
@@ -144,7 +145,7 @@ public class AutoRangeForTokens extends Decorator implements EditablePiece {
                 List<BumpableWithShape> BWS = getOtherShipsOnMap();
                 for (BumpableWithShape b : BWS) {
                     //Range 0 check
-                    if (shapesOverlap(shapeOfPieceItself, b.shape)) {
+                    if (shapesOverlap(tShapeR0, b.shape)) {
                         rfindings.add(new RangeFindings(0, b.pilotName));
                         continue;
                     }
@@ -176,7 +177,7 @@ public class AutoRangeForTokens extends Decorator implements EditablePiece {
     }
 
     private void verifyBasicShapes() {
-        if(shapeForRange1==null || shapeForRange2 ==null || shapeForRange3 ==null) logToChat("Please stand by (this operation will take a few seconds).");
+        if(shapeForRange1==null || shapeForRange2 ==null || shapeForRange3 ==null) logToChat("* -- Generating shapes for the first range check of this token, this will take a few seconds (and will only be done the first time).");
 
         if(shapeForRange1==null){
             shapeForRange1 = getRawShapeFromFile(getAssociatedImage(this.piece.getName(),1));
@@ -258,19 +259,19 @@ public class AutoRangeForTokens extends Decorator implements EditablePiece {
         for (RangeFindings rf : rfindings) {
             if (rf.range == 0) {
                 hasR0 = true;
-                range0String += rf.fullName;
+                range0String += rf.fullName + " | ";
             }
             if (rf.range == 1) {
                 hasR1 = true;
-                range1String += rf.fullName;
+                range1String += rf.fullName + " | ";
             }
             if (rf.range == 2) {
                 hasR2 = true;
-                range2String += rf.fullName;
+                range2String += rf.fullName + " | ";
             }
             if (rf.range == 3) {
                 hasR3 = true;
-                range3String += rf.fullName;
+                range3String += rf.fullName + " | ";
             }
         }
 
