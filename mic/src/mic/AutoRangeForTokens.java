@@ -1,7 +1,6 @@
 
 package mic;
 
-import VASSAL.build.GameModule;
 import VASSAL.build.module.documentation.HelpFile;
 import VASSAL.command.Command;
 import VASSAL.configure.HotKeyConfigurer;
@@ -11,14 +10,12 @@ import com.google.common.collect.Lists;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.KeyEvent;
 import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import static mic.Util.*;
-import static mic.Util.rotY;
 
 /**
  * Created by Mic on 23/03/2017.
@@ -37,9 +34,9 @@ enum ImagesUsedForRanges {
         r3Img = r3;
     }
 
-    public String getR1Img(){ return r1Img; }
-    public String getR2Img(){ return r2Img; }
-    public String getR3Img(){ return r3Img; }
+    public String getR1Img(){ return r1Img+".png"; }
+    public String getR2Img(){ return r2Img+".png"; }
+    public String getR3Img(){ return r3Img+".png"; }
 }
 
 public class AutoRangeForTokens extends Decorator implements EditablePiece {
@@ -48,6 +45,10 @@ public class AutoRangeForTokens extends Decorator implements EditablePiece {
     private static final int findObstaclesShips = 1;
     private static final int findShips = 2;
     private static final int findObstacles = 3;
+
+    private Shape shapeForRange1;
+    private Shape shapeForRange2;
+    private Shape shapeForRange3;
 
     String bigAnnounce = "";
     private final FreeRotator testRotator;
@@ -62,7 +63,7 @@ public class AutoRangeForTokens extends Decorator implements EditablePiece {
             .put("CTRL SHIFT O", findObstacles) //find only obstacles
             .build();
     private static Map<String, ImagesUsedForRanges> pieceNameToImgs = ImmutableMap.<String, ImagesUsedForRanges>builder()
-            .put("DRK-1 Probe Droid", ImagesUsedForRanges.ProbeDroid)
+            .put("DRK-1 Probe Droid (this_is_a_remote)", ImagesUsedForRanges.ProbeDroid)
             .build();
 
     public AutoRangeForTokens() {
@@ -98,17 +99,15 @@ public class AutoRangeForTokens extends Decorator implements EditablePiece {
         if(pieceNameToImgs.containsKey(name)){
             switch(range){
                 case 1:
-                    return pieceNameToImgs.get(name).getR1Img() +".png";
-                    break;
+                    return pieceNameToImgs.get(name).getR1Img();
                 case 2:
-                    return pieceNameToImgs.get(name).getR2Img() +".png";
-                    break;
+                    return pieceNameToImgs.get(name).getR2Img();
                 case 3:
                 default:
-                    return pieceNameToImgs.get(name).getR3Img() +".png";
-                    break;
+                    return pieceNameToImgs.get(name).getR3Img();
             }
         }
+        return "";
     }
 
     protected KeyCommand[] myGetKeyCommands() {
@@ -128,17 +127,18 @@ public class AutoRangeForTokens extends Decorator implements EditablePiece {
         whichOption = getKeystrokeToOptions(stroke);
 
         //we have a valid keystroke option, let's deal with it
-        if(whichOption != -1){
+        if(whichOption != -1 && stroke.isOnKeyRelease()==false){
+            verifyBasicShapes();
             prepAnnouncementStart();
             Shape shapeOfPieceItself = this.piece.getShape();
-            Shape shapeForRange1 = repositionedOriginShape(getAssociatedImage(this.piece.getName(),1));
-            Shape shapeForRange2 = repositionedOriginShape(getAssociatedImage(this.piece.getName(),2));
-            Shape shapeForRange3 = repositionedOriginShape(getAssociatedImage(this.piece.getName(),3));
+            logToChat("ARFT line 132 piece name " + this.piece.getName());
 
             //add the ships to the detection
             if(whichOption == findShips || whichOption == findObstaclesShips) {
-                //Prepare the start of the appropriate chat announcement string - which ship are we doing this from, which kind of autorange
 
+                Shape tShapeR1 = getTransformedShape(shapeForRange1);
+                Shape tShapeR2 = getTransformedShape(shapeForRange2);
+                Shape tShapeR3 = getTransformedShape(shapeForRange3);
 
                 //Loop over every other target ship
                 List<BumpableWithShape> BWS = getOtherShipsOnMap();
@@ -149,17 +149,17 @@ public class AutoRangeForTokens extends Decorator implements EditablePiece {
                         continue;
                     }
                     //Range 1 check
-                    if(shapesOverlap(shapeForRange1, b.shape)){
+                    if(shapeForRange1 !=null && shapesOverlap(tShapeR1, b.shape)){
                         rfindings.add(new RangeFindings(1, b.pilotName));
                         continue;
                     }
                     //Range 2 check
-                    if(shapesOverlap(shapeForRange2,  b.shape)){
+                    if(shapeForRange2 !=null && shapesOverlap(tShapeR2,  b.shape)){
                         rfindings.add(new RangeFindings(2, b.pilotName));
                         continue;
                     }
                     //Range 3 check
-                    if(shapesOverlap(shapeForRange3, b.shape)){
+                    if(shapeForRange3 !=null && shapesOverlap(tShapeR3, b.shape)){
                         rfindings.add(new RangeFindings(3, b.pilotName));
                     }
                 }
@@ -170,59 +170,79 @@ public class AutoRangeForTokens extends Decorator implements EditablePiece {
             }
 
             makeBigAnnounceCommand(bigAnnounce, rfindings);
-
         }
 
         return piece.keyEvent(stroke); //did not find anything worth react to, so send back the key for others to deal with it
     }
-    private Shape repositionedOriginShape(String fileName){
-        Shape finalShape = Util.getImageShape(fileName);
 
-        //Info Gathering: gets the angle from repoTemplate which deals with degrees, local space with ship at 0,0, pointing up
-        //double globalShipAngle = this.getRotator().getAngle(); //ship angle
-        //STEP 2: rotate the reposition template with both angles
-        //FreeRotator fR = (FreeRotator)Decorator.getDecorator(templatePiece, FreeRotator.class);
-        //fR.setAngle(globalShipAngle + templateAngle);
+    private void verifyBasicShapes() {
+        if(shapeForRange1==null || shapeForRange2 ==null || shapeForRange3 ==null) logToChat("Please stand by (this operation will take a few seconds).");
 
-        //Info Gathering: Offset 1, put to the side of the ship, local coords, adjusting for large base if it is found
-        //double off1x = repoTemplate.getOffsetX();
-        //double off1y = repoTemplate.getOffsetY();
+        if(shapeForRange1==null){
+            shapeForRange1 = getRawShapeFromFile(getAssociatedImage(this.piece.getName(),1));
+        }
+        if(shapeForRange2==null){
+            shapeForRange2 = getRawShapeFromFile(getAssociatedImage(this.piece.getName(),2));
+        }
+        if(shapeForRange3==null){
+            shapeForRange3 = getRawShapeFromFile(getAssociatedImage(this.piece.getName(),3));
+        }
 
-        //Info Gathering: Offset 2 get the center global coordinates of the ship calling this op
-        //double off2x = this.getPosition().getX();
-        //double off2y = this.getPosition().getY();
+    }
 
-        //STEP 3: rotate the offset1 dependant within the spawner's local coordinates
-        //double off1x_rot = rotX(off1x, off1y, globalShipAngle);
-        //double off1y_rot = rotY(off1x, off1y, globalShipAngle);
-
-        //STEP 4: translation into place
-        //shapeForTemplate = AffineTransform.
-        //        getTranslateInstance((int)off1x_rot + (int)off2x, (int)off1y_rot + (int)off2y).
-        //        createTransformedShape(shapeForTemplate);
-        //double roundedAngle = convertAngleToGameLimits(globalShipAngle + templateAngle);
-        //shapeForTemplate = AffineTransform
-        //        .getRotateInstance(Math.toRadians(-roundedAngle), (int)off1x_rot + (int)off2x, (int)off1y_rot + (int)off2y)
-        //        .createTransformedShape(shapeForTemplate);
+    private Shape getRawShapeFromFile(String fileName){
+        Shape finalShape;
+        if(fileName.equals("")) return null;
+        finalShape = Util.getImageShape(fileName);
 
         return finalShape;
     }
+
+    private Shape getTransformedShape(Shape rawShape){
+        //Info Gathering: gets the angle from repoTemplate which deals with degrees, local space with ship at 0,0, pointing up
+        double globalShipAngle = this.testRotator.getAngle(); //ship angle
+
+        //Step 1: Translation
+        double offx = this.getPosition().getX();
+        double offy = this.getPosition().getY();
+
+        //STEP 2: translation into place
+        Shape transformedShape = AffineTransform.
+                getTranslateInstance((int)offx, (int)offy).
+                createTransformedShape(rawShape);
+        double roundedAngle = convertAngleToGameLimits(globalShipAngle);
+        transformedShape = AffineTransform
+                .getRotateInstance(Math.toRadians(-roundedAngle), (int)offx, (int)offy)
+                .createTransformedShape(transformedShape);
+
+        return transformedShape;
+    }
+
+    private double convertAngleToGameLimits(double angle) {
+        this.testRotator.setAngle(angle);
+        return this.testRotator.getAngle();
+    }
+
     private void prepAnnouncementStart() {
         //prepares the initial part of the chat window string that announces the firing options
         //bigAnnounce = "*** Calculating ranges from " + this.piece.getName() + " to ";
-        bigAnnounce = "*** Calculating ranges to ";
+        String originPieceName = this.piece.getName();
+        String[] parts = originPieceName.split("\\(");
+        String finalName = (parts.length>1?parts[0]:originPieceName);
+        String firstAnnounce = "*** Calculating ranges to " + finalName;
 
         switch (whichOption) {
             case findObstaclesShips:
-                bigAnnounce += "ships and obstacles ";
+                firstAnnounce += "ships and obstacles.";
                 break;
             case findShips:
-                bigAnnounce += "ships ";
+                firstAnnounce += "ships.";
                 break;
             case findObstacles:
-                bigAnnounce += "obstacles ";
+                firstAnnounce += "obstacles.";
                 break;
         }
+        logToChat(firstAnnounce);
     }
     private void makeBigAnnounceCommand(String bigAnnounce, ArrayList<RangeFindings> rfindings) {
         String range1String = "";
