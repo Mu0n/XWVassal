@@ -1354,6 +1354,12 @@ public class ShipReposition extends Decorator implements EditablePiece {
                     testFlipString = ((Decorator) piece).getDecorator(piece,piece.getClass()).getProperty("whichShape").toString();
                 } catch (Exception e) {}
                 bumpables.add(new BumpableWithShape((Decorator)piece, "GasCloud", "2".equals(testFlipString), false));
+            }else if (piece.getState().contains("this_is_a_remote")) {
+                String testFlipString = "";
+                try{
+                    testFlipString = ((Decorator) piece).getDecorator(piece,piece.getClass()).getProperty("whichShape").toString();
+                } catch (Exception e) {}
+                bumpables.add(new BumpableWithShape((Decorator)piece, "Remote", "2".equals(testFlipString), false));
             }else if(wantShipsToo == true && piece.getState().contains("this_is_a_ship")){
                 //MrMurphM
                 //    GamePiece newPiece = PieceCloner.getInstance().clonePiece(piece);
