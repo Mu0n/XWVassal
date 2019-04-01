@@ -22,7 +22,10 @@ import static mic.Util.*;
  */
 
 enum ImagesUsedForRanges {
-    ProbeDroid("Probe-range1","Probe-range2","Probe-range");
+    ProbeDroid("Probe-range1","Probe-range2","Probe-range"),
+    GasCloud1("Gascloud1_r1","Gascloud1_r2","Gascloud1_TL"),
+    GasCloud2("Gascloud2_r1","Gascloud2_r2","Gascloud2_TL"),
+    GasCloud3("Gascloud3_r1","Gascloud3_r2","Gascloud3_TL");
 
     private final String r1Img;
     private final String r2Img;
@@ -63,7 +66,10 @@ public class AutoRangeForTokens extends Decorator implements EditablePiece {
             .put("CTRL SHIFT O", findObstacles) //find only obstacles
             .build();
     private static Map<String, ImagesUsedForRanges> pieceNameToImgs = ImmutableMap.<String, ImagesUsedForRanges>builder()
-            .put("DRK-1 Probe Droid (this_is_a_remote)", ImagesUsedForRanges.ProbeDroid)
+            .put("DRK-1 Probe Droid", ImagesUsedForRanges.ProbeDroid)
+            .put("Gas Cloud 1", ImagesUsedForRanges.ProbeDroid.GasCloud1)
+            .put("Gas Cloud 2", ImagesUsedForRanges.ProbeDroid.GasCloud2)
+            .put("Gas Cloud 3", ImagesUsedForRanges.ProbeDroid.GasCloud3)
             .build();
 
     public AutoRangeForTokens() {
@@ -227,10 +233,14 @@ public class AutoRangeForTokens extends Decorator implements EditablePiece {
     private void prepAnnouncementStart() {
         //prepares the initial part of the chat window string that announces the firing options
         //bigAnnounce = "*** Calculating ranges from " + this.piece.getName() + " to ";
-        String originPieceName = this.piece.getName();
-        String[] parts = originPieceName.split("\\(");
-        String finalName = (parts.length>1?parts[0]:originPieceName);
-        String firstAnnounce = "*** Calculating ranges from " + finalName + " to ";
+
+
+        GamePiece outermost = Decorator.getOutermost(this);
+
+        String originPieceName = outermost.getName();
+        //String[] parts = originPieceName.split("\\(");
+        //String finalName = (parts.length>1?parts[0]:originPieceName);
+        String firstAnnounce = "*** Calculating ranges from " + originPieceName + " to ";
 
         switch (whichOption) {
             case findObstaclesShips:
