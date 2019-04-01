@@ -40,12 +40,12 @@ enum ImagesUsedForRanges {
     Asteroid11("Asteroid_11b_r1","Asteroid_11b_r2","Asteroid_11b_range"),
     Asteroid12("Asteroid_12b_r1","Asteroid_12b_r2","Asteroid_12b_range"),
     Container("","",""),
-    Debris1("","","Debris1_TL"),
-    Debris2("","","Debris2_TL"),
-    Debris3("","","Debris3_TL"),
-    Debris4("","","Debris4_TL"),
-    Debris5("","","Debris5_TL"),
-    Debris6("","","Debris6_TL"),
+    Debris1("Debris1_r1","Debris1_r2","Debris1_TL"),
+    Debris2("Debris2_r1","Debris2_r2","Debris2_TL"),
+    Debris3("Debris3_r1","Debris3_r2","Debris3_TL"),
+    Debris4("Debris4_r1","Debris4_r2","Debris4_TL"),
+    Debris5("Debris5_r1","Debris5_r2","Debris5_TL"),
+    Debris6("Debris6_r1","Debris6_r2","Debris6_TL"),
     Cargo("Cloud_Debris_range1","",""),
     SpareParts("","","");
 
