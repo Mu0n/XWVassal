@@ -8,13 +8,16 @@ import VASSAL.build.widget.PieceSlot;
 import VASSAL.command.Command;
 import VASSAL.counters.*;
 import VASSAL.tools.DataArchive;
+import VASSAL.tools.io.FileArchive;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
 import mic.ota.XWOTAUtils;
 
+import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.geom.*;
+import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -149,6 +152,23 @@ public class Util {
 
         Command c = new Chatter.DisplayText(GameModule.getGameModule().getChatter(), "* (" + theTime + ")" + msg);
         c.execute();
+        return c;
+    }
+
+    public static Command logToChatWithTimeCommandNoExecute(String msg, Object... args) {
+        if (args != null && args.length > 0) {
+            msg = String.format(msg, args);
+        }
+        final Date currentTime = new Date();
+
+        final SimpleDateFormat sdf =
+                new SimpleDateFormat("MMM d, hh:mm:ss a z");
+
+// Give it to me in GMT time.
+        sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
+        String theTime = sdf.format(currentTime);
+
+        Command c = new Chatter.DisplayText(GameModule.getGameModule().getChatter(), "* (" + theTime + ")" + msg);
         return c;
     }
     public static Command logToChatCommand(String msg, Object... args) {
@@ -340,6 +360,51 @@ public class Util {
 
     public static Shape getRawShape(Decorator bumpable) {
         return Decorator.getDecorator(Decorator.getOutermost(bumpable), NonRectangular.class).getShape();
+    }
+
+    public static Shape getImageShape(String imageFileName) {
+        //load the image
+        try {
+            BufferedImage image;
+            GameModule gameModule = GameModule.getGameModule();
+            DataArchive dataArchive = gameModule.getDataArchive();
+            FileArchive fileArchive = dataArchive.getArchive();
+
+            InputStream inputstream = new BufferedInputStream(fileArchive.getInputStream("images/" + imageFileName));
+            image = ImageIO.read(inputstream);
+            inputstream.close();
+
+            final int w = image.getWidth();
+            final int h = image.getHeight();
+            final int[] pixels = image.getRGB(0, 0, w, h, new int[w*h], 0, w);
+
+            Area outline = new Area();
+            for (int y = 0; y < h; ++y) {
+                int left = -1;
+                for (int x = 0; x < w; ++x) {
+                    if (((pixels[x + y * w] >>> 24) & 0xff) > 0) {
+                        if (left < 0) {
+                            left = x;
+                        }
+                    } else if (left > -1) {
+                        outline.add(new Area(new Rectangle(left, y, x - left, 1)));
+                        left = -1;
+                    }
+                }
+
+                if (left > -1) {
+                    outline.add(new Area(new Rectangle(left, y, w - left, 1)));
+                }
+            }
+            Shape returnShape = AffineTransform.getTranslateInstance(-w / 2, -h / 2)
+                    .createTransformedShape(outline);
+
+            return returnShape;
+        }
+        catch(Exception e){
+            Util.logToChat("Failed to load image's Shape with " + imageFileName);
+            return null;
+        }
     }
 
 

@@ -243,7 +243,7 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
             //don't check for collisions in windows other than the main map
             if(!"Contested Sector".equals(getMap().getMapName())) return innerCommand;
 
-            innerCommand.append(logToChatWithTimeCommand("* --- " + yourShipName + " performs move: " + path.getFullName()));
+            innerCommand.append(logToChatWithTimeCommandNoExecute("* --- " + yourShipName + " performs move: " + path.getFullName()));
 
             //Check for template shape overlap with mines, asteroids, debris
             checkTemplateOverlap(lastMoveShapeUsed, otherBumpableShapes);
@@ -290,6 +290,12 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
                 howManyBumped++;
             } else if (bumpedBumpable.type.equals("Mine")) {
                 String bumpAlertString = "* --- Overlap detected with " + yourShipName + "'s maneuver template and a mine.";
+                logToChatWithTime(bumpAlertString);
+                cvFoundHere.add(bumpedBumpable.shape);
+                this.previousCollisionVisualization.add(bumpedBumpable.shape);
+                howManyBumped++;
+            }else if (bumpedBumpable.type.equals("Remote")) {
+                String bumpAlertString = "* --- Overlap detected with " + yourShipName + "'s maneuver template and a remote.";
                 logToChatWithTime(bumpAlertString);
                 cvFoundHere.add(bumpedBumpable.shape);
                 this.previousCollisionVisualization.add(bumpedBumpable.shape);
@@ -608,6 +614,12 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
                     testFlipString = ((Decorator) piece).getDecorator(piece,piece.getClass()).getProperty("whichShape").toString();
                 } catch (Exception e) {}
                 bumpables.add(new BumpableWithShape((Decorator)piece, "GasCloud", "2".equals(testFlipString), false));
+            }else if (piece.getState().contains("this_is_a_remote")) {
+                String testFlipString = "";
+                try{
+                    testFlipString = ((Decorator) piece).getDecorator(piece,piece.getClass()).getProperty("whichShape").toString();
+                } catch (Exception e) {}
+                bumpables.add(new BumpableWithShape((Decorator)piece, "Remote", "2".equals(testFlipString), false));
             }else if (piece.getState().contains("this_is_a_bomb")) {
                 bumpables.add(new BumpableWithShape((Decorator)piece, "Mine", false, false));
             }
