@@ -22,46 +22,57 @@ import static mic.Util.*;
  */
 
 enum ImagesUsedForRanges {
-    ProbeDroid("Probe-range1","Probe-range2","Probe-range"),
-    GasCloud1("Gascloud1_r1","Gascloud1_r2","Gascloud1_TL"),
-    GasCloud2("Gascloud2_r1","Gascloud2_r2","Gascloud2_TL"),
-    GasCloud3("Gascloud3_r1","Gascloud3_r2","Gascloud3_TL"),
-    BuzzDroid("","",""),
-    Asteroid1("Asteroid1_r1","Asteroid1_r2","Asteroid1_TL"),
-    Asteroid2("Asteroid2_r1","Asteroid2_r2","Asteroid2_TL"),
-    Asteroid3("Asteroid3_r1","Asteroid3_r2","Asteroid3_TL"),
-    Asteroid4("Asteroid4_r1","Asteroid4_r2","Asteroid4_TL"),
-    Asteroid5("Asteroid5_r1","Asteroid5_r2","Asteroid5_TL"),
-    Asteroid6("Asteroid6_r1","Asteroid6_r2","Asteroid6_TL"),
-    Asteroid7("Asteroid_7b_r1","Asteroid_7b_r2","Asteroid_7b_range"),
-    Asteroid8("Asteroid_8b_r1","Asteroid_8b_r2","Asteroid_8b_range"),
-    Asteroid9("Asteroid_9b_r1","Asteroid_9b_r2","Asteroid_9b_range"),
-    Asteroid10("Asteroid_10b_r1","Asteroid_10b_r2","Asteroid_10b_range"),
-    Asteroid11("Asteroid_11b_r1","Asteroid_11b_r2","Asteroid_11b_range"),
-    Asteroid12("Asteroid_12b_r1","Asteroid_12b_r2","Asteroid_12b_range"),
-    Container("","",""),
-    Debris1("Debris1_r1","Debris1_r2","Debris1_TL"),
-    Debris2("Debris2_r1","Debris2_r2","Debris2_TL"),
-    Debris3("Debris3_r1","Debris3_r2","Debris3_TL"),
-    Debris4("Debris4_r1","Debris4_r2","Debris4_TL"),
-    Debris5("Debris5_r1","Debris5_r2","Debris5_TL"),
-    Debris6("Debris6_r1","Debris6_r2","Debris6_TL"),
-    Cargo("Cloud_Debris_range1","",""),
-    SpareParts("","","");
+    ProbeDroid("Probe-range1","Probe-range2","Probe-range", 0, 0),
+    GasCloud1("Gascloud1_r1","Gascloud1_r2","Gascloud1_TL", 0, 0),
+    GasCloud2("Gascloud2_r1","Gascloud2_r2","Gascloud2_TL", 0, 0),
+    GasCloud3("Gascloud3_r1","Gascloud3_r2","Gascloud3_TL", 0, 0),
+    BuzzDroid("","","", 0, 0),
+    Asteroid1("Asteroid1_r1","Asteroid1_r2","Asteroid1_TL", 0, 0),
+    Asteroid2("Asteroid2_r1","Asteroid2_r2","Asteroid2_TL", 0, 0),
+    Asteroid3("Asteroid3_r1","Asteroid3_r2","Asteroid3_TL", 0, 0),
+    Asteroid4("Asteroid4_r1","Asteroid4_r2","Asteroid4_TL", 0, 0),
+    Asteroid5("Asteroid5_r1","Asteroid5_r2","Asteroid5_TL", 0, 0),
+    Asteroid6("Asteroid6_r1","Asteroid6_r2","Asteroid6_TL", 0, 0),
+    Asteroid7("Asteroid_7b_r1","Asteroid_7b_r2","Asteroid_7b_range", -5, -3),
+    Asteroid8("Asteroid_8b_r1","Asteroid_8b_r2","Asteroid_8b_range", -5, -3),
+    Asteroid9("Asteroid_9b_r1","Asteroid_9b_r2","Asteroid_9b_range", 3, 0),
+    Asteroid10("Asteroid_10b_r1","Asteroid_10b_r2","Asteroid_10b_range", -2, -3),
+    Asteroid11("Asteroid_11b_r1","Asteroid_11b_r2","Asteroid_11b_range", -5, -3),
+    Asteroid12("Asteroid_12b_r1","Asteroid_12b_r2","Asteroid_12b_range", -5, -3),
+    Container("","","", 0, 0),
+    Debris1("Debris1_r1","Debris1_r2","Debris1_TL", -5, -3),
+    Debris2("Debris2_r1","Debris2_r2","Debris2_TL", -5, -3),
+    Debris3("Debris3_r1","Debris3_r2","Debris3_TL", 3, 0),
+    Debris4("Debris4_r1","Debris4_r2","Debris4_TL", -2, -3),
+    Debris5("Debris5_r1","Debris5_r2","Debris5_TL", -5, -3),
+    Debris6("Debris6_r1","Debris6_r2","Debris6_TL", -5, -3),
+    Cargo("Cloud_Debris_range1","","", 0, 0),
+    SpareParts("","","", 0, 0),
+    SeismicCharge("Mine_Explosion","","",0 ,0),
+    ProtonBomb("Mine_Explosion","","",0 ,0),
+    ThermalDetonators("Mine_Explosion","","",0 ,0),
+    IonBombs("Mine_Explosion","","",0 ,0),
+    Bomblet("Mine_Explosion","","",0 ,0);
 
     private final String r1Img;
     private final String r2Img;
     private final String r3Img;
+    private final int offX;
+    private final int offY;
 
-    ImagesUsedForRanges(String r1, String r2, String r3){
+    ImagesUsedForRanges(String r1, String r2, String r3, int ox, int oy){
         r1Img = r1;
         r2Img = r2;
         r3Img = r3;
+        offX = ox;
+        offY = oy;
     }
 
     public String getR1Img(){ return r1Img+".png"; }
     public String getR2Img(){ return r2Img+".png"; }
     public String getR3Img(){ return r3Img+".png"; }
+    public int getOffX() { return offX; }
+    public int getOffY() { return offY; }
 }
 
 public class AutoRangeForTokens extends Decorator implements EditablePiece {
@@ -70,6 +81,8 @@ public class AutoRangeForTokens extends Decorator implements EditablePiece {
     private static final int findObstaclesShips = 1;
     private static final int findShips = 2;
     private static final int findObstacles = 3;
+
+    public MapVisualizations previousCollisionVisualization = null;
 
     private Shape shapeForRange1;
     private Shape shapeForRange2;
@@ -115,6 +128,12 @@ public class AutoRangeForTokens extends Decorator implements EditablePiece {
             .put("Gas Cloud 1", ImagesUsedForRanges.GasCloud1)
             .put("Gas Cloud 2", ImagesUsedForRanges.GasCloud2)
             .put("Gas Cloud 3", ImagesUsedForRanges.GasCloud3)
+            .put("Seismic Charge", ImagesUsedForRanges.SeismicCharge)
+            .put("Proton Bomb", ImagesUsedForRanges.ProtonBomb)
+            .put("Thermal Detonators", ImagesUsedForRanges.ThermalDetonators)
+            .put("Ion Bombs", ImagesUsedForRanges.IonBombs)
+            .put("Bomblet", ImagesUsedForRanges.Bomblet)
+            .put
             .build();
 
     public AutoRangeForTokens() {
@@ -161,6 +180,16 @@ public class AutoRangeForTokens extends Decorator implements EditablePiece {
         return "";
     }
 
+    private int getOffX(String name){
+        if(pieceNameToImgs.containsKey(name)) return pieceNameToImgs.get(name).getOffX();
+        return 0;
+    }
+
+    private int getOffY(String name){
+        if(pieceNameToImgs.containsKey(name)) return pieceNameToImgs.get(name).getOffY();
+        return 0;
+    }
+
     protected KeyCommand[] myGetKeyCommands() {
         return new KeyCommand[0];
     }
@@ -202,6 +231,9 @@ public class AutoRangeForTokens extends Decorator implements EditablePiece {
                     //Range 1 check
                     if(shapeForRange1 !=null && shapesOverlap(tShapeR1, b.shape)){
                         rfindings.add(new RangeFindings(1, b.pilotName));
+                        previousCollisionVisualization = new MapVisualizations();
+                        previousCollisionVisualization.add(tShapeR1);
+                        previousCollisionVisualization.execute();
                         continue;
                     }
                     //Range 2 check
@@ -322,7 +354,12 @@ public class AutoRangeForTokens extends Decorator implements EditablePiece {
 
         return finalShape;
     }
-
+    public static double rotX(double x, double y, double angle){
+        return Math.cos(-Math.PI*angle/180.0f)*x - Math.sin(-Math.PI*angle/180.0f)*y;
+    }
+    public static double rotY(double x, double y, double angle){
+        return Math.sin(-Math.PI*angle/180.0f)*x + Math.cos(-Math.PI*angle/180.0f)*y;
+    }
     private Shape getTransformedShape(Shape rawShape){
         //Info Gathering: gets the angle from repoTemplate which deals with degrees, local space with ship at 0,0, pointing up
         double globalShipAngle = getRotator().getAngle(); //ship angle
@@ -331,13 +368,22 @@ public class AutoRangeForTokens extends Decorator implements EditablePiece {
         double offx = this.getPosition().getX();
         double offy = this.getPosition().getY();
 
+
+        String pieceName = (Decorator.getInnermost(this)).getName();
+
+        double off2x = getOffX(pieceName);
+        double off2y = getOffY(pieceName);
+
+        double toffx = rotX(off2x, off2y, globalShipAngle);
+        double toffy = rotY(off2x, off2y, globalShipAngle);
+
         //STEP 2: translation into place
         Shape transformedShape = AffineTransform.
-                getTranslateInstance((int)offx, (int)offy).
+                getTranslateInstance((int)offx + (int)toffx , (int)offy + (int)toffy).
                 createTransformedShape(rawShape);
         double roundedAngle = convertAngleToGameLimits(globalShipAngle);
         transformedShape = AffineTransform
-                .getRotateInstance(Math.toRadians(-roundedAngle), (int)offx, (int)offy)
+                .getRotateInstance(Math.toRadians(-roundedAngle), (int)offx + (int)toffx , (int)offy+ (int)toffy)
                 .createTransformedShape(transformedShape);
 
         return transformedShape;
