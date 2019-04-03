@@ -354,7 +354,17 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
                 logToChatWithTime(bumpAlertString);
                 this.previousCollisionVisualization.add(bumpedBumpable.shape);
                 howManyBumped++;
-            } else if (bumpedBumpable.type.equals("Mine")) {
+            } else if (bumpedBumpable.type.equals("GasCloud")) {
+                String bumpAlertString = "* --- Overlap detected with " + yourShipName + " and a gas cloud.";
+                logToChatWithTime(bumpAlertString);
+                this.previousCollisionVisualization.add(bumpedBumpable.shape);
+                howManyBumped++;
+            }else if (bumpedBumpable.type.equals("Remote")) {
+                String bumpAlertString = "* --- Overlap detected with " + yourShipName + " and a remote.";
+                logToChatWithTime(bumpAlertString);
+                this.previousCollisionVisualization.add(bumpedBumpable.shape);
+                howManyBumped++;
+            }else if (bumpedBumpable.type.equals("Mine")) {
                 String bumpAlertString = "* --- Overlap detected with " + yourShipName + " and a mine.";
                 logToChatWithTime(bumpAlertString);
                 this.previousCollisionVisualization.add(bumpedBumpable.shape);
