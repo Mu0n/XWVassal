@@ -3,6 +3,7 @@ package mic;
 import VASSAL.build.GameModule;
 import VASSAL.build.module.Chatter;
 import VASSAL.build.module.GlobalOptions;
+import VASSAL.build.module.Map;
 import VASSAL.build.module.PlayerRoster;
 import VASSAL.build.widget.PieceSlot;
 import VASSAL.command.Command;
@@ -509,8 +510,43 @@ public class Util {
         return null;
     }
 
+    static public Map getTheMainMap(){
+        for (Map loopMap : GameModule.getGameModule().getComponentsOf(Map.class)) {
+            if (("Contested Sector").equals(loopMap.getMapName())) {
+                return loopMap;
+            }
+        }
+        return null;
+    }
+    public static Shape getTransformedPieceShape(GamePiece piece) {
+        Shape rawShape = piece.getShape();
+        Shape transformed = AffineTransform
+                .getTranslateInstance(piece.getPosition().getX(), piece.getPosition().getY())
+                .createTransformedShape(rawShape);
 
+        FreeRotator rotator = (FreeRotator) (Decorator.getDecorator(Decorator.getOutermost(piece), FreeRotator.class));
+        double centerX = piece.getPosition().getX();
+        double centerY = piece.getPosition().getY();
+        transformed = AffineTransform
+                .getRotateInstance(rotator.getAngleInRadians(), centerX, centerY)
+                .createTransformedShape(transformed);
 
+        return transformed;
+    }
+    public static Shape getTransformedShape(Shape rawShape, GamePiece sourcePiece) {
+        Shape transformed = AffineTransform
+                .getTranslateInstance(sourcePiece.getPosition().getX(), sourcePiece.getPosition().getY())
+                .createTransformedShape(rawShape);
+
+        FreeRotator rotator = (FreeRotator) (Decorator.getDecorator(Decorator.getOutermost(sourcePiece), FreeRotator.class));
+        double centerX = sourcePiece.getPosition().getX();
+        double centerY = sourcePiece.getPosition().getY();
+        transformed = AffineTransform
+                .getRotateInstance(rotator.getAngleInRadians(), centerX, centerY)
+                .createTransformedShape(transformed);
+
+        return transformed;
+    }
 
 
 

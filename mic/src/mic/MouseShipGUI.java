@@ -18,9 +18,7 @@ import java.awt.geom.AffineTransform;
 import java.util.*;
 import java.util.List;
 
-import static mic.Util.getCurrentPlayer;
-import static mic.Util.logToChat;
-import static mic.Util.logToChatWithoutUndo;
+import static mic.Util.*;
 
 /**
  * Created by Mic on 09/08/2017.
@@ -84,12 +82,17 @@ public class MouseShipGUI extends AbstractConfigurable {
                 //Pop the first step of the GUI
                 if(e.isControlDown() == true && activatedPiece == null) {
                     Collection<GamePiece> shipPieces = new ArrayList<GamePiece>();
+                    Collection<GamePiece> remotePieces = new ArrayList<GamePiece>();
+
                     GamePiece[] gpArray = theMap.getAllPieces();
                     // scan all game pieces, keep only the ones we're sure are ships
                     for (int i = 0; i < gpArray.length; i++) {
                         try {
                             if (gpArray[i].getState().contains("this_is_a_ship")) {
                                 shipPieces.add(gpArray[i]);
+                            }
+                            else if(gpArray[i].getState().contains("this_is_a_remote")){
+                                remotePieces.add(gpArray[i]);
                             }
                         } catch (Exception ex) {
                             continue;
@@ -223,41 +226,6 @@ public class MouseShipGUI extends AbstractConfigurable {
         }
         return null;
     }
-    private static Shape getTransformedPieceShape(GamePiece piece) {
-        Shape rawShape = piece.getShape();
-        Shape transformed = AffineTransform
-                .getTranslateInstance(piece.getPosition().getX(), piece.getPosition().getY())
-                .createTransformedShape(rawShape);
 
-        FreeRotator rotator = (FreeRotator) (Decorator.getDecorator(Decorator.getOutermost(piece), FreeRotator.class));
-        double centerX = piece.getPosition().getX();
-        double centerY = piece.getPosition().getY();
-        transformed = AffineTransform
-                .getRotateInstance(rotator.getAngleInRadians(), centerX, centerY)
-                .createTransformedShape(transformed);
 
-        return transformed;
-    }
-    private static Shape getTransformedShape(Shape rawShape, GamePiece sourcePiece) {
-        Shape transformed = AffineTransform
-                .getTranslateInstance(sourcePiece.getPosition().getX(), sourcePiece.getPosition().getY())
-                .createTransformedShape(rawShape);
-
-        FreeRotator rotator = (FreeRotator) (Decorator.getDecorator(Decorator.getOutermost(sourcePiece), FreeRotator.class));
-        double centerX = sourcePiece.getPosition().getX();
-        double centerY = sourcePiece.getPosition().getY();
-        transformed = AffineTransform
-                .getRotateInstance(rotator.getAngleInRadians(), centerX, centerY)
-                .createTransformedShape(transformed);
-
-        return transformed;
-    }
-    static public Map getTheMainMap(){
-        for (Map loopMap : GameModule.getGameModule().getComponentsOf(Map.class)) {
-            if (("Contested Sector").equals(loopMap.getMapName())) {
-                return loopMap;
-            }
-        }
-        return null;
-    }
 }
