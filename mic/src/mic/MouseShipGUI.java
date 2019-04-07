@@ -9,6 +9,7 @@ import VASSAL.command.Command;
 import VASSAL.counters.*;
 import VASSAL.counters.Stack;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Lists;
 
 import javax.swing.*;
 import java.awt.*;
@@ -16,9 +17,11 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.Ellipse2D;
 import java.util.*;
 import java.util.List;
 
+import static VASSAL.counters.Decorator.getOutermost;
 import static mic.Util.*;
 
 /**
@@ -32,7 +35,6 @@ public class MouseShipGUI extends AbstractConfigurable {
     boolean secondStagePopup = false; //makes it easier to differ between first stage and 2nd stage
     MouseGUIDrawable lastPopup; //active popup drawable component with info on images, clickable areas, etc
     MouseListener ml;
-
 
     private static final int probeDroidGUIOption = 1;
     private static final int buzzSwarmGUIOption = 2;
@@ -65,8 +67,8 @@ public class MouseShipGUI extends AbstractConfigurable {
 
     public void removeFrom(Buildable parent) {
         Map theMap = getTheMainMap();
-        if(lastPopup.getClass().isInstance(MouseShipGUIDrawable.class)) theMap.removeDrawComponent((MouseShipGUIDrawable)lastPopup);
-        else if(lastPopup.getClass().isInstance(MouseRemoteGUIDrawable.class)) theMap.removeDrawComponent((MouseRemoteGUIDrawable)lastPopup);
+        if(lastPopup instanceof MouseShipGUIDrawable) theMap.removeDrawComponent((MouseShipGUIDrawable)lastPopup);
+        else if(lastPopup instanceof MouseRemoteGUIDrawable) theMap.removeDrawComponent((MouseRemoteGUIDrawable)lastPopup);
         theMap.removeLocalMouseListener(ml);
     }
 
@@ -94,13 +96,20 @@ public class MouseShipGUI extends AbstractConfigurable {
                     Collection<GamePiece> remotePieces = new ArrayList<GamePiece>();
 
                     GamePiece[] gpArray = theMap.getAllPieces();
-                    // scan all game pieces, keep only the ones we're sure are ships or remotes
+                    // scan all game pieces, keep only the ones we're sure are ships
                     for (int i = 0; i < gpArray.length; i++) {
                         try {
                             if (gpArray[i].getState().contains("this_is_a_ship")) {
                                 shipPieces.add(gpArray[i]);
                             }
-                            else if(gpArray[i].getState().contains("this_is_a_remote")){
+                        } catch (Exception ex) {
+                            continue;
+                        }
+                    }
+                    // scan all game pieces, keep only the ones we're sure are remotes
+                    for (int i = 0; i < gpArray.length; i++) {
+                        try {
+                            if(gpArray[i].getState().contains("this_is_a_remote")){
                                 remotePieces.add(gpArray[i]);
                             }
                         } catch (Exception ex) {
@@ -120,8 +129,12 @@ public class MouseShipGUI extends AbstractConfigurable {
 
                 //There was already an activated piece, deal with the main GUI panel
                 else if(activatedPiece!=null && lastPopup != null){
-                    if(lastPopup.getClass().isInstance(MouseShipGUIDrawable.class)) firstStageShipGUI(e, theMap);
-                    else if(lastPopup.getClass().isInstance(MouseRemoteGUIDrawable.class)) firstStageRemoteGUI(e, theMap);
+                    if(lastPopup instanceof MouseShipGUIDrawable) {
+                        firstStageShipGUI(e, theMap);
+                    }
+                    else if(lastPopup instanceof MouseRemoteGUIDrawable) {
+                        firstStageRemoteGUI(e, theMap);
+                    }
                 } //end of non-ship clicks while a ship is activated
             } //end of mousePressed Event
             public void mouseReleased(MouseEvent e) {}
@@ -131,10 +144,7 @@ public class MouseShipGUI extends AbstractConfigurable {
         theMap.addLocalMouseListener(ml);
     }
 
-   private void firstStageRemoteGUI(MouseEvent e, Map theMap){
-        logToChat("Reached the remote first stage");
-        removePopup(theMap, e);
-   }
+
 
     private boolean isPieceClicked(MouseEvent e, Map theMap, GamePiece candidate){
         Shape theShape = getTransformedPieceShape(candidate);
@@ -153,8 +163,8 @@ public class MouseShipGUI extends AbstractConfigurable {
             if(isPieceClicked(e, theMap, remote)){
                 if(activatedPiece != remote){
                     //gotta deactivate the last one before doing the new one
-                    if(lastPopup.getClass().isInstance(MouseShipGUIDrawable.class)) theMap.removeDrawComponent((MouseShipGUIDrawable)lastPopup);
-                    if(lastPopup.getClass().isInstance(MouseRemoteGUIDrawable.class)) theMap.removeDrawComponent((MouseRemoteGUIDrawable)lastPopup);
+                    if(lastPopup instanceof MouseShipGUIDrawable) theMap.removeDrawComponent((MouseShipGUIDrawable)lastPopup);
+                    if(lastPopup instanceof MouseRemoteGUIDrawable) theMap.removeDrawComponent((MouseRemoteGUIDrawable)lastPopup);
                 } else if(remote == activatedPiece && lastPopup != null){
                     //clicking on a ship whose popup is already here, deal with buttons here
                     //TODO buttons
@@ -176,10 +186,9 @@ public class MouseShipGUI extends AbstractConfigurable {
                     logToChat("*-- Error making a GUI for this remote: " + remoteName);
                     continue;
                 }
-                logToChat("mouseShipGUI line 148 name: " + remoteName);
                 //MouseShipGUIDrawable msgd = new MouseShipGUIDrawable(ship, theMap, pilotShip, pilot);
-                //theMap.addDrawComponent(msgd);
-                //theMap.repaint();
+                if(mrgd!=null) theMap.addDrawComponent(mrgd);
+                theMap.repaint();
 
                 logToChatWithoutUndo("*-- Welcome to the beta Mouse Graphical Interface. You got here by ctrl-left clicking on a remote. You can left-click on the dots to select the direction of the relocation. Click on the red X to close the popup");
 
@@ -197,8 +206,8 @@ public class MouseShipGUI extends AbstractConfigurable {
             if(isPieceClicked(e, theMap, ship)) {
                 if (activatedPiece != ship && lastPopup!=null) {
                     //gotta deactivate the last one before doing the new one
-                    if(lastPopup.getClass().isInstance(MouseShipGUIDrawable.class)) theMap.removeDrawComponent((MouseShipGUIDrawable)lastPopup);
-                    if(lastPopup.getClass().isInstance(MouseRemoteGUIDrawable.class)) theMap.removeDrawComponent((MouseRemoteGUIDrawable)lastPopup);
+                    if(lastPopup instanceof MouseShipGUIDrawable) theMap.removeDrawComponent((MouseShipGUIDrawable)lastPopup);
+                    if(lastPopup instanceof MouseRemoteGUIDrawable) theMap.removeDrawComponent((MouseRemoteGUIDrawable)lastPopup);
                 } else if (ship == activatedPiece && lastPopup != null) {
                     //clicking on a ship whose popup is already here, deal with buttons here
                     //TODO buttons
@@ -228,6 +237,11 @@ public class MouseShipGUI extends AbstractConfigurable {
             } //end of ship clicks
         }//end of checking each ship
     }
+
+    private void firstStageRemoteGUI(MouseEvent e, Map theMap){
+        removePopup(theMap, e);
+    }
+
     private void firstStageShipGUI(MouseEvent e, Map theMap)
     {
         for(MouseShipGUIDrawable.miElement elem : ((MouseShipGUIDrawable)lastPopup).listOfInteractiveElements){
@@ -278,14 +292,21 @@ public class MouseShipGUI extends AbstractConfigurable {
    private void removePopup(Map theMap, MouseEvent e){
        activatedPiece=null;
        if(lastPopup!=null) {
-
-           logToChat("test line 277 lastpopup is ship bool: " + lastPopup.getClass().isInstance(MouseShipGUIDrawable.class));
-           if(lastPopup.getClass().isInstance(MouseShipGUIDrawable.class)) theMap.removeDrawComponent((MouseShipGUIDrawable)lastPopup);
-           else if(lastPopup.getClass().isInstance(MouseRemoteGUIDrawable.class)) theMap.removeDrawComponent((MouseRemoteGUIDrawable)lastPopup);
+           if(lastPopup instanceof MouseShipGUIDrawable) theMap.removeDrawComponent((MouseShipGUIDrawable)lastPopup);
+           else if(lastPopup instanceof MouseRemoteGUIDrawable) theMap.removeDrawComponent((MouseRemoteGUIDrawable)lastPopup);
            lastPopup=null;
            e.consume();
        }
    }
+
+    private void removePopupButKeepActivatedPiece(Map theMap, MouseEvent e){
+        if(lastPopup!=null) {
+            if(lastPopup instanceof MouseShipGUIDrawable) theMap.removeDrawComponent((MouseShipGUIDrawable)lastPopup);
+            else if(lastPopup instanceof MouseRemoteGUIDrawable) theMap.removeDrawComponent((MouseRemoteGUIDrawable)lastPopup);
+            lastPopup=null;
+            e.consume();
+        }
+    }
 
     private static VASSAL.build.module.Map getPlayerMap(int playerIndex) {
         for (VASSAL.build.module.Map loopMap : GameModule.getGameModule().getComponentsOf(VASSAL.build.module.Map.class)) {

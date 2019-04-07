@@ -1519,7 +1519,7 @@ public class ShipReposition extends Decorator implements EditablePiece {
         return this.piece.getName();
     }
 
-    private static class repositionChoiceVisual implements Drawable {
+    public static class repositionChoiceVisual implements Drawable {
         Shape thePieceShape;
         Shape theDot;
         Boolean mouseOvered = false;
@@ -1551,10 +1551,10 @@ public class ShipReposition extends Decorator implements EditablePiece {
             AffineTransform scaler = AffineTransform.getScaleInstance(map.getZoom(), map.getZoom());
 
             graphics2D.setColor(validColor);
-            graphics2D.fill(scaler.createTransformedShape(thePieceShape));
+            if(thePieceShape!=null) graphics2D.fill(scaler.createTransformedShape(thePieceShape));
             if(isOverlapped) graphics2D.setColor(dotOverlappedColor);
             else graphics2D.setColor(dotColor);
-            graphics2D.fill(scaler.createTransformedShape(theDot));
+            if(theDot!=null) graphics2D.fill(scaler.createTransformedShape(theDot));
             if(mouseOvered){
                 graphics2D.setColor(mouseOverColor);
                 graphics2D.draw(theDot);
