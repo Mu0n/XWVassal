@@ -41,7 +41,7 @@ import java.util.Collection;
  *
  * This class prepares the drawable so that the vassal engine knows when to draw stuff. No encoder is used since the UI is not shared to others
  */
-public class MouseShipGUIDrawable implements Drawable {
+public class MouseShipGUIDrawable extends MouseGUIDrawable implements Drawable {
     GamePiece _shipPiece;
     Map _map;
     XWS2Pilots _pilotShip;
@@ -51,10 +51,7 @@ public class MouseShipGUIDrawable implements Drawable {
     int padY = 20;
     int cursorX = padX;
     int cursorY = padY;
-    int ulX = 0; //upper left corner of the popup
-    int ulY = 0;
-    int totalWidth;
-    int totalHeight;
+
     Collection<miElement> listOfInteractiveElements = Lists.newArrayList();
     double scale;
     public MouseEvent summoningEvent;

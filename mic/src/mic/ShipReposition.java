@@ -1068,7 +1068,7 @@ public class ShipReposition extends Decorator implements EditablePiece {
 
         Command startIt = startTripleChoiceStopNewOnes();
         List<RepoManeuver> repoChoices = Lists.newArrayList();
-        final VASSAL.build.module.Map theMap = MouseShipGUI.getTheMainMap();
+        final VASSAL.build.module.Map theMap = Util.getTheMainMap();
         String contemplatingPlayerName = getCurrentPlayer().getName();
 
         StringBuilder sb = new StringBuilder("*--- ");
