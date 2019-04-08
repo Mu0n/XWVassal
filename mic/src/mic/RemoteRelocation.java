@@ -337,11 +337,11 @@ public class RemoteRelocation extends Decorator implements EditablePiece {
     }
 
     public String myGetState() {
-        return null;
+        return "";
     }
 
     public String myGetType() {
-        return null;
+        return ID;
     }
 
     protected KeyCommand[] myGetKeyCommands() {
@@ -353,7 +353,7 @@ public class RemoteRelocation extends Decorator implements EditablePiece {
     }
 
     public String getDescription() {
-        return null;
+        return "Custom remote relocation (mic.RemoteRelocation)";
     }
 
     public void mySetType(String type) {
