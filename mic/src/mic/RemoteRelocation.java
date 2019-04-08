@@ -32,21 +32,21 @@ import static mic.Util.logToChat;
 enum ReloManeuverForProbe {
     //Remote Relocation data. Currently, the templateAngle would be the angle used to reorient the maneuver template from the Pieces window
     //it's unused since you don't need to check an overlap from a relocation template to anything
-    Fwd_1("Forward 2 from 1st orientation", "525", 0.0f, 0.0f, -0.0f, 36.0f, 0.0f, -342.0f, 0.0f),
-    Fwd_2("Forward 2 from 2nd orientation", "525", 0.0f, -0.0f, -0.0f, 36.0f, 0.0f, -342.0f, 72.0f),
-    Fwd_3("Forward 2 from 3rd orientation", "525", 0.0f, -0.0f, 0.0f, 36.0f, 0.0f, -342.0f, 144.0f),
-    Fwd_4("Forward 2 from 4th orientation", "525", 0.0f, 0.0f, 0.0f, 36.0f, 0.0f, -342.0f, 216.0f),
-    Fwd_5("Forward 2 from 5th orientation", "525", 0.0f, 0.0f, -0.0f, 36.0f, 0.0f, -342.0f, 288.0f),
-    Left_1("Bank 2 Left from 1st orientation", "519", 0.0f, -0.0f, -0.0f, 45.0f, 0.0f, 0.0f, 0.0f),
-    Left_2("Bank 2 Left from 2nd orientation", "519", 0.0f, -0.0f, -0.0f, 45.0f, 0.0f, 0.0f, 72.0f),
-    Left_3("Bank 2 Left from 3rd orientation", "519", 0.0f, -0.0f, 0.0f, 45.0f, 0.0f, 0.0f, 144.0f),
-    Left_4("Bank 2 Left from 4th orientation", "519", 0.0f, 0.0f, 0.0f, 45.0f, 0.0f, 0.0f, 216.0f),
-    Left_5("Bank 2 Left from 5th orientation", "519", 0.0f, 0.0f, -0.0f, 45.0f, 0.0f, 0.0f, 288.0f),
-    Right_1("Bank 2 Right from 1st orientation", "519", 0.0f, 0.0f, -0.0f, -45.0f, 0.0f, 0.0f, 0.0f),
-    Right_2("Bank 2 Right from 2nd orientation", "519", 0.0f, 0.0f, -0.0f, -45.0f, 0.0f, 0.0f, 72.0f),
-    Right_3("Bank 2 Right from 3rd orientation", "519", 0.0f, 0.0f, 0.0f, -45.0f, 0.0f, 0.0f, 144.0f),
-    Right_4("Bank 2 Right from 4th orientation", "519", 0.0f, 0.0f, 0.0f, -45.0f, 0.0f, 0.0f, 216.0f),
-    Right_5("Bank 2 Right from 5th orientation", "519", 0.0f, 0.0f, -0.0f, -45.0f, 0.0f, 0.0f, 288.0f);
+    Fwd_1(  "Forward 2 from 1st orientation",    "525", 0.0f, 0.0f, 0.0f, 36.0f,  0.0f,   -342.0f, 0.0f),
+    Fwd_2(  "Forward 2 from 2nd orientation",    "525", 0.0f, 0.0f, 0.0f, 36.0f,  0.0f,   -342.0f, 72.0f),
+    Fwd_3(  "Forward 2 from 3rd orientation",    "525", 0.0f, 0.0f, 0.0f, 36.0f,  0.0f,   -342.0f, 144.0f),
+    Fwd_4(  "Forward 2 from 4th orientation",    "525", 0.0f, 0.0f, 0.0f, 36.0f,  0.0f,   -342.0f, 216.0f),
+    Fwd_5(  "Forward 2 from 5th orientation",    "525", 0.0f, 0.0f, 0.0f, 36.0f,  0.0f,   -342.0f, 288.0f),
+    Left_1( "Bank 2 Left from 1st orientation",  "519", 0.0f, 0.0f, 0.0f, -9.0f, -149.0f, -359.0f, 0.0f),
+    Left_2( "Bank 2 Left from 2nd orientation",  "519", 0.0f, 0.0f, 0.0f, -9.0f, -149.0f, -359.0f, 72.0f),
+    Left_3( "Bank 2 Left from 3rd orientation",  "519", 0.0f, 0.0f, 0.0f, -9.0f, -149.0f, -359.0f, 144.0f),
+    Left_4( "Bank 2 Left from 4th orientation",  "519", 0.0f, 0.0f, 0.0f, -9.0f, -149.0f, -359.0f, 216.0f),
+    Left_5( "Bank 2 Left from 5th orientation",  "519", 0.0f, 0.0f, 0.0f, -9.0f, -149.0f, -359.0f, 288.0f),
+    Right_1("Bank 2 Right from 1st orientation", "519", 0.0f, 0.0f, 0.0f, 9.0f,  149.0f,  -359.0f, 0.0f),
+    Right_2("Bank 2 Right from 2nd orientation", "519", 0.0f, 0.0f, 0.0f, 9.0f,  149.0f,  -359.0f, 72.0f),
+    Right_3("Bank 2 Right from 3rd orientation", "519", 0.0f, 0.0f, 0.0f, 9.0f,  149.0f,  -359.0f, 144.0f),
+    Right_4("Bank 2 Right from 4th orientation", "519", 0.0f, 0.0f, 0.0f, 9.0f,  149.0f,  -359.0f, 216.0f),
+    Right_5("Bank 2 Right from 5th orientation", "519", 0.0f, 0.0f, 0.0f, 9.0f,  149.0f,  -359.0f, 288.0f);
 
     private final String repoName;
     private final String gpID;
