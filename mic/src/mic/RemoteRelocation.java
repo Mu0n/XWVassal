@@ -373,7 +373,7 @@ public class RemoteRelocation extends Decorator implements EditablePiece {
     }
 
     public Shape getShape() {
-        return this.piece.getShape();;
+        return this.piece.getShape();
     }
 
     public String getName() {
