@@ -32,21 +32,21 @@ import static mic.Util.logToChat;
 enum ReloManeuverForProbe {
     //Remote Relocation data. Currently, the templateAngle would be the angle used to reorient the maneuver template from the Pieces window
     //it's unused since you don't need to check an overlap from a relocation template to anything
-    Fwd_1("Forward 2 from 1st orientation", "525", 0.0f, 0.0f, -0.0f, 72.0f, 0.0f, -280.0f),
-    Fwd_2("Forward 2 from 2nd orientation", "525", 0.0f, -0.0f, -0.0f, 72.0f, 0.0f, -280.0f),
-    Fwd_3("Forward 2 from 3rd orientation", "525", 0.0f, -0.0f, 0.0f, 72.0f, 0.0f, -280.0f),
-    Fwd_4("Forward 2 from 4th orientation", "525", 0.0f, 0.0f, 0.0f, 72.0f, 0.0f, -280.0f),
-    Fwd_5("Forward 2 from 5th orientation", "525", 0.0f, 0.0f, -0.0f, 72.0f, 0.0f, -280.0f),
-    Left_1("Bank 2 Left from 1st orientation", "519", 0.0f, -0.0f, -0.0f, 45.0f, 0.0f, 0.0f),
-    Left_2("Bank 2 Left from 2nd orientation", "519", 0.0f, -0.0f, -0.0f, 45.0f, 0.0f, 0.0f),
-    Left_3("Bank 2 Left from 3rd orientation", "519", 0.0f, -0.0f, 0.0f, 45.0f, 0.0f, 0.0f),
-    Left_4("Bank 2 Left from 4th orientation", "519", 0.0f, 0.0f, 0.0f, 45.0f, 0.0f, 0.0f),
-    Left_5("Bank 2 Left from 5th orientation", "519", 0.0f, 0.0f, -0.0f, 45.0f, 0.0f, 0.0f),
-    Right_1("Bank 2 Right from 1st orientation", "519", 0.0f, 0.0f, -0.0f, -45.0f, 0.0f, 0.0f),
-    Right_2("Bank 2 Right from 2nd orientation", "519", 0.0f, 0.0f, -0.0f, -45.0f, 0.0f, 0.0f),
-    Right_3("Bank 2 Right from 3rd orientation", "519", 0.0f, 0.0f, 0.0f, -45.0f, 0.0f, 0.0f),
-    Right_4("Bank 2 Right from 4th orientation", "519", 0.0f, 0.0f, 0.0f, -45.0f, 0.0f, 0.0f),
-    Right_5("Bank 2 Right from 5th orientation", "519", 0.0f, 0.0f, -0.0f, -45.0f, 0.0f, 0.0f);
+    Fwd_1("Forward 2 from 1st orientation", "525", 0.0f, 0.0f, -0.0f, 36.0f, 0.0f, -342.0f, 0.0f),
+    Fwd_2("Forward 2 from 2nd orientation", "525", 0.0f, -0.0f, -0.0f, 36.0f, 0.0f, -342.0f, 72.0f),
+    Fwd_3("Forward 2 from 3rd orientation", "525", 0.0f, -0.0f, 0.0f, 36.0f, 0.0f, -342.0f, 144.0f),
+    Fwd_4("Forward 2 from 4th orientation", "525", 0.0f, 0.0f, 0.0f, 36.0f, 0.0f, -342.0f, 216.0f),
+    Fwd_5("Forward 2 from 5th orientation", "525", 0.0f, 0.0f, -0.0f, 36.0f, 0.0f, -342.0f, 288.0f),
+    Left_1("Bank 2 Left from 1st orientation", "519", 0.0f, -0.0f, -0.0f, 45.0f, 0.0f, 0.0f, 0.0f),
+    Left_2("Bank 2 Left from 2nd orientation", "519", 0.0f, -0.0f, -0.0f, 45.0f, 0.0f, 0.0f, 72.0f),
+    Left_3("Bank 2 Left from 3rd orientation", "519", 0.0f, -0.0f, 0.0f, 45.0f, 0.0f, 0.0f, 144.0f),
+    Left_4("Bank 2 Left from 4th orientation", "519", 0.0f, 0.0f, 0.0f, 45.0f, 0.0f, 0.0f, 216.0f),
+    Left_5("Bank 2 Left from 5th orientation", "519", 0.0f, 0.0f, -0.0f, 45.0f, 0.0f, 0.0f, 288.0f),
+    Right_1("Bank 2 Right from 1st orientation", "519", 0.0f, 0.0f, -0.0f, -45.0f, 0.0f, 0.0f, 0.0f),
+    Right_2("Bank 2 Right from 2nd orientation", "519", 0.0f, 0.0f, -0.0f, -45.0f, 0.0f, 0.0f, 72.0f),
+    Right_3("Bank 2 Right from 3rd orientation", "519", 0.0f, 0.0f, 0.0f, -45.0f, 0.0f, 0.0f, 144.0f),
+    Right_4("Bank 2 Right from 4th orientation", "519", 0.0f, 0.0f, 0.0f, -45.0f, 0.0f, 0.0f, 216.0f),
+    Right_5("Bank 2 Right from 5th orientation", "519", 0.0f, 0.0f, -0.0f, -45.0f, 0.0f, 0.0f, 288.0f);
 
     private final String repoName;
     private final String gpID;
@@ -58,8 +58,10 @@ enum ReloManeuverForProbe {
     private final double remoteX;
     private final double remoteY;
 
+    private final double pentaDirectionAngle;
+
     ReloManeuverForProbe(String repoName,  String gpID, double templateAngle,
-                 double offsetX, double offsetY)
+                 double offsetX, double offsetY, double pentaDir)
     {
         this.repoName = repoName;
         this.gpID = gpID;
@@ -69,11 +71,12 @@ enum ReloManeuverForProbe {
         this.remoteAngle = 0.0f;
         this.remoteX = 0.0f;
         this.remoteY = 0.0f;
+        pentaDirectionAngle = pentaDir;
     }
 
     ReloManeuverForProbe(String repoName,  String gpID, double templateAngle,
                  double offsetX, double offsetY,
-                 double angle, double x, double y)
+                 double angle, double x, double y, double pentaDir)
 
     {
         this.repoName = repoName;
@@ -84,6 +87,7 @@ enum ReloManeuverForProbe {
         this.remoteAngle = angle;
         this.remoteX = x;
         this.remoteY = y;
+        pentaDirectionAngle = pentaDir;
 
     }
 
@@ -96,6 +100,7 @@ enum ReloManeuverForProbe {
     public double getRemoteAngle() { return this.remoteAngle; }
     public double getRemoteX() { return this.remoteX; }
     public double getRemoteY() { return this.remoteY; }
+    public double getPentaDir() { return this.pentaDirectionAngle; }
 
 
 }
@@ -112,18 +117,23 @@ public class RemoteRelocation extends Decorator implements EditablePiece {
 
     List<RepositionChoiceVisual> rpcList = Lists.newArrayList();
     private static java.util.Map<Integer, ReloManeuverForProbe> optionToRelocate = ImmutableMap.<Integer, ReloManeuverForProbe>builder()
+            //called by option 1
             .put(6 ,ReloManeuverForProbe.Left_1)
             .put(7 ,ReloManeuverForProbe.Fwd_1)
             .put(8 ,ReloManeuverForProbe.Right_1)
+            //called by option 2
             .put(9 ,ReloManeuverForProbe.Left_2)
             .put(10,ReloManeuverForProbe.Fwd_2)
             .put(11,ReloManeuverForProbe.Right_2)
+            //called by option 3
             .put(12,ReloManeuverForProbe.Left_3)
             .put(13,ReloManeuverForProbe.Fwd_3)
             .put(14,ReloManeuverForProbe.Right_3)
+            //called by option 4
             .put(15,ReloManeuverForProbe.Left_4)
             .put(16,ReloManeuverForProbe.Fwd_4)
             .put(17,ReloManeuverForProbe.Right_4)
+            //called by option 5
             .put(18,ReloManeuverForProbe.Left_5)
             .put(19,ReloManeuverForProbe.Fwd_5)
             .put(20,ReloManeuverForProbe.Right_5)
@@ -213,6 +223,7 @@ public class RemoteRelocation extends Decorator implements EditablePiece {
 
         //Info Gathering: angle and position of the ship
         double globalRemoteAngle = this.getRotator().getAngle(); //remote angle
+        double pentaDirectionAngle = relo.getPentaDir();
 
         //Info Gathering: Offset 2 get the center global coordinates of the ship calling this op
         double off2x = this.getPosition().getX();
@@ -221,8 +232,8 @@ public class RemoteRelocation extends Decorator implements EditablePiece {
         double off1x = relo.getRemoteX();
         double off1y = relo.getRemoteY();
 
-        double off1x_rot = rotX(off1x, off1y, globalRemoteAngle);
-        double off1y_rot = rotY(off1x, off1y, globalRemoteAngle);
+        double off1x_rot = rotX(off1x, off1y, globalRemoteAngle+pentaDirectionAngle);
+        double off1y_rot = rotY(off1x, off1y, globalRemoteAngle+pentaDirectionAngle);
 
         double templateTurnsRemoteAngle = relo.getRemoteAngle(); //get the extra angle caused by the template to the ship
         Command bigCommand = null;
@@ -230,7 +241,7 @@ public class RemoteRelocation extends Decorator implements EditablePiece {
         //Set the ship's final angle
         ChangeTracker changeTracker = new ChangeTracker(this);
         FreeRotator fRShip = (FreeRotator)Decorator.getDecorator(this.piece, FreeRotator.class);
-        fRShip.setAngle(globalRemoteAngle + templateTurnsRemoteAngle);
+        fRShip.setAngle(globalRemoteAngle - templateTurnsRemoteAngle);
         Command changeRotationCommand = changeTracker.getChangeCommand();
         if(bigCommand !=null) bigCommand.append(changeRotationCommand);
         else bigCommand = changeRotationCommand;
@@ -241,66 +252,6 @@ public class RemoteRelocation extends Decorator implements EditablePiece {
 
         return bigCommand;
     }
-    /*
-    private Command repositionTheShip(RepoManeuver repoTemplate, boolean is2pointOh) {
-
-        //STEP 6: Gather info for ship's final wanted position
-
-        // spawn a copy of the ship without the actions
-        //Shape shapeForOverlap2 = getCopyOfShapeWithoutActionsForOverlapCheck(this.piece,repoTemplate );
-        Shape shapeForShip = repositionedShape(repoTemplate);
-
-        //Info Gathering: Offset 1, put to the side of the ship, local coords, adjusting for large base if it is found
-        double off1x_s = repoTemplate.getShipX();
-        double off1y_s = repoTemplate.getShipY();
-
-        //STEP 7: rotate the offset1 dependant within the spawner's local coordinates
-        double off1x_rot_s = rotX(off1x_s, off1y_s, globalShipAngle);
-        double off1y_rot_s = rotY(off1x_s, off1y_s, globalShipAngle);
-
-
-        //STEP 9: Check for overlap with obstacles and ships with the final ship position
-        List<BumpableWithShape> shipsOrObstacles = getBumpablesOnMap(true);
-
-        String yourShipName = getShipStringForReports(true, this.getProperty("Pilot Name").toString(), this.getProperty("Craft ID #").toString());
-        if(shapeForShip != null){
-
-            List<BumpableWithShape> overlappingShipOrObstacles = findCollidingEntities(shapeForShip, shipsOrObstacles);
-
-            if(overlappingShipOrObstacles.size() > 0) {
-                for(BumpableWithShape bws : overlappingShipOrObstacles)
-                {
-                    previousCollisionVisualization.add(bws.shape);
-
-                    String overlapOnFinalWarn = "*** Warning: " + yourShipName + "'s final reposition location currently overlaps a Ship or Obstacle.";
-                    if(bigCommand !=null) bigCommand.append(logToChatCommand(overlapOnFinalWarn));
-                    else bigCommand = logToChatCommand(overlapOnFinalWarn);
-                }
-                previousCollisionVisualization.add(shapeForShip);
-                spawnTemplate = true; //we'll want the template
-            }
-        }
-
-        // STEP 9.5: Check for movement out of bounds
-        checkIfOutOfBounds(yourShipName, shapeForShip, true, true);
-
-        //STEP 11: reposition the ship
-        //Set the ship's final angle
-        ChangeTracker changeTracker = new ChangeTracker(this);
-        FreeRotator fRShip = (FreeRotator)Decorator.getDecorator(this.piece, FreeRotator.class);
-        fRShip.setAngle(globalShipAngle - templateTurnsShipAngle);
-        Command changeRotationCommand = changeTracker.getChangeCommand();
-        if(bigCommand !=null) bigCommand.append(changeRotationCommand);
-        else bigCommand = changeRotationCommand;
-
-        //Ship's final translation command
-        if(bigCommand != null) bigCommand.append(getMap().placeOrMerge(Decorator.getOutermost(this), new Point((int)off1x_rot_s + (int)off2x, (int)off1y_rot_s + (int)off2y)));
-        else bigCommand = getMap().placeOrMerge(Decorator.getOutermost(this), new Point((int)off1x_rot_s + (int)off2x, (int)off1y_rot_s + (int)off2y));
-
-        return bigCommand;
-    }
-     */
-
 
         private int offerTripleChoices(java.util.List<ReloManeuverForProbe> reloTemplates, VASSAL.build.module.Map theMap, int which) {
         //Getting into this function, repoShip is associated with the template used to reposition the ship. We also need the non-mapped final ship tentative position
@@ -353,7 +304,7 @@ public class RemoteRelocation extends Decorator implements EditablePiece {
             //STEP 11: reposition the ship
             //Add visuals according to the selection of repositioning
 
-            RepositionChoiceVisual rpc = new RepositionChoiceVisual(null, dot, false, "", which + 6 + spreadDotAngleFactor);
+            RepositionChoiceVisual rpc = new RepositionChoiceVisual(null, dot, false, "", 4 + 3*which + spreadDotAngleFactor);
             rpcList.add(rpc);
             spreadDotAngleFactor++;
             //return bigCommand;
