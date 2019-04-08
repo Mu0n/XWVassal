@@ -250,6 +250,7 @@ public class MouseShipGUI extends AbstractConfigurable {
                 GameModule.getGameModule().sendAndLog(tripleChoiceCommand);
 
                 removePopup(theMap, e);
+                return;
             }
 
         }
