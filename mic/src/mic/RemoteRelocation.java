@@ -46,7 +46,10 @@ enum ReloManeuverForProbe {
     Right_2("Bank 2 Right from 2nd orientation", "519", 0.0f, 0.0f, 0.0f, 9.0f,  149.0f,  -359.0f, 72.0f),
     Right_3("Bank 2 Right from 3rd orientation", "519", 0.0f, 0.0f, 0.0f, 9.0f,  149.0f,  -359.0f, 144.0f),
     Right_4("Bank 2 Right from 4th orientation", "519", 0.0f, 0.0f, 0.0f, 9.0f,  149.0f,  -359.0f, 216.0f),
-    Right_5("Bank 2 Right from 5th orientation", "519", 0.0f, 0.0f, 0.0f, 9.0f,  149.0f,  -359.0f, 288.0f);
+    Right_5("Bank 2 Right from 5th orientation", "519", 0.0f, 0.0f, 0.0f, 9.0f,  149.0f,  -359.0f, 288.0f),
+
+    BuzzFront("Front", "", 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
+    BuzzBack("Back", "", 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f);
 
     private final String repoName;
     private final String gpID;
@@ -114,6 +117,7 @@ public class RemoteRelocation extends Decorator implements EditablePiece {
     public static float DOT_DIAMETER = 46.0f;
     public static float DOT_RADIUS_FOR_PROBE = 110.0f;
     public static float DOT_RADIUS_FOR_PROBE_BANKEXTRA = 90.0f;
+    public static float DOT_BUZZ_RADIUS = 72.0f;
 
     List<RepositionChoiceVisual> rpcList = Lists.newArrayList();
     private static java.util.Map<Integer, ReloManeuverForProbe> optionToRelocate = ImmutableMap.<Integer, ReloManeuverForProbe>builder()
@@ -137,6 +141,9 @@ public class RemoteRelocation extends Decorator implements EditablePiece {
             .put(18,ReloManeuverForProbe.Left_5)
             .put(19,ReloManeuverForProbe.Fwd_5)
             .put(20,ReloManeuverForProbe.Right_5)
+            //called by option -77, buzz swarm
+            .put(-55, ReloManeuverForProbe.BuzzFront)
+            .put(-66, ReloManeuverForProbe.BuzzBack)
             .build();
     public RemoteRelocation() { this(null); }
 
@@ -187,7 +194,7 @@ public class RemoteRelocation extends Decorator implements EditablePiece {
         else return true;
     }
 
-    public Command tripleChoiceDispatcher(int which, Map theMap) {
+    public Command tripleChoiceDispatcher(RepositionChoiceVisual rpc, Map theMap) {
 
         if(!isATripleChoiceAllowed()) return null;
 
@@ -195,33 +202,73 @@ public class RemoteRelocation extends Decorator implements EditablePiece {
         String contemplatingPlayerName = getCurrentPlayer().getName();
 
         List<ReloManeuverForProbe> relos = Lists.newArrayList();
-        switch(which){
-            case 1:
+        switch(rpc._option){
+            case 1: //Probe Droid
                 relos = Lists.newArrayList(ReloManeuverForProbe.Left_1,ReloManeuverForProbe.Fwd_1,ReloManeuverForProbe.Right_1);
                 break;
-            case 2:
+            case 2: //Probe Droid
                 relos = Lists.newArrayList(ReloManeuverForProbe.Left_2,ReloManeuverForProbe.Fwd_2,ReloManeuverForProbe.Right_2);
                 break;
-            case 3:
+            case 3: //Probe Droid
                 relos = Lists.newArrayList(ReloManeuverForProbe.Left_3,ReloManeuverForProbe.Fwd_3,ReloManeuverForProbe.Right_3);
                 break;
-            case 4:
+            case 4: //Probe Droid
                 relos = Lists.newArrayList(ReloManeuverForProbe.Left_4,ReloManeuverForProbe.Fwd_4,ReloManeuverForProbe.Right_4);
                 break;
-            case 5:
+            case 5: //Probe Droid
                 relos = Lists.newArrayList(ReloManeuverForProbe.Left_5,ReloManeuverForProbe.Fwd_5,ReloManeuverForProbe.Right_5);
                 break;
+            case -77: //Buzz Droid Swarm
+                relos = Lists.newArrayList(ReloManeuverForProbe.BuzzFront, ReloManeuverForProbe.BuzzBack, ReloManeuverForProbe.BuzzBack);
+
+                logToChatWithoutUndo("Please click on a dot to relocate the remote. Click on empty space to cancel this.");
+                if(startIt!=null) startIt.append(logToChatCommand("*-- " + contemplatingPlayerName + " is considering attachment positions for the Buzz Swarm Droids."));
+                else startIt = logToChatCommand("*-- " + contemplatingPlayerName + " is considering attachment positions for the Buzz Swarm Droids.");
+                offerTripleChoices(relos,  theMap, rpc);
+                return startIt;
         }
+
         logToChatWithoutUndo("Please click on a dot to relocate the remote. Click on empty space to cancel this.");
         if(startIt!=null) startIt.append(logToChatCommand("*-- " + contemplatingPlayerName + " is considering 3 relocation positions for the DRK-1 Probe Droid."));
         else startIt = logToChatCommand("*-- " + contemplatingPlayerName + " is considering 3 relocation positions for the DRK-1 Probe Droid.");
-        offerTripleChoices(relos,  theMap, which);
+        offerTripleChoices(relos,  theMap, rpc);
         return startIt;
     }
 
+    private Command repositionBuzzSwarm(ReloManeuverForProbe relo, GamePiece victimShip){
+        boolean wantBack = false;
+        if(relo==ReloManeuverForProbe.BuzzBack) wantBack = true;
+
+        double globalShipAngle =  ((FreeRotator) Decorator.getDecorator(getOutermost(victimShip), FreeRotator.class)).getAngle();
+
+        double off2x = victimShip.getPosition().x;
+        double off2y = victimShip.getPosition().y;
+
+        double off1x = 0.0f;
+        double off1y = -116.0f;
+
+        double off1x_rot = rotX(off1x, off1y, globalShipAngle + (wantBack?180.0f:0.0f));
+        double off1y_rot = rotY(off1x, off1y, globalShipAngle + (wantBack?180.0f:0.0f));
+
+        Command bigCommand = null;
+        //STEP 11: reposition the remote
+        //Set the remote's final angle
+        ChangeTracker changeTracker = new ChangeTracker(this);
+        FreeRotator fRShip = (FreeRotator)Decorator.getDecorator(this.piece, FreeRotator.class);
+        fRShip.setAngle(globalShipAngle + (wantBack?180.0f:0.0f));
+        Command changeRotationCommand = changeTracker.getChangeCommand();
+        if(bigCommand !=null) bigCommand.append(changeRotationCommand);
+        else bigCommand = changeRotationCommand;
+        //Remote's final translation command
+        if(bigCommand != null) bigCommand.append(getMap().placeOrMerge(Decorator.getOutermost(this), new Point((int)off1x_rot + (int)off2x, (int)off1y_rot + (int)off2y)));
+        else bigCommand = getMap().placeOrMerge(Decorator.getOutermost(this), new Point((int)off1x_rot + (int)off2x, (int)off1y_rot + (int)off2y));
+
+        return bigCommand;
+
+    }
     private Command repositionTheRemote(ReloManeuverForProbe relo) {
 
-        //Info Gathering: angle and position of the ship
+        //Info Gathering: angle and position of the remote
         double globalRemoteAngle = this.getRotator().getAngle(); //remote angle
         double pentaDirectionAngle = relo.getPentaDir();
 
@@ -237,8 +284,8 @@ public class RemoteRelocation extends Decorator implements EditablePiece {
 
         double templateTurnsRemoteAngle = relo.getRemoteAngle(); //get the extra angle caused by the template to the ship
         Command bigCommand = null;
-        //STEP 11: reposition the ship
-        //Set the ship's final angle
+        //STEP 11: reposition the remote
+        //Set the remote's final angle
         ChangeTracker changeTracker = new ChangeTracker(this);
         FreeRotator fRShip = (FreeRotator)Decorator.getDecorator(this.piece, FreeRotator.class);
         fRShip.setAngle(globalRemoteAngle - templateTurnsRemoteAngle);
@@ -246,69 +293,106 @@ public class RemoteRelocation extends Decorator implements EditablePiece {
         if(bigCommand !=null) bigCommand.append(changeRotationCommand);
         else bigCommand = changeRotationCommand;
 
-        //Ship's final translation command
+        //Remote's final translation command
         if(bigCommand != null) bigCommand.append(getMap().placeOrMerge(Decorator.getOutermost(this), new Point((int)off1x_rot + (int)off2x, (int)off1y_rot + (int)off2y)));
         else bigCommand = getMap().placeOrMerge(Decorator.getOutermost(this), new Point((int)off1x_rot + (int)off2x, (int)off1y_rot + (int)off2y));
 
         return bigCommand;
     }
 
-        private int offerTripleChoices(java.util.List<ReloManeuverForProbe> reloTemplates, VASSAL.build.module.Map theMap, int which) {
+        private int offerTripleChoices(java.util.List<ReloManeuverForProbe> reloTemplates, VASSAL.build.module.Map theMap, RepositionChoiceVisual rpcInput) {
         //Getting into this function, repoShip is associated with the template used to reposition the ship. We also need the non-mapped final ship tentative position
 
         // STEP 0: gather ship angle and rotator
         double remoteAngle = this.getRotator().getAngle(); //remote angle
         //FreeRotator fR = (FreeRotator) Decorator.getDecorator(piece, FreeRotator.class);
 
-            int spreadDotAngleFactor = -1;
-        for(ReloManeuverForProbe reloTemplate : reloTemplates) { //loops over the list of potential repositions
-            if(reloTemplate == null) {
-                logToChat("--- Error: couldn't find the relocation data");
-                return -1;
+            if(rpcInput._option==-77) {//buzz droid swarm case
+                double globalShipAngle =  ((FreeRotator) Decorator.getDecorator(getOutermost(rpcInput.associatedTargetPiece), FreeRotator.class)).getAngle();
+                //STEP 1:
+                //Info Gathering: Offset 2 get the center global coordinates of the ship calling this op
+                double off2x = rpcInput.associatedTargetPiece.getPosition().getX();
+                double off2y = rpcInput.associatedTargetPiece.getPosition().getY();
+
+                double off1x = 0.0f;
+                float sizeFudge = whichSizeShip((Decorator) Decorator.getOutermost(rpcInput.associatedTargetPiece),true);
+                double off1y = -DOT_BUZZ_RADIUS - (sizeFudge-1) * 35.0f;
+
+                double off1x_rot_front = rotX(off1x, off1y, globalShipAngle);
+                double off1y_rot_front = rotY(off1x, off1y, globalShipAngle);
+
+                double off1x_rot_back = rotX(off1x, off1y, globalShipAngle + 180.0f);
+                double off1y_rot_back = rotY(off1x, off1y, globalShipAngle + 180.0f);
+
+                float diam = DOT_DIAMETER + (sizeFudge-1) * 20.0f;
+                Shape dot = new Ellipse2D.Float(-diam / 2, -diam / 2, diam, diam);
+                dot = AffineTransform.
+                        getTranslateInstance((int) off1x_rot_front + (int) off2x, (int) off1y_rot_front + (int) off2y).
+                        createTransformedShape(dot);
+
+                RepositionChoiceVisual rpc = new RepositionChoiceVisual(null, dot, false, "", -55, rpcInput.associatedTargetPiece);
+                rpcList.add(rpc);
+
+                Shape dot2 = new Ellipse2D.Float(-diam / 2, -diam / 2, diam, diam);
+                dot2 = AffineTransform.
+                        getTranslateInstance((int) off1x_rot_back + (int) off2x, (int) off1y_rot_back + (int) off2y).
+                        createTransformedShape(dot2);
+                RepositionChoiceVisual rpc2 = new RepositionChoiceVisual(null, dot2, false, "", -66, rpcInput.associatedTargetPiece);
+                rpcList.add(rpc2);
             }
-            //STEP 1:
-            //Info Gathering: Offset 2 get the center global coordinates of the ship calling this op
-            double off2x = this.getPosition().getX();
-            double off2y = this.getPosition().getY();
+        else { // probe droid case
+                //for now, Probe Droid case, the only other case
+                int spreadDotAngleFactor = -1;
+                for(ReloManeuverForProbe reloTemplate : reloTemplates) { //loops over the list of potential repositions
+                    if(reloTemplate == null) {
+                        logToChat("--- Error: couldn't find the relocation data");
+                        return -1;
+                    }
+                    //STEP 1:
+                    //Info Gathering: Offset 2 get the center global coordinates of the ship calling this op
+                    double off2x = this.getPosition().getX();
+                    double off2y = this.getPosition().getY();
 
-            float diam = DOT_DIAMETER;
-            Shape dot = new Ellipse2D.Float(-diam / 2, -diam / 2, diam, diam);
+                    float diam = DOT_DIAMETER;
+                    Shape dot = new Ellipse2D.Float(-diam / 2, -diam / 2, diam, diam);
 
-            //Info Gathering: gets the angle from RepoManeuver which deals with degrees, local space with ship at 0,0, pointing up
-            double templateTurnsRemoteAngle = reloTemplate.getRemoteAngle(); //repo maneuver's angle
+                    //Info Gathering: gets the angle from RepoManeuver which deals with degrees, local space with ship at 0,0, pointing up
+                    double templateTurnsRemoteAngle = reloTemplate.getRemoteAngle(); //repo maneuver's angle
 
-            //Info Gathering: Offset 1, put to the side of the ship, local coords, get the final coords of the ship (and its dot)
+                    //Info Gathering: Offset 1, put to the side of the ship, local coords, get the final coords of the ship (and its dot)
 
-            double off3x = 0.0f;
-            double off3y = -DOT_RADIUS_FOR_PROBE_BANKEXTRA;
+                    double off3x = 0.0f;
+                    double off3y = -DOT_RADIUS_FOR_PROBE_BANKEXTRA;
 
-            double off3x_rot = rotX(off3x, off3y, -spreadDotAngleFactor*35.0f);
-            double off3y_rot = rotY(off3x, off3y, -spreadDotAngleFactor*35.0f);
+                    double off3x_rot = rotX(off3x, off3y, -spreadDotAngleFactor*35.0f);
+                    double off3y_rot = rotY(off3x, off3y, -spreadDotAngleFactor*35.0f);
 
-            double off1x_s = 0.0f;
-            double off1y_s = -DOT_RADIUS_FOR_PROBE;
+                    double off1x_s = 0.0f;
+                    double off1y_s = -DOT_RADIUS_FOR_PROBE;
 
-            double offLx = off1x_s + off3x_rot;
-            double offLy = off1y_s + off3y_rot;
+                    double offLx = off1x_s + off3x_rot;
+                    double offLy = off1y_s + off3y_rot;
 
 
-            //STEP 7: rotate the offset1 dependant within the spawner's local coordinates
+                    //STEP 7: rotate the offset1 dependant within the spawner's local coordinates
 
-            double off1x_rot_s_dot = rotX(offLx, offLy, remoteAngle + (which-1)*72.0);
-            double off1y_rot_s_dot = rotY(offLx, offLy, remoteAngle + (which-1)*72.0);
+                    double off1x_rot_s_dot = rotX(offLx, offLy, remoteAngle + (rpcInput._option-1)*72.0);
+                    double off1y_rot_s_dot = rotY(offLx, offLy, remoteAngle + (rpcInput._option-1)*72.0);
 
-            dot = AffineTransform.
-                    getTranslateInstance((int) off1x_rot_s_dot + (int) off2x, (int) off1y_rot_s_dot + (int) off2y).
-                    createTransformedShape(dot);
+                    dot = AffineTransform.
+                            getTranslateInstance((int) off1x_rot_s_dot + (int) off2x, (int) off1y_rot_s_dot + (int) off2y).
+                            createTransformedShape(dot);
 
-            //STEP 11: reposition the ship
-            //Add visuals according to the selection of repositioning
+                    //STEP 11: reposition the ship
+                    //Add visuals according to the selection of repositioning
 
-            RepositionChoiceVisual rpc = new RepositionChoiceVisual(null, dot, false, "", 4 + 3*which + spreadDotAngleFactor);
-            rpcList.add(rpc);
-            spreadDotAngleFactor++;
-            //return bigCommand;
-        } // end of loop around the 3 templates used in the repositions
+                    RepositionChoiceVisual rpc = new RepositionChoiceVisual(null, dot, false, "", 4 + 3*rpcInput._option + spreadDotAngleFactor, null);
+                    rpcList.add(rpc);
+                    spreadDotAngleFactor++;
+                    //return bigCommand;
+                } // end of loop around the 3 templates used in the repositions
+            }
+
 
         //FINAL STEP: add the visuala to the map and the mouse listener
 
@@ -319,6 +403,7 @@ public class RemoteRelocation extends Decorator implements EditablePiece {
 
         final Decorator remoteToRelocate = this;
         final VASSAL.build.module.Map finalMap = theMap;
+        final int finalCase = rpcInput._option;
 
         ml = new MouseListener() {
             int i=0;
@@ -346,7 +431,7 @@ public class RemoteRelocation extends Decorator implements EditablePiece {
                         //Change this line to another function that can deal with strings instead
                         //shipToReposition.keyEvent(theChosenOne.getKeyStroke());
                         RemoteRelocation RR = findRemoteRelocationDecorator(remoteToRelocate);
-                        RR.newNonKeyEvent(theChosenOne._option);
+                        RR.newNonKeyEvent(theChosenOne);
 
                         closeMouseListener(finalMap, ml);
                         return;
@@ -385,6 +470,19 @@ public class RemoteRelocation extends Decorator implements EditablePiece {
 
         return 1;
     }
+
+    //1=small,2=medium,3=large
+    private int whichSizeShip(Decorator ship, boolean is2pointoh) {
+        BumpableWithShape test = new BumpableWithShape(ship, "Ship", "notimportant", "notimportant", is2pointoh);
+        String chassisNameResult = test.chassis.getChassisName();
+        if(chassisNameResult.equals("small")) return 1;
+        if(chassisNameResult.equals("medium")) return 2;
+        if(chassisNameResult.equals("large")) return 3;
+
+        return 1; //default size
+    }
+
+
     //There were too many hotkeys for the mouse GUI, so it uses names instead
     private ReloManeuverForProbe getNewSystemRelo(int choice) {
         if (optionToRelocate.containsKey(choice)) {
@@ -393,16 +491,28 @@ public class RemoteRelocation extends Decorator implements EditablePiece {
         return null;
     }
     //used at the end of triple choice sequences. Lots less to deal with
-    public Command newNonKeyEvent(int option){
+    public Command newNonKeyEvent(RepositionChoiceVisual rpc){
         //Deal with ship repositioning, including overlap detection for the templates used, including the triple choice keystrokes that lead to a mouse GUI
-        ReloManeuverForProbe reloRemote = getNewSystemRelo(option);
+        ReloManeuverForProbe reloRemote = getNewSystemRelo(rpc._option);
+
         //Ship reposition requested
         if(reloRemote != null) {
+            if(reloRemote==ReloManeuverForProbe.BuzzBack || reloRemote==ReloManeuverForProbe.BuzzFront){
+                Command repoCommand = repositionBuzzSwarm(reloRemote, rpc.associatedTargetPiece);
+
+                if(repoCommand == null) return null; //somehow did not get a programmed reposition command
+                else{
+                    repoCommand.append(logToChatCommand("*** The Buzz Swarm Droid has attached to " + rpc.associatedTargetPiece.getName() + " to the " + reloRemote.getRepoName()));
+                    repoCommand.execute();
+                    GameModule.getGameModule().sendAndLog(repoCommand);
+                    return null;
+                }
+            }
             //detect that the ship's final position overlaps a ship or obstacle
             Command repoCommand = repositionTheRemote(reloRemote);
             if(repoCommand == null) return null; //somehow did not get a programmed reposition command
             else{
-                repoCommand.append(logToChatCommand("*** The DRK-1 Probe Droid has repositioned with option " + option));
+                repoCommand.append(logToChatCommand("*** The DRK-1 Probe Droid has repositioned"));
                 repoCommand.execute();
                 GameModule.getGameModule().sendAndLog(repoCommand);
                 return null;

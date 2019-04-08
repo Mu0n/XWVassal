@@ -2,6 +2,7 @@ package mic;
 
 import VASSAL.build.module.Map;
 import VASSAL.build.module.map.Drawable;
+import VASSAL.counters.GamePiece;
 
 import javax.swing.*;
 import java.awt.*;
@@ -27,13 +28,15 @@ public class RepositionChoiceVisual implements Drawable {
     KeyStroke theKey;
     String inStringForm;
     int _option;
+    GamePiece associatedTargetPiece;
 
-    public RepositionChoiceVisual(Shape translatedRotatedScaledShape, Shape centralDot, boolean wantOverlapColor, String choice, int option){
+    public RepositionChoiceVisual(Shape translatedRotatedScaledShape, Shape centralDot, boolean wantOverlapColor, String choice, int option, GamePiece targetPiece){
         thePieceShape = translatedRotatedScaledShape;
         theDot = centralDot;
         isOverlapped = wantOverlapColor;
         inStringForm = choice;
         _option = option;
+        associatedTargetPiece = targetPiece;
     }
 
     public void draw(Graphics g, VASSAL.build.module.Map map) {

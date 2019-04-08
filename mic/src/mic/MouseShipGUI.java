@@ -36,8 +36,8 @@ public class MouseShipGUI extends AbstractConfigurable {
     MouseGUIDrawable lastPopup; //active popup drawable component with info on images, clickable areas, etc
     MouseListener ml;
 
-    private static final int probeDroidGUIOption = 1;
-    private static final int buzzSwarmGUIOption = 2;
+    public static final int probeDroidGUIOption = 1;
+    public static final int buzzSwarmGUIOption = 2;
 
     private static java.util.Map<String, Integer> remoteNameToGUIOption = ImmutableMap.<String, Integer>builder()
             .put("DRK-1 Probe Droid", probeDroidGUIOption)
@@ -190,7 +190,7 @@ public class MouseShipGUI extends AbstractConfigurable {
                 if(mrgd!=null) theMap.addDrawComponent(mrgd);
                 theMap.repaint();
 
-                logToChatWithoutUndo("*-- Welcome to the beta Mouse Graphical Interface. You got here by ctrl-left clicking on a remote. You can left-click on the dots to select the direction of the relocation. Click in empty space to dismiss this.");
+                logToChatWithoutUndo("*-- Welcome to the beta Mouse Graphical Interface. You got here by ctrl-left clicking on a remote. You can left-click on a dot to activate the next step of the relocation/attachment. You can click on an empty area to dismiss this.");
 
                 //save this ship and popup Drawable for future behavior
                 activatedPiece = remote;
@@ -244,7 +244,7 @@ public class MouseShipGUI extends AbstractConfigurable {
                 e.consume();
 
                 RemoteRelocation RL = RemoteRelocation.findRemoteRelocationDecorator(activatedPiece);
-                Command tripleChoiceCommand = RL.tripleChoiceDispatcher(rpc._option, theMap);
+                Command tripleChoiceCommand = RL.tripleChoiceDispatcher(rpc, theMap);
 
                 tripleChoiceCommand.execute();
                 GameModule.getGameModule().sendAndLog(tripleChoiceCommand);
