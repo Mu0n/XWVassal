@@ -112,8 +112,8 @@ public class RemoteRelocation extends Decorator implements EditablePiece {
     private final FreeRotator testRotator;
     private FreeRotator myRotator = null;
     public static float DOT_DIAMETER = 46.0f;
-    public static float DOT_RADIUS_FOR_PROBE = 170.0f;
-    public static float DOT_RADIUS_FOR_PROBE_BANKEXTRA = 100.0f;
+    public static float DOT_RADIUS_FOR_PROBE = 110.0f;
+    public static float DOT_RADIUS_FOR_PROBE_BANKEXTRA = 90.0f;
 
     List<RepositionChoiceVisual> rpcList = Lists.newArrayList();
     private static java.util.Map<Integer, ReloManeuverForProbe> optionToRelocate = ImmutableMap.<Integer, ReloManeuverForProbe>builder()
