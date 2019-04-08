@@ -190,7 +190,7 @@ public class MouseShipGUI extends AbstractConfigurable {
                 if(mrgd!=null) theMap.addDrawComponent(mrgd);
                 theMap.repaint();
 
-                logToChatWithoutUndo("*-- Welcome to the beta Mouse Graphical Interface. You got here by ctrl-left clicking on a remote. You can left-click on the dots to select the direction of the relocation. Click on the red X to close the popup");
+                logToChatWithoutUndo("*-- Welcome to the beta Mouse Graphical Interface. You got here by ctrl-left clicking on a remote. You can left-click on the dots to select the direction of the relocation. Click in empty space to dismiss this.");
 
                 //save this ship and popup Drawable for future behavior
                 activatedPiece = remote;
@@ -239,6 +239,22 @@ public class MouseShipGUI extends AbstractConfigurable {
     }
 
     private void firstStageRemoteGUI(MouseEvent e, Map theMap){
+        for(RepositionChoiceVisual rpc : ((MouseRemoteGUIDrawable)lastPopup).rpcList){
+            if( rpc.theDot.contains(e.getX(), e.getY())){
+                e.consume();
+
+                RemoteRelocation RL = RemoteRelocation.findRemoteRelocationDecorator(activatedPiece);
+                Command tripleChoiceCommand = RL.tripleChoiceDispatcher(rpc._option, theMap);
+
+                tripleChoiceCommand.execute();
+                GameModule.getGameModule().sendAndLog(tripleChoiceCommand);
+
+                removePopup(theMap, e);
+            }
+
+        }
+        //did not click on the dots
+        logToChatWithoutUndo("You dismissed the GUI for the remote. Nothing was done. Ctrl-Click on the remote if you want to try again");
         removePopup(theMap, e);
     }
 

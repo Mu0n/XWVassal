@@ -232,7 +232,7 @@ public class ShipReposition extends Decorator implements EditablePiece {
 
     MouseListener ml;
     Boolean dealingWithClickChoicesDuringReposition = false;
-    List<repositionChoiceVisual> rpcList = Lists.newArrayList();
+    List<RepositionChoiceVisual> rpcList = Lists.newArrayList();
 
     private static Map<String, RepoManeuver> keyStrokeToDropTemplate = ImmutableMap.<String, RepoManeuver>builder()
             .put("CTRL R", RepoManeuver.BR1_Left_Mid)
@@ -716,7 +716,7 @@ public class ShipReposition extends Decorator implements EditablePiece {
             //STEP 11: reposition the ship
             //Add visuals according to the selection of repositioning
 
-            repositionChoiceVisual rpc = new repositionChoiceVisual(shapeForShipOverlap, dot, wantOverlapColor,repoShipToString.get(repoTemplate));
+            RepositionChoiceVisual rpc = new RepositionChoiceVisual(shapeForShipOverlap, dot, wantOverlapColor,repoShipToString.get(repoTemplate),0);
             rpcList.add(rpc);
 
             //return bigCommand;
@@ -725,7 +725,7 @@ public class ShipReposition extends Decorator implements EditablePiece {
         } // end of loop around the 3 templates used in the repositions
 
         //FINAL STEP: add the visuala to the map and the mouse listener
-        for(repositionChoiceVisual r : rpcList){
+        for(RepositionChoiceVisual r : rpcList){
             theMap.addDrawComponent(r);
         }
 
@@ -736,15 +736,15 @@ public class ShipReposition extends Decorator implements EditablePiece {
             public void mousePressed(MouseEvent e) {
                 if(e.isConsumed()) return;
 
-                List<repositionChoiceVisual> copiedList = Lists.newArrayList();
-                for(repositionChoiceVisual r : rpcList){
+                List<RepositionChoiceVisual> copiedList = Lists.newArrayList();
+                for(RepositionChoiceVisual r : rpcList){
                     copiedList.add(r);
                 }
                 //When it gets the answer, gracefully close the mouse listenener and remove the visuals
-                repositionChoiceVisual theChosenOne = null;
+                RepositionChoiceVisual theChosenOne = null;
                 boolean slightMisclick = false;
 
-                for(repositionChoiceVisual r : copiedList){
+                for(RepositionChoiceVisual r : copiedList){
                     if(r.theDot.contains(e.getX(),e.getY())){
                         theChosenOne = r;
                         break;
@@ -786,30 +786,13 @@ public class ShipReposition extends Decorator implements EditablePiece {
                 }
             }
 
-            public void mouseClicked(MouseEvent e) {
+            public void mouseClicked(MouseEvent e) { }
 
-            }
+            public void mouseReleased(MouseEvent e) { }
 
-            public void mouseReleased(MouseEvent e) {
+            public void mouseEntered(MouseEvent e) { }
 
-            }
-
-            public void mouseEntered(MouseEvent e) {
-                for(repositionChoiceVisual rpc : rpcList){
-                    if(rpc.theDot.contains(e.getPoint())){
-                        rpc.setMouseOvered();
-                        logToChat("$*/*$(*%($/%*($%*/*($%*/");
-                    }
-                }
-            }
-
-            public void mouseExited(MouseEvent e) {
-                for(repositionChoiceVisual rpc : rpcList){
-                    if(!rpc.theDot.contains(e.getPoint())){
-                        rpc.unsetMouseOvered();
-                    }
-                }
-            }
+            public void mouseExited(MouseEvent e) { }
         };
         theMap.addLocalMouseListenerFirst(ml);
 
@@ -1056,7 +1039,7 @@ public class ShipReposition extends Decorator implements EditablePiece {
     }
 
     private void removeVisuals(VASSAL.build.module.Map aMapm){
-        for(repositionChoiceVisual r : rpcList){
+        for(RepositionChoiceVisual r : rpcList){
             aMapm.removeDrawComponent(r);
         }
         rpcList.clear();
@@ -1519,58 +1502,6 @@ public class ShipReposition extends Decorator implements EditablePiece {
         return this.piece.getName();
     }
 
-    public static class repositionChoiceVisual implements Drawable {
-        Shape thePieceShape;
-        Shape theDot;
-        Boolean mouseOvered = false;
-        Color bumpColor = new Color(255,99,71, 60);
-        Color validColor = new Color(0,255,130, 60);
-        Color dotColor = new Color(255,255,200);
-        Color mouseOverColor = new Color(255,255,130);
-        Color dotOverlappedColor = new Color(255,0,0);
-        boolean isOverlapped = false;
-        KeyStroke theKey;
-        String inStringForm;
-
-        public repositionChoiceVisual(Shape translatedRotatedScaledShape, Shape centralDot, boolean wantOverlapColor, String choice){
-            thePieceShape = translatedRotatedScaledShape;
-            theDot = centralDot;
-            isOverlapped = wantOverlapColor;
-            inStringForm = choice;
-        }
-
-        public void setMouseOvered(){
-            mouseOvered = true;
-        }
-        public void unsetMouseOvered(){
-            mouseOvered = false;
-        }
-        public void draw(Graphics g, VASSAL.build.module.Map map) {
-            Graphics2D graphics2D = (Graphics2D) g;
-
-            AffineTransform scaler = AffineTransform.getScaleInstance(map.getZoom(), map.getZoom());
-
-            graphics2D.setColor(validColor);
-            if(thePieceShape!=null) graphics2D.fill(scaler.createTransformedShape(thePieceShape));
-            if(isOverlapped) graphics2D.setColor(dotOverlappedColor);
-            else graphics2D.setColor(dotColor);
-            if(theDot!=null) graphics2D.fill(scaler.createTransformedShape(theDot));
-            if(mouseOvered){
-                graphics2D.setColor(mouseOverColor);
-                graphics2D.draw(theDot);
-            }
-        }
-
-        public boolean drawAboveCounters() {
-            return true;
-        }
-
-        public KeyStroke getKeyStroke() {
-            return theKey;
-        }
-
-        public String getInStringForm() { return inStringForm; }
-    }
 
     public static ShipReposition findShipRepositionDecorator(GamePiece activatedPiece) {
         return (ShipReposition)ShipReposition.getDecorator(activatedPiece,ShipReposition.class);

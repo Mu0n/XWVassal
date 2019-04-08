@@ -1,15 +1,23 @@
 package mic;
 
+import VASSAL.build.GameModule;
 import VASSAL.build.module.Map;
 import VASSAL.build.module.map.Drawable;
 import VASSAL.counters.Decorator;
 import VASSAL.counters.FreeRotator;
 import VASSAL.counters.GamePiece;
+import VASSAL.tools.DataArchive;
+import VASSAL.tools.io.FileArchive;
 import com.google.common.collect.Lists;
 
+import javax.imageio.ImageIO;
+import javax.swing.*;
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Ellipse2D;
+import java.awt.image.BufferedImage;
+import java.io.BufferedInputStream;
+import java.io.InputStream;
 import java.util.*;
 
 import static VASSAL.counters.Decorator.getOutermost;
@@ -27,10 +35,9 @@ public class MouseRemoteGUIDrawable extends MouseGUIDrawable implements Drawable
     GamePiece _remotePiece;
     Map _map;
     int _option;
-    java.util.List<ShipReposition.repositionChoiceVisual> rpcList = Lists.newArrayList();
+    public java.util.List<RepositionChoiceVisual> rpcList = Lists.newArrayList();
     public static float DOT_DIAMETER = 46.0f;
 
-    Collection<MouseShipGUIDrawable.miElement> listOfInteractiveElements = Lists.newArrayList();
     double scale;
 
     public MouseRemoteGUIDrawable(GamePiece remotePiece, Map map, int option){
@@ -50,21 +57,22 @@ public class MouseRemoteGUIDrawable extends MouseGUIDrawable implements Drawable
         double shipAngle = ((FreeRotator) Decorator.getDecorator(getOutermost(_remotePiece), FreeRotator.class)).getAngle(); //remote angle
         //STEP 7: rotate the offset1 dependant within the spawner's local coordinates
 
-        for(int i=0; i<5; i++){
+        for(int i=1; i<=5; i++){
             float diam = DOT_DIAMETER;
             Shape dot = new Ellipse2D.Float(-diam / 2, -diam / 2, diam, diam);
 
             double off2x = 0;
             double off2y = -80;
 
-            double off2x_rot_dot = rotX(off2x, off2y, shipAngle + 72*i);
-            double off2y_rot_dot = rotY(off2x, off2y, shipAngle + 72*i);
+            double off2x_rot_dot = rotX(off2x, off2y, shipAngle + 72*(i-1));
+            double off2y_rot_dot = rotY(off2x, off2y, shipAngle + 72*(i-1));
+
 
             dot = AffineTransform.
                     getTranslateInstance((int) offx + (int) off2x_rot_dot, (int) offy + (int) off2y_rot_dot).
                     createTransformedShape(dot);
 
-            ShipReposition.repositionChoiceVisual rpc = new ShipReposition.repositionChoiceVisual(null, dot, false,"");
+            RepositionChoiceVisual rpc = new RepositionChoiceVisual(null, dot, false,"",i);
             rpcList.add(rpc);
         }
     }
@@ -76,7 +84,7 @@ public class MouseRemoteGUIDrawable extends MouseGUIDrawable implements Drawable
 
         AffineTransform scaler = AffineTransform.getScaleInstance(scale, scale);
 
-        for(ShipReposition.repositionChoiceVisual rpc : rpcList){
+        for(RepositionChoiceVisual rpc : rpcList){
             Shape tDot = scaler.createTransformedShape(rpc.theDot);
             g2d.setColor(rpc.dotColor);
             g2d.fill(tDot);
@@ -86,4 +94,5 @@ public class MouseRemoteGUIDrawable extends MouseGUIDrawable implements Drawable
     public boolean drawAboveCounters() {
         return true;
     }
+
 }
