@@ -364,20 +364,20 @@ public class RemoteRelocation extends Decorator implements EditablePiece {
         return null;
     }
 
-    public void draw(Graphics g, int x, int y, Component obs, double zoom) {
-
+    public void draw(Graphics graphics, int i, int i1, Component component, double v) {
+        this.piece.draw(graphics, i, i1, component, v);
     }
 
     public Rectangle boundingBox() {
-        return null;
+        return this.piece.boundingBox();
     }
 
     public Shape getShape() {
-        return null;
+        return this.piece.getShape();;
     }
 
     public String getName() {
-        return null;
+        return this.piece.getName();
     }
 
     public static RemoteRelocation findRemoteRelocationDecorator(GamePiece activatedPiece) {
