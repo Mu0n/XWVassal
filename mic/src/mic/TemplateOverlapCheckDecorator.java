@@ -341,59 +341,6 @@ public class TemplateOverlapCheckDecorator extends Decorator implements Editable
         return transformed;
     }
 
-    /*
-    private static class CollisionVisualization implements Drawable {
-
-        private final java.util.List<Shape> shapes;
-        private boolean tictoc = false;
-        Color myO = new Color(255,99,71, 150);
-
-        CollisionVisualization() {
-            this.shapes = new ArrayList<Shape>();
-        }
-        CollisionVisualization(Shape shipShape) {
-            this.shapes = new ArrayList<Shape>();
-            this.shapes.add(shipShape);
-        }
-
-        public void add(Shape bumpable) {
-            this.shapes.add(bumpable);
-        }
-
-        public int getCount() {
-            int count = 0;
-            Iterator<Shape> it = this.shapes.iterator();
-            while(it.hasNext()) {
-                count++;
-                it.next();
-            }
-            return count;
-        }
-
-        public void draw(Graphics graphics, VASSAL.build.module.Map map) {
-            Graphics2D graphics2D = (Graphics2D) graphics;
-            if(tictoc == false)
-            {
-                graphics2D.setColor(myO);
-                AffineTransform scaler = AffineTransform.getScaleInstance(map.getZoom(), map.getZoom());
-                for (Shape shape : shapes) {
-                    graphics2D.fill(scaler.createTransformedShape(shape));
-                }
-                tictoc = true;
-            }
-            else {
-                map.getView().repaint();
-                tictoc = false;
-            }
-
-
-        }
-
-        public boolean drawAboveCounters() {
-            return true;
-        }
-    }
-*/
     private static class ShipPositionState {
         double x;
         double y;
