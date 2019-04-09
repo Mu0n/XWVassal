@@ -83,7 +83,7 @@ public class MouseRemoteGUIDrawable extends MouseGUIDrawable implements Drawable
             for (GamePiece piece : pieces) {
                 try{
                     if(piece.getState().contains("this_is_a_ship")){
-                        float diam = DOT_DIAMETER;
+                        float diam = DOT_DIAMETER*4/3;
                         Shape dot = new Ellipse2D.Float(-diam / 2, -diam / 2, diam, diam);
                         double offx = piece.getPosition().getX();
                         double offy = piece.getPosition().getY();

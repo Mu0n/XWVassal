@@ -502,7 +502,7 @@ public class RemoteRelocation extends Decorator implements EditablePiece {
 
                 if(repoCommand == null) return null; //somehow did not get a programmed reposition command
                 else{
-                    repoCommand.append(logToChatCommand("*** The Buzz Swarm Droid has attached to " + rpc.associatedTargetPiece.getName() + " to the " + reloRemote.getRepoName()));
+                    repoCommand.append(logToChatCommand("*** The Buzz Swarm Droid has attached to " + rpc.associatedTargetPiece.getProperty("Pilot Name").toString() + " to the " + reloRemote.getRepoName()));
                     repoCommand.execute();
                     GameModule.getGameModule().sendAndLog(repoCommand);
                     return null;
