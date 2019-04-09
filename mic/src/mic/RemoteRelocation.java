@@ -247,6 +247,10 @@ public class RemoteRelocation extends Decorator implements EditablePiece {
         double off1x = 0.0f;
         double off1y = -116.0f;
 
+        int sizeship = whichSizeShip((Decorator)Decorator.getOutermost(victimShip), true);
+        if(sizeship==2) off1y = -145.5f;
+        else if(sizeship==3) off1y = -173.0f;
+
         double off1x_rot = rotX(off1x, off1y, globalShipAngle + (wantBack?180.0f:0.0f));
         double off1y_rot = rotY(off1x, off1y, globalShipAngle + (wantBack?180.0f:0.0f));
 
