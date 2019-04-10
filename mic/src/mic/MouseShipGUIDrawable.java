@@ -3,6 +3,7 @@ package mic;
 import VASSAL.build.GameModule;
 import VASSAL.build.module.Map;
 import VASSAL.build.module.map.Drawable;
+import VASSAL.build.module.map.boardPicker.Board;
 import VASSAL.counters.Decorator;
 import VASSAL.counters.FreeRotator;
 import VASSAL.counters.GamePiece;
@@ -36,6 +37,11 @@ import java.security.Key;
 import java.text.AttributedString;
 import java.util.Collection;
 
+import java.util.List;
+
+import static mic.Util.logToChat;
+import static mic.Util.logToChatWithTime;
+
 /**
  * Created by Mic on 2019-01-17.
  *
@@ -51,6 +57,7 @@ public class MouseShipGUIDrawable extends MouseGUIDrawable implements Drawable {
     int padY = 20;
     int cursorX = padX;
     int cursorY = padY;
+    List<BumpableWithShape> drawThese;
 
     Collection<miElement> listOfInteractiveElements = Lists.newArrayList();
     double scale;
@@ -64,9 +71,9 @@ public class MouseShipGUIDrawable extends MouseGUIDrawable implements Drawable {
 
         scale = _map.getZoom();
 
-        //Define the top left coordinate of the popup outline
+        //Define the top left coordinate of the popup outline, first attempt
         ulX = shipPiece.getPosition().x + 150;
-        ulY = shipPiece.getPosition().y - 150;
+        ulY = Math.max(0,shipPiece.getPosition().y - 150);
 
         //Barrel Roll test
         miElement brIconLeft = new miElement("mi_barrelroll.png", ulX + cursorX, ulY + cursorY,
@@ -191,6 +198,85 @@ public class MouseShipGUIDrawable extends MouseGUIDrawable implements Drawable {
 
         totalWidth = cursorX + padX;
         totalHeight = cursorY + padY;
+
+        figureOutBestTopLeftCorner();
+    }
+    private Shape refreshShape(){
+        Rectangle outline = new Rectangle(totalWidth,totalHeight);
+        scale = _map.getZoom();
+        AffineTransform scaler = AffineTransform.getScaleInstance(scale, scale);
+        scaler.translate(_shipPiece.getPosition().getX(), _shipPiece.getPosition().getY());
+        return scaler.createTransformedShape(outline);
+    }
+    private Shape getMapShape(){
+        Rectangle mapArea = new Rectangle(0,0,0,0);
+        try{
+            Board b = _map.getBoards().iterator().next();
+            mapArea = b.bounds();
+        }catch(Exception e)
+        {
+            return null;
+        }
+        return mapArea;
+    }
+
+    private void figureOutBestTopLeftCorner() {
+
+        Shape wouldBeOutline = refreshShape();
+        Shape mapArea = getMapShape();
+        List<BumpableWithShape> bumpables = OverlapCheckManager.getBumpablesOnMap(true, null);
+        drawThese= OverlapCheckManager.getBumpablesOnMap(true, null);
+        boolean isSearching = true;
+        int failSafe = 40;
+        int iteration = 0;
+        int oldUlX = ulX;
+        int oldUlY = ulY;
+        while(isSearching){
+            if(iteration >= failSafe) {
+                ulX = oldUlX;
+                ulY = oldUlY;
+                break;
+            }
+            if(isGreenToGo(wouldBeOutline, bumpables)) {
+                logToChat("green to go");
+                break;
+            }
+            logToChat("tweaking the position of the GUI iteration " + iteration);
+            ulX += 50;
+            if(checkIfOutOfBoundsToTheRight(wouldBeOutline, mapArea)){
+                ulX = 0;
+                ulY += wouldBeOutline.getBounds().height;
+                wouldBeOutline = refreshShape();
+            }
+
+            iteration++;
+        }
+
+    }
+
+    /*
+    shapeToCheck.getBounds().getMaxX() > mapArea.getBounds().getMaxX()  || // too far to the right
+                shapeToCheck.getBounds().getMaxY() > mapArea.getBounds().getMaxY() || // too far to the bottom
+                shapeToCheck.getBounds().getX() < mapArea.getBounds().getX() || //too far to the left
+                shapeToCheck.getBounds().getY() < mapArea.getBounds().getY()) // too far to the top
+     */
+    private boolean checkIfOutOfBoundsToTheRight(Shape shapeToCheck, Shape mapArea) {
+        if(shapeToCheck.getBounds().getMaxX() > mapArea.getBounds().getMaxX()) return true;
+        return false;
+    }
+
+    private boolean checkIfOutOfBoundsToTheBottom(Shape shapeToCheck, Shape mapArea) {
+        if(shapeToCheck.getBounds().getMaxY() > mapArea.getBounds().getMaxY()) return true;
+        return false;
+    }
+    private boolean isGreenToGo(Shape GUIOutline, List<BumpableWithShape> bumpables){
+        scale = _map.getZoom();
+        AffineTransform scaler = AffineTransform.getScaleInstance(scale, scale);
+        for(BumpableWithShape bws : bumpables){
+            Shape tShape = scaler.createTransformedShape(bws.shape);
+            if(Util.shapesOverlap(GUIOutline, tShape)) return false;
+        }
+        return true;
     }
 
     private String getShipImage(XWS2Pilots pilotShip, int dualState) {
@@ -225,13 +311,6 @@ public class MouseShipGUIDrawable extends MouseGUIDrawable implements Drawable {
         Shape transformedOutline = scaler.createTransformedShape(outline);
         g2d.fill(transformedOutline);
 
-        Line2D.Double firstLine = new Line2D.Double(new Point2D.Double(-150,150),
-                new Point(0,  0));
-        Line2D.Double secondLine = new Line2D.Double(new Point2D.Double(-150,150),
-                new Point(0,  outline.height));
-
-        g2d.draw(scaler.createTransformedShape(firstLine));
-        g2d.draw(scaler.createTransformedShape(secondLine));
 
         g2d.setPaint(new Color(0,0,255, 150));
         for(miElement elem : listOfInteractiveElements){
@@ -250,6 +329,11 @@ public class MouseShipGUIDrawable extends MouseGUIDrawable implements Drawable {
             Rectangle rawR = elem.image.getData().getBounds();
             Shape s = af.createTransformedShape(rawR);
             //g2d.fillRect(s.getBounds().x, s.getBounds().y, s.getBounds().width, s.getBounds().height);
+        }
+
+        g2d.setColor(Color.BLUE);
+        for(BumpableWithShape bws : drawThese){
+            g2d.draw(bws.shape);
         }
 
         /*  piece of code that can fetch the maneuver icons as seen on the dials

@@ -28,12 +28,13 @@ import static mic.Util.getTheMainMap;
  */
 
 public class OverlapCheckManager extends AbstractConfigurable {
-    Map theMap;
+    static Map theMap;
 
-
-    public List<BumpableWithShape> getBumpablesOnMap(Boolean wantShipsToo) {
-
+//Gets a list of objects in the form of bumpables, optionally skip a piece (generally the one verifying if it overlaps other objects)
+    public static List<BumpableWithShape> getBumpablesOnMap(Boolean wantShipsToo, GamePiece optionalSkipThisPiece) {
         List<BumpableWithShape> bumpables = Lists.newArrayList();
+
+        if(theMap == null) theMap = getTheMainMap();
 
         GamePiece[] pieces = theMap.getAllPieces();
         for (GamePiece piece : pieces) {
@@ -65,19 +66,22 @@ public class OverlapCheckManager extends AbstractConfigurable {
                 } catch (Exception e) {}
                 bumpables.add(new BumpableWithShape((Decorator)piece, "Remote", "2".equals(testFlipString), false));
             }else if(wantShipsToo == true && piece.getState().contains("this_is_a_ship")){
-                BumpableWithShape tentativeBumpable = new BumpableWithShape((Decorator)piece, "Ship",false,
-                        this.getInner().getState().contains("this_is_2pointoh"));
-                if (getId().equals(tentativeBumpable.bumpable.getId())) {
-                    continue;
+                if(optionalSkipThisPiece!=null){
+                    BumpableWithShape tentativeBumpable = new BumpableWithShape((Decorator)piece, "Ship",false,
+                            piece.getState().contains("this_is_2pointoh"));
+                    if (getId(optionalSkipThisPiece).equals(tentativeBumpable.bumpable.getId())) {
+                        continue;
+                    }
+                    bumpables.add(tentativeBumpable);
                 }
-                bumpables.add(tentativeBumpable);
-
             }
         }
         return bumpables;
     }
 
-
+    public static String getId(GamePiece piece) {
+        return piece.getId();
+    }
 
     public String[] getAttributeDescriptions() {
         return new String[0];
