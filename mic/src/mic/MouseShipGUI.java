@@ -263,7 +263,7 @@ public class MouseShipGUI extends AbstractConfigurable {
     {
         for(MouseShipGUIDrawable.miElement elem : ((MouseShipGUIDrawable)lastPopup).listOfInteractiveElements){
             double scale = theMap.getZoom();
-            AffineTransform af = elem.getTransformForClick(scale);
+            AffineTransform af = elem.getTransformForClick(scale, lastPopup.ulX, lastPopup.ulY);
             Rectangle rawR = elem.image.getData().getBounds();
             Shape s = af.createTransformedShape(rawR);
 

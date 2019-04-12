@@ -74,6 +74,11 @@ public class OverlapCheckManager extends AbstractConfigurable {
                     }
                     bumpables.add(tentativeBumpable);
                 }
+                else{
+                    BumpableWithShape tentativeBumpable = new BumpableWithShape((Decorator)piece, "Ship",false,
+                            piece.getState().contains("this_is_2pointoh"));
+                    bumpables.add(tentativeBumpable);
+                }
             }
         }
         return bumpables;

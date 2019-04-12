@@ -1,9 +1,9 @@
 package mic;
 
 public abstract class MouseGUIDrawable {
-    int ulX = 0; //upper left corner of the popup
-    int ulY = 0;
-    int totalWidth = 0;
-    int totalHeight = 0;
+    public int ulX = 0; //upper left corner of the popup
+    public int ulY = 0;
+    public int totalWidth = 0;
+    public int totalHeight = 0;
 
 }
