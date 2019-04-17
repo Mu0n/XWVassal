@@ -214,11 +214,13 @@ public class MouseShipGUIDrawable extends MouseGUIDrawable implements Drawable {
         try{
             Board b = _map.getBoards().iterator().next();
             mapArea = b.bounds();
+
+            AffineTransform scaler = AffineTransform.getScaleInstance(scale, scale);
+            return scaler.createTransformedShape(mapArea);
         }catch(Exception e)
         {
             return null;
         }
-        return mapArea;
     }
 
     private void figureOutBestTopLeftCorner() {
@@ -232,6 +234,16 @@ public class MouseShipGUIDrawable extends MouseGUIDrawable implements Drawable {
         int iteration = 0;
         int oldUlX = ulX;
         int oldUlY = ulY;
+
+
+        if(Util.hasEnlargedUnion(wouldBeOutline, mapArea)==true) logToChat("dépasse la map!");
+        //Try to the right
+
+        //try to the bottom
+
+        //try above
+
+        //try to the left
         while(isSearching){
             if(iteration >= failSafe) {
                 ulX = oldUlX;
@@ -273,6 +285,8 @@ public class MouseShipGUIDrawable extends MouseGUIDrawable implements Drawable {
         return false;
     }
     private boolean isGreenToGo(Shape GUIOutline, List<BumpableWithShape> bumpables){
+
+
         scale = _map.getZoom();
         AffineTransform scaler = AffineTransform.getScaleInstance(scale, scale);
         for(BumpableWithShape bws : bumpables){

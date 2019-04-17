@@ -245,6 +245,16 @@ public class Util {
         a1.intersect(new Area(shape2));
         return !a1.isEmpty();
     }
+
+    public static boolean hasEnlargedUnion(Shape guiShape, Shape mapShape) {
+        Area a1 = new Area(guiShape);
+        Area a2 = new Area(mapShape);
+
+        if(a1.getBounds2D().getMaxX() > a2.getBounds2D().getMaxX() ||
+           a1.getBounds2D().getMaxY() > a2.getBounds2D().getMaxY()) return true;
+
+        return false;
+    }
     public static Shape getIntersectedShape(Shape shape1, Shape shape2){
         Area a1 = new Area(shape1);
         a1.intersect(new Area(shape2));
