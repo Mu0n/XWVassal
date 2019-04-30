@@ -632,7 +632,7 @@ public class ShipReposition extends Decorator implements EditablePiece {
 
         int nbOfRedDots = 0;
 
-        List<BumpableWithShape> obstacles = getBumpablesOnMap(false);
+        List<BumpableWithShape> obstacles = OverlapCheckManager.getBumpablesOnMap(false, null);
         Boolean condemnAllDots = false;
         shapeForTemplate = repositionedTemplateShape(repoTemplates.get(0)); //using the first of the list will do, since all 3 use the same template information
         if(shapeForTemplate != null) {
@@ -689,7 +689,7 @@ public class ShipReposition extends Decorator implements EditablePiece {
 
 
             //STEP 9: Check for overlap with obstacles and ships with the final ship position
-            List<BumpableWithShape> shipsOrObstacles = getBumpablesOnMap(true);
+            List<BumpableWithShape> shipsOrObstacles = OverlapCheckManager.getBumpablesOnMap(true, null);
             boolean wantOverlapColor = false;
 
             if(condemnAllDots==true){
@@ -799,12 +799,6 @@ public class ShipReposition extends Decorator implements EditablePiece {
         return nbOfRedDots;
     }
 
-    public static String getKeyStrokeFromRepoManeuver(RepoManeuver rp){
-        for (Map.Entry<String, RepoManeuver> entry : keyStrokeToRepositionShip_2e.entrySet()) {
-            if (entry.getValue()==rp) return entry.getKey();
-        }
-        return null;
-    }
 
 
     private Command repositionTheShip(RepoManeuver repoTemplate, boolean is2pointOh) {
@@ -838,7 +832,7 @@ public class ShipReposition extends Decorator implements EditablePiece {
         //STEP 5: Check for overlap with an obstacle, if so, spawn it so the player sees it
         Command bigCommand = null;
 
-        List<BumpableWithShape> obstacles = getBumpablesOnMap(false);
+        List<BumpableWithShape> obstacles = OverlapCheckManager.getBumpablesOnMap(false, null);
 
         if(shapeForTemplate != null) {
             List<BumpableWithShape> overlappingObstacles = findCollidingEntities(shapeForTemplate, obstacles);
@@ -869,7 +863,7 @@ public class ShipReposition extends Decorator implements EditablePiece {
 
 
         //STEP 9: Check for overlap with obstacles and ships with the final ship position
-        List<BumpableWithShape> shipsOrObstacles = getBumpablesOnMap(true);
+        List<BumpableWithShape> shipsOrObstacles = OverlapCheckManager.getBumpablesOnMap(true, null);
 
         String yourShipName = getShipStringForReports(true, this.getProperty("Pilot Name").toString(), this.getProperty("Craft ID #").toString());
         if(shapeForShip != null){
@@ -1015,25 +1009,6 @@ public class ShipReposition extends Decorator implements EditablePiece {
     }
 
 
-    private Shape getCopyOfShapeWithoutActionsForOverlapCheck(GamePiece oldPiece,RepoManeuver repoTemplate ) {
-        // Copy the old piece, but don't set the State
-        GamePiece newPiece = GameModule.getGameModule().createPiece(oldPiece.getType());
-        VASSAL.build.module.Map var3 = oldPiece.getMap();
-        this.piece.setMap((VASSAL.build.module.Map) null);
-        // manually set the same position of the old piece
-        newPiece.setPosition(oldPiece.getPosition());
-        oldPiece.setMap(var3);
-
-        // now set the angle
-        double templateAngle;
-        templateAngle = repoTemplate.getTemplateAngle(); //repo maneuver's angle
-        double shipAngle = this.getRotator().getAngle(); //ship angle
-        FreeRotator rotater = (FreeRotator) Decorator.getDecorator(newPiece, FreeRotator.class);
-        rotater.setAngle(shipAngle);
-        return newPiece.getShape();
-    }
-
-
     private void closeMouseListener(VASSAL.build.module.Map aMap, MouseListener aML){
         aMap.removeLocalMouseListener(aML);
     }
@@ -1172,7 +1147,7 @@ public class ShipReposition extends Decorator implements EditablePiece {
 
         //Deal with ALT-C, detect if there's something under the ship creating an overlap
         if (KeyStroke.getKeyStroke(KeyEvent.VK_C, KeyEvent.ALT_DOWN_MASK,false).equals(stroke)){
-            List<BumpableWithShape> BWS = getBumpablesOnMap(true);
+            List<BumpableWithShape> BWS = OverlapCheckManager.getBumpablesOnMap(true, null);
             Shape shipShape = getBumpableCompareShape(this);
             List<BumpableWithShape> overlappingObstacles = findCollidingEntities(shipShape, BWS);
             if(overlappingObstacles.size() > 0) {
@@ -1207,7 +1182,7 @@ public class ShipReposition extends Decorator implements EditablePiece {
         if (is2pointohShip == false && repoTemplateDrop != null && stroke.isOnKeyRelease() == false) {
             Command result = spawnRepoTemplate(repoTemplateDrop);
 
-            List<BumpableWithShape> obstacles = getBumpablesOnMap(false);
+            List<BumpableWithShape> obstacles = OverlapCheckManager.getBumpablesOnMap(false, null);
 
             if(shapeForTemplate != null){
                 List<BumpableWithShape> overlappingObstacles = findCollidingEntities(shapeForTemplate, obstacles);
@@ -1308,55 +1283,6 @@ public class ShipReposition extends Decorator implements EditablePiece {
             }
         }
         return shapes;
-    }
-
-    private List<BumpableWithShape> getBumpablesOnMap(Boolean wantShipsToo) {
-
-        List<BumpableWithShape> bumpables = Lists.newArrayList();
-
-        GamePiece[] pieces = getMap().getAllPieces();
-        for (GamePiece piece : pieces) {
-            if (piece.getState().contains("this_is_an_asteroid")) {
-                // comment out this line and the next three that add to bumpables if bumps other than with ships shouldn't be detected yet
-                String testFlipString = "";
-                try{
-                    testFlipString = ((Decorator) piece).getDecorator(piece,piece.getClass()).getProperty("whichShape").toString();
-                } catch (Exception e) {}
-                bumpables.add(new BumpableWithShape((Decorator)piece, "Asteroid", "2".equals(testFlipString), false));
-            } else if (piece.getState().contains("this_is_a_debris")) {
-                String testFlipString = "";
-                try{
-                    testFlipString = ((Decorator) piece).getDecorator(piece,piece.getClass()).getProperty("whichShape").toString();
-                } catch (Exception e) {}
-                bumpables.add(new BumpableWithShape((Decorator)piece,"Debris","2".equals(testFlipString), false));
-            } else if (piece.getState().contains("this_is_a_bomb")) {
-                bumpables.add(new BumpableWithShape((Decorator)piece, "Mine", false, false));
-            } else if (piece.getState().contains("this_is_a_gascloud")) {
-                String testFlipString = "";
-                try{
-                    testFlipString = ((Decorator) piece).getDecorator(piece,piece.getClass()).getProperty("whichShape").toString();
-                } catch (Exception e) {}bumpables.add(new BumpableWithShape((Decorator)piece, "GasCloud", "2".equals(testFlipString), false));
-            }else if (piece.getState().contains("this_is_a_remote")) {
-                String testFlipString = "";
-                try{
-                    testFlipString = ((Decorator) piece).getDecorator(piece,piece.getClass()).getProperty("whichShape").toString();
-                } catch (Exception e) {}
-                bumpables.add(new BumpableWithShape((Decorator)piece, "Remote", "2".equals(testFlipString), false));
-            }else if(wantShipsToo == true && piece.getState().contains("this_is_a_ship")){
-                //MrMurphM
-                //    GamePiece newPiece = PieceCloner.getInstance().clonePiece(piece);
-                //    newPiece.setPosition(piece.getPosition());
-                //END
-                BumpableWithShape tentativeBumpable = new BumpableWithShape((Decorator)piece, "Ship",false,
-                        this.getInner().getState().contains("this_is_2pointoh"));
-                if (getId().equals(tentativeBumpable.bumpable.getId())) {
-                    continue;
-                }
-                bumpables.add(tentativeBumpable);
-
-            }
-        }
-        return bumpables;
     }
 
     public String getId() {

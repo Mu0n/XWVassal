@@ -84,6 +84,34 @@ public class OverlapCheckManager extends AbstractConfigurable {
         return bumpables;
     }
 
+
+    //get only ships:
+    public static List<BumpableWithShape> getShipsOnMap(GamePiece optionalSkipThisPiece) {
+        List<BumpableWithShape> ships = Lists.newArrayList();
+
+        if(theMap == null) theMap = getTheMainMap();
+
+        GamePiece[] pieces = theMap.getAllPieces();
+        for (GamePiece piece : pieces) {
+            if (piece.getState().contains("this_is_a_ship")) {
+                if(optionalSkipThisPiece!=null){
+                    BumpableWithShape tentativeBumpable = new BumpableWithShape((Decorator)piece, "Ship",false,
+                            piece.getState().contains("this_is_2pointoh"));
+                    if (getId(optionalSkipThisPiece).equals(tentativeBumpable.bumpable.getId())) {
+                        continue;
+                    }
+                    ships.add(tentativeBumpable);
+                }
+                else{
+                    BumpableWithShape tentativeBumpable = new BumpableWithShape((Decorator)piece, "Ship",false,
+                            piece.getState().contains("this_is_2pointoh"));
+                    ships.add(tentativeBumpable);
+                }
+            }
+        }
+        return ships;
+    }
+
     public static String getId(GamePiece piece) {
         return piece.getId();
     }
