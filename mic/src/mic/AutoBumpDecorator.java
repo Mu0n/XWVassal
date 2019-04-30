@@ -376,7 +376,6 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
         }
     }
 
-
     /**
      * Iterate in reverse over path of last maneuver and return a command that
      * will move the ship to a non-overlapping position and rotation
@@ -394,8 +393,6 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
                 this.prevPosition.angle,
                 whichSizeShip(this)
         );
-
-
 
         for (int i = parts.size() - 1; i >= 0; i--) {
             PathPart part = parts.get(i);
@@ -485,8 +482,6 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
         return shapes;
     }
 
-
-
     public void draw(Graphics graphics, int i, int i1, Component component, double v) {
         this.piece.draw(graphics, i, i1, component, v);
     }
@@ -573,7 +568,7 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
 
     private List<BumpableWithShape> getBumpablesWithShapes() {
         List<BumpableWithShape> bumpables = Lists.newLinkedList();
-        for (BumpableWithShape bumpable : getBumpablesOnMap()) {
+        for (BumpableWithShape bumpable : OverlapCheckManager.getBumpablesOnMap(true,null)) {
             if (getId().equals(bumpable.bumpable.getId())) {
                 continue;
             }
@@ -594,47 +589,6 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
             }
         }
         return ships;
-    }
-
-    private List<BumpableWithShape> getBumpablesOnMap() {
-        List<BumpableWithShape> bumpables = Lists.newArrayList();
-
-        GamePiece[] pieces = getMap().getAllPieces();
-        for (GamePiece piece : pieces) {
-            if (piece.getState().contains("this_is_a_ship")) {
-                bumpables.add(new BumpableWithShape((Decorator)piece,"Ship",
-                        piece.getProperty("Pilot Name").toString(), piece.getProperty("Craft ID #").toString(),
-                        this.getInner().getState().contains("this_is_2pointoh")));
-            } else if (piece.getState().contains("this_is_an_asteroid")) {
-                // comment out this line and the next three that add to bumpables if bumps other than with ships shouldn't be detected yet
-                String testFlipString = "";
-                try{
-                    testFlipString = ((Decorator) piece).getDecorator(piece,piece.getClass()).getProperty("whichShape").toString();
-                } catch (Exception e) {}
-                bumpables.add(new BumpableWithShape((Decorator)piece, "Asteroid", "2".equals(testFlipString),false));
-            } else if (piece.getState().contains("this_is_a_debris")) {
-                String testFlipString = "";
-                try{
-                    testFlipString = ((Decorator) piece).getDecorator(piece,piece.getClass()).getProperty("whichShape").toString();
-                } catch (Exception e) {}
-                bumpables.add(new BumpableWithShape((Decorator)piece,"Debris","2".equals(testFlipString),false));
-            } else if (piece.getState().contains("this_is_a_gascloud")) {
-                String testFlipString = "";
-                try{
-                    testFlipString = ((Decorator) piece).getDecorator(piece,piece.getClass()).getProperty("whichShape").toString();
-                } catch (Exception e) {}
-                bumpables.add(new BumpableWithShape((Decorator)piece, "GasCloud", "2".equals(testFlipString), false));
-            }else if (piece.getState().contains("this_is_a_remote")) {
-                String testFlipString = "";
-                try{
-                    testFlipString = ((Decorator) piece).getDecorator(piece,piece.getClass()).getProperty("whichShape").toString();
-                } catch (Exception e) {}
-                bumpables.add(new BumpableWithShape((Decorator)piece, "Remote", "2".equals(testFlipString), false));
-            }else if (piece.getState().contains("this_is_a_bomb")) {
-                bumpables.add(new BumpableWithShape((Decorator)piece, "Mine", false, false));
-            }
-        }
-        return bumpables;
     }
 
     /**
@@ -658,159 +612,9 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
         return 1;
     }
 
-    /*
-    public static class CollisionVisualization extends Command implements Drawable {
-        static final int NBFLASHES = 6;
-        static final int DELAYBETWEENFLASHES = 250;
-
-        private final List<Shape> shapes;
-        private boolean tictoc = false;
-        Color myO = new Color(255,99,71, 150);
-
-        CollisionVisualization() {
-            this.shapes = new ArrayList<Shape>();
-        }
-
-        CollisionVisualization(Shape shipShape) {
-            this.shapes = new ArrayList<Shape>();
-            this.shapes.add(shipShape);
-        }
-
-        protected void executeCommand() {
-            final Timer timer = new Timer();
-            final VASSAL.build.module.Map map = VASSAL.build.module.Map.getMapById("Map0");
-            logger.info("Rendering CollisionVisualization command");
-            this.tictoc = false;
-            final AtomicInteger count = new AtomicInteger(0);
-            timer.schedule(new TimerTask() {
-                @Override
-                public void run() {
-                    try{
-                        if(count.getAndIncrement() >= NBFLASHES * 2) {
-                            timer.cancel();
-                            map.removeDrawComponent(CollisionVisualization.this);
-                            return;
-                        }
-                        draw(map.getView().getGraphics(), map);
-                    } catch (Exception e) {
-                        logger.error("Error rendering collision visualization", e);
-                    }
-                }
-            }, 0,DELAYBETWEENFLASHES);
-        }
-
-        protected Command myUndoCommand() {
-            return null;
-        }
-
-        public void add(Shape bumpable) {
-            this.shapes.add(bumpable);
-        }
-
-        public List<Shape> getShapes() {
-            return this.shapes;
-        }
-
-        public void draw(Graphics graphics, VASSAL.build.module.Map map) {
-            Graphics2D graphics2D = (Graphics2D) graphics;
-            if(tictoc == false)
-            {
-                graphics2D.setColor(myO);
-                AffineTransform scaler = AffineTransform.getScaleInstance(map.getZoom(), map.getZoom());
-                for (Shape shape : shapes) {
-                    graphics2D.fill(scaler.createTransformedShape(shape));
-                }
-                tictoc = true;
-            }
-            else {
-                map.getView().repaint();
-                tictoc = false;
-            }
-        }
-
-        public boolean drawAboveCounters() {
-            return true;
-        }
-    }
-
-    public static class CollsionVisualizationEncoder implements CommandEncoder {
-        private static String commandPrefix = "CollisionVis=";
-
-        public Command decode(String command) {
-            if (command == null || !command.contains(commandPrefix)) {
-                return null;
-            }
-
-            logger.info("Decoding CollisionVisualization");
-
-            command = command.substring(commandPrefix.length());
-
-            try {
-                String[] newCommandStrs = command.split("\t");
-                CollisionVisualization visualization = new CollisionVisualization();
-                for (String bytesBase64Str : newCommandStrs) {
-                    ByteArrayInputStream strIn = new ByteArrayInputStream(Base64.decodeBase64(bytesBase64Str));
-                    ObjectInputStream in = new ObjectInputStream(strIn);
-                    Shape shape = (Shape) in.readObject();
-                    visualization.add(shape);
-                    in.close();
-                }
-                logger.info("Decoded CollisionVisualization with {} shapes", visualization.getShapes().size());
-                return visualization;
-            } catch (Exception e) {
-                logger.error("Error decoding CollisionVisualization", e);
-                return null;
-            }
-        }
-
-        public String encode(Command c) {
-            if (!(c instanceof CollisionVisualization)) {
-                return null;
-            }
-            logger.info("Encoding CollisionVisualization");
-            CollisionVisualization visualization = (CollisionVisualization) c;
-            try {
-                List<String> commandStrs = Lists.newArrayList();
-                for (Shape shape : visualization.getShapes()) {
-                    ByteArrayOutputStream bos = new ByteArrayOutputStream();
-                    ObjectOutputStream out = new ObjectOutputStream(bos);
-                    out.writeObject(shape);
-                    out.close();
-                    byte[] bytes = bos.toByteArray();
-                    String bytesBase64 = Base64.encodeBase64String(bytes);
-                    commandStrs.add(bytesBase64);
-                }
-                return commandPrefix + Joiner.on('\t').join(commandStrs);
-            } catch (Exception e) {
-                logger.error("Error encoding CollisionVisualization", e);
-                return null;
-            }
-        }
-    }
-*/
     private static class ShipPositionState {
         double x;
         double y;
         double angle;
     }
-
-//    public static void main(String[] args) throws Exception {
-//        CollisionVisualization visualization = new CollisionVisualization();
-//        Path2D.Double path = new Path2D.Double();
-//        path.moveTo(0.0, 0.0);
-//        path.lineTo(0.0, 1.0);
-//        visualization.add(path);
-//        path = new Path2D.Double();
-//        path.moveTo(0.0, 0.0);
-//        path.lineTo(0.0, 0.10);
-//        visualization.add(path);
-//
-//        CommandEncoder encoder = new CollsionVisualizationEncoder();
-//
-//        String encoded = encoder.encode(visualization);
-//        System.out.println("encoded = " + encoded);
-//
-//        CollisionVisualization newVis = (CollisionVisualization) encoder.decode(encoded);
-//        System.out.println("decoded = " + newVis.getShapes().size())     ;
-//    }
 }
