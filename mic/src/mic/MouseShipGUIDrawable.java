@@ -47,7 +47,7 @@ import static mic.Util.*;
  * This class prepares the drawable so that the vassal engine knows when to draw stuff. No encoder is used since the UI is not shared to others
  */
 public class MouseShipGUIDrawable extends MouseGUIDrawable implements Drawable {
-    private static final int MAXBUMPABLECOUNT = 0;
+    private static final int MAXBUMPABLECOUNT = 1;
     private static final float SMALLSHIPGUIRADIUSBASE = 215 ;
     GamePiece _shipPiece;
     Map _map;
@@ -238,8 +238,10 @@ public class MouseShipGUIDrawable extends MouseGUIDrawable implements Drawable {
 
         AffineTransform scaler = AffineTransform.getScaleInstance(scale, scale);
 
+        double bestX = -666.0, bestY = -666.0;
+        int bestBump = 999;
         boolean breakoff=false;
-        for(int i=1; i<3; i++){
+        for(int i=1; i<3; i++){ //scan to the right of the ship
             float radius = SMALLSHIPGUIRADIUSBASE*getRadiusMultiplier(_pilotShip.getSize());
             radius *= i;
             for(int j=40; j>=-40; j=j-20){
@@ -250,18 +252,24 @@ public class MouseShipGUIDrawable extends MouseGUIDrawable implements Drawable {
                 ulY = Math.max(0,_shipPiece.getPosition().y - (int)y);
 
                 wouldBeOutline = refreshShape();
-                andThese.add(wouldBeOutline);
+                //andThese.add(wouldBeOutline);
 
-                if(isGreenToGo(wouldBeOutline,mapArea,bumpables)) {
+                int bumps = isGreenToGo(wouldBeOutline,mapArea,bumpables);
+                if(bumps < bestBump) {
+                    bestBump = bumps;
+                    bestX = ulX;
+                    bestY = ulY;
+                }
+                if(bumps < MAXBUMPABLECOUNT) {
                     breakoff = true;
                     break;
                 }
-                logToChat("keep the search on i:" + i + " j:" + j);
+               // logToChat("keep the search on i:" + i + " j:" + j);
             }
             if(breakoff) break;
-        }
+        } //end scan to the right of the ship
         if(breakoff == false){
-            for(int i=1; i<3; i++){
+            for(int i=1; i<3; i++){ //scan to the left of the ship
                 float radius = SMALLSHIPGUIRADIUSBASE*getRadiusMultiplier(_pilotShip.getSize());
                 radius*=i;
                 for(int j= 40; j >= -40; j=j-20){
@@ -272,18 +280,27 @@ public class MouseShipGUIDrawable extends MouseGUIDrawable implements Drawable {
                     ulY = Math.max(0, _shipPiece.getPosition().y - (int) y);
 
                     wouldBeOutline = refreshShape();
-                    andThese.add(wouldBeOutline);
+                    //andThese.add(wouldBeOutline);
 
-                    if(isGreenToGo(wouldBeOutline, mapArea, bumpables)){
+                    int bumps = isGreenToGo(wouldBeOutline,mapArea,bumpables);
+                    if(bumps < bestBump) {
+                        bestBump = bumps;
+                        bestX = ulX;
+                        bestY = ulY;
+                    }
+                    if(bumps < MAXBUMPABLECOUNT){
                         breakoff = true;
                         break;
                     }
 
                 }
                 if(breakoff) break;
-            }
+            } //end scan to the left of the ship
         }
-        if(breakoff==false){logToChat("didn't find a proper location, using last");}
+        //if(breakoff==false){logToChat("didn't find a proper location, using best x:" +bestX + " y:" + bestY + " with " + bestBump + " overlaps.");
+        ulX = (int)bestX;
+        ulY = (int)bestY;
+        }
 
 /*
         //try to the left
@@ -311,7 +328,7 @@ public class MouseShipGUIDrawable extends MouseGUIDrawable implements Drawable {
         }
         */
 
-    }
+
 
     /*
     shapeToCheck.getBounds().getMaxX() > mapArea.getBounds().getMaxX()  || // too far to the right
@@ -319,17 +336,8 @@ public class MouseShipGUIDrawable extends MouseGUIDrawable implements Drawable {
                 shapeToCheck.getBounds().getX() < mapArea.getBounds().getX() || //too far to the left
                 shapeToCheck.getBounds().getY() < mapArea.getBounds().getY()) // too far to the top
      */
-    private boolean checkIfOutOfBoundsToTheRight(Shape shapeToCheck, Shape mapArea) {
-        if(shapeToCheck.getBounds().getMaxX() > mapArea.getBounds().getMaxX()) return true;
-        return false;
-    }
-
-    private boolean checkIfOutOfBoundsToTheBottom(Shape shapeToCheck, Shape mapArea) {
-        if(shapeToCheck.getBounds().getMaxY() > mapArea.getBounds().getMaxY()) return true;
-        return false;
-    }
-    private boolean isGreenToGo(Shape GUIOutline, Shape mapArea, List<BumpableWithShape> bumpables){
-        if(Util.hasEnlargedUnion(GUIOutline, mapArea)==true) return false;
+    private int isGreenToGo(Shape GUIOutline, Shape mapArea, List<BumpableWithShape> bumpables){
+        if(Util.hasEnlargedUnion(GUIOutline, mapArea)==true) return Integer.MAX_VALUE;
 
         scale = _map.getZoom();
         AffineTransform scaler = AffineTransform.getScaleInstance(scale, scale);
@@ -337,9 +345,8 @@ public class MouseShipGUIDrawable extends MouseGUIDrawable implements Drawable {
         for(BumpableWithShape bws : bumpables){
             Shape tShape = scaler.createTransformedShape(bws.shape);
             if(Util.shapesOverlap(GUIOutline, tShape)) bumpableCount++;
-            if(bumpableCount > MAXBUMPABLECOUNT) return false;
         }
-        return true;
+        return bumpableCount;
     }
 
     private String getShipImage(XWS2Pilots pilotShip, int dualState) {
@@ -414,15 +421,15 @@ public class MouseShipGUIDrawable extends MouseGUIDrawable implements Drawable {
 
         //bring the translation back to what it was before the GUI
         scaler.translate(-ulX,-ulY);
-        g2d.setColor(Color.WHITE);
-        logToChat("amount of shapes to draw " + drawThese.size());
-        for(BumpableWithShape bws : drawThese){
-            g2d.fill(scaler.createTransformedShape(bws.shape));
-        }
-        g2d.setColor(new Color(0,255,0,60));
-        for(Shape s : andThese){
-            g2d.fill(s);
-        }
+    //    g2d.setColor(Color.WHITE);
+        //logToChat("amount of shapes to draw " + drawThese.size());
+       // for(BumpableWithShape bws : drawThese){
+      //      g2d.fill(scaler.createTransformedShape(bws.shape));
+       // }
+       // g2d.setColor(new Color(0,255,0,60));
+      //  for(Shape s : andThese){
+     //       g2d.fill(s);
+     //   }
 
         /*  piece of code that can fetch the maneuver icons as seen on the dials
         try{

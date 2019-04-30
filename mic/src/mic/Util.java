@@ -251,7 +251,9 @@ public class Util {
         Area a2 = new Area(mapShape);
 
         if(a1.getBounds2D().getMaxX() > a2.getBounds2D().getMaxX() ||
-           a1.getBounds2D().getMaxY() > a2.getBounds2D().getMaxY()) return true;
+           a1.getBounds2D().getMaxY() > a2.getBounds2D().getMaxY() ||
+           a1.getBounds2D().getMinX() < a2.getBounds2D().getMinX() ||
+           a1.getBounds2D().getMinY() < a2.getBounds2D().getMinY()) return true;
 
         return false;
     }
