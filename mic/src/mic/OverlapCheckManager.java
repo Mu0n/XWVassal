@@ -31,7 +31,7 @@ public class OverlapCheckManager extends AbstractConfigurable {
     static Map theMap;
 
 //Gets a list of objects in the form of bumpables, optionally skip a piece (generally the one verifying if it overlaps other objects)
-    public static List<BumpableWithShape> getBumpablesOnMap(Boolean wantShipsToo, GamePiece optionalSkipThisPiece) {
+    public static List<BumpableWithShape> getBumpablesOnMap(Boolean wantShipsToo, List<GamePiece> optionalSkipThesePieces) {
         List<BumpableWithShape> bumpables = Lists.newArrayList();
 
         if(theMap == null) theMap = getTheMainMap();
@@ -66,12 +66,16 @@ public class OverlapCheckManager extends AbstractConfigurable {
                 } catch (Exception e) {}
                 bumpables.add(new BumpableWithShape((Decorator)piece, "Remote", "2".equals(testFlipString), false));
             }else if(wantShipsToo == true && piece.getState().contains("this_is_a_ship")){
-                if(optionalSkipThisPiece!=null){
+                if(optionalSkipThesePieces!=null){
                     BumpableWithShape tentativeBumpable = new BumpableWithShape((Decorator)piece, "Ship",false,
                             piece.getState().contains("this_is_2pointoh"));
-                    if (getId(optionalSkipThisPiece).equals(tentativeBumpable.bumpable.getId())) {
-                        continue;
+                    boolean continueToNextPiece = false;
+                    for(GamePiece gp : optionalSkipThesePieces){
+                        if (getId(gp).equals(tentativeBumpable.bumpable.getId())) {
+                            continueToNextPiece = true;
+                        }
                     }
+                    if(continueToNextPiece) continue;
                     bumpables.add(tentativeBumpable);
                 }
                 else{

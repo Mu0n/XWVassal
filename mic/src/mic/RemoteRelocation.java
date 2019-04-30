@@ -221,19 +221,53 @@ public class RemoteRelocation extends Decorator implements EditablePiece {
             case -77: //Buzz Droid Swarm
                 relos = Lists.newArrayList(ReloManeuverForProbe.BuzzFront, ReloManeuverForProbe.BuzzBack, ReloManeuverForProbe.BuzzBack);
 
+                int nbOfRedDots = offerTripleChoices(relos,  theMap, rpc);
                 logToChatWithoutUndo("Please click on a dot to relocate the remote. Click on empty space to cancel this.");
-                if(startIt!=null) startIt.append(logToChatCommand("*-- " + contemplatingPlayerName + " is considering attachment positions for the Buzz Swarm Droids."));
-                else startIt = logToChatCommand("*-- " + contemplatingPlayerName + " is considering attachment positions for the Buzz Swarm Droids.");
-                offerTripleChoices(relos,  theMap, rpc);
+                if(startIt!=null) startIt.append(logToChatCommand("*-- " + contemplatingPlayerName + " is considering attachment positions for the Buzz Swarm Droids. There are " + (2-nbOfRedDots) + " valid positions."));
+                else startIt = logToChatCommand("*-- " + contemplatingPlayerName + " is considering attachment positions for the Buzz Swarm Droids. There are " + (2-nbOfRedDots) + " valid positions.");
+                if(nbOfRedDots==-1) return null; //something wrong happened
                 return startIt;
         }
-
+        offerTripleChoices(relos,  theMap, rpc);
         logToChatWithoutUndo("Please click on a dot to relocate the remote. Click on empty space to cancel this.");
         if(startIt!=null) startIt.append(logToChatCommand("*-- " + contemplatingPlayerName + " is considering 3 relocation positions for the DRK-1 Probe Droid."));
         else startIt = logToChatCommand("*-- " + contemplatingPlayerName + " is considering 3 relocation positions for the DRK-1 Probe Droid.");
-        offerTripleChoices(relos,  theMap, rpc);
+
         return startIt;
     }
+
+    private Shape repositionedBuzzSwarmShape(ReloManeuverForProbe relo, GamePiece victimShip){
+        boolean wantBack = false;
+        if(relo == ReloManeuverForProbe.BuzzBack) wantBack = true;
+
+        double globalShipAngle =  ((FreeRotator) Decorator.getDecorator(getOutermost(victimShip), FreeRotator.class)).getAngle();
+
+        double off2x = victimShip.getPosition().x;
+        double off2y = victimShip.getPosition().y;
+
+        double off1x = 0.0f;
+        double off1y = -116.0f;
+        int sizeship = whichSizeShip((Decorator)Decorator.getOutermost(victimShip), true);
+        if(sizeship==2) off1y = -145.5f;
+        else if(sizeship==3) off1y = -173.0f;
+
+        double off1x_rot = rotX(off1x, off1y, globalShipAngle + (wantBack?180.0f:0.0f));
+        double off1y_rot = rotY(off1x, off1y, globalShipAngle + (wantBack?180.0f:0.0f));
+
+        Shape shapeForBuzz = Decorator.getDecorator(Decorator.getOutermost(victimShip), NonRectangular.class).getShape();
+
+
+        double roundedAngle = globalShipAngle + (wantBack?180.0f:0.0f);
+
+        shapeForBuzz = AffineTransform.
+                getTranslateInstance((int) off1x_rot + (int) off2x, (int) off1y_rot + (int) off2y).
+                createTransformedShape(shapeForBuzz);
+        shapeForBuzz = AffineTransform
+                .getRotateInstance(Math.toRadians(roundedAngle), (int) off1x_rot + (int) off2x,(int) off1y_rot + (int) off2y)
+                .createTransformedShape(shapeForBuzz);
+        return shapeForBuzz;
+    }
+
 
     private Command repositionBuzzSwarm(ReloManeuverForProbe relo, GamePiece victimShip){
         boolean wantBack = false;
@@ -303,6 +337,15 @@ public class RemoteRelocation extends Decorator implements EditablePiece {
 
         return bigCommand;
     }
+    private List<BumpableWithShape> findCollidingEntities(Shape myTestShape, List<BumpableWithShape> otherShapes) {
+        List<BumpableWithShape> shapes = Lists.newLinkedList();
+        for (BumpableWithShape otherBumpableShape : otherShapes) {
+            if (shapesOverlap(myTestShape, otherBumpableShape.shape)) {
+                shapes.add(otherBumpableShape);
+            }
+        }
+        return shapes;
+    }
 
         private int offerTripleChoices(java.util.List<ReloManeuverForProbe> reloTemplates, VASSAL.build.module.Map theMap, RepositionChoiceVisual rpcInput) {
         //Getting into this function, repoShip is associated with the template used to reposition the ship. We also need the non-mapped final ship tentative position
@@ -310,8 +353,17 @@ public class RemoteRelocation extends Decorator implements EditablePiece {
         // STEP 0: gather ship angle and rotator
         double remoteAngle = this.getRotator().getAngle(); //remote angle
         //FreeRotator fR = (FreeRotator) Decorator.getDecorator(piece, FreeRotator.class);
+            int nbOfRedDots = 0;
 
             if(rpcInput._option==-77) {//buzz droid swarm case
+                boolean wantOverlapColor = false;
+
+                List<GamePiece> excludedPieces = Lists.newArrayList();
+                excludedPieces.add(this.piece); //must not detect an overlap with this buzzdroid
+                excludedPieces.add(rpcInput.associatedTargetPiece); //must exclude the victim ship
+
+                List<BumpableWithShape> objects = OverlapCheckManager.getBumpablesOnMap(true, excludedPieces);
+
                 double globalShipAngle =  ((FreeRotator) Decorator.getDecorator(getOutermost(rpcInput.associatedTargetPiece), FreeRotator.class)).getAngle();
                 //STEP 1:
                 //Info Gathering: Offset 2 get the center global coordinates of the ship calling this op
@@ -329,19 +381,41 @@ public class RemoteRelocation extends Decorator implements EditablePiece {
                 double off1y_rot_back = rotY(off1x, off1y, globalShipAngle + 180.0f);
 
                 float diam = DOT_DIAMETER + (sizeFudge-1) * 20.0f;
+                //deal with the front dot
                 Shape dot = new Ellipse2D.Float(-diam / 2, -diam / 2, diam, diam);
                 dot = AffineTransform.
                         getTranslateInstance((int) off1x_rot_front + (int) off2x, (int) off1y_rot_front + (int) off2y).
                         createTransformedShape(dot);
 
-                RepositionChoiceVisual rpc = new RepositionChoiceVisual(null, dot, false, "", -55, rpcInput.associatedTargetPiece);
+                //check if the front buzz swarm shape would overlap something
+                Shape buzzInFrontShape = repositionedBuzzSwarmShape(ReloManeuverForProbe.BuzzFront,rpcInput.associatedTargetPiece);
+                if (buzzInFrontShape != null) {
+                    List<BumpableWithShape> overlappingShips = findCollidingEntities(buzzInFrontShape, objects);
+                    if (overlappingShips.size() > 0) {
+                        wantOverlapColor = true;
+                        nbOfRedDots++;
+                        }
+                    }
+                RepositionChoiceVisual rpc = new RepositionChoiceVisual(null, dot, wantOverlapColor, "", -55, rpcInput.associatedTargetPiece);
                 rpcList.add(rpc);
+
+                //deal with the back dot
+                wantOverlapColor = false;
 
                 Shape dot2 = new Ellipse2D.Float(-diam / 2, -diam / 2, diam, diam);
                 dot2 = AffineTransform.
                         getTranslateInstance((int) off1x_rot_back + (int) off2x, (int) off1y_rot_back + (int) off2y).
                         createTransformedShape(dot2);
-                RepositionChoiceVisual rpc2 = new RepositionChoiceVisual(null, dot2, false, "", -66, rpcInput.associatedTargetPiece);
+                //check if the front buzz swarm shape would overlap something
+                Shape buzzInBackShape = repositionedBuzzSwarmShape(ReloManeuverForProbe.BuzzBack,rpcInput.associatedTargetPiece);
+                if (buzzInBackShape != null) {
+                    List<BumpableWithShape> overlappingShips = findCollidingEntities(buzzInBackShape, objects);
+                    if (overlappingShips.size() > 0) {
+                        wantOverlapColor = true;
+                        nbOfRedDots++;
+                    }
+                }
+                RepositionChoiceVisual rpc2 = new RepositionChoiceVisual(null, dot2, wantOverlapColor, "", -66, rpcInput.associatedTargetPiece);
                 rpcList.add(rpc2);
             }
         else { // probe droid case
@@ -472,7 +546,7 @@ public class RemoteRelocation extends Decorator implements EditablePiece {
         };
         theMap.addLocalMouseListenerFirst(ml);
 
-        return 1;
+        return nbOfRedDots;
     }
 
     //1=small,2=medium,3=large
