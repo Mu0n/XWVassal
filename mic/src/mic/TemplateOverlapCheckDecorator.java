@@ -76,13 +76,6 @@ public class TemplateOverlapCheckDecorator extends Decorator implements Editable
         return null;
     }
 
-    private PieceSlot findPieceSlotByID(String gpID) {
-        for(PieceSlot ps : GameModule.getGameModule().getAllDescendantComponentsOf(PieceSlot.class)){
-            if(gpID.equals(ps.getGpId())) return ps;
-        }
-        return null;
-    }
-
     @Override
     public Command keyEvent(KeyStroke stroke) {
         //Any keystroke made on a ship will remove the orange shades
@@ -244,49 +237,11 @@ public class TemplateOverlapCheckDecorator extends Decorator implements Editable
 
     private java.util.List<BumpableWithShape> getBumpablesWithShapes() {
         java.util.List<BumpableWithShape> bumpables = Lists.newLinkedList();
-        for (BumpableWithShape bumpable : getBumpablesOnMap()) {
+        for (BumpableWithShape bumpable : OverlapCheckManager.getBumpablesOnMap(false, null)) {
             if (getId().equals(bumpable.bumpable.getId())) {
                 continue;
             }
             bumpables.add(bumpable);
-        }
-        return bumpables;
-    }
-
-
-    private java.util.List<BumpableWithShape> getBumpablesOnMap() {
-        java.util.List<BumpableWithShape> bumpables = Lists.newArrayList();
-
-        GamePiece[] pieces = getMap().getAllPieces();
-        for (GamePiece piece : pieces) {
-            if (piece.getState().contains("this_is_an_asteroid")) {
-                // comment out this line and the next three that add to bumpables if bumps other than with ships shouldn't be detected yet
-                String testFlipString = "";
-                try{
-                    testFlipString = ((Decorator) piece).getDecorator(piece,piece.getClass()).getProperty("whichShape").toString();
-                } catch (Exception e) {}
-                bumpables.add(new BumpableWithShape((Decorator)piece, "Asteroid", "2".equals(testFlipString),false));
-            } else if (piece.getState().contains("this_is_a_debris")) {
-                String testFlipString = "";
-                try{
-                    testFlipString = ((Decorator) piece).getDecorator(piece,piece.getClass()).getProperty("whichShape").toString();
-                } catch (Exception e) {}
-                bumpables.add(new BumpableWithShape((Decorator)piece,"Debris","2".equals(testFlipString),false));
-            } else if (piece.getState().contains("this_is_a_gascloud")) {
-                String testFlipString = "";
-                try{
-                    testFlipString = ((Decorator) piece).getDecorator(piece,piece.getClass()).getProperty("whichShape").toString();
-                } catch (Exception e) {}
-                bumpables.add(new BumpableWithShape((Decorator)piece, "GasCloud", "2".equals(testFlipString), false));
-            }else if (piece.getState().contains("this_is_a_remote")) {
-                String testFlipString = "";
-                try{
-                    testFlipString = ((Decorator) piece).getDecorator(piece,piece.getClass()).getProperty("whichShape").toString();
-                } catch (Exception e) {}
-                bumpables.add(new BumpableWithShape((Decorator)piece, "Remote", "2".equals(testFlipString), false));
-            }else if (piece.getState().contains("this_is_a_bomb")) {
-                bumpables.add(new BumpableWithShape((Decorator)piece, "Mine", false,false));
-            }
         }
         return bumpables;
     }
@@ -341,9 +296,4 @@ public class TemplateOverlapCheckDecorator extends Decorator implements Editable
         return transformed;
     }
 
-    private static class ShipPositionState {
-        double x;
-        double y;
-        double angle;
-    }
 }
