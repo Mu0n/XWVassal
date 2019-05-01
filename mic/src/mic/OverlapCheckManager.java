@@ -13,6 +13,8 @@ import java.util.List;
 
 import static VASSAL.build.AutoConfigurable.Util.*;
 import static mic.Util.getTheMainMap;
+import static mic.Util.logToChat;
+import static mic.Util.logToChatWithoutUndo;
 
 /**
  * Created by mjuneau on 2019-04-09
@@ -38,6 +40,17 @@ public class OverlapCheckManager extends AbstractConfigurable {
 
         GamePiece[] pieces = theMap.getAllPieces();
         for (GamePiece piece : pieces) {
+            boolean skipThisIteration = false;
+            if(optionalSkipThesePieces!=null){
+                for(GamePiece gp : optionalSkipThesePieces){
+                    if(gp.getId().equals(piece.getId())) {
+                        skipThisIteration = true;
+                        break;
+                    }
+                }
+            }
+            if(skipThisIteration) continue;
+
             if (piece.getState().contains("this_is_an_asteroid")) {
                 // comment out this line and the next three that add to bumpables if bumps other than with ships shouldn't be detected yet
                 String testFlipString = "";
@@ -66,23 +79,12 @@ public class OverlapCheckManager extends AbstractConfigurable {
                 } catch (Exception e) {}
                 bumpables.add(new BumpableWithShape((Decorator)piece, "Remote", "2".equals(testFlipString), false));
             }else if(wantShipsToo == true && piece.getState().contains("this_is_a_ship")){
-                if(optionalSkipThesePieces!=null){
-                    BumpableWithShape tentativeBumpable = new BumpableWithShape((Decorator)piece, "Ship",false,
-                            piece.getState().contains("this_is_2pointoh"));
-                    boolean continueToNextPiece = false;
-                    for(GamePiece gp : optionalSkipThesePieces){
-                        if (getId(gp).equals(tentativeBumpable.bumpable.getId())) {
-                            continueToNextPiece = true;
-                        }
-                    }
-                    if(continueToNextPiece) continue;
-                    bumpables.add(tentativeBumpable);
-                }
-                else{
-                    BumpableWithShape tentativeBumpable = new BumpableWithShape((Decorator)piece, "Ship",false,
-                            piece.getState().contains("this_is_2pointoh"));
-                    bumpables.add(tentativeBumpable);
-                }
+                String testFlipString = "";
+                try{
+                    testFlipString = ((Decorator) piece).getDecorator(piece,piece.getClass()).getProperty("whichShape").toString();
+                } catch (Exception e) {}
+                bumpables.add(new BumpableWithShape((Decorator)piece, "Ship",false,
+                            piece.getState().contains("this_is_2pointoh")));
             }
         }
         return bumpables;
