@@ -217,7 +217,7 @@ public class MouseShipGUIDrawable extends MouseGUIDrawable implements Drawable {
 
         miElement trL1 = new miElement("mi_tallonleft.png", tallonRollxCursor, tentativeTrollY, null, 13);
         listOfInteractiveElements.add(trL1);
-        tallonRollxCursor += trL1.image.getWidth() +1;
+        tallonRollxCursor += trL1.image.getWidth() +padX;
 
         miElement trR1 = new miElement("mi_tallonright.png", tallonRollxCursor, tentativeTrollY, null, 16);
         listOfInteractiveElements.add(trR1);

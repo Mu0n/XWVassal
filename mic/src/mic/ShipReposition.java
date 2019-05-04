@@ -162,7 +162,84 @@ enum RepoManeuver {
 
     BRD_Right_AFAP_Large_2E("BR Right as Forward as Possible", "524", 0.0f, 141.25f, 0.0f, 0.0f, 283.0f, -56.5f),
     BRD_Right_Large_2E("BR Right", "524", -90.0f, 169.5f, 0.0f, 0.0f, 283.0f, 0.0f),
-    BRD_Right_ABAP_Large_2E("BR Right as Backward as Possible", "524", 0.0f, 141.25f, 0.0f, 0.0f, 283.0f, 56.5f)
+    BRD_Right_ABAP_Large_2E("BR Right as Backward as Possible", "524", 0.0f, 141.25f, 0.0f, 0.0f, 283.0f, 56.5f),
+
+
+    //Tallon Rolls
+
+    TR3_Left_AFAP_2E("TR 3 Left as Forward as Possible","",0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
+    TR3_Left_2E("TR 3 Left centered","",0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
+    TR3_Left_ABAP_2E("TR 3 Left as Backward as Possible","",0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
+
+    TR2_Left_AFAP_2E("TR 2 Left as Forward as Possible","",0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
+    TR2_Left_2E("TR 2 Left centered","",0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
+    TR2_Left_ABAP_2E("TR 2 Left as Backward as Possible","",0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
+
+    TR1_Left_AFAP_2E("TR 1 Left as Forward as Possible","",0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
+    TR1_Left_2E("TR 1 Left centered","",0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
+    TR1_Left_ABAP_2E("TR 1 Left as Backward as Possible","",0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
+
+    TR3_Right_AFAP_2E("TR 3 Right as Forward as Possible","",0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
+    TR3_Right_2E("TR 3 Right centered","",0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
+    TR3_Right_ABAP_2E("TR 3 Right as Backward as Possible","",0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
+
+    TR2_Right_AFAP_2E("TR 2 Right as Forward as Possible","",0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
+    TR2_Right_2E("TR 2 Right centered","",0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
+    TR2_Right_ABAP_2E("TR 2 Right as Backward as Possible","",0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
+
+    TR1_Right_AFAP_2E("TR 1 Right as Forward as Possible","",0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
+    TR1_Right_2E("TR 1 Right centered","",0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
+    TR1_Right_ABAP_2E("TR 1 Right as Backward as Possible","",0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
+
+
+    TR3_Left_Medium_AFAP_2E("TR 3 Left as Forward as Possible","",0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
+    TR3_Left_Medium_2E("TR 3 Left centered","",0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
+    TR3_Left_Medium_ABAP_2E("TR 3 Left as Backward as Possible","",0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
+
+    TR2_Left_Medium_AFAP_2E("TR 2 Left as Forward as Possible","",0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
+    TR2_Left_Medium_2E("TR 2 Left centered","",0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
+    TR2_Left_Medium_ABAP_2E("TR 2 Left as Backward as Possible","",0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
+
+    TR1_Left_Medium_AFAP_2E("TR 1 Left as Forward as Possible","",0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
+    TR1_Left_Medium_2E("TR 1 Left centered","",0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
+    TR1_Left_Medium_ABAP_2E("TR 1 Left as Backward as Possible","",0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
+
+    TR3_Right_Medium_AFAP_2E("TR 3 Right as Forward as Possible","",0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
+    TR3_Right_Medium_2E("TR 3 Right centered","",0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
+    TR3_Right_Medium_ABAP_2E("TR 3 Right as Backward as Possible","",0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
+
+    TR2_Right_Medium_AFAP_2E("TR 2 Right as Forward as Possible","",0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
+    TR2_Right_Medium_2E("TR 2 Right centered","",0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
+    TR2_Right_Medium_ABAP_2E("TR 2 Right as Backward as Possible","",0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
+
+    TR1_Right_Medium_AFAP_2E("TR 1 Right as Forward as Possible","",0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
+    TR1_Right_Medium_2E("TR 1 Right centered","",0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
+    TR1_Right_Medium_ABAP_2E("TR 1 Right as Backward as Possible","",0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
+
+    TR3_Left_Large_AFAP_2E("TR 3 Left as Forward as Possible","",0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
+    TR3_Left_Large_2E("TR 3 Left centered","",0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
+    TR3_Left_Large_ABAP_2E("TR 3 Left as Backward as Possible","",0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
+
+    TR2_Left_Large_AFAP_2E("TR 2 Left as Forward as Possible","",0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
+    TR2_Left_Large_2E("TR 2 Left centered","",0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
+    TR2_Left_Large_ABAP_2E("TR 2 Left as Backward as Possible","",0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
+
+    TR1_Left_Large_AFAP_2E("TR 1 Left as Forward as Possible","",0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
+    TR1_Left_Large_2E("TR 1 Left centered","",0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
+    TR1_Left_Large_ABAP_2E("TR 1 Left as Backward as Possible","",0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
+
+    TR3_Right_Large_AFAP_2E("TR 3 Right as Forward as Possible","",0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
+    TR3_Right_Large_2E("TR 3 Right centered","",0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
+    TR3_Right_Large_ABAP_2E("TR 3 Right as Backward as Possible","",0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
+
+    TR2_Right_Large_AFAP_2E("TR 2 Right as Forward as Possible","",0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
+    TR2_Right_Large_2E("TR 2 Right centered","",0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
+    TR2_Right_Large_ABAP_2E("TR 2 Right as Backward as Possible","",0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
+
+    TR1_Right_Large_AFAP_2E("TR 1 Right as Forward as Possible","",0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
+    TR1_Right_Large_2E("TR 1 Right centered","",0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
+    TR1_Right_Large_ABAP_2E("TR 1 Right as Backward as Possible","",0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
+
     ;
 
     private final String repoName;
@@ -1099,6 +1176,8 @@ public class ShipReposition extends Decorator implements EditablePiece {
                 break;
             //Tallon Roll Left 3
             case 15:
+                sb.append(contemplatingPlayerName + " is contemplating 3 choices for Tallon roll left 3 for " + pilotName);
+                repoChoices = Lists.newArrayList(RepoManeuver.BR2_Right_BankB_AFAP_2E, RepoManeuver.BR2_Right_BankB_2E, RepoManeuver.BR2_Right_BankB_ABAP_2E);
                 break;
             //Tallon Roll Right 1
             case 16:
