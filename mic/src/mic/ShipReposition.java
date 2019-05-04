@@ -1092,11 +1092,23 @@ public class ShipReposition extends Decorator implements EditablePiece {
                 repoChoices = Lists.newArrayList(RepoManeuver.BR2_Right_BankB_AFAP_2E, RepoManeuver.BR2_Right_BankB_2E, RepoManeuver.BR2_Right_BankB_ABAP_2E);
                 break;
             //Tallon Roll Left 1
+            case 13:
+                break;
             //Tallon Roll Left 2
+            case 14:
+                break;
             //Tallon Roll Left 3
+            case 15:
+                break;
             //Tallon Roll Right 1
+            case 16:
+                break;
             //Tallon Roll Right 2
+            case 17:
+                break;
             //Tallon Roll Right 3
+            case 18:
+                break;
             //Segnor's Loop Left 1
             //Segnor's Loop Left 2
             //Segnor's Loop Left 3

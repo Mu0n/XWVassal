@@ -82,6 +82,7 @@ public class MouseShipGUIDrawable extends MouseGUIDrawable implements Drawable {
                 null, 1);
         listOfInteractiveElements.add(brIconLeft);
 
+
         if(pilotShip.getSize().equals("Small")){
 
             miElement br2IconLeft = new miElement("mi_barrelroll2L.png",  cursorX,  cursorY + brIconLeft.image.getHeight()+padX,
@@ -114,6 +115,11 @@ public class MouseShipGUIDrawable extends MouseGUIDrawable implements Drawable {
             listOfInteractiveElements.add(shipGfx);
             cursorX += shipGfx.image.getWidth() + smallGapX;
         }
+
+        int tentativeTrollY = 0;
+        if(pilotShip.getSize().equals("Small")) tentativeTrollY = cursorY + 4*brIconLeft.image.getHeight()+4*padX;
+        else tentativeTrollY = cursorY + shipGfx.image.getHeight() + smallGapX;
+
 
         miElement brIconRight = new miElement("mi_barrelroll.png", cursorX,  cursorY,
                 null, 2);
@@ -197,6 +203,33 @@ public class MouseShipGUIDrawable extends MouseGUIDrawable implements Drawable {
         listOfInteractiveElements.add(closeGfx);
 
         cursorX += closeGfx.image.getWidth();
+
+
+        //adding the tallon roll buttons
+        int tallonRollxCursor = padX;
+        miElement trL3 = new miElement("mi_tallonleft.png", tallonRollxCursor, tentativeTrollY, null, 15);
+        listOfInteractiveElements.add(trL3);
+        tallonRollxCursor += trL3.image.getWidth() + 1;
+
+        miElement trL2 = new miElement("mi_tallonleft.png", tallonRollxCursor, tentativeTrollY, null, 14);
+        listOfInteractiveElements.add(trL2);
+        tallonRollxCursor += trL2.image.getWidth() + 1;
+
+        miElement trL1 = new miElement("mi_tallonleft.png", tallonRollxCursor, tentativeTrollY, null, 13);
+        listOfInteractiveElements.add(trL1);
+        tallonRollxCursor += trL1.image.getWidth() +1;
+
+        miElement trR1 = new miElement("mi_tallonright.png", tallonRollxCursor, tentativeTrollY, null, 16);
+        listOfInteractiveElements.add(trR1);
+        tallonRollxCursor += trR1.image.getWidth() + 1;
+
+        miElement trR2 = new miElement("mi_tallonright.png", tallonRollxCursor, tentativeTrollY, null, 17);
+        listOfInteractiveElements.add(trR2);
+        tallonRollxCursor += trR2.image.getWidth() + 1;
+
+        miElement trR3 = new miElement("mi_tallonright.png", tallonRollxCursor, tentativeTrollY, null, 18);
+        listOfInteractiveElements.add(trR3);
+
 
         totalWidth = cursorX + padX;
         totalHeight = cursorY + padY;
