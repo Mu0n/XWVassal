@@ -612,6 +612,10 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
         return 1;
     }
 
+    public static AutoBumpDecorator findAutoBumpDecorator(GamePiece activatedPiece) {
+        return (AutoBumpDecorator)AutoBumpDecorator.getDecorator(activatedPiece,AutoBumpDecorator.class);
+    }
+
     private static class ShipPositionState {
         double x;
         double y;

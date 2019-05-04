@@ -162,85 +162,7 @@ enum RepoManeuver {
 
     BRD_Right_AFAP_Large_2E("BR Right as Forward as Possible", "524", 0.0f, 141.25f, 0.0f, 0.0f, 283.0f, -56.5f),
     BRD_Right_Large_2E("BR Right", "524", -90.0f, 169.5f, 0.0f, 0.0f, 283.0f, 0.0f),
-    BRD_Right_ABAP_Large_2E("BR Right as Backward as Possible", "524", 0.0f, 141.25f, 0.0f, 0.0f, 283.0f, 56.5f),
-
-
-    //Tallon Rolls
-
-    TR3_Left_AFAP_2E("TR 3 Left as Forward as Possible","",0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
-    TR3_Left_2E("TR 3 Left centered","",0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
-    TR3_Left_ABAP_2E("TR 3 Left as Backward as Possible","",0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
-
-    TR2_Left_AFAP_2E("TR 2 Left as Forward as Possible","",0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
-    TR2_Left_2E("TR 2 Left centered","",0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
-    TR2_Left_ABAP_2E("TR 2 Left as Backward as Possible","",0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
-
-    TR1_Left_AFAP_2E("TR 1 Left as Forward as Possible","",0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
-    TR1_Left_2E("TR 1 Left centered","",0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
-    TR1_Left_ABAP_2E("TR 1 Left as Backward as Possible","",0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
-
-    TR3_Right_AFAP_2E("TR 3 Right as Forward as Possible","",0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
-    TR3_Right_2E("TR 3 Right centered","",0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
-    TR3_Right_ABAP_2E("TR 3 Right as Backward as Possible","",0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
-
-    TR2_Right_AFAP_2E("TR 2 Right as Forward as Possible","",0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
-    TR2_Right_2E("TR 2 Right centered","",0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
-    TR2_Right_ABAP_2E("TR 2 Right as Backward as Possible","",0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
-
-    TR1_Right_AFAP_2E("TR 1 Right as Forward as Possible","",0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
-    TR1_Right_2E("TR 1 Right centered","",0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
-    TR1_Right_ABAP_2E("TR 1 Right as Backward as Possible","",0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
-
-
-    TR3_Left_Medium_AFAP_2E("TR 3 Left as Forward as Possible","",0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
-    TR3_Left_Medium_2E("TR 3 Left centered","",0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
-    TR3_Left_Medium_ABAP_2E("TR 3 Left as Backward as Possible","",0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
-
-    TR2_Left_Medium_AFAP_2E("TR 2 Left as Forward as Possible","",0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
-    TR2_Left_Medium_2E("TR 2 Left centered","",0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
-    TR2_Left_Medium_ABAP_2E("TR 2 Left as Backward as Possible","",0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
-
-    TR1_Left_Medium_AFAP_2E("TR 1 Left as Forward as Possible","",0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
-    TR1_Left_Medium_2E("TR 1 Left centered","",0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
-    TR1_Left_Medium_ABAP_2E("TR 1 Left as Backward as Possible","",0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
-
-    TR3_Right_Medium_AFAP_2E("TR 3 Right as Forward as Possible","",0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
-    TR3_Right_Medium_2E("TR 3 Right centered","",0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
-    TR3_Right_Medium_ABAP_2E("TR 3 Right as Backward as Possible","",0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
-
-    TR2_Right_Medium_AFAP_2E("TR 2 Right as Forward as Possible","",0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
-    TR2_Right_Medium_2E("TR 2 Right centered","",0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
-    TR2_Right_Medium_ABAP_2E("TR 2 Right as Backward as Possible","",0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
-
-    TR1_Right_Medium_AFAP_2E("TR 1 Right as Forward as Possible","",0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
-    TR1_Right_Medium_2E("TR 1 Right centered","",0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
-    TR1_Right_Medium_ABAP_2E("TR 1 Right as Backward as Possible","",0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
-
-    TR3_Left_Large_AFAP_2E("TR 3 Left as Forward as Possible","",0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
-    TR3_Left_Large_2E("TR 3 Left centered","",0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
-    TR3_Left_Large_ABAP_2E("TR 3 Left as Backward as Possible","",0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
-
-    TR2_Left_Large_AFAP_2E("TR 2 Left as Forward as Possible","",0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
-    TR2_Left_Large_2E("TR 2 Left centered","",0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
-    TR2_Left_Large_ABAP_2E("TR 2 Left as Backward as Possible","",0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
-
-    TR1_Left_Large_AFAP_2E("TR 1 Left as Forward as Possible","",0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
-    TR1_Left_Large_2E("TR 1 Left centered","",0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
-    TR1_Left_Large_ABAP_2E("TR 1 Left as Backward as Possible","",0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
-
-    TR3_Right_Large_AFAP_2E("TR 3 Right as Forward as Possible","",0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
-    TR3_Right_Large_2E("TR 3 Right centered","",0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
-    TR3_Right_Large_ABAP_2E("TR 3 Right as Backward as Possible","",0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
-
-    TR2_Right_Large_AFAP_2E("TR 2 Right as Forward as Possible","",0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
-    TR2_Right_Large_2E("TR 2 Right centered","",0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
-    TR2_Right_Large_ABAP_2E("TR 2 Right as Backward as Possible","",0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
-
-    TR1_Right_Large_AFAP_2E("TR 1 Right as Forward as Possible","",0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
-    TR1_Right_Large_2E("TR 1 Right centered","",0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
-    TR1_Right_Large_ABAP_2E("TR 1 Right as Backward as Possible","",0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
-
-    ;
+    BRD_Right_ABAP_Large_2E("BR Right as Backward as Possible", "524", 0.0f, 141.25f, 0.0f, 0.0f, 283.0f, 56.5f);
 
     private final String repoName;
     private final String gpID;
@@ -1321,50 +1243,7 @@ public class ShipReposition extends Decorator implements EditablePiece {
         return piece.keyEvent(stroke);
     }
 
-    private boolean isATripleChoiceAllowed() {
-        mic.Util.XWPlayerInfo playerInfo = getCurrentPlayer();
-        VASSAL.build.module.Map playerMap = getPlayerMap(playerInfo.getSide());
-        Boolean ret = Boolean.parseBoolean(playerMap.getProperty("clickChoice").toString());
-        if(ret) return false;
-        else return true;
-    }
 
-    private Command stopTripleChoiceMakeNextReady() {
-        Command result = null;
-        mic.Util.XWPlayerInfo playerInfo = getCurrentPlayer();
-        VASSAL.build.module.Map playerMap = getPlayerMap(playerInfo.getSide());
-        GamePiece[] pieces = playerMap.getAllPieces();
-        for(GamePiece p : pieces){
-            if(p.getName().equals("clickChoiceController")) {
-                result = p.keyEvent(KeyStroke.getKeyStroke(KeyEvent.VK_O, KeyEvent.CTRL_DOWN_MASK, false));
-                return result;
-            }
-        }
-        return result;
-    }
-
-    private Command startTripleChoiceStopNewOnes() {
-        Command result = null;
-        mic.Util.XWPlayerInfo playerInfo = getCurrentPlayer();
-        VASSAL.build.module.Map playerMap = getPlayerMap(playerInfo.getSide());
-        GamePiece[] pieces = playerMap.getAllPieces();
-        for(GamePiece p : pieces){
-            if(p.getName().equals("clickChoiceController")){
-                result = p.keyEvent(KeyStroke.getKeyStroke(KeyEvent.VK_A, KeyEvent.CTRL_DOWN_MASK, false));
-                return result;
-            }
-        }
-        return result;
-    }
-
-    private VASSAL.build.module.Map getPlayerMap(int playerIndex) {
-        for (VASSAL.build.module.Map loopMap : GameModule.getGameModule().getComponentsOf(VASSAL.build.module.Map.class)) {
-            if (("Player " + Integer.toString(playerIndex)).equals(loopMap.getMapName())) {
-                return loopMap;
-            }
-        }
-        return null;
-    }
 
     private List<BumpableWithShape> findCollidingEntities(Shape myTestShape, List<BumpableWithShape> otherShapes) {
         List<BumpableWithShape> shapes = Lists.newLinkedList();

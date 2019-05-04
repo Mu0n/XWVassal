@@ -16,7 +16,9 @@ import com.google.common.collect.Lists;
 import mic.ota.XWOTAUtils;
 
 import javax.imageio.ImageIO;
+import javax.swing.*;
 import java.awt.*;
+import java.awt.event.KeyEvent;
 import java.awt.geom.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
@@ -233,6 +235,50 @@ public class Util {
         return Math.sin(-Math.PI*angle/180.0f)*x + Math.cos(-Math.PI*angle/180.0f)*y;
     }
 
+    public static boolean isATripleChoiceAllowed() {
+        mic.Util.XWPlayerInfo playerInfo = getCurrentPlayer();
+        VASSAL.build.module.Map playerMap = getPlayerMap(playerInfo.getSide());
+        Boolean ret = Boolean.parseBoolean(playerMap.getProperty("clickChoice").toString());
+        if(ret) return false;
+        else return true;
+    }
+
+    public static Command stopTripleChoiceMakeNextReady() {
+        Command result = null;
+        mic.Util.XWPlayerInfo playerInfo = getCurrentPlayer();
+        VASSAL.build.module.Map playerMap = getPlayerMap(playerInfo.getSide());
+        GamePiece[] pieces = playerMap.getAllPieces();
+        for(GamePiece p : pieces){
+            if(p.getName().equals("clickChoiceController")) {
+                result = p.keyEvent(KeyStroke.getKeyStroke(KeyEvent.VK_O, KeyEvent.CTRL_DOWN_MASK, false));
+                return result;
+            }
+        }
+        return result;
+    }
+
+    public static Command startTripleChoiceStopNewOnes() {
+        Command result = null;
+        mic.Util.XWPlayerInfo playerInfo = getCurrentPlayer();
+        VASSAL.build.module.Map playerMap = getPlayerMap(playerInfo.getSide());
+        GamePiece[] pieces = playerMap.getAllPieces();
+        for(GamePiece p : pieces){
+            if(p.getName().equals("clickChoiceController")){
+                result = p.keyEvent(KeyStroke.getKeyStroke(KeyEvent.VK_A, KeyEvent.CTRL_DOWN_MASK, false));
+                return result;
+            }
+        }
+        return result;
+    }
+
+    public static VASSAL.build.module.Map getPlayerMap(int playerIndex) {
+        for (VASSAL.build.module.Map loopMap : GameModule.getGameModule().getComponentsOf(VASSAL.build.module.Map.class)) {
+            if (("Player " + Integer.toString(playerIndex)).equals(loopMap.getMapName())) {
+                return loopMap;
+            }
+        }
+        return null;
+    }
     /**
      * Returns true if the two provided shapes areas have any intersection
      *

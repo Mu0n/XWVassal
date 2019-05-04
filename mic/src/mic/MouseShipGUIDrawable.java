@@ -207,27 +207,27 @@ public class MouseShipGUIDrawable extends MouseGUIDrawable implements Drawable {
 
         //adding the tallon roll buttons
         int tallonRollxCursor = padX;
-        miElement trL3 = new miElement("mi_tallonleft.png", tallonRollxCursor, tentativeTrollY, null, 15);
+        miElement trL3 = new miElement("mi_tallonleft.png", tallonRollxCursor, tentativeTrollY, null, 202);
         listOfInteractiveElements.add(trL3);
         tallonRollxCursor += trL3.image.getWidth() + 1;
 
-        miElement trL2 = new miElement("mi_tallonleft.png", tallonRollxCursor, tentativeTrollY, null, 14);
+        miElement trL2 = new miElement("mi_tallonleft.png", tallonRollxCursor, tentativeTrollY, null, 201);
         listOfInteractiveElements.add(trL2);
         tallonRollxCursor += trL2.image.getWidth() + 1;
 
-        miElement trL1 = new miElement("mi_tallonleft.png", tallonRollxCursor, tentativeTrollY, null, 13);
+        miElement trL1 = new miElement("mi_tallonleft.png", tallonRollxCursor, tentativeTrollY, null, 200);
         listOfInteractiveElements.add(trL1);
         tallonRollxCursor += trL1.image.getWidth() +padX;
 
-        miElement trR1 = new miElement("mi_tallonright.png", tallonRollxCursor, tentativeTrollY, null, 16);
+        miElement trR1 = new miElement("mi_tallonright.png", tallonRollxCursor, tentativeTrollY, null, 203);
         listOfInteractiveElements.add(trR1);
         tallonRollxCursor += trR1.image.getWidth() + 1;
 
-        miElement trR2 = new miElement("mi_tallonright.png", tallonRollxCursor, tentativeTrollY, null, 17);
+        miElement trR2 = new miElement("mi_tallonright.png", tallonRollxCursor, tentativeTrollY, null, 204);
         listOfInteractiveElements.add(trR2);
         tallonRollxCursor += trR2.image.getWidth() + 1;
 
-        miElement trR3 = new miElement("mi_tallonright.png", tallonRollxCursor, tentativeTrollY, null, 18);
+        miElement trR3 = new miElement("mi_tallonright.png", tallonRollxCursor, tentativeTrollY, null, 205);
         listOfInteractiveElements.add(trR3);
 
 

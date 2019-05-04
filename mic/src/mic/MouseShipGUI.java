@@ -275,12 +275,25 @@ public class MouseShipGUI extends AbstractConfigurable {
                     GameModule.getGameModule().sendAndLog(directKeyStroke);
                     e.consume();
                 }
-                //Second class of GUI-driven commands: Goes to a 2nd step with triple click choices:
-                else if(elem.whichTripleChoice > 0) {
+                //Second class of GUI-driven commands (ship repositions): Goes to a 2nd step with triple click choices:
+                else if(elem.whichTripleChoice > 0 && elem.whichTripleChoice < 200) {
                     logToChatWithoutUndo("Please click on a dot to reposition the ship. White dots = legal position. Red dots = illegal obstructed positions. Click on empty space to cancel this.");
 
                     e.consume();
                     ShipReposition SR = ShipReposition.findShipRepositionDecorator(activatedPiece);
+                    Command tripleChoiceCommand = SR.tripleChoiceDispatcher(elem.whichTripleChoice, activatedPiece.getProperty("Pilot Name").toString());
+
+                    tripleChoiceCommand.execute();
+                    GameModule.getGameModule().sendAndLog(tripleChoiceCommand);
+
+                    removePopup(theMap, e);
+                }
+                //Third class of GUI-driven commands (ship maneuvers): Goes to a 2nd step with triple click choices:
+                else if(elem.whichTripleChoice >= 200 && elem.whichTripleChoice <=400){
+                    logToChatWithoutUndo("Please click on a dot to reposition the ship. White dots = legal position. Red dots = illegal obstructed positions. Click on empty space to cancel this.");
+
+                    e.consume();
+                    AutoBumpDecorator SR = AutoBumpDecorator.findAutoBumpDecorator(activatedPiece);
                     Command tripleChoiceCommand = SR.tripleChoiceDispatcher(elem.whichTripleChoice, activatedPiece.getProperty("Pilot Name").toString());
 
                     tripleChoiceCommand.execute();
