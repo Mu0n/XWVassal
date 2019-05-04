@@ -1177,7 +1177,7 @@ public class ShipReposition extends Decorator implements EditablePiece {
             //Tallon Roll Left 3
             case 15:
                 sb.append(contemplatingPlayerName + " is contemplating 3 choices for Tallon roll left 3 for " + pilotName);
-                repoChoices = Lists.newArrayList(RepoManeuver.BR2_Right_BankB_AFAP_2E, RepoManeuver.BR2_Right_BankB_2E, RepoManeuver.BR2_Right_BankB_ABAP_2E);
+                repoChoices = Lists.newArrayList(RepoManeuver.TR3_Left_AFAP_2E, RepoManeuver.TR3_Left_2E, RepoManeuver.TR3_Left_ABAP_2E);
                 break;
             //Tallon Roll Right 1
             case 16:
