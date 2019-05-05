@@ -2,7 +2,10 @@ package mic;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.Ellipse2D;
 import java.util.List;
 import java.util.Map;
 
@@ -33,6 +36,14 @@ import static mic.Util.*;
  * Second role: to completely intercept every maneuver shortcut and deal with movement AND autobump AND out of bound detection
  */
 public class AutoBumpDecorator extends Decorator implements EditablePiece {
+
+    public static float DOT_DIAMETER = 30.0f;
+    public static float DOT_FUDGE = 30.0f;
+    MouseListener ml;
+    List<RepositionChoiceVisual> rpcList = Lists.newArrayList();
+
+    private Shape shapeForTemplate;
+
     private static final Logger logger = LoggerFactory.getLogger(AutoBumpDecorator.class);
     public static final String ID = "auto-bump;";
     private final FreeRotator testRotator;
@@ -612,6 +623,280 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
         return 1;
     }
 
+    public Command tripleChoiceDispatcher(int which, String pilotName) {
+
+        if (!isATripleChoiceAllowed()) return null;
+
+        Command startIt = startTripleChoiceStopNewOnes();
+        List<ManeuverPaths> maneuChoices = Lists.newArrayList();
+        final VASSAL.build.module.Map theMap = Util.getTheMainMap();
+        String contemplatingPlayerName = getCurrentPlayer().getName();
+
+        StringBuilder sb = new StringBuilder("*--- ");
+        switch(which){
+            //Tallon Roll Left 1
+            case 13:
+                break;
+            //Tallon Roll Left 2
+            case 14:
+                break;
+            //Tallon Roll Left 3
+            case 202:
+                sb.append(contemplatingPlayerName + " is contemplating 3 choices for Tallon roll left 3 for " + pilotName);
+                maneuChoices = Lists.newArrayList(ManeuverPaths.TrollL3, ManeuverPaths.TrollL3, ManeuverPaths.TrollL3);
+                break;
+            //Tallon Roll Right 1
+            case 16:
+                break;
+            //Tallon Roll Right 2
+            case 17:
+                break;
+            //Tallon Roll Right 3
+            case 18:
+                break;
+            //Segnor's Loop Left 1
+            //Segnor's Loop Left 2
+            //Segnor's Loop Left 3
+            //Segnor's Loop Right 1
+            //Segnor's Loop Right 2
+            //Segnor's Loop Right 3
+        }
+
+        int nbOfRedDots = offerTripleChoices(maneuChoices, true, theMap);
+        sb.append(". There are " + (3-nbOfRedDots) + " valid position"+(nbOfRedDots>1?"s":"")+" to pick from." );
+        if(startIt!=null) startIt.append(logToChatCommand(sb.toString()));
+        else startIt = logToChatCommand(sb.toString());
+        if(nbOfRedDots==-1) return null;
+        return startIt;
+
+    }
+    private void closeMouseListener(VASSAL.build.module.Map aMap, MouseListener aML){
+        aMap.removeLocalMouseListener(aML);
+    }
+
+    private void removeVisuals(VASSAL.build.module.Map aMapm){
+        for(RepositionChoiceVisual r : rpcList){
+            aMapm.removeDrawComponent(r);
+        }
+        rpcList.clear();
+    }
+
+    private Shape repositionedTemplateShape(ManeuverPaths maneuChoice){
+        //STEP 1: Collision reposition template, centered as in in the image file, centered on 0,0 (upper left corner)
+        GamePiece templatePiece = newPiece(findPieceSlotByID(maneuChoice.getTemplateGpID()));
+
+        shapeForTemplate = templatePiece.getShape();
+
+        //Info Gathering: gets the angle from repoTemplate which deals with degrees, local space with ship at 0,0, pointing up
+        double templateAngle = maneuChoice.getTemplateAngle(); //repo maneuver's angle
+        double globalShipAngle = this.getRotator().getAngle(); //ship angle
+        //STEP 2: rotate the reposition template with both angles
+        FreeRotator fR = (FreeRotator)Decorator.getDecorator(templatePiece, FreeRotator.class);
+        fR.setAngle(globalShipAngle + templateAngle);
+
+        //Info Gathering: Offset 1, put to the side of the ship, local coords, adjusting for large base if it is found
+        double off1x = maneuChoice.getOffsetX();
+        double off1y = maneuChoice.getOffsetY();
+
+        //Info Gathering: Offset 2 get the center global coordinates of the ship calling this op
+        double off2x = this.getPosition().getX();
+        double off2y = this.getPosition().getY();
+
+        //STEP 3: rotate the offset1 dependant within the spawner's local coordinates
+        double off1x_rot = rotX(off1x, off1y, globalShipAngle);
+        double off1y_rot = rotY(off1x, off1y, globalShipAngle);
+
+        //STEP 4: translation into place
+        shapeForTemplate = AffineTransform.
+                getTranslateInstance((int)off1x_rot + (int)off2x, (int)off1y_rot + (int)off2y).
+                createTransformedShape(shapeForTemplate);
+        double roundedAngle = convertAngleToGameLimits(globalShipAngle + templateAngle);
+        shapeForTemplate = AffineTransform
+                .getRotateInstance(Math.toRadians(-roundedAngle), (int)off1x_rot + (int)off2x, (int)off1y_rot + (int)off2y)
+                .createTransformedShape(shapeForTemplate);
+
+        return shapeForTemplate;
+    }
+
+    private int offerTripleChoices(List<ManeuverPaths> maneuChoices, boolean is2pointOh, VASSAL.build.module.Map theMap){
+        //Getting into this function, repoShip is associated with the template used to reposition the ship. We also need the non-mapped final ship tentative position
+
+        int size = whichSizeShip(this, is2pointOh);
+        removeVisuals(theMap);
+        int wideningFudgeFactorBetweenDots = -1; //will go from -1 to 0 to 1 in the following loop
+
+        // STEP 0: gather ship angle and rotator
+        double shipAngle = this.getRotator().getAngle(); //ship angle
+        //FreeRotator fR = (FreeRotator) Decorator.getDecorator(piece, FreeRotator.class);
+
+        int nbOfRedDots = 0;
+
+        List<BumpableWithShape> obstacles = OverlapCheckManager.getBumpablesOnMap(false, null);
+        Boolean condemnAllDots = false;
+        shapeForTemplate = repositionedTemplateShape(maneuChoices.get(0)); //using the first of the list will do, since all 3 use the same template information
+        if(shapeForTemplate != null) {
+            List<BumpableWithShape> overlappingObstacles = findCollidingEntities(shapeForTemplate, obstacles);
+            if (overlappingObstacles.size() > 0) {
+                condemnAllDots = true;
+            }
+        }
+
+        for(ManeuverPaths maneuChoice : maneuChoices) { //loops over the list of potential repositions
+//Prep step, check if it's a medium ship, and only deal with regular barrel rolls, because it's all they can do anyway, rerouting to the correct RepoManeuver
+            //logToChat("repo name before change: " + repoTemplate.name());
+            maneuChoice = swapToRepoManeuverIfMedOrLarge(maneuChoice, size, is2pointOh);
+            //logToChat("repo name after change: " + repoTemplate.name());
+
+            if(maneuChoice == null) {
+                logToChat("--- Error: this size " + size + " ship can't perform this maneuver.");
+                return -1;
+            }
+            //STEP 1:
+            //Info Gathering: Offset 2 get the center global coordinates of the ship calling this op
+            double off2x = this.getPosition().getX();
+            double off2y = this.getPosition().getY();
+
+            //STEP 2: Gather info for ship's final wanted position
+            // spawn a copy of the ship without the actions
+            Shape shapeForShipOverlap = repositionedShape(maneuChoice);
+
+            float diam = DOT_DIAMETER + (size - 1) * DOT_FUDGE * 0.666f;
+            Shape dot = new Ellipse2D.Float(-diam / 2, -diam / 2, diam, diam);
+
+            //Info Gathering: gets the angle from RepoManeuver which deals with degrees, local space with ship at 0,0, pointing up
+            double templateTurnsShipAngle = maneuChoice.getShipAngle(); //repo maneuver's angle
+
+            //Info Gathering: Offset 1, put to the side of the ship, local coords, get the final coords of the ship (and its dot)
+            double off1x_s = maneuChoice.getShipX();
+            double off1y_s = maneuChoice.getShipY();
+            double off3x = 0.0f;
+            double off3y = wideningFudgeFactorBetweenDots * size * 0.666f * DOT_FUDGE;
+            double off3x_t_rot = rotX(off3x, off3y, -templateTurnsShipAngle);
+            double off3y_t_rot = rotY(off3x, off3y, -templateTurnsShipAngle);
+            double off1x_s_dot = off1x_s + off3x_t_rot;
+            double off1y_s_dot = off1y_s + off3y_t_rot;
+
+            //STEP 7: rotate the offset1 dependant within the spawner's local coordinates
+
+            double off1x_rot_s_dot = rotX(off1x_s_dot, off1y_s_dot, shipAngle);
+            double off1y_rot_s_dot = rotY(off1x_s_dot, off1y_s_dot, shipAngle);
+
+            dot = AffineTransform.
+                    getTranslateInstance((int) off1x_rot_s_dot + (int) off2x, (int) off1y_rot_s_dot + (int) off2y).
+                    createTransformedShape(dot);
+
+
+
+            //STEP 9: Check for overlap with obstacles and ships with the final ship position
+            List<BumpableWithShape> shipsOrObstacles = OverlapCheckManager.getBumpablesOnMap(true, null);
+            boolean wantOverlapColor = false;
+
+            if(condemnAllDots==true){
+                wantOverlapColor = true;
+            }
+            else{ //this dot might still be white, or maybe not.
+                String yourShipName = getShipStringForReports(true, this.getProperty("Pilot Name").toString(), this.getProperty("Craft ID #").toString());
+                if (shapeForShipOverlap != null) {
+
+                    List<BumpableWithShape> overlappingShipOrObstacles = findCollidingEntities(shapeForShipOverlap, shipsOrObstacles);
+
+                    if (overlappingShipOrObstacles.size() > 0) {
+                        for (BumpableWithShape bws : overlappingShipOrObstacles) {
+                            wantOverlapColor = true;
+                        }
+                    }
+                }
+
+                // STEP 9.5: Check for movement out of bounds
+                boolean outsideCheck = checkIfOutOfBounds(yourShipName, shapeForShipOverlap, false, false);
+                if (outsideCheck) wantOverlapColor = true;
+            }
+
+            //STEP 11: reposition the ship
+            //Add visuals according to the selection of repositioning
+
+            RepositionChoiceVisual rpc = new RepositionChoiceVisual(shapeForShipOverlap, dot, wantOverlapColor,repoShipToString.get(maneuChoice),0, null);
+            rpcList.add(rpc);
+
+            //return bigCommand;
+            wideningFudgeFactorBetweenDots++;
+            if(wantOverlapColor == true) nbOfRedDots++;
+        } // end of loop around the 3 templates used in the repositions
+
+        //FINAL STEP: add the visuala to the map and the mouse listener
+        for(RepositionChoiceVisual r : rpcList){
+            theMap.addDrawComponent(r);
+        }
+
+        final Decorator shipToReposition = this;
+        final VASSAL.build.module.Map finalMap = theMap;
+        ml = new MouseListener() {
+            int i=0;
+            public void mousePressed(MouseEvent e) {
+                if(e.isConsumed()) return;
+
+                List<RepositionChoiceVisual> copiedList = Lists.newArrayList();
+                for(RepositionChoiceVisual r : rpcList){
+                    copiedList.add(r);
+                }
+                //When it gets the answer, gracefully close the mouse listenener and remove the visuals
+                RepositionChoiceVisual theChosenOne = null;
+                boolean slightMisclick = false;
+
+                for(RepositionChoiceVisual r : copiedList){
+                    if(r.theDot.contains(e.getX(),e.getY())){
+                        theChosenOne = r;
+                        break;
+                    } else if(r.thePieceShape.contains(e.getX(), e.getY()))
+                    {
+                        slightMisclick = true; //in the ship area but not inside the dot, allow the whole thing to survive
+                    }
+                }
+                try{
+                    if(theChosenOne != null){
+                        removeVisuals(finalMap);
+                        Command endIt = stopTripleChoiceMakeNextReady();
+                        if(endIt!=null) endIt.execute();
+                        //Change this line to another function that can deal with strings instead
+                        //shipToReposition.keyEvent(theChosenOne.getKeyStroke());
+                        AutoBumpDecorator SR = findAutoBumpDecorator(shipToReposition);
+                        SR.newNonKeyEvent(theChosenOne.inStringForm);
+
+                        closeMouseListener(finalMap, ml);
+                        return;
+                    }
+                }catch(Exception exce){
+                    removeVisuals(finalMap);
+                    logToChat("caught an exception while resolving ship maneuver");
+                    closeMouseListener(finalMap, ml);
+                    return;
+                }
+
+                if(slightMisclick) return; //misclick outside of a dot, but inside the ship shapes, do nothing, don't dismiss the GUI
+                else{ //was not in any dot, any ship area, close the whole thing down
+                    removeVisuals(finalMap);
+                    Command stopItAll = stopTripleChoiceMakeNextReady();
+                    String stoppingPlayerName = getCurrentPlayer().getName();
+                    if(stopItAll!=null) stopItAll.execute();
+                    logToChat("*-- " + stoppingPlayerName + " is cancelling a maneuver");
+
+                    closeMouseListener(finalMap, ml);
+                    return;
+                }
+            }
+
+            public void mouseClicked(MouseEvent e) { }
+
+            public void mouseReleased(MouseEvent e) { }
+
+            public void mouseEntered(MouseEvent e) { }
+
+            public void mouseExited(MouseEvent e) { }
+        };
+        theMap.addLocalMouseListenerFirst(ml);
+
+        return nbOfRedDots;
+    }
     public static AutoBumpDecorator findAutoBumpDecorator(GamePiece activatedPiece) {
         return (AutoBumpDecorator)AutoBumpDecorator.getDecorator(activatedPiece,AutoBumpDecorator.class);
     }
