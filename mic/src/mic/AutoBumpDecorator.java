@@ -718,10 +718,42 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
         return shapeForTemplate;
     }
 
+    private Shape repositionedShape(ManeuverPaths maneuChoice){
+        double globalShipAngle = this.getRotator().getAngle(); //ship angle
+        double templateTurnsShipAngle = maneuChoice.getShipAngle(); //template making the ship turn angle
+        //Info Gathering: Offset 2 get the center global coordinates of the ship calling this op
+        double off2x = this.getPosition().getX();
+        double off2y = this.getPosition().getY();
+
+        // spawn a copy of the ship without the actions
+        //Shape shapeForOverlap2 = getCopyOfShapeWithoutActionsForOverlapCheck(this.piece,repoTemplate );
+        Shape shapeForShip = Decorator.getDecorator(Decorator.getOutermost(this), NonRectangular.class).getShape();
+
+        //Info Gathering: Offset 1, put to the side of the ship, local coords, adjusting for large base if it is found
+        double off1x_s = maneuChoice.getShipX();
+        double off1y_s = maneuChoice.getShipY();
+
+        //STEP 7: rotate the offset1 dependant within the spawner's local coordinates
+        double off1x_rot_s = rotX(off1x_s, off1y_s, globalShipAngle);
+        double off1y_rot_s = rotY(off1x_s, off1y_s, globalShipAngle);
+
+        double roundedAngle = convertAngleToGameLimits(globalShipAngle - templateTurnsShipAngle);
+
+        //STEP 8: translation into place
+        shapeForShip = AffineTransform.
+                getTranslateInstance((int) off1x_rot_s + (int) off2x, (int) off1y_rot_s + (int) off2y).
+                createTransformedShape(shapeForShip);
+        shapeForShip = AffineTransform
+                .getRotateInstance(Math.toRadians(-roundedAngle), (int) off1x_rot_s + (int) off2x,(int) off1y_rot_s + (int) off2y)
+                .createTransformedShape(shapeForShip);
+
+        return shapeForShip;
+    }
+
     private int offerTripleChoices(List<ManeuverPaths> maneuChoices, boolean is2pointOh, VASSAL.build.module.Map theMap){
         //Getting into this function, repoShip is associated with the template used to reposition the ship. We also need the non-mapped final ship tentative position
 
-        int size = whichSizeShip(this, is2pointOh);
+        int size = whichSizeShip(this);
         removeVisuals(theMap);
         int wideningFudgeFactorBetweenDots = -1; //will go from -1 to 0 to 1 in the following loop
 
@@ -744,7 +776,7 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
         for(ManeuverPaths maneuChoice : maneuChoices) { //loops over the list of potential repositions
 //Prep step, check if it's a medium ship, and only deal with regular barrel rolls, because it's all they can do anyway, rerouting to the correct RepoManeuver
             //logToChat("repo name before change: " + repoTemplate.name());
-            maneuChoice = swapToRepoManeuverIfMedOrLarge(maneuChoice, size, is2pointOh);
+            //maneuChoice = swapToRepoManeuverIfMedOrLarge(maneuChoice, size, is2pointOh);
             //logToChat("repo name after change: " + repoTemplate.name());
 
             if(maneuChoice == null) {
