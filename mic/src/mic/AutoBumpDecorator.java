@@ -232,6 +232,34 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
             //this is the final ship position post-move
             PathPart part = parts.get(parts.size()-1);
 
+            //if the path is a troll:
+            if(lastManeuver == ManeuverPaths.TrollL1  || lastManeuver == ManeuverPaths.TrollL2 || lastManeuver == ManeuverPaths.TrollL3
+                    || lastManeuver == ManeuverPaths.TrollR1  || lastManeuver == ManeuverPaths.TrollR2 || lastManeuver == ManeuverPaths.TrollR3) {
+
+                boolean LeftOtherwiseRight = true;
+                if(lastManeuver == ManeuverPaths.TrollR1  || lastManeuver == ManeuverPaths.TrollR2 || lastManeuver == ManeuverPaths.TrollR3) LeftOtherwiseRight = false;
+
+
+                    ////modify that last element slightly in case there was a Troll or Sloop ordered
+                PathPart lastPartAFAP = path.getTweakedPathPartForTroll(
+                        this.getCurrentState().x,
+                        this.getCurrentState().y,
+                        this.getCurrentState().angle,
+                        whichSizeShip(this), LeftOtherwiseRight, 1);
+                PathPart lastPartABAP = path.getTweakedPathPartForTroll(
+                        this.getCurrentState().x,
+                        this.getCurrentState().y,
+                        this.getCurrentState().angle,
+                        whichSizeShip(this), LeftOtherwiseRight ,-1);;
+                ////go to a triple choice mouse interface
+                ////figure out valid positions, paint the dots in red if they're not, announce everything
+                ////manage an early click-outside cancel
+                ////
+
+            }
+
+
+
             //Get the ship name string for announcements
             String yourShipName = getShipStringForReports(true, this.getProperty("Pilot Name").toString(), this.getProperty("Craft ID #").toString());
             //Start the Command chain
