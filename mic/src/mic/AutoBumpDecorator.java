@@ -220,6 +220,11 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
             this.prevPosition = getCurrentState();
             this.lastManeuver = path;
 
+
+            //Get the ship name string for announcements
+            String yourShipName = getShipStringForReports(true, this.getProperty("Pilot Name").toString(), this.getProperty("Craft ID #").toString());
+
+
             //This PathPart list will be used everywhere: moving, bumping, out of boundsing
             //maybe fetch it for both 'c' behavior and movement
             final List<PathPart> parts = path.getTransformedPathParts(
@@ -256,12 +261,13 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
                 ////manage an early click-outside cancel
                 ////
 
+                logToChat("Doing a Tallon Roll. Centered: " + part.getX() + ":" + part.getY() +
+                        " AFAP: " + lastPartAFAP.getX() + ":"+ lastPartAFAP.getY() +
+                        " ABAP: " + lastPartABAP.getX() + ":" + lastPartABAP.getY());
             }
 
 
 
-            //Get the ship name string for announcements
-            String yourShipName = getShipStringForReports(true, this.getProperty("Pilot Name").toString(), this.getProperty("Craft ID #").toString());
             //Start the Command chain
             Command innerCommand = piece.keyEvent(stroke);
             innerCommand.append(buildTranslateCommand(part, path.getAdditionalAngleForShip()));
@@ -689,8 +695,8 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
             //Segnor's Loop Right 2
             //Segnor's Loop Right 3
         }
-
-        int nbOfRedDots = offerTripleChoices(maneuChoices, true, theMap);
+int nbOfRedDots = 0;
+        //int nbOfRedDots = offerTripleChoices(maneuChoices, true, theMap);
         sb.append(". There are " + (3-nbOfRedDots) + " valid position"+(nbOfRedDots>1?"s":"")+" to pick from." );
         if(startIt!=null) startIt.append(logToChatCommand(sb.toString()));
         else startIt = logToChatCommand(sb.toString());
@@ -745,7 +751,7 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
 
         return shapeForTemplate;
     }
-
+/*
     private Shape repositionedShape(ManeuverPaths maneuChoice){
         double globalShipAngle = this.getRotator().getAngle(); //ship angle
         double templateTurnsShipAngle = maneuChoice.getShipAngle(); //template making the ship turn angle
@@ -777,7 +783,9 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
 
         return shapeForShip;
     }
+*/
 
+/*
     private int offerTripleChoices(List<ManeuverPaths> maneuChoices, boolean is2pointOh, VASSAL.build.module.Map theMap){
         //Getting into this function, repoShip is associated with the template used to reposition the ship. We also need the non-mapped final ship tentative position
 
@@ -957,6 +965,9 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
 
         return nbOfRedDots;
     }
+
+    */
+
     public static AutoBumpDecorator findAutoBumpDecorator(GamePiece activatedPiece) {
         return (AutoBumpDecorator)AutoBumpDecorator.getDecorator(activatedPiece,AutoBumpDecorator.class);
     }

@@ -223,13 +223,15 @@ public enum ManeuverPaths {
 
         PathPart rawPart = rawParts.get(rawParts.size()-1); //go directly at the end
         Path2D.Double testPath = new Path2D.Double();
-        testPath.moveTo(rawPart.getX(), rawPart.getY());
+        int yOffset  =(int)( FrontCenterBack * 56.5/2);
+
+        testPath.moveTo(rawPart.getX(), rawPart.getY() + yOffset);
 
         //add a tripleChoiceTroll offset to the front or back, then rotate it depending on the left or right troll
         //TODO
 
             testPath = (Path2D.Double) AffineTransform
-                .getRotateInstance(-angleDegrees * (Math.PI / 180), 0, 0)
+                .getRotateInstance(-(angleDegrees) * (Math.PI / 180), 0, 0)
                 .createTransformedShape(testPath);
 
         double angle = angleDegrees + rawPart.getAngle();
