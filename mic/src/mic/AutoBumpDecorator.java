@@ -259,6 +259,12 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
                 ////go to a triple choice mouse interface
                 ////figure out valid positions, paint the dots in red if they're not, announce everything
                 ////manage an early click-outside cancel
+
+                List<PathPart> threePartChoices = Lists.newArrayList();
+                threePartChoices.add(lastPartAFAP, part, lastPartABAP);
+
+                int nbRedDots = offerTripleChoices(threePartChoices, true, getTheMainMap());
+
                 ////
 
                 logToChat("Doing a Tallon Roll. Centered: " + part.getX() + ":" + part.getY() +
@@ -785,8 +791,8 @@ int nbOfRedDots = 0;
     }
 */
 
-/*
-    private int offerTripleChoices(List<ManeuverPaths> maneuChoices, boolean is2pointOh, VASSAL.build.module.Map theMap){
+
+    private int offerTripleChoices(List<PathPart> trCoords, boolean is2pointOh, VASSAL.build.module.Map theMap){
         //Getting into this function, repoShip is associated with the template used to reposition the ship. We also need the non-mapped final ship tentative position
 
         int size = whichSizeShip(this);
@@ -966,7 +972,7 @@ int nbOfRedDots = 0;
         return nbOfRedDots;
     }
 
-    */
+
 
     public static AutoBumpDecorator findAutoBumpDecorator(GamePiece activatedPiece) {
         return (AutoBumpDecorator)AutoBumpDecorator.getDecorator(activatedPiece,AutoBumpDecorator.class);
