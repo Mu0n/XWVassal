@@ -3,6 +3,7 @@ package mic;
 import VASSAL.build.GameModule;
 import VASSAL.build.module.Map;
 import VASSAL.build.module.map.Drawable;
+import VASSAL.build.module.map.boardPicker.Board;
 import VASSAL.counters.Decorator;
 import VASSAL.counters.FreeRotator;
 import VASSAL.counters.GamePiece;
@@ -36,12 +37,18 @@ import java.security.Key;
 import java.text.AttributedString;
 import java.util.Collection;
 
+import java.util.List;
+
+import static mic.Util.*;
+
 /**
  * Created by Mic on 2019-01-17.
  *
  * This class prepares the drawable so that the vassal engine knows when to draw stuff. No encoder is used since the UI is not shared to others
  */
-public class MouseShipGUIDrawable implements Drawable {
+public class MouseShipGUIDrawable extends MouseGUIDrawable implements Drawable {
+    private static final int MAXBUMPABLECOUNT = 1;
+    private static final float SMALLSHIPGUIRADIUSBASE = 215 ;
     GamePiece _shipPiece;
     Map _map;
     XWS2Pilots _pilotShip;
@@ -51,10 +58,9 @@ public class MouseShipGUIDrawable implements Drawable {
     int padY = 20;
     int cursorX = padX;
     int cursorY = padY;
-    int ulX = 0; //upper left corner of the popup
-    int ulY = 0;
-    int totalWidth;
-    int totalHeight;
+    List<BumpableWithShape> drawThese = Lists.newArrayList();
+    List<Shape> andThese = Lists.newArrayList();
+
     Collection<miElement> listOfInteractiveElements = Lists.newArrayList();
     double scale;
     public MouseEvent summoningEvent;
@@ -67,25 +73,26 @@ public class MouseShipGUIDrawable implements Drawable {
 
         scale = _map.getZoom();
 
-        //Define the top left coordinate of the popup outline
-        ulX = shipPiece.getPosition().x + 150;
-        ulY = shipPiece.getPosition().y - 150;
+        //Define the top left coordinate of the popup outline, first attempt
+        ulX = _shipPiece.getPosition().x + 150;
+        ulY = Math.max(0,_shipPiece.getPosition().y - 150);
 
         //Barrel Roll test
-        miElement brIconLeft = new miElement("mi_barrelroll.png", ulX + cursorX, ulY + cursorY,
+        miElement brIconLeft = new miElement("mi_barrelroll.png",  cursorX,  cursorY,
                 null, 1);
         listOfInteractiveElements.add(brIconLeft);
 
+
         if(pilotShip.getSize().equals("Small")){
 
-            miElement br2IconLeft = new miElement("mi_barrelroll2L.png", ulX + cursorX, ulY + cursorY + brIconLeft.image.getHeight()+padX,
+            miElement br2IconLeft = new miElement("mi_barrelroll2L.png",  cursorX,  cursorY + brIconLeft.image.getHeight()+padX,
                     null, 3);
             listOfInteractiveElements.add(br2IconLeft);
 
-            miElement brLBFIconLeft = new miElement("mi_barrelroll_lb.png", ulX + cursorX, ulY + cursorY + 2*brIconLeft.image.getHeight()+2*padX,
+            miElement brLBFIconLeft = new miElement("mi_barrelroll_lb.png", cursorX,  cursorY + 2*brIconLeft.image.getHeight()+2*padX,
                     null, 5);
             listOfInteractiveElements.add(brLBFIconLeft);
-            miElement brLBBIconLeft = new miElement("mi_barrelroll_lbb.png", ulX + cursorX, ulY + cursorY + 3*brIconLeft.image.getHeight()+3*padX,
+            miElement brLBBIconLeft = new miElement("mi_barrelroll_lbb.png",  cursorX,  cursorY + 3*brIconLeft.image.getHeight()+3*padX,
                     null, 6);
             listOfInteractiveElements.add(brLBBIconLeft);
             cursorX += br2IconLeft.image.getWidth() + smallGapX;
@@ -97,44 +104,49 @@ public class MouseShipGUIDrawable implements Drawable {
         //add ship gfx, getShipImage deals with alt paint jobs and dual ships (just takes the first one it finds)
         int stateOfShipGfx = 0;
         try{
-            int uLevel = Integer.parseInt(shipPiece.getProperty("ULevel").toString());
+            int uLevel = Integer.parseInt(_shipPiece.getProperty("ULevel").toString());
             if(uLevel == 3 || uLevel == 4) stateOfShipGfx = 2;
             if(uLevel == 1 || uLevel == 2) stateOfShipGfx = 1;
         }catch(Exception e){
 
         }
-        miElement shipGfx = new miElement(getShipImage(pilotShip, stateOfShipGfx),ulX+cursorX, ulY+cursorY, null,0);
+        miElement shipGfx = new miElement(getShipImage(pilotShip, stateOfShipGfx),cursorX, cursorY, null,0);
         if(shipGfx!=null && shipGfx.image!=null) {
             listOfInteractiveElements.add(shipGfx);
             cursorX += shipGfx.image.getWidth() + smallGapX;
         }
 
-        miElement brIconRight = new miElement("mi_barrelroll.png", ulX + cursorX, ulY + cursorY,
+        int tentativeTrollY = 0;
+        if(pilotShip.getSize().equals("Small")) tentativeTrollY = cursorY + 4*brIconLeft.image.getHeight()+4*padX;
+        else tentativeTrollY = cursorY + shipGfx.image.getHeight() + smallGapX;
+
+
+        miElement brIconRight = new miElement("mi_barrelroll.png", cursorX,  cursorY,
                 null, 2);
         listOfInteractiveElements.add(brIconRight);
 
         if(pilotShip.getSize().equals("Small")) {
-            miElement br2IconRight = new miElement("mi_barrelroll2R.png", ulX + cursorX, ulY + cursorY + brIconRight.image.getHeight() + padX,
+            miElement br2IconRight = new miElement("mi_barrelroll2R.png",  cursorX,  cursorY + brIconRight.image.getHeight() + padX,
                     null, 4);
             listOfInteractiveElements.add(br2IconRight);
 
-            miElement brRBFIconRight = new miElement("mi_barrelroll_rb.png", ulX + cursorX, ulY + cursorY + 2*brIconRight.image.getHeight() + 2*padX,
+            miElement brRBFIconRight = new miElement("mi_barrelroll_rb.png", cursorX,  cursorY + 2*brIconRight.image.getHeight() + 2*padX,
                     null, 7);
             listOfInteractiveElements.add(brRBFIconRight);
 
-            miElement brRBBIconRight = new miElement("mi_barrelroll_rbb.png", ulX + cursorX, ulY + cursorY + 3*brIconRight.image.getHeight() + 3*padX,
+            miElement brRBBIconRight = new miElement("mi_barrelroll_rbb.png",  cursorX,  cursorY + 3*brIconRight.image.getHeight() + 3*padX,
                     null, 8);
             listOfInteractiveElements.add(brRBBIconRight);
         }
 
         cursorX += brIconRight.image.getWidth() + padX;
 
-        miElement hullGfx = new miElement("mi_hull.png", ulX + cursorX+smallGapX, ulY+padY,
+        miElement hullGfx = new miElement("mi_hull.png",  cursorX+smallGapX, padY,
                 null,0);
-        miElement addHull = new miElement("mi_plus.png", ulX + cursorX+ smallGapX + hullGfx.image.getWidth(), ulY+padY+hullGfx.image.getHeight()/2-16,
+        miElement addHull = new miElement("mi_plus.png", cursorX+ smallGapX + hullGfx.image.getWidth(), padY+hullGfx.image.getHeight()/2-16,
                 KeyStroke.getKeyStroke(KeyEvent.VK_H, KeyEvent.ALT_DOWN_MASK, false),0);
-        miElement removeHull = new miElement("mi_minus.png", ulX + cursorX + 2*smallGapX + hullGfx.image.getWidth() + addHull.image.getWidth(),
-                ulY+padY+hullGfx.image.getHeight()/2-16,
+        miElement removeHull = new miElement("mi_minus.png",  cursorX + 2*smallGapX + hullGfx.image.getWidth() + addHull.image.getWidth(),
+                padY+hullGfx.image.getHeight()/2-16,
         KeyStroke.getKeyStroke(KeyEvent.VK_H, KeyEvent.ALT_DOWN_MASK + KeyEvent.CTRL_DOWN_MASK, false),0);
 
         listOfInteractiveElements.add(hullGfx);
@@ -143,12 +155,12 @@ public class MouseShipGUIDrawable implements Drawable {
 
         cursorY += hullGfx.image.getHeight() + smallGapX;
 
-        miElement shieldGfx = new miElement("mi_shield.png", ulX + cursorX+smallGapX, ulY+cursorY,
+        miElement shieldGfx = new miElement("mi_shield.png",  cursorX+smallGapX, cursorY,
                 null,0);
-        miElement addShield = new miElement("mi_plus.png", ulX + cursorX+ smallGapX + hullGfx.image.getWidth(), ulY+cursorY+shieldGfx.image.getHeight()/2-16,
+        miElement addShield = new miElement("mi_plus.png", cursorX+ smallGapX + hullGfx.image.getWidth(), cursorY+shieldGfx.image.getHeight()/2-16,
                 KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyEvent.ALT_DOWN_MASK, false),0);
-        miElement removeShield = new miElement("mi_minus.png", ulX + cursorX + 2*smallGapX + hullGfx.image.getWidth() + addHull.image.getWidth(),
-                ulY+cursorY+shieldGfx.image.getHeight()/2-16,
+        miElement removeShield = new miElement("mi_minus.png",  cursorX + 2*smallGapX + hullGfx.image.getWidth() + addHull.image.getWidth(),
+                cursorY+shieldGfx.image.getHeight()/2-16,
                 KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyEvent.ALT_DOWN_MASK + KeyEvent.CTRL_DOWN_MASK, false),0);
 
         listOfInteractiveElements.add(shieldGfx);
@@ -158,12 +170,12 @@ public class MouseShipGUIDrawable implements Drawable {
 
         cursorY += shieldGfx.image.getHeight() + smallGapX;
 
-        miElement chargeGfx = new miElement("mi_charge.png", ulX + cursorX+smallGapX, ulY+cursorY,
+        miElement chargeGfx = new miElement("mi_charge.png", cursorX+smallGapX, cursorY,
                 null,0);
-        miElement addCharge = new miElement("mi_plus.png", ulX + cursorX+ smallGapX + hullGfx.image.getWidth(), ulY+cursorY+chargeGfx.image.getHeight()/2-16,
+        miElement addCharge = new miElement("mi_plus.png",  cursorX+ smallGapX + hullGfx.image.getWidth(), cursorY+chargeGfx.image.getHeight()/2-16,
                 KeyStroke.getKeyStroke(KeyEvent.VK_C, KeyEvent.SHIFT_DOWN_MASK, false),0);
-        miElement removeCharge = new miElement("mi_minus.png", ulX + cursorX + 2*smallGapX + hullGfx.image.getWidth() + addHull.image.getWidth(),
-                ulY+cursorY+chargeGfx.image.getHeight()/2-16,
+        miElement removeCharge = new miElement("mi_minus.png", cursorX + 2*smallGapX + hullGfx.image.getWidth() + addHull.image.getWidth(),
+                cursorY+chargeGfx.image.getHeight()/2-16,
                 KeyStroke.getKeyStroke(KeyEvent.VK_C, KeyEvent.CTRL_DOWN_MASK + KeyEvent.SHIFT_DOWN_MASK, false),0);
 
         listOfInteractiveElements.add(chargeGfx);
@@ -172,12 +184,12 @@ public class MouseShipGUIDrawable implements Drawable {
 
         cursorY += chargeGfx.image.getHeight() + smallGapX;
 
-        miElement forceGfx = new miElement("mi_force.png", ulX + cursorX+smallGapX, ulY+cursorY,
+        miElement forceGfx = new miElement("mi_force.png", cursorX+smallGapX, cursorY,
                 null,0);
-        miElement addForce = new miElement("mi_plus.png", ulX + cursorX+ smallGapX + hullGfx.image.getWidth(), ulY+cursorY+forceGfx.image.getHeight()/2-16,
+        miElement addForce = new miElement("mi_plus.png",  cursorX+ smallGapX + hullGfx.image.getWidth(), cursorY+forceGfx.image.getHeight()/2-16,
                 KeyStroke.getKeyStroke(KeyEvent.VK_I, KeyEvent.SHIFT_DOWN_MASK, false),0);
-        miElement removeForce = new miElement("mi_minus.png", ulX + cursorX + 2*smallGapX + hullGfx.image.getWidth() + addHull.image.getWidth(),
-                ulY+cursorY+forceGfx.image.getHeight()/2-16,
+        miElement removeForce = new miElement("mi_minus.png", cursorX + 2*smallGapX + hullGfx.image.getWidth() + addHull.image.getWidth(),
+                cursorY+forceGfx.image.getHeight()/2-16,
                 KeyStroke.getKeyStroke(KeyEvent.VK_I, KeyEvent.SHIFT_DOWN_MASK + KeyEvent.CTRL_DOWN_MASK, false),0);
 
         listOfInteractiveElements.add(forceGfx);
@@ -187,13 +199,188 @@ public class MouseShipGUIDrawable implements Drawable {
         cursorX += hullGfx.image.getWidth() + addHull.image.getWidth() + removeHull.image.getWidth();
         cursorY += forceGfx.image.getHeight() + smallGapX;
 
-        miElement closeGfx = new miElement("mi_close.png",  ulX + cursorX + padX, ulY, null, -66);
+        miElement closeGfx = new miElement("mi_close.png",  cursorX + padX, 0, null, -66);
         listOfInteractiveElements.add(closeGfx);
 
         cursorX += closeGfx.image.getWidth();
 
+
+        //adding the tallon roll buttons
+        /*
+        int tallonRollxCursor = padX;
+        miElement trL3 = new miElement("mi_tallonleft.png", tallonRollxCursor, tentativeTrollY, KeyStroke.getKeyStroke(KeyEvent.VK_T, KeyEvent.CTRL_DOWN_MASK, false), 0);
+        listOfInteractiveElements.add(trL3);
+        tallonRollxCursor += trL3.image.getWidth() + 1;
+
+        miElement trL2 = new miElement("mi_tallonleft.png", tallonRollxCursor, tentativeTrollY, KeyStroke.getKeyStroke(KeyEvent.VK_Y, KeyEvent.CTRL_DOWN_MASK, false), 0);
+        listOfInteractiveElements.add(trL2);
+        tallonRollxCursor += trL2.image.getWidth() + 1;
+
+        miElement trL1 = new miElement("mi_tallonleft.png", tallonRollxCursor, tentativeTrollY, KeyStroke.getKeyStroke(KeyEvent.VK_I, KeyEvent.CTRL_DOWN_MASK, false), 0);
+        listOfInteractiveElements.add(trL1);
+        tallonRollxCursor += trL1.image.getWidth() +padX;
+
+        miElement trR1 = new miElement("mi_tallonright.png", tallonRollxCursor, tentativeTrollY, KeyStroke.getKeyStroke(KeyEvent.VK_I, KeyEvent.ALT_DOWN_MASK, false), 0);
+        listOfInteractiveElements.add(trR1);
+        tallonRollxCursor += trR1.image.getWidth() + 1;
+
+        miElement trR2 = new miElement("mi_tallonright.png", tallonRollxCursor, tentativeTrollY, KeyStroke.getKeyStroke(KeyEvent.VK_Y, KeyEvent.ALT_DOWN_MASK, false), 0);
+        listOfInteractiveElements.add(trR2);
+        tallonRollxCursor += trR2.image.getWidth() + 1;
+
+        miElement trR3 = new miElement("mi_tallonright.png", tallonRollxCursor, tentativeTrollY, KeyStroke.getKeyStroke(KeyEvent.VK_T, KeyEvent.ALT_DOWN_MASK, false), 0);
+        listOfInteractiveElements.add(trR3);
+*/
+
         totalWidth = cursorX + padX;
         totalHeight = cursorY + padY;
+
+        figureOutBestTopLeftCorner();
+    }
+    private Shape refreshShape(){
+        Rectangle outline = new Rectangle(totalWidth,totalHeight);
+        scale = _map.getZoom();
+        AffineTransform scaler = AffineTransform.getScaleInstance(scale, scale);
+        scaler.translate(ulX, ulY);
+        return scaler.createTransformedShape(outline);
+    }
+    private Shape getMapShape(){
+        Rectangle mapArea = new Rectangle(0,0,0,0);
+        try{
+            Board b = _map.getBoards().iterator().next();
+            mapArea = b.bounds();
+
+            AffineTransform scaler = AffineTransform.getScaleInstance(scale, scale);
+            return scaler.createTransformedShape(mapArea);
+        }catch(Exception e)
+        {
+            return null;
+        }
+    }
+
+    private void figureOutBestTopLeftCorner() {
+
+        Shape wouldBeOutline = refreshShape();
+        Shape mapArea = getMapShape();
+        List<BumpableWithShape> bumpables = OverlapCheckManager.getBumpablesOnMap(true, null);
+        drawThese= OverlapCheckManager.getBumpablesOnMap(true, null);
+        boolean isSearching = true;
+        int failSafe = 40;
+        int iteration = 0;
+        int oldUlX = ulX;
+        int oldUlY = ulY;
+
+        AffineTransform scaler = AffineTransform.getScaleInstance(scale, scale);
+
+        double bestX = -666.0, bestY = -666.0;
+        int bestBump = 999;
+        boolean breakoff=false;
+        for(int i=1; i<3; i++){ //scan to the right of the ship
+            float radius = SMALLSHIPGUIRADIUSBASE*getRadiusMultiplier(_pilotShip.getSize());
+            radius *= i;
+            for(int j=40; j>=-40; j=j-20){
+                double x = rotX(radius, 0, -j);
+                double y = rotY(radius, 0, -j);
+
+                ulX = _shipPiece.getPosition().x + (int)x;
+                ulY = Math.max(0,_shipPiece.getPosition().y - (int)y);
+
+                wouldBeOutline = refreshShape();
+                //andThese.add(wouldBeOutline);
+
+                int bumps = isGreenToGo(wouldBeOutline,mapArea,bumpables);
+                if(bumps < bestBump) {
+                    bestBump = bumps;
+                    bestX = ulX;
+                    bestY = ulY;
+                }
+                if(bumps < MAXBUMPABLECOUNT) {
+                    breakoff = true;
+                    break;
+                }
+               // logToChat("keep the search on i:" + i + " j:" + j);
+            }
+            if(breakoff) break;
+        } //end scan to the right of the ship
+        if(breakoff == false){
+            for(int i=1; i<3; i++){ //scan to the left of the ship
+                float radius = SMALLSHIPGUIRADIUSBASE*getRadiusMultiplier(_pilotShip.getSize());
+                radius*=i;
+                for(int j= 40; j >= -40; j=j-20){
+                    double x = rotX(radius, 0, -j);
+                    double y = rotY(radius, 0, -j);
+
+                    ulX = _shipPiece.getPosition().x - totalWidth - (int)x;
+                    ulY = Math.max(0, _shipPiece.getPosition().y - (int) y);
+
+                    wouldBeOutline = refreshShape();
+                    //andThese.add(wouldBeOutline);
+
+                    int bumps = isGreenToGo(wouldBeOutline,mapArea,bumpables);
+                    if(bumps < bestBump) {
+                        bestBump = bumps;
+                        bestX = ulX;
+                        bestY = ulY;
+                    }
+                    if(bumps < MAXBUMPABLECOUNT){
+                        breakoff = true;
+                        break;
+                    }
+
+                }
+                if(breakoff) break;
+            } //end scan to the left of the ship
+        }
+        //if(breakoff==false){logToChat("didn't find a proper location, using best x:" +bestX + " y:" + bestY + " with " + bestBump + " overlaps.");
+        ulX = (int)bestX;
+        ulY = (int)bestY;
+        }
+
+/*
+        //try to the left
+        while(isSearching){
+            if(iteration >= failSafe) {
+                ulX = oldUlX;
+                ulY = oldUlY;
+                break;
+            }
+            if(isGreenToGo(wouldBeOutline, mapArea, bumpables)) {
+                logToChat("green to go");
+                break;
+            }
+            logToChat("tweaking the position of the GUI iteration " + iteration);
+            ulX += 125;
+            wouldBeOutline = refreshShape();
+
+            if(checkIfOutOfBoundsToTheRight(wouldBeOutline, mapArea)){
+                ulX = 0;
+                ulY += wouldBeOutline.getBounds().height;
+                wouldBeOutline = refreshShape();
+            }
+
+            iteration++;
+        }
+        */
+
+
+
+    /*
+    shapeToCheck.getBounds().getMaxX() > mapArea.getBounds().getMaxX()  || // too far to the right
+                shapeToCheck.getBounds().getMaxY() > mapArea.getBounds().getMaxY() || // too far to the bottom
+                shapeToCheck.getBounds().getX() < mapArea.getBounds().getX() || //too far to the left
+                shapeToCheck.getBounds().getY() < mapArea.getBounds().getY()) // too far to the top
+     */
+    private int isGreenToGo(Shape GUIOutline, Shape mapArea, List<BumpableWithShape> bumpables){
+        if(Util.hasEnlargedUnion(GUIOutline, mapArea)==true) return Integer.MAX_VALUE;
+
+        scale = _map.getZoom();
+        AffineTransform scaler = AffineTransform.getScaleInstance(scale, scale);
+        int bumpableCount = 0;
+        for(BumpableWithShape bws : bumpables){
+            Shape tShape = scaler.createTransformedShape(bws.shape);
+            if(Util.shapesOverlap(GUIOutline, tShape)) bumpableCount++;
+        }
+        return bumpableCount;
     }
 
     private String getShipImage(XWS2Pilots pilotShip, int dualState) {
@@ -212,6 +399,13 @@ public class MouseShipGUIDrawable implements Drawable {
        return sb.toString();
     }
 
+    public float getRadiusMultiplier(String size){
+        int i=1;
+        if(size.equals("large") || size.equals("Large")) i=3;
+        if(size.equals("medium") || size.equals("Medium")) i=2;
+
+        return (i+1)/2;
+    }
     public void draw(Graphics g, Map map) {
         Graphics2D g2d = (Graphics2D) g;
 
@@ -223,37 +417,53 @@ public class MouseShipGUIDrawable implements Drawable {
         scale = _map.getZoom();
 
         AffineTransform scaler = AffineTransform.getScaleInstance(scale, scale);
+
+
         scaler.translate(ulX,ulY);
         g2d.setPaint(Color.WHITE);
         Shape transformedOutline = scaler.createTransformedShape(outline);
         g2d.fill(transformedOutline);
 
-        Line2D.Double firstLine = new Line2D.Double(new Point2D.Double(-150,150),
-                new Point(0,  0));
-        Line2D.Double secondLine = new Line2D.Double(new Point2D.Double(-150,150),
-                new Point(0,  outline.height));
 
-        g2d.draw(scaler.createTransformedShape(firstLine));
-        g2d.draw(scaler.createTransformedShape(secondLine));
+
 
         g2d.setPaint(new Color(0,0,255, 150));
         for(miElement elem : listOfInteractiveElements){
-            AffineTransform af;
+            scaler.translate(elem.x, elem.y);
+
+            //AffineTransform af;
            /*
             if(_pilotShip.getSize().equals("Large") || _pilotShip.getSize().equals("large")) af = elem.getTransformForDraw(scale, 0.5);
             else af = elem.getTransformForDraw(scale);
 */
 
-            af = elem.getTransformForDraw(scale);
-            g2d.drawImage(elem.image, af, new ImageObserver() {
+            //af = elem.getTransformForDraw(scale);
+            g2d.drawImage(elem.image, scaler, new ImageObserver() {
                 public boolean imageUpdate(Image img, int infoflags, int x, int y, int width, int height) {
                     return false;
                 }
             });
-            Rectangle rawR = elem.image.getData().getBounds();
-            Shape s = af.createTransformedShape(rawR);
+
+            //undo the relative translation for this element to become ready for the next
+            scaler.translate(-elem.x, -elem.y);
+
+
+           // Rectangle rawR = elem.image.getData().getBounds();
+            //Shape s = af.createTransformedShape(rawR);
             //g2d.fillRect(s.getBounds().x, s.getBounds().y, s.getBounds().width, s.getBounds().height);
         }
+
+        //bring the translation back to what it was before the GUI
+        scaler.translate(-ulX,-ulY);
+    //    g2d.setColor(Color.WHITE);
+        //logToChat("amount of shapes to draw " + drawThese.size());
+       // for(BumpableWithShape bws : drawThese){
+      //      g2d.fill(scaler.createTransformedShape(bws.shape));
+       // }
+       // g2d.setColor(new Color(0,255,0,60));
+      //  for(Shape s : andThese){
+     //       g2d.fill(s);
+     //   }
 
         /*  piece of code that can fetch the maneuver icons as seen on the dials
         try{
@@ -356,9 +566,9 @@ public class MouseShipGUIDrawable implements Drawable {
         public int getTripleChoice(){
             return whichTripleChoice;
         }
-        public AffineTransform getTransformForClick(double scale){
+        public AffineTransform getTransformForClick(double scale, int abx, int aby){
             AffineTransform affineTransform = new AffineTransform();
-            affineTransform.translate(x, y);
+            affineTransform.translate(abx + x, aby + y);
             return affineTransform;
         }
 

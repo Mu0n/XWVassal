@@ -184,7 +184,6 @@ public class BombSpawner extends Decorator implements EditablePiece {
 
     @Override
     public void mySetState(String s) {
-
     }
 
     @Override
@@ -208,11 +207,6 @@ public class BombSpawner extends Decorator implements EditablePiece {
         }
         return null;
     }
-
-    private boolean isLargeShip(Decorator ship) {
-        return BumpableWithShape.getRawShape(ship).getBounds().getWidth() > 114;
-    }
-
     private Command spawnBomb(BombToken theBomb, BombManeuver theManeu) {
         //STEP 1: Collision aide template, centered as in in the image file, centered on 0,0 (upper left corner)
         GamePiece piece = newPiece(findPieceSlotByID(theBomb.getBombGpID()));
@@ -309,9 +303,9 @@ public class BombSpawner extends Decorator implements EditablePiece {
             BombToken droppedBomb = getKeystrokeBomb(stroke);
             if(droppedBomb != null && processingOnlyOneBomb == false){
                 processingOnlyOneBomb = true;
-                if("Mine".equals(droppedBomb.getBombType())) //deal with prox mine, conner net, etc which can trigger an overlap event
+                if("Mine".equals(droppedBomb.getBombType())  || "Remote".equals(droppedBomb.getBombType())) //deal with prox mine, conner net, etc which can trigger an overlap event
                 {
-                    List<BumpableWithShape> otherShipShapes = getShipsOnMap();
+                    List<BumpableWithShape> otherShipShapes = OverlapCheckManager.getShipsOnMap(null);
 
                     GamePiece thBS = getInner();
                     String selectedMove = thBS.getProperty("selectedMove").toString();
@@ -383,23 +377,6 @@ public class BombSpawner extends Decorator implements EditablePiece {
 
     }
 
-
-    /**
-     * Returns the comparision shape of the first bumpable colliding with the provided ship.  Returns null if there
-     * are no collisions
-     *
-     * @param myTestShape
-     * @return
-     */
-    private BumpableWithShape findCollidingEntity(Shape myTestShape, List<BumpableWithShape> otherShapes) {
-        List<BumpableWithShape> allCollidingEntities = findCollidingEntities(myTestShape, otherShapes);
-        if (allCollidingEntities.size() > 0) {
-            return allCollidingEntities.get(0);
-        } else {
-            return null;
-        }
-    }
-
     /**
      * Returns a list of all bumpables colliding with the provided ship.  Returns an empty list if there
      * are no collisions
@@ -461,203 +438,5 @@ public class BombSpawner extends Decorator implements EditablePiece {
             this.myRotator = ((FreeRotator) Decorator.getDecorator(getOutermost(this), FreeRotator.class));
         }
         return this.myRotator;
-    }
-
-    /**
-     * Returns a new ShipPositionState based on the current position and angle of this ship
-     *
-     * @return
-     */
-    private ShipPositionState getCurrentState() {
-        ShipPositionState shipState = new ShipPositionState();
-        shipState.x = getPosition().getX();
-        shipState.y = getPosition().getY();
-        shipState.angle = getRotator().getAngle();
-        return shipState;
-    }
-
-    private List<BumpableWithShape> getShipsWithShapes() {
-        List<BumpableWithShape> ships = Lists.newLinkedList();
-        for (BumpableWithShape ship : getShipsOnMap()) {
-            if (getId().equals(ship.bumpable.getId())) {
-                continue;
-            }
-            ships.add(ship);
-        }
-        return ships;
-    }
-
-    private List<BumpableWithShape> getBumpablesWithShapes() {
-        List<BumpableWithShape> bumpables = Lists.newLinkedList();
-        for (BumpableWithShape bumpable : getBumpablesOnMap()) {
-            if (getId().equals(bumpable.bumpable.getId())) {
-                continue;
-            }
-            bumpables.add(bumpable);
-        }
-        return bumpables;
-    }
-
-    private List<BumpableWithShape> getShipsOnMap() {
-        List<BumpableWithShape> ships = Lists.newArrayList();
-
-        GamePiece[] pieces = getMap().getAllPieces();
-        for (GamePiece piece : pieces) {
-            if (piece.getState().contains("this_is_a_ship")) {
-                ships.add(new BumpableWithShape((Decorator)piece, "Ship",
-                        piece.getProperty("Pilot Name").toString(), piece.getProperty("Craft ID #").toString(),
-                        this.getInner().getState().contains("this_is_2pointoh")));
-            }
-        }
-        return ships;
-    }
-
-    private List<BumpableWithShape> getBumpablesOnMap() {
-        List<BumpableWithShape> bumpables = Lists.newArrayList();
-
-        GamePiece[] pieces = getMap().getAllPieces();
-        for (GamePiece piece : pieces) {
-            if (piece.getState().contains("this_is_a_ship")) {
-                bumpables.add(new BumpableWithShape((Decorator)piece,"Ship",
-                        piece.getProperty("Pilot Name").toString(), piece.getProperty("Craft ID #").toString(),
-                        this.getInner().getState().contains("this_is_2pointoh")));
-            } else if (piece.getState().contains("this_is_an_asteroid")) {
-                // comment out this line and the next three that add to bumpables if bumps other than with ships shouldn't be detected yet
-                String testFlipString = "";
-                try{
-                    testFlipString = ((Decorator) piece).getDecorator(piece,piece.getClass()).getProperty("whichShape").toString();
-                } catch (Exception e) {}
-                bumpables.add(new BumpableWithShape((Decorator)piece, "Asteroid", "2".equals(testFlipString), false));
-            } else if (piece.getState().contains("this_is_a_debris")) {
-                String testFlipString = "";
-                try{
-                    testFlipString = ((Decorator) piece).getDecorator(piece,piece.getClass()).getProperty("whichShape").toString();
-                } catch (Exception e) {}
-                bumpables.add(new BumpableWithShape((Decorator)piece,"Debris","2".equals(testFlipString), false));
-            } else if (piece.getState().contains("this_is_a_bomb")) {
-                bumpables.add(new BumpableWithShape((Decorator)piece, "Mine", false, false));
-            }
-        }
-        return bumpables;
-    }
-
-   /* private static class FlashCommand extends Command implements Drawable {
-
-
-
-        private final List<Shape> shapes;
-        private boolean tictoc = false;
-        Color bumpColor = new Color(215, 255, 0, 150);
-
-        FlashCommand() {
-            this.shapes = new ArrayList<Shape>();
-        }
-        FlashCommand(Shape shipShape) {
-            this.shapes = new ArrayList<Shape>();
-            this.shapes.add(shipShape);
-        }
-
-        protected void executeCommand() {
-            draw(GameModule.getGameModule(), )
-        }
-
-        protected Command myUndoCommand() {
-            return null;
-        }
-
-        public void add(Shape bumpable) {
-            this.shapes.add(bumpable);
-        }
-
-        public int getCount() {
-            int count = 0;
-            Iterator<Shape> it = this.shapes.iterator();
-            while(it.hasNext()) {
-                count++;
-                it.next();
-            }
-            return count;
-        }
-
-        public void draw(Graphics graphics, VASSAL.build.module.Map map) {
-            Graphics2D graphics2D = (Graphics2D) graphics;
-            if(tictoc == false)
-            {
-                graphics2D.setColor(bumpColor);
-                AffineTransform scaler = AffineTransform.getScaleInstance(map.getZoom(), map.getZoom());
-                for (Shape shape : shapes) {
-                    graphics2D.fill(scaler.createTransformedShape(shape));
-                }
-                tictoc = true;
-            }
-            else {
-                map.getView().repaint();
-                tictoc = false;
-            }
-        }
-
-        public boolean drawAboveCounters() {
-            return true;
-        }
-    }*/
-
-   /*
-    private static class CollisionVisualization implements Drawable {
-
-        private final List<Shape> shapes;
-        private boolean tictoc = false;
-        Color myO = new Color(215, 255, 0, 150);
-
-        CollisionVisualization() {
-            this.shapes = new ArrayList<Shape>();
-        }
-        CollisionVisualization(Shape shipShape) {
-            this.shapes = new ArrayList<Shape>();
-            this.shapes.add(shipShape);
-        }
-
-        public void add(Shape bumpable) {
-            this.shapes.add(bumpable);
-        }
-
-        public int getCount() {
-            int count = 0;
-            Iterator<Shape> it = this.shapes.iterator();
-            while(it.hasNext()) {
-                count++;
-                it.next();
-            }
-            return count;
-        }
-
-        public void draw(Graphics graphics, VASSAL.build.module.Map map) {
-            Graphics2D graphics2D = (Graphics2D) graphics;
-            if(tictoc == false)
-            {
-                graphics2D.setColor(myO);
-                AffineTransform scaler = AffineTransform.getScaleInstance(map.getZoom(), map.getZoom());
-                for (Shape shape : shapes) {
-                    graphics2D.fill(scaler.createTransformedShape(shape));
-                }
-                tictoc = true;
-            }
-            else {
-                map.getView().repaint();
-                tictoc = false;
-            }
-
-
-
-        }
-
-        public boolean drawAboveCounters() {
-            return true;
-        }
-    }
-*/
-    private static class ShipPositionState {
-        double x;
-        double y;
-        double angle;
     }
 }

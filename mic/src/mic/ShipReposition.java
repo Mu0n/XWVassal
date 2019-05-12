@@ -162,8 +162,7 @@ enum RepoManeuver {
 
     BRD_Right_AFAP_Large_2E("BR Right as Forward as Possible", "524", 0.0f, 141.25f, 0.0f, 0.0f, 283.0f, -56.5f),
     BRD_Right_Large_2E("BR Right", "524", -90.0f, 169.5f, 0.0f, 0.0f, 283.0f, 0.0f),
-    BRD_Right_ABAP_Large_2E("BR Right as Backward as Possible", "524", 0.0f, 141.25f, 0.0f, 0.0f, 283.0f, 56.5f)
-    ;
+    BRD_Right_ABAP_Large_2E("BR Right as Backward as Possible", "524", 0.0f, 141.25f, 0.0f, 0.0f, 283.0f, 56.5f);
 
     private final String repoName;
     private final String gpID;
@@ -232,7 +231,7 @@ public class ShipReposition extends Decorator implements EditablePiece {
 
     MouseListener ml;
     Boolean dealingWithClickChoicesDuringReposition = false;
-    List<repositionChoiceVisual> rpcList = Lists.newArrayList();
+    List<RepositionChoiceVisual> rpcList = Lists.newArrayList();
 
     private static Map<String, RepoManeuver> keyStrokeToDropTemplate = ImmutableMap.<String, RepoManeuver>builder()
             .put("CTRL R", RepoManeuver.BR1_Left_Mid)
@@ -632,7 +631,7 @@ public class ShipReposition extends Decorator implements EditablePiece {
 
         int nbOfRedDots = 0;
 
-        List<BumpableWithShape> obstacles = getBumpablesOnMap(false);
+        List<BumpableWithShape> obstacles = OverlapCheckManager.getBumpablesOnMap(false, null);
         Boolean condemnAllDots = false;
         shapeForTemplate = repositionedTemplateShape(repoTemplates.get(0)); //using the first of the list will do, since all 3 use the same template information
         if(shapeForTemplate != null) {
@@ -689,7 +688,7 @@ public class ShipReposition extends Decorator implements EditablePiece {
 
 
             //STEP 9: Check for overlap with obstacles and ships with the final ship position
-            List<BumpableWithShape> shipsOrObstacles = getBumpablesOnMap(true);
+            List<BumpableWithShape> shipsOrObstacles = OverlapCheckManager.getBumpablesOnMap(true, null);
             boolean wantOverlapColor = false;
 
             if(condemnAllDots==true){
@@ -716,7 +715,7 @@ public class ShipReposition extends Decorator implements EditablePiece {
             //STEP 11: reposition the ship
             //Add visuals according to the selection of repositioning
 
-            repositionChoiceVisual rpc = new repositionChoiceVisual(shapeForShipOverlap, dot, wantOverlapColor,repoShipToString.get(repoTemplate));
+            RepositionChoiceVisual rpc = new RepositionChoiceVisual(shapeForShipOverlap, dot, wantOverlapColor,repoShipToString.get(repoTemplate),0, null, null, 0);
             rpcList.add(rpc);
 
             //return bigCommand;
@@ -725,7 +724,7 @@ public class ShipReposition extends Decorator implements EditablePiece {
         } // end of loop around the 3 templates used in the repositions
 
         //FINAL STEP: add the visuala to the map and the mouse listener
-        for(repositionChoiceVisual r : rpcList){
+        for(RepositionChoiceVisual r : rpcList){
             theMap.addDrawComponent(r);
         }
 
@@ -736,15 +735,15 @@ public class ShipReposition extends Decorator implements EditablePiece {
             public void mousePressed(MouseEvent e) {
                 if(e.isConsumed()) return;
 
-                List<repositionChoiceVisual> copiedList = Lists.newArrayList();
-                for(repositionChoiceVisual r : rpcList){
+                List<RepositionChoiceVisual> copiedList = Lists.newArrayList();
+                for(RepositionChoiceVisual r : rpcList){
                     copiedList.add(r);
                 }
                 //When it gets the answer, gracefully close the mouse listenener and remove the visuals
-                repositionChoiceVisual theChosenOne = null;
+                RepositionChoiceVisual theChosenOne = null;
                 boolean slightMisclick = false;
 
-                for(repositionChoiceVisual r : copiedList){
+                for(RepositionChoiceVisual r : copiedList){
                     if(r.theDot.contains(e.getX(),e.getY())){
                         theChosenOne = r;
                         break;
@@ -786,42 +785,19 @@ public class ShipReposition extends Decorator implements EditablePiece {
                 }
             }
 
-            public void mouseClicked(MouseEvent e) {
+            public void mouseClicked(MouseEvent e) { }
 
-            }
+            public void mouseReleased(MouseEvent e) { }
 
-            public void mouseReleased(MouseEvent e) {
+            public void mouseEntered(MouseEvent e) { }
 
-            }
-
-            public void mouseEntered(MouseEvent e) {
-                for(repositionChoiceVisual rpc : rpcList){
-                    if(rpc.theDot.contains(e.getPoint())){
-                        rpc.setMouseOvered();
-                        logToChat("$*/*$(*%($/%*($%*/*($%*/");
-                    }
-                }
-            }
-
-            public void mouseExited(MouseEvent e) {
-                for(repositionChoiceVisual rpc : rpcList){
-                    if(!rpc.theDot.contains(e.getPoint())){
-                        rpc.unsetMouseOvered();
-                    }
-                }
-            }
+            public void mouseExited(MouseEvent e) { }
         };
         theMap.addLocalMouseListenerFirst(ml);
 
         return nbOfRedDots;
     }
 
-    public static String getKeyStrokeFromRepoManeuver(RepoManeuver rp){
-        for (Map.Entry<String, RepoManeuver> entry : keyStrokeToRepositionShip_2e.entrySet()) {
-            if (entry.getValue()==rp) return entry.getKey();
-        }
-        return null;
-    }
 
 
     private Command repositionTheShip(RepoManeuver repoTemplate, boolean is2pointOh) {
@@ -855,7 +831,7 @@ public class ShipReposition extends Decorator implements EditablePiece {
         //STEP 5: Check for overlap with an obstacle, if so, spawn it so the player sees it
         Command bigCommand = null;
 
-        List<BumpableWithShape> obstacles = getBumpablesOnMap(false);
+        List<BumpableWithShape> obstacles = OverlapCheckManager.getBumpablesOnMap(false, null);
 
         if(shapeForTemplate != null) {
             List<BumpableWithShape> overlappingObstacles = findCollidingEntities(shapeForTemplate, obstacles);
@@ -886,7 +862,7 @@ public class ShipReposition extends Decorator implements EditablePiece {
 
 
         //STEP 9: Check for overlap with obstacles and ships with the final ship position
-        List<BumpableWithShape> shipsOrObstacles = getBumpablesOnMap(true);
+        List<BumpableWithShape> shipsOrObstacles = OverlapCheckManager.getBumpablesOnMap(true, null);
 
         String yourShipName = getShipStringForReports(true, this.getProperty("Pilot Name").toString(), this.getProperty("Craft ID #").toString());
         if(shapeForShip != null){
@@ -1032,31 +1008,12 @@ public class ShipReposition extends Decorator implements EditablePiece {
     }
 
 
-    private Shape getCopyOfShapeWithoutActionsForOverlapCheck(GamePiece oldPiece,RepoManeuver repoTemplate ) {
-        // Copy the old piece, but don't set the State
-        GamePiece newPiece = GameModule.getGameModule().createPiece(oldPiece.getType());
-        VASSAL.build.module.Map var3 = oldPiece.getMap();
-        this.piece.setMap((VASSAL.build.module.Map) null);
-        // manually set the same position of the old piece
-        newPiece.setPosition(oldPiece.getPosition());
-        oldPiece.setMap(var3);
-
-        // now set the angle
-        double templateAngle;
-        templateAngle = repoTemplate.getTemplateAngle(); //repo maneuver's angle
-        double shipAngle = this.getRotator().getAngle(); //ship angle
-        FreeRotator rotater = (FreeRotator) Decorator.getDecorator(newPiece, FreeRotator.class);
-        rotater.setAngle(shipAngle);
-        return newPiece.getShape();
-    }
-
-
     private void closeMouseListener(VASSAL.build.module.Map aMap, MouseListener aML){
         aMap.removeLocalMouseListener(aML);
     }
 
     private void removeVisuals(VASSAL.build.module.Map aMapm){
-        for(repositionChoiceVisual r : rpcList){
+        for(RepositionChoiceVisual r : rpcList){
             aMapm.removeDrawComponent(r);
         }
         rpcList.clear();
@@ -1068,7 +1025,7 @@ public class ShipReposition extends Decorator implements EditablePiece {
 
         Command startIt = startTripleChoiceStopNewOnes();
         List<RepoManeuver> repoChoices = Lists.newArrayList();
-        final VASSAL.build.module.Map theMap = MouseShipGUI.getTheMainMap();
+        final VASSAL.build.module.Map theMap = Util.getTheMainMap();
         String contemplatingPlayerName = getCurrentPlayer().getName();
 
         StringBuilder sb = new StringBuilder("*--- ");
@@ -1133,18 +1090,6 @@ public class ShipReposition extends Decorator implements EditablePiece {
                 sb.append(contemplatingPlayerName + " is contemplating 3 choices for barrel roll right with backward bank 2 (Echo style decloak) for " + pilotName);
                 repoChoices = Lists.newArrayList(RepoManeuver.BR2_Right_BankB_AFAP_2E, RepoManeuver.BR2_Right_BankB_2E, RepoManeuver.BR2_Right_BankB_ABAP_2E);
                 break;
-            //Tallon Roll Left 1
-            //Tallon Roll Left 2
-            //Tallon Roll Left 3
-            //Tallon Roll Right 1
-            //Tallon Roll Right 2
-            //Tallon Roll Right 3
-            //Segnor's Loop Left 1
-            //Segnor's Loop Left 2
-            //Segnor's Loop Left 3
-            //Segnor's Loop Right 1
-            //Segnor's Loop Right 2
-            //Segnor's Loop Right 3
         }
 
         int nbOfRedDots = offerTripleChoices(repoChoices, true, theMap);
@@ -1189,7 +1134,7 @@ public class ShipReposition extends Decorator implements EditablePiece {
 
         //Deal with ALT-C, detect if there's something under the ship creating an overlap
         if (KeyStroke.getKeyStroke(KeyEvent.VK_C, KeyEvent.ALT_DOWN_MASK,false).equals(stroke)){
-            List<BumpableWithShape> BWS = getBumpablesOnMap(true);
+            List<BumpableWithShape> BWS = OverlapCheckManager.getBumpablesOnMap(true, null);
             Shape shipShape = getBumpableCompareShape(this);
             List<BumpableWithShape> overlappingObstacles = findCollidingEntities(shipShape, BWS);
             if(overlappingObstacles.size() > 0) {
@@ -1224,7 +1169,7 @@ public class ShipReposition extends Decorator implements EditablePiece {
         if (is2pointohShip == false && repoTemplateDrop != null && stroke.isOnKeyRelease() == false) {
             Command result = spawnRepoTemplate(repoTemplateDrop);
 
-            List<BumpableWithShape> obstacles = getBumpablesOnMap(false);
+            List<BumpableWithShape> obstacles = OverlapCheckManager.getBumpablesOnMap(false, null);
 
             if(shapeForTemplate != null){
                 List<BumpableWithShape> overlappingObstacles = findCollidingEntities(shapeForTemplate, obstacles);
@@ -1272,50 +1217,7 @@ public class ShipReposition extends Decorator implements EditablePiece {
         return piece.keyEvent(stroke);
     }
 
-    private boolean isATripleChoiceAllowed() {
-        mic.Util.XWPlayerInfo playerInfo = getCurrentPlayer();
-        VASSAL.build.module.Map playerMap = getPlayerMap(playerInfo.getSide());
-        Boolean ret = Boolean.parseBoolean(playerMap.getProperty("clickChoice").toString());
-        if(ret) return false;
-        else return true;
-    }
 
-    private Command stopTripleChoiceMakeNextReady() {
-        Command result = null;
-        mic.Util.XWPlayerInfo playerInfo = getCurrentPlayer();
-        VASSAL.build.module.Map playerMap = getPlayerMap(playerInfo.getSide());
-        GamePiece[] pieces = playerMap.getAllPieces();
-        for(GamePiece p : pieces){
-            if(p.getName().equals("clickChoiceController")) {
-                result = p.keyEvent(KeyStroke.getKeyStroke(KeyEvent.VK_O, KeyEvent.CTRL_DOWN_MASK, false));
-                return result;
-            }
-        }
-        return result;
-    }
-
-    private Command startTripleChoiceStopNewOnes() {
-        Command result = null;
-        mic.Util.XWPlayerInfo playerInfo = getCurrentPlayer();
-        VASSAL.build.module.Map playerMap = getPlayerMap(playerInfo.getSide());
-        GamePiece[] pieces = playerMap.getAllPieces();
-        for(GamePiece p : pieces){
-            if(p.getName().equals("clickChoiceController")){
-                result = p.keyEvent(KeyStroke.getKeyStroke(KeyEvent.VK_A, KeyEvent.CTRL_DOWN_MASK, false));
-                return result;
-            }
-        }
-        return result;
-    }
-
-    private VASSAL.build.module.Map getPlayerMap(int playerIndex) {
-        for (VASSAL.build.module.Map loopMap : GameModule.getGameModule().getComponentsOf(VASSAL.build.module.Map.class)) {
-            if (("Player " + Integer.toString(playerIndex)).equals(loopMap.getMapName())) {
-                return loopMap;
-            }
-        }
-        return null;
-    }
 
     private List<BumpableWithShape> findCollidingEntities(Shape myTestShape, List<BumpableWithShape> otherShapes) {
         List<BumpableWithShape> shapes = Lists.newLinkedList();
@@ -1325,56 +1227,6 @@ public class ShipReposition extends Decorator implements EditablePiece {
             }
         }
         return shapes;
-    }
-
-    private List<BumpableWithShape> getBumpablesOnMap(Boolean wantShipsToo) {
-
-        List<BumpableWithShape> bumpables = Lists.newArrayList();
-
-        GamePiece[] pieces = getMap().getAllPieces();
-        for (GamePiece piece : pieces) {
-            if (piece.getState().contains("this_is_an_asteroid")) {
-                // comment out this line and the next three that add to bumpables if bumps other than with ships shouldn't be detected yet
-                String testFlipString = "";
-                try{
-                    testFlipString = ((Decorator) piece).getDecorator(piece,piece.getClass()).getProperty("whichShape").toString();
-                } catch (Exception e) {}
-                bumpables.add(new BumpableWithShape((Decorator)piece, "Asteroid", "2".equals(testFlipString), false));
-            } else if (piece.getState().contains("this_is_a_debris")) {
-                String testFlipString = "";
-                try{
-                    testFlipString = ((Decorator) piece).getDecorator(piece,piece.getClass()).getProperty("whichShape").toString();
-                } catch (Exception e) {}
-                bumpables.add(new BumpableWithShape((Decorator)piece,"Debris","2".equals(testFlipString), false));
-            } else if (piece.getState().contains("this_is_a_bomb")) {
-                bumpables.add(new BumpableWithShape((Decorator)piece, "Mine", false, false));
-            } else if (piece.getState().contains("this_is_a_gascloud")) {
-                String testFlipString = "";
-                try{
-                    testFlipString = ((Decorator) piece).getDecorator(piece,piece.getClass()).getProperty("whichShape").toString();
-                } catch (Exception e) {}
-                bumpables.add(new BumpableWithShape((Decorator)piece, "GasCloud", "2".equals(testFlipString), false));
-            }else if (piece.getState().contains("this_is_a_remote")) {
-                String testFlipString = "";
-                try{
-                    testFlipString = ((Decorator) piece).getDecorator(piece,piece.getClass()).getProperty("whichShape").toString();
-                } catch (Exception e) {}
-                bumpables.add(new BumpableWithShape((Decorator)piece, "Remote", "2".equals(testFlipString), false));
-            }else if(wantShipsToo == true && piece.getState().contains("this_is_a_ship")){
-                //MrMurphM
-                //    GamePiece newPiece = PieceCloner.getInstance().clonePiece(piece);
-                //    newPiece.setPosition(piece.getPosition());
-                //END
-                BumpableWithShape tentativeBumpable = new BumpableWithShape((Decorator)piece, "Ship",false,
-                        this.getInner().getState().contains("this_is_2pointoh"));
-                if (getId().equals(tentativeBumpable.bumpable.getId())) {
-                    continue;
-                }
-                bumpables.add(tentativeBumpable);
-
-            }
-        }
-        return bumpables;
     }
 
     public String getId() {
@@ -1519,58 +1371,6 @@ public class ShipReposition extends Decorator implements EditablePiece {
         return this.piece.getName();
     }
 
-    private static class repositionChoiceVisual implements Drawable {
-        Shape thePieceShape;
-        Shape theDot;
-        Boolean mouseOvered = false;
-        Color bumpColor = new Color(255,99,71, 60);
-        Color validColor = new Color(0,255,130, 60);
-        Color dotColor = new Color(255,255,200);
-        Color mouseOverColor = new Color(255,255,130);
-        Color dotOverlappedColor = new Color(255,0,0);
-        boolean isOverlapped = false;
-        KeyStroke theKey;
-        String inStringForm;
-
-        public repositionChoiceVisual(Shape translatedRotatedScaledShape, Shape centralDot, boolean wantOverlapColor, String choice){
-            thePieceShape = translatedRotatedScaledShape;
-            theDot = centralDot;
-            isOverlapped = wantOverlapColor;
-            inStringForm = choice;
-        }
-
-        public void setMouseOvered(){
-            mouseOvered = true;
-        }
-        public void unsetMouseOvered(){
-            mouseOvered = false;
-        }
-        public void draw(Graphics g, VASSAL.build.module.Map map) {
-            Graphics2D graphics2D = (Graphics2D) g;
-
-            AffineTransform scaler = AffineTransform.getScaleInstance(map.getZoom(), map.getZoom());
-
-            graphics2D.setColor(validColor);
-            graphics2D.fill(scaler.createTransformedShape(thePieceShape));
-            if(isOverlapped) graphics2D.setColor(dotOverlappedColor);
-            else graphics2D.setColor(dotColor);
-            graphics2D.fill(scaler.createTransformedShape(theDot));
-            if(mouseOvered){
-                graphics2D.setColor(mouseOverColor);
-                graphics2D.draw(theDot);
-            }
-        }
-
-        public boolean drawAboveCounters() {
-            return true;
-        }
-
-        public KeyStroke getKeyStroke() {
-            return theKey;
-        }
-
-        public String getInStringForm() { return inStringForm; }
-    }
 
     public static ShipReposition findShipRepositionDecorator(GamePiece activatedPiece) {
         return (ShipReposition)ShipReposition.getDecorator(activatedPiece,ShipReposition.class);

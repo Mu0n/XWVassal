@@ -226,6 +226,7 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
         isHiddenPropCheck = Integer.parseInt(piece.getProperty("isHidden").toString());
 
         //Util.logToChat("STEP 0 - keyEvent=" + stroke.getKeyEventType() + " isHidden=" + isHiddenPropCheck);
+        KeyStroke checkForMassActionMapWipe = KeyStroke.getKeyStroke(KeyEvent.VK_A, KeyEvent.CTRL_DOWN_MASK + KeyEvent.SHIFT_DOWN_MASK + KeyEvent.ALT_DOWN_MASK, false);
 
         if (getOwnerOfThisDial() == Util.getCurrentPlayer().getSide()) {
             KeyStroke checkForCtrlRReleased = KeyStroke.getKeyStroke(KeyEvent.VK_R, KeyEvent.CTRL_DOWN_MASK, false);
@@ -233,6 +234,7 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
             KeyStroke checkForPeriodReleased = KeyStroke.getKeyStroke(KeyEvent.VK_PERIOD, 0, false);
             KeyStroke checkForSuperCtrlRReleased = KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyEvent.CTRL_DOWN_MASK, false);
             KeyStroke checkForC = KeyStroke.getKeyStroke(KeyEvent.VK_C, 0, false);
+
 
 
             boolean goingLeft = checkForCommaReleased.equals(stroke);
@@ -330,7 +332,7 @@ public class StemNuDial2e extends Decorator implements EditablePiece, Serializab
                     return result;
                 }
             }
-        } else { // get scolded for not owning the dial that was manipulated
+        } else if(!stroke.equals(checkForMassActionMapWipe)) { // get scolded for not owning the dial that was manipulated, unless it's a mass action wipe on the map
             Util.logToChatWithoutUndo("You (player " + Util.getCurrentPlayer().getSide() + ") are not the owner of this dial, player " + getOwnerOfThisDial() + " is.");
         }
         return piece.keyEvent(stroke);

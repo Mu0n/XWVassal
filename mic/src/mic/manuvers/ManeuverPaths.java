@@ -211,6 +211,45 @@ public enum ManeuverPaths {
         return transformed;
     }
 
+    public PathPart getTweakedPathPartForTrollInternal(ManeuverPath workingPath, double x, double y, double angleDegrees, int whichSize, boolean LeftOtherwiseRight, int FrontCenterBack) {
+        //Front = 1, Center = 0 (unused because you typically already have it as the last element of lastmaneuver in AutoBumpDecorator, Back = -1
+
+        double baseOffset = 56.5;
+        if(whichSize==3) baseOffset = 113;
+        else if(whichSize==2) baseOffset = 84.75;
+
+        List<PathPart> rawParts = workingPath.getPathParts(getNumPathSegments(workingPath), baseOffset, whichSize);
+        PathPart transformed;
+
+        PathPart rawPart = rawParts.get(rawParts.size()-1); //go directly at the end
+        Path2D.Double testPath = new Path2D.Double();
+        int yOffset  =(int)( FrontCenterBack * 56.5/2);
+
+        testPath.moveTo(rawPart.getX(), rawPart.getY() + yOffset);
+
+        //add a tripleChoiceTroll offset to the front or back, then rotate it depending on the left or right troll
+        //TODO
+
+            testPath = (Path2D.Double) AffineTransform
+                .getRotateInstance(-(angleDegrees) * (Math.PI / 180), 0, 0)
+                .createTransformedShape(testPath);
+
+        double angle = angleDegrees + rawPart.getAngle();
+        if (angle > 0) {
+            angle = angle - 360;
+        }
+        transformed = new PathPart(
+                x + testPath.getCurrentPoint().getX(),
+                y + testPath.getCurrentPoint().getY(),
+                angle
+        );
+
+        return transformed;
+    }
+
+    public PathPart getTweakedPathPartForTroll(double x, double y, double angleDegrees, int whichSize, boolean LeftOtherwiseRight, int FrontCenterBack) {
+        return getTweakedPathPartForTrollInternal(this.path, x, y, angleDegrees, whichSize, LeftOtherwiseRight, FrontCenterBack);
+    }
     public List<PathPart> getTransformedPathParts(double x, double y, double angleDegrees, int whichSize) {
         return getTransformedPathPartsInternal(this.path, x, y, angleDegrees, whichSize);
     }

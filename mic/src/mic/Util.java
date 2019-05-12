@@ -3,6 +3,7 @@ package mic;
 import VASSAL.build.GameModule;
 import VASSAL.build.module.Chatter;
 import VASSAL.build.module.GlobalOptions;
+import VASSAL.build.module.Map;
 import VASSAL.build.module.PlayerRoster;
 import VASSAL.build.widget.PieceSlot;
 import VASSAL.command.Command;
@@ -15,7 +16,9 @@ import com.google.common.collect.Lists;
 import mic.ota.XWOTAUtils;
 
 import javax.imageio.ImageIO;
+import javax.swing.*;
 import java.awt.*;
+import java.awt.event.KeyEvent;
 import java.awt.geom.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
@@ -232,6 +235,50 @@ public class Util {
         return Math.sin(-Math.PI*angle/180.0f)*x + Math.cos(-Math.PI*angle/180.0f)*y;
     }
 
+    public static boolean isATripleChoiceAllowed() {
+        mic.Util.XWPlayerInfo playerInfo = getCurrentPlayer();
+        VASSAL.build.module.Map playerMap = getPlayerMap(playerInfo.getSide());
+        Boolean ret = Boolean.parseBoolean(playerMap.getProperty("clickChoice").toString());
+        if(ret) return false;
+        else return true;
+    }
+
+    public static Command stopTripleChoiceMakeNextReady() {
+        Command result = null;
+        mic.Util.XWPlayerInfo playerInfo = getCurrentPlayer();
+        VASSAL.build.module.Map playerMap = getPlayerMap(playerInfo.getSide());
+        GamePiece[] pieces = playerMap.getAllPieces();
+        for(GamePiece p : pieces){
+            if(p.getName().equals("clickChoiceController")) {
+                result = p.keyEvent(KeyStroke.getKeyStroke(KeyEvent.VK_O, KeyEvent.CTRL_DOWN_MASK, false));
+                return result;
+            }
+        }
+        return result;
+    }
+
+    public static Command startTripleChoiceStopNewOnes() {
+        Command result = null;
+        mic.Util.XWPlayerInfo playerInfo = getCurrentPlayer();
+        VASSAL.build.module.Map playerMap = getPlayerMap(playerInfo.getSide());
+        GamePiece[] pieces = playerMap.getAllPieces();
+        for(GamePiece p : pieces){
+            if(p.getName().equals("clickChoiceController")){
+                result = p.keyEvent(KeyStroke.getKeyStroke(KeyEvent.VK_A, KeyEvent.CTRL_DOWN_MASK, false));
+                return result;
+            }
+        }
+        return result;
+    }
+
+    public static VASSAL.build.module.Map getPlayerMap(int playerIndex) {
+        for (VASSAL.build.module.Map loopMap : GameModule.getGameModule().getComponentsOf(VASSAL.build.module.Map.class)) {
+            if (("Player " + Integer.toString(playerIndex)).equals(loopMap.getMapName())) {
+                return loopMap;
+            }
+        }
+        return null;
+    }
     /**
      * Returns true if the two provided shapes areas have any intersection
      *
@@ -243,6 +290,18 @@ public class Util {
         Area a1 = new Area(shape1);
         a1.intersect(new Area(shape2));
         return !a1.isEmpty();
+    }
+
+    public static boolean hasEnlargedUnion(Shape guiShape, Shape mapShape) {
+        Area a1 = new Area(guiShape);
+        Area a2 = new Area(mapShape);
+
+        if(a1.getBounds2D().getMaxX() > a2.getBounds2D().getMaxX() ||
+           a1.getBounds2D().getMaxY() > a2.getBounds2D().getMaxY() ||
+           a1.getBounds2D().getMinX() < a2.getBounds2D().getMinX() ||
+           a1.getBounds2D().getMinY() < a2.getBounds2D().getMinY()) return true;
+
+        return false;
     }
     public static Shape getIntersectedShape(Shape shape1, Shape shape2){
         Area a1 = new Area(shape1);
@@ -509,8 +568,43 @@ public class Util {
         return null;
     }
 
+    static public Map getTheMainMap(){
+        for (Map loopMap : GameModule.getGameModule().getComponentsOf(Map.class)) {
+            if (("Contested Sector").equals(loopMap.getMapName())) {
+                return loopMap;
+            }
+        }
+        return null;
+    }
+    public static Shape getTransformedPieceShape(GamePiece piece) {
+        Shape rawShape = piece.getShape();
+        Shape transformed = AffineTransform
+                .getTranslateInstance(piece.getPosition().getX(), piece.getPosition().getY())
+                .createTransformedShape(rawShape);
 
+        FreeRotator rotator = (FreeRotator) (Decorator.getDecorator(Decorator.getOutermost(piece), FreeRotator.class));
+        double centerX = piece.getPosition().getX();
+        double centerY = piece.getPosition().getY();
+        transformed = AffineTransform
+                .getRotateInstance(rotator.getAngleInRadians(), centerX, centerY)
+                .createTransformedShape(transformed);
 
+        return transformed;
+    }
+    public static Shape getTransformedShape(Shape rawShape, GamePiece sourcePiece) {
+        Shape transformed = AffineTransform
+                .getTranslateInstance(sourcePiece.getPosition().getX(), sourcePiece.getPosition().getY())
+                .createTransformedShape(rawShape);
+
+        FreeRotator rotator = (FreeRotator) (Decorator.getDecorator(Decorator.getOutermost(sourcePiece), FreeRotator.class));
+        double centerX = sourcePiece.getPosition().getX();
+        double centerY = sourcePiece.getPosition().getY();
+        transformed = AffineTransform
+                .getRotateInstance(rotator.getAngleInRadians(), centerX, centerY)
+                .createTransformedShape(transformed);
+
+        return transformed;
+    }
 
 
 
