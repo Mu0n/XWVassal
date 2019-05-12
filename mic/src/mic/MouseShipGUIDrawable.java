@@ -206,6 +206,7 @@ public class MouseShipGUIDrawable extends MouseGUIDrawable implements Drawable {
 
 
         //adding the tallon roll buttons
+        /*
         int tallonRollxCursor = padX;
         miElement trL3 = new miElement("mi_tallonleft.png", tallonRollxCursor, tentativeTrollY, KeyStroke.getKeyStroke(KeyEvent.VK_T, KeyEvent.CTRL_DOWN_MASK, false), 0);
         listOfInteractiveElements.add(trL3);
@@ -229,7 +230,7 @@ public class MouseShipGUIDrawable extends MouseGUIDrawable implements Drawable {
 
         miElement trR3 = new miElement("mi_tallonright.png", tallonRollxCursor, tentativeTrollY, KeyStroke.getKeyStroke(KeyEvent.VK_T, KeyEvent.ALT_DOWN_MASK, false), 0);
         listOfInteractiveElements.add(trR3);
-
+*/
 
         totalWidth = cursorX + padX;
         totalHeight = cursorY + padY;
