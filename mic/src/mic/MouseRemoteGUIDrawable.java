@@ -72,7 +72,7 @@ public class MouseRemoteGUIDrawable extends MouseGUIDrawable implements Drawable
                         getTranslateInstance((int) offx + (int) off2x_rot_dot, (int) offy + (int) off2y_rot_dot).
                         createTransformedShape(dot);
 
-                RepositionChoiceVisual rpc = new RepositionChoiceVisual(null, dot, false,"",i, null);
+                RepositionChoiceVisual rpc = new RepositionChoiceVisual(null, dot, false,"",i, null, null, 0);
                 rpcList.add(rpc);
             }
         }
@@ -91,7 +91,7 @@ public class MouseRemoteGUIDrawable extends MouseGUIDrawable implements Drawable
                         dot = AffineTransform.
                                 getTranslateInstance((int) offx , (int) offy).
                                 createTransformedShape(dot);
-                        RepositionChoiceVisual rpc = new RepositionChoiceVisual(null, dot, false, "", -77, piece);
+                        RepositionChoiceVisual rpc = new RepositionChoiceVisual(null, dot, false, "", -77, piece, null, 0);
                         rpcList.add(rpc);
                     }
 

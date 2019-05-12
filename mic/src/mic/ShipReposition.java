@@ -715,7 +715,7 @@ public class ShipReposition extends Decorator implements EditablePiece {
             //STEP 11: reposition the ship
             //Add visuals according to the selection of repositioning
 
-            RepositionChoiceVisual rpc = new RepositionChoiceVisual(shapeForShipOverlap, dot, wantOverlapColor,repoShipToString.get(repoTemplate),0, null);
+            RepositionChoiceVisual rpc = new RepositionChoiceVisual(shapeForShipOverlap, dot, wantOverlapColor,repoShipToString.get(repoTemplate),0, null, null, 0);
             rpcList.add(rpc);
 
             //return bigCommand;

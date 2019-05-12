@@ -3,6 +3,7 @@ package mic;
 import VASSAL.build.module.Map;
 import VASSAL.build.module.map.Drawable;
 import VASSAL.counters.GamePiece;
+import mic.manuvers.PathPart;
 
 import javax.swing.*;
 import java.awt.*;
@@ -29,14 +30,19 @@ public class RepositionChoiceVisual implements Drawable {
     String inStringForm;
     int _option;
     GamePiece associatedTargetPiece;
+    PathPart tallonRollEnd;
+    double tallonRollExtraAngle;
 
-    public RepositionChoiceVisual(Shape translatedRotatedScaledShape, Shape centralDot, boolean wantOverlapColor, String choice, int option, GamePiece targetPiece){
+    public RepositionChoiceVisual(Shape translatedRotatedScaledShape, Shape centralDot, boolean wantOverlapColor, String choice, int option, GamePiece targetPiece,
+                                  PathPart wantTREnd, double wantTRangle){
         thePieceShape = translatedRotatedScaledShape;
         theDot = centralDot;
         isOverlapped = wantOverlapColor;
-        inStringForm = choice;
-        _option = option;
-        associatedTargetPiece = targetPiece;
+        inStringForm = choice; //keeps a string of the operation done, so far, used in ship repositions so it knows how to call it after a choice is made
+        _option = option; //is used so far by relocations with remotes
+        associatedTargetPiece = targetPiece; //is used by buzz swarm so it knows where to latch on
+        tallonRollEnd = wantTREnd;
+        tallonRollExtraAngle = wantTRangle;
     }
 
     public void draw(Graphics g, VASSAL.build.module.Map map) {
@@ -54,6 +60,9 @@ public class RepositionChoiceVisual implements Drawable {
             graphics2D.draw(theDot);
         }
     }
+
+    public PathPart getPathPart(){ return tallonRollEnd; }
+    public double getTallonRollExtraAngle() { return tallonRollExtraAngle; }
 
     public AffineTransform getTransformForClick(double scale, double x, double y){
         AffineTransform affineTransform = new AffineTransform();

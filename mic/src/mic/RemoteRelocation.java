@@ -396,7 +396,7 @@ public class RemoteRelocation extends Decorator implements EditablePiece {
                         nbOfRedDots++;
                         }
                     }
-                RepositionChoiceVisual rpc = new RepositionChoiceVisual(null, dot, wantOverlapColor, "", -55, rpcInput.associatedTargetPiece);
+                RepositionChoiceVisual rpc = new RepositionChoiceVisual(null, dot, wantOverlapColor, "", -55, rpcInput.associatedTargetPiece, null, 0);
                 rpcList.add(rpc);
 
                 //deal with the back dot
@@ -415,7 +415,7 @@ public class RemoteRelocation extends Decorator implements EditablePiece {
                         nbOfRedDots++;
                     }
                 }
-                RepositionChoiceVisual rpc2 = new RepositionChoiceVisual(null, dot2, wantOverlapColor, "", -66, rpcInput.associatedTargetPiece);
+                RepositionChoiceVisual rpc2 = new RepositionChoiceVisual(null, dot2, wantOverlapColor, "", -66, rpcInput.associatedTargetPiece, null, 0);
                 rpcList.add(rpc2);
             }
         else { // probe droid case
@@ -464,7 +464,7 @@ public class RemoteRelocation extends Decorator implements EditablePiece {
                     //STEP 11: reposition the ship
                     //Add visuals according to the selection of repositioning
 
-                    RepositionChoiceVisual rpc = new RepositionChoiceVisual(null, dot, false, "", 4 + 3*rpcInput._option + spreadDotAngleFactor, null);
+                    RepositionChoiceVisual rpc = new RepositionChoiceVisual(null, dot, false, "", 4 + 3*rpcInput._option + spreadDotAngleFactor, null, null, 0);
                     rpcList.add(rpc);
                     spreadDotAngleFactor++;
                     //return bigCommand;
