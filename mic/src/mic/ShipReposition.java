@@ -114,21 +114,21 @@ enum RepoManeuver {
 
     //Echo BR TODO change values away from normal bank BR
 
-    BR2_Left_BankF_AFAP_2E("BR2 Bank Left Forward, as Forward as Possible", "519", -135.0f, -132.0f, -21.0f, 45.0f, -237.5f, -124.0f),
-    BR2_Left_BankF_2E("BR2 Bank Left Forward, centered", "519", -135.0f, -132.0f, -21.0f, 45.0f, -257.5f, -104.0f),
-    BR2_Left_BankF_ABAP_2E("BR2 Bank Left Forward, as Forward as Possible", "519", -135.0f, -132.0f, -21.0f, 45.0f, -277.5f, -84.0f),
+    BR2_Left_BankF_AFAP_2E("BR2 Bank Left Forward, as Forward as Possible", "519", -135.0f, -183.0f, -43.0f, 45.0f, -336.5f, -168.0f),
+    BR2_Left_BankF_2E("BR2 Bank Left Forward, centered", "519", -135.0f, -183.0f, -43.0f, 45.0f, -356.5f, -148.0f),
+    BR2_Left_BankF_ABAP_2E("BR2 Bank Left Forward, as Forward as Possible", "519", -135.0f, -183.0f, -43.0f, 45.0f, -376.5f, -128.0f),
 
-    BR2_Left_BankB_AFAP_2E("BR2 Bank Left Backward, as Forward as Possible", "519", 90.0f, -146.0f, 29.0f, -45.0f, -277.5f, 87.0f),
-    BR2_Left_BankB_2E("BR2 Bank Left Backward, centered", "519", 90.0f, -146.0f, 29.0f, -45.0f, -257.5f, 107.0f),
-    BR2_Left_BankB_ABAP_2E("BR2 Bank Left Backward, as Forward as Possible", "519", 90.0f, -146.0f, 29.0f, -45.0f, -237.5f, 127.0f),
+    BR2_Left_BankB_AFAP_2E("BR2 Bank Left Backward, as Forward as Possible", "519", 90.0f, -196.0f, 49.0f, -45.0f, -376.5f, 128.0f),
+    BR2_Left_BankB_2E("BR2 Bank Left Backward, centered", "519", 90.0f, -196.0f, 49.0f, -45.0f, -356.5f, 148.0f),
+    BR2_Left_BankB_ABAP_2E("BR2 Bank Left Backward, as Forward as Possible", "519", 90.0f, -196.0f, 49.0f, -45.0f, -336.5f, 168.0f),
 
-    BR2_Right_BankF_AFAP_2E("BR2 Bank Right Forward, as Forward as Possible", "519", -90.0f, 147.0f, -28.0f, -45.0f, 237.5f, -124.0f),
-    BR2_Right_BankF_2E("BR2 Bank Right Forward, centered", "519", -90.0f, 147.0f, -28.0f, -45.0f, 257.5f, -104.0f),
-    BR2_Right_BankF_ABAP_2E("BR2 Bank Right Forward, as Forward as Possible", "519", -90.0f, 147.0f, -28.0f, -45.0f, 277.5f, -84.0f),
+    BR2_Right_BankF_AFAP_2E("BR2 Bank Right Forward, as Forward as Possible", "519", -90.0f, 196.0f, -49.0f, -45.0f, 336.5f, -168.0f),
+    BR2_Right_BankF_2E("BR2 Bank Right Forward, centered", "519", -90.0f, 196.0f, -49.0f, -45.0f, 356.5f, -148.0f),
+    BR2_Right_BankF_ABAP_2E("BR2 Bank Right Forward, as Forward as Possible", "519", -90.0f, 196.0f, -49.0f, -45.0f, 376.5f, -128.0f),
 
-    BR2_Right_BankB_AFAP_2E("BR2 Bank Right Forward, as Forward as Possible", "519", 45.0f, 134.0f, 22.0f, 45.0f, 277.5f, 87.0f),
-    BR2_Right_BankB_2E("BR2 Bank Right Forward, centered", "519", 45.0f, 134.0f, 22.0f, 45.0f, 257.5f, 107.0f),
-    BR2_Right_BankB_ABAP_2E("BR2 Bank Right Forward, as Forward as Possible", "519", 45.0f, 134.0f, 22.0f, 45.0f, 237.5f, 127.0f),
+    BR2_Right_BankB_AFAP_2E("BR2 Bank Right Forward, as Forward as Possible", "519", 45.0f, 183.0f, 44.0f, 45.0f, 378.5f, 127.0f),
+    BR2_Right_BankB_2E("BR2 Bank Right Forward, centered", "519", 45.0f, 183.0f, 44.0f, 45.0f, 358.5f, 147.0f),
+    BR2_Right_BankB_ABAP_2E("BR2 Bank Right Forward, as Forward as Possible", "519", 45.0f, 183.0f, 44.0f, 45.0f, 338.5f, 167.0f),
 
     //medium normal BR
     BR1_Left_AFAP_Medium_2E("BR Left as Forward as Possible", "524", 0.0f, -113.75f, 0.0f, 0.0f, -227.5f, -56.5f),
@@ -383,9 +383,23 @@ public class ShipReposition extends Decorator implements EditablePiece {
             .put(RepoManeuver.BR1_Right_BankB_AFAP_2E, "Right, Backward Bank, as Forward as Possible")
             .put(RepoManeuver.BR1_Right_BankB_2E, "Right, Backward Bank, centered")
             .put(RepoManeuver.BR1_Right_BankB_ABAP_2E, "Right, Backward Bank, as Backward as Possible")
+
+            //Barrel Roll Bank Left 2 (Echo style)
+            .put(RepoManeuver.BR2_Left_BankF_AFAP_2E, "Left, Forward Bank 2, as Forward as Possible")
+            .put(RepoManeuver.BR2_Left_BankF_2E, "Left, Forward Bank 2, centered")
+            .put(RepoManeuver.BR2_Left_BankF_ABAP_2E, "Left, Forward Bank 2, as Backward as Possible")
+            .put(RepoManeuver.BR2_Left_BankB_AFAP_2E, "Left, Backward Bank 2, as Forward as Possible")
+            .put(RepoManeuver.BR2_Left_BankB_2E, "Left, Backward Bank 2, centered")
+            .put(RepoManeuver.BR2_Left_BankB_ABAP_2E, "Left, Backward Bank 2, as Backward as Possible")
+
+            //Barrel Roll Bank Right 2 (Echo style)
+            .put(RepoManeuver.BR2_Right_BankF_AFAP_2E, "Right, Forward Bank 2, as Forward as Possible")
+            .put(RepoManeuver.BR2_Right_BankF_2E, "Right, Forward Bank 2, centered")
+            .put(RepoManeuver.BR2_Right_BankF_ABAP_2E, "Right, Forward Bank 2, as Backward as Possible")
+            .put(RepoManeuver.BR2_Right_BankB_AFAP_2E, "Right, Backward Bank 2, as Forward as Possible")
+            .put(RepoManeuver.BR2_Right_BankB_2E, "Right, Backward Bank 2, centered")
+            .put(RepoManeuver.BR2_Right_BankB_ABAP_2E, "Right, Backward Bank 2, as Backward as Possible")
             .build();
-
-
 
 
     //Names of the reposition
