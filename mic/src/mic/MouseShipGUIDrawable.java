@@ -95,6 +95,14 @@ public class MouseShipGUIDrawable extends MouseGUIDrawable implements Drawable {
             miElement brLBBIconLeft = new miElement("mi_barrelroll_lbb.png",  cursorX,  cursorY + 3*brIconLeft.image.getHeight()+3*padX,
                     null, 6);
             listOfInteractiveElements.add(brLBBIconLeft);
+
+            miElement br2LBFIconLeft = new miElement("mi_barrelroll_lb.png", cursorX,  cursorY + 4*brIconLeft.image.getHeight()+4*padX,
+                    null, 9);
+            listOfInteractiveElements.add(br2LBFIconLeft);
+            miElement br2LBBIconLeft = new miElement("mi_barrelroll_lbb.png",  cursorX,  cursorY + 5*brIconLeft.image.getHeight()+5*padX,
+                    null, 11);
+            listOfInteractiveElements.add(br2LBBIconLeft);
+
             cursorX += br2IconLeft.image.getWidth() + smallGapX;
         }
         else
@@ -137,6 +145,14 @@ public class MouseShipGUIDrawable extends MouseGUIDrawable implements Drawable {
             miElement brRBBIconRight = new miElement("mi_barrelroll_rbb.png",  cursorX,  cursorY + 3*brIconRight.image.getHeight() + 3*padX,
                     null, 8);
             listOfInteractiveElements.add(brRBBIconRight);
+
+            miElement br2RBFIconRight = new miElement("mi_barrelroll_rb.png", cursorX,  cursorY + 4*brIconRight.image.getHeight() + 4*padX,
+                    null, 10);
+            listOfInteractiveElements.add(br2RBFIconRight);
+
+            miElement br2RBBIconRight = new miElement("mi_barrelroll_rbb.png",  cursorX,  cursorY + 5*brIconRight.image.getHeight() + 5*padX,
+                    null, 12);
+            listOfInteractiveElements.add(br2RBBIconRight);
         }
 
         cursorX += brIconRight.image.getWidth() + padX;
@@ -233,7 +249,7 @@ public class MouseShipGUIDrawable extends MouseGUIDrawable implements Drawable {
 */
 
         totalWidth = cursorX + padX;
-        totalHeight = cursorY + padY;
+        totalHeight = 6*brIconLeft.image.getHeight() + 2* padY;
 
         figureOutBestTopLeftCorner();
     }

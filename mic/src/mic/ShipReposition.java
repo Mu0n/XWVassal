@@ -112,7 +112,8 @@ enum RepoManeuver {
     BR1_Right_BankB_2E("BR Bank Right Forward, centered", "517", 45.0f, 134.0f, 22.0f, 45.0f, 257.5f, 107.0f),
     BR1_Right_BankB_ABAP_2E("BR Bank Right Forward, as Forward as Possible", "517", 45.0f, 134.0f, 22.0f, 45.0f, 237.5f, 127.0f),
 
-    //Echo BR
+    //Echo BR TODO change values away from normal bank BR
+
     BR2_Left_BankF_AFAP_2E("BR2 Bank Left Forward, as Forward as Possible", "519", -135.0f, -132.0f, -21.0f, 45.0f, -237.5f, -124.0f),
     BR2_Left_BankF_2E("BR2 Bank Left Forward, centered", "519", -135.0f, -132.0f, -21.0f, 45.0f, -257.5f, -104.0f),
     BR2_Left_BankF_ABAP_2E("BR2 Bank Left Forward, as Forward as Possible", "519", -135.0f, -132.0f, -21.0f, 45.0f, -277.5f, -84.0f),
@@ -321,6 +322,20 @@ public class ShipReposition extends Decorator implements EditablePiece {
             .put("Right, Backward Bank, as Forward as Possible", RepoManeuver.BR1_Right_BankB_AFAP_2E)
             .put("Right, Backward Bank, centered", RepoManeuver.BR1_Right_BankB_2E)
             .put("Right, Backward Bank, as Backward as Possible", RepoManeuver.BR1_Right_BankB_ABAP_2E)
+
+            .put("Left, Forward Bank 2, as Forward as Possible", RepoManeuver.BR2_Left_BankF_AFAP_2E)
+            .put("Left, Forward Bank 2, centered", RepoManeuver.BR2_Left_BankF_2E)
+            .put("Left, Forward Bank 2, as Backward as Possible", RepoManeuver.BR2_Left_BankF_ABAP_2E)
+            .put("Left, Backward Bank 2, as Forward as Possible", RepoManeuver.BR2_Left_BankB_AFAP_2E)
+            .put("Left, Backward Bank 2, centered", RepoManeuver.BR2_Left_BankB_2E)
+            .put("Left, Backward Bank 2, as Backward as Possible", RepoManeuver.BR2_Left_BankB_ABAP_2E)
+
+            .put("Right, Forward Bank 2, as Forward as Possible", RepoManeuver.BR2_Right_BankF_AFAP_2E)
+            .put("Right, Forward Bank 2, centered", RepoManeuver.BR2_Right_BankF_2E)
+            .put("Right, Forward Bank 2, as Backward as Possible", RepoManeuver.BR2_Right_BankF_ABAP_2E)
+            .put("Right, Backward Bank 2, as Forward as Possible", RepoManeuver.BR2_Right_BankB_AFAP_2E)
+            .put("Right, Backward Bank 2, centered", RepoManeuver.BR2_Right_BankB_2E)
+            .put("Right, Backward Bank 2, as Backward as Possible", RepoManeuver.BR2_Right_BankB_ABAP_2E)
 
             .build();
     //Latest 2.0: Get back the String (reverse map)
