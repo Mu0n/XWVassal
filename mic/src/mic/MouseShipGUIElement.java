@@ -45,12 +45,14 @@ public class MouseShipGUIElement {
         List<PieceSlot> pieceSlots = GameModule.getGameModule().getAllDescendantComponentsOf(PieceSlot.class);
         GamePiece piece = null;
 
-        for (PieceSlot pieceSlot : pieceSlots) {
-            String sName = pieceSlot.getConfigureName();
-            if (sName.equals(slotName)){
-                piece = Util.newPiece(pieceSlot);
-                nonRect = piece.getShape();
-                break;
+        if(slotName != null) {
+            for (PieceSlot pieceSlot : pieceSlots) {
+                String sName = pieceSlot.getConfigureName();
+                if (sName.equals(slotName)) {
+                    piece = Util.newPiece(pieceSlot);
+                    nonRect = piece.getShape();
+                    break;
+                }
             }
         }
         //load the image

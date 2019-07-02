@@ -70,18 +70,18 @@ public class MouseShipGUIDrawable extends MouseGUIDrawable implements Drawable {
 
     //3rd iteration of the mouse ship GUI using the spiffy gfx from Jomblr
     public void MouseShipGUIJomblr(GamePiece shipPiece, Map map, XWS2Pilots pilotShip, XWS2Pilots.Pilot2e pilot){
-         MouseShipGUIElement BR_L1 = new MouseShipGUIElement("BR_L1", "Barrel_L_Side_1.png", cursorX, cursorY, null, 1);
-         MouseShipGUIElement BR_R1 = new MouseShipGUIElement("BR_R1", "Barrel_R_Side_1.png",cursorX + BR_L1.image.getWidth() + smallGapX, cursorY, null, 2);
+         MouseShipGUIElement BR_L1 = new MouseShipGUIElement("BR_L1", "Barrel_L_Side_1.png", 150, 200, null, 1);
+
+         MouseShipGUIElement CENTER = new MouseShipGUIElement(null, "Base.png", 200, 200, null, -66);
+
+         MouseShipGUIElement BR_R1 = new MouseShipGUIElement("BR_R1", "Barrel_R_Side_1.png",250, 200, null, 2);
 
         // MouseShipGUIElement BR_LB1 = new MouseShipGUIElement("BR_LB1", "Barrel_L_Back_1.png", cursorX, cursorY, null, 1);
 
-
-
         guiElements.add(BR_L1);
-         guiElements.add(BR_R1);
+        guiElements.add(CENTER);
+        guiElements.add(BR_R1);
          //guiElements.add(BR_LB1);
-
-
 
         totalWidth = cursorX + padX;
         totalHeight = BR_L1.image.getHeight() + 2* padY;

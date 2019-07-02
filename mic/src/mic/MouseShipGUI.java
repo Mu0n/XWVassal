@@ -102,11 +102,21 @@ public class MouseShipGUI extends AbstractConfigurable {
                         if(activatedPiece!=null){
                             switch (ke.getID()) {
                                 case KeyEvent.KEY_PRESSED:
+                                    if (ke.getKeyCode() == KeyEvent.VK_TAB){
+                                        wPressed = true;
+                                        ((MouseShipGUIDrawable)lastPopup).currentGUIElementBeingEdited++;
+                                        if(((MouseShipGUIDrawable)lastPopup).currentGUIElementBeingEdited > ((MouseShipGUIDrawable)lastPopup).guiElements.size()-1)
+                                        ((MouseShipGUIDrawable)lastPopup).currentGUIElementBeingEdited = 0;
+                                    }
                                     if (ke.getKeyCode() == KeyEvent.VK_W) {
                                         wPressed = true;
                                         Iterator<MouseShipGUIElement> it = ((MouseShipGUIDrawable)lastPopup).guiElements.iterator();
                                         if(it.hasNext()){
                                             MouseShipGUIElement msge = it.next();
+                                            for(int i=0; i<((MouseShipGUIDrawable)lastPopup).currentGUIElementBeingEdited; i++)
+                                            {
+                                                 msge = it.next();
+                                            }
                                             msge.globalY--;
                                             logToChat("x: " + msge.globalX + " y: " + msge.globalY);
                                         }
@@ -116,6 +126,10 @@ public class MouseShipGUI extends AbstractConfigurable {
                                         Iterator<MouseShipGUIElement> it = ((MouseShipGUIDrawable)lastPopup).guiElements.iterator();
                                         if(it.hasNext()) {
                                             MouseShipGUIElement msge = it.next();
+                                            for(int i=0; i<((MouseShipGUIDrawable)lastPopup).currentGUIElementBeingEdited; i++)
+                                            {
+                                                msge = it.next();
+                                            }
                                             msge.globalY++;
                                             logToChat("x: " + msge.globalX + " y: " + msge.globalY);
                                         }
@@ -125,6 +139,10 @@ public class MouseShipGUI extends AbstractConfigurable {
                                         Iterator<MouseShipGUIElement> it = ((MouseShipGUIDrawable)lastPopup).guiElements.iterator();
                                         if(it.hasNext()) {
                                             MouseShipGUIElement msge = it.next();
+                                            for(int i=0; i<((MouseShipGUIDrawable)lastPopup).currentGUIElementBeingEdited; i++)
+                                            {
+                                                msge = it.next();
+                                            }
                                             msge.globalX--;
                                             logToChat("x: " + msge.globalX + " y: " + msge.globalY);
                                         }
@@ -134,6 +152,10 @@ public class MouseShipGUI extends AbstractConfigurable {
                                         Iterator<MouseShipGUIElement> it = ((MouseShipGUIDrawable)lastPopup).guiElements.iterator();
                                         if(it.hasNext()) {
                                             MouseShipGUIElement msge = it.next();
+                                            for(int i=0; i<((MouseShipGUIDrawable)lastPopup).currentGUIElementBeingEdited; i++)
+                                            {
+                                                msge = it.next();
+                                            }
                                             msge.globalX++;
                                             logToChat("x: " + msge.globalX + " y: " + msge.globalY);
                                         }
