@@ -6,4 +6,6 @@ public abstract class MouseGUIDrawable {
     public int totalWidth = 0;
     public int totalHeight = 0;
 
+    public int currentGUIElementBeingEdited = 0;
+
 }

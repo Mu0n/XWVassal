@@ -61,10 +61,36 @@ public class MouseShipGUIDrawable extends MouseGUIDrawable implements Drawable {
     List<BumpableWithShape> drawThese = Lists.newArrayList();
     List<Shape> andThese = Lists.newArrayList();
 
-    Collection<miElement> listOfInteractiveElements = Lists.newArrayList();
+    public Collection<MouseShipGUIElement> guiElements = Lists.newArrayList();
+
+    //Collection<miElement> listOfInteractiveElements = Lists.newArrayList();
     double scale;
     public MouseEvent summoningEvent;
 
+
+    //3rd iteration of the mouse ship GUI using the spiffy gfx from Jomblr
+    public void MouseShipGUIJomblr(GamePiece shipPiece, Map map, XWS2Pilots pilotShip, XWS2Pilots.Pilot2e pilot){
+         MouseShipGUIElement BR_L1 = new MouseShipGUIElement("BR_L1", "Barrel_L_Side_1.png", cursorX, cursorY, null, 1);
+         MouseShipGUIElement BR_R1 = new MouseShipGUIElement("BR_R1", "Barrel_R_Side_1.png",cursorX + BR_L1.image.getWidth() + smallGapX, cursorY, null, 2);
+
+        // MouseShipGUIElement BR_LB1 = new MouseShipGUIElement("BR_LB1", "Barrel_L_Back_1.png", cursorX, cursorY, null, 1);
+
+
+
+        guiElements.add(BR_L1);
+         guiElements.add(BR_R1);
+         //guiElements.add(BR_LB1);
+
+
+
+        totalWidth = cursorX + padX;
+        totalHeight = BR_L1.image.getHeight() + 2* padY;
+
+        figureOutBestTopLeftCorner();
+
+    }
+
+    //default ugly placeholder mouse ship GUI, will be phased out
     public MouseShipGUIDrawable(GamePiece shipPiece, Map map, XWS2Pilots pilotShip, XWS2Pilots.Pilot2e pilot){
         _shipPiece = shipPiece;
         _map = map;
@@ -77,6 +103,10 @@ public class MouseShipGUIDrawable extends MouseGUIDrawable implements Drawable {
         ulX = _shipPiece.getPosition().x + 150;
         ulY = Math.max(0,_shipPiece.getPosition().y - 150);
 
+        MouseShipGUIJomblr(shipPiece, map, pilotShip, pilot);
+
+
+        /*
         //Barrel Roll test
         miElement brIconLeft = new miElement("mi_barrelroll.png",  cursorX,  cursorY,
                 null, 1);
@@ -246,12 +276,14 @@ public class MouseShipGUIDrawable extends MouseGUIDrawable implements Drawable {
 
         miElement trR3 = new miElement("mi_tallonright.png", tallonRollxCursor, tentativeTrollY, KeyStroke.getKeyStroke(KeyEvent.VK_T, KeyEvent.ALT_DOWN_MASK, false), 0);
         listOfInteractiveElements.add(trR3);
-*/
+
 
         totalWidth = cursorX + padX;
         totalHeight = 6*brIconLeft.image.getHeight() + 2* padY;
 
         figureOutBestTopLeftCorner();
+        */
+
     }
     private Shape refreshShape(){
         Rectangle outline = new Rectangle(totalWidth,totalHeight);
@@ -444,8 +476,8 @@ public class MouseShipGUIDrawable extends MouseGUIDrawable implements Drawable {
 
 
         g2d.setPaint(new Color(0,0,255, 150));
-        for(miElement elem : listOfInteractiveElements){
-            scaler.translate(elem.x, elem.y);
+        for(MouseShipGUIElement elem : guiElements){
+            scaler.translate(elem.globalX, elem.globalY);
 
             //AffineTransform af;
            /*
@@ -461,7 +493,7 @@ public class MouseShipGUIDrawable extends MouseGUIDrawable implements Drawable {
             });
 
             //undo the relative translation for this element to become ready for the next
-            scaler.translate(-elem.x, -elem.y);
+            scaler.translate(-elem.globalX, -elem.globalY);
 
 
            // Rectangle rawR = elem.image.getData().getBounds();
@@ -546,7 +578,7 @@ public class MouseShipGUIDrawable extends MouseGUIDrawable implements Drawable {
             graphics2D.draw(textShape);
         }
     }
-
+/*
 
     protected static class miElement {
         BufferedImage image;
@@ -603,4 +635,5 @@ public class MouseShipGUIDrawable extends MouseGUIDrawable implements Drawable {
         }
 
     }
+    */
 }
