@@ -92,9 +92,50 @@ public class MouseShipGUIDrawable extends MouseGUIDrawable implements Drawable {
          MouseShipGUIElement BR_R1 = new MouseShipGUIElement("BR_R1", "Barrel_R_Side_1.png",325, 230, null, 2);
          MouseShipGUIElement BR_R2 = new MouseShipGUIElement("BR_R2", "Barrel_R_Side_2.png",404, 225, null, 4);
 
-        MouseShipGUIElement ROLLPAGE = new MouseShipGUIElement("", "", 200, 330, null, 0);
+        //MouseShipGUIElement ROLLPAGE = new MouseShipGUIElement("", "", 200, 330, null, 0);
+        MouseShipGUIElement FORCE_STAT = new MouseShipGUIElement(null, "mi_force_stat.png", 268, 504, null, 0);
+        MouseShipGUIElement FORCE_UP = new MouseShipGUIElement(null, "mi_stat_up.png", 392,504,
+                KeyStroke.getKeyStroke(KeyEvent.VK_I, KeyEvent.SHIFT_DOWN_MASK, false), 0);
+        MouseShipGUIElement FORCE_DOWN = new MouseShipGUIElement(null, "mi_stat_down.png", 392,537,
+                KeyStroke.getKeyStroke(KeyEvent.VK_I, KeyEvent.SHIFT_DOWN_MASK + KeyEvent.CTRL_DOWN_MASK, false), 0);
 
-        guiElements.add(ROLLPAGE);
+        MouseShipGUIElement HULL_STAT = new MouseShipGUIElement(null, "mi_hull_stat.png", 60, 504, null, 0);
+        MouseShipGUIElement HULL_UP = new MouseShipGUIElement(null, "mi_stat_up.png", 184,504,
+                KeyStroke.getKeyStroke(KeyEvent.VK_H, KeyEvent.ALT_DOWN_MASK, false), 0);
+        MouseShipGUIElement HULL_DOWN = new MouseShipGUIElement(null, "mi_stat_down.png", 184,537,
+                KeyStroke.getKeyStroke(KeyEvent.VK_H, KeyEvent.ALT_DOWN_MASK + KeyEvent.CTRL_DOWN_MASK, false), 0);
+
+
+        MouseShipGUIElement CHARGE_STAT = new MouseShipGUIElement(null, "mi_charge_stat.png", 268, 430, null, 0);
+        MouseShipGUIElement CHARGE_UP = new MouseShipGUIElement(null, "mi_stat_up.png", 392,430,
+                KeyStroke.getKeyStroke(KeyEvent.VK_C, KeyEvent.SHIFT_DOWN_MASK, false), 0);
+        MouseShipGUIElement CHARGE_DOWN = new MouseShipGUIElement(null, "mi_stat_down.png", 392,463,
+                KeyStroke.getKeyStroke(KeyEvent.VK_C, KeyEvent.SHIFT_DOWN_MASK + KeyEvent.CTRL_DOWN_MASK, false), 0);
+
+
+        MouseShipGUIElement SHIELD_STAT = new MouseShipGUIElement(null, "mi_shield_stat.png", 60, 430, null, 0);
+        MouseShipGUIElement SHIELD_UP = new MouseShipGUIElement(null, "mi_stat_up.png", 184,430,
+                KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyEvent.ALT_DOWN_MASK, false), 0);
+        MouseShipGUIElement SHIELD_DOWN = new MouseShipGUIElement(null, "mi_stat_down.png", 184,463,
+                KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyEvent.ALT_DOWN_MASK + KeyEvent.CTRL_DOWN_MASK, false), 0);
+
+        //guiElements.add(ROLLPAGE);
+
+        guiElements.add(FORCE_STAT);
+        guiElements.add(FORCE_UP);
+        guiElements.add(FORCE_DOWN);
+
+        guiElements.add(HULL_STAT);
+        guiElements.add(HULL_UP);
+        guiElements.add(HULL_DOWN);
+
+        guiElements.add(CHARGE_STAT);
+        guiElements.add(CHARGE_UP);
+        guiElements.add(CHARGE_DOWN);
+
+        guiElements.add(SHIELD_STAT);
+        guiElements.add(SHIELD_UP);
+        guiElements.add(SHIELD_DOWN);
         guiElements.add(BR_RF1);
         guiElements.add(BR_RB1);
         guiElements.add(BR_RF2);
