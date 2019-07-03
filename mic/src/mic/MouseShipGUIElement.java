@@ -28,12 +28,14 @@ public class MouseShipGUIElement {
     KeyStroke associatedKeyStroke; //can produce a keystroke to the ship piece if this attribute is defined
     int whichTripleChoice = 0; //can select one of 3 choices in certain situations (barrel rolls, tallon rolls, etc)
     Shape nonRect;
+    int page = 0; //used for page toggling, to keep the GUI light in appearance. By default, stuff should be at page 0 to always appear
 
     public MouseShipGUIElement(){
         toggle = false;
     }
 
-    public MouseShipGUIElement(String slotName, String imageName, int wantedX, int wantedY, KeyStroke wantedKeyStroke, int wantedTripleChoice){
+    public MouseShipGUIElement(int wantedPage, String slotName, String imageName, int wantedX, int wantedY, KeyStroke wantedKeyStroke, int wantedTripleChoice){
+        page = wantedPage;
         globalX = wantedX;
         globalY = wantedY;
         associatedKeyStroke = wantedKeyStroke;
@@ -74,6 +76,10 @@ public class MouseShipGUIElement {
 
     public void setToggle(boolean wantedToggle){
         toggle = wantedToggle;
+    }
+
+    public int getPage(){
+        return page;
     }
 
     public void toggleIt(){

@@ -324,6 +324,7 @@ public class MouseShipGUI extends AbstractConfigurable {
                             logToChat("Hull Status: " + ship.getProperty("Hull Rating").toString() + "/" + pilotShip.getHull() + " Shield Rating: " + ship.getProperty("Shield Rating") + "/" + pilotShip.getShields());
                             logToChat("Attack Rating Front Arc: " + pilotShip.getFrontArc() + " Back Arc: " + pilotShip.getRearArc());*/
                     MouseShipGUIDrawable msgd = new MouseShipGUIDrawable(ship, theMap, pilotShip, pilot);
+
                     theMap.addDrawComponent(msgd);
                     theMap.repaint();
                     logToChatWithoutUndo("*-- Welcome to the beta Mouse Graphical Interface. You got here by ctrl-left clicking on a ship. You can left-click on the icons to perform \"things\" on the ship. Click on the red X to close the popup");
@@ -360,54 +361,63 @@ public class MouseShipGUI extends AbstractConfigurable {
 
         private void firstStageShipGUI(MouseEvent e, Map theMap) {
             for (MouseShipGUIElement elem : ((MouseShipGUIDrawable) lastPopup).guiElements) {
-                double scale = theMap.getZoom();
-                AffineTransform af = elem.getTransformForClick(scale, lastPopup.ulX, lastPopup.ulY);
-                Shape s = null;
-                if(elem.getNonRect()==null){
-                    s = af.createTransformedShape(elem.image.getData().getBounds()); //use the image bounds
-                } else {
-                    //adjust for halfwidth half height
-                    af.translate(elem.getNonRect().getBounds2D().getWidth()/2.0, elem.getNonRect().getBounds2D().getHeight()/2.0);
-                    s = af.createTransformedShape(elem.getNonRect()); //use the non-rectangular if there's one
-                }
-
-
-                if (s.contains(e.getX(), e.getY())) {
-                    //First class of GUI-driven commands: Direct keystroke commands, keep the GUI up
-                    if (elem.associatedKeyStroke != null) {
-                        Command directKeyStroke = activatedPiece.keyEvent(elem.associatedKeyStroke);
-                        //directKeyStroke.execute();
-                        GameModule.getGameModule().sendAndLog(directKeyStroke);
-                        e.consume();
-                    }
-                    //Second class of GUI-driven commands (ship repositions): Goes to a 2nd step with triple click choices:
-                    else if (elem.whichTripleChoice > 0 && elem.whichTripleChoice < 200) {
-                        logToChatWithoutUndo("Please click on a dot to reposition the ship. White dots = legal position. Red dots = illegal obstructed positions. Click on empty space to cancel this.");
-
-                        e.consume();
-                        ShipReposition SR = ShipReposition.findShipRepositionDecorator(activatedPiece);
-                        Command tripleChoiceCommand = SR.tripleChoiceDispatcher(elem.whichTripleChoice, activatedPiece.getProperty("Pilot Name").toString());
-
-                        tripleChoiceCommand.execute();
-                        GameModule.getGameModule().sendAndLog(tripleChoiceCommand);
-
-                        removePopup(theMap, e);
-                    }
-                    //keystroke is null and triplechoice is 0? must be a cosmetic non-interactive text or image
-                    else if (elem.whichTripleChoice == 0) {
-                        //do nothing
-                        return;
-                    }
-                    //click on the close button
-                    else if (elem.getTripleChoice() == -66) {
-                        removePopup(theMap, e);
-                        return;
+                if(elem.getPage()==lastPopup.currentPage || elem.getPage() == 0){
+                    double scale = theMap.getZoom();
+                    AffineTransform af = elem.getTransformForClick(scale, lastPopup.ulX, lastPopup.ulY);
+                    Shape s = null;
+                    if(elem.getNonRect()==null){
+                        s = af.createTransformedShape(elem.image.getData().getBounds()); //use the image bounds
                     } else {
-                        logToChatWithoutUndo("Error: failed to execute a mouse GUI command.");
-                        removePopup(theMap, e);
+                        //adjust for halfwidth half height
+                        af.translate(elem.getNonRect().getBounds2D().getWidth()/2.0, elem.getNonRect().getBounds2D().getHeight()/2.0);
+                        s = af.createTransformedShape(elem.getNonRect()); //use the non-rectangular if there's one
                     }
-                    break;
-                }//end of scanning a particular element (click was detected inside its shape)
+
+
+                    if (s.contains(e.getX(), e.getY())) {
+                        //First class of GUI-driven commands: Direct keystroke commands, keep the GUI up
+                        if (elem.associatedKeyStroke != null) {
+                            Command directKeyStroke = activatedPiece.keyEvent(elem.associatedKeyStroke);
+                            //directKeyStroke.execute();
+                            GameModule.getGameModule().sendAndLog(directKeyStroke);
+                            e.consume();
+                        }
+                        //Second class of GUI-driven commands (ship repositions): Goes to a 2nd step with triple click choices:
+                        else if (elem.whichTripleChoice > 0 && elem.whichTripleChoice < 200) {
+                            logToChatWithoutUndo("Please click on a dot to reposition the ship. White dots = legal position. Red dots = illegal obstructed positions. Click on empty space to cancel this.");
+
+                            e.consume();
+                            ShipReposition SR = ShipReposition.findShipRepositionDecorator(activatedPiece);
+                            Command tripleChoiceCommand = SR.tripleChoiceDispatcher(elem.whichTripleChoice, activatedPiece.getProperty("Pilot Name").toString());
+
+                            tripleChoiceCommand.execute();
+                            GameModule.getGameModule().sendAndLog(tripleChoiceCommand);
+
+                            removePopup(theMap, e);
+                        }
+                        //keystroke is null and triplechoice is 0? must be a cosmetic non-interactive text or image
+                        else if (elem.whichTripleChoice == 0) {
+                            //do nothing
+                            return;
+                        }
+                        //click on the close button
+                        else if (elem.getTripleChoice() == -66) {
+                            removePopup(theMap, e);
+                            return;
+                        }
+                        // switch to page x. triplechoice = -199 -> page 1; triplechoice = -198 -> page 2, etc.
+                        else if(elem.getTripleChoice() <= -100 && elem.getTripleChoice() >= -199)
+                        {
+                            lastPopup.currentPage = elem.getTripleChoice() + 200;
+                        }
+                        else {
+                            logToChatWithoutUndo("Error: failed to execute a mouse GUI command.");
+                            removePopup(theMap, e);
+                        }
+                        break;
+                    }//end of scanning a particular element (click was detected inside its shape)
+                } // end the element is on the right page or equal to 0
+
             } //end of scanning all the mouse interface elements for clicks
         }
 

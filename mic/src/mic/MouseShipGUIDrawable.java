@@ -80,82 +80,82 @@ public class MouseShipGUIDrawable extends MouseGUIDrawable implements Drawable {
         //medium and large ships have a lot less barrel roll options so while these buttons still show up, they default to either BR left 1 or BR right 1, centered
         if(isSmall) smallShipTripleChoice = 3;
         else smallShipTripleChoice = 1;
-         MouseShipGUIElement BR_L2 = new MouseShipGUIElement("BR_L2", "Barrel_L_Side_2.png", 36, 226, null, smallShipTripleChoice);
-         MouseShipGUIElement BR_L1 = new MouseShipGUIElement("BR_L1", "Barrel_L_Side_1.png", 110, 230, null, 1);
+         MouseShipGUIElement BR_L2 = new MouseShipGUIElement(1,"BR_L2", "Barrel_L_Side_2.png", 36, 226, null, smallShipTripleChoice);
+         MouseShipGUIElement BR_L1 = new MouseShipGUIElement(1,"BR_L1", "Barrel_L_Side_1.png", 110, 230, null, 1);
 
         // *
         // * Barrel roll left banks
         // *
         if(isSmall) smallShipTripleChoice = 9;
         else smallShipTripleChoice = 1;
-        MouseShipGUIElement BR_LF2 = new MouseShipGUIElement("BR_LF2", "Barrel_L_Front_2.png", 64, 115, null, smallShipTripleChoice);
+        MouseShipGUIElement BR_LF2 = new MouseShipGUIElement(1,"BR_LF2", "Barrel_L_Front_2.png", 64, 115, null, smallShipTripleChoice);
         if(isSmall) smallShipTripleChoice = 5;
         else smallShipTripleChoice = 1;
-        MouseShipGUIElement BR_LF1 = new MouseShipGUIElement("BR_LF1", "Barrel_L_Front_1.png", 120, 140, null, smallShipTripleChoice);
+        MouseShipGUIElement BR_LF1 = new MouseShipGUIElement(1,"BR_LF1", "Barrel_L_Front_1.png", 120, 140, null, smallShipTripleChoice);
         if(isSmall) smallShipTripleChoice = 11;
         else smallShipTripleChoice = 1;
-        MouseShipGUIElement BR_LB2 = new MouseShipGUIElement("BR_LB2", "Barrel_L_Back_2.png", 63, 332, null, smallShipTripleChoice);
+        MouseShipGUIElement BR_LB2 = new MouseShipGUIElement(1, "BR_LB2", "Barrel_L_Back_2.png", 63, 332, null, smallShipTripleChoice);
         if(isSmall) smallShipTripleChoice = 6;
         else smallShipTripleChoice = 1;
-        MouseShipGUIElement BR_LB1 = new MouseShipGUIElement("BR_LB1", "Barrel_L_Back_1.png", 117, 310, null, smallShipTripleChoice);
+        MouseShipGUIElement BR_LB1 = new MouseShipGUIElement(1,"BR_LB1", "Barrel_L_Back_1.png", 117, 310, null, smallShipTripleChoice);
 
         // *
         // * center square base
         // *
-         MouseShipGUIElement CENTER = new MouseShipGUIElement(null, "Base.png", 200, 200, null, -66);
+         MouseShipGUIElement CENTER = new MouseShipGUIElement(0,null, "Base.png", 200, 200, null, -66);
 
         // *
         // * Barrel roll right banks
         // *
         if(isSmall) smallShipTripleChoice = 10;
         else smallShipTripleChoice = 2;
-        MouseShipGUIElement BR_RF2 = new MouseShipGUIElement("BR_RF2", "Barrel_R_Front_2.png", 377 , 114, null, smallShipTripleChoice);
+        MouseShipGUIElement BR_RF2 = new MouseShipGUIElement(1,"BR_RF2", "Barrel_R_Front_2.png", 377 , 114, null, smallShipTripleChoice);
         if(isSmall) smallShipTripleChoice = 7;
         else smallShipTripleChoice = 2;
-        MouseShipGUIElement BR_RF1 = new MouseShipGUIElement("BR_RF1", "Barrel_R_Front_1.png", 320, 140, null, smallShipTripleChoice);
+        MouseShipGUIElement BR_RF1 = new MouseShipGUIElement(1,"BR_RF1", "Barrel_R_Front_1.png", 320, 140, null, smallShipTripleChoice);
         if(isSmall) smallShipTripleChoice = 12;
         else smallShipTripleChoice = 2;
-        MouseShipGUIElement BR_RB2 = new MouseShipGUIElement("BR_RB2", "Barrel_R_Back_2.png", 377, 330, null, smallShipTripleChoice);
+        MouseShipGUIElement BR_RB2 = new MouseShipGUIElement(1,"BR_RB2", "Barrel_R_Back_2.png", 377, 330, null, smallShipTripleChoice);
         if(isSmall) smallShipTripleChoice = 8;
         else smallShipTripleChoice = 2;
-        MouseShipGUIElement BR_RB1 = new MouseShipGUIElement("BR_RB1", "Barrel_R_Back_1.png", 320, 310, null, smallShipTripleChoice);
+        MouseShipGUIElement BR_RB1 = new MouseShipGUIElement(1,"BR_RB1", "Barrel_R_Back_1.png", 320, 310, null, smallShipTripleChoice);
 
         // *
         // * Barrel roll right straight
         // *
-         MouseShipGUIElement BR_R1 = new MouseShipGUIElement("BR_R1", "Barrel_R_Side_1.png",325, 230, null, 2);
+         MouseShipGUIElement BR_R1 = new MouseShipGUIElement(1,"BR_R1", "Barrel_R_Side_1.png",325, 230, null, 2);
          if(isSmall) smallShipTripleChoice = 4;
         else smallShipTripleChoice = 2;
-         MouseShipGUIElement BR_R2 = new MouseShipGUIElement("BR_R2", "Barrel_R_Side_2.png",404, 225, null, smallShipTripleChoice);
+         MouseShipGUIElement BR_R2 = new MouseShipGUIElement(1,"BR_R2", "Barrel_R_Side_2.png",404, 225, null, smallShipTripleChoice);
 
-        MouseShipGUIElement ROLLPAGE = new MouseShipGUIElement("TOG_BR", "Toggle_Barrel_Active.png", 217, 340, null, 0);
+        MouseShipGUIElement ROLLPAGE = new MouseShipGUIElement(0,"TOG_BR", "Toggle_Barrel_Active.png", 217, 340, null, -198);
 
 
         // *
         // * SHIP STATS
         // *
-        MouseShipGUIElement SHIELD_STAT = new MouseShipGUIElement(null, "mi_shield_stat.png", 60, 430, null, 0);
-        MouseShipGUIElement SHIELD_UP = new MouseShipGUIElement(null, "mi_stat_up.png", 122,430,
+        MouseShipGUIElement SHIELD_STAT = new MouseShipGUIElement(0,null, "mi_shield_stat.png", 60, 430, null, 0);
+        MouseShipGUIElement SHIELD_UP = new MouseShipGUIElement(0,null, "mi_stat_up.png", 122,430,
                 KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyEvent.ALT_DOWN_MASK, false), 0);
-        MouseShipGUIElement SHIELD_DOWN = new MouseShipGUIElement(null, "mi_stat_down.png", 184,430,
+        MouseShipGUIElement SHIELD_DOWN = new MouseShipGUIElement(0,null, "mi_stat_down.png", 184,430,
                 KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyEvent.ALT_DOWN_MASK + KeyEvent.CTRL_DOWN_MASK, false), 0);
 
-        MouseShipGUIElement FORCE_STAT = new MouseShipGUIElement(null, "mi_force_stat.png", 268, 504, null, 0);
-        MouseShipGUIElement FORCE_UP = new MouseShipGUIElement(null, "mi_stat_up.png", 330,504,
+        MouseShipGUIElement FORCE_STAT = new MouseShipGUIElement(0,null, "mi_force_stat.png", 268, 504, null, 0);
+        MouseShipGUIElement FORCE_UP = new MouseShipGUIElement(0,null, "mi_stat_up.png", 330,504,
                 KeyStroke.getKeyStroke(KeyEvent.VK_I, KeyEvent.SHIFT_DOWN_MASK, false), 0);
-        MouseShipGUIElement FORCE_DOWN = new MouseShipGUIElement(null, "mi_stat_down.png", 392,504,
+        MouseShipGUIElement FORCE_DOWN = new MouseShipGUIElement(0,null, "mi_stat_down.png", 392,504,
                 KeyStroke.getKeyStroke(KeyEvent.VK_I, KeyEvent.SHIFT_DOWN_MASK + KeyEvent.CTRL_DOWN_MASK, false), 0);
 
-        MouseShipGUIElement HULL_STAT = new MouseShipGUIElement(null, "mi_hull_stat.png", 60, 504, null, 0);
-        MouseShipGUIElement HULL_UP = new MouseShipGUIElement(null, "mi_stat_up.png", 122,504,
+        MouseShipGUIElement HULL_STAT = new MouseShipGUIElement(0,null, "mi_hull_stat.png", 60, 504, null, 0);
+        MouseShipGUIElement HULL_UP = new MouseShipGUIElement(0,null, "mi_stat_up.png", 122,504,
                 KeyStroke.getKeyStroke(KeyEvent.VK_H, KeyEvent.ALT_DOWN_MASK, false), 0);
-        MouseShipGUIElement HULL_DOWN = new MouseShipGUIElement(null, "mi_stat_down.png", 184,504,
+        MouseShipGUIElement HULL_DOWN = new MouseShipGUIElement(0,null, "mi_stat_down.png", 184,504,
                 KeyStroke.getKeyStroke(KeyEvent.VK_H, KeyEvent.ALT_DOWN_MASK + KeyEvent.CTRL_DOWN_MASK, false), 0);
 
-        MouseShipGUIElement CHARGE_STAT = new MouseShipGUIElement(null, "mi_charge_stat.png", 268, 430, null, 0);
-        MouseShipGUIElement CHARGE_UP = new MouseShipGUIElement(null, "mi_stat_up.png", 330,430,
+        MouseShipGUIElement CHARGE_STAT = new MouseShipGUIElement(0,null, "mi_charge_stat.png", 268, 430, null, 0);
+        MouseShipGUIElement CHARGE_UP = new MouseShipGUIElement(0,null, "mi_stat_up.png", 330,430,
                 KeyStroke.getKeyStroke(KeyEvent.VK_C, KeyEvent.SHIFT_DOWN_MASK, false), 0);
-        MouseShipGUIElement CHARGE_DOWN = new MouseShipGUIElement(null, "mi_stat_down.png", 392,430,
+        MouseShipGUIElement CHARGE_DOWN = new MouseShipGUIElement(0,null, "mi_stat_down.png", 392,430,
                 KeyStroke.getKeyStroke(KeyEvent.VK_C, KeyEvent.SHIFT_DOWN_MASK + KeyEvent.CTRL_DOWN_MASK, false), 0);
 
         guiElements.add(ROLLPAGE);
@@ -191,8 +191,8 @@ public class MouseShipGUIDrawable extends MouseGUIDrawable implements Drawable {
         guiElements.add(BR_R2);
          //guiElements.add(BR_LB1);
 
-        totalWidth = cursorX + padX;
-        totalHeight = BR_L1.image.getHeight() + 2* padY;
+        totalWidth = 400;
+        totalHeight = 300;
 
         figureOutBestTopLeftCorner();
 
@@ -587,39 +587,40 @@ public class MouseShipGUIDrawable extends MouseGUIDrawable implements Drawable {
 
         g2d.setPaint(new Color(0,0,255, 150));
         for(MouseShipGUIElement elem : guiElements){
-            scaler.translate(elem.globalX, elem.globalY);
+            if(elem.getPage() == 0 || elem.getPage() == currentPage){
+                scaler.translate(elem.globalX, elem.globalY);
 
-            //prepare shadows for each GUI elements
+                //prepare shadows for each GUI elements
            /*
             if(_pilotShip.getSize().equals("Large") || _pilotShip.getSize().equals("large")) af = elem.getTransformForDraw(scale, 0.5);
             else af = elem.getTransformForDraw(scale);
 */
-            //af = elem.getTransformForDraw(scale);
-            g2d.drawImage(elem.image, scaler, new ImageObserver() {
-                public boolean imageUpdate(Image img, int infoflags, int x, int y, int width, int height) {
-                    return false;
+                //af = elem.getTransformForDraw(scale);
+                g2d.drawImage(elem.image, scaler, new ImageObserver() {
+                    public boolean imageUpdate(Image img, int infoflags, int x, int y, int width, int height) {
+                        return false;
+                    }
+                });
+                //undo the relative translation for this element to become ready for the next
+                scaler.translate(-elem.globalX, -elem.globalY);
+
+
+                // Rectangle rawR = elem.image.getData().getBounds();
+                AffineTransform af = elem.getTransformForDraw(scale);
+                af.translate(ulX, ulY);
+                Shape s = null;
+                if(elem.getNonRect()==null){
+                    s = af.createTransformedShape(elem.image.getData().getBounds()); //use the image bounds
+                } else {
+                    //adjust for halfwidth half height
+                    af.translate(elem.getNonRect().getBounds2D().getWidth()/2.0, elem.getNonRect().getBounds2D().getHeight()/2.0);
+                    s = af.createTransformedShape(elem.getNonRect()); //use the non-rectangular if there's one
+
                 }
-            });
-            //undo the relative translation for this element to become ready for the next
-            scaler.translate(-elem.globalX, -elem.globalY);
-
-
-            // Rectangle rawR = elem.image.getData().getBounds();
-            AffineTransform af = elem.getTransformForDraw(scale);
-            af.translate(ulX, ulY);
-            Shape s = null;
-            if(elem.getNonRect()==null){
-                s = af.createTransformedShape(elem.image.getData().getBounds()); //use the image bounds
-            } else {
-                //adjust for halfwidth half height
-                af.translate(elem.getNonRect().getBounds2D().getWidth()/2.0, elem.getNonRect().getBounds2D().getHeight()/2.0);
-                s = af.createTransformedShape(elem.getNonRect()); //use the non-rectangular if there's one
-
-            }
 //paint the shapes of the buttons here
-            //g2d.fill(s);
-            //g2d.fillRect(s.getBounds().x, s.getBounds().y, s.getBounds().width, s.getBounds().height);
-
+                //g2d.fill(s);
+                //g2d.fillRect(s.getBounds().x, s.getBounds().y, s.getBounds().width, s.getBounds().height);
+            }
         }
 
         //bring the translation back to what it was before the GUI
