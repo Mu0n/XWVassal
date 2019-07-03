@@ -126,9 +126,9 @@ public class MouseShipGUIDrawable extends MouseGUIDrawable implements Drawable {
          MouseShipGUIElement BR_R1 = new MouseShipGUIElement("BR_R1", "Barrel_R_Side_1.png",325, 230, null, 2);
          if(isSmall) smallShipTripleChoice = 4;
         else smallShipTripleChoice = 2;
-         MouseShipGUIElement BR_R2 = new MouseShipGUIElement("BR_R2", "Barrel_R_Side_2.png",404, 225, null, 4);
+         MouseShipGUIElement BR_R2 = new MouseShipGUIElement("BR_R2", "Barrel_R_Side_2.png",404, 225, null, smallShipTripleChoice);
 
-        MouseShipGUIElement ROLLPAGE = new MouseShipGUIElement("Toggle_BR_Active", "Toggle_Barrel_Active.png", 200, 330, null, 0);
+        MouseShipGUIElement ROLLPAGE = new MouseShipGUIElement("TOG_BR", "Toggle_Barrel_Active.png", 217, 340, null, 0);
 
 
         // *
