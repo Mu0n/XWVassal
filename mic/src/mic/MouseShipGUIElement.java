@@ -23,7 +23,6 @@ import java.util.List;
 public class MouseShipGUIElement {
 
     BufferedImage image;
-    int localX, localY; //coordinates in the local system
     int globalX, globalY; //coordinates in the global system
     boolean toggle; //used for toggling if needed
     KeyStroke associatedKeyStroke; //can produce a keystroke to the ship piece if this attribute is defined
@@ -31,7 +30,6 @@ public class MouseShipGUIElement {
     Shape nonRect;
 
     public MouseShipGUIElement(){
-        localX = localY = 0;
         toggle = false;
     }
 
@@ -69,21 +67,6 @@ public class MouseShipGUIElement {
             Util.logToChat("Failed to load GUI image " + imageName);
         }
     }
-    public void setLocalX(int newX){
-        localX = newX;
-    }
-
-    public void setLocalY(int newY){
-        localY = newY;
-    }
-
-    public int getX(){
-        return localX;
-    }
-
-    public int getY(){
-        return localY;
-    }
 
     public boolean isToggled(){
         return toggle;
@@ -101,6 +84,8 @@ public class MouseShipGUIElement {
     public int getTripleChoice(){
         return whichTripleChoice;
     }
+
+    //scale is done outside of this method
     public AffineTransform getTransformForClick(double scale, int abx, int aby){
         AffineTransform affineTransform = new AffineTransform();
         affineTransform.translate(abx + globalX, aby + globalY);

@@ -362,9 +362,14 @@ public class MouseShipGUI extends AbstractConfigurable {
             for (MouseShipGUIElement elem : ((MouseShipGUIDrawable) lastPopup).guiElements) {
                 double scale = theMap.getZoom();
                 AffineTransform af = elem.getTransformForClick(scale, lastPopup.ulX, lastPopup.ulY);
-                // next line: old way, using the image to get a clickable bounds
-                // Rectangle rawR = elem.image.getData().getBounds();
-                Shape s = af.createTransformedShape(elem.getNonRect());
+                Shape s = null;
+                if(elem.getNonRect()==null){
+                    s = af.createTransformedShape(elem.image.getData().getBounds()); //use the image bounds
+                } else {
+                    //adjust for halfwidth half height
+                    af.translate(elem.getNonRect().getBounds2D().getWidth()/2.0, elem.getNonRect().getBounds2D().getHeight()/2.0);
+                    s = af.createTransformedShape(elem.getNonRect()); //use the non-rectangular if there's one
+                }
 
 
                 if (s.contains(e.getX(), e.getY())) {

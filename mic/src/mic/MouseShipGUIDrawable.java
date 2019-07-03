@@ -70,17 +70,45 @@ public class MouseShipGUIDrawable extends MouseGUIDrawable implements Drawable {
 
     //3rd iteration of the mouse ship GUI using the spiffy gfx from Jomblr
     public void MouseShipGUIJomblr(GamePiece shipPiece, Map map, XWS2Pilots pilotShip, XWS2Pilots.Pilot2e pilot){
-         MouseShipGUIElement BR_L1 = new MouseShipGUIElement("BR_L1", "Barrel_L_Side_1.png", 150, 200, null, 1);
+
+
+         MouseShipGUIElement BR_L2 = new MouseShipGUIElement("BR_L2", "Barrel_L_Side_2.png", 36, 226, null, 3);
+         MouseShipGUIElement BR_L1 = new MouseShipGUIElement("BR_L1", "Barrel_L_Side_1.png", 110, 230, null, 1);
+
+
+        MouseShipGUIElement BR_LF2 = new MouseShipGUIElement("BR_LF2", "Barrel_L_Front_2.png", 64, 115, null, 9);
+        MouseShipGUIElement BR_LF1 = new MouseShipGUIElement("BR_LF1", "Barrel_L_Front_1.png", 120, 140, null, 5);
+        MouseShipGUIElement BR_LB2 = new MouseShipGUIElement("BR_LB2", "Barrel_L_Back_2.png", 63, 332, null, 11);
+        MouseShipGUIElement BR_LB1 = new MouseShipGUIElement("BR_LB1", "Barrel_L_Back_1.png", 117, 310, null, 6);
 
          MouseShipGUIElement CENTER = new MouseShipGUIElement(null, "Base.png", 200, 200, null, -66);
 
-         MouseShipGUIElement BR_R1 = new MouseShipGUIElement("BR_R1", "Barrel_R_Side_1.png",250, 200, null, 2);
 
-        // MouseShipGUIElement BR_LB1 = new MouseShipGUIElement("BR_LB1", "Barrel_L_Back_1.png", cursorX, cursorY, null, 1);
+        MouseShipGUIElement BR_RF2 = new MouseShipGUIElement("BR_RF2", "Barrel_R_Front_2.png", 377 , 114, null, 10);
+        MouseShipGUIElement BR_RF1 = new MouseShipGUIElement("BR_RF1", "Barrel_R_Front_1.png", 320, 140, null, 7);
+        MouseShipGUIElement BR_RB2 = new MouseShipGUIElement("BR_RB2", "Barrel_R_Back_2.png", 377, 330, null, 12);
+        MouseShipGUIElement BR_RB1 = new MouseShipGUIElement("BR_RB1", "Barrel_R_Back_1.png", 320, 310, null, 8);
 
+         MouseShipGUIElement BR_R1 = new MouseShipGUIElement("BR_R1", "Barrel_R_Side_1.png",325, 230, null, 2);
+         MouseShipGUIElement BR_R2 = new MouseShipGUIElement("BR_R2", "Barrel_R_Side_2.png",404, 225, null, 4);
+
+        MouseShipGUIElement ROLLPAGE = new MouseShipGUIElement("", "", 200, 330, null, 0);
+
+        guiElements.add(ROLLPAGE);
+        guiElements.add(BR_RF1);
+        guiElements.add(BR_RB1);
+        guiElements.add(BR_RF2);
+        guiElements.add(BR_RB2);
+
+        guiElements.add(BR_LF2);
+        guiElements.add(BR_LF1);
+        guiElements.add(BR_LB2);
+        guiElements.add(BR_LB1);
+        guiElements.add(BR_L2);
         guiElements.add(BR_L1);
         guiElements.add(CENTER);
         guiElements.add(BR_R1);
+        guiElements.add(BR_R2);
          //guiElements.add(BR_LB1);
 
         totalWidth = cursorX + padX;
@@ -467,10 +495,12 @@ public class MouseShipGUIDrawable extends MouseGUIDrawable implements Drawable {
         AffineTransform scaler = AffineTransform.getScaleInstance(scale, scale);
 
 
+        //prepare the outline of the GUI
+
         scaler.translate(ulX,ulY);
         g2d.setPaint(Color.WHITE);
         Shape transformedOutline = scaler.createTransformedShape(outline);
-        g2d.fill(transformedOutline);
+        //g2d.fill(transformedOutline);
 
 
 
@@ -479,26 +509,37 @@ public class MouseShipGUIDrawable extends MouseGUIDrawable implements Drawable {
         for(MouseShipGUIElement elem : guiElements){
             scaler.translate(elem.globalX, elem.globalY);
 
-            //AffineTransform af;
+            //prepare shadows for each GUI elements
            /*
             if(_pilotShip.getSize().equals("Large") || _pilotShip.getSize().equals("large")) af = elem.getTransformForDraw(scale, 0.5);
             else af = elem.getTransformForDraw(scale);
 */
-
             //af = elem.getTransformForDraw(scale);
             g2d.drawImage(elem.image, scaler, new ImageObserver() {
                 public boolean imageUpdate(Image img, int infoflags, int x, int y, int width, int height) {
                     return false;
                 }
             });
-
             //undo the relative translation for this element to become ready for the next
             scaler.translate(-elem.globalX, -elem.globalY);
 
 
-           // Rectangle rawR = elem.image.getData().getBounds();
-            //Shape s = af.createTransformedShape(rawR);
+            // Rectangle rawR = elem.image.getData().getBounds();
+            AffineTransform af = elem.getTransformForDraw(scale);
+            af.translate(ulX, ulY);
+            Shape s = null;
+            if(elem.getNonRect()==null){
+                s = af.createTransformedShape(elem.image.getData().getBounds()); //use the image bounds
+            } else {
+                //adjust for halfwidth half height
+                af.translate(elem.getNonRect().getBounds2D().getWidth()/2.0, elem.getNonRect().getBounds2D().getHeight()/2.0);
+                s = af.createTransformedShape(elem.getNonRect()); //use the non-rectangular if there's one
+
+            }
+
+            g2d.fill(s);
             //g2d.fillRect(s.getBounds().x, s.getBounds().y, s.getBounds().width, s.getBounds().height);
+
         }
 
         //bring the translation back to what it was before the GUI
