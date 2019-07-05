@@ -108,6 +108,11 @@ public class MouseShipGUI extends AbstractConfigurable {
                                         if(((MouseShipGUIDrawable)lastPopup).currentGUIElementBeingEdited > ((MouseShipGUIDrawable)lastPopup).guiElements.size()-1)
                                         ((MouseShipGUIDrawable)lastPopup).currentGUIElementBeingEdited = 0;
                                     }
+                                    else if(ke.getKeyCode() == KeyEvent.VK_TAB  && ke.isShiftDown()){
+                                        wPressed = true;
+                                        ((MouseShipGUIDrawable)lastPopup).currentGUIElementBeingEdited--;
+                                        if(((MouseShipGUIDrawable)lastPopup).currentGUIElementBeingEdited < 0) ((MouseShipGUIDrawable)lastPopup).currentGUIElementBeingEdited = ((MouseShipGUIDrawable)lastPopup).guiElements.size()-1;
+                                    }
                                     if (ke.getKeyCode() == KeyEvent.VK_W) {
                                         wPressed = true;
                                         Iterator<MouseShipGUIElement> it = ((MouseShipGUIDrawable)lastPopup).guiElements.iterator();

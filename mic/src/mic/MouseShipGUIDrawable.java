@@ -77,9 +77,15 @@ public class MouseShipGUIDrawable extends MouseGUIDrawable implements Drawable {
         // *
         // * Turret icons
         // *
-        MouseShipGUIElement ROTATE_LEFT = new MouseShipGUIElement(3,"TOG_TUR", "mi_rotate_left.png", 155, 64,
+        MouseShipGUIElement ROTATE_LEFT = new MouseShipGUIElement(3,"TOG_TUR", "mi_rotate_left.png", 155, 74,
                 KeyStroke.getKeyStroke(KeyEvent.VK_M, KeyEvent.ALT_DOWN_MASK + KeyEvent.SHIFT_DOWN_MASK, false), 0);
-        MouseShipGUIElement ROTATE_RIGHT = new MouseShipGUIElement(3,"TOG_TUR", "mi_rotate_right.png", 295, 64,
+
+        MouseShipGUIElement TURRET_ARC = new MouseShipGUIElement(3,"TOG_TUR", "mi_turret_arc.png", 185, 74,
+                KeyStroke.getKeyStroke(KeyEvent.VK_F, KeyEvent.ALT_DOWN_MASK, false), 0);
+        MouseShipGUIElement TURRET_123 = new MouseShipGUIElement(3,"TOG_BR", "mi_turret_123.png", 185, 104,
+                KeyStroke.getKeyStroke(KeyEvent.VK_F, KeyEvent.ALT_DOWN_MASK + KeyEvent.SHIFT_DOWN_MASK, false), 0);
+
+        MouseShipGUIElement ROTATE_RIGHT = new MouseShipGUIElement(3,"TOG_TUR", "mi_rotate_right.png", 295, 74,
                 KeyStroke.getKeyStroke(KeyEvent.VK_M, KeyEvent.ALT_DOWN_MASK, false), 0);
         // *
         // * Boost icons
@@ -224,6 +230,8 @@ public class MouseShipGUIDrawable extends MouseGUIDrawable implements Drawable {
         //1,4 6,316 (+56+16 = 72)
         //Y=     132,188,244,316
         guiElements.add(ROTATE_LEFT);
+        guiElements.add(TURRET_123);
+        guiElements.add(TURRET_ARC);
         guiElements.add(ROTATE_RIGHT);
         guiElements.add(TURRETPAGE);
         guiElements.add(BOOST_LEFT);
@@ -675,6 +683,7 @@ public class MouseShipGUIDrawable extends MouseGUIDrawable implements Drawable {
 
         g2d.setPaint(new Color(0,0,255, 150));
         for(MouseShipGUIElement elem : guiElements){
+
             if(elem.getPage() == 0 || elem.getPage() == currentPage){
                 scaler.translate(elem.globalX, elem.globalY);
 
@@ -719,10 +728,9 @@ public class MouseShipGUIDrawable extends MouseGUIDrawable implements Drawable {
 
                 }
 //paint the shapes of the buttons here
-                //g2d.fill(s);
                 //g2d.fillRect(s.getBounds().x, s.getBounds().y, s.getBounds().width, s.getBounds().height);
-            }
-        }
+            } //end drawing an element part of active page or page 0
+        } //end drawing all the guielements
 
         //bring the translation back to what it was before the GUI
         scaler.translate(-ulX,-ulY);
