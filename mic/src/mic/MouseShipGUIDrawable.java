@@ -77,7 +77,7 @@ public class MouseShipGUIDrawable extends MouseGUIDrawable implements Drawable {
         // *
         // * Conditions icons
         // *
-        MouseShipGUIElement CONPAGE = new MouseShipGUIElement(0,"TOG_CON", "Toggle_Conditions_Active.png", "Toggle_Conditions_Inactive.png",417, 327, null, -196);
+        MouseShipGUIElement CONPAGE = new MouseShipGUIElement(0,"TOG_CON", "Toggle_Conditions_Active.png", "Toggle_Conditions_Inactive.png",295, 397, null, -196);
 
         // *
         // * Turret icons
@@ -234,6 +234,7 @@ public class MouseShipGUIDrawable extends MouseGUIDrawable implements Drawable {
         //2,3 104,244
         //1,4 6,316 (+56+16 = 72)
         //Y=     132,188,244,316
+        guiElements.add(CONPAGE);
         guiElements.add(ROTATE_LEFT);
         guiElements.add(TURRET_123);
         guiElements.add(TURRET_ARC);
