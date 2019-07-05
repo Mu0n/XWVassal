@@ -75,6 +75,24 @@ public class MouseShipGUIDrawable extends MouseGUIDrawable implements Drawable {
         if(pilotShip.getSize().equals("Small")) isSmall = true;
 
         // *
+        // * Turret icons
+        // *
+        MouseShipGUIElement ROTATE_LEFT = new MouseShipGUIElement(3,"TOG_TUR", "mi_rotate_left.png", 155, 64,
+                KeyStroke.getKeyStroke(KeyEvent.VK_M, KeyEvent.ALT_DOWN_MASK + KeyEvent.SHIFT_DOWN_MASK, false), 0);
+        MouseShipGUIElement ROTATE_RIGHT = new MouseShipGUIElement(3,"TOG_TUR", "mi_rotate_right.png", 295, 64,
+                KeyStroke.getKeyStroke(KeyEvent.VK_M, KeyEvent.ALT_DOWN_MASK, false), 0);
+        // *
+        // * Boost icons
+        // *
+        MouseShipGUIElement BOOST_LEFT = new MouseShipGUIElement(1,"BO_LEFT", "Boost_Left.png", 155, 64,
+                KeyStroke.getKeyStroke(KeyEvent.VK_1, KeyEvent.CTRL_DOWN_MASK, false), 0);
+        MouseShipGUIElement BOOST_STR8 = new MouseShipGUIElement(1,"BO_STR8", "Boost_Front.png", 228, 54,
+                KeyStroke.getKeyStroke(KeyEvent.VK_1, KeyEvent.SHIFT_DOWN_MASK, false), 0);
+        MouseShipGUIElement BOOST_RIGHT = new MouseShipGUIElement(1,"BO_RIGHT", "Boost_Right.png", 295, 64,
+                KeyStroke.getKeyStroke(KeyEvent.VK_1, KeyEvent.ALT_DOWN_MASK, false), 0);
+        MouseShipGUIElement TURRETPAGE = new MouseShipGUIElement(0,"TOG_TUR", "Toggle_Turret_Active.png", "Toggle_Turret_Inactive.png",139, 397, null, -197);
+
+        // *
         // * Barrel roll left straight
         // *
         //medium and large ships have a lot less barrel roll options so while these buttons still show up, they default to either BR left 1 or BR right 1, centered
@@ -205,6 +223,12 @@ public class MouseShipGUIDrawable extends MouseGUIDrawable implements Drawable {
         //2,3 104,244
         //1,4 6,316 (+56+16 = 72)
         //Y=     132,188,244,316
+        guiElements.add(ROTATE_LEFT);
+        guiElements.add(ROTATE_RIGHT);
+        guiElements.add(TURRETPAGE);
+        guiElements.add(BOOST_LEFT);
+        guiElements.add(BOOST_STR8);
+        guiElements.add(BOOST_RIGHT);
         guiElements.add(FORE_TOGGLE);
         guiElements.add(FORE_123);
         guiElements.add(AFT_TOGGLE);
