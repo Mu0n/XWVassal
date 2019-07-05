@@ -75,17 +75,22 @@ public class MouseShipGUIDrawable extends MouseGUIDrawable implements Drawable {
         if(pilotShip.getSize().equals("Small")) isSmall = true;
 
         // *
+        // * Conditions icons
+        // *
+        MouseShipGUIElement CONPAGE = new MouseShipGUIElement(0,"TOG_CON", "Toggle_Conditions_Active.png", "Toggle_Conditions_Inactive.png",417, 327, null, -196);
+
+        // *
         // * Turret icons
         // *
-        MouseShipGUIElement ROTATE_LEFT = new MouseShipGUIElement(3,"TOG_TUR", "mi_rotate_left.png", 138, 92,
+                MouseShipGUIElement ROTATE_LEFT = new MouseShipGUIElement(3,"TOG_TUR", "mi_rotate_left.png", 138, 92,
                 KeyStroke.getKeyStroke(KeyEvent.VK_M, KeyEvent.ALT_DOWN_MASK + KeyEvent.SHIFT_DOWN_MASK, false), 0);
 
-        MouseShipGUIElement TURRET_ARC = new MouseShipGUIElement(3,"TOG_ARC", "mi_turret_arc.png", 217, 20,
+                MouseShipGUIElement TURRET_ARC = new MouseShipGUIElement(3,"TOG_ARC", "mi_turret_arc.png", 217, 20,
                 KeyStroke.getKeyStroke(KeyEvent.VK_F, KeyEvent.ALT_DOWN_MASK, false), 0);
-        MouseShipGUIElement TURRET_123 = new MouseShipGUIElement(3,"TOG_BR", "mi_turret_123.png", 218, 88,
+                MouseShipGUIElement TURRET_123 = new MouseShipGUIElement(3,"TOG_BR", "mi_turret_123.png", 218, 88,
                 KeyStroke.getKeyStroke(KeyEvent.VK_F, KeyEvent.ALT_DOWN_MASK + KeyEvent.SHIFT_DOWN_MASK, false), 0);
 
-        MouseShipGUIElement ROTATE_RIGHT = new MouseShipGUIElement(3,"TOG_CON", "mi_rotate_right.png", 296, 92,
+                MouseShipGUIElement ROTATE_RIGHT = new MouseShipGUIElement(3,"TOG_CON", "mi_rotate_right.png", 296, 92,
                 KeyStroke.getKeyStroke(KeyEvent.VK_M, KeyEvent.ALT_DOWN_MASK, false), 0);
         // *
         // * Boost icons
