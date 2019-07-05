@@ -255,8 +255,8 @@ public class MouseShipGUIDrawable extends MouseGUIDrawable implements Drawable {
         guiElements.add(BR_R1);
         guiElements.add(BR_R2);
 
-        totalWidth = 400;
-        totalHeight = 300;
+        totalWidth = 550;
+        totalHeight = 530;
 
         figureOutBestTopLeftCorner();
 
