@@ -22,7 +22,7 @@ import java.util.List;
 
 public class MouseShipGUIElement {
 
-    BufferedImage image;
+    BufferedImage image, imageSpent;  //imageSpent is for when the toggle button is off
     int globalX, globalY; //coordinates in the global system
     boolean toggle; //used for toggling if needed
     KeyStroke associatedKeyStroke; //can produce a keystroke to the ship piece if this attribute is defined
@@ -34,6 +34,49 @@ public class MouseShipGUIElement {
         toggle = false;
     }
 
+    //Slightly different constructor for when you need 2 graphics for a toggle button
+    public MouseShipGUIElement(int wantedPage, String slotName, String imageName, String imageNameInactive, int wantedX, int wantedY, KeyStroke wantedKeyStroke, int wantedTripleChoice) {
+        page = wantedPage;
+        globalX = wantedX;
+        globalY = wantedY;
+        associatedKeyStroke = wantedKeyStroke;
+        whichTripleChoice = wantedTripleChoice;
+
+
+        List<PieceSlot> pieceSlots = GameModule.getGameModule().getAllDescendantComponentsOf(PieceSlot.class);
+        GamePiece piece = null;
+
+        if(slotName != null) {
+            for (PieceSlot pieceSlot : pieceSlots) {
+                String sName = pieceSlot.getConfigureName();
+                if (sName.equals(slotName)) {
+                    piece = Util.newPiece(pieceSlot);
+                    nonRect = piece.getShape();
+                    break;
+                }
+            }
+        }
+        //load the images
+        try {
+            GameModule gameModule = GameModule.getGameModule();
+            DataArchive dataArchive = gameModule.getDataArchive();
+            FileArchive fileArchive = dataArchive.getArchive();
+
+            InputStream inputstream = new BufferedInputStream(fileArchive.getInputStream("images/" + imageName));
+            image = ImageIO.read(inputstream);
+            inputstream.close();
+
+            InputStream inputstream2 = new BufferedInputStream(fileArchive.getInputStream("images/" + imageNameInactive));
+            imageSpent = ImageIO.read(inputstream2);
+            inputstream2.close();
+
+        }
+        catch(Exception e){
+            Util.logToChat("Failed to load GUI images " + imageName);
+        }
+    }
+
+    //main constructor
     public MouseShipGUIElement(int wantedPage, String slotName, String imageName, int wantedX, int wantedY, KeyStroke wantedKeyStroke, int wantedTripleChoice){
         page = wantedPage;
         globalX = wantedX;

@@ -7,6 +7,6 @@ public abstract class MouseGUIDrawable {
     public int totalHeight = 0;
 
     public int currentGUIElementBeingEdited = 0;
-    public int currentPage = 1; //currently only used for the ship mouse GUI, but could be used by others
+    public int currentPage = 2; //currently only used for the ship mouse GUI, but could be used by others
 
 }
