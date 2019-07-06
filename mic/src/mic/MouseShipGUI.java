@@ -394,6 +394,13 @@ public class MouseShipGUI extends AbstractConfigurable {
                                     elem.getImageName().equals("Boost_Right.png") ||
                                     elem.getImageName().equals("Boost_Front.png")) {
 
+                                    if(elem.getImageName().equals("Boost_Left.png")){
+                                        logToChat("*** " + getCurrentPlayer().getName() + " makes " + activatedPiece.getProperty("Pilot Name").toString() + " perform a boost bank left");
+                                    }if(elem.getImageName().equals("Boost_Right.png")){
+                                        logToChat("*** " +getCurrentPlayer().getName() + " makes " + activatedPiece.getProperty("Pilot Name").toString() + " perform a boost bank right");
+                                    }if(elem.getImageName().equals("Boost_Front.png")){
+                                        logToChat("*** " +getCurrentPlayer().getName() + " makes " + activatedPiece.getProperty("Pilot Name").toString() + " perform a boost forward");
+                                    }
                                     removePopup(theMap, e);
                                 }
                         }
