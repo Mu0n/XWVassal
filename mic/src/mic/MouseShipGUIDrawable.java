@@ -80,7 +80,7 @@ public class MouseShipGUIDrawable extends MouseGUIDrawable implements Drawable {
         MouseShipGUIElement LAUNCH = new MouseShipGUIElement(4, "TOG_ARC", "mi_launch_device.png", 216,5,
                 KeyStroke.getKeyStroke(KeyEvent.VK_B, KeyEvent.CTRL_DOWN_MASK + KeyEvent.SHIFT_DOWN_MASK, false), 0);
         MouseShipGUIElement DROP = new MouseShipGUIElement(4, "TOG_BR", "mi_drop_device.png", 216,73,
-                KeyStroke.getKeyStroke(KeyEvent.VK_B, KeyEvent.SHIFT_DOWN_MASK, false), 0);
+                KeyStroke.getKeyStroke(KeyEvent.VK_B, KeyEvent.CTRL_DOWN_MASK, false), 0);
 
         MouseShipGUIElement CONPAGE = new MouseShipGUIElement(0,"TOG_CON", "Toggle_Conditions_Active.png", "Toggle_Conditions_Inactive.png",295, 397, null, -196);
 

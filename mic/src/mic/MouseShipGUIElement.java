@@ -23,6 +23,7 @@ import java.util.List;
 public class MouseShipGUIElement {
 
     BufferedImage image, imageSpent;  //imageSpent is for when the toggle button is off
+    String imageName;
     int globalX, globalY; //coordinates in the global system
     boolean toggle; //used for toggling if needed
     KeyStroke associatedKeyStroke; //can produce a keystroke to the ship piece if this attribute is defined
@@ -34,13 +35,18 @@ public class MouseShipGUIElement {
         toggle = false;
     }
 
+    public String getImageName(){
+        return imageName;
+    }
+
     //Slightly different constructor for when you need 2 graphics for a toggle button
-    public MouseShipGUIElement(int wantedPage, String slotName, String imageName, String imageNameInactive, int wantedX, int wantedY, KeyStroke wantedKeyStroke, int wantedTripleChoice) {
+    public MouseShipGUIElement(int wantedPage, String slotName, String wantedImageName, String imageNameInactive, int wantedX, int wantedY, KeyStroke wantedKeyStroke, int wantedTripleChoice) {
         page = wantedPage;
         globalX = wantedX;
         globalY = wantedY;
         associatedKeyStroke = wantedKeyStroke;
         whichTripleChoice = wantedTripleChoice;
+        imageName = wantedImageName;
 
 
         List<PieceSlot> pieceSlots = GameModule.getGameModule().getAllDescendantComponentsOf(PieceSlot.class);
@@ -77,13 +83,13 @@ public class MouseShipGUIElement {
     }
 
     //main constructor
-    public MouseShipGUIElement(int wantedPage, String slotName, String imageName, int wantedX, int wantedY, KeyStroke wantedKeyStroke, int wantedTripleChoice){
+    public MouseShipGUIElement(int wantedPage, String slotName, String wantedImageName, int wantedX, int wantedY, KeyStroke wantedKeyStroke, int wantedTripleChoice){
         page = wantedPage;
         globalX = wantedX;
         globalY = wantedY;
         associatedKeyStroke = wantedKeyStroke;
         whichTripleChoice = wantedTripleChoice;
-
+        imageName = wantedImageName;
 
         List<PieceSlot> pieceSlots = GameModule.getGameModule().getAllDescendantComponentsOf(PieceSlot.class);
         GamePiece piece = null;

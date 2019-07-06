@@ -382,10 +382,20 @@ public class MouseShipGUI extends AbstractConfigurable {
                     if (s.contains(e.getX(), e.getY())) {
                         //First class of GUI-driven commands: Direct keystroke commands, keep the GUI up
                         if (elem.associatedKeyStroke != null) {
+
                             Command directKeyStroke = activatedPiece.keyEvent(elem.associatedKeyStroke);
                             //directKeyStroke.execute();
                             GameModule.getGameModule().sendAndLog(directKeyStroke);
                             e.consume();
+
+                            //allow boost, which are direct keystroke commands to dismiss the GUI NONETHELESS
+                            if(elem.getImageName() != null)
+                                if(elem.getImageName().equals("Boost_Left.png") ||
+                                    elem.getImageName().equals("Boost_Right.png") ||
+                                    elem.getImageName().equals("Boost_Front.png")) {
+
+                                    removePopup(theMap, e);
+                                }
                         }
                         //Second class of GUI-driven commands (ship repositions): Goes to a 2nd step with triple click choices:
                         else if (elem.whichTripleChoice > 0 && elem.whichTripleChoice < 200) {
