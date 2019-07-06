@@ -75,6 +75,11 @@ public class MouseShipGUIDrawable extends MouseGUIDrawable implements Drawable {
         if(pilotShip.getSize().equals("Small")) isSmall = true;
 
         // *
+        // * Close button
+        // *
+
+        MouseShipGUIElement CLOSE = new MouseShipGUIElement(0, null, "mi_close.png", 228,154, null, -66);
+        // *
         // * Misc icons
         // *
         MouseShipGUIElement LAUNCH = new MouseShipGUIElement(4, "TOG_ARC", "mi_launch_device.png", 216,5,
@@ -239,6 +244,7 @@ public class MouseShipGUIDrawable extends MouseGUIDrawable implements Drawable {
         //2,3 104,244
         //1,4 6,316 (+56+16 = 72)
         //Y=     132,188,244,316
+        guiElements.add(CLOSE);
         guiElements.add(DROP);
         guiElements.add(LAUNCH);
         guiElements.add(CONPAGE);
