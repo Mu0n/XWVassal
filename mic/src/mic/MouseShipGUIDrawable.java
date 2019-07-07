@@ -75,6 +75,40 @@ public class MouseShipGUIDrawable extends MouseGUIDrawable implements Drawable {
         if(pilotShip.getSize().equals("Small")) isSmall = true;
 
         // *
+        // * Movement/Slam buttons
+        // *
+
+        // * Page button
+        MouseShipGUIElement MOVESLAM = new MouseShipGUIElement(0, "MI_MOVESLAM", "mi_moveslam.png", 335,397,
+                KeyStroke.getKeyStroke(KeyEvent.VK_5, KeyEvent.SHIFT_DOWN_MASK, false), 0);
+
+        // * Straights
+        MouseShipGUIElement STRAIGHT5 = new MouseShipGUIElement(5, "MI_MOVE", "mi_straight.png", 10,20,
+                KeyStroke.getKeyStroke(KeyEvent.VK_5, KeyEvent.SHIFT_DOWN_MASK, false), 0);
+        MouseShipGUIElement STRAIGHT4 = new MouseShipGUIElement(5, "MI_MOVE", "mi_straight.png", 10,50,
+                KeyStroke.getKeyStroke(KeyEvent.VK_4, KeyEvent.SHIFT_DOWN_MASK, false), 0);
+        MouseShipGUIElement STRAIGHT3 = new MouseShipGUIElement(5, "MI_MOVE", "mi_straight.png", 10,80,
+                KeyStroke.getKeyStroke(KeyEvent.VK_3, KeyEvent.SHIFT_DOWN_MASK, false), 0);
+        MouseShipGUIElement STRAIGHT2 = new MouseShipGUIElement(5, "MI_MOVE", "mi_straight.png", 10,110,
+                KeyStroke.getKeyStroke(KeyEvent.VK_2, KeyEvent.SHIFT_DOWN_MASK, false), 0);
+        MouseShipGUIElement STRAIGHT1 = new MouseShipGUIElement(5, "MI_MOVE", "mi_straight.png", 10,140,
+                KeyStroke.getKeyStroke(KeyEvent.VK_1, KeyEvent.SHIFT_DOWN_MASK, false), 0);
+
+        // * K-turns
+        MouseShipGUIElement KTURN5 = new MouseShipGUIElement(5, "MI_MOVE", "mi_kturn.png", 60,20,
+                KeyStroke.getKeyStroke(KeyEvent.VK_5, KeyEvent.CTRL_DOWN_MASK + KeyEvent.ALT_DOWN_MASK, false), 0);
+        MouseShipGUIElement KTURN4 = new MouseShipGUIElement(5, "MI_MOVE", "mi_kturn.png", 60,50,
+                KeyStroke.getKeyStroke(KeyEvent.VK_4, KeyEvent.CTRL_DOWN_MASK + KeyEvent.ALT_DOWN_MASK, false), 0);
+        MouseShipGUIElement KTURN3 = new MouseShipGUIElement(5, "MI_MOVE", "mi_kturn.png", 60,80,
+                KeyStroke.getKeyStroke(KeyEvent.VK_3, KeyEvent.CTRL_DOWN_MASK + KeyEvent.ALT_DOWN_MASK, false), 0);
+        MouseShipGUIElement KTURN2 = new MouseShipGUIElement(5, "MI_MOVE", "mi_kturn.png", 60,110,
+                KeyStroke.getKeyStroke(KeyEvent.VK_2, KeyEvent.CTRL_DOWN_MASK + KeyEvent.ALT_DOWN_MASK, false), 0);
+        MouseShipGUIElement KTURN1 = new MouseShipGUIElement(5, "MI_MOVE", "mi_kturn.png", 60,140,
+                KeyStroke.getKeyStroke(KeyEvent.VK_1, KeyEvent.CTRL_DOWN_MASK + KeyEvent.ALT_DOWN_MASK, false), 0);
+
+
+
+        // *
         // * Close button
         // *
 
@@ -244,6 +278,16 @@ public class MouseShipGUIDrawable extends MouseGUIDrawable implements Drawable {
         //2,3 104,244
         //1,4 6,316 (+56+16 = 72)
         //Y=     132,188,244,316
+        guiElements.add(STRAIGHT1);
+        guiElements.add(STRAIGHT2);
+        guiElements.add(STRAIGHT3);
+        guiElements.add(STRAIGHT4);
+        guiElements.add(STRAIGHT5);
+        guiElements.add(KTURN5);
+        guiElements.add(KTURN4);
+        guiElements.add(KTURN3);
+        guiElements.add(KTURN2);
+        guiElements.add(KTURN1);
         guiElements.add(CLOSE);
         guiElements.add(DROP);
         guiElements.add(LAUNCH);
