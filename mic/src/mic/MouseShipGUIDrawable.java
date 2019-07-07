@@ -79,8 +79,8 @@ public class MouseShipGUIDrawable extends MouseGUIDrawable implements Drawable {
         // *
 
         // * Page button
-        MouseShipGUIElement MOVESLAM = new MouseShipGUIElement(0, "TOG_MOV", "Toggle_Move_Active.png", "Toggle_Move_Inactive.png", 335,397,
-                KeyStroke.getKeyStroke(KeyEvent.VK_5, KeyEvent.SHIFT_DOWN_MASK, false), 0);
+        MouseShipGUIElement MOVESLAM = new MouseShipGUIElement(0, "TOG_MOV", "Toggle_Move_Active.png", "Toggle_Move_Inactive.png", 382,398,
+                KeyStroke.getKeyStroke(KeyEvent.VK_5, KeyEvent.SHIFT_DOWN_MASK, false), -195);
 
         // * Straights
         MouseShipGUIElement STRAIGHT5 = new MouseShipGUIElement(5, "MI_MOVE", "mi_straight.png", 10,20,
@@ -161,16 +161,16 @@ public class MouseShipGUIDrawable extends MouseGUIDrawable implements Drawable {
         // *
         if(isSmall) smallShipTripleChoice = 9;
         else smallShipTripleChoice = 1;
-        MouseShipGUIElement BR_LF2 = new MouseShipGUIElement(1,"BR_LF2", "Barrel_L_Front_2.png", 64, 115, null, smallShipTripleChoice);
+        MouseShipGUIElement BR_LF2 = new MouseShipGUIElement(1,"BR_LF2", "Barrel_L_Front_2.png", 64, 119, null, smallShipTripleChoice);
         if(isSmall) smallShipTripleChoice = 5;
         else smallShipTripleChoice = 1;
-        MouseShipGUIElement BR_LF1 = new MouseShipGUIElement(1,"BR_LF1", "Barrel_L_Front_1.png", 120, 140, null, smallShipTripleChoice);
+        MouseShipGUIElement BR_LF1 = new MouseShipGUIElement(1,"BR_LF1", "Barrel_L_Front_1.png", 120, 144, null, smallShipTripleChoice);
         if(isSmall) smallShipTripleChoice = 11;
         else smallShipTripleChoice = 1;
-        MouseShipGUIElement BR_LB2 = new MouseShipGUIElement(1, "BR_LB2", "Barrel_L_Back_2.png", 63, 332, null, smallShipTripleChoice);
+        MouseShipGUIElement BR_LB2 = new MouseShipGUIElement(1, "BR_LB2", "Barrel_L_Back_2.png", 63, 328, null, smallShipTripleChoice);
         if(isSmall) smallShipTripleChoice = 6;
         else smallShipTripleChoice = 1;
-        MouseShipGUIElement BR_LB1 = new MouseShipGUIElement(1,"BR_LB1", "Barrel_L_Back_1.png", 117, 310, null, smallShipTripleChoice);
+        MouseShipGUIElement BR_LB1 = new MouseShipGUIElement(1,"BR_LB1", "Barrel_L_Back_1.png", 117, 306, null, smallShipTripleChoice);
 
         // *
         // * center square base
@@ -182,16 +182,16 @@ public class MouseShipGUIDrawable extends MouseGUIDrawable implements Drawable {
         // *
         if(isSmall) smallShipTripleChoice = 10;
         else smallShipTripleChoice = 2;
-        MouseShipGUIElement BR_RF2 = new MouseShipGUIElement(1,"BR_RF2", "Barrel_R_Front_2.png", 377 , 114, null, smallShipTripleChoice);
+        MouseShipGUIElement BR_RF2 = new MouseShipGUIElement(1,"BR_RF2", "Barrel_R_Front_2.png", 377 , 118, null, smallShipTripleChoice);
         if(isSmall) smallShipTripleChoice = 7;
         else smallShipTripleChoice = 2;
-        MouseShipGUIElement BR_RF1 = new MouseShipGUIElement(1,"BR_RF1", "Barrel_R_Front_1.png", 320, 140, null, smallShipTripleChoice);
+        MouseShipGUIElement BR_RF1 = new MouseShipGUIElement(1,"BR_RF1", "Barrel_R_Front_1.png", 320, 144, null, smallShipTripleChoice);
         if(isSmall) smallShipTripleChoice = 12;
         else smallShipTripleChoice = 2;
-        MouseShipGUIElement BR_RB2 = new MouseShipGUIElement(1,"BR_RB2", "Barrel_R_Back_2.png", 377, 330, null, smallShipTripleChoice);
+        MouseShipGUIElement BR_RB2 = new MouseShipGUIElement(1,"BR_RB2", "Barrel_R_Back_2.png", 377, 326, null, smallShipTripleChoice);
         if(isSmall) smallShipTripleChoice = 8;
         else smallShipTripleChoice = 2;
-        MouseShipGUIElement BR_RB1 = new MouseShipGUIElement(1,"BR_RB1", "Barrel_R_Back_1.png", 320, 310, null, smallShipTripleChoice);
+        MouseShipGUIElement BR_RB1 = new MouseShipGUIElement(1,"BR_RB1", "Barrel_R_Back_1.png", 320, 306, null, smallShipTripleChoice);
 
         // *
         // * Barrel roll right straight
