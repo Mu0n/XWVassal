@@ -79,7 +79,7 @@ public class MouseShipGUIDrawable extends MouseGUIDrawable implements Drawable {
         // *
 
         // * Page button
-        MouseShipGUIElement MOVESLAM = new MouseShipGUIElement(0, "MI_MOVESLAM", "mi_moveslam.png", 335,397,
+        MouseShipGUIElement MOVESLAM = new MouseShipGUIElement(0, "MI_MOVESLAM", "Toggle_Move_Active.png", "Toggle_Move_Inactive.png", 335,397,
                 KeyStroke.getKeyStroke(KeyEvent.VK_5, KeyEvent.SHIFT_DOWN_MASK, false), 0);
 
         // * Straights
