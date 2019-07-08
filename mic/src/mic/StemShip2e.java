@@ -77,7 +77,7 @@ public class StemShip2e extends Decorator implements EditablePiece {
             .put("large/separatistalliance/Full Front Arc","emb2;;2;;Show Aux Arc;2;;;2;;;;;true;0;-480;,Arc_2e_CIS_Large_FFA.svg;,;true;Show Big Aux Arc;;;false;;1;1;true;;78,130;")
 
             // Full Back Arc
-            .put("small/separatistalliance/Full Back Arc","emb2;;2;;Show Auxiliary Arc;2;;;2;;;;;true;0;-452;,Arc_2e_CIS_Small_FBA.svg;,;true;Show Auxiliary Firing Arc;;;false;;1;1;true;;78,130;")
+            .put("small/separatistalliance/Full Back Arc","emb2;;2;;Show Auxiliary Arc;2;;;2;;;;;true;0;452;,Arc_2e_CIS_Small_FBA.svg;,;true;Show Auxiliary Firing Arc;;;false;;1;1;true;;78,130;")
 
 
             // Rear Arc
