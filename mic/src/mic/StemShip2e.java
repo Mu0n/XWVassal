@@ -58,7 +58,7 @@ public class StemShip2e extends Decorator implements EditablePiece {
             .put("small/resistance/Full Front Arc","emb2;;2;;Show Auxiliary Arc;2;;;2;;;;;true;0;-452;,Arc_2e_Resistance_Small_FFA.svg;,;true;Show Auxiliary Firing Arc;;;false;;1;1;true;;78,130;")
             .put("small/firstorder/Full Front Arc","emb2;;2;;Show Auxiliary Arc;2;;;2;;;;;true;0;-452;,Arc_2e_FirstOrder_Small_FFA.svg;,;true;Show Auxiliary Firing Arc;;;false;;1;1;true;;78,130;")
             .put("small/galacticrepublic/Full Front Arc","emb2;;2;;Show Auxiliary Arc;2;;;2;;;;;true;0;-452;,Arc_2e_Republic_Small_FFA.svg;,;true;Show Auxiliary Firing Arc;;;false;;1;1;true;;78,130;")
-            .put("small/separatistalliance/Full Front Arc","emb2;;2;;Show Auxiliary Arc;2;;;2;;;;;true;0;-452;,Arc_2e_CIS_Small_FFA.svg;,;true;Show Auxiliary Firing Arc;;;false;;1;1;true;;78,130;")
+            .put("small/separatistalliance/Full Front Arc","emb2;;2;;Show Full Front Arc;2;;;2;;;;;true;0;-452;,Arc_2e_CIS_Small_FFA.svg;,;true;Toggle Full Front Arc;;;false;;1;1;true;;78,130;")
 
             .put("medium/rebelalliance/Full Front Arc","emb2;;2;;Show Auxiliary Arc;2;;;2;;;;;true;0;-466;,Arc_2e_Rebel_Medium_FFA.svg;,;true;Show Auxiliary Firing Arc;;;false;;1;1;true;;78,130;")
             .put("medium/galacticempire/Full Front Arc","emb2;;2;;Show Auxiliary Arc;2;;;2;;;;;true;0;-466;,Arc_2e_Empire_Medium_FFA.svg;,;true;Show Auxiliary Firing Arc;;;false;;1;1;true;;78,130;")
@@ -77,7 +77,7 @@ public class StemShip2e extends Decorator implements EditablePiece {
             .put("large/separatistalliance/Full Front Arc","emb2;;2;;Show Aux Arc;2;;;2;;;;;true;0;-480;,Arc_2e_CIS_Large_FFA.svg;,;true;Show Big Aux Arc;;;false;;1;1;true;;78,130;")
 
             // Full Back Arc
-            .put("small/separatistalliance/Full Back Arc","emb2;;2;;Show Auxiliary Arc;2;;;2;;;;;true;0;452;,Arc_2e_CIS_Small_FBA.svg;,;true;Show Auxiliary Firing Arc;;;false;;1;1;true;;78,130;")
+            .put("small/separatistalliance/Full Back Arc","emb2;;2;;Show Full Back Arc;2;;;2;;;;;true;0;452;,Arc_2e_CIS_Small_FBA.svg;,;true;Toggle Full Rear Arc;;;false;;1;1;true;;78,130;")
 
 
             // Rear Arc
@@ -247,7 +247,7 @@ public class StemShip2e extends Decorator implements EditablePiece {
             Embellishment emb = null;
             String arcKey = null;
             String newType = null;
-            while(i.hasNext())
+           /* while(i.hasNext())
             {
                 arc = i.next().getArc();
                 if(arc.equals("Rear Arc")) {
@@ -266,7 +266,7 @@ public class StemShip2e extends Decorator implements EditablePiece {
                     }
                     newType = null;
 
-            }
+            }*/
             //add rear arc for all
             emb = (Embellishment) Util.getEmbellishment(newGamePiece, "Layer - Show Auxiliary Firing Arc");
             arc = "Rear Arc";
