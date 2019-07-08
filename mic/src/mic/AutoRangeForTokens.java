@@ -53,7 +53,7 @@ enum ImagesUsedForRanges {
     ThermalDetonators("Mine_Explosion","","",0 ,0),
     IonBombs("Mine_Explosion","","",0 ,0),
     Bomblet("Mine_Explosion","","",0 ,0),
-    ElectroProton("Mine Explosion","Mine_Explosion2","",0,0);
+    ElectroProton("Mine_Explosion","Mine_Explosion2","",0,0);
 
     private final String r1Img;
     private final String r2Img;
