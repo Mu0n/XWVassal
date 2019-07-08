@@ -78,33 +78,112 @@ public class MouseShipGUIDrawable extends MouseGUIDrawable implements Drawable {
         // * Movement/Slam buttons
         // *
 
-        // * Page button
+        // * Extra page button
+        MouseShipGUIElement EXTRA = new MouseShipGUIElement(0, "TOG_EXT", "Toggle_Extra_Active.png", "Toggle_Extra_Inactive.png", 50,398,
+                null, -194);
+
+        // * Moves page button
         MouseShipGUIElement MOVESLAM = new MouseShipGUIElement(0, "TOG_MOV", "Toggle_Move_Active.png", "Toggle_Move_Inactive.png", 382,398,
                 null, -195);
 
         // * Straights
-        MouseShipGUIElement STRAIGHT5 = new MouseShipGUIElement(5, "MI_MOVE", "mi_straight.png", 10,20,
-                KeyStroke.getKeyStroke(KeyEvent.VK_5, KeyEvent.SHIFT_DOWN_MASK, false), 0);
-        MouseShipGUIElement STRAIGHT4 = new MouseShipGUIElement(5, "MI_MOVE", "mi_straight.png", 10,70,
-                KeyStroke.getKeyStroke(KeyEvent.VK_4, KeyEvent.SHIFT_DOWN_MASK, false), 0);
-        MouseShipGUIElement STRAIGHT3 = new MouseShipGUIElement(5, "MI_MOVE", "mi_straight.png", 10,120,
-                KeyStroke.getKeyStroke(KeyEvent.VK_3, KeyEvent.SHIFT_DOWN_MASK, false), 0);
-        MouseShipGUIElement STRAIGHT2 = new MouseShipGUIElement(5, "MI_MOVE", "mi_straight.png", 10,170,
-                KeyStroke.getKeyStroke(KeyEvent.VK_2, KeyEvent.SHIFT_DOWN_MASK, false), 0);
-        MouseShipGUIElement STRAIGHT1 = new MouseShipGUIElement(5, "MI_MOVE", "mi_straight.png", 10,210,
-                KeyStroke.getKeyStroke(KeyEvent.VK_1, KeyEvent.SHIFT_DOWN_MASK, false), 0);
+        MouseShipGUIElement STRAIGHT5 = new MouseShipGUIElement(5, "MI_MOVE", "mi_straight.png", 129,74,
+                KeyStroke.getKeyStroke(KeyEvent.VK_5, KeyEvent.SHIFT_DOWN_MASK, false), 0, " perform a straight 5");
+        MouseShipGUIElement STRAIGHT4 = new MouseShipGUIElement(5, "MI_MOVE", "mi_straight.png", 129,139,
+                KeyStroke.getKeyStroke(KeyEvent.VK_4, KeyEvent.SHIFT_DOWN_MASK, false), 0, " perform a straight 4");
+        MouseShipGUIElement STRAIGHT3 = new MouseShipGUIElement(5, "MI_MOVE", "mi_straight.png", 129,204,
+                KeyStroke.getKeyStroke(KeyEvent.VK_3, KeyEvent.SHIFT_DOWN_MASK, false), 0, " perform a straight 3");
+        MouseShipGUIElement STRAIGHT2 = new MouseShipGUIElement(5, "MI_MOVE", "mi_straight.png", 129,269,
+                KeyStroke.getKeyStroke(KeyEvent.VK_2, KeyEvent.SHIFT_DOWN_MASK, false), 0, " perform a straight 2");
+        MouseShipGUIElement STRAIGHT1 = new MouseShipGUIElement(5, "MI_MOVE", "mi_straight.png", 129,334,
+                KeyStroke.getKeyStroke(KeyEvent.VK_1, KeyEvent.SHIFT_DOWN_MASK, false),0, " perform a straight 1");
 
         // * K-turns
-        MouseShipGUIElement KTURN5 = new MouseShipGUIElement(5, "MI_MOVE", "mi_kturn.png", 90,20,
-                KeyStroke.getKeyStroke(KeyEvent.VK_5, KeyEvent.CTRL_DOWN_MASK + KeyEvent.ALT_DOWN_MASK, false), 0);
-        MouseShipGUIElement KTURN4 = new MouseShipGUIElement(5, "MI_MOVE", "mi_kturn.png", 90,70,
-                KeyStroke.getKeyStroke(KeyEvent.VK_4, KeyEvent.CTRL_DOWN_MASK + KeyEvent.ALT_DOWN_MASK, false), 0);
-        MouseShipGUIElement KTURN3 = new MouseShipGUIElement(5, "MI_MOVE", "mi_kturn.png", 90,120,
-                KeyStroke.getKeyStroke(KeyEvent.VK_3, KeyEvent.CTRL_DOWN_MASK + KeyEvent.ALT_DOWN_MASK, false), 0);
-        MouseShipGUIElement KTURN2 = new MouseShipGUIElement(5, "MI_MOVE", "mi_kturn.png", 90,170,
-                KeyStroke.getKeyStroke(KeyEvent.VK_2, KeyEvent.CTRL_DOWN_MASK + KeyEvent.ALT_DOWN_MASK, false), 0);
-        MouseShipGUIElement KTURN1 = new MouseShipGUIElement(5, "MI_MOVE", "mi_kturn.png", 90,210,
-                KeyStroke.getKeyStroke(KeyEvent.VK_1, KeyEvent.CTRL_DOWN_MASK + KeyEvent.ALT_DOWN_MASK, false), 0);
+        MouseShipGUIElement KTURN5 = new MouseShipGUIElement(5, "MI_MOVE", "mi_kturn.png", 340,74,
+                KeyStroke.getKeyStroke(KeyEvent.VK_5, KeyEvent.CTRL_DOWN_MASK + KeyEvent.ALT_DOWN_MASK, false), 0," perform a k-turn 5");
+        MouseShipGUIElement KTURN4 = new MouseShipGUIElement(5, "MI_MOVE", "mi_kturn.png", 340,139,
+                KeyStroke.getKeyStroke(KeyEvent.VK_4, KeyEvent.CTRL_DOWN_MASK + KeyEvent.ALT_DOWN_MASK, false), 0," perform a k-turn 4");
+        MouseShipGUIElement KTURN3 = new MouseShipGUIElement(5, "MI_MOVE", "mi_kturn.png", 340,204,
+                KeyStroke.getKeyStroke(KeyEvent.VK_3, KeyEvent.CTRL_DOWN_MASK + KeyEvent.ALT_DOWN_MASK, false), 0," perform a k-turn 3");
+        MouseShipGUIElement KTURN2 = new MouseShipGUIElement(5, "MI_MOVE", "mi_kturn.png", 340,269,
+                KeyStroke.getKeyStroke(KeyEvent.VK_2, KeyEvent.CTRL_DOWN_MASK + KeyEvent.ALT_DOWN_MASK, false), 0," perform a k-turn 2");
+        MouseShipGUIElement KTURN1 = new MouseShipGUIElement(5, "MI_MOVE", "mi_kturn.png", 340,334,
+                KeyStroke.getKeyStroke(KeyEvent.VK_1, KeyEvent.CTRL_DOWN_MASK + KeyEvent.ALT_DOWN_MASK, false), 0, " perform a k-turn 1");
+
+        // * Left Banks
+        MouseShipGUIElement LEFTBANK3 = new MouseShipGUIElement(5, "MI_MOVE", "mi_bank_left.png", 76,9,
+                KeyStroke.getKeyStroke(KeyEvent.VK_3, KeyEvent.CTRL_DOWN_MASK, false), 0, " perform a left bank 3");
+        MouseShipGUIElement LEFTBANK2 = new MouseShipGUIElement(5, "MI_MOVE", "mi_bank_left.png", 76,74,
+                KeyStroke.getKeyStroke(KeyEvent.VK_2, KeyEvent.CTRL_DOWN_MASK, false), 0, " perform a left bank 2");
+        MouseShipGUIElement LEFTBANK1 = new MouseShipGUIElement(5, "MI_MOVE", "mi_bank_left.png", 76,139,
+                KeyStroke.getKeyStroke(KeyEvent.VK_1, KeyEvent.CTRL_DOWN_MASK, false), 0, " perform a left bank 1");
+
+        // * Left Tallon Rolls
+        MouseShipGUIElement LEFTTROLL3 = new MouseShipGUIElement(5, "MI_MOVE", "mi_tallon_left.png", 23,215,
+                KeyStroke.getKeyStroke(KeyEvent.VK_T, KeyEvent.CTRL_DOWN_MASK, false), 0, " perform a left tallon roll 3");
+        MouseShipGUIElement LEFTTROLL2 = new MouseShipGUIElement(5, "MI_MOVE", "mi_tallon_left.png", 23,280,
+                KeyStroke.getKeyStroke(KeyEvent.VK_Y, KeyEvent.CTRL_DOWN_MASK, false), 0, " perform a left tallon roll 2");
+        MouseShipGUIElement LEFTTROLL1 = new MouseShipGUIElement(5, "MI_MOVE", "mi_tallon_left.png", 23,345,
+                KeyStroke.getKeyStroke(KeyEvent.VK_I, KeyEvent.CTRL_DOWN_MASK, false), 0, " perform a left tallon roll 1");
+
+        // * Left Segnor's Loops
+        MouseShipGUIElement LEFTSLOOP3 = new MouseShipGUIElement(5, "MI_MOVE", "mi_sloop_left.png", 76,204,
+                KeyStroke.getKeyStroke(KeyEvent.VK_E, KeyEvent.CTRL_DOWN_MASK, false), 0, " perform a left segnor's loop 3");
+        MouseShipGUIElement LEFTSLOOP2 = new MouseShipGUIElement(5, "MI_MOVE", "mi_sloop_left.png", 76,269,
+                KeyStroke.getKeyStroke(KeyEvent.VK_W, KeyEvent.CTRL_DOWN_MASK, false), 0, " perform a left segnor's loop 2");
+        MouseShipGUIElement LEFTSLOOP1 = new MouseShipGUIElement(5, "MI_MOVE", "mi_sloop_left.png", 76,334,
+                KeyStroke.getKeyStroke(KeyEvent.VK_Q, KeyEvent.CTRL_DOWN_MASK, false), 0, " perform a left segnor's loop 1");
+
+        // * Left Turns
+        MouseShipGUIElement LEFTTURN3 = new MouseShipGUIElement(5, "MI_MOVE", "mi_turn_left.png", 23,20,
+                KeyStroke.getKeyStroke(KeyEvent.VK_3, KeyEvent.CTRL_DOWN_MASK + KeyEvent.SHIFT_DOWN_MASK, false), 0, " perform a left turn 3");
+        MouseShipGUIElement LEFTTURN2 = new MouseShipGUIElement(5, "MI_MOVE", "mi_turn_left.png", 23,85,
+                KeyStroke.getKeyStroke(KeyEvent.VK_2, KeyEvent.CTRL_DOWN_MASK+ KeyEvent.SHIFT_DOWN_MASK, false), 0, " perform a left turn 2");
+        MouseShipGUIElement LEFTTURN1 = new MouseShipGUIElement(5, "MI_MOVE", "mi_turn_left.png", 23,150,
+                KeyStroke.getKeyStroke(KeyEvent.VK_1, KeyEvent.CTRL_DOWN_MASK+ KeyEvent.SHIFT_DOWN_MASK, false), 0, " perform a left turn 1");
+
+        // * Right Banks
+        MouseShipGUIElement RIGHTBANK3 = new MouseShipGUIElement(5, "MI_MOVE", "mi_bank_right.png", 393,9,
+                KeyStroke.getKeyStroke(KeyEvent.VK_3, KeyEvent.ALT_DOWN_MASK, false), 0, " perform a right bank 3");
+        MouseShipGUIElement RIGHTBANK2 = new MouseShipGUIElement(5, "MI_MOVE", "mi_bank_right.png", 393,74,
+                KeyStroke.getKeyStroke(KeyEvent.VK_2, KeyEvent.ALT_DOWN_MASK, false), 0, " perform a right bank 2");
+        MouseShipGUIElement RIGHTBANK1 = new MouseShipGUIElement(5, "MI_MOVE", "mi_bank_right.png", 393,139,
+                KeyStroke.getKeyStroke(KeyEvent.VK_1, KeyEvent.ALT_DOWN_MASK, false), 0, " perform a right bank 1");
+
+        // * Right Tallon Rolls
+        MouseShipGUIElement RIGHTTROLL3 = new MouseShipGUIElement(5, "MI_MOVE", "mi_tallon_right.png", 446,215,
+                KeyStroke.getKeyStroke(KeyEvent.VK_T, KeyEvent.ALT_DOWN_MASK, false), 0, " perform a right tallon roll 3");
+        MouseShipGUIElement RIGHTTROLL2 = new MouseShipGUIElement(5, "MI_MOVE", "mi_tallon_right.png", 446,280,
+                KeyStroke.getKeyStroke(KeyEvent.VK_Y, KeyEvent.ALT_DOWN_MASK, false), 0, " perform a right tallon roll 2");
+        MouseShipGUIElement RIGHTTROLL1 = new MouseShipGUIElement(5, "MI_MOVE", "mi_tallon_right.png", 446,345,
+                KeyStroke.getKeyStroke(KeyEvent.VK_I, KeyEvent.ALT_DOWN_MASK, false), 0, " perform a right tallon roll 1");
+
+        // * Right Segnor's Loops
+        MouseShipGUIElement RIGHTSLOOP3 = new MouseShipGUIElement(5, "MI_MOVE", "mi_sloop_right.png", 393,204,
+                KeyStroke.getKeyStroke(KeyEvent.VK_E, KeyEvent.ALT_DOWN_MASK, false), 0, " perform a right segnor's loop 3");
+        MouseShipGUIElement RIGHTSLOOP2 = new MouseShipGUIElement(5, "MI_MOVE", "mi_sloop_right.png", 393,269,
+                KeyStroke.getKeyStroke(KeyEvent.VK_W, KeyEvent.ALT_DOWN_MASK, false), 0, " perform a right segnor's loop 2");
+        MouseShipGUIElement RIGHTSLOOP1 = new MouseShipGUIElement(5, "MI_MOVE", "mi_sloop_right.png", 393,334,
+                KeyStroke.getKeyStroke(KeyEvent.VK_Q, KeyEvent.ALT_DOWN_MASK, false), 0, " perform a right segnor's loop 1");
+
+        // * Right Turns
+        MouseShipGUIElement RIGHTTURN3 = new MouseShipGUIElement(5, "MI_MOVE", "mi_turn_right.png", 446,20,
+                KeyStroke.getKeyStroke(KeyEvent.VK_3, KeyEvent.ALT_DOWN_MASK + KeyEvent.SHIFT_DOWN_MASK, false), 0, " perform a right turn 3");
+        MouseShipGUIElement RIGHTTURN2 = new MouseShipGUIElement(5, "MI_MOVE", "mi_turn_right.png", 446,85,
+                KeyStroke.getKeyStroke(KeyEvent.VK_2, KeyEvent.ALT_DOWN_MASK+ KeyEvent.SHIFT_DOWN_MASK, false), 0, " perform a right turn 2");
+        MouseShipGUIElement RIGHTTURN1 = new MouseShipGUIElement(5, "MI_MOVE", "mi_turn_right.png", 446,150,
+                KeyStroke.getKeyStroke(KeyEvent.VK_1, KeyEvent.ALT_DOWN_MASK+ KeyEvent.SHIFT_DOWN_MASK, false), 0, " perform a right turn 1");
+
+
+        // * Reverse
+        MouseShipGUIElement REVERSE = new MouseShipGUIElement(5, "MI_MOVE", "mi_reverse.png", 235,20,
+                KeyStroke.getKeyStroke(KeyEvent.VK_6, KeyEvent.SHIFT_DOWN_MASK, false), 0, " perform a reverse 1");
+        MouseShipGUIElement REVERSE2 = new MouseShipGUIElement(5, "MI_MOVE", "mi_reverse.png", 235,85,
+                KeyStroke.getKeyStroke(KeyEvent.VK_7, KeyEvent.SHIFT_DOWN_MASK, false), 0, " perform a reverse 2");
+        MouseShipGUIElement REVERSELEFT = new MouseShipGUIElement(5, "MI_MOVE", "mi_reverse_left.png", 182,20,
+                KeyStroke.getKeyStroke(KeyEvent.VK_6, KeyEvent.CTRL_DOWN_MASK, false), 0, " perform a reverse left");
+        MouseShipGUIElement REVERSERIGHT = new MouseShipGUIElement(5, "MI_MOVE", "mi_reverse_right.png", 288,20,
+                KeyStroke.getKeyStroke(KeyEvent.VK_6, KeyEvent.ALT_DOWN_MASK, false), 0, " perform a reverse right");
 
 
 
@@ -112,14 +191,14 @@ public class MouseShipGUIDrawable extends MouseGUIDrawable implements Drawable {
         // * Close button
         // *
 
-        MouseShipGUIElement CLOSE = new MouseShipGUIElement(0, null, "mi_close.png", 228,154, null, -66);
+        MouseShipGUIElement CLOSE = new MouseShipGUIElement(0, null, "mi_close.png", 228,154, null, -66, null);
         // *
         // * Misc icons
         // *
         MouseShipGUIElement LAUNCH = new MouseShipGUIElement(4, "TOG_ARC", "mi_launch_device.png", 216,5,
-                KeyStroke.getKeyStroke(KeyEvent.VK_B, KeyEvent.CTRL_DOWN_MASK + KeyEvent.SHIFT_DOWN_MASK, false), 0);
+                KeyStroke.getKeyStroke(KeyEvent.VK_B, KeyEvent.CTRL_DOWN_MASK + KeyEvent.SHIFT_DOWN_MASK, false), 0," launch a device");
         MouseShipGUIElement DROP = new MouseShipGUIElement(4, "TOG_BR", "mi_drop_device.png", 216,73,
-                KeyStroke.getKeyStroke(KeyEvent.VK_B, KeyEvent.CTRL_DOWN_MASK, false), 0);
+                KeyStroke.getKeyStroke(KeyEvent.VK_B, KeyEvent.CTRL_DOWN_MASK, false), 0," drop a device");
 
         MouseShipGUIElement CONPAGE = new MouseShipGUIElement(0,"TOG_CON", "Toggle_Conditions_Active.png", "Toggle_Conditions_Inactive.png",295, 397, null, -196);
 
@@ -127,25 +206,26 @@ public class MouseShipGUIDrawable extends MouseGUIDrawable implements Drawable {
         // * Turret icons
         // *
                 MouseShipGUIElement ROTATE_LEFT = new MouseShipGUIElement(3,"TOG_TUR", "mi_rotate_left.png", 138, 92,
-                KeyStroke.getKeyStroke(KeyEvent.VK_M, KeyEvent.ALT_DOWN_MASK + KeyEvent.SHIFT_DOWN_MASK, false), 0);
+                KeyStroke.getKeyStroke(KeyEvent.VK_M, KeyEvent.ALT_DOWN_MASK + KeyEvent.SHIFT_DOWN_MASK, false), 0,"rotate the turret counter-clockwise");
 
                 MouseShipGUIElement TURRET_ARC = new MouseShipGUIElement(3,"TOG_ARC", "mi_turret_arc.png", 217, 20,
-                KeyStroke.getKeyStroke(KeyEvent.VK_F, KeyEvent.ALT_DOWN_MASK, false), 0);
+                KeyStroke.getKeyStroke(KeyEvent.VK_F, KeyEvent.ALT_DOWN_MASK, false), 0, null);
                 MouseShipGUIElement TURRET_123 = new MouseShipGUIElement(3,"TOG_BR", "mi_turret_123.png", 218, 88,
-                KeyStroke.getKeyStroke(KeyEvent.VK_F, KeyEvent.ALT_DOWN_MASK + KeyEvent.SHIFT_DOWN_MASK, false), 0);
+                KeyStroke.getKeyStroke(KeyEvent.VK_F, KeyEvent.ALT_DOWN_MASK + KeyEvent.SHIFT_DOWN_MASK, false), 0, null);
 
                 MouseShipGUIElement ROTATE_RIGHT = new MouseShipGUIElement(3,"TOG_CON", "mi_rotate_right.png", 296, 92,
-                KeyStroke.getKeyStroke(KeyEvent.VK_M, KeyEvent.ALT_DOWN_MASK, false), 0);
+                KeyStroke.getKeyStroke(KeyEvent.VK_M, KeyEvent.ALT_DOWN_MASK, false), 0, " rotate the turret clockwise");
         // *
         // * Boost icons
         // *
         MouseShipGUIElement BOOST_LEFT = new MouseShipGUIElement(1,"BO_LEFT", "Boost_Left.png", 155, 64,
-                KeyStroke.getKeyStroke(KeyEvent.VK_1, KeyEvent.CTRL_DOWN_MASK, false), 0);
+                KeyStroke.getKeyStroke(KeyEvent.VK_1, KeyEvent.CTRL_DOWN_MASK, false), 0, " perform a boost bank left");
         MouseShipGUIElement BOOST_STR8 = new MouseShipGUIElement(1,"BO_STR8", "Boost_Front.png", 228, 54,
-                KeyStroke.getKeyStroke(KeyEvent.VK_1, KeyEvent.SHIFT_DOWN_MASK, false), 0);
+                KeyStroke.getKeyStroke(KeyEvent.VK_1, KeyEvent.SHIFT_DOWN_MASK, false), 0," perform a boost forward");
         MouseShipGUIElement BOOST_RIGHT = new MouseShipGUIElement(1,"BO_RIGHT", "Boost_Right.png", 295, 64,
-                KeyStroke.getKeyStroke(KeyEvent.VK_1, KeyEvent.ALT_DOWN_MASK, false), 0);
-        MouseShipGUIElement TURRETPAGE = new MouseShipGUIElement(0,"TOG_TUR", "Toggle_Turret_Active.png", "Toggle_Turret_Inactive.png",139, 397, null, -197);
+                KeyStroke.getKeyStroke(KeyEvent.VK_1, KeyEvent.ALT_DOWN_MASK, false), 0, " perform a boost bank right");
+        MouseShipGUIElement TURRETPAGE = new MouseShipGUIElement(0,"TOG_TUR", "Toggle_Turret_Active.png",
+                "Toggle_Turret_Inactive.png",139, 397, null, -197);
 
         // *
         // * Barrel roll left straight
@@ -153,53 +233,53 @@ public class MouseShipGUIDrawable extends MouseGUIDrawable implements Drawable {
         //medium and large ships have a lot less barrel roll options so while these buttons still show up, they default to either BR left 1 or BR right 1, centered
         if(isSmall) smallShipTripleChoice = 3;
         else smallShipTripleChoice = 1;
-         MouseShipGUIElement BR_L2 = new MouseShipGUIElement(1,"BR_L2", "Barrel_L_Side_2.png", 36, 226, null, smallShipTripleChoice);
-         MouseShipGUIElement BR_L1 = new MouseShipGUIElement(1,"BR_L1", "Barrel_L_Side_1.png", 110, 230, null, 1);
+         MouseShipGUIElement BR_L2 = new MouseShipGUIElement(1,"BR_L2", "Barrel_L_Side_2.png", 36, 226, null, smallShipTripleChoice, null);
+         MouseShipGUIElement BR_L1 = new MouseShipGUIElement(1,"BR_L1", "Barrel_L_Side_1.png", 110, 230, null, 1, null);
 
         // *
         // * Barrel roll left banks
         // *
         if(isSmall) smallShipTripleChoice = 9;
         else smallShipTripleChoice = 1;
-        MouseShipGUIElement BR_LF2 = new MouseShipGUIElement(1,"BR_LF2", "Barrel_L_Front_2.png", 64, 124, null, smallShipTripleChoice);
+        MouseShipGUIElement BR_LF2 = new MouseShipGUIElement(1,"BR_LF2", "Barrel_L_Front_2.png", 64, 124, null, smallShipTripleChoice, null);
         if(isSmall) smallShipTripleChoice = 5;
         else smallShipTripleChoice = 1;
-        MouseShipGUIElement BR_LF1 = new MouseShipGUIElement(1,"BR_LF1", "Barrel_L_Front_1.png", 120, 149, null, smallShipTripleChoice);
+        MouseShipGUIElement BR_LF1 = new MouseShipGUIElement(1,"BR_LF1", "Barrel_L_Front_1.png", 120, 149, null, smallShipTripleChoice, null);
         if(isSmall) smallShipTripleChoice = 11;
         else smallShipTripleChoice = 1;
-        MouseShipGUIElement BR_LB2 = new MouseShipGUIElement(1, "BR_LB2", "Barrel_L_Back_2.png", 63, 323, null, smallShipTripleChoice);
+        MouseShipGUIElement BR_LB2 = new MouseShipGUIElement(1, "BR_LB2", "Barrel_L_Back_2.png", 63, 323, null, smallShipTripleChoice, null);
         if(isSmall) smallShipTripleChoice = 6;
         else smallShipTripleChoice = 1;
-        MouseShipGUIElement BR_LB1 = new MouseShipGUIElement(1,"BR_LB1", "Barrel_L_Back_1.png", 117, 301, null, smallShipTripleChoice);
+        MouseShipGUIElement BR_LB1 = new MouseShipGUIElement(1,"BR_LB1", "Barrel_L_Back_1.png", 117, 301, null, smallShipTripleChoice, null);
 
         // *
         // * center square base
         // *
-         MouseShipGUIElement CENTER = new MouseShipGUIElement(0,null, "Base.png", 200, 200, null, -66);
+         MouseShipGUIElement CENTER = new MouseShipGUIElement(0,null, "Base.png", 200, 200, null, -66, null);
 
         // *
         // * Barrel roll right banks
         // *
         if(isSmall) smallShipTripleChoice = 10;
         else smallShipTripleChoice = 2;
-        MouseShipGUIElement BR_RF2 = new MouseShipGUIElement(1,"BR_RF2", "Barrel_R_Front_2.png", 377 , 123, null, smallShipTripleChoice);
+        MouseShipGUIElement BR_RF2 = new MouseShipGUIElement(1,"BR_RF2", "Barrel_R_Front_2.png", 377 , 123, null, smallShipTripleChoice, null);
         if(isSmall) smallShipTripleChoice = 7;
         else smallShipTripleChoice = 2;
-        MouseShipGUIElement BR_RF1 = new MouseShipGUIElement(1,"BR_RF1", "Barrel_R_Front_1.png", 320, 149, null, smallShipTripleChoice);
+        MouseShipGUIElement BR_RF1 = new MouseShipGUIElement(1,"BR_RF1", "Barrel_R_Front_1.png", 320, 149, null, smallShipTripleChoice, null);
         if(isSmall) smallShipTripleChoice = 12;
         else smallShipTripleChoice = 2;
-        MouseShipGUIElement BR_RB2 = new MouseShipGUIElement(1,"BR_RB2", "Barrel_R_Back_2.png", 377, 321, null, smallShipTripleChoice);
+        MouseShipGUIElement BR_RB2 = new MouseShipGUIElement(1,"BR_RB2", "Barrel_R_Back_2.png", 377, 321, null, smallShipTripleChoice, null);
         if(isSmall) smallShipTripleChoice = 8;
         else smallShipTripleChoice = 2;
-        MouseShipGUIElement BR_RB1 = new MouseShipGUIElement(1,"BR_RB1", "Barrel_R_Back_1.png", 320, 301, null, smallShipTripleChoice);
+        MouseShipGUIElement BR_RB1 = new MouseShipGUIElement(1,"BR_RB1", "Barrel_R_Back_1.png", 320, 301, null, smallShipTripleChoice, null);
 
         // *
         // * Barrel roll right straight
         // *
-         MouseShipGUIElement BR_R1 = new MouseShipGUIElement(1,"BR_R1", "Barrel_R_Side_1.png",325, 230, null, 2);
+         MouseShipGUIElement BR_R1 = new MouseShipGUIElement(1,"BR_R1", "Barrel_R_Side_1.png",325, 230, null, 2, null);
          if(isSmall) smallShipTripleChoice = 4;
         else smallShipTripleChoice = 2;
-         MouseShipGUIElement BR_R2 = new MouseShipGUIElement(1,"BR_R2", "Barrel_R_Side_2.png",404, 225, null, smallShipTripleChoice);
+         MouseShipGUIElement BR_R2 = new MouseShipGUIElement(1,"BR_R2", "Barrel_R_Side_2.png",404, 225, null, smallShipTripleChoice, null);
 
         MouseShipGUIElement ROLLPAGE = new MouseShipGUIElement(0,"TOG_BR", "Toggle_Barrel_Active.png", "Toggle_Barrel_Inactive.png",217, 395, null, -199);
         MouseShipGUIElement ARCPAGE = new MouseShipGUIElement(0,"TOG_ARC", "Toggle_Arc_Active.png", "Toggle_Arc_Inactive.png",217, 327, null, -198);
@@ -208,76 +288,103 @@ public class MouseShipGUIDrawable extends MouseGUIDrawable implements Drawable {
         // *
         // * SHIP STATS
         // *
-        MouseShipGUIElement SHIELD_STAT = new MouseShipGUIElement(0,null, "mi_shield_stat.png", 60, 462, null, 0);
-        MouseShipGUIElement SHIELD_UP = new MouseShipGUIElement(0,null, "mi_stat_up.png", 122,462,
-                KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyEvent.ALT_DOWN_MASK, false), 0);
-        MouseShipGUIElement SHIELD_DOWN = new MouseShipGUIElement(0,null, "mi_stat_down.png", 184,462,
-                KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyEvent.ALT_DOWN_MASK + KeyEvent.CTRL_DOWN_MASK, false), 0);
+        MouseShipGUIElement SHIELD_STAT = new MouseShipGUIElement(0,null, "mi_shield_stat.png", 48, 462, null, 0, null);
+        MouseShipGUIElement SHIELD_UP = new MouseShipGUIElement(0,null, "mi_stat_up.png", 110,462,
+                KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyEvent.ALT_DOWN_MASK, false), 0, null);
+        MouseShipGUIElement SHIELD_DOWN = new MouseShipGUIElement(0,null, "mi_stat_down.png", 172,462,
+                KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyEvent.ALT_DOWN_MASK + KeyEvent.CTRL_DOWN_MASK, false), 0, null);
 
-        MouseShipGUIElement FORCE_STAT = new MouseShipGUIElement(0,null, "mi_force_stat.png", 268, 536, null, 0);
-        MouseShipGUIElement FORCE_UP = new MouseShipGUIElement(0,null, "mi_stat_up.png", 330,536,
-                KeyStroke.getKeyStroke(KeyEvent.VK_I, KeyEvent.SHIFT_DOWN_MASK, false), 0);
-        MouseShipGUIElement FORCE_DOWN = new MouseShipGUIElement(0,null, "mi_stat_down.png", 392,536,
-                KeyStroke.getKeyStroke(KeyEvent.VK_I, KeyEvent.SHIFT_DOWN_MASK + KeyEvent.CTRL_DOWN_MASK, false), 0);
+        MouseShipGUIElement FORCE_STAT = new MouseShipGUIElement(0,null, "mi_force_stat.png", 280, 536, null, 0, null);
+        MouseShipGUIElement FORCE_UP = new MouseShipGUIElement(0,null, "mi_stat_up.png", 342,536,
+                KeyStroke.getKeyStroke(KeyEvent.VK_I, KeyEvent.SHIFT_DOWN_MASK, false), 0, null);
+        MouseShipGUIElement FORCE_DOWN = new MouseShipGUIElement(0,null, "mi_stat_down.png", 404,536,
+                KeyStroke.getKeyStroke(KeyEvent.VK_I, KeyEvent.SHIFT_DOWN_MASK + KeyEvent.CTRL_DOWN_MASK, false), 0, null);
 
-        MouseShipGUIElement HULL_STAT = new MouseShipGUIElement(0,null, "mi_hull_stat.png", 60, 536, null, 0);
-        MouseShipGUIElement HULL_UP = new MouseShipGUIElement(0,null, "mi_stat_up.png", 122,536,
-                KeyStroke.getKeyStroke(KeyEvent.VK_H, KeyEvent.ALT_DOWN_MASK, false), 0);
-        MouseShipGUIElement HULL_DOWN = new MouseShipGUIElement(0,null, "mi_stat_down.png", 184,536,
-                KeyStroke.getKeyStroke(KeyEvent.VK_H, KeyEvent.ALT_DOWN_MASK + KeyEvent.CTRL_DOWN_MASK, false), 0);
+        MouseShipGUIElement HULL_STAT = new MouseShipGUIElement(0,null, "mi_hull_stat.png", 48, 536, null, 0, null);
+        MouseShipGUIElement HULL_UP = new MouseShipGUIElement(0,null, "mi_stat_up.png", 110,536,
+                KeyStroke.getKeyStroke(KeyEvent.VK_H, KeyEvent.ALT_DOWN_MASK, false), 0, null);
+        MouseShipGUIElement HULL_DOWN = new MouseShipGUIElement(0,null, "mi_stat_down.png", 172,536,
+                KeyStroke.getKeyStroke(KeyEvent.VK_H, KeyEvent.ALT_DOWN_MASK + KeyEvent.CTRL_DOWN_MASK, false), 0, null);
 
-        MouseShipGUIElement CHARGE_STAT = new MouseShipGUIElement(0,null, "mi_charge_stat.png", 268, 462, null, 0);
-        MouseShipGUIElement CHARGE_UP = new MouseShipGUIElement(0,null, "mi_stat_up.png", 330,462,
-                KeyStroke.getKeyStroke(KeyEvent.VK_C, KeyEvent.SHIFT_DOWN_MASK, false), 0);
-        MouseShipGUIElement CHARGE_DOWN = new MouseShipGUIElement(0,null, "mi_stat_down.png", 392,462,
-                KeyStroke.getKeyStroke(KeyEvent.VK_C, KeyEvent.SHIFT_DOWN_MASK + KeyEvent.CTRL_DOWN_MASK, false), 0);
+        MouseShipGUIElement CHARGE_STAT = new MouseShipGUIElement(0,null, "mi_charge_stat.png", 280, 462, null, 0, null);
+        MouseShipGUIElement CHARGE_UP = new MouseShipGUIElement(0,null, "mi_stat_up.png", 342,462,
+                KeyStroke.getKeyStroke(KeyEvent.VK_C, KeyEvent.SHIFT_DOWN_MASK, false), 0, null);
+        MouseShipGUIElement CHARGE_DOWN = new MouseShipGUIElement(0,null, "mi_stat_down.png", 404,462,
+                KeyStroke.getKeyStroke(KeyEvent.VK_C, KeyEvent.SHIFT_DOWN_MASK + KeyEvent.CTRL_DOWN_MASK, false), 0, null);
 // *
         // * ARC Toggles
         // *
         MouseShipGUIElement FRONT_ARC_TOGGLE = new MouseShipGUIElement(2, null, "mi_front_arc.png", 11, 132,
-                KeyStroke.getKeyStroke(KeyEvent.VK_F, KeyEvent.CTRL_DOWN_MASK, false), 0);
+                KeyStroke.getKeyStroke(KeyEvent.VK_F, KeyEvent.CTRL_DOWN_MASK, false), 0, null);
         MouseShipGUIElement FRONT_ARC_123 = new MouseShipGUIElement(2, null, "mi_range_123.png", 104, 132,
-                KeyStroke.getKeyStroke(KeyEvent.VK_F, KeyEvent.CTRL_DOWN_MASK + KeyEvent.SHIFT_DOWN_MASK, false), 0);
+                KeyStroke.getKeyStroke(KeyEvent.VK_F, KeyEvent.CTRL_DOWN_MASK + KeyEvent.SHIFT_DOWN_MASK, false), 0, null);
 
         MouseShipGUIElement BACK_ARC_TOGGLE = new MouseShipGUIElement(2, null, "mi_back_arc.png", 11, 199,
-                KeyStroke.getKeyStroke(KeyEvent.VK_V, KeyEvent.CTRL_DOWN_MASK, false), 0);
+                KeyStroke.getKeyStroke(KeyEvent.VK_V, KeyEvent.CTRL_DOWN_MASK, false), 0, null);
         MouseShipGUIElement BACK_ARC_123 = new MouseShipGUIElement(2, null, "mi_range_123.png", 104, 199,
-                KeyStroke.getKeyStroke(KeyEvent.VK_V, KeyEvent.CTRL_DOWN_MASK + KeyEvent.SHIFT_DOWN_MASK, false), 0);
+                KeyStroke.getKeyStroke(KeyEvent.VK_V, KeyEvent.CTRL_DOWN_MASK + KeyEvent.SHIFT_DOWN_MASK, false), 0, null);
 
         MouseShipGUIElement LEFT_ARC_TOGGLE = new MouseShipGUIElement(2, null, "mi_left_arc.png", 11, 266,
-                KeyStroke.getKeyStroke(KeyEvent.VK_G, KeyEvent.CTRL_DOWN_MASK, false), 0);
+                KeyStroke.getKeyStroke(KeyEvent.VK_G, KeyEvent.CTRL_DOWN_MASK, false), 0, null);
         MouseShipGUIElement LEFT_ARC_123 = new MouseShipGUIElement(2, null, "mi_range_123.png", 104, 266,
-                KeyStroke.getKeyStroke(KeyEvent.VK_G, KeyEvent.CTRL_DOWN_MASK + KeyEvent.SHIFT_DOWN_MASK, false), 0);
+                KeyStroke.getKeyStroke(KeyEvent.VK_G, KeyEvent.CTRL_DOWN_MASK + KeyEvent.SHIFT_DOWN_MASK, false), 0, null);
 
         MouseShipGUIElement RIGHT_ARC_TOGGLE = new MouseShipGUIElement(2, null, "mi_right_arc.png", 11, 333,
-                KeyStroke.getKeyStroke(KeyEvent.VK_G, KeyEvent.ALT_DOWN_MASK, false), 0);
+                KeyStroke.getKeyStroke(KeyEvent.VK_G, KeyEvent.ALT_DOWN_MASK, false), 0, null);
         MouseShipGUIElement RIGHT_ARC_123 = new MouseShipGUIElement(2, null, "mi_range_123.png", 104, 333,
-                KeyStroke.getKeyStroke(KeyEvent.VK_G, KeyEvent.ALT_DOWN_MASK + KeyEvent.SHIFT_DOWN_MASK, false), 0);
+                KeyStroke.getKeyStroke(KeyEvent.VK_G, KeyEvent.ALT_DOWN_MASK + KeyEvent.SHIFT_DOWN_MASK, false), 0, null);
 
         MouseShipGUIElement TARGET_TOGGLE = new MouseShipGUIElement(2, null, "mi_target.png", 330, 132,
-                KeyStroke.getKeyStroke(KeyEvent.VK_L, KeyEvent.CTRL_DOWN_MASK, false), 0);
+                KeyStroke.getKeyStroke(KeyEvent.VK_L, KeyEvent.CTRL_DOWN_MASK, false), 0, null);
         MouseShipGUIElement TARGET_123 = new MouseShipGUIElement(2, null, "mi_range_123.png", 423, 132,
-                KeyStroke.getKeyStroke(KeyEvent.VK_L, KeyEvent.CTRL_DOWN_MASK + KeyEvent.SHIFT_DOWN_MASK, false), 0);
+                KeyStroke.getKeyStroke(KeyEvent.VK_L, KeyEvent.CTRL_DOWN_MASK + KeyEvent.SHIFT_DOWN_MASK, false), 0, null);
 
         MouseShipGUIElement BULLSEYE_TOGGLE = new MouseShipGUIElement(2, null, "mi_bullseye.png", 330, 199,
-                KeyStroke.getKeyStroke(KeyEvent.VK_X, KeyEvent.CTRL_DOWN_MASK, false), 0);
+                KeyStroke.getKeyStroke(KeyEvent.VK_X, KeyEvent.CTRL_DOWN_MASK, false), 0, null);
         MouseShipGUIElement BULLSEYE_123 = new MouseShipGUIElement(2, null, "mi_range_123.png", 423, 199,
-                KeyStroke.getKeyStroke(KeyEvent.VK_X, KeyEvent.CTRL_DOWN_MASK + KeyEvent.SHIFT_DOWN_MASK, false), 0);
+                KeyStroke.getKeyStroke(KeyEvent.VK_X, KeyEvent.CTRL_DOWN_MASK + KeyEvent.SHIFT_DOWN_MASK, false), 0, null);
 
         MouseShipGUIElement FORE_TOGGLE = new MouseShipGUIElement(2, null, "mi_fore_arc.png", 330, 266,
-                KeyStroke.getKeyStroke(KeyEvent.VK_N, KeyEvent.CTRL_DOWN_MASK, false), 0);
+                KeyStroke.getKeyStroke(KeyEvent.VK_N, KeyEvent.CTRL_DOWN_MASK, false), 0, null);
         MouseShipGUIElement FORE_123 = new MouseShipGUIElement(2, null, "mi_range_123.png", 423, 266,
-                KeyStroke.getKeyStroke(KeyEvent.VK_N, KeyEvent.CTRL_DOWN_MASK + KeyEvent.SHIFT_DOWN_MASK, false), 0);
+                KeyStroke.getKeyStroke(KeyEvent.VK_N, KeyEvent.CTRL_DOWN_MASK + KeyEvent.SHIFT_DOWN_MASK, false), 0, null);
 
         MouseShipGUIElement AFT_TOGGLE = new MouseShipGUIElement(2, null, "mi_aft_arc.png", 330, 333,
-                KeyStroke.getKeyStroke(KeyEvent.VK_N, KeyEvent.ALT_DOWN_MASK, false), 0);
+                KeyStroke.getKeyStroke(KeyEvent.VK_N, KeyEvent.ALT_DOWN_MASK, false), 0, null);
         MouseShipGUIElement AFT_123 = new MouseShipGUIElement(2, null, "mi_range_123.png", 423, 333,
-                KeyStroke.getKeyStroke(KeyEvent.VK_N, KeyEvent.ALT_DOWN_MASK + KeyEvent.SHIFT_DOWN_MASK, false), 0);
+                KeyStroke.getKeyStroke(KeyEvent.VK_N, KeyEvent.ALT_DOWN_MASK + KeyEvent.SHIFT_DOWN_MASK, false), 0, null);
 
 
-        //2,3 104,244
-        //1,4 6,316 (+56+16 = 72)
-        //Y=     132,188,244,316
+        guiElements.add(EXTRA);
+        guiElements.add(LEFTTROLL3);
+        guiElements.add(LEFTTROLL2);
+        guiElements.add(LEFTTROLL1);
+        guiElements.add(LEFTSLOOP3);
+        guiElements.add(LEFTSLOOP2);
+        guiElements.add(LEFTSLOOP1);
+        guiElements.add(RIGHTTROLL3);
+        guiElements.add(RIGHTTROLL2);
+        guiElements.add(RIGHTTROLL1);
+        guiElements.add(RIGHTSLOOP3);
+        guiElements.add(RIGHTSLOOP2);
+        guiElements.add(RIGHTSLOOP1);
+
+        guiElements.add(LEFTBANK3);
+        guiElements.add(LEFTBANK2);
+        guiElements.add(LEFTBANK1);
+        guiElements.add(RIGHTBANK3);
+        guiElements.add(RIGHTBANK2);
+        guiElements.add(RIGHTBANK1);
+        guiElements.add(RIGHTTURN3);
+        guiElements.add(RIGHTTURN2);
+        guiElements.add(RIGHTTURN1);
+        guiElements.add(REVERSELEFT);
+        guiElements.add(REVERSE2);
+        guiElements.add(REVERSE);
+        guiElements.add(REVERSERIGHT);
+        guiElements.add(LEFTTURN3);
+        guiElements.add(LEFTTURN2);
+        guiElements.add(LEFTTURN1);
         guiElements.add(MOVESLAM);
         guiElements.add(STRAIGHT1);
         guiElements.add(STRAIGHT2);

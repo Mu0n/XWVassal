@@ -382,27 +382,16 @@ public class MouseShipGUI extends AbstractConfigurable {
                     if (s.contains(e.getX(), e.getY())) {
                         //First class of GUI-driven commands: Direct keystroke commands, keep the GUI up
                         if (elem.associatedKeyStroke != null) {
-
                             Command directKeyStroke = activatedPiece.keyEvent(elem.associatedKeyStroke);
-                            //directKeyStroke.execute();
+
+                            if(elem.getImageName() != null && elem.getLogMessage() != null){
+                                Command verboseChat = logToChatCommand("*** " + getCurrentPlayer().getName() + " makes " + activatedPiece.getProperty("Pilot Name").toString() + elem.getLogMessage());
+                                verboseChat.execute();
+                                verboseChat.append(directKeyStroke);
+                                removePopup(theMap, e);
+                            }
                             GameModule.getGameModule().sendAndLog(directKeyStroke);
                             e.consume();
-
-                            //allow boost, which are direct keystroke commands to dismiss the GUI NONETHELESS
-                            if(elem.getImageName() != null)
-                                if(elem.getImageName().equals("Boost_Left.png") ||
-                                    elem.getImageName().equals("Boost_Right.png") ||
-                                    elem.getImageName().equals("Boost_Front.png")) {
-
-                                    if(elem.getImageName().equals("Boost_Left.png")){
-                                        logToChat("*** " + getCurrentPlayer().getName() + " makes " + activatedPiece.getProperty("Pilot Name").toString() + " perform a boost bank left");
-                                    }if(elem.getImageName().equals("Boost_Right.png")){
-                                        logToChat("*** " +getCurrentPlayer().getName() + " makes " + activatedPiece.getProperty("Pilot Name").toString() + " perform a boost bank right");
-                                    }if(elem.getImageName().equals("Boost_Front.png")){
-                                        logToChat("*** " +getCurrentPlayer().getName() + " makes " + activatedPiece.getProperty("Pilot Name").toString() + " perform a boost forward");
-                                    }
-                                    removePopup(theMap, e);
-                                }
                         }
                         //Second class of GUI-driven commands (ship repositions): Goes to a 2nd step with triple click choices:
                         else if (elem.whichTripleChoice > 0 && elem.whichTripleChoice < 200) {

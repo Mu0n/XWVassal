@@ -30,11 +30,15 @@ public class MouseShipGUIElement {
     int whichTripleChoice = 0; //can select one of 3 choices in certain situations (barrel rolls, tallon rolls, etc)
     Shape nonRect;
     int page = 0; //used for page toggling, to keep the GUI light in appearance. By default, stuff should be at page 0 to always appear
+    String logMessage; //used when a move must happen and output a logtochat message (such as boost or slam)
 
     public MouseShipGUIElement(){
         toggle = false;
     }
 
+    public String getLogMessage(){
+        return logMessage;
+    }
     public String getImageName(){
         return imageName;
     }
@@ -83,13 +87,14 @@ public class MouseShipGUIElement {
     }
 
     //main constructor
-    public MouseShipGUIElement(int wantedPage, String slotName, String wantedImageName, int wantedX, int wantedY, KeyStroke wantedKeyStroke, int wantedTripleChoice){
+    public MouseShipGUIElement(int wantedPage, String slotName, String wantedImageName, int wantedX, int wantedY, KeyStroke wantedKeyStroke, int wantedTripleChoice, String wantedLogMessage){
         page = wantedPage;
         globalX = wantedX;
         globalY = wantedY;
         associatedKeyStroke = wantedKeyStroke;
         whichTripleChoice = wantedTripleChoice;
         imageName = wantedImageName;
+        logMessage = wantedLogMessage;
 
         List<PieceSlot> pieceSlots = GameModule.getGameModule().getAllDescendantComponentsOf(PieceSlot.class);
         GamePiece piece = null;
