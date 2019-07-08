@@ -134,6 +134,7 @@ public class AutoRangeForTokens extends Decorator implements EditablePiece {
             .put("Thermal Detonators", ImagesUsedForRanges.ThermalDetonators)
             .put("Ion Bombs", ImagesUsedForRanges.IonBombs)
             .put("Bomblet", ImagesUsedForRanges.Bomblet)
+            .put("Electro-Proton Bomb", ImagesUsedForRanges.ElectroProton)
             .build();
 
     public AutoRangeForTokens() {
