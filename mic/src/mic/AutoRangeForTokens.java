@@ -48,12 +48,12 @@ enum ImagesUsedForRanges {
     Debris6("Debris6_r1","Debris6_r2","Debris6_TL", -5, -3),
     Cargo("Cloud_Debris_range1","","", 0, 0),
     SpareParts("","","", 0, 0),
-    SeismicCharge("Mine_Explosion","","",0 ,0),
-    ProtonBomb("Mine_Explosion","","",0 ,0),
-    ThermalDetonators("Mine_Explosion","","",0 ,0),
-    IonBombs("Mine_Explosion","","",0 ,0),
-    Bomblet("Mine_Explosion","","",0 ,0),
-    ElectroProton("Mine_Explosion","Mine_Explosion2","",0,0);
+    SeismicCharge("Mine_Explosion","Mine_Explosion2","Mine_Explosion3",0 ,0),
+    ProtonBomb("Mine_Explosion","Mine_Explosion2","Mine_Explosion3",0 ,0),
+    ThermalDetonators("Mine_Explosion","Mine_Explosion2","Mine_Explosion3",0 ,0),
+    IonBombs("Mine_Explosion","Mine_Explosion2","Mine_Explosion3",0 ,0),
+    Bomblet("Mine_Explosion","Mine_Explosion2","Mine_Explosion3",0 ,0),
+    ElectroProton("Mine_Explosion","Mine_Explosion2","Mine_Explosion3",0,0);
 
     private final String r1Img;
     private final String r2Img;

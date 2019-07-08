@@ -76,6 +76,10 @@ public class StemShip2e extends Decorator implements EditablePiece {
             .put("large/galacticrepublic/Full Front Arc","emb2;;2;;Show Aux Arc;2;;;2;;;;;true;0;-480;,Arc_2e_Republic_Large_FFA.svg;,;true;Show Big Aux Arc;;;false;;1;1;true;;78,130;")
             .put("large/separatistalliance/Full Front Arc","emb2;;2;;Show Aux Arc;2;;;2;;;;;true;0;-480;,Arc_2e_CIS_Large_FFA.svg;,;true;Show Big Aux Arc;;;false;;1;1;true;;78,130;")
 
+            // Full Back Arc
+            .put("small/separatistalliance/Full Back Arc","emb2;;2;;Show Auxiliary Arc;2;;;2;;;;;true;0;-452;,Arc_2e_CIS_Small_FBA.svg;,;true;Show Auxiliary Firing Arc;;;false;;1;1;true;;78,130;")
+
+
             // Rear Arc
             .put("small/rebelalliance/Rear Arc","emb2;;2;;Show Auxiliary Arc;2;;;2;;;;;true;0;481;,Arc_2e_Rebel_Small_Aux.svg;,;true;Show Auxiliary Firing Arc;;;false;;1;1;true;;86,130;")
             .put("small/galacticempire/Rear Arc","emb2;;2;;Show Auxiliary Arc;2;;;2;;;;;true;0;481;,Arc_2e_Empire_Small_Aux.svg;,;true;Show Auxiliary Firing Arc;;;false;;1;1;true;;86,130;")
@@ -262,6 +266,35 @@ public class StemShip2e extends Decorator implements EditablePiece {
                     }
                     newType = null;
 
+            }
+            //add rear arc for all
+            emb = (Embellishment) Util.getEmbellishment(newGamePiece, "Layer - Show Auxiliary Firing Arc");
+            arc = "Rear Arc";
+            arcKey = mic.Canonicalizer.getCleanedName(source.getShipData().getSize()) + "/" + mic.Canonicalizer.getCleanedName(source.getPilotData().getFaction()) + "/" + arc;
+            newType = firingArcTypes.get(arcKey);
+            if(newType != null && !newType.isEmpty())
+            {
+                emb.mySetType(newType);
+            }
+
+            //add full front arc
+            emb = (Embellishment) Util.getEmbellishment(newGamePiece, "Layer - Show Full Front Arc");
+            arc = "Full Front Arc";
+            arcKey = mic.Canonicalizer.getCleanedName(source.getShipData().getSize()) + "/" + mic.Canonicalizer.getCleanedName(source.getPilotData().getFaction()) + "/" + arc;
+            newType = firingArcTypes.get(arcKey);
+            if(newType != null && !newType.isEmpty())
+            {
+                emb.mySetType(newType);
+            }
+
+            //add full back arc
+            emb = (Embellishment) Util.getEmbellishment(newGamePiece, "Layer - Show Full Back Arc");
+            arc = "Full Back Arc";
+            arcKey = mic.Canonicalizer.getCleanedName(source.getShipData().getSize()) + "/" + mic.Canonicalizer.getCleanedName(source.getPilotData().getFaction()) + "/" + arc;
+            newType = firingArcTypes.get(arcKey);
+            if(newType != null && !newType.isEmpty())
+            {
+                emb.mySetType(newType);
             }
 
             //add front arc for all, for card effects mostly even if there's no front arc primary weapon
