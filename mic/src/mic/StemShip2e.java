@@ -151,6 +151,9 @@ public class StemShip2e extends Decorator implements EditablePiece {
             .put("large/galacticrepublic/Bullseye","emb2;;2;;Toggle Bullseye Arc;2;;;2;;;;;true;0;-535;,Arc_2e_BE_Republic.svg;,;true;Show Bullseye Arc;;;false;;1;1;true;;88,130;")
             .put("large/separatistalliance/Bullseye","emb2;;2;;Toggle Bullseye Arc;2;;;2;;;;;true;0;-535;,Arc_2e_BE_CIS.svg;,;true;Show Bullseye Arc;;;false;;1;1;true;;88,130;")
 
+
+            //Left Arc
+            .put("small/rebelalliance/Left Arc","emb2;;2;;Toggle Left Arc;2;;;2;;;;;true;0;-479;,Arc_2e_Rebel_Small_Left.svg;,;true;Show Left Arc;;;false;;1;1;true;;88,130;")
             .build();
 
     public StemShip2e(){
