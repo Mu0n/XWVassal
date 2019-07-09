@@ -378,6 +378,16 @@ public class StemShip2e extends Decorator implements EditablePiece {
                 emb.mySetType(newType);
             }
 
+            //add right arc
+            emb = (Embellishment) Util.getEmbellishment(newGamePiece, "Layer - Show Right Arc");
+            arc = "Right Arc";
+            arcKey = mic.Canonicalizer.getCleanedName(source.getShipData().getSize()) + "/" + mic.Canonicalizer.getCleanedName(source.getPilotData().getFaction()) + "/" + arc;
+            newType = firingArcTypes.get(arcKey);
+            if(newType != null && !newType.isEmpty())
+            {
+                emb.mySetType(newType);
+            }
+
             //add front arc for all, for card effects mostly even if there's no front arc primary weapon
             emb = (Embellishment) Util.getEmbellishment(newGamePiece, "Layer - Arc");
             arc = "Front Arc";
