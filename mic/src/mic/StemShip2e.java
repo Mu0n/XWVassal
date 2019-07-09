@@ -194,13 +194,13 @@ public class StemShip2e extends Decorator implements EditablePiece {
             .put("medium/galacticrepublic/Right Arc","emb2;;2;;Toggle Right Arc;2;;;2;;;;;true;505;0;,Arc_2e_Republic_Medium_Right.svg;,;true;Show Right Arc;;;false;;1;1;true;;71,520;")
             .put("medium/separatistalliance/Right Arc","emb2;;2;;Toggle Right Arc;2;;;2;;;;;true;505;0;,Arc_2e_CIS_Medium_Right.svg;,;true;Show Right Arc;;;false;;1;1;true;;71,520;")
 
-            .put("large/rebelalliance/Right Arc","emb2;;2;;Toggle Right Arc;2;;;2;;;;;true;533;0;,Arc_2e_Rebel_Large_Right.svg;,;true;Show Right Arc;;;false;;1;1;true;;71,520;")
-            .put("large/galacticempire/Right Arc","emb2;;2;;Toggle Right Arc;2;;;2;;;;;true;533;0;,Arc_2e_Empire_Large_Right.svg;,;true;Show Right Arc;;;false;;1;1;true;;71,520;")
-            .put("large/scumandvillainy/Right Arc","emb2;;2;;Toggle Right Arc;2;;;2;;;;;true;533;0;,Arc_2e_Scum_Large_Right.svg;,;true;Show Right Arc;;;false;;1;1;true;;71,520;")
-            .put("large/resistance/Right Arc","emb2;;2;;Toggle Right Arc;2;;;2;;;;;true;533;0;,Arc_2e_Resistance_Large_Right.svg;,;true;Show Right Arc;;;false;;1;1;true;;71,520;")
-            .put("large/firstorder/Right Arc","emb2;;2;;Toggle Right Arc;2;;;2;;;;;true;533;0;,Arc_2e_FirstOrder_Large_Right.svg;,;true;Show Right Arc;;;false;;1;1;true;;71,520;")
-            .put("large/galacticrepublic/Right Arc","emb2;;2;;Toggle Right Arc;2;;;2;;;;;true;533;0;,Arc_2e_Republic_Large_Right.svg;,;true;Show Right Arc;;;false;;1;1;true;;71,520;")
-            .put("large/separatistalliance/Right Arc","emb2;;2;;Toggle Right Arc;2;;;2;;;;;true;533;0;,Arc_2e_CIS_Large_Right.svg;,;true;Show Right Arc;;;false;;1;1;true;;71,520;")
+            .put("large/rebelalliance/Right Arc","emb2;;2;;Toggle Right Arc;2;;;2;;;;;true;532;0;,Arc_2e_Rebel_Large_Right.svg;,;true;Show Right Arc;;;false;;1;1;true;;71,520;")
+            .put("large/galacticempire/Right Arc","emb2;;2;;Toggle Right Arc;2;;;2;;;;;true;532;0;,Arc_2e_Empire_Large_Right.svg;,;true;Show Right Arc;;;false;;1;1;true;;71,520;")
+            .put("large/scumandvillainy/Right Arc","emb2;;2;;Toggle Right Arc;2;;;2;;;;;true;532;0;,Arc_2e_Scum_Large_Right.svg;,;true;Show Right Arc;;;false;;1;1;true;;71,520;")
+            .put("large/resistance/Right Arc","emb2;;2;;Toggle Right Arc;2;;;2;;;;;true;532;0;,Arc_2e_Resistance_Large_Right.svg;,;true;Show Right Arc;;;false;;1;1;true;;71,520;")
+            .put("large/firstorder/Right Arc","emb2;;2;;Toggle Right Arc;2;;;2;;;;;true;532;0;,Arc_2e_FirstOrder_Large_Right.svg;,;true;Show Right Arc;;;false;;1;1;true;;71,520;")
+            .put("large/galacticrepublic/Right Arc","emb2;;2;;Toggle Right Arc;2;;;2;;;;;true;532;0;,Arc_2e_Republic_Large_Right.svg;,;true;Show Right Arc;;;false;;1;1;true;;71,520;")
+            .put("large/separatistalliance/Right Arc","emb2;;2;;Toggle Right Arc;2;;;2;;;;;true;532;0;,Arc_2e_CIS_Large_Right.svg;,;true;Show Right Arc;;;false;;1;1;true;;71,520;")
             .build();
 
     public StemShip2e(){

@@ -100,6 +100,8 @@ public class MouseShipGUI extends AbstractConfigurable {
                     synchronized (IsKeyPressed.class) {
 
                         if(activatedPiece!=null){
+
+                            //activate to tweak the position of buttons in the mouse interface the following block of code. WASD displaces the buttons and tab switches to the next element in the list of guiElements.
                             switch (ke.getID()) {
                                 case KeyEvent.KEY_PRESSED:
                                     if (ke.getKeyCode() == KeyEvent.VK_TAB){
