@@ -218,9 +218,9 @@ public class MouseShipGUIDrawable extends MouseGUIDrawable implements Drawable {
                 KeyStroke.getKeyStroke(KeyEvent.VK_M, KeyEvent.ALT_DOWN_MASK + KeyEvent.SHIFT_DOWN_MASK, false), -999,"rotate the turret counter-clockwise");
 
                 MouseShipGUIElement TURRET_ARC = new MouseShipGUIElement(3,"TOG_ARC", "mi_turret_arc.png", 217, 20,
-                KeyStroke.getKeyStroke(KeyEvent.VK_F, KeyEvent.ALT_DOWN_MASK, false), -999, null);
+                KeyStroke.getKeyStroke(KeyEvent.VK_F, KeyEvent.ALT_DOWN_MASK, false), 0, null);
                 MouseShipGUIElement TURRET_123 = new MouseShipGUIElement(3,"TOG_BR", "mi_turret_123.png", 218, 88,
-                KeyStroke.getKeyStroke(KeyEvent.VK_F, KeyEvent.ALT_DOWN_MASK + KeyEvent.SHIFT_DOWN_MASK, false), -999, null);
+                KeyStroke.getKeyStroke(KeyEvent.VK_F, KeyEvent.ALT_DOWN_MASK + KeyEvent.SHIFT_DOWN_MASK, false), 0, null);
 
                 MouseShipGUIElement ROTATE_RIGHT = new MouseShipGUIElement(3,"TOG_CON", "mi_rotate_right.png", 296, 92,
                 KeyStroke.getKeyStroke(KeyEvent.VK_M, KeyEvent.ALT_DOWN_MASK, false), -999, " rotate the turret clockwise");
