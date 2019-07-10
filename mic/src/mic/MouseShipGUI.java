@@ -386,7 +386,13 @@ public class MouseShipGUI extends AbstractConfigurable {
                         if (elem.associatedKeyStroke != null) {
                             Command directKeyStroke = activatedPiece.keyEvent(elem.associatedKeyStroke);
 
-                            if(elem.getImageName() != null && elem.getLogMessage() != null){
+                            //buttons that have a message to display in the chat and want to dismiss the GUI
+                            if(elem.whichTripleChoice == -999) { //buttons that have a message to display but DON'T want to dismiss the GUI
+                                Command verboseChat = logToChatCommand("*** " + getCurrentPlayer().getName() + " makes " + activatedPiece.getProperty("Pilot Name").toString() + elem.getLogMessage());
+                                verboseChat.execute();
+                                verboseChat.append(directKeyStroke);
+                            }
+                            else if(elem.getImageName() != null && elem.getLogMessage() != null){
                                 Command verboseChat = logToChatCommand("*** " + getCurrentPlayer().getName() + " makes " + activatedPiece.getProperty("Pilot Name").toString() + elem.getLogMessage());
                                 verboseChat.execute();
                                 verboseChat.append(directKeyStroke);
