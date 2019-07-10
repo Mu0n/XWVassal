@@ -199,7 +199,10 @@ public class MouseShipGUIDrawable extends MouseGUIDrawable implements Drawable {
         //ship rotations
         MouseShipGUIElement CW1 = new MouseShipGUIElement(4,"TOG_TUR", "mi_cw_1.png", 400, 150,
                 KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, KeyEvent.CTRL_DOWN_MASK, false), -999," rotate 1 degree clockwise");
-
+        MouseShipGUIElement CW15 = new MouseShipGUIElement(4,"TOG_BR", "mi_cw_15.png", 450, 150,
+                KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, 0, false), -999," rotate 1 degree clockwise");
+        MouseShipGUIElement CW90 = new MouseShipGUIElement(4,"TOG_CON", "mi_cw_90.png", 500, 150,
+                KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, 0, false), -999," rotate 1 degree clockwise");
 
         //1 pixel translations
         MouseShipGUIElement DISPLACEUP = new MouseShipGUIElement(4, "ARROW_UP", "mi_arrow_up.png", 355,5,
@@ -369,6 +372,11 @@ public class MouseShipGUIDrawable extends MouseGUIDrawable implements Drawable {
                 KeyStroke.getKeyStroke(KeyEvent.VK_N, KeyEvent.ALT_DOWN_MASK, false), 0, null);
         MouseShipGUIElement AFT_123 = new MouseShipGUIElement(2, null, "mi_range_123_todo.png", 423, 333,
                 KeyStroke.getKeyStroke(KeyEvent.VK_N, KeyEvent.ALT_DOWN_MASK + KeyEvent.SHIFT_DOWN_MASK, false), 0, null);
+
+
+        guiElements.add(CW1);
+        guiElements.add(CW15);
+        guiElements.add(CW90);
 
         guiElements.add(DISPLACEUP);
         guiElements.add(DISPLACEDOWN);
