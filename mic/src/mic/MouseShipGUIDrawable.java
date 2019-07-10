@@ -197,6 +197,9 @@ public class MouseShipGUIDrawable extends MouseGUIDrawable implements Drawable {
         // *
 
         //ship rotations
+        MouseShipGUIElement ROT180 = new MouseShipGUIElement(4,"TOG_ARC", "mi_180.png", 295, 100,
+                KeyStroke.getKeyStroke(KeyEvent.VK_U, KeyEvent.CTRL_DOWN_MASK, false), 0," flip around 180 degrees");
+
         MouseShipGUIElement CW1 = new MouseShipGUIElement(4,"TOG_TUR", "mi_cw_1.png", 321, 206,
                 KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, KeyEvent.CTRL_DOWN_MASK, false), -999," rotate 1 degree clockwise");
         MouseShipGUIElement CW15 = new MouseShipGUIElement(4,"TOG_BR", "mi_cw_15.png", 397, 198,
@@ -205,18 +208,18 @@ public class MouseShipGUIDrawable extends MouseGUIDrawable implements Drawable {
                 KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, KeyEvent.ALT_DOWN_MASK, false), -999," rotate 90 degrees clockwise");
 
         //1 pixel translations
-        MouseShipGUIElement DISPLACEUP = new MouseShipGUIElement(4, "ARROW_UP", "mi_arrow_up.png", 355,5,
+        MouseShipGUIElement DISPLACEUP = new MouseShipGUIElement(4, "ARROW_UP", "mi_arrow_up.png", 375,5,
                 KeyStroke.getKeyStroke(KeyEvent.VK_UP, KeyEvent.SHIFT_DOWN_MASK, false), -999," move up 1 pixel");
-        MouseShipGUIElement DISPLACEDOWN = new MouseShipGUIElement(4, "ARROW_DOWN", "mi_arrow_down.png", 354,73,
+        MouseShipGUIElement DISPLACEDOWN = new MouseShipGUIElement(4, "ARROW_DOWN", "mi_arrow_down.png", 374,73,
                 KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, KeyEvent.SHIFT_DOWN_MASK, false), -999," move down 1 pixel");
-        MouseShipGUIElement DISPLACELEFT = new MouseShipGUIElement(4, "ARROW_LEFT", "mi_arrow_left.png", 303,39,
+        MouseShipGUIElement DISPLACELEFT = new MouseShipGUIElement(4, "ARROW_LEFT", "mi_arrow_left.png", 323,39,
                 KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, KeyEvent.SHIFT_DOWN_MASK, false), -999," move left 1 pixel");
-        MouseShipGUIElement DISPLACERIGHT = new MouseShipGUIElement(4, "ARROW_RIGHT", "mi_arrow_right.png", 406,40,
+        MouseShipGUIElement DISPLACERIGHT = new MouseShipGUIElement(4, "ARROW_RIGHT", "mi_arrow_right.png", 426,40,
                 KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, KeyEvent.SHIFT_DOWN_MASK, false), -999," move right 1 pixel");
 
-        MouseShipGUIElement LAUNCH = new MouseShipGUIElement(4, "TOG_ARC", "mi_launch_device.png", 216,5,
+        MouseShipGUIElement LAUNCH = new MouseShipGUIElement(4, "TOG_ARC", "mi_launch_device.png", 116,5,
                 KeyStroke.getKeyStroke(KeyEvent.VK_B, KeyEvent.CTRL_DOWN_MASK + KeyEvent.SHIFT_DOWN_MASK, false), 0," launch a device");
-        MouseShipGUIElement DROP = new MouseShipGUIElement(4, "TOG_BR", "mi_drop_device.png", 216,73,
+        MouseShipGUIElement DROP = new MouseShipGUIElement(4, "TOG_BR", "mi_drop_device.png", 116,73,
                 KeyStroke.getKeyStroke(KeyEvent.VK_B, KeyEvent.CTRL_DOWN_MASK, false), 0," drop a device");
 
         MouseShipGUIElement CONPAGE = new MouseShipGUIElement(0,"TOG_CON", "Toggle_Conditions_Active.png", "Toggle_Conditions_Inactive.png",295, 397, null, -196);
