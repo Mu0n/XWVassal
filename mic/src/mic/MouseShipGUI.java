@@ -334,7 +334,7 @@ public class MouseShipGUI extends AbstractConfigurable {
 
                     theMap.addDrawComponent(msgd);
                     theMap.repaint();
-                    logToChatWithoutUndo("*-- Welcome to the beta Mouse Graphical Interface. You got here by ctrl-left clicking on a ship. You can left-click on the icons to perform \"things\" on the ship. Click on the red X to close the popup");
+                    logToChatWithoutUndo("*-- Welcome to the Mouse-driven Graphical Interface for ships. You got here by ctrl-left clicking on a ship. You can left-click on the icons to perform \"things\" on the ship. Click on the red X to close the popup");
 
                     //save this ship and popup Drawable for future behavior
                     activatedPiece = ship;
