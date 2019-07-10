@@ -195,6 +195,15 @@ public class MouseShipGUIDrawable extends MouseGUIDrawable implements Drawable {
         // *
         // * Misc icons
         // *
+        MouseShipGUIElement DISPLACEUP = new MouseShipGUIElement(4, "ARROW_UP", "mi_arrow_up.png", 416,5,
+                KeyStroke.getKeyStroke(KeyEvent.VK_UP, KeyEvent.SHIFT_DOWN_MASK, false), 0," move up 1 pixel");
+        MouseShipGUIElement DISPLACEDOWN = new MouseShipGUIElement(4, "ARROW_DOWN", "mi_arrow_down.png", 416,45,
+                KeyStroke.getKeyStroke(KeyEvent.VK_UP, KeyEvent.SHIFT_DOWN_MASK, false), 0," move up 1 pixel");
+        MouseShipGUIElement DISPLACELEFT = new MouseShipGUIElement(4, "ARROW_LEFT", "mi_arrow_left.png", 380,25,
+                KeyStroke.getKeyStroke(KeyEvent.VK_UP, KeyEvent.SHIFT_DOWN_MASK, false), 0," move up 1 pixel");
+        MouseShipGUIElement DISPLACERIGHT = new MouseShipGUIElement(4, "ARROW_RIGHT", "mi_arrow_right.png", 450,25,
+                KeyStroke.getKeyStroke(KeyEvent.VK_UP, KeyEvent.SHIFT_DOWN_MASK, false), 0," move up 1 pixel");
+
         MouseShipGUIElement LAUNCH = new MouseShipGUIElement(4, "TOG_ARC", "mi_launch_device.png", 216,5,
                 KeyStroke.getKeyStroke(KeyEvent.VK_B, KeyEvent.CTRL_DOWN_MASK + KeyEvent.SHIFT_DOWN_MASK, false), 0," launch a device");
         MouseShipGUIElement DROP = new MouseShipGUIElement(4, "TOG_BR", "mi_drop_device.png", 216,73,
