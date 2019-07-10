@@ -363,6 +363,10 @@ public class MouseShipGUIDrawable extends MouseGUIDrawable implements Drawable {
         MouseShipGUIElement AFT_123 = new MouseShipGUIElement(2, null, "mi_range_123_todo.png", 423, 333,
                 KeyStroke.getKeyStroke(KeyEvent.VK_N, KeyEvent.ALT_DOWN_MASK + KeyEvent.SHIFT_DOWN_MASK, false), 0, null);
 
+        guiElements.add(DISPLACEUP);
+        guiElements.add(DISPLACEDOWN);
+        guiElements.add(DISPLACELEFT);
+        guiElements.add(DISPLACERIGHT);
 
         guiElements.add(EXTRA);
         guiElements.add(LEFTTROLL3);
