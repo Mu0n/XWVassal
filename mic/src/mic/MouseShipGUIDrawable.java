@@ -195,6 +195,13 @@ public class MouseShipGUIDrawable extends MouseGUIDrawable implements Drawable {
         // *
         // * Misc icons
         // *
+
+        //ship rotations
+        MouseShipGUIElement CW1 = new MouseShipGUIElement(4,"TOG_TUR", "mi_cw_1.png", 400, 150,
+                KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, KeyEvent.CTRL_DOWN_MASK, false), -999," rotate 1 degree clockwise");
+
+
+        //1 pixel translations
         MouseShipGUIElement DISPLACEUP = new MouseShipGUIElement(4, "ARROW_UP", "mi_arrow_up.png", 355,5,
                 KeyStroke.getKeyStroke(KeyEvent.VK_UP, KeyEvent.SHIFT_DOWN_MASK, false), -999," move up 1 pixel");
         MouseShipGUIElement DISPLACEDOWN = new MouseShipGUIElement(4, "ARROW_DOWN", "mi_arrow_down.png", 354,73,
