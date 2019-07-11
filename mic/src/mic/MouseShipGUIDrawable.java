@@ -384,6 +384,9 @@ public class MouseShipGUIDrawable extends MouseGUIDrawable implements Drawable {
                 KeyStroke.getKeyStroke(KeyEvent.VK_N, KeyEvent.ALT_DOWN_MASK + KeyEvent.SHIFT_DOWN_MASK, false), 0, null);
 
 
+        guiElements.add(CCW1);
+        guiElements.add(CCW15);
+        guiElements.add(CCW90);
         guiElements.add(ROT180);
 
         guiElements.add(DROP);
