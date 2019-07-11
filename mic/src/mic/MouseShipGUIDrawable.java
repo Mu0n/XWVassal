@@ -204,14 +204,14 @@ public class MouseShipGUIDrawable extends MouseGUIDrawable implements Drawable {
                 KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, KeyEvent.CTRL_DOWN_MASK, false), -999," rotate 1 degree clockwise");
         MouseShipGUIElement CW15 = new MouseShipGUIElement(4,"TOG_BR", "mi_cw_15.png", 397, 198,
                 KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, 0, false), -999," rotate 15 degrees clockwise");
-        MouseShipGUIElement CW90 = new MouseShipGUIElement(4,"TOG_CON", "mi_cw_90.png", 468, 216,
+        MouseShipGUIElement CW90 = new MouseShipGUIElement(4,"TOG_CON", "mi_cw_90.png", 407, 260,
                 KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, KeyEvent.ALT_DOWN_MASK, false), -999," rotate 90 degrees clockwise");
 
-        MouseShipGUIElement CCW1 = new MouseShipGUIElement(4,"TOG_CON", "mi_ccw_1.png", 280, 206,
+        MouseShipGUIElement CCW1 = new MouseShipGUIElement(4,"TOG_CON", "mi_ccw_1.png", 113, 206,
                 KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, KeyEvent.CTRL_DOWN_MASK, false), -999," rotate 1 degree counter-clockwise");
-        MouseShipGUIElement CCW15 = new MouseShipGUIElement(4,"TOG_BR", "mi_ccw_15.png", 140, 198,
+        MouseShipGUIElement CCW15 = new MouseShipGUIElement(4,"TOG_BR", "mi_ccw_15.png", 38, 198,
                 KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, 0, false), -999," rotate 15 degrees counter-clockwise");
-        MouseShipGUIElement CCW90 = new MouseShipGUIElement(4,"TOG_TUR", "mi_ccw_90.png", 20, 216,
+        MouseShipGUIElement CCW90 = new MouseShipGUIElement(4,"TOG_TUR", "mi_ccw_90.png", 29, 260,
                 KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, KeyEvent.ALT_DOWN_MASK, false), -999," rotate 90 degrees counter-clockwise");
 
         //1 pixel translations
