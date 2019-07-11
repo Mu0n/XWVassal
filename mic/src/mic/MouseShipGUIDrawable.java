@@ -207,6 +207,13 @@ public class MouseShipGUIDrawable extends MouseGUIDrawable implements Drawable {
         MouseShipGUIElement CW90 = new MouseShipGUIElement(4,"TOG_CON", "mi_cw_90.png", 468, 216,
                 KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, KeyEvent.ALT_DOWN_MASK, false), -999," rotate 90 degrees clockwise");
 
+        MouseShipGUIElement CCW1 = new MouseShipGUIElement(4,"TOG_CON", "mi_ccw_1.png", 280, 206,
+                KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, KeyEvent.CTRL_DOWN_MASK, false), -999," rotate 1 degree counter-clockwise");
+        MouseShipGUIElement CCW15 = new MouseShipGUIElement(4,"TOG_BR", "mi_ccw_15.png", 140, 198,
+                KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, 0, false), -999," rotate 15 degrees counter-clockwise");
+        MouseShipGUIElement CCW90 = new MouseShipGUIElement(4,"TOG_TUR", "mi_ccw_90.png", 20, 216,
+                KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, KeyEvent.ALT_DOWN_MASK, false), -999," rotate 90 degrees counter-clockwise");
+
         //1 pixel translations
         MouseShipGUIElement DISPLACEUP = new MouseShipGUIElement(4, "ARROW_UP", "mi_arrow_up.png", 407,29,
                 KeyStroke.getKeyStroke(KeyEvent.VK_UP, KeyEvent.SHIFT_DOWN_MASK, false), -999," move up 1 pixel");
