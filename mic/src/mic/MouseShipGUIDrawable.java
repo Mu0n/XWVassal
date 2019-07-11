@@ -197,7 +197,7 @@ public class MouseShipGUIDrawable extends MouseGUIDrawable implements Drawable {
         // *
 
         //ship rotations
-        MouseShipGUIElement SFOILS = new MouseShipGUIElement(4,"TOG_BR", "mi_sfoils.png", 217, 5,
+        MouseShipGUIElement SFOILS = new MouseShipGUIElement(4,"TOG_BR", "mi_sfoils.png", 218, 21,
                 KeyStroke.getKeyStroke(KeyEvent.VK_U, KeyEvent.ALT_DOWN_MASK, false), 0,null);
         MouseShipGUIElement ROT180 = new MouseShipGUIElement(4,"TOG_ARC", "mi_180.png", 217, 86,
                 KeyStroke.getKeyStroke(KeyEvent.VK_U, KeyEvent.CTRL_DOWN_MASK, false), 0," flip around 180 degrees");
