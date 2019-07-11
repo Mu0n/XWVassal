@@ -208,13 +208,13 @@ public class MouseShipGUIDrawable extends MouseGUIDrawable implements Drawable {
                 KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, KeyEvent.ALT_DOWN_MASK, false), -999," rotate 90 degrees clockwise");
 
         //1 pixel translations
-        MouseShipGUIElement DISPLACEUP = new MouseShipGUIElement(4, "ARROW_UP", "mi_arrow_up.png", 375,5,
+        MouseShipGUIElement DISPLACEUP = new MouseShipGUIElement(4, "ARROW_UP", "mi_arrow_up.png", 407,29,
                 KeyStroke.getKeyStroke(KeyEvent.VK_UP, KeyEvent.SHIFT_DOWN_MASK, false), -999," move up 1 pixel");
-        MouseShipGUIElement DISPLACEDOWN = new MouseShipGUIElement(4, "ARROW_DOWN", "mi_arrow_down.png", 374,73,
+        MouseShipGUIElement DISPLACEDOWN = new MouseShipGUIElement(4, "ARROW_DOWN", "mi_arrow_down.png", 406,97,
                 KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, KeyEvent.SHIFT_DOWN_MASK, false), -999," move down 1 pixel");
-        MouseShipGUIElement DISPLACELEFT = new MouseShipGUIElement(4, "ARROW_LEFT", "mi_arrow_left.png", 323,39,
+        MouseShipGUIElement DISPLACELEFT = new MouseShipGUIElement(4, "ARROW_LEFT", "mi_arrow_left.png", 355,63,
                 KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, KeyEvent.SHIFT_DOWN_MASK, false), -999," move left 1 pixel");
-        MouseShipGUIElement DISPLACERIGHT = new MouseShipGUIElement(4, "ARROW_RIGHT", "mi_arrow_right.png", 426,40,
+        MouseShipGUIElement DISPLACERIGHT = new MouseShipGUIElement(4, "ARROW_RIGHT", "mi_arrow_right.png", 458,64,
                 KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, KeyEvent.SHIFT_DOWN_MASK, false), -999," move right 1 pixel");
 
         MouseShipGUIElement LAUNCH = new MouseShipGUIElement(4, "TOG_ARC", "mi_launch_device.png", 116,5,
@@ -377,6 +377,10 @@ public class MouseShipGUIDrawable extends MouseGUIDrawable implements Drawable {
                 KeyStroke.getKeyStroke(KeyEvent.VK_N, KeyEvent.ALT_DOWN_MASK + KeyEvent.SHIFT_DOWN_MASK, false), 0, null);
 
 
+        guiElements.add(ROT180);
+
+        guiElements.add(DROP);
+        guiElements.add(LAUNCH);
         guiElements.add(CW1);
         guiElements.add(CW15);
         guiElements.add(CW90);
@@ -428,8 +432,6 @@ public class MouseShipGUIDrawable extends MouseGUIDrawable implements Drawable {
         guiElements.add(KTURN2);
         guiElements.add(KTURN1);
         guiElements.add(CLOSE);
-        guiElements.add(DROP);
-        guiElements.add(LAUNCH);
         guiElements.add(CONPAGE);
         guiElements.add(ROTATE_LEFT);
         guiElements.add(TURRET_123);
