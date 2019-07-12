@@ -744,10 +744,10 @@ public class MouseShipGUIDrawable extends MouseGUIDrawable implements Drawable {
         double bestX = -666.0, bestY = -666.0;
         int bestBump = 999;
         boolean breakoff=false;
-        for(int i=1; i<3; i++){ //scan to the right of the ship
+        for(int i=1; i<8; i++){ //scan to the right of the ship
             float radius = SMALLSHIPGUIRADIUSBASE*getRadiusMultiplier(_pilotShip.getSize());
             radius *= i;
-            for(int j=40; j>=-40; j=j-20){
+            for(int j=80; j>=-80; j=j-20){
                 double x = rotX(radius, 0, -j);
                 double y = rotY(radius, 0, -j);
 
@@ -772,7 +772,7 @@ public class MouseShipGUIDrawable extends MouseGUIDrawable implements Drawable {
             if(breakoff) break;
         } //end scan to the right of the ship
         if(breakoff == false){
-            for(int i=1; i<3; i++){ //scan to the left of the ship
+            for(int i=1; i<8; i++){ //scan to the left of the ship
                 float radius = SMALLSHIPGUIRADIUSBASE*getRadiusMultiplier(_pilotShip.getSize());
                 radius*=i;
                 for(int j= 40; j >= -40; j=j-20){
