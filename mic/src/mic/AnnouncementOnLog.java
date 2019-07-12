@@ -11,6 +11,7 @@ import VASSAL.tools.DataArchive;
 import VASSAL.tools.io.FileArchive;
 import com.google.common.collect.Lists;
 import mic.ota.*;
+import org.omg.CORBA.Environment;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -135,6 +136,8 @@ public class AnnouncementOnLog extends AbstractConfigurable {
             versionLabel.setFont(new Font("Serif", Font.PLAIN, 20));
             JLabel versionLabel2 = new JLabel(msg);
             JLabel versionLabel3 = new JLabel("The latest version available for download is " + line);
+            JLabel disclaimLabel = new JLabel("This X-Wing Second Edition Vassal module is UNOFFICIAL.");
+            JLabel disclaimLabel2 = new JLabel("It is not endorsed by Fantasy Flight Games and Asmodee.");
             JLabel checkLabel = new JLabel("The module is about to check for additional content.");
             JLabel checkLabel2 = new JLabel("The Content Checker button will flash black if it finds any.");
             JLabel checkLabel3 = new JLabel("Click on it to download the missing components.");
@@ -158,6 +161,8 @@ public class AnnouncementOnLog extends AbstractConfigurable {
             labelPanel.add(versionLabel);
             labelPanel.add(versionLabel2);
             labelPanel.add(versionLabel3);
+            labelPanel.add(disclaimLabel);
+            labelPanel.add(disclaimLabel2);
 
             labelPanel.add(Box.createRigidArea(new Dimension(0,8)));
             labelPanel.add(new JSeparator());

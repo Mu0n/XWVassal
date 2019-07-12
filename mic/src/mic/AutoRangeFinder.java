@@ -67,6 +67,9 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
     private static final int backArcOption = 4;
     private static final int mobileSideArcOption = 5;
     private static final int bullseyeArcOption = 6;
+    private static final int backAftArcOption = 7;
+    private static final int leftArcOption = 8;
+    private static final int rightArcOption = 9;
 
     public static final String ID = "auto-range-finder";
 
@@ -79,9 +82,12 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
             .put("CTRL SHIFT F", frontArcOption) //primary arc
             .put("CTRL SHIFT L", turretArcOption) //turret/TL
             .put("CTRL SHIFT N", frontAuxArcOption) //front pairs of aux arc (YV-666, Auzituck)
+            .put("ALT SHIFT N", backAftArcOption)
             .put("CTRL SHIFT V", backArcOption) //back aux arc
             .put("ALT SHIFT F", mobileSideArcOption) //mobile turret arc, must detect which one is selected on the ship
             .put("CTRL SHIFT X", bullseyeArcOption) //bullseye arc
+            .put("CTRL SHIFT G", leftArcOption) //left arc
+            .put("ALT SHIFT G", rightArcOption) //right arc
             .put("F5", 12)
             .put("F6", 13)
             .build();
@@ -145,6 +151,9 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
         return -1;
     }
 
+    void SayNotImplementedYet(){
+        logToChat("The auto-range for this arc has not yet been implemented yet.");
+    }
     public Command keyEvent(KeyStroke stroke) {
 
         ArrayList<RangeFindings> rfindings = new ArrayList<RangeFindings>(); //findings compiled here
@@ -283,7 +292,10 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
                 bestLine = findBestLineInSimpleArcs(D1, D2, D3, 3);
                 break;
             case frontAuxArcOption:
-                if(twoPointOh == false) bestLine = findBestLineInFrontAuxArcs(D1, D2, D3, 3);
+                if(twoPointOh == false) {
+                    //bestLine = findBestLineInFrontAuxArcs(D1, D2, D3, 3);
+                    SayNotImplementedYet();
+                }
                 else findBestLineInFullFrontArc(D1, D2, D3, 3);;
                 break;
             case mobileSideArcOption:
@@ -291,6 +303,18 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
                 break;
             case bullseyeArcOption:
                 bestLine = findBestLineInBullseye(D1, D2, D3, 3);
+                break;
+            case backAftArcOption:
+                //bestLine = findBestLineInBackAuxArcs(D1, D2, D3, 3);
+                SayNotImplementedYet();
+                break;
+            case leftArcOption:
+                //bestLine = findBestLineInLeftArc(D1, D2, D3, 3);
+                SayNotImplementedYet();
+                break;
+            case rightArcOption:
+                //bestLine = findBestLineInRightArc(D1, D2, D3, 3);
+                SayNotImplementedYet();
                 break;
         }
 

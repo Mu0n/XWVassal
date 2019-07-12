@@ -58,7 +58,7 @@ public class StemShip2e extends Decorator implements EditablePiece {
             .put("small/resistance/Full Front Arc","emb2;;2;;Show Auxiliary Arc;2;;;2;;;;;true;0;-452;,Arc_2e_Resistance_Small_FFA.svg;,;true;Show Auxiliary Firing Arc;;;false;;1;1;true;;78,130;")
             .put("small/firstorder/Full Front Arc","emb2;;2;;Show Auxiliary Arc;2;;;2;;;;;true;0;-452;,Arc_2e_FirstOrder_Small_FFA.svg;,;true;Show Auxiliary Firing Arc;;;false;;1;1;true;;78,130;")
             .put("small/galacticrepublic/Full Front Arc","emb2;;2;;Show Auxiliary Arc;2;;;2;;;;;true;0;-452;,Arc_2e_Republic_Small_FFA.svg;,;true;Show Auxiliary Firing Arc;;;false;;1;1;true;;78,130;")
-            .put("small/separatistalliance/Full Front Arc","emb2;;2;;Show Auxiliary Arc;2;;;2;;;;;true;0;-452;,Arc_2e_CIS_Small_FFA.svg;,;true;Show Auxiliary Firing Arc;;;false;;1;1;true;;78,130;")
+            .put("small/separatistalliance/Full Front Arc","emb2;;2;;Show Full Front Arc;2;;;2;;;;;true;0;-452;,Arc_2e_CIS_Small_FFA.svg;,;true;Toggle Full Front Arc;;;false;;1;1;true;;78,130;")
 
             .put("medium/rebelalliance/Full Front Arc","emb2;;2;;Show Auxiliary Arc;2;;;2;;;;;true;0;-466;,Arc_2e_Rebel_Medium_FFA.svg;,;true;Show Auxiliary Firing Arc;;;false;;1;1;true;;78,130;")
             .put("medium/galacticempire/Full Front Arc","emb2;;2;;Show Auxiliary Arc;2;;;2;;;;;true;0;-466;,Arc_2e_Empire_Medium_FFA.svg;,;true;Show Auxiliary Firing Arc;;;false;;1;1;true;;78,130;")
@@ -75,6 +75,31 @@ public class StemShip2e extends Decorator implements EditablePiece {
             .put("large/firstorder/Full Front Arc","emb2;;2;;Show Aux Arc;2;;;2;;;;;true;0;-480;,Arc_2e_FirstOrder_Large_FFA.svg;,;true;Show Big Aux Arc;;;false;;1;1;true;;78,130;")
             .put("large/galacticrepublic/Full Front Arc","emb2;;2;;Show Aux Arc;2;;;2;;;;;true;0;-480;,Arc_2e_Republic_Large_FFA.svg;,;true;Show Big Aux Arc;;;false;;1;1;true;;78,130;")
             .put("large/separatistalliance/Full Front Arc","emb2;;2;;Show Aux Arc;2;;;2;;;;;true;0;-480;,Arc_2e_CIS_Large_FFA.svg;,;true;Show Big Aux Arc;;;false;;1;1;true;;78,130;")
+
+            // Full Back Arc
+            .put("small/rebelalliance/Full Back Arc","emb2;;2;;Show Full Back Arc;2;;;2;;;;;true;0;452;,Arc_2e_Rebel_Small_FBA.svg;,;true;Toggle Full Back Arc;;;false;;1;1;true;;78,520;")
+            .put("small/galacticempire/Full Back Arc","emb2;;2;;Show Full Back Arc;2;;;2;;;;;true;0;452;,Arc_2e_Empire_Small_FBA.svg;,;true;Toggle Full Back Arc;;;false;;1;1;true;;78,520;")
+            .put("small/scumandvillainy/Full Back Arc","emb2;;2;;Show Full Back Arc;2;;;2;;;;;true;0;452;,Arc_2e_Scum_Small_FBA.svg;,;true;Toggle Full Back Arc;;;false;;1;1;true;;78,520;")
+            .put("small/resistance/Full Back Arc","emb2;;2;;Show Full Back Arc;2;;;2;;;;;true;0;452;,Arc_2e_Resistance_Small_FBA.svg;,;true;Toggle Full Back Arc;;;false;;1;1;true;;78,520;")
+            .put("small/firstorder/Full Back Arc","emb2;;2;;Show Full Back Arc;2;;;2;;;;;true;0;452;,Arc_2e_FirstOrder_Small_FBA.svg;,;true;Toggle Full Back Arc;;;false;;1;1;true;;78,520;")
+            .put("small/galacticrepublic/Full Back Arc","emb2;;2;;Show Full Back Arc;2;;;2;;;;;true;0;452;,Arc_2e_Republic_Small_FBA.svg;,;true;Toggle Full Back Arc;;;false;;1;1;true;;78,520;")
+            .put("small/separatistalliance/Full Back Arc","emb2;;2;;Show Full Back Arc;2;;;2;;;;;true;0;452;,Arc_2e_CIS_Small_FBA.svg;,;true;Toggle Full Back Arc;;;false;;1;1;true;;78,520;")
+
+            .put("medium/rebelalliance/Full Back Arc","emb2;;2;;Show Full Back Arc;2;;;2;;;;;true;0;466;,Arc_2e_Rebel_Medium_FBA.svg;,;true;Toggle Full Back Arc;;;false;;1;1;true;;78,520;")
+            .put("medium/galacticempire/Full Back Arc","emb2;;2;;Show Full Back Arc;2;;;2;;;;;true;0;466;,Arc_2e_Empire_Medium_FBA.svg;,;true;Toggle Full Back Arc;;;false;;1;1;true;;78,520;")
+            .put("medium/scumandvillainy/Full Back Arc","emb2;;2;;Show Full Back Arc;2;;;2;;;;;true;0;466;,Arc_2e_Scum_Medium_FBA.svg;,;true;Toggle Full Back Arc;;;false;;1;1;true;;78,520;")
+            .put("medium/resistance/Full Back Arc","emb2;;2;;Show Full Back Arc;2;;;2;;;;;true;0;466;,Arc_2e_Resistance_Medium_FBA.svg;,;true;Toggle Full Back Arc;;;false;;1;1;true;;78,520;")
+            .put("medium/firstorder/Full Back Arc","emb2;;2;;Show Full Back Arc;2;;;2;;;;;true;0;466;,Arc_2e_FirstOrder_Medium_FBA.svg;,;true;Toggle Full Back Arc;;;false;;1;1;true;;78,520;")
+            .put("medium/galacticrepublic/Full Back Arc","emb2;;2;;Show Full Back Arc;2;;;2;;;;;true;0;466;,Arc_2e_Republic_Medium_FBA.svg;,;true;Toggle Full Back Arc;;;false;;1;1;true;;78,520;")
+            .put("medium/separatistalliance/Full Back Arc","emb2;;2;;Show Full Back Arc;2;;;2;;;;;true;0;466;,Arc_2e_CIS_Medium_FBA.svg;,;true;Toggle Full Back Arc;;;false;;1;1;true;;78,520;")
+
+            .put("large/rebelalliance/Full Back Arc","emb2;;2;;Show Full Back Arc;2;;;2;;;;;true;0;480;,Arc_2e_Rebel_Large_FBA.svg;,;true;Toggle Full Back Arc;;;false;;1;1;true;;78,520;")
+            .put("large/galacticempire/Full Back Arc","emb2;;2;;Show Full Back Arc;2;;;2;;;;;true;0;480;,Arc_2e_Empire_Large_FBA.svg;,;true;Toggle Full Back Arc;;;false;;1;1;true;;78,520;")
+            .put("large/scumandvillainy/Full Back Arc","emb2;;2;;Show Full Back Arc;2;;;2;;;;;true;0;480;,Arc_2e_Scum_Large_FBA.svg;,;true;Toggle Full Back Arc;;;false;;1;1;true;;78,520;")
+            .put("large/resistance/Full Back Arc","emb2;;2;;Show Full Back Arc;2;;;2;;;;;true;0;480;,Arc_2e_Resistance_Large_FBA.svg;,;true;Toggle Full Back Arc;;;false;;1;1;true;;78,520;")
+            .put("large/firstorder/Full Back Arc","emb2;;2;;Show Full Back Arc;2;;;2;;;;;true;0;480;,Arc_2e_FirstOrder_Large_FBA.svg;,;true;Toggle Full Back Arc;;;false;;1;1;true;;78,520;")
+            .put("large/galacticrepublic/Full Back Arc","emb2;;2;;Show Full Back Arc;2;;;2;;;;;true;0;480;,Arc_2e_Republic_Large_FBA.svg;,;true;Toggle Full Back Arc;;;false;;1;1;true;;78,520;")
+            .put("large/separatistalliance/Full Back Arc","emb2;;2;;Show Full Back Arc;2;;;2;;;;;true;0;480;,Arc_2e_CIS_Large_FBA.svg;,;true;Toggle Full Back Arc;;;false;;1;1;true;;78,520;")
 
             // Rear Arc
             .put("small/rebelalliance/Rear Arc","emb2;;2;;Show Auxiliary Arc;2;;;2;;;;;true;0;481;,Arc_2e_Rebel_Small_Aux.svg;,;true;Show Auxiliary Firing Arc;;;false;;1;1;true;;86,130;")
@@ -126,6 +151,56 @@ public class StemShip2e extends Decorator implements EditablePiece {
             .put("large/galacticrepublic/Bullseye","emb2;;2;;Toggle Bullseye Arc;2;;;2;;;;;true;0;-535;,Arc_2e_BE_Republic.svg;,;true;Show Bullseye Arc;;;false;;1;1;true;;88,130;")
             .put("large/separatistalliance/Bullseye","emb2;;2;;Toggle Bullseye Arc;2;;;2;;;;;true;0;-535;,Arc_2e_BE_CIS.svg;,;true;Show Bullseye Arc;;;false;;1;1;true;;88,130;")
 
+
+            //Left Arc
+            .put("small/rebelalliance/Left Arc","emb2;;2;;Toggle Left Arc;2;;;2;;;;;true;-476;0;,Arc_2e_Rebel_Small_Left.svg;,;true;Show Left Arc;;;false;;1;1;true;;71,130;")
+            .put("small/galacticempire/Left Arc","emb2;;2;;Toggle Left Arc;2;;;2;;;;;true;-476;0;,Arc_2e_Empire_Small_Left.svg;,;true;Show Left Arc;;;false;;1;1;true;;71,130;")
+            .put("small/scumandvillainy/Left Arc","emb2;;2;;Toggle Left Arc;2;;;2;;;;;true;-476;0;,Arc_2e_Scum_Small_Left.svg;,;true;Show Left Arc;;;false;;1;1;true;;71,130;")
+            .put("small/resistance/Left Arc","emb2;;2;;Toggle Left Arc;2;;;2;;;;;true;-476;0;,Arc_2e_Resistance_Small_Left.svg;,;true;Show Left Arc;;;false;;1;1;true;;71,130;")
+            .put("small/firstorder/Left Arc","emb2;;2;;Toggle Left Arc;2;;;2;;;;;true;-476;0;,Arc_2e_FirstOrder_Small_Left.svg;,;true;Show Left Arc;;;false;;1;1;true;;71,130;")
+            .put("small/galacticrepublic/Left Arc","emb2;;2;;Toggle Left Arc;2;;;2;;;;;true;-476;0;,Arc_2e_Republic_Small_Left.svg;,;true;Show Left Arc;;;false;;1;1;true;;71,130;")
+            .put("small/separatistalliance/Left Arc","emb2;;2;;Toggle Left Arc;2;;;2;;;;;true;-476;0;,Arc_2e_CIS_Small_Left.svg;,;true;Show Left Arc;;;false;;1;1;true;;71,130;")
+
+            .put("medium/rebelalliance/Left Arc","emb2;;2;;Toggle Left Arc;2;;;2;;;;;true;-504;0;,Arc_2e_Rebel_Medium_Left.svg;,;true;Show Left Arc;;;false;;1;1;true;;71,130;")
+            .put("medium/galacticempire/Left Arc","emb2;;2;;Toggle Left Arc;2;;;2;;;;;true;-504;0;,Arc_2e_Empire_Medium_Left.svg;,;true;Show Left Arc;;;false;;1;1;true;;71,130;")
+            .put("medium/scumandvillainy/Left Arc","emb2;;2;;Toggle Left Arc;2;;;2;;;;;true;-504;0;,Arc_2e_Scum_Medium_Left.svg;,;true;Show Left Arc;;;false;;1;1;true;;71,130;")
+            .put("medium/resistance/Left Arc","emb2;;2;;Toggle Left Arc;2;;;2;;;;;true;-504;0;,Arc_2e_Resistance_Medium_Left.svg;,;true;Show Left Arc;;;false;;1;1;true;;71,130;")
+            .put("medium/firstorder/Left Arc","emb2;;2;;Toggle Left Arc;2;;;2;;;;;true;-504;0;,Arc_2e_FirstOrder_Medium_Left.svg;,;true;Show Left Arc;;;false;;1;1;true;;71,130;")
+            .put("medium/galacticrepublic/Left Arc","emb2;;2;;Toggle Left Arc;2;;;2;;;;;true;-504;0;,Arc_2e_Republic_Medium_Left.svg;,;true;Show Left Arc;;;false;;1;1;true;;71,130;")
+            .put("medium/separatistalliance/Left Arc","emb2;;2;;Toggle Left Arc;2;;;2;;;;;true;-504;0;,Arc_2e_CIS_Medium_Left.svg;,;true;Show Left Arc;;;false;;1;1;true;;71,130;")
+
+            .put("large/rebelalliance/Left Arc","emb2;;2;;Toggle Left Arc;2;;;2;;;;;true;-532;0;,Arc_2e_Rebel_Large_Left.svg;,;true;Show Left Arc;;;false;;1;1;true;;71,130;")
+            .put("large/galacticempire/Left Arc","emb2;;2;;Toggle Left Arc;2;;;2;;;;;true;-532;0;,Arc_2e_Empire_Large_Left.svg;,;true;Show Left Arc;;;false;;1;1;true;;71,130;")
+            .put("large/scumandvillainy/Left Arc","emb2;;2;;Toggle Left Arc;2;;;2;;;;;true;-532;0;,Arc_2e_Scum_Large_Left.svg;,;true;Show Left Arc;;;false;;1;1;true;;71,130;")
+            .put("large/resistance/Left Arc","emb2;;2;;Toggle Left Arc;2;;;2;;;;;true;-532;0;,Arc_2e_Resistance_Large_Left.svg;,;true;Show Left Arc;;;false;;1;1;true;;71,130;")
+            .put("large/firstorder/Left Arc","emb2;;2;;Toggle Left Arc;2;;;2;;;;;true;-532;0;,Arc_2e_FirstOrder_Large_Left.svg;,;true;Show Left Arc;;;false;;1;1;true;;71,130;")
+            .put("large/galacticrepublic/Left Arc","emb2;;2;;Toggle Left Arc;2;;;2;;;;;true;-532;0;,Arc_2e_Republic_Large_Left.svg;,;true;Show Left Arc;;;false;;1;1;true;;71,130;")
+            .put("large/separatistalliance/Left Arc","emb2;;2;;Toggle Left Arc;2;;;2;;;;;true;-532;0;,Arc_2e_CIS_Large_Left.svg;,;true;Show Left Arc;;;false;;1;1;true;;71,130;")
+
+            //Right Arc
+            .put("small/rebelalliance/Right Arc","emb2;;2;;Toggle Right Arc;2;;;2;;;;;true;476;0;,Arc_2e_Rebel_Small_Right.svg;,;true;Show Right Arc;;;false;;1;1;true;;71,520;")
+            .put("small/galacticempire/Right Arc","emb2;;2;;Toggle Right Arc;2;;;2;;;;;true;476;0;,Arc_2e_Empire_Small_Right.svg;,;true;Show Right Arc;;;false;;1;1;true;;71,520;")
+            .put("small/scumandvillainy/Right Arc","emb2;;2;;Toggle Right Arc;2;;;2;;;;;true;476;0;,Arc_2e_Scum_Small_Right.svg;,;true;Show Right Arc;;;false;;1;1;true;;71,520;")
+            .put("small/resistance/Right Arc","emb2;;2;;Toggle Right Arc;2;;;2;;;;;true;476;0;,Arc_2e_Resistance_Small_Right.svg;,;true;Show Right Arc;;;false;;1;1;true;;71,520;")
+            .put("small/firstorder/Right Arc","emb2;;2;;Toggle Right Arc;2;;;2;;;;;true;476;0;,Arc_2e_FirstOrder_Small_Right.svg;,;true;Show Right Arc;;;false;;1;1;true;;71,520;")
+            .put("small/galacticrepublic/Right Arc","emb2;;2;;Toggle Right Arc;2;;;2;;;;;true;476;0;,Arc_2e_Republic_Small_Right.svg;,;true;Show Right Arc;;;false;;1;1;true;;71,520;")
+            .put("small/separatistalliance/Right Arc","emb2;;2;;Toggle Right Arc;2;;;2;;;;;true;476;0;,Arc_2e_CIS_Small_Right.svg;,;true;Show Right Arc;;;false;;1;1;true;;71,520;")
+
+            .put("medium/rebelalliance/Right Arc","emb2;;2;;Toggle Right Arc;2;;;2;;;;;true;505;0;,Arc_2e_Rebel_Medium_Right.svg;,;true;Show Right Arc;;;false;;1;1;true;;71,520;")
+            .put("medium/galacticempire/Right Arc","emb2;;2;;Toggle Right Arc;2;;;2;;;;;true;505;0;,Arc_2e_Empire_Medium_Right.svg;,;true;Show Right Arc;;;false;;1;1;true;;71,520;")
+            .put("medium/scumandvillainy/Right Arc","emb2;;2;;Toggle Right Arc;2;;;2;;;;;true;505;0;,Arc_2e_Scum_Medium_Right.svg;,;true;Show Right Arc;;;false;;1;1;true;;71,520;")
+            .put("medium/resistance/Right Arc","emb2;;2;;Toggle Right Arc;2;;;2;;;;;true;505;0;,Arc_2e_Resistance_Medium_Right.svg;,;true;Show Right Arc;;;false;;1;1;true;;71,520;")
+            .put("medium/firstorder/Right Arc","emb2;;2;;Toggle Right Arc;2;;;2;;;;;true;505;0;,Arc_2e_FirstOrder_Medium_Right.svg;,;true;Show Right Arc;;;false;;1;1;true;;71,520;")
+            .put("medium/galacticrepublic/Right Arc","emb2;;2;;Toggle Right Arc;2;;;2;;;;;true;505;0;,Arc_2e_Republic_Medium_Right.svg;,;true;Show Right Arc;;;false;;1;1;true;;71,520;")
+            .put("medium/separatistalliance/Right Arc","emb2;;2;;Toggle Right Arc;2;;;2;;;;;true;505;0;,Arc_2e_CIS_Medium_Right.svg;,;true;Show Right Arc;;;false;;1;1;true;;71,520;")
+
+            .put("large/rebelalliance/Right Arc","emb2;;2;;Toggle Right Arc;2;;;2;;;;;true;532;0;,Arc_2e_Rebel_Large_Right.svg;,;true;Show Right Arc;;;false;;1;1;true;;71,520;")
+            .put("large/galacticempire/Right Arc","emb2;;2;;Toggle Right Arc;2;;;2;;;;;true;532;0;,Arc_2e_Empire_Large_Right.svg;,;true;Show Right Arc;;;false;;1;1;true;;71,520;")
+            .put("large/scumandvillainy/Right Arc","emb2;;2;;Toggle Right Arc;2;;;2;;;;;true;532;0;,Arc_2e_Scum_Large_Right.svg;,;true;Show Right Arc;;;false;;1;1;true;;71,520;")
+            .put("large/resistance/Right Arc","emb2;;2;;Toggle Right Arc;2;;;2;;;;;true;532;0;,Arc_2e_Resistance_Large_Right.svg;,;true;Show Right Arc;;;false;;1;1;true;;71,520;")
+            .put("large/firstorder/Right Arc","emb2;;2;;Toggle Right Arc;2;;;2;;;;;true;532;0;,Arc_2e_FirstOrder_Large_Right.svg;,;true;Show Right Arc;;;false;;1;1;true;;71,520;")
+            .put("large/galacticrepublic/Right Arc","emb2;;2;;Toggle Right Arc;2;;;2;;;;;true;532;0;,Arc_2e_Republic_Large_Right.svg;,;true;Show Right Arc;;;false;;1;1;true;;71,520;")
+            .put("large/separatistalliance/Right Arc","emb2;;2;;Toggle Right Arc;2;;;2;;;;;true;532;0;,Arc_2e_CIS_Large_Right.svg;,;true;Show Right Arc;;;false;;1;1;true;;71,520;")
             .build();
 
     public StemShip2e(){
@@ -243,7 +318,7 @@ public class StemShip2e extends Decorator implements EditablePiece {
             Embellishment emb = null;
             String arcKey = null;
             String newType = null;
-            while(i.hasNext())
+           /* while(i.hasNext())
             {
                 arc = i.next().getArc();
                 if(arc.equals("Rear Arc")) {
@@ -262,6 +337,55 @@ public class StemShip2e extends Decorator implements EditablePiece {
                     }
                     newType = null;
 
+            }*/
+            //add rear arc for all
+            emb = (Embellishment) Util.getEmbellishment(newGamePiece, "Layer - Show Auxiliary Firing Arc");
+            arc = "Rear Arc";
+            arcKey = mic.Canonicalizer.getCleanedName(source.getShipData().getSize()) + "/" + mic.Canonicalizer.getCleanedName(source.getPilotData().getFaction()) + "/" + arc;
+            newType = firingArcTypes.get(arcKey);
+            if(newType != null && !newType.isEmpty())
+            {
+                emb.mySetType(newType);
+            }
+
+            //add full front arc
+            emb = (Embellishment) Util.getEmbellishment(newGamePiece, "Layer - Show Full Front Arc");
+            arc = "Full Front Arc";
+            arcKey = mic.Canonicalizer.getCleanedName(source.getShipData().getSize()) + "/" + mic.Canonicalizer.getCleanedName(source.getPilotData().getFaction()) + "/" + arc;
+            newType = firingArcTypes.get(arcKey);
+            if(newType != null && !newType.isEmpty())
+            {
+                emb.mySetType(newType);
+            }
+
+            //add full back arc
+            emb = (Embellishment) Util.getEmbellishment(newGamePiece, "Layer - Show Full Back Arc");
+            arc = "Full Back Arc";
+            arcKey = mic.Canonicalizer.getCleanedName(source.getShipData().getSize()) + "/" + mic.Canonicalizer.getCleanedName(source.getPilotData().getFaction()) + "/" + arc;
+            newType = firingArcTypes.get(arcKey);
+            if(newType != null && !newType.isEmpty())
+            {
+                emb.mySetType(newType);
+            }
+
+            //add left arc
+            emb = (Embellishment) Util.getEmbellishment(newGamePiece, "Layer - Show Left Arc");
+            arc = "Left Arc";
+            arcKey = mic.Canonicalizer.getCleanedName(source.getShipData().getSize()) + "/" + mic.Canonicalizer.getCleanedName(source.getPilotData().getFaction()) + "/" + arc;
+            newType = firingArcTypes.get(arcKey);
+            if(newType != null && !newType.isEmpty())
+            {
+                emb.mySetType(newType);
+            }
+
+            //add right arc
+            emb = (Embellishment) Util.getEmbellishment(newGamePiece, "Layer - Show Right Arc");
+            arc = "Right Arc";
+            arcKey = mic.Canonicalizer.getCleanedName(source.getShipData().getSize()) + "/" + mic.Canonicalizer.getCleanedName(source.getPilotData().getFaction()) + "/" + arc;
+            newType = firingArcTypes.get(arcKey);
+            if(newType != null && !newType.isEmpty())
+            {
+                emb.mySetType(newType);
             }
 
             //add front arc for all, for card effects mostly even if there's no front arc primary weapon

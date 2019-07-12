@@ -628,6 +628,9 @@ public class OTAContentsChecker extends AbstractConfigurable {
         {
             logToChat("error download and integrating the jsons");
             errorOccurredOnXWingData = true;
+
+            JFrame f = new JFrame();
+            JOptionPane.showMessageDialog(f,"Error writing to disk; you must put the X-Wing Second Edition module file in a folder for which Vassal has writing access (ie, not in /Program Files/");
         }
         return errorOccurredOnXWingData;
     }
