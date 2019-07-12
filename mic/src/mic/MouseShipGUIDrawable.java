@@ -898,10 +898,10 @@ public class MouseShipGUIDrawable extends MouseGUIDrawable implements Drawable {
 
         scaler.translate(ulX,ulY);
         g2d.setPaint(Color.WHITE);
-        Shape transformedOutline = scaler.createTransformedShape(outline);
 
         //paint the big GUI outline
-        g2d.fill(transformedOutline);
+        //Shape transformedOutline = scaler.createTransformedShape(outline);
+        //g2d.fill(transformedOutline);
 
 
 
@@ -973,10 +973,12 @@ public class MouseShipGUIDrawable extends MouseGUIDrawable implements Drawable {
         */
 
         // draw shapes of buttons? or outline test of the GUI
+        /*
         g2d.setColor(new Color(0,255,0,60));
         for(Shape s : andThese){
             g2d.fill(s);
         }
+*/
 
         /*  piece of code that can fetch the maneuver icons as seen on the dials
         try{
