@@ -504,8 +504,9 @@ public class MouseShipGUIDrawable extends MouseGUIDrawable implements Drawable {
         guiElements.add(BR_R1);
         guiElements.add(BR_R2);
 
-        totalWidth = 550;
-        totalHeight = 530;
+        // HARD CODED outline of the GUI - DONE AT EVERYONE'S PERIL
+        totalWidth = 520;
+        totalHeight = 610;
 
         figureOutBestTopLeftCorner();
 
@@ -741,8 +742,8 @@ public class MouseShipGUIDrawable extends MouseGUIDrawable implements Drawable {
 
         AffineTransform scaler = AffineTransform.getScaleInstance(scale, scale);
 
-        double bestX = -666.0, bestY = -666.0;
-        int bestBump = 999;
+        double bestX = 200.0, bestY = 200.0; //worst case scenario
+        int bestBump = 999; //default value, if no spots are found, this is gonna be it. should activate the GUI dead center or in a fixed position
         boolean breakoff=false;
         for(int i=1; i<8; i++){ //scan to the right of the ship
             float radius = SMALLSHIPGUIRADIUSBASE*getRadiusMultiplier(_pilotShip.getSize());
@@ -775,7 +776,7 @@ public class MouseShipGUIDrawable extends MouseGUIDrawable implements Drawable {
             for(int i=1; i<8; i++){ //scan to the left of the ship
                 float radius = SMALLSHIPGUIRADIUSBASE*getRadiusMultiplier(_pilotShip.getSize());
                 radius*=i;
-                for(int j= 40; j >= -40; j=j-20){
+                for(int j= 80; j >= -80; j=j-20){
                     double x = rotX(radius, 0, -j);
                     double y = rotY(radius, 0, -j);
 
@@ -840,6 +841,11 @@ public class MouseShipGUIDrawable extends MouseGUIDrawable implements Drawable {
                 shapeToCheck.getBounds().getY() < mapArea.getBounds().getY()) // too far to the top
      */
     private int isGreenToGo(Shape GUIOutline, Shape mapArea, List<BumpableWithShape> bumpables){
+
+        //check if the gui outline, union with the map square is a bigger shape than the original map square
+        //ie the mouse gui would go off the map and might have parts of it unseen by a player who has the map
+        //set to zoom fit to height/width and not seeing any part outside the map, which shows up as red
+        // in vassal - returns positive infinity to say something's the worst case possible
         if(Util.hasEnlargedUnion(GUIOutline, mapArea)==true) return Integer.MAX_VALUE;
 
         scale = _map.getZoom();
@@ -893,7 +899,9 @@ public class MouseShipGUIDrawable extends MouseGUIDrawable implements Drawable {
         scaler.translate(ulX,ulY);
         g2d.setPaint(Color.WHITE);
         Shape transformedOutline = scaler.createTransformedShape(outline);
-        //g2d.fill(transformedOutline);
+
+        //paint the big GUI outline
+        g2d.fill(transformedOutline);
 
 
 
@@ -951,15 +959,24 @@ public class MouseShipGUIDrawable extends MouseGUIDrawable implements Drawable {
 
         //bring the translation back to what it was before the GUI
         scaler.translate(-ulX,-ulY);
-    //    g2d.setColor(Color.WHITE);
+
+        //fill something white. the main outline?
+
+        g2d.setColor(Color.WHITE);
         //logToChat("amount of shapes to draw " + drawThese.size());
-       // for(BumpableWithShape bws : drawThese){
-      //      g2d.fill(scaler.createTransformedShape(bws.shape));
-       // }
-       // g2d.setColor(new Color(0,255,0,60));
-      //  for(Shape s : andThese){
-     //       g2d.fill(s);
-     //   }
+
+        //draw bumpables
+        /*
+        for(BumpableWithShape bws : drawThese){
+            g2d.fill(scaler.createTransformedShape(bws.shape));
+        }
+        */
+
+        // draw shapes of buttons? or outline test of the GUI
+        g2d.setColor(new Color(0,255,0,60));
+        for(Shape s : andThese){
+            g2d.fill(s);
+        }
 
         /*  piece of code that can fetch the maneuver icons as seen on the dials
         try{
