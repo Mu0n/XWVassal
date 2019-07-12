@@ -314,6 +314,7 @@ public class MouseShipGUI extends AbstractConfigurable {
                 if (isPieceClicked(e, theMap, ship)) {
                     if (activatedPiece != ship && lastPopup != null) {
                         //gotta deactivate the last one before doing the new one
+                        //BUGGED - doesn't ever reach that point
                         if (lastPopup instanceof MouseShipGUIDrawable)
                             theMap.removeDrawComponent((MouseShipGUIDrawable) lastPopup);
                         if (lastPopup instanceof MouseRemoteGUIDrawable)
