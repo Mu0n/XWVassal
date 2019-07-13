@@ -72,6 +72,7 @@ public class MouseShipGUIDrawable extends MouseGUIDrawable implements Drawable {
     public void MouseShipGUIJomblr(GamePiece shipPiece, Map map, XWS2Pilots pilotShip, XWS2Pilots.Pilot2e pilot){
         int smallShipTripleChoice = 0;
         boolean isSmall = false;
+        logToChat(pilotShip.toString());
         if(pilotShip.getSize().equals("Small")) isSmall = true;
 
         // *
