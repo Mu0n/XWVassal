@@ -296,7 +296,7 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
                 if(twoPointOh == false) {
                     bestLine = findBestLineInFrontAuxArcs(D1, D2, D3, 3);
                 }
-                else findBestLineInFullFrontArc(D1, D2, D3, 3);
+                else bestLine = findBestLineInFullFrontArc(D1, D2, D3, 3);
                 break;
             case mobileSideArcOption:
                 bestLine = findBestLineInMobileArc(D1, D2, D3, 3);
@@ -305,7 +305,7 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
                 bestLine = findBestLineInBullseye(D1, D2, D3, 3);
                 break;
             case backAftArcOption:
-                findBestLineInFullFrontArc(D1, D2, D3, 3);
+                bestLine = findBestLineInFullFrontArc(D1, D2, D3, 3);
                 break;
             case leftArcOption:
                 bestLine = findBestLineInLeftArc(D1, D2, D3, 3);
@@ -376,9 +376,13 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
                     Shape temp4 = findInBetweenRectangle(thisShip, b, wantedWidth, bullseyeArcOption);
                     if(temp4!=null)atkShapes.add(temp4);
                     break;
+                case backAftArcOption:
+                    Shape temp342 = findInBetweenRectangle(thisShip, b, wantedWidth, backAftArcOption);
+                    if(temp342!=null) atkShapes.add(temp342);
+                    break;
                 case frontAuxArcOption:
                     if(twoPointOh) {
-                        Shape temp99 = findInBetweenRectangle(thisShip, b, wantedWidth, turretArcOption);
+                        Shape temp99 = findInBetweenRectangle(thisShip, b, wantedWidth, frontAuxArcOption);
                         if(temp99!=null) atkShapes.add(temp99);
                         break;
                     }
@@ -1089,7 +1093,9 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
 
         MicLine DDCC = createLinePtoAB(CC,DD, false);
 
-        Boolean firingArcAllowsBand = (findSegmentCrossPoint(DDCC,new MicLine(center,E1,false),true)!=null ||
+        Boolean firingArcAllowsBand = false;
+
+        if(twoPointOh == false || (twoPointOh == true && whichOption != frontAuxArcOption && whichOption != backAftArcOption)) firingArcAllowsBand= (findSegmentCrossPoint(DDCC,new MicLine(center,E1,false),true)!=null ||
                 findSegmentCrossPoint(DDCC,new MicLine(center,E2,false),true)!=null ||
                 findSegmentCrossPoint(DDCC,new MicLine(center,E3,false),true)!=null ||
                 findSegmentCrossPoint(DDCC,new MicLine(center,E4,false),true)!=null)
@@ -1097,16 +1103,8 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
 
         //CASE 5: front aux arc can get a frontal band, or sideways band
         //deal with easy front aux arc case that will at least get a frontal band
-        if(whichOption == frontAuxArcOption){
-            Boolean checkInsideArcRects = isTargetInsideofRectangles(thisShip, b, true, true);
-            if(checkInsideArcRects == true) return true;
-        }
-        //CERTIFICATION 5: front aux arc's only remaining case is if it's on frontal side, away from front arc, where it might have a band or not
-
-        //CASE 6: we must check if the firing arc line prevents bands for front aux arc
-        if(whichOption == frontAuxArcOption){
-            Boolean checkInsideArcRects = isTargetInsideofRectangles(thisShip, b, true, true);
-
+        if(whichOption == frontAuxArcOption || whichOption == backAftArcOption){
+            Boolean checkInsideArcRects = isTargetInsideofRectangles(thisShip, b, true, !twoPointOh);
             //subcase 6a, line is blocked, but there might still be a frontal band allowed. decide on that limiting factor
             if(firingArcAllowsBand == false) {
                 if(checkInsideArcRects == true) return true;
@@ -1118,6 +1116,7 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
                 return true;
             }
         }
+        //CERTIFICATION 5: front aux arc's only remaining case is if it's on frontal side, away from front arc, where it might have a band or not
         //CERTIFICATION 6: front aux arc is completely dealt with
 
         if(whichOption == leftArcOption){
@@ -1310,17 +1309,19 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
             case turretArcOption:
             case leftArcOption:
             case rightArcOption:
+            case backAftArcOption:
             default:
                 break;
             case frontArcOption:
             case backArcOption:
-            case frontAuxArcOption:
             case mobileSideArcOption:
                 wantedWidth = thisShip.getChassisWidth() - thisShip.chassis.getCornerToFiringArc() * 2.0;
                 break;
             case bullseyeArcOption:
                 wantedWidth = thisShip.getChassis().getBullsEyeWidth();
                 break;
+            case frontAuxArcOption:
+                if(twoPointOh == false) wantedWidth = thisShip.getChassisWidth() - thisShip.chassis.getCornerToFiringArc() * 2.0;
         }
         return wantedWidth;
     }
@@ -1870,7 +1871,6 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
             }
         }
         //end of section
-logToChat("found this no of lines " + filteredList.size());
 
         //First criterium, find the best distance and make it the best Line
         double bestDist = rangeInt * 282.5;
@@ -1883,6 +1883,7 @@ logToChat("found this no of lines " + filteredList.size());
         }
         //nothing under the requested range was found, no best lines can be submitted
         if (best == null) {
+            logToChat("still got no best line, it's null!");
             return null;
         }
 
@@ -3227,7 +3228,7 @@ logToChat("found this no of lines " + filteredList.size());
                 if(shapesOverlap(transformed, def.getRectWithNoNubs())) return transformed;
             }
         }
-        if(chosenOption == frontAuxArcOption) { //auzituck YV-666
+        if(chosenOption == frontAuxArcOption && twoPointOh == false) { //auzituck YV-66 reserved for 1.0?
             Shape front = new Rectangle2D.Double(-wantedWidth/2.0, -RANGE3 - chassisHeight/2.0, wantedWidth, RANGE3);
             Shape left = new Rectangle2D.Double(-chassisWidth/2.0 - RANGE3, -chassisHeight/2.0, RANGE3, chassisHeight/2.0);
             Shape right = new Rectangle2D.Double(chassisWidth/2.0, -chassisHeight/2.0, RANGE3, chassisHeight/2.0);
@@ -3235,6 +3236,50 @@ logToChat("found this no of lines " + filteredList.size());
 
             ArrayList<Shape> listShape = new ArrayList<Shape>();
             listShape.add(front);
+            listShape.add(left);
+            listShape.add(right);
+
+            ArrayList<Shape> keptTransformedlistShape = new ArrayList<Shape>();
+            for(Shape s : listShape){
+                Shape transformed = transformRectShapeForBestLines(atk, def, s, centerX, centerY);
+                if(shapesOverlap(transformed, def.getRectWithNoNubs())) keptTransformedlistShape.add(transformed);
+            }
+            Area fusion = new Area();
+            for(Shape s : keptTransformedlistShape){
+                fusion.add(new Area(s));
+            }
+            return fusion;
+        }
+        if(chosenOption == frontAuxArcOption && twoPointOh == true){
+            Shape front = new Rectangle2D.Double(-wantedWidth/2.0, -RANGE3 - chassisHeight/2.0, wantedWidth, RANGE3);
+            Shape left = new Rectangle2D.Double(-chassisWidth/2.0 - RANGE3, -chassisHeight/2.0, RANGE3, chassisHeight/2.0);
+            Shape right = new Rectangle2D.Double(chassisWidth/2.0, -chassisHeight/2.0, RANGE3, chassisHeight/2.0);
+
+
+            ArrayList<Shape> listShape = new ArrayList<Shape>();
+            listShape.add(front);
+            listShape.add(left);
+            listShape.add(right);
+
+            ArrayList<Shape> keptTransformedlistShape = new ArrayList<Shape>();
+            for(Shape s : listShape){
+                Shape transformed = transformRectShapeForBestLines(atk, def, s, centerX, centerY);
+                if(shapesOverlap(transformed, def.getRectWithNoNubs())) keptTransformedlistShape.add(transformed);
+            }
+            Area fusion = new Area();
+            for(Shape s : keptTransformedlistShape){
+                fusion.add(new Area(s));
+            }
+            return fusion;
+        }
+        if(chosenOption == backAftArcOption){
+            Shape back = new Rectangle2D.Double(-wantedWidth/2.0, chassisHeight/2.0, wantedWidth, RANGE3);
+            Shape left = new Rectangle2D.Double(-chassisWidth/2.0 - RANGE3, -chassisHeight/2.0, RANGE3, chassisHeight/2.0);
+            Shape right = new Rectangle2D.Double(chassisWidth/2.0, -chassisHeight/2.0, RANGE3, chassisHeight/2.0);
+
+
+            ArrayList<Shape> listShape = new ArrayList<Shape>();
+            listShape.add(back);
             listShape.add(left);
             listShape.add(right);
 
@@ -3537,6 +3582,9 @@ logToChat("found this no of lines " + filteredList.size());
         //half height reduced side rectangles for Auzituck/YV-666 arcs
         Shape leftRight_reduced = new Rectangle2D.Double(-chassisWidth/2.0 - boost*RANGE3, -workingHeight/2.0, 2.0*boost*RANGE3+chassisWidth, workingHeight/2.0);
 
+        //half height reduced side rectangles for back aft arc checks
+        Shape leftRight_reduced_aft = new Rectangle2D.Double(-chassisWidth/2.0 - boost*RANGE3, 0, 2.0*boost*RANGE3+chassisWidth, workingHeight/2.0);
+
         //by default, get everything for turret/TL shots
         Area zone = new Area();
         switch(whichOption){
@@ -3550,6 +3598,9 @@ logToChat("found this no of lines " + filteredList.size());
                 zone = new Area(front);
                 zone.add(new Area(leftRight_reduced));
                 break;
+            case backAftArcOption:
+                zone = new Area(back);
+                zone.add(new Area(leftRight_reduced_aft));
             case mobileSideArcOption:
                 zone = new Area(frontBack);
                 zone.add(new Area(leftRight));
