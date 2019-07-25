@@ -1070,7 +1070,7 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
 
         //FORK IN THE ROAD, use specialized isTargetInsideofRectangles for mobile turret later and front aux arcs
 
-        if(whichOption!=mobileSideArcOption && whichOption != frontAuxArcOption){
+        if(whichOption!=mobileSideArcOption && whichOption != frontAuxArcOption && whichOption != backAftArcOption){
             //CASE 4: the target is inside of the arc bound rectangles not front aux arc nor mobile turret arcs, could be aligned or not, irrelevant
             //check if the ship is in front of the front edge of the arc
             Boolean checkInsideArcRects = isTargetInsideofRectangles(thisShip, b, true, true);
@@ -1103,8 +1103,8 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
 
         //CASE 5: front aux arc can get a frontal band, or sideways band
         //deal with easy front aux arc case that will at least get a frontal band
-        if(whichOption == frontAuxArcOption || whichOption == backAftArcOption){
-            Boolean checkInsideArcRects = isTargetInsideofRectangles(thisShip, b, true, !twoPointOh);
+        if(twoPointOh == true && (whichOption == frontAuxArcOption || whichOption == backAftArcOption)){
+            Boolean checkInsideArcRects = isTargetInsideofRectangles(thisShip, b, true, false);
             //subcase 6a, line is blocked, but there might still be a frontal band allowed. decide on that limiting factor
             if(firingArcAllowsBand == false) {
                 if(checkInsideArcRects == true) return true;
@@ -2485,6 +2485,9 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
                 if(twoPointOh == false) bigAnnounce += "for the front pair of auxiliary arcs - from ";
                 else bigAnnounce += "for the full front arc - from ";
                 break;
+            case backAftArcOption:
+                bigAnnounce += "for the full back arc - from ";
+                break;
             case  bullseyeArcOption:
                 bigAnnounce += "for the bullseye arc - from ";
                 break;
@@ -3005,6 +3008,8 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
 
         Shape crossZone = findUnionOfRectangularExtensions(thisShip, wantBoost, wantBoundByFrontAndBackArcs);
 
+        //temp debug
+        //fov.add(crossZone);
         return shapesOverlap(crossZone, targetBWS.getRectWithNoNubs());
     }
 
@@ -3274,8 +3279,8 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
         }
         if(chosenOption == backAftArcOption){
             Shape back = new Rectangle2D.Double(-wantedWidth/2.0, chassisHeight/2.0, wantedWidth, RANGE3);
-            Shape left = new Rectangle2D.Double(-chassisWidth/2.0 - RANGE3, -chassisHeight/2.0, RANGE3, chassisHeight/2.0);
-            Shape right = new Rectangle2D.Double(chassisWidth/2.0, -chassisHeight/2.0, RANGE3, chassisHeight/2.0);
+            Shape left = new Rectangle2D.Double(-chassisWidth/2.0 - RANGE3, 0, RANGE3, chassisHeight/2.0);
+            Shape right = new Rectangle2D.Double(chassisWidth/2.0, 0, RANGE3, chassisHeight/2.0);
 
 
             ArrayList<Shape> listShape = new ArrayList<Shape>();
@@ -3636,7 +3641,7 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
                 .getRotateInstance(b.getAngleInRadians(), centerX, centerY)
                 .createTransformedShape(transformed);
 
-        //fov.add(transformed);
+        fov.add(transformed);
         return transformed;
     }
 
