@@ -58,7 +58,7 @@ Integer savedOption = 0;
 public class AutoRangeFinder extends Decorator implements EditablePiece {
 
     private static Boolean DEBUGMODE = false;
-    private static Boolean MULTILINES = true;
+    private static Boolean MULTILINES = false;
 
     protected VASSAL.build.module.Map map;
     private static final int frontArcOption = 1;
@@ -228,7 +228,7 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
         } //end of dealing with keystrokes that are linked to autorange lines
         else if (KeyStroke.getKeyStroke(KeyEvent.VK_D, KeyEvent.CTRL_DOWN_MASK, false).equals(stroke)) {
             if (this.fov != null && this.fov.getCount() > 0 && fovCommand!=null) {
-                fovCommand = null;
+                //fovCommand = null;
                 Command clearIt = this.piece.keyEvent(KeyStroke.getKeyStroke(KeyEvent.VK_M, KeyEvent.SHIFT_DOWN_MASK,false));;
                 clearIt.execute();
                 GameModule.getGameModule().sendAndLog(clearIt);
@@ -430,9 +430,72 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
 
                     }
                     break;
+                case rightArcOption:
+                    Shape temp777 = findInBetweenRectangle(thisShip, b, wantedWidth, rightArcOption);
+                    if(temp777!=null) if(temp777.getBounds2D().getWidth()!=0) atkShapes.add(temp777);
+                    //fov.add(temp8); //temp debug to see bands
+
+
+                    if(wantExtraBandsMorFA){
+                        //deal with triangle
+                        Shape dualRects = findDualRects(thisShip);
+                        Area protoFilteredShape = new Area(dualRects);
+                        Area filteredShape=null;
+                        MicLine DD = new MicLine(D1,D2,false);
+
+
+                        Point2D.Double ArcIntersectsDD = findSegmentCrossPoint(new MicLine(A2,E2, false), DD, true);
+                        if(ArcIntersectsDD == null || (int)ArcIntersectsDD.getX() == 0 && (int)ArcIntersectsDD.getY() == 0) {
+                            //the defender ext rects will limit things anyway, let DualRects do its thing
+                        }
+                        else{
+                            MicLine A2DD = createLinePtoAB(A2, DD, true);
+                            Point2D.Double the4thPoint = new Point2D.Double(ArcIntersectsDD.x + (A2DD.first.x-A2DD.second.x), ArcIntersectsDD.y + + (A2DD.first.y-A2DD.second.y));
+                            GeneralPath excessLeft = new GeneralPath();
+                            excessLeft.moveTo(ArcIntersectsDD.x, ArcIntersectsDD.y);
+                            excessLeft.lineTo(the4thPoint.x, the4thPoint.y);
+                            excessLeft.lineTo(A2.x, A2.y);
+                            excessLeft.lineTo(A2DD.second.x, A2DD.second.y);
+                            excessLeft.closePath();
+
+                            protoFilteredShape.subtract(new Area(excessLeft));
+                            double fullWidth = thisShip.getChassisWidth();
+                            Shape sideSelector = findInBetweenRectangle(thisShip, b, fullWidth, turretArcOption);
+                            filteredShape = new Area(sideSelector);
+                            filteredShape.intersect(protoFilteredShape);
+                        }
+                        Point2D.Double ArcIntersectsDD_back = findSegmentCrossPoint(new MicLine(A1,E1, false), DD, false);
+                        if(ArcIntersectsDD_back == null || (int)ArcIntersectsDD_back.getX() == 0 && (int)ArcIntersectsDD_back.getY() == 0) {
+
+                        }
+                        else{
+                            MicLine A1DD = createLinePtoAB(A1, DD, true);
+                            Point2D.Double the4thPoint = new Point2D.Double(ArcIntersectsDD_back.x + (A1DD.first.x-A1DD.second.x), ArcIntersectsDD_back.y + + (A1DD.first.y-A1DD.second.y));
+                            GeneralPath excessRight = new GeneralPath();
+                            excessRight.moveTo(ArcIntersectsDD_back.x, ArcIntersectsDD_back.y);
+                            excessRight.lineTo(the4thPoint.x, the4thPoint.y);
+                            excessRight.lineTo(A1.x, A1.y);
+                            excessRight.lineTo(A1DD.second.x, A1DD.second.y);
+                            excessRight.closePath();
+
+                            protoFilteredShape.subtract(new Area(excessRight));
+                            double fullWidth = thisShip.getChassisWidth();
+                            Shape sideSelector = findInBetweenRectangle(thisShip, b, fullWidth, turretArcOption);
+                            filteredShape = new Area(sideSelector);
+                            filteredShape.intersect(protoFilteredShape);
+                        }
+
+
+
+                        if(filteredShape!=null)  if(filteredShape.getBounds2D().getWidth()!=0)atkShapes.add(filteredShape);
+
+                    }
+                    break;
                 case leftArcOption:
                     Shape temp8 = findInBetweenRectangle(thisShip, b, wantedWidth, leftArcOption);
                     if(temp8!=null) if(temp8.getBounds2D().getWidth()!=0) atkShapes.add(temp8);
+                    //fov.add(temp8); //temp debug to see bands
+
 
                     if(wantExtraBandsMorFA){
                         //deal with triangle
@@ -692,14 +755,18 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
         MicLine RCFDD = createLinePtoAB(RCF, DD, true);
         MicLine RCBDD = createLinePtoAB(RCB, DD, true);
 
-        int mobileSide = 2;
-        switch(mobileSide){
-            case 2:
                 //along arc edges
-                lineToVet = vetThisLine(A2DD_arc_restricted, "A2DD_ea", 0.5);
+                lineToVet = vetThisLine(A1DD_arc_restricted, "A1DD_ea", 0.5);
                 if(lineToVet != null) noAngleCheckList.add(lineToVet);
-                lineToVet = vetThisLine(A2DD_arc_restricted_2nd, "A2DD_2nd_ea", 0.7);
+                lineToVet = vetThisLine(A1DD_arc_restricted_2nd, "A1DD_2nd_ea", 0.7);
                 if(lineToVet != null) noAngleCheckList.add(lineToVet);
+
+        //from the arc extremeties, free-style direction
+        lineToVet = vetThisLine(A1D1, "A1D1_right", 0.2);
+        if(lineToVet != null) rightList.add(lineToVet);
+        lineToVet = vetThisLine(A2D1, "A2D1_right", 0.8);
+        if(lineToVet != null) rightList.add(lineToVet);
+
 
                 //from the corners
                 if(findSegmentCrossPoint(RCFD1, new MicLine(center, E1, false), true)==null &&
@@ -707,7 +774,7 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
                     lineToVet = vetThisLine(RCFD1, "RCFD1", 0.4);
                     if(lineToVet != null) noAngleCheckList.add(lineToVet);
                 }
-                if(findSegmentCrossPoint(RCBD1, new MicLine(center, E2, false), true)==null &&
+                if(findSegmentCrossPoint(RCBD1, new MicLine(center, E1, false), true)==null &&
                         findSegmentCrossPoint(RCBD1, new MicLine(center, E2, false), true)==null){
                     lineToVet = vetThisLine(RCBD1, "RCBD1", 0.4);
                     if(lineToVet != null) noAngleCheckList.add(lineToVet);
@@ -719,7 +786,7 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
                     lineToVet = vetThisLine(RCFDD, "RCFDD", 0.4);
                     if(lineToVet != null) noAngleCheckList.add(lineToVet);
                 }
-                if(findSegmentCrossPoint(RCBDD, new MicLine(center, E2, false), true)==null &&
+                if(findSegmentCrossPoint(RCBDD, new MicLine(center, E1, false), true)==null &&
                         findSegmentCrossPoint(RCBDD, new MicLine(center, E2, false), true)==null) {
                     lineToVet = vetThisLine(RCBDD, "RCBDD", 0.4);
                     if (lineToVet != null) noAngleCheckList.add(lineToVet);
@@ -748,8 +815,7 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
                     lineToVet = vetThisLine(RBED1, "RBED1", 0.8);
                     if(lineToVet != null) noAngleCheckList.add(lineToVet);
                 }
-                break;
-        }
+
 
         ArrayList<MicLine> filteredList = new ArrayList<MicLine>();
         ArrayList<MicLine> deadList = new ArrayList<MicLine>();
@@ -880,8 +946,8 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
                 if(lineToVet != null) leftList.add(lineToVet);
 
                 //from the corners
-                if(findSegmentCrossPoint(LCFD1, new MicLine(center, E2, false), true)==null &&
-                        findSegmentCrossPoint(LCFD1, new MicLine(center, E1, false), true)==null){
+                if(findSegmentCrossPoint(LCFD1, new MicLine(center, E1, false), true)==null &&
+                        findSegmentCrossPoint(LCFD1, new MicLine(center, E2, false), true)==null){
                     lineToVet = vetThisLine(LCFD1, "LCFD1", 0.4);
                     if(lineToVet != null) noAngleCheckList.add(lineToVet);
                 }
@@ -892,8 +958,8 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
                 }
 
                 //from the corners, normal
-                if(findSegmentCrossPoint(LCFDD, new MicLine(center, E2, false), true)==null &&
-                        findSegmentCrossPoint(LCFDD, new MicLine(center, E1, false), true)==null){
+                if(findSegmentCrossPoint(LCFDD, new MicLine(center, E1, false), true)==null &&
+                        findSegmentCrossPoint(LCFDD, new MicLine(center, E2, false), true)==null){
                     lineToVet = vetThisLine(LCFDD, "LCFDD", 0.4);
                     if(lineToVet != null) noAngleCheckList.add(lineToVet);
                 }
@@ -3121,6 +3187,24 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
                 if(shapesOverlap(transformed, def.getRectWithNoNubs())) return transformed;
             }
         }
+        if(chosenOption == leftArcOption){
+            ArrayList<Shape> listShape = new ArrayList<Shape>();
+            listShape.add(new Rectangle2D.Double(-chassisWidth/2.0 - RANGE3, -chassisHeight/2.0, RANGE3, chassisHeight)); //left or rightleft
+
+            for(Shape s : listShape){
+                Shape transformed = transformRectShapeForBestLines(atk, def, s, centerX, centerY);
+                if(shapesOverlap(transformed, def.getRectWithNoNubs())) return transformed;
+            }
+        }
+        if(chosenOption == rightArcOption){
+            ArrayList<Shape> listShape = new ArrayList<Shape>();
+            listShape.add(new Rectangle2D.Double(chassisWidth/2.0, -chassisHeight/2.0, RANGE3, chassisHeight)); //left or rightleft
+
+            for(Shape s : listShape){
+                Shape transformed = transformRectShapeForBestLines(atk, def, s, centerX, centerY);
+                if(shapesOverlap(transformed, def.getRectWithNoNubs())) return transformed;
+            }
+        }
         if(chosenOption == frontAuxArcOption) { //auzituck YV-666
             Shape front = new Rectangle2D.Double(-wantedWidth/2.0, -RANGE3 - chassisHeight/2.0, wantedWidth, RANGE3);
             Shape left = new Rectangle2D.Double(-chassisWidth/2.0 - RANGE3, -chassisHeight/2.0, RANGE3, chassisHeight/2.0);
@@ -3163,20 +3247,7 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
             }
             return fusion;
         }
-        if(chosenOption == leftArcOption){
-            ArrayList<Shape> listShape = new ArrayList<Shape>();
-            listShape.add(new Rectangle2D.Double(-chassisWidth/2.0 - RANGE3, -chassisHeight/2.0, RANGE3, chassisHeight)); //left or rightleft
-            ArrayList<Shape> keptTransformedlistShape = new ArrayList<Shape>();
-            for(Shape s : listShape){
-                Shape transformed = transformRectShapeForBestLines(atk, def, s, centerX, centerY);
-                if(shapesOverlap(transformed, def.getRectWithNoNubs())) keptTransformedlistShape.add(transformed);
-            }
-            Area fusion = new Area();
-            for(Shape s : keptTransformedlistShape){
-                fusion.add(new Area(s));
-            }
-            return fusion;
-        }
+
         //common to all options except turret/TL shots
         Shape tShape = transformRectShapeForBestLines(atk, def, testShape, centerX, centerY);
         if(tShape !=null) if(shapesOverlap(tShape, def.getRectWithNoNubs())) return tShape;
