@@ -294,10 +294,9 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
                 break;
             case frontAuxArcOption:
                 if(twoPointOh == false) {
-                    //bestLine = findBestLineInFrontAuxArcs(D1, D2, D3, 3);
-                    SayNotImplementedYet();
+                    bestLine = findBestLineInFrontAuxArcs(D1, D2, D3, 3);
                 }
-                else findBestLineInFullFrontArc(D1, D2, D3, 3);;
+                else findBestLineInFullFrontArc(D1, D2, D3, 3);
                 break;
             case mobileSideArcOption:
                 bestLine = findBestLineInMobileArc(D1, D2, D3, 3);
@@ -306,8 +305,7 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
                 bestLine = findBestLineInBullseye(D1, D2, D3, 3);
                 break;
             case backAftArcOption:
-                //bestLine = findBestLineInBackAuxArcs(D1, D2, D3, 3);
-                SayNotImplementedYet();
+                findBestLineInFullFrontArc(D1, D2, D3, 3);
                 break;
             case leftArcOption:
                 bestLine = findBestLineInLeftArc(D1, D2, D3, 3);
@@ -1725,6 +1723,13 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
         Point2D.Double LC = thisShip.getVertices().get(0);
         Point2D.Double RC = thisShip.getVertices().get(1);
 
+
+        if(whichOption==backAftArcOption){
+            LC = thisShip.getVertices().get(3);
+            RC = thisShip.getVertices().get(2);
+        }
+
+
         Point2D.Double center = new Point2D.Double(thisShip.bumpable.getPosition().x, thisShip.bumpable.getPosition().y);
 
         //Prep segments along ships (attacker and defender) used to figure out some of the firing lines
@@ -1759,16 +1764,16 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
         }
         //Right Corner Attacker to Closest Defender
         MicLine RCD1 = new MicLine(RC, D1, false);
-        if(findSegmentCrossPoint(LCD2, new MicLine(center, E1, false), true)==null &&
-                findSegmentCrossPoint(LCD2, new MicLine(center, E2, false), true)==null){
+        if(findSegmentCrossPoint(RCD1, new MicLine(center, E1, false), true)==null &&
+                findSegmentCrossPoint(RCD1, new MicLine(center, E2, false), true)==null){
             lineToVet = vetThisLine(RCD1, "RCD1", 0.1);
             if(lineToVet != null) lineList.add(lineToVet);
         }
 
         //Right Corner Attacker to 2nd closest Defender
         MicLine RCD2 = new MicLine(RC, D2, false);
-        if(findSegmentCrossPoint(LCD2, new MicLine(center, E1, false), true)==null &&
-                findSegmentCrossPoint(LCD2, new MicLine(center, E2, false), true)==null){
+        if(findSegmentCrossPoint(RCD2, new MicLine(center, E1, false), true)==null &&
+                findSegmentCrossPoint(RCD2, new MicLine(center, E2, false), true)==null){
             lineToVet = vetThisLine(RCD2, "RCD2", 0.1);
             if(lineToVet != null) lineList.add(lineToVet);
         }
@@ -1777,11 +1782,17 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
         //first arc edge
         MicLine A1DD_arc_restricted = createLineAxtoDD_along_arc_edge(A1, E1, DD);
         lineToVet = vetThisLine(A1DD_arc_restricted, "A1DD_ea", 0.5);
-        if(lineToVet != null) lineList.add(lineToVet);
+        if(lineToVet != null) {
+            lineList.add(lineToVet);
+            //logToChat("A1 to DD angle checks= "+isEdgeInArc(lineToVet, A2, E2, A1, E1));
+        }
         //first arc edge to 2nd def edge
         MicLine A1DD_arc_restricted_2nd = createLineAxtoDD_along_arc_edge(A1, E1, DD_2nd);
         lineToVet = vetThisLine(A1DD_arc_restricted_2nd, "A1DD_2nd_ea", 0.7);
-        if(lineToVet != null) lineList.add(lineToVet);
+        if(lineToVet != null) {
+            lineList.add(lineToVet);
+            //logToChat("A1 to DD2 angle checks= "+isEdgeInArc(lineToVet, A2, E2, A1, E1));
+        }
 
         //2nd arc edge
         MicLine A2DD_arc_restricted = createLineAxtoDD_along_arc_edge(A2, E2, DD);
@@ -1804,7 +1815,7 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
 
         //Attacker's edge to defender's closest vertex
         MicLine AAD1 = createLinePtoAB(D1, AA, false);
-        if(doesAAforInArcPassTest(AAD1, AA)== true && isRangeOk(AAD1, 1, rangeInt))
+        if(AAD1 != null && isRangeOk(AAD1, 1, rangeInt))
         {
             lineToVet = vetThisLine(AAD1, "AAD1", 0.8);
             if(lineToVet != null) lineList.add(lineToVet);
@@ -1812,14 +1823,14 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
 
         //Attacker's left long edge to defender's closest vertex
         MicLine LED1 = createLinePtoAB(D1, LE, false);
-        if(doesAAforInArcPassTest(LED1, LE)== true && isRangeOk(LED1, 1, rangeInt))
+        if(LED1 != null && isRangeOk(LED1, 1, rangeInt))
         {
             lineToVet = vetThisLine(LED1, "LED1", 0.8);
             if(lineToVet != null) lineList.add(lineToVet);
         }
         //same but right side
         MicLine RED1 = createLinePtoAB(D1, RE, false);
-        if(doesAAforInArcPassTest(RED1, RE)== true && isRangeOk(RED1, 1, rangeInt))
+        if(RED1 != null && isRangeOk(RED1, 1, rangeInt))
         {
             lineToVet = vetThisLine(RED1, "RED1", 0.8);
             if(lineToVet != null) lineList.add(lineToVet);
@@ -1840,11 +1851,14 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
         ArrayList<MicLine> filteredList = new ArrayList<MicLine>();
         ArrayList<MicLine> deadList = new ArrayList<MicLine>();
 
+
         for(MicLine l: lineList)
         {
-            if(isEdgeInArcInwardTweak(l, A1, E1, A2, E2) == true) filteredList.add(l);
-            else deadList.add(l);
+            filteredList.add(l);
+           //if(isEdgeInArc(l, A1, E1, A2, E2) == true) filteredList.add(l);
+           //else deadList.add(l);
         }
+
         //ALLLINES: if all lines have to been added to the visuals, then, uncomment this section
         if(MULTILINES == true){
             for(MicLine everyline : filteredList) {
@@ -1856,7 +1870,7 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
             }
         }
         //end of section
-
+logToChat("found this no of lines " + filteredList.size());
 
         //First criterium, find the best distance and make it the best Line
         double bestDist = rangeInt * 282.5;
@@ -2379,10 +2393,18 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
         }
         else if(whichOption == frontAuxArcOption && twoPointOh == true){
             A1 = thisShip.tPts.get(8);
-            A2 = thisShip.tPts.get(9);
-
             E1 = thisShip.tPts.get(10);
+
+            A2 = thisShip.tPts.get(9);
             E2 = thisShip.tPts.get(11);
+        }
+        else if(whichOption == backAftArcOption){
+            A1 = thisShip.tPts.get(8);
+            E1 = thisShip.tPts.get(10);
+
+            A2 = thisShip.tPts.get(9);
+            E2 = thisShip.tPts.get(11);
+
         }
         /*
         else if(whichOption == backFullArcOption && twoPointOh == true){
@@ -2637,7 +2659,7 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
         if(Double.compare(secondArcEdgePolarAngle, -Math.PI + fudgefactor) < 0) secondArcEdgePolarAngle += 2.0*Math.PI;
         if(Double.compare(bestLinePolarAngle, -Math.PI + fudgefactor) < 0 ) bestLinePolarAngle += 2.0*Math.PI;
 
-        //logToChat("1: " + Double.toString(firstArcEdgePolarAngle) + " line: " + Double.toString(bestLinePolarAngle) + " 2: " + Double.toString(secondArcEdgePolarAngle));
+        logToChat("1: " + Double.toString(firstArcEdgePolarAngle) + " line: " + Double.toString(bestLinePolarAngle) + " 2: " + Double.toString(secondArcEdgePolarAngle));
         if(Double.compare(bestLinePolarAngle, firstArcEdgePolarAngle) < 0 || Double.compare(bestLinePolarAngle, secondArcEdgePolarAngle) > 0)
             return false;
         return true;
