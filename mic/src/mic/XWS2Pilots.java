@@ -184,7 +184,7 @@ public class XWS2Pilots implements Serializable {
     public boolean containsPilot(String pilotName){
         for(Pilot2e pilot : getPilots())
         {
-            Util.logToChat("scanning pilot " + pilot.getName());
+            //Util.logToChat("scanning pilot " + pilot.getName());
             if(pilot.getName().equals(pilotName)) return true;
         }
         return false;
@@ -193,7 +193,7 @@ public class XWS2Pilots implements Serializable {
     public boolean containsCleanedPilot(String cleanedPilotName){
         for(Pilot2e pilot : getPilots())
         {
-            Util.logToChat("scanning pilot " + pilot.getName());
+            //Util.logToChat("scanning pilot " + pilot.getName());
             if(Canonicalizer.getCleanedName(pilot.getName()).equals(cleanedPilotName)) return true;
         }
         return false;
