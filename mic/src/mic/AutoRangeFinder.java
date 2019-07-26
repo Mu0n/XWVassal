@@ -1105,6 +1105,7 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
         //deal with easy front aux arc case that will at least get a frontal band
         if(twoPointOh == true && (whichOption == frontAuxArcOption || whichOption == backAftArcOption)){
             Boolean checkInsideArcRects = isTargetInsideofRectangles(thisShip, b, true, false);
+            logToChat("line 1108 ARF: checkInsideArcRects ="+checkInsideArcRects);
             //subcase 6a, line is blocked, but there might still be a frontal band allowed. decide on that limiting factor
             if(firingArcAllowsBand == false) {
                 if(checkInsideArcRects == true) return true;
