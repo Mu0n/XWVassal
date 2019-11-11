@@ -72,6 +72,7 @@ public class MouseShipGUIDrawable extends MouseGUIDrawable implements Drawable {
     public void MouseShipGUIJomblr(GamePiece shipPiece, Map map, XWS2Pilots pilotShip, XWS2Pilots.Pilot2e pilot){
         int smallShipTripleChoice = 0;
         boolean isSmall = false;
+        //logToChat(pilotShip.toString());
         if(pilotShip.getSize().equals("Small")) isSmall = true;
 
         // *
@@ -357,12 +358,12 @@ public class MouseShipGUIDrawable extends MouseGUIDrawable implements Drawable {
 
         MouseShipGUIElement LEFT_ARC_TOGGLE = new MouseShipGUIElement(2, null, "mi_left_arc.png", 11, 266,
                 KeyStroke.getKeyStroke(KeyEvent.VK_G, KeyEvent.CTRL_DOWN_MASK, false), 0, null);
-        MouseShipGUIElement LEFT_ARC_123 = new MouseShipGUIElement(2, null, "mi_range_123_todo.png", 104, 266,
+        MouseShipGUIElement LEFT_ARC_123 = new MouseShipGUIElement(2, null, "mi_range_123.png", 104, 266,
                 KeyStroke.getKeyStroke(KeyEvent.VK_G, KeyEvent.CTRL_DOWN_MASK + KeyEvent.SHIFT_DOWN_MASK, false), 0, null);
 
         MouseShipGUIElement RIGHT_ARC_TOGGLE = new MouseShipGUIElement(2, null, "mi_right_arc.png", 11, 333,
                 KeyStroke.getKeyStroke(KeyEvent.VK_G, KeyEvent.ALT_DOWN_MASK, false), 0, null);
-        MouseShipGUIElement RIGHT_ARC_123 = new MouseShipGUIElement(2, null, "mi_range_123_todo.png", 104, 333,
+        MouseShipGUIElement RIGHT_ARC_123 = new MouseShipGUIElement(2, null, "mi_range_123.png", 104, 333,
                 KeyStroke.getKeyStroke(KeyEvent.VK_G, KeyEvent.ALT_DOWN_MASK + KeyEvent.SHIFT_DOWN_MASK, false), 0, null);
 
         MouseShipGUIElement TARGET_TOGGLE = new MouseShipGUIElement(2, null, "mi_target.png", 330, 132,

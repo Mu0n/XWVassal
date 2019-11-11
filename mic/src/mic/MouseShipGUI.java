@@ -330,6 +330,9 @@ public class MouseShipGUI extends AbstractConfigurable {
                     //final solution to fetch a ship's info
                     String xwsStr = ship.getProperty("xws").toString();
 
+                    //WOOP WOOP TECH DEBT, manual hack just for pilot 0-66 which got rewritten as an int of value 66, breaking detection in xwd2 later
+                    if(xwsStr.equals("66")) xwsStr = "066";
+
                     XWS2Pilots.Pilot2e pilot = XWS2Pilots.getSpecificPilot(xwsStr, allShips);
                     XWS2Pilots pilotShip = XWS2Pilots.getSpecificShipFromPilotXWS2(xwsStr, allShips);
                             /*logToChat("Pilot name = " + pilot.getName() + " xws = " + pilot.getXWS()+ " who flies a " + pilotShip.getName());
