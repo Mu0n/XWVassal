@@ -826,7 +826,7 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
         //Same, right side
         for(MicLine l: rightList)
         {
-            if(isEdgeInArc(l, A1, E1, A2, E2) == true) filteredList.add(l);
+            if(isEdgeInArcNew(l, A1, E1, A2, E2) == true) filteredList.add(l);
             else deadList.add(l);
         }
         //add the rest of the safe angle lines
@@ -1002,7 +1002,7 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
         //Filter out shots that aren't inside the left aux arc
         for(MicLine l: leftList)
         {
-            if(isEdgeInArc(l, A1, E1, A2, E2) == true) filteredList.add(l);
+            if(isEdgeInArcNew(l, A1, E1, A2, E2) == true) filteredList.add(l);
             else deadList.add(l);
         }
         //add the rest of the safe angle lines
@@ -1105,7 +1105,7 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
         //deal with easy front aux arc case that will at least get a frontal band
         if(twoPointOh == true && (whichOption == frontAuxArcOption || whichOption == backAftArcOption)){
             Boolean checkInsideArcRects = isTargetInsideofRectangles(thisShip, b, true, false);
-            logToChat("line 1108 ARF: checkInsideArcRects ="+checkInsideArcRects);
+            //logToChat("line 1108 ARF: checkInsideArcRects ="+checkInsideArcRects);
             //subcase 6a, line is blocked, but there might still be a frontal band allowed. decide on that limiting factor
             if(firingArcAllowsBand == false) {
                 if(checkInsideArcRects == true) return true;
@@ -1658,25 +1658,25 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
         //Filter out shots that aren't inside the left aux arc
         for(MicLine l: leftList)
         {
-            if(isEdgeInArc(l, A1, E1, A2, E2) == true) filteredList.add(l);
+            if(isEdgeInArcNew(l, A1, E1, A2, E2) == true) filteredList.add(l);
             else deadList.add(l);
         }
         //Same, right side
         for(MicLine l: rightList)
         {
-            if(isEdgeInArc(l, A3, E3, A4, E4) == true) filteredList.add(l);
+            if(isEdgeInArcNew(l, A3, E3, A4, E4) == true) filteredList.add(l);
             else deadList.add(l);
         }
         //Same, front side
         for(MicLine l: frontList)
         {
-            if(isEdgeInArc(l, A2, E2, A3, E3) == true) filteredList.add(l);
+            if(isEdgeInArcNew(l, A2, E2, A3, E3) == true) filteredList.add(l);
             else deadList.add(l);
         }
         //Same, back side
         for(MicLine l: backList)
         {
-            if(isEdgeInArc(l, A4, E4, A1, E1) == true) filteredList.add(l);
+            if(isEdgeInArcNew(l, A4, E4, A1, E1) == true) filteredList.add(l);
             else deadList.add(l);
         }
         //add the rest of the safe angle lines
@@ -1727,8 +1727,8 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
 
 
         if(whichOption==backAftArcOption){
-            LC = thisShip.getVertices().get(3);
-            RC = thisShip.getVertices().get(2);
+            LC = thisShip.getVertices().get(2);
+            RC = thisShip.getVertices().get(3);
         }
 
 
@@ -1857,8 +1857,8 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
         for(MicLine l: lineList)
         {
             filteredList.add(l);
-            //if(isEdgeInArc(l, A1, E1, A2, E2) == true) filteredList.add(l);
-            //else deadList.add(l);
+            if(isEdgeInArcNew(l, A1, E1, A2, E2) == true) filteredList.add(l);
+            else deadList.add(l);
         }
 
         //ALLLINES: if all lines have to been added to the visuals, then, uncomment this section
@@ -2087,19 +2087,19 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
         //Filter out shots that aren't inside the left aux arc
         for(MicLine l: leftLineList)
         {
-            if(isEdgeInArc(l, A1, E1, A2, E2) == true) filteredList.add(l);
+            if(isEdgeInArcNew(l, A1, E1, A2, E2) == true) filteredList.add(l);
             else deadList.add(l);
         }
         //Same, right side
         for(MicLine l: rightLineList)
         {
-            if(isEdgeInArc(l, A3, E3, A4, E4) == true) filteredList.add(l);
+            if(isEdgeInArcNew(l, A3, E3, A4, E4) == true) filteredList.add(l);
             else deadList.add(l);
         }
         //Same, front side
         for(MicLine l: lineList)
         {
-            if(isEdgeInArc(l, A2, E2, A3, E3) == true) filteredList.add(l);
+            if(isEdgeInArcNew(l, A2, E2, A3, E3) == true) filteredList.add(l);
             else deadList.add(l);
         }
         //add the rest of the safe angle lines
@@ -2189,7 +2189,7 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
         //Filter out shots that aren't in-arc if the turret option is not chosen
         for(MicLine l: lineList)
         {
-            if(isEdgeInArc(l, A1, E1, A2, E2) == true) filteredList.add(l);
+            if(isEdgeInArcNew(l, A1, E1, A2, E2) == true) filteredList.add(l);
             else deadList.add(l);
         }
 
@@ -2304,7 +2304,7 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
         //Filter out shots that aren't in-arc if the turret option is not chosen
         for(MicLine l: lineList)
         {
-            if(isEdgeInArc(l, A1, E1, A2, E2) == true) filteredList.add(l);
+            if(isEdgeInArcNew(l, A1, E1, A2, E2) == true) filteredList.add(l);
             else deadList.add(l);
         }
         //Add already vetted lines
@@ -2401,11 +2401,11 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
             E2 = thisShip.tPts.get(11);
         }
         else if(whichOption == backAftArcOption){
-            A1 = thisShip.tPts.get(8);
-            E1 = thisShip.tPts.get(10);
+            A1 = thisShip.tPts.get(9);
+            E1 = thisShip.tPts.get(11);
 
-            A2 = thisShip.tPts.get(9);
-            E2 = thisShip.tPts.get(11);
+            A2 = thisShip.tPts.get(8);
+            E2 = thisShip.tPts.get(10);
 
         }
         /*
@@ -2664,12 +2664,45 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
         if(Double.compare(secondArcEdgePolarAngle, -Math.PI + fudgefactor) < 0) secondArcEdgePolarAngle += 2.0*Math.PI;
         if(Double.compare(bestLinePolarAngle, -Math.PI + fudgefactor) < 0 ) bestLinePolarAngle += 2.0*Math.PI;
 
-        logToChat("1: " + Double.toString(firstArcEdgePolarAngle) + " line: " + Double.toString(bestLinePolarAngle) + " 2: " + Double.toString(secondArcEdgePolarAngle));
+        //logToChat("1: " + Double.toString(firstArcEdgePolarAngle) + " line: " + Double.toString(bestLinePolarAngle) + " 2: " + Double.toString(secondArcEdgePolarAngle));
         if(Double.compare(bestLinePolarAngle, firstArcEdgePolarAngle) < 0 || Double.compare(bestLinePolarAngle, secondArcEdgePolarAngle) > 0)
             return false;
         return true;
     }
+    private boolean hasPlusOrMinusOnly(double firstArcEdgePolarAngle, double bestLinePolarAngle, double secondArcEdgePolarAngle)
+    {
+        int cumulativeCheck = 0;
 
+        if(Double.compare(firstArcEdgePolarAngle, 0.0) > 0) cumulativeCheck++;
+        if(Double.compare(bestLinePolarAngle, 0.0) > 0) cumulativeCheck++;
+        if(Double.compare(secondArcEdgePolarAngle, 0.0) > 0) cumulativeCheck++;
+
+        if(cumulativeCheck==3) return true;
+        return false;
+    }
+    private boolean isEdgeInArcNew(MicLine theCandidateLine, Point2D.Double leftMostStart, Point2D.Double leftMostEnd, Point2D.Double rightMostStart, Point2D.Double  rightMostEnd)
+    {
+        double fudgefactor = 0.00001; //open up the arc just slightly to better allow along-the-arc firing lines
+        double firstArcEdgePolarAngle = getEdgeAngle(leftMostStart, leftMostEnd) - fudgefactor; //edge most counter-clockwise
+        double secondArcEdgePolarAngle = getEdgeAngle(rightMostStart, rightMostEnd) + fudgefactor; //edge most clockwise
+        double bestLinePolarAngle = getEdgeAngle(theCandidateLine.first, theCandidateLine.second);
+
+        //left shouldn't be bigger than right
+        if(Double.compare(firstArcEdgePolarAngle,secondArcEdgePolarAngle)>0){
+            boolean mustAdjustLineToo = Double.compare(bestLinePolarAngle,firstArcEdgePolarAngle)>0;
+
+            firstArcEdgePolarAngle-=2.0*Math.PI;
+            if(mustAdjustLineToo) bestLinePolarAngle -= 2.0*Math.PI;
+        }
+
+        //another case do deal with: full 180 arcs might have both left and right positive because of the fudge factor,
+        //slightly dipping in the positive half of the angle coordinate system. simple check, verify that if the angle is
+        //logToChat("left: " + Double.toString(firstArcEdgePolarAngle) + " line: " + Double.toString(bestLinePolarAngle) + " right: " + Double.toString(secondArcEdgePolarAngle));
+
+        if(Double.compare(bestLinePolarAngle, firstArcEdgePolarAngle) > 0 && Double.compare(bestLinePolarAngle, secondArcEdgePolarAngle) < 0)
+            return true;
+        return false;
+    }
     private boolean isEdgeInArcInwardTweak(MicLine theCandidateLine, Point2D.Double leftMostStart, Point2D.Double leftMostEnd, Point2D.Double rightMostStart, Point2D.Double  rightMostEnd)
     {
         double fudgefactor = 0.00001; //open up the arc just slightly to better allow along-the-arc firing lines
@@ -2687,7 +2720,7 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
         if(Double.compare(secondArcEdgePolarAngle, -Math.PI + fudgefactor) < 0) secondArcEdgePolarAngle += 2.0*Math.PI;
         if(Double.compare(bestLinePolarAngle, -Math.PI + fudgefactor) < 0 ) bestLinePolarAngle += 2.0*Math.PI;
 
-        logToChat("1: " + Double.toString(firstArcEdgePolarAngle) + " line: " + Double.toString(bestLinePolarAngle) + " 2: " + Double.toString(secondArcEdgePolarAngle));
+        //logToChat("1: " + Double.toString(firstArcEdgePolarAngle) + " line: " + Double.toString(bestLinePolarAngle) + " 2: " + Double.toString(secondArcEdgePolarAngle));
         if(Double.compare(bestLinePolarAngle, firstArcEdgePolarAngle) < 0 || Double.compare(bestLinePolarAngle, secondArcEdgePolarAngle) > 0)
             return false;
         return true;
@@ -3642,7 +3675,7 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
                 .getRotateInstance(b.getAngleInRadians(), centerX, centerY)
                 .createTransformedShape(transformed);
 
-        fov.add(transformed);
+        //fov.add(transformed);
         return transformed;
     }
 
