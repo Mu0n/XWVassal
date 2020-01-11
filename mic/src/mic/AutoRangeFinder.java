@@ -282,6 +282,8 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
         Point2D.Double D3 = find3rdClosestVertex(b, thisShip);
 
         MicLine bestLine = null;
+        MicLine bestLine2 = null; // for double turrets
+
         switch(whichOption){
             case turretArcOption:
                 bestLine = findBestLine(D1, D2, 3);
@@ -299,7 +301,31 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
                 else bestLine = findBestLineInFullFrontArc(D1, D2, D3, 3);
                 break;
             case mobileSideArcOption:
-                bestLine = findBestLineInMobileArc(D1, D2, D3, 3);
+                if(twoPointOh == false) {
+                    bestLine = findBestLineInMobileArc(D1, D2, D3, 3);
+                }
+                else switch(getMobileEdge()){
+                    case 1:
+                        bestLine = findBestLineInSimpleArcs(D1, D2, D3, 3);
+                        break;
+                    case 2:
+                        bestLine = findBestLineInRightArc(D1, D2, D3, 3);
+                        break;
+                    case 3:
+                        bestLine = findBestLineInSimpleArcs(D1, D2, D3, 3);
+                        break;
+                    case 4:
+                        bestLine = findBestLineInLeftArc(D1, D2, D3, 3);
+                        break;
+                    case 13:
+                        bestLine = findBestLineInSimpleArcs(D1, D2, D3, 3);
+                        bestLine2 = findBestLineInSimpleArcs(D1, D2, D3, 3);
+                        break;
+                    case 24:
+                        bestLine = findBestLineInRightArc(D1, D2, D3, 3);
+                        bestLine2 = findBestLineInLeftArc(D1, D2, D3, 3);
+                        break;
+                }
                 break;
             case bullseyeArcOption:
                 bestLine = findBestLineInBullseye(D1, D2, D3, 3);
@@ -309,16 +335,16 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
                 break;
             case leftArcOption:
                 bestLine = findBestLineInLeftArc(D1, D2, D3, 3);
-                //SayNotImplementedYet();
                 break;
             case rightArcOption:
                 bestLine = findBestLineInRightArc(D1, D2, D3, 3);
-                //SayNotImplementedYet();
                 break;
         }
 
-        if (bestLine == null) return;
-        bestLine.isBestLine = true;
+        //TODO not sure about this at all
+        if (bestLine == null && bestLine2 == null) return; //nothing at all found
+        if(bestLine != null) bestLine.isBestLine = true;
+        if(bestLine2 !=null) bestLine2.isBestLine = true;
 
         //Prepare the end of the appropriate chat announcement string - targets with their range, obstruction notice if relevant, ordered per range
         String bShipName = b.pilotName + "(" + b.shipName + ")";
@@ -1142,7 +1168,7 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
             if(checkClassicCross==true) return true;
         }
         //Completely deal with mobile turret cases that were not totally easy before the FORK above
-        if(whichOption==mobileSideArcOption) { //should be moot because it's supposed to be the last surviving option
+        if(whichOption==mobileSideArcOption && twoPointOh == false) { //should be moot because it's supposed to be the last surviving option
             Boolean checkFrontArcAlignment = isTargetInsideofFrontRectangle(thisShip, b, true);
             Boolean checkClassicCross = isTargetInsideofRectangles(thisShip, b, true, true);
             switch(whichMobileSide){
@@ -1193,6 +1219,9 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
                     if(checkClassicCross==true) return true;
                     break;
             }
+        }
+        if(whichOption == mobileSideArcOption && twoPointOh){
+            //TODO implement here
         }
         return false; //must request a line because that corner is not in the side that's selected
     }
@@ -1813,12 +1842,18 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
         //normal to defender's edges
         //Closest attacker's point to the defender's closest edge
         MicLine A1DD = createLinePtoAB(A1, DD, true);
-        lineToVet = vetThisLine(A1DD, "A1DD", 0.2);
-        if(lineToVet != null) lineList.add(lineToVet);
+        if(findSegmentCrossPoint(A1DD, AA, true)==null &&
+                findSegmentCrossPoint(A1DD, RE, true)==null){
+            lineToVet = vetThisLine(A1DD, "A1DD", 0.2);
+            if(lineToVet != null) lineList.add(lineToVet);
+        }
 
         MicLine A2DD = createLinePtoAB(A2, DD, true);
-        lineToVet = vetThisLine(A2DD, "A2DD", 0.4);
-        if(lineToVet != null) lineList.add(lineToVet);
+        if(findSegmentCrossPoint(A2DD, AA, true)==null &&
+                findSegmentCrossPoint(A2DD, LE, true)==null){
+            lineToVet = vetThisLine(A2DD, "A2DD", 0.4);
+            if(lineToVet != null) lineList.add(lineToVet);
+        }
 
         //Attacker's edge to defender's closest vertex
         MicLine AAD1 = createLinePtoAB(D1, AA, false);
@@ -2357,7 +2392,7 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
             A1 = findClosestVertex(thisShip, b);
             A2 = find2ndClosestVertex(thisShip, b);
         }
-        else if(whichOption == frontArcOption){
+        else if(whichOption == frontArcOption || (whichOption == mobileSideArcOption && getMobileEdge() == 1 && twoPointOh)){
             // Assuming an upward facing ship,
             // firing arc edges used to restrict best lines if they are crossing (unused for turret/TL.
             // 0 and 2 for CCW primary arc (start and end)
@@ -2373,7 +2408,7 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
             E1 = thisShip.tPts.get(2); //associated with A1 as the edge A1E1
             E2 = thisShip.tPts.get(3); //associated with A2 as the edge A2E2
         }
-        else if(whichOption == backArcOption){
+        else if(whichOption == backArcOption  || (whichOption == mobileSideArcOption && getMobileEdge() == 3 && twoPointOh)){
             A1 = thisShip.tPts.get(4);
             A2 = thisShip.tPts.get(5);
 
@@ -2434,29 +2469,15 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
 
             E3 = thisShip.tPts.get(3);
             E4 = thisShip.tPts.get(6);
-        }else if(whichOption == mobileSideArcOption && twoPointOh == true){
-            //left side check
-            A1 = thisShip.tPts.get(5);
-            E1 = thisShip.tPts.get(7);
-
-            A2 = thisShip.tPts.get(0);
-            E2 = thisShip.tPts.get(2);
-
-            //right side check
-            A3 = thisShip.tPts.get(1);
-            E3 = thisShip.tPts.get(3);
-
-            A4 = thisShip.tPts.get(4);
-            E4 = thisShip.tPts.get(6);
         }
-        else if(whichOption == leftArcOption){
+        else if(whichOption == leftArcOption  || (whichOption == mobileSideArcOption && getMobileEdge() == 4 && twoPointOh)){
             A1 = thisShip.tPts.get(5);
             E1 = thisShip.tPts.get(7);
 
             A2 = thisShip.tPts.get(0);
             E2 = thisShip.tPts.get(2);
         }
-        else if(whichOption == rightArcOption){
+        else if(whichOption == rightArcOption  || (whichOption == mobileSideArcOption && getMobileEdge() == 2 && twoPointOh)){
             A1 = thisShip.tPts.get(1);
             E1 = thisShip.tPts.get(3);
 
