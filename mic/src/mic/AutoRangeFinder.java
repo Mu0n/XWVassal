@@ -58,7 +58,7 @@ class FluidAnim extends TimerTask {
 public class AutoRangeFinder extends Decorator implements EditablePiece {
 
     private static Boolean DEBUGMODE = false;
-    private static Boolean MULTILINES = true;
+    private static Boolean MULTILINES = false;
 
     protected VASSAL.build.module.Map map;
     private static final int frontArcOption = 1;
@@ -1888,10 +1888,9 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
         }
         //nothing under the requested range was found, no best lines can be submitted
         if (best == null) {
-            logToChat("still got no best line, it's null!");
+            //logToChat("still got no best line, it's null!");
             return null;
         }
-
         best.isArcLine = true;
         return best;
     }
@@ -2701,11 +2700,11 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
 
         //another case do deal with: full 180 arcs might have both left and right positive because of the fudge factor,
         //slightly dipping in the positive half of the angle coordinate system. simple check, verify that if the angle is
-        logToChat((theCandidateLine.labelKeep.equals("")?"":theCandidateLine.labelKeep)
+/*logToChat((theCandidateLine.labelKeep.equals("")?"":theCandidateLine.labelKeep)
                 + " left: " + Double.toString(firstArcEdgePolarAngle)
                 + " line: " + Double.toString(bestLinePolarAngle) + " right: "
                 + Double.toString(secondArcEdgePolarAngle));
-
+*/
         if(Double.compare(bestLinePolarAngle, firstArcEdgePolarAngle) > 0 && Double.compare(secondArcEdgePolarAngle, bestLinePolarAngle) > 0)
             return true;
         return false;
