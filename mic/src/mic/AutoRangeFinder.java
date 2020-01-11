@@ -58,7 +58,7 @@ class FluidAnim extends TimerTask {
 public class AutoRangeFinder extends Decorator implements EditablePiece {
 
     private static Boolean DEBUGMODE = false;
-    private static Boolean MULTILINES = true;
+    private static Boolean MULTILINES = false;
 
     protected VASSAL.build.module.Map map;
     private static final int frontArcOption = 1;
@@ -173,7 +173,7 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
         whichOption = getKeystrokeToOptions(stroke);
 
         if (whichOption != -1 && stroke.isOnKeyRelease() == false) {
-            if(isShowingLines.equals("1") && fovCommand != null & this.fov !=null && this.fov.getCount() > 0) return piece.keyEvent(stroke); //not ready to deal with anything until the normal vassal editor trigger has worked and changed this to "0"
+            if(isShowingLines.equals("1") && fovCommand != null && this.fov !=null && this.fov.getCount() > 0) return piece.keyEvent(stroke); //not ready to deal with anything until the normal vassal editor trigger has worked and changed this to "0"
             else if(isShowingLines.equals("0") && this.fov !=null && this.fov.getCount() > 0) return piece.keyEvent(stroke); //the line garbage collector has not done its job yet, don't enter now.
             if(whichOption == 12) {
                 MULTILINES = true;
@@ -1856,7 +1856,6 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
 
         for(MicLine l: lineList)
         {
-            filteredList.add(l);
             if(isEdgeInArcNew(l, A1, E1, A2, E2) == true) filteredList.add(l);
             else deadList.add(l);
         }
@@ -2697,9 +2696,12 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
 
         //another case do deal with: full 180 arcs might have both left and right positive because of the fudge factor,
         //slightly dipping in the positive half of the angle coordinate system. simple check, verify that if the angle is
-        logToChat("left: " + Double.toString(firstArcEdgePolarAngle) + " line: " + Double.toString(bestLinePolarAngle) + " right: " + Double.toString(secondArcEdgePolarAngle));
+        logToChat(theCandidateLine.labelKeep.equals("")?"":theCandidateLine.labelKeep
+                + " left: " + Double.toString(firstArcEdgePolarAngle)
+                + " line: " + Double.toString(bestLinePolarAngle) + " right: "
+                + Double.toString(secondArcEdgePolarAngle));
 
-        if(Double.compare(bestLinePolarAngle, firstArcEdgePolarAngle) > 0 && Double.compare(bestLinePolarAngle, secondArcEdgePolarAngle) < 0)
+        if(Double.compare(bestLinePolarAngle, firstArcEdgePolarAngle) > 0 && Double.compare(secondArcEdgePolarAngle, bestLinePolarAngle) > 0)
             return true;
         return false;
     }
@@ -3770,6 +3772,7 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
         public Point2D.Double first, second;
         public Line2D.Double line = null;
         public Boolean markedAsDead = false;
+        public String labelKeep = "";
 
         public MicLine() { /* To allow serizliation */ }
 
@@ -3785,6 +3788,7 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
         public MicLine(Point2D.Double first, Point2D.Double second, Boolean markAsDead, String label, double percentage) {
             this.first = first;
             this.second = second;
+            this.labelKeep = label;
             doRest(label, percentage);
             markedAsDead = markAsDead;
         }
