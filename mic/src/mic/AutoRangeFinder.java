@@ -58,7 +58,7 @@ class FluidAnim extends TimerTask {
 public class AutoRangeFinder extends Decorator implements EditablePiece {
 
     private static Boolean DEBUGMODE = false;
-    private static Boolean MULTILINES = false;
+    private static Boolean MULTILINES = true;
 
     protected VASSAL.build.module.Map map;
     private static final int frontArcOption = 1;
@@ -342,7 +342,8 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
             fov.addLine(bestLine);
         }
 
-        else { //multiple lines case; shouldWeDoBandScenario() == true
+        else {
+            //multiple lines case; shouldWeDoBandScenario() == true
             //5th case: will be used in multiple bands, the triangles at the corners must be intersected with the rects of the defender
             //Boolean case5 = checkWeirdCase == true && trickyBandCase == true && are90degreesAligned(thisShip, b) == true && bestLineDoesntCrossArcEdge(bestLine);
 
@@ -377,8 +378,11 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
                     if(temp4!=null)atkShapes.add(temp4);
                     break;
                 case backAftArcOption:
+
                     Shape temp342 = findInBetweenRectangle(thisShip, b, wantedWidth, backAftArcOption);
-                    if(temp342!=null) atkShapes.add(temp342);
+                    if(temp342!=null) {
+                        atkShapes.add(temp342);
+                    }
                     break;
                 case frontAuxArcOption:
                     if(twoPointOh) {
@@ -1342,6 +1346,7 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
                 if(D1AA != null) foundRange = D1AA.rangeLength;
                 break;
             case frontAuxArcOption:
+            case backAftArcOption:
             case mobileSideArcOption:
             case leftArcOption:
             case rightArcOption:
@@ -2696,7 +2701,7 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
 
         //another case do deal with: full 180 arcs might have both left and right positive because of the fudge factor,
         //slightly dipping in the positive half of the angle coordinate system. simple check, verify that if the angle is
-        logToChat(theCandidateLine.labelKeep.equals("")?"":theCandidateLine.labelKeep
+        logToChat((theCandidateLine.labelKeep.equals("")?"":theCandidateLine.labelKeep)
                 + " left: " + Double.toString(firstArcEdgePolarAngle)
                 + " line: " + Double.toString(bestLinePolarAngle) + " right: "
                 + Double.toString(secondArcEdgePolarAngle));
@@ -3218,6 +3223,8 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
     }
 
     private Shape findInBetweenRectangle(BumpableWithShape atk, BumpableWithShape def, double wantedWidth, int chosenOption) {
+
+
         //this fishes out the rectangular shape of a multiple attack line scenario (band), bounded by arc lines in the case
         //of a front or back shot, including aux front arcs when the front has to be tested, or mobile turret shots when the front is tested.
         //testing out the triangles at the corners of front aux and mobile shots is done elsewhere, controlled in the else statement of the main keyEvent dealer method
@@ -3314,6 +3321,7 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
             return fusion;
         }
         if(chosenOption == backAftArcOption){
+
             Shape back = new Rectangle2D.Double(-wantedWidth/2.0, chassisHeight/2.0, wantedWidth, RANGE3);
             Shape left = new Rectangle2D.Double(-chassisWidth/2.0 - RANGE3, 0, RANGE3, chassisHeight/2.0);
             Shape right = new Rectangle2D.Double(chassisWidth/2.0, 0, RANGE3, chassisHeight/2.0);
@@ -3327,16 +3335,13 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
             ArrayList<Shape> keptTransformedlistShape = new ArrayList<Shape>();
             for(Shape s : listShape){
                 Shape transformed = transformRectShapeForBestLines(atk, def, s, centerX, centerY);
-                //TODO: remove next line when full aft arc is working
 
-                fov.add(transformed);
                 if(shapesOverlap(transformed, def.getRectWithNoNubs())) keptTransformedlistShape.add(transformed);
             }
             Area fusion = new Area();
             for(Shape s : keptTransformedlistShape){
                 fusion.add(new Area(s));
             }
-
             return fusion;
         }
         if(chosenOption == mobileSideArcOption) { //Lancer-Class and now many more in 2.0
