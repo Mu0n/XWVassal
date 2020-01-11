@@ -18,7 +18,7 @@ public class XWSUrlHelper2e {
 
     //example
     //https://raithos.github.io/?f=Rebel%20Alliance&d=v5!s!76:-1,-1,-1,-1,-1:&sn=Unnamed%20Squadron&obs=
-    private static String yasb2XWSRoot = "https://yasb2-xws.herokuapp.com/?";
+    private static String yasb2XWSRoot = "http://squad2xws.herokuapp.com/yasb/xws/?";
 
     private static URL translateYasb2(String url) throws MalformedURLException {
         URL originalUrl = new URL(url);
@@ -33,7 +33,7 @@ public class XWSUrlHelper2e {
 
     //example
     //
-    private static String officialXWSRoot = "http://sb2xws.herokuapp.com/translate/";
+    private static String officialXWSRoot = "http://squad2xws.herokuapp.com/translate/";
 
     private static URL translateOfficial(String url) throws MalformedURLException {
         URL originalUrl = new URL(url);

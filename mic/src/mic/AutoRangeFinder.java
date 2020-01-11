@@ -58,7 +58,7 @@ class FluidAnim extends TimerTask {
 public class AutoRangeFinder extends Decorator implements EditablePiece {
 
     private static Boolean DEBUGMODE = false;
-    private static Boolean MULTILINES = false;
+    private static Boolean MULTILINES = true;
 
     protected VASSAL.build.module.Map map;
     private static final int frontArcOption = 1;
@@ -2697,7 +2697,7 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
 
         //another case do deal with: full 180 arcs might have both left and right positive because of the fudge factor,
         //slightly dipping in the positive half of the angle coordinate system. simple check, verify that if the angle is
-        //logToChat("left: " + Double.toString(firstArcEdgePolarAngle) + " line: " + Double.toString(bestLinePolarAngle) + " right: " + Double.toString(secondArcEdgePolarAngle));
+        logToChat("left: " + Double.toString(firstArcEdgePolarAngle) + " line: " + Double.toString(bestLinePolarAngle) + " right: " + Double.toString(secondArcEdgePolarAngle));
 
         if(Double.compare(bestLinePolarAngle, firstArcEdgePolarAngle) > 0 && Double.compare(bestLinePolarAngle, secondArcEdgePolarAngle) < 0)
             return true;
@@ -3325,12 +3325,16 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
             ArrayList<Shape> keptTransformedlistShape = new ArrayList<Shape>();
             for(Shape s : listShape){
                 Shape transformed = transformRectShapeForBestLines(atk, def, s, centerX, centerY);
+                //TODO: remove next line when full aft arc is working
+
+                fov.add(transformed);
                 if(shapesOverlap(transformed, def.getRectWithNoNubs())) keptTransformedlistShape.add(transformed);
             }
             Area fusion = new Area();
             for(Shape s : keptTransformedlistShape){
                 fusion.add(new Area(s));
             }
+
             return fusion;
         }
         if(chosenOption == mobileSideArcOption) { //Lancer-Class and now many more in 2.0
