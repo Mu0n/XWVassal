@@ -378,12 +378,12 @@ public class MouseShipGUIDrawable extends MouseGUIDrawable implements Drawable {
 
         MouseShipGUIElement FORE_TOGGLE = new MouseShipGUIElement(2, null, "mi_fore_arc.png", 330, 266,
                 KeyStroke.getKeyStroke(KeyEvent.VK_N, KeyEvent.CTRL_DOWN_MASK, false), 0, null);
-        MouseShipGUIElement FORE_123 = new MouseShipGUIElement(2, null, "mi_range_123_todo.png", 423, 266,
+        MouseShipGUIElement FORE_123 = new MouseShipGUIElement(2, null, "mi_range_123.png", 423, 266,
                 KeyStroke.getKeyStroke(KeyEvent.VK_N, KeyEvent.CTRL_DOWN_MASK + KeyEvent.SHIFT_DOWN_MASK, false), 0, null);
 
         MouseShipGUIElement AFT_TOGGLE = new MouseShipGUIElement(2, null, "mi_aft_arc.png", 330, 333,
                 KeyStroke.getKeyStroke(KeyEvent.VK_N, KeyEvent.ALT_DOWN_MASK, false), 0, null);
-        MouseShipGUIElement AFT_123 = new MouseShipGUIElement(2, null, "mi_range_123_todo.png", 423, 333,
+        MouseShipGUIElement AFT_123 = new MouseShipGUIElement(2, null, "mi_range_123.png", 423, 333,
                 KeyStroke.getKeyStroke(KeyEvent.VK_N, KeyEvent.ALT_DOWN_MASK + KeyEvent.SHIFT_DOWN_MASK, false), 0, null);
 
 

@@ -63,29 +63,32 @@ public class FOVisualization extends Command {
             GamePiece p = FOVisualization.findPieceFromMicID(copyOverId);
                            @Override
                            public void run() {
-                               if(i==0){
-                                   SwingUtilities.invokeLater(new Runnable() {
-                                       public void run() {
-                                           map.addDrawComponent(fovContent);
-                                           map.repaint();
-                                       }
-                                   });
-                               i++;
-                               }
-                               else{
-                                   String isShowingLines = (Decorator.getOutermost(this.p)).getProperty("isShowingLines").toString();
-                                   if(isShowingLines.equals("0")){
+                               if (fovContent != null){
+                                   if(i==0){
                                        SwingUtilities.invokeLater(new Runnable() {
                                            public void run() {
-                                               map.removeDrawComponent(fovContent);
+                                               map.addDrawComponent(fovContent);
                                                map.repaint();
                                            }
                                        });
-                                       Command c = p.keyEvent(KeyStroke.getKeyStroke(KeyEvent.VK_M, KeyEvent.SHIFT_DOWN_MASK,false));
-                                       if(c!=null) c.execute();
-                                       timer.cancel();
+                                       i++;
+                                   }
+                                   else{
+                                       String isShowingLines = (Decorator.getOutermost(this.p)).getProperty("isShowingLines").toString();
+                                       if(isShowingLines.equals("0")){
+                                           SwingUtilities.invokeLater(new Runnable() {
+                                               public void run() {
+                                                   map.removeDrawComponent(fovContent);
+                                                   map.repaint();
+                                               }
+                                           });
+                                           Command c = p.keyEvent(KeyStroke.getKeyStroke(KeyEvent.VK_M, KeyEvent.SHIFT_DOWN_MASK,false));
+                                           if(c!=null) c.execute();
+                                           timer.cancel();
+                                       }
                                    }
                                }
+
                            }
                        }, 0, 200);
     }
