@@ -36,7 +36,7 @@ public class AutoSquadSpawn extends AbstractConfigurable {
     static final String voidURL = "http://xwing-builder.co.uk/build";
     static final String fabsURL = "http://x-wing.fabpsb.net/gindex.php";
 
-    static final String modeListURL = "https://raw.githubusercontent.com/Mu0n/XWVassal-website/master/modeList.json";
+    static final String modeListURL = "https://raw.githubusercontent.com/Mu0n/XWVassal-website/master/c";
 
     private boolean listHasHoundsTooth = false;
     private int houndsToothPilotSkill = 0;
