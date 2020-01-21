@@ -264,6 +264,7 @@ public class VassalXWSPieceLoader2e {
                 continue;
             }
             String obstacleName = tokenSlot.getConfigureName().trim();
+            Util.logToChat("obstacle loaded: " + obstacleName);
             Obstacles obstacle = Obstacles.forVassalName(obstacleName);
             obstaclesPiecesMap.put(obstacle, tokenSlot);
         }
