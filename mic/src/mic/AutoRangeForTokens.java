@@ -26,6 +26,9 @@ enum ImagesUsedForRanges {
     GasCloud1("Gascloud1_r1","Gascloud1_r2","Gascloud1_TL", 0, 0),
     GasCloud2("Gascloud2_r1","Gascloud2_r2","Gascloud2_TL", 0, 0),
     GasCloud3("Gascloud3_r1","Gascloud3_r2","Gascloud3_TL", 0, 0),
+    GasCloud4("Gascloud4_r1","Gascloud4_r2","Gascloud4_TL", 0, 0),
+    GasCloud5("Gascloud5_r1","Gascloud5_r2","Gascloud5_TL", 0, 0),
+    GasCloud6("Gascloud6_r1","Gascloud6_r2","Gascloud6_TL", 0, 0),
     BuzzDroid("","","", 0, 0),
     Asteroid1("Asteroid1_r1","Asteroid1_r2","Asteroid1_TL", 0, 0),
     Asteroid2("Asteroid2_r1","Asteroid2_r2","Asteroid2_TL", 0, 0),
@@ -129,6 +132,9 @@ public class AutoRangeForTokens extends Decorator implements EditablePiece {
             .put("Gas Cloud 1", ImagesUsedForRanges.GasCloud1)
             .put("Gas Cloud 2", ImagesUsedForRanges.GasCloud2)
             .put("Gas Cloud 3", ImagesUsedForRanges.GasCloud3)
+            .put("Gas Cloud 4", ImagesUsedForRanges.GasCloud4)
+            .put("Gas Cloud 5", ImagesUsedForRanges.GasCloud5)
+            .put("Gas Cloud 6", ImagesUsedForRanges.GasCloud6)
             .put("Seismic Charge", ImagesUsedForRanges.SeismicCharge)
             .put("Proton Bomb", ImagesUsedForRanges.ProtonBomb)
             .put("Thermal Detonators", ImagesUsedForRanges.ThermalDetonators)
