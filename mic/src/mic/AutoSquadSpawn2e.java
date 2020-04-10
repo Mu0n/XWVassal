@@ -795,12 +795,25 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
 
             totalPilotHeight += pilotHeight + 50;
 
-            if (ship.getPilotData().getForceData().getValue() > 0) {
+            int ktrack = 0; //used in case force tokens and charge tokens must coexist for the same pilot
+            if (ship.getPilotData().getForceData().getValue() + extraForceFromUpgrade > 0) {
                 int force = ship.getPilotData().getForceData().getValue();
+
+
                 for(int k = 0; k < force + extraForceFromUpgrade; k++) {
                     GamePiece forcePiece = newPiece(forceChargePieceSlot);
                     entireSpawnCommand.append(spawnPieceCommand(forcePiece, new Point(pilotPosX + - (int)(pilotPiece.boundingBox().width/2.0) + (int)(forcePiece.boundingBox().width/2.0) + k * forcePiece.boundingBox().width,
                             pilotPosY - (int) pilotPiece.boundingBox().height/2), playerMap));
+                    ktrack++;
+                }
+            }
+            if(ship.getPilotData().getChargeData().getValue() > 0) {
+                int charge = ship.getPilotData().getChargeData().getValue();
+
+                for(int k = 0; k < charge; k++){
+                    GamePiece chargePiece = newPiece(chargePieceSlot);
+                    entireSpawnCommand.append(spawnPieceCommand(chargePiece, new Point(pilotPosX + - (int)(pilotPiece.boundingBox().width/2.0) + (int)(chargePiece.boundingBox().width/2.0) + (ktrack+k) * chargePiece.boundingBox().width,
+                            pilotPosY - (int) pilotPiece.boundingBox().height/2),playerMap));
                 }
             }
 
