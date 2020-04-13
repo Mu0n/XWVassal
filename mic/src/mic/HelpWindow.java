@@ -26,15 +26,10 @@ import java.net.URLConnection;
 
 public class HelpWindow extends AbstractConfigurable {
 
-    // debug flag - setting this to false skips the onLoad download of OTA
-    private static final boolean DEBUG_DO_DOWNLOAD = true;
-
     private static String websiteVassal = "http://xwvassal.info";
     private static String guideURL = "http://xwvassal.info/guide";
     private JButton helpButton = new JButton();
-    private JFrame updateCheckFrame;
 
-    private static boolean checkComplete = false;
     private synchronized void HelpWindow() {
         JLabel titleLabel = new JLabel("How to get help - Click links to open in a browser");
         titleLabel.setFont(new Font("Serif", Font.PLAIN, 20));
@@ -111,6 +106,7 @@ public class HelpWindow extends AbstractConfigurable {
     }
 
     public void removeFrom(Buildable parent) {
+        GameModule.getGameModule().getToolBar().remove(helpButton);
     }
 
     // <editor-fold desc="unused vassal hooks">
