@@ -1825,7 +1825,8 @@
     <mic.EpicDeckTrayToggle/>
     <mic.AutoSquadSpawn/>
     <mic.AnnouncementOnLog/>
+    <mic.HelpWindow/>
+    <mic.EventsCalendar/>
     <mic.PatreonWindow/>
     <mic.MouseShipGUI/>
-    <mic.HelpWindow/>
 </VASSAL.launch.BasicModule>

@@ -37,9 +37,14 @@ public class EventsCalendar extends AbstractConfigurable {
         JLabel titleLabel = new JLabel("Events on Vassal X-Wing - Click link to open in a browser");
         titleLabel.setFont(new Font("Serif", Font.PLAIN, 20));
 
-        JLabel calendarDescLabel = new JLabel("Automatically updated Google Calendar with event links, signup dates and event dates. These are organized by active members of the X-Wing community.");
+        JLabel calendarDescLabel = new JLabel("Automatically updated Google Calendar with event links, signup dates and event dates.");
+            JLabel calendarDescLabel2 = new JLabel("These are organized by active members of the X-Wing community.");
         JLabel calendarLinkLabel = new JLabel("Link to the Google Calendar: ");
-        JLabel addExplanationLabel = new JLabel("You may import this Calendar to your Google account by clicking this button on the bottom right of that page. No need to visit the Calendar through here again!");
+
+            JLabel addExplanationLabela = new JLabel("Click on the various items in the Calendar to see the start date, end date and web link to the event.");
+            JLabel addExplanationLabelb = new JLabel("Every event has signup dates and ongoing dates.");
+        JLabel addExplanationLabel = new JLabel("You may import this Calendar to your Google account by clicking this button on the bottom right of that page.");
+            JLabel addExplanationLabel2 = new JLabel("No need to visit the Calendar through here again!");
             JLabel addCalendarImage = new JLabel();
             DataArchive dataArchive = GameModule.getGameModule().getDataArchive();
             BufferedImage img = null;
@@ -66,7 +71,7 @@ public class EventsCalendar extends AbstractConfigurable {
         labelPanel.add(Box.createRigidArea(new Dimension(0,8)));
 
         labelPanel.add(calendarDescLabel);
-
+            labelPanel.add(calendarDescLabel2);
         JPanel guideHoriz = new JPanel();
         guideHoriz.setLayout(new BoxLayout(guideHoriz, BoxLayout.X_AXIS));
         guideHoriz.add(calendarLinkLabel);
@@ -74,7 +79,11 @@ public class EventsCalendar extends AbstractConfigurable {
 
         labelPanel.add(guideHoriz);
         labelPanel.add(Box.createRigidArea(new Dimension(0,8)));
+
+            labelPanel.add(addExplanationLabela);
+            labelPanel.add(addExplanationLabelb);
         labelPanel.add(addExplanationLabel);
+            labelPanel.add(addExplanationLabel2);
         labelPanel.add(addCalendarImage);
 
 
