@@ -141,12 +141,12 @@ public class AnnouncementOnLog extends AbstractConfigurable {
             JLabel checkLabel = new JLabel("The module is about to check for additional content.");
             JLabel checkLabel2 = new JLabel("The Content Checker button will flash black if it finds any.");
             JLabel checkLabel3 = new JLabel("Click on it to download the missing components.");
-            SwingLink mainDownloadLink = new SwingLink("X-Wing Vassal download page", vassalDownloadURL);
-            SwingLink altDownloadLink = new SwingLink("Alt download page on github", githubDownloadURL);
+            SwingLink mainDownloadLink = new SwingLink("Github (fast) download page ", githubDownloadURL);
+            SwingLink altDownloadLink = new SwingLink("Vassalengine.org (slow) download page", vassalDownloadURL);
             SwingLink whatsNewLink = new SwingLink("What's new in v" + line, urlPatchString);
             SwingLink guideLink = new SwingLink("New? Need help? Go to the web guide", guideURL);
             SwingLink supportLink = new SwingLink("Support the X-Wing Vassal module", "http://xwvassal.info/supportmodule.html");
-            SwingLink homeLink = new SwingLink("Home for the Vassal League", "http://xwvassal.info");
+            SwingLink homeLink = new SwingLink("X-Wing module website", "http://xwvassal.info");
 
             JPanel panel = new JPanel();
 
