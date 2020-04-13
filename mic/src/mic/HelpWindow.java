@@ -69,7 +69,7 @@ public class HelpWindow extends AbstractConfigurable {
 
         labelPanel.add(Box.createRigidArea(new Dimension(0,12)));
         JPanel websiteHoriz = new JPanel();
-        websiteHoriz.setLayout(new BoxLayout(guideHoriz, BoxLayout.X_AXIS));
+        websiteHoriz.setLayout(new BoxLayout(websiteHoriz, BoxLayout.X_AXIS));
         websiteHoriz.add(websiteLabel);
         websiteHoriz.add(websiteDownloadLink);
         labelPanel.add(websiteHoriz);
