@@ -1827,4 +1827,5 @@
     <mic.AnnouncementOnLog/>
     <mic.PatreonWindow/>
     <mic.MouseShipGUI/>
+    <mic.HelpWindow/>
 </VASSAL.launch.BasicModule>
