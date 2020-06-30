@@ -40,6 +40,11 @@ public class OverlapCheckManager extends AbstractConfigurable {
 
         GamePiece[] pieces = theMap.getAllPieces();
         for (GamePiece piece : pieces) {
+            try{
+                if(piece.getState().contains("dont_collide_with_this")) continue;
+            }
+            catch(Exception e){}
+
             boolean skipThisIteration = false;
             if(optionalSkipThesePieces!=null){
                 for(GamePiece gp : optionalSkipThesePieces){

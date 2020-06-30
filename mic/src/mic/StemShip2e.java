@@ -27,13 +27,13 @@ public class StemShip2e extends Decorator implements EditablePiece {
 
     private static Map<String, String> firingArcTypes = ImmutableMap.<String, String>builder()
             // Front Arc
-            .put("small/rebelalliance/Front Arc","emb2;;2;;Toggle Firing Arc;2;;;2;;;;;true;0;-480;,Arc_2e_Rebel_Small.svg;,;true;Arc;;;false;;1;1;true;;70,130;")
-            .put("small/galacticempire/Front Arc","emb2;;2;;Toggle Firing Arc;2;;;2;;;;;true;0;-480;,Arc_2e_Empire_Small.svg;,;true;Arc;;;false;;1;1;true;;70,130;")
-            .put("small/scumandvillainy/Front Arc","emb2;;2;;Toggle Firing Arc;2;;;2;;;;;true;0;-480;,Arc_2e_Scum_Small.svg;,;true;Arc;;;false;;1;1;true;;70,130;")
-            .put("small/resistance/Front Arc","emb2;;2;;Toggle Firing Arc;2;;;2;;;;;true;0;-480;,Arc_2e_Resistance_Small.svg;,;true;Arc;;;false;;1;1;true;;70,130;")
-            .put("small/firstorder/Front Arc","emb2;;2;;Toggle Firing Arc;2;;;2;;;;;true;0;-480;,Arc_2e_FirstOrder_Small.svg;,;true;Arc;;;false;;1;1;true;;70,130;")
-            .put("small/galacticrepublic/Front Arc","emb2;;2;;Toggle Firing Arc;2;;;2;;;;;true;0;-480;,Arc_2e_Republic_Small.svg;,;true;Arc;;;false;;1;1;true;;70,130;")
-            .put("small/separatistalliance/Front Arc","emb2;;2;;Toggle Firing Arc;2;;;2;;;;;true;0;-480;,Arc_2e_CIS_Small.svg;,;true;Arc;;;false;;1;1;true;;70,130;")
+            .put("small/rebelalliance/Front Arc","emb2;;2;;Toggle Firing Arc;2;;;2;;;;;true;0;-479;,Arc_2e_Rebel_Small.svg;,;true;Arc;;;false;;1;1;true;;70,130;")
+            .put("small/galacticempire/Front Arc","emb2;;2;;Toggle Firing Arc;2;;;2;;;;;true;0;-479;,Arc_2e_Empire_Small.svg;,;true;Arc;;;false;;1;1;true;;70,130;")
+            .put("small/scumandvillainy/Front Arc","emb2;;2;;Toggle Firing Arc;2;;;2;;;;;true;0;-479;,Arc_2e_Scum_Small.svg;,;true;Arc;;;false;;1;1;true;;70,130;")
+            .put("small/resistance/Front Arc","emb2;;2;;Toggle Firing Arc;2;;;2;;;;;true;0;-479;,Arc_2e_Resistance_Small.svg;,;true;Arc;;;false;;1;1;true;;70,130;")
+            .put("small/firstorder/Front Arc","emb2;;2;;Toggle Firing Arc;2;;;2;;;;;true;0;-479;,Arc_2e_FirstOrder_Small.svg;,;true;Arc;;;false;;1;1;true;;70,130;")
+            .put("small/galacticrepublic/Front Arc","emb2;;2;;Toggle Firing Arc;2;;;2;;;;;true;0;-479;,Arc_2e_Republic_Small.svg;,;true;Arc;;;false;;1;1;true;;70,130;")
+            .put("small/separatistalliance/Front Arc","emb2;;2;;Toggle Firing Arc;2;;;2;;;;;true;0;-479;,Arc_2e_CIS_Small.svg;,;true;Arc;;;false;;1;1;true;;70,130;")
 
             .put("medium/rebelalliance/Front Arc","emb2;;2;;Toggle Firing Arc;2;;;2;;;;;true;0;-508;,Arc_2e_Rebel_Medium.svg;,;true;Arc;;;false;;1;1;true;;70,130;")
             .put("medium/galacticempire/Front Arc","emb2;;2;;Toggle Firing Arc;2;;;2;;;;;true;0;-508;,Arc_2e_Empire_Medium.svg;,;true;Arc;;;false;;1;1;true;;70,130;")

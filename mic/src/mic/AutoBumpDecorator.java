@@ -672,7 +672,17 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
 
         GamePiece[] pieces = getMap().getAllPieces();
         for (GamePiece piece : pieces) {
+            try{
+                String bidon = null;
+                bidon=piece.getProperty("dont_collide_with_this").toString();
+                if(bidon != null)
+                {
+                    continue;
+                }
+            }
+            catch(Exception e){}
             if (piece.getState().contains("this_is_a_ship")) {
+
                 ships.add(new BumpableWithShape((Decorator)piece, "Ship",
                         piece.getProperty("Pilot Name").toString(), piece.getProperty("Craft ID #").toString(),
                         this.getInner().getState().contains("this_is_2pointoh")));
