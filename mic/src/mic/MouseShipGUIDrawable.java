@@ -388,9 +388,11 @@ public class MouseShipGUIDrawable extends MouseGUIDrawable implements Drawable {
 
         // * Sideslip page, needs 12 buttons, all for the HMP Droid Gunship
         // *
+        MouseShipGUIElement SS_LBF3 = new MouseShipGUIElement(6,"BR_LF3", "Barrel_L_Front_3.png", 14, 264, null, 0, null);
         MouseShipGUIElement SS_LBF2 = new MouseShipGUIElement(6,"BR_LF2", "Barrel_L_Front_2.png", 64, 294, null, 0, null);
         MouseShipGUIElement SS_LBF1 = new MouseShipGUIElement(6,"BR_LF1", "Barrel_L_Front_1.png", 120, 319, null, 0, null);
 
+        MouseShipGUIElement SS_RBF3 = new MouseShipGUIElement(6,"BR_RF3", "Barrel_R_Front_3.png", 437 , 273, null, 0, null);
         MouseShipGUIElement SS_RBF2 = new MouseShipGUIElement(6,"BR_RF2", "Barrel_R_Front_2.png", 377 , 293, null, 0, null);
         MouseShipGUIElement SS_RBF1 = new MouseShipGUIElement(6,"BR_RF1", "Barrel_R_Front_1.png", 320, 319, null, 0, null);
 
@@ -407,13 +409,17 @@ public class MouseShipGUIDrawable extends MouseGUIDrawable implements Drawable {
         if(isSmall){
             guiElements.add(SS_LBF1);
             guiElements.add(SS_LBF2);
+            guiElements.add(SS_LBF3);
             guiElements.add(SS_RBF1);
             guiElements.add(SS_RBF2);
+            guiElements.add(SS_RBF3);
 
             guiElements.add(SS_LF1);
             guiElements.add(SS_LF2);
+            guiElements.add(SS_LF3);
             guiElements.add(SS_LR1);
             guiElements.add(SS_LR2);
+            guiElements.add(SS_LR3);
         }
         guiElements.add(SFOILS);
         guiElements.add(CCW1);
