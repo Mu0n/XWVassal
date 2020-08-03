@@ -392,7 +392,7 @@ public class MouseShipGUIDrawable extends MouseGUIDrawable implements Drawable {
         MouseShipGUIElement SS_LBF2 = new MouseShipGUIElement(6,"BR_LF2", "Barrel_L_Front_2d.png", 64, 294, null, 0, null);
         MouseShipGUIElement SS_LBF1 = new MouseShipGUIElement(6,"BR_LF1", "Barrel_L_Front_1.png", 120, 319, null, 0, null);
 
-        MouseShipGUIElement SS_RBF3 = new MouseShipGUIElement(6,"BR_RF3", "Barrel_R_Front_3.png", 422 , 252, null, 0, null);
+        MouseShipGUIElement SS_RBF3 = new MouseShipGUIElement(6,"BR_RF3", "Barrel_R_Front_3.png", 420 , 251, null, 0, null);
         MouseShipGUIElement SS_RBF2 = new MouseShipGUIElement(6,"BR_RF2", "Barrel_R_Front_2d.png", 377 , 293, null, 0, null);
         MouseShipGUIElement SS_RBF1 = new MouseShipGUIElement(6,"BR_RF1", "Barrel_R_Front_1.png", 320, 319, null, 0, null);
 
