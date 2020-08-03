@@ -386,7 +386,35 @@ public class MouseShipGUIDrawable extends MouseGUIDrawable implements Drawable {
         MouseShipGUIElement AFT_123 = new MouseShipGUIElement(2, null, "mi_range_123.png", 423, 333,
                 KeyStroke.getKeyStroke(KeyEvent.VK_N, KeyEvent.ALT_DOWN_MASK + KeyEvent.SHIFT_DOWN_MASK, false), 0, null);
 
+        // * Sideslip page, needs 12 buttons, all for the HMP Droid Gunship
+        // *
+        MouseShipGUIElement SS_LBF2 = new MouseShipGUIElement(6,"BR_LF2", "Barrel_L_Front_2.png", 64, 294, null, 0, null);
+        MouseShipGUIElement SS_LBF1 = new MouseShipGUIElement(6,"BR_LF1", "Barrel_L_Front_1.png", 120, 319, null, 0, null);
 
+        MouseShipGUIElement SS_RBF2 = new MouseShipGUIElement(6,"BR_RF2", "Barrel_R_Front_2.png", 377 , 293, null, 0, null);
+        MouseShipGUIElement SS_RBF1 = new MouseShipGUIElement(6,"BR_RF1", "Barrel_R_Front_1.png", 320, 319, null, 0, null);
+
+        MouseShipGUIElement SS_LF3 = new MouseShipGUIElement(6,"BR_L3", "Barrel_L_Side_3.png", 36, 104, null, 0, null);
+        MouseShipGUIElement SS_LF2 = new MouseShipGUIElement(6,"BR_L2", "Barrel_L_Side_2d.png", 36, 154, null, 0, null);
+        MouseShipGUIElement SS_LF1 = new MouseShipGUIElement(6,"BR_L1", "Barrel_L_Side_1.png", 110, 158, null, 0, null);
+
+        MouseShipGUIElement SS_LR3 = new MouseShipGUIElement(6,"BR_R3", "Barrel_R_Side_3.png", 404, 103, null, 0, null);
+        MouseShipGUIElement SS_LR2 = new MouseShipGUIElement(6,"BR_R2", "Barrel_R_Side_2d.png", 404, 153, null, 0, null);
+        MouseShipGUIElement SS_LR1 = new MouseShipGUIElement(6,"BR_R1", "Barrel_R_Side_1.png", 325, 158, null, 0, null);
+
+
+
+        if(isSmall){
+            guiElements.add(SS_LBF1);
+            guiElements.add(SS_LBF2);
+            guiElements.add(SS_RBF1);
+            guiElements.add(SS_RBF2);
+
+            guiElements.add(SS_LF1);
+            guiElements.add(SS_LF2);
+            guiElements.add(SS_LR1);
+            guiElements.add(SS_LR2);
+        }
         guiElements.add(SFOILS);
         guiElements.add(CCW1);
         guiElements.add(CCW15);

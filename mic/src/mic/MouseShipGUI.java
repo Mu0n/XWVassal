@@ -97,7 +97,7 @@ public class MouseShipGUI extends AbstractConfigurable {
 
             //WASD keys to displace buttons, activate to tweak the GUI in development
 
-            /*
+
             KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(new KeyEventDispatcher() {
 
                 public boolean dispatchKeyEvent(KeyEvent ke) {
@@ -182,7 +182,7 @@ public class MouseShipGUI extends AbstractConfigurable {
                     } //end synchronized method
                 } //end dispatchKeyEvent
             }); //end key  focus manager
-*/
+
             ml = new MouseListener() {
                 public void mouseClicked(MouseEvent e) {
                 }
