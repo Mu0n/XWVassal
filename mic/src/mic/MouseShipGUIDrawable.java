@@ -10,7 +10,7 @@ import VASSAL.counters.GamePiece;
 import VASSAL.tools.DataArchive;
 import VASSAL.tools.io.FileArchive;
 import com.google.common.collect.Lists;
-import javafx.scene.transform.Affine;
+//import javafx.scene.transform.Affine;
 import mic.ota.OTAContentsChecker;
 import mic.ota.OTAMasterShips;
 
@@ -925,6 +925,12 @@ public class MouseShipGUIDrawable extends MouseGUIDrawable implements Drawable {
         //g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
         scale = _map.getZoom();
+
+        //Vassal 3.x.x fix, uiScale can now change from the default value of 1 thanks to HiDPI monitors.
+        final double os_scale = g2d.getDeviceConfiguration().getDefaultTransform().getScaleX();
+        scale *= os_scale;
+        //end fix
+
 
         AffineTransform scaler = AffineTransform.getScaleInstance(scale, scale);
 

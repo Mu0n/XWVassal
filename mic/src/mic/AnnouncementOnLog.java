@@ -11,7 +11,8 @@ import VASSAL.tools.DataArchive;
 import VASSAL.tools.io.FileArchive;
 import com.google.common.collect.Lists;
 import mic.ota.*;
-import org.omg.CORBA.Environment;
+//import org.omg.CORBA.Environment;
+
 
 import javax.imageio.ImageIO;
 import javax.swing.*;

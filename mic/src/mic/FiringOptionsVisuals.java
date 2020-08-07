@@ -67,6 +67,12 @@ public class FiringOptionsVisuals implements Drawable, Serializable{
         graphics2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
         double scale = map.getZoom();
+
+        //Vassal 3.x.x fix, uiScale can now change from the default value of 1 thanks to HiDPI monitors.
+        final double os_scale = graphics2D.getDeviceConfiguration().getDefaultTransform().getScaleX();
+        scale *= os_scale;
+        //end fix
+
         AffineTransform scaler = AffineTransform.getScaleInstance(scale, scale);
 
         graphics2D.setColor(shipsObstaclesColor);

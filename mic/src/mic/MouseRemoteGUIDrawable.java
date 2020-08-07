@@ -107,6 +107,10 @@ public class MouseRemoteGUIDrawable extends MouseGUIDrawable implements Drawable
         Graphics2D g2d = (Graphics2D) g;
 
         scale = _map.getZoom();
+        //Vassal 3.x.x fix, uiScale can now change from the default value of 1 thanks to HiDPI monitors.
+        final double os_scale = g2d.getDeviceConfiguration().getDefaultTransform().getScaleX();
+        scale *= os_scale;
+        //end fix
 
         AffineTransform scaler = AffineTransform.getScaleInstance(scale, scale);
 

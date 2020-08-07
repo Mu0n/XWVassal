@@ -5,7 +5,7 @@ import VASSAL.tools.ArchiveWriter;
 import VASSAL.tools.DataArchive;
 import VASSAL.tools.image.ImageUtils;
 import VASSAL.tools.io.FileArchive;
-import javafx.scene.chart.PieChart;
+//import javafx.scene.chart.PieChart;
 import mic.Canonicalizer;
 import mic.Util;
 import mic.XWS2Pilots;

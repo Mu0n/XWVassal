@@ -378,6 +378,7 @@ public class MouseShipGUI extends AbstractConfigurable {
             for (MouseShipGUIElement elem : ((MouseShipGUIDrawable) lastPopup).guiElements) {
                 if(elem.getPage()==lastPopup.currentPage || elem.getPage() == 0){
                     double scale = theMap.getZoom();
+
                     AffineTransform af = elem.getTransformForClick(scale, lastPopup.ulX, lastPopup.ulY);
                     Shape s = null;
                     if(elem.getNonRect()==null){

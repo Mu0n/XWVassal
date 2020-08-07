@@ -380,6 +380,7 @@ public class RemoteRelocation extends Decorator implements EditablePiece {
                 double off1x_rot_back = rotX(off1x, off1y, globalShipAngle + 180.0f);
                 double off1y_rot_back = rotY(off1x, off1y, globalShipAngle + 180.0f);
 
+
                 float diam = DOT_DIAMETER + (sizeFudge-1) * 20.0f;
                 //deal with the front dot
                 Shape dot = new Ellipse2D.Float(-diam / 2, -diam / 2, diam, diam);

@@ -48,7 +48,11 @@ public class RepositionChoiceVisual implements Drawable {
     public void draw(Graphics g, VASSAL.build.module.Map map) {
         Graphics2D graphics2D = (Graphics2D) g;
 
-        AffineTransform scaler = AffineTransform.getScaleInstance(map.getZoom(), map.getZoom());
+//Vassal 3.x.x fix, uiScale can now change from the default value of 1 thanks to HiDPI monitors.
+        final double os_scale = graphics2D.getDeviceConfiguration().getDefaultTransform().getScaleX();
+
+        AffineTransform scaler = AffineTransform.getScaleInstance(map.getZoom()*os_scale, map.getZoom()*os_scale);
+ //end fix
 
         graphics2D.setColor(validColor);
         if(thePieceShape!=null) graphics2D.fill(scaler.createTransformedShape(thePieceShape));
