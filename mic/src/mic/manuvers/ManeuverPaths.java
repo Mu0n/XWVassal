@@ -74,23 +74,23 @@ public enum ManeuverPaths {
     SloopR3Turn(CurvedPaths.RT3, "Segnor's Loop Hard Right 3", 3, 180.0f, "523", 0.0f, -113.0f, -198.0f, -113.0f, -226.25f, -113.0f, -254.5f, "3658", -283.0f, -28.0f, -282.5f, -57.0f, -282.0f, -86.0f),
     SloopL3Turn(CurvedPaths.LT3, "Segnor's Loop Hard Left 3", 3, 180.0f, "523", 270.0f, 113.0f, -198.0f, 113.0f, -226.25f, 113.0f, -254.5f, "3658", 284.0f, -28.0f, 283.0f, -57.0f, 282.0f, -86.0f),
 
-    SideSlipL1Turn(CurvedPaths.SSLT1, "Sideslip Hard Left 1", 1, 180.0f, "521", 90.0f, 120.0f, -36.0f, 113.0f, -226.25f, 113.0f, -254.5f, "3656", 284.0f, -28.0f, 283.0f, -57.0f, 282.0f, -86.0f),
-    SideSlipL2Turn(CurvedPaths.SSLT2, "Sideslip Hard Left 2", 2, 180.0f, "522", 90.0f, 159.0f, -74.0f, 113.0f, -226.25f, 113.0f, -254.5f, "3657", 284.0f, -28.0f, 283.0f, -57.0f, 282.0f, -86.0f),
-    SideSlipL3Turn(CurvedPaths.SSLT3, "Sideslip Hard Left 3", 3, 180.0f, "523", 90.0f, 198.0f, -113.0f, 113.0f, -226.25f, 113.0f, -254.5f, "3658", 284.0f, -28.0f, 283.0f, -57.0f, 282.0f, -86.0f),
+    SideSlipL1Turn(CurvedPaths.SSLT1, "Sideslip Hard Left 1", 1, 180.0f, "521", 90.0f, 120.0f, -36.0f, 0.0f, -0.0f, 0.0f, -0.0f, "3656", -49.0f, -205.0f, 0.0f, -0.0f, 0.0f, -0.0f),
+    SideSlipL2Turn(CurvedPaths.SSLT2, "Sideslip Hard Left 2", 2, 180.0f, "522", 90.0f, 159.0f, -74.0f, 0.0f, -0.0f, 0.0f, -0.0f, "3657", -9.0f, -244.0f, 0.0f, -0.0f, 0.0f, -0.0f),
+    SideSlipL3Turn(CurvedPaths.SSLT3, "Sideslip Hard Left 3", 3, 180.0f, "523", 90.0f, 198.0f, -113.0f, 0.0f, -0.0f, 0.0f, -0.0f, "3658", 29.0f, -283.0f, 0.0f, -0.0f, 0.0f, -0.0f),
 
-    SideSlipR1Turn(CurvedPaths.SSRT1, "Sideslip Hard Right 1", 1, 180.0f, "521", 180.0f, -119.0f, -35.0f, 113.0f, -226.25f, 113.0f, -254.5f, "3656", 284.0f, -28.0f, 283.0f, -57.0f, 282.0f, -86.0f),
-    SideSlipR2Turn(CurvedPaths.SSRT2, "Sideslip Hard Right 2", 2, 180.0f, "522", 180.0f, -159.0f, -75.0f, 113.0f, -226.25f, 113.0f, -254.5f, "3657", 284.0f, -28.0f, 283.0f, -57.0f, 282.0f, -86.0f),
-    SideSlipR3Turn(CurvedPaths.SSRT3, "Sideslip Hard Right 3", 3, 180.0f, "523", 180.0f, -198.0f, -113.0f, 113.0f, -226.25f, 113.0f, -254.5f, "3658", 284.0f, -28.0f, 283.0f, -57.0f, 282.0f, -86.0f),
+    SideSlipR1Turn(CurvedPaths.SSRT1, "Sideslip Hard Right 1", 1, 180.0f, "521", 180.0f, -119.0f, -35.0f, 0.0f, -0.0f, 0.0f, -0.0f, "3656", 48.0f, -205.0f, 0.0f, -0.0f, 0.0f, -0.0f),
+    SideSlipR2Turn(CurvedPaths.SSRT2, "Sideslip Hard Right 2", 2, 180.0f, "522", 180.0f, -159.0f, -75.0f, 0.0f, -0.0f, 0.0f, -0.0f, "3657", 9.0f, -244.0f, 0.0f, -0.0f, 0.0f, -0.0f),
+    SideSlipR3Turn(CurvedPaths.SSRT3, "Sideslip Hard Right 3", 3, 180.0f, "523", 180.0f, -198.0f, -113.0f, 0.0f, -0.0f, 0.0f, -0.0f, "3658", -30.0f, -283.0f, 0.0f, -0.0f, 0.0f, -0.0f),
 
 
 
-    SideSlipL1Bank(CurvedPaths.SSLBk1, "Sideslip Bank Left 1", 1, 270.0f, "517", 90.0f, 146.0f, -29.0f, 113.0f, -226.25f, 113.0f, -254.5f, "3653", 284.0f, -28.0f, 283.0f, -57.0f, 282.0f, -86.0f),
-    SideSlipL2Bank(CurvedPaths.SSLBk2, "Sideslip Bank Left 2", 2, 270.0f, "519", 90.0f, 196.0f, -50.0f, 113.0f, -226.25f, 113.0f, -254.5f, "3654", 284.0f, -28.0f, 283.0f, -57.0f, 282.0f, -86.0f),
-    SideSlipL3Bank(CurvedPaths.SSLBk3, "Sideslip Bank Left 3", 3, 270.0f, "520", 90.0f, 246.0f, -70.0f, 113.0f, -226.25f, 113.0f, -254.5f, "3655", 284.0f, -28.0f, 283.0f, -57.0f, 282.0f, -86.0f),
+    SideSlipL1Bank(CurvedPaths.SSLBk1, "Sideslip Bank Left 1", 1, 270.0f, "517", 90.0f, 146.0f, -29.0f, 0.0f, -0.0f, 0.0f, -0.0f, "3653", 97.0f, -149.0f, 0.0f, -0.0f, 0.0f, -0.0f),
+    SideSlipL2Bank(CurvedPaths.SSLBk2, "Sideslip Bank Left 2", 2, 270.0f, "519", 90.0f, 196.0f, -50.0f, 0.0f, -0.0f, 0.0f, -0.0f, "3654", 146.0f, -170.0f, 0.0f, -0.0f, 0.0f, -0.0f),
+    SideSlipL3Bank(CurvedPaths.SSLBk3, "Sideslip Bank Left 3", 3, 270.0f, "520", 90.0f, 246.0f, -70.0f, 0.0f, -0.0f, 0.0f, -0.0f, "3655", 196.0f, -190.0f, 0.0f, -0.0f, 0.0f, -0.0f),
 
-    SideSlipR1Bank(CurvedPaths.SSRBk1, "Sideslip Bank Right 1", 1, 90.0f, "517", 135.0f, -133.0f, -22.0f, 113.0f, -226.25f, 113.0f, -254.5f, "3653", 284.0f, -28.0f, 283.0f, -57.0f, 282.0f, -86.0f),
-    SideSlipR2Bank(CurvedPaths.SSRBk2, "Sideslip Bank Right 2", 2, 90.0f, "519", 135.0f, -183.0f, -42.0f, 113.0f, -226.25f, 113.0f, -254.5f, "3654", 284.0f, -28.0f, 283.0f, -57.0f, 282.0f, -86.0f),
-    SideSlipR3Bank(CurvedPaths.SSRBk3, "Sideslip Bank Right 3", 3, 90.0f, "520", 135.0f, -233.0f, -64.0f, 113.0f, -226.25f, 113.0f, -254.5f, "3655", 284.0f, -28.0f, 283.0f, -57.0f, 282.0f, -86.0f)
+    SideSlipR1Bank(CurvedPaths.SSRBk1, "Sideslip Bank Right 1", 1, 90.0f, "517", 135.0f, -133.0f, -22.0f, 0.0f, -0.0f, 0.0f, -0.0f, "3653", -83.0f, -142.0f, 0.0f, -0.0f, 0.0f, -0.0f),
+    SideSlipR2Bank(CurvedPaths.SSRBk2, "Sideslip Bank Right 2", 2, 90.0f, "519", 135.0f, -183.0f, -42.0f, 0.0f, -0.0f, 0.0f, -0.0f, "3654", -134.0f, -163.0f, 0.0f, -0.0f, 0.0f, -0.0f),
+    SideSlipR3Bank(CurvedPaths.SSRBk3, "Sideslip Bank Right 3", 3, 90.0f, "520", 135.0f, -233.0f, -64.0f, 0.0f, -0.0f, 0.0f, -0.0f, "3655", -184.0f, -184.0f, 0.0f, -0.0f, 0.0f, -0.0f)
     ;
 
     private final ManeuverPath path;
