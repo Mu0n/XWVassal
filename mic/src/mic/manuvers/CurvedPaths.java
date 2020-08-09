@@ -9,33 +9,49 @@ import com.google.common.collect.Lists;
  * Path calculations implemented by haslo on 2017-02-24
  */
 public enum CurvedPaths implements ManeuverPath {
-    LBk1(80 * 2.825, true, true, false, 0.95),
-    RBk1(80 * 2.825, false, true, false, 0.95),
-    LBk2(130 * 2.825, true, true, false, 0.98),
-    RBk2(130 * 2.825, false, true, false, 0.98),
-    LBk3(180 * 2.825, true, true, false, 1.0),
-    RBk3(180 * 2.825, false, true, false, 1.0),
+    LBk1(80 * 2.825, true, true, false, 0.95, false),
+    RBk1(80 * 2.825, false, true, false, 0.95, false),
+    LBk2(130 * 2.825, true, true, false, 0.98, false),
+    RBk2(130 * 2.825, false, true, false, 0.98, false),
+    LBk3(180 * 2.825, true, true, false, 1.0, false),
+    RBk3(180 * 2.825, false, true, false, 1.0, false),
 
-    RevLB1(80 * 2.825, true, true, true, 0.95),
-    RevRB1(80 * 2.825, false, true, true, 0.95),
+    RevLB1(80 * 2.825, true, true, true, 0.95, false),
+    RevRB1(80 * 2.825, false, true, true, 0.95, false),
 
-    LT1(35 * 2.825, true, false, false, 0.85),
-    RT1(35 * 2.825, false, false, false, 0.85),
-    LT2(62.5 * 2.825, true, false, false, 0.95),
-    RT2(62.5 * 2.825, false, false, false, 0.95),
-    LT3(90 * 2.825, true, false, false, 1.0),
-    RT3(90 * 2.825, false, false, false, 1.0);
+    LT1(35 * 2.825, true, false, false, 0.85, false),
+    RT1(35 * 2.825, false, false, false, 0.85, false),
+    LT2(62.5 * 2.825, true, false, false, 0.95, false),
+    RT2(62.5 * 2.825, false, false, false, 0.95, false),
+    LT3(90 * 2.825, true, false, false, 1.0, false),
+    RT3(90 * 2.825, false, false, false, 1.0, false),
 
-    private boolean bank, reverse;
+    SSLT1(35 * 2.825, true, false, false, 0.85, true),
+    SSRT1(35 * 2.825, false, false, false, 0.85, true),
+    SSLT2(62.5 * 2.825, true, false, false, 0.95, true),
+    SSRT2(62.5 * 2.825, false, false, false, 0.95, true),
+    SSLT3(90 * 2.825, true, false, false, 1.0, true),
+    SSRT3(90 * 2.825, false, false, false, 1.0, true),
+
+    SSLBk1(80 * 2.825, true, true, false, 0.95, true),
+    SSRBk1(80 * 2.825, false, true, false, 0.95, true),
+    SSLBk2(130 * 2.825, true, true, false, 0.98, true),
+    SSRBk2(130 * 2.825, false, true, false, 0.98, true),
+    SSLBk3(180 * 2.825, true, true, false, 1.0, true),
+    SSRBk3(180 * 2.825, false, true, false, 1.0, true)
+    ;
+
+    private boolean bank, reverse, sideslip;
     boolean left;
     private double radius, approximationMultiplier;
 
-    CurvedPaths(double radius, boolean left, boolean bank, boolean reverse, double approximationMultiplier) {
+    CurvedPaths(double radius, boolean left, boolean bank, boolean reverse, double approximationMultiplier, boolean sideslip) {
         this.radius = radius;
         this.left = left;
         this.bank = bank;
         this.reverse = reverse;
         this.approximationMultiplier = approximationMultiplier;
+        this.sideslip = sideslip;
     }
 
     public double getFinalAngleOffset() {
@@ -151,6 +167,7 @@ public enum CurvedPaths implements ManeuverPath {
         // the position we want to return is in the center between front and back
         double x = (frontPosition.x + backPosition.x) / 2;
         double y = (frontPosition.y + backPosition.y) / 2;
+
         if (this.left) {
             return new PathPart(-x, y, -angle);
         } else {
@@ -167,6 +184,8 @@ public enum CurvedPaths implements ManeuverPath {
             double alpha = currentDistance / arcLength * (Math.PI / 4.0);
             double x = this.radius - (Math.cos(alpha) * this.radius);
             double y = (Math.sin(alpha) * this.radius) + (baseLength / 2); // upwards
+
+            if(sideslip) return new Vector(y, -x);
             return new Vector(x, this.reverse ? y : -y);
         } else {
             // straight bit (template extension) at a 45° angle after the arc
@@ -174,6 +193,8 @@ public enum CurvedPaths implements ManeuverPath {
             double startY = (Math.sin(Math.PI / 4.0) * this.radius) + (baseLength / 2); // upwards
             double x = startX + ((currentDistance - arcLength) / Math.sqrt(2));
             double y = startY + ((currentDistance - arcLength) / Math.sqrt(2)); // upwards
+
+            if(sideslip) return new Vector(y, -x);
             return new Vector(x, this.reverse ? y : -y);
         }
     }
@@ -186,12 +207,18 @@ public enum CurvedPaths implements ManeuverPath {
             // go through the base first, straight (template extension)
             double x = 0;
             double y = -(baseLength / 2) + currentDistance; // upwards
+
+
+            if(sideslip) return new Vector(y, -x);
             return new Vector(x, this.reverse ? y : -y);
         } else {
             // second bit, the arc of the bank template
             double alpha = (currentDistance - baseLength) / arcLength * (Math.PI / 4.0);
             double x = this.radius - (Math.cos(alpha) * this.radius);
             double y = (baseLength / 2) + (Math.sin(alpha) * this.radius); // upwards
+
+
+            if(sideslip) return new Vector(y, -x);
             return new Vector(x, this.reverse ? y : -y);
         }
     }

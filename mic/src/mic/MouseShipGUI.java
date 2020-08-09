@@ -108,6 +108,7 @@ public class MouseShipGUI extends AbstractConfigurable {
                             //activate to tweak the position of buttons in the mouse interface the following block of code. WASD displaces the buttons and tab switches to the next element in the list of guiElements.
                             switch (ke.getID()) {
                                 case KeyEvent.KEY_PRESSED:
+                                    /*
                                     if (ke.getKeyCode() == KeyEvent.VK_TAB){
                                         wPressed = true;
                                         ((MouseShipGUIDrawable)lastPopup).currentGUIElementBeingEdited++;
@@ -170,9 +171,10 @@ public class MouseShipGUI extends AbstractConfigurable {
                                             msge.globalX++;
                                             logToChat("x: " + msge.globalX + " y: " + msge.globalY);
                                         }
+
                                     }
                                     break;
-
+*/
                             } // end switch
 
                             theMap.repaint();
@@ -190,10 +192,10 @@ public class MouseShipGUI extends AbstractConfigurable {
                 public void mousePressed(MouseEvent e) {
                     //restrict the initial activation to ctrl-clicks
                     if (e.isConsumed()) return;
-                    if (e.isControlDown() == false && activatedPiece == null) return;
+                    if (e.isControlDown() == false && e.isAltDown() && e.isAltGraphDown() == false && activatedPiece == null) return;
 
-                    //Prep step of the GUI - will it activate?
-                    if (e.isControlDown() == true && activatedPiece == null) {
+                    //Prep step of the GUI - will it activate? Allow Alt for mac-user since Ctrl-left click is like right click now starting in vassal 3.3.x
+                    if ((e.isControlDown() == true || e.isAltDown() == true || e.isAltGraphDown()) && activatedPiece == null) {
                         Collection<GamePiece> shipPieces = new ArrayList<GamePiece>();
                         Collection<GamePiece> remotePieces = new ArrayList<GamePiece>();
 

@@ -99,6 +99,23 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
             .put("ALT I", ManeuverPaths.TrollR1)
             .put("ALT Y", ManeuverPaths.TrollR2)
             .put("ALT T", ManeuverPaths.TrollR3)
+
+
+            .put("ALT K", ManeuverPaths.SideSlipL1Turn)
+            .put("CTRL K", ManeuverPaths.SideSlipL2Turn)
+            .put("SHIFT K", ManeuverPaths.SideSlipL3Turn)
+
+            .put("CTRL SHIFT K", ManeuverPaths.SideSlipR1Turn)
+            .put("ALT SHIFT K", ManeuverPaths.SideSlipR2Turn)
+            .put("ALT CTRL K", ManeuverPaths.SideSlipR3Turn)
+
+            .put("ALT O", ManeuverPaths.SideSlipL1Bank)
+            .put("CTRL O", ManeuverPaths.SideSlipL2Bank)
+            .put("SHIFT O", ManeuverPaths.SideSlipL3Bank)
+
+            .put("O", ManeuverPaths.SideSlipR1Bank)
+            .put("ALT SHIFT O", ManeuverPaths.SideSlipR2Bank)
+            .put("ALT CTRL O", ManeuverPaths.SideSlipR3Bank)
             .build();
 
     public AutoBumpDecorator() {
@@ -639,6 +656,7 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
      */
     private ManeuverPaths getKeystrokePath(KeyStroke keyStroke) {
         String hotKey = HotKeyConfigurer.getString(keyStroke);
+
         if (keyStrokeToManeuver.containsKey(hotKey)) {
             return keyStrokeToManeuver.get(hotKey);
         }

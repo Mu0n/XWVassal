@@ -17,6 +17,8 @@ import static mic.Util.logToChat;
 /**
  * Created by amatheny on 2/17/17.
  */
+
+
 public enum ManeuverPaths {
     LBk1(CurvedPaths.LBk1, "Left Bank 1", 1, 0.0f, "517", 45.0f, -23.0f, 133.0f, -23.0f, 161.25f, -23.0f, 189.5f, "3653", -143.0f, 84.0f, -143.0f, 112.0f, -143.0f, 140.0f),
     LBk2(CurvedPaths.LBk2, "Left Bank 2", 2, 0.0f, "519", 45.0f, -43.6f, 183.0f, -43.6f, 211.25f, -43.6f, 239.5f, "3654", -163.0f, 133.0f, -163.0f, 161.0f, -163.0f, 189.0f),
@@ -70,24 +72,26 @@ public enum ManeuverPaths {
     SloopR3(CurvedPaths.RBk3, "Segnor's Loop Right 3", 3, 180.0f, "520", 0.0f, -72.0f, -246.5f, -72.0f, -274.75f, -72.0f, -303.0f, "3655", -190.0f, -196.0f, -190.0f, -225.0f, -190.0f, -254.0f),
 
     SloopR3Turn(CurvedPaths.RT3, "Segnor's Loop Hard Right 3", 3, 180.0f, "523", 0.0f, -113.0f, -198.0f, -113.0f, -226.25f, -113.0f, -254.5f, "3658", -283.0f, -28.0f, -282.5f, -57.0f, -282.0f, -86.0f),
-    SloopL3Turn(CurvedPaths.LT3, "Segnor's Loop Hard Left 3", 3, 180.0f, "523", 270.0f, 113.0f, -198.0f, 113.0f, -226.25f, 113.0f, -254.5f, "3658", 284.0f, -28.0f, 283.0f, -57.0f, 282.0f, -86.0f)
+    SloopL3Turn(CurvedPaths.LT3, "Segnor's Loop Hard Left 3", 3, 180.0f, "523", 270.0f, 113.0f, -198.0f, 113.0f, -226.25f, 113.0f, -254.5f, "3658", 284.0f, -28.0f, 283.0f, -57.0f, 282.0f, -86.0f),
 
-   /* SideSlipL1Turn(CurvedPaths.SSLT1, "Sideslip Hard Left 1", 1, 180.0f, "521", 270.0f, 113.0f, -198.0f, 113.0f, -226.25f, 113.0f, -254.5f, "3656", 284.0f, -28.0f, 283.0f, -57.0f, 282.0f, -86.0f),
-    SideSlipL2Turn(CurvedPaths.SSLT2, "Sideslip Hard Left 2", 2, 180.0f, "522", 270.0f, 113.0f, -198.0f, 113.0f, -226.25f, 113.0f, -254.5f, "3657", 284.0f, -28.0f, 283.0f, -57.0f, 282.0f, -86.0f),
-    SideSlipL3Turn(CurvedPaths.SSLT3, "Sideslip Hard Left 3", 3, 180.0f, "523", 270.0f, 113.0f, -198.0f, 113.0f, -226.25f, 113.0f, -254.5f, "3658", 284.0f, -28.0f, 283.0f, -57.0f, 282.0f, -86.0f),
+    SideSlipL1Turn(CurvedPaths.SSLT1, "Sideslip Hard Left 1", 1, 180.0f, "521", 90.0f, 120.0f, -36.0f, 113.0f, -226.25f, 113.0f, -254.5f, "3656", 284.0f, -28.0f, 283.0f, -57.0f, 282.0f, -86.0f),
+    SideSlipL2Turn(CurvedPaths.SSLT2, "Sideslip Hard Left 2", 2, 180.0f, "522", 90.0f, 159.0f, -74.0f, 113.0f, -226.25f, 113.0f, -254.5f, "3657", 284.0f, -28.0f, 283.0f, -57.0f, 282.0f, -86.0f),
+    SideSlipL3Turn(CurvedPaths.SSLT3, "Sideslip Hard Left 3", 3, 180.0f, "523", 90.0f, 198.0f, -113.0f, 113.0f, -226.25f, 113.0f, -254.5f, "3658", 284.0f, -28.0f, 283.0f, -57.0f, 282.0f, -86.0f),
 
-    SideSlipR1Turn(CurvedPaths.SSRT1, "Sideslip Hard Right 1", 1, 180.0f, "521", 270.0f, 113.0f, -198.0f, 113.0f, -226.25f, 113.0f, -254.5f, "3656", 284.0f, -28.0f, 283.0f, -57.0f, 282.0f, -86.0f),
-    SideSlipR2Turn(CurvedPaths.SSRT2, "Sideslip Hard Right 2", 2, 180.0f, "522", 270.0f, 113.0f, -198.0f, 113.0f, -226.25f, 113.0f, -254.5f, "3657", 284.0f, -28.0f, 283.0f, -57.0f, 282.0f, -86.0f),
-    SideSlipR3Turn(CurvedPaths.SSRT3, "Sideslip Hard Right 3", 3, 180.0f, "523", 270.0f, 113.0f, -198.0f, 113.0f, -226.25f, 113.0f, -254.5f, "3658", 284.0f, -28.0f, 283.0f, -57.0f, 282.0f, -86.0f),
+    SideSlipR1Turn(CurvedPaths.SSRT1, "Sideslip Hard Right 1", 1, 180.0f, "521", 180.0f, -119.0f, -35.0f, 113.0f, -226.25f, 113.0f, -254.5f, "3656", 284.0f, -28.0f, 283.0f, -57.0f, 282.0f, -86.0f),
+    SideSlipR2Turn(CurvedPaths.SSRT2, "Sideslip Hard Right 2", 2, 180.0f, "522", 180.0f, -159.0f, -75.0f, 113.0f, -226.25f, 113.0f, -254.5f, "3657", 284.0f, -28.0f, 283.0f, -57.0f, 282.0f, -86.0f),
+    SideSlipR3Turn(CurvedPaths.SSRT3, "Sideslip Hard Right 3", 3, 180.0f, "523", 180.0f, -198.0f, -113.0f, 113.0f, -226.25f, 113.0f, -254.5f, "3658", 284.0f, -28.0f, 283.0f, -57.0f, 282.0f, -86.0f),
 
-    SideSlipL1Bank(CurvedPaths.SSLBk1, "Sideslip Bank Left 1", 1, 180.0f, "517", 270.0f, 113.0f, -198.0f, 113.0f, -226.25f, 113.0f, -254.5f, "3653", 284.0f, -28.0f, 283.0f, -57.0f, 282.0f, -86.0f),
-    SideSlipL2Bank(CurvedPaths.SSLBk2, "Sideslip Bank Left 2", 2, 180.0f, "519", 270.0f, 113.0f, -198.0f, 113.0f, -226.25f, 113.0f, -254.5f, "3654", 284.0f, -28.0f, 283.0f, -57.0f, 282.0f, -86.0f),
-    SideSlipL3Bank(CurvedPaths.SSLBk3, "Sideslip Bank Left 3", 3, 180.0f, "520", 270.0f, 113.0f, -198.0f, 113.0f, -226.25f, 113.0f, -254.5f, "3655", 284.0f, -28.0f, 283.0f, -57.0f, 282.0f, -86.0f),
 
-    SideSlipR1Bank(CurvedPaths.SSRBk1, "Sideslip Bank Right 1", 1, 180.0f, "517", 270.0f, 113.0f, -198.0f, 113.0f, -226.25f, 113.0f, -254.5f, "3653", 284.0f, -28.0f, 283.0f, -57.0f, 282.0f, -86.0f),
-    SideSlipR2Bank(CurvedPaths.SSRBk2, "Sideslip Bank Right 2", 2, 180.0f, "519", 270.0f, 113.0f, -198.0f, 113.0f, -226.25f, 113.0f, -254.5f, "3654", 284.0f, -28.0f, 283.0f, -57.0f, 282.0f, -86.0f),
-    SideSlipR3Bank(CurvedPaths.SSRBk3, "Sideslip Bank Right 3", 3, 180.0f, "520", 270.0f, 113.0f, -198.0f, 113.0f, -226.25f, 113.0f, -254.5f, "3655", 284.0f, -28.0f, 283.0f, -57.0f, 282.0f, -86.0f)
-    */;
+
+    SideSlipL1Bank(CurvedPaths.SSLBk1, "Sideslip Bank Left 1", 1, 270.0f, "517", 90.0f, 146.0f, -29.0f, 113.0f, -226.25f, 113.0f, -254.5f, "3653", 284.0f, -28.0f, 283.0f, -57.0f, 282.0f, -86.0f),
+    SideSlipL2Bank(CurvedPaths.SSLBk2, "Sideslip Bank Left 2", 2, 270.0f, "519", 90.0f, 196.0f, -50.0f, 113.0f, -226.25f, 113.0f, -254.5f, "3654", 284.0f, -28.0f, 283.0f, -57.0f, 282.0f, -86.0f),
+    SideSlipL3Bank(CurvedPaths.SSLBk3, "Sideslip Bank Left 3", 3, 270.0f, "520", 90.0f, 246.0f, -70.0f, 113.0f, -226.25f, 113.0f, -254.5f, "3655", 284.0f, -28.0f, 283.0f, -57.0f, 282.0f, -86.0f),
+
+    SideSlipR1Bank(CurvedPaths.SSRBk1, "Sideslip Bank Right 1", 1, 90.0f, "517", 135.0f, -133.0f, -22.0f, 113.0f, -226.25f, 113.0f, -254.5f, "3653", 284.0f, -28.0f, 283.0f, -57.0f, 282.0f, -86.0f),
+    SideSlipR2Bank(CurvedPaths.SSRBk2, "Sideslip Bank Right 2", 2, 90.0f, "519", 135.0f, -183.0f, -42.0f, 113.0f, -226.25f, 113.0f, -254.5f, "3654", 284.0f, -28.0f, 283.0f, -57.0f, 282.0f, -86.0f),
+    SideSlipR3Bank(CurvedPaths.SSRBk3, "Sideslip Bank Right 3", 3, 90.0f, "520", 135.0f, -233.0f, -64.0f, 113.0f, -226.25f, 113.0f, -254.5f, "3655", 284.0f, -28.0f, 283.0f, -57.0f, 282.0f, -86.0f)
+    ;
 
     private final ManeuverPath path;
     private final String fullName;
