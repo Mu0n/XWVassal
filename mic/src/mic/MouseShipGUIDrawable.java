@@ -388,21 +388,33 @@ public class MouseShipGUIDrawable extends MouseGUIDrawable implements Drawable {
 
         // * Sideslip page, needs 12 buttons, all for the HMP Droid Gunship
         // *
-        MouseShipGUIElement SS_LBF3 = new MouseShipGUIElement(6,"BR_LF3", "Barrel_L_Front_3.png", 12, 252, null, 0, " perform a sideslip left bank 3");
-        MouseShipGUIElement SS_LBF2 = new MouseShipGUIElement(6,"BR_LF2", "Barrel_L_Front_2d.png", 64, 294, null, 0, " perform a sideslip left bank 2");
-        MouseShipGUIElement SS_LBF1 = new MouseShipGUIElement(6,"BR_LF1", "Barrel_L_Front_1.png", 120, 319, null, 0, " perform a sideslip left bank 1");
+        MouseShipGUIElement SS_LBF3 = new MouseShipGUIElement(6,"BR_LF3", "Barrel_L_Front_3.png", 12, 252,
+                KeyStroke.getKeyStroke(KeyEvent.VK_O, KeyEvent.SHIFT_DOWN_MASK, false), 0, " perform a sideslip left bank 3");
+        MouseShipGUIElement SS_LBF2 = new MouseShipGUIElement(6,"BR_LF2", "Barrel_L_Front_2d.png", 64, 294,
+                KeyStroke.getKeyStroke(KeyEvent.VK_O, KeyEvent.CTRL_DOWN_MASK, false), 0, " perform a sideslip left bank 2");
+        MouseShipGUIElement SS_LBF1 = new MouseShipGUIElement(6,"BR_LF1", "Barrel_L_Front_1.png", 120, 319,
+                KeyStroke.getKeyStroke(KeyEvent.VK_O, KeyEvent.ALT_DOWN_MASK, false), 0, " perform a sideslip left bank 1");
 
-        MouseShipGUIElement SS_RBF3 = new MouseShipGUIElement(6,"BR_RF3", "Barrel_R_Front_3.png", 420 , 251, null, 0, " perform a sideslip right bank 3");
-        MouseShipGUIElement SS_RBF2 = new MouseShipGUIElement(6,"BR_RF2", "Barrel_R_Front_2d.png", 377 , 293, null, 0, " perform a sideslip right bank 2");
-        MouseShipGUIElement SS_RBF1 = new MouseShipGUIElement(6,"BR_RF1", "Barrel_R_Front_1.png", 320, 319, null, 0, " perform a sideslip right bank 1");
+        MouseShipGUIElement SS_RBF3 = new MouseShipGUIElement(6,"BR_RF3", "Barrel_R_Front_3.png", 420 , 251,
+                KeyStroke.getKeyStroke(KeyEvent.VK_O, KeyEvent.ALT_DOWN_MASK+KeyEvent.CTRL_DOWN_MASK, false), 0, " perform a sideslip right bank 3");
+        MouseShipGUIElement SS_RBF2 = new MouseShipGUIElement(6,"BR_RF2", "Barrel_R_Front_2d.png", 377 , 293,
+                KeyStroke.getKeyStroke(KeyEvent.VK_O, KeyEvent.ALT_DOWN_MASK+KeyEvent.SHIFT_DOWN_MASK, false), 0, " perform a sideslip right bank 2");
+        MouseShipGUIElement SS_RBF1 = new MouseShipGUIElement(6,"BR_RF1", "Barrel_R_Front_1.png", 320, 319,
+                KeyStroke.getKeyStroke(KeyEvent.VK_O, 0, false), 0, " perform a sideslip right bank 1");
 
-        MouseShipGUIElement SS_LF3 = new MouseShipGUIElement(6,"BR_L3", "Barrel_L_Side_3.png", 37, 82, null, 0, " perform a sideslip left turn 3");
-        MouseShipGUIElement SS_LF2 = new MouseShipGUIElement(6,"BR_L2", "Barrel_L_Side_2d.png", 36, 154, null, 0, " perform a sideslip left turn 2");
-        MouseShipGUIElement SS_LF1 = new MouseShipGUIElement(6,"BR_L1", "Barrel_L_Side_1.png", 110, 158, null, 0, " perform a sideslip left turn 1");
+        MouseShipGUIElement SS_LF3 = new MouseShipGUIElement(6,"BR_L3", "Barrel_L_Side_3.png", 37, 82,
+                KeyStroke.getKeyStroke(KeyEvent.VK_K, KeyEvent.SHIFT_DOWN_MASK, false), 0, " perform a sideslip left turn 3");
+        MouseShipGUIElement SS_LF2 = new MouseShipGUIElement(6,"BR_L2", "Barrel_L_Side_2d.png", 36, 154,
+                KeyStroke.getKeyStroke(KeyEvent.VK_K, KeyEvent.CTRL_DOWN_MASK, false), 0, " perform a sideslip left turn 2");
+        MouseShipGUIElement SS_LF1 = new MouseShipGUIElement(6,"BR_L1", "Barrel_L_Side_1.png", 110, 158,
+                KeyStroke.getKeyStroke(KeyEvent.VK_K, KeyEvent.ALT_DOWN_MASK, false), 0, " perform a sideslip left turn 1");
 
-        MouseShipGUIElement SS_LR3 = new MouseShipGUIElement(6,"BR_R3", "Barrel_R_Side_3.png", 394, 82, null, 0, " perform a sideslip right turn 3");
-        MouseShipGUIElement SS_LR2 = new MouseShipGUIElement(6,"BR_R2", "Barrel_R_Side_2d.png", 404, 153, null, 0, " perform a sideslip right turn 2");
-        MouseShipGUIElement SS_LR1 = new MouseShipGUIElement(6,"BR_R1", "Barrel_R_Side_1.png", 325, 158, null, 0, " perform a sideslip right turn 1");
+        MouseShipGUIElement SS_LR3 = new MouseShipGUIElement(6,"BR_R3", "Barrel_R_Side_3.png", 394, 82,
+                KeyStroke.getKeyStroke(KeyEvent.VK_K, KeyEvent.ALT_DOWN_MASK+KeyEvent.CTRL_DOWN_MASK, false), 0, " perform a sideslip right turn 3");
+        MouseShipGUIElement SS_LR2 = new MouseShipGUIElement(6,"BR_R2", "Barrel_R_Side_2d.png", 404, 153,
+                KeyStroke.getKeyStroke(KeyEvent.VK_K, KeyEvent.ALT_DOWN_MASK+KeyEvent.SHIFT_DOWN_MASK, false), 0, " perform a sideslip right turn 2");
+        MouseShipGUIElement SS_LR1 = new MouseShipGUIElement(6,"BR_R1", "Barrel_R_Side_1.png", 325, 158,
+                KeyStroke.getKeyStroke(KeyEvent.VK_K, KeyEvent.CTRL_DOWN_MASK+KeyEvent.SHIFT_DOWN_MASK, false), 0, " perform a sideslip right turn 1");
 
 
 
