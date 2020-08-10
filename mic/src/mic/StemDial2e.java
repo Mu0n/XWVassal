@@ -202,6 +202,7 @@ public class StemDial2e extends Decorator implements EditablePiece {
             .put("EB","mEB.png")
             .put("EW","mEW.png")
             .put("ER","mER.png")
+            .put("EP","mEP.png")
             .put("TB", "mTB.png")
             .put("TW", "mTW.png")
             .put("TR", "mTR.png")
@@ -229,6 +230,7 @@ public class StemDial2e extends Decorator implements EditablePiece {
             .put("RB","mRB.png")
             .put("RW","mRW.png")
             .put("RR","mRR.png")
+            .put("RP","mRP.png")
             .build();
 
     public StemDial2e(){
