@@ -261,11 +261,16 @@ public enum CurvedPaths implements ManeuverPath {
             double alpha = currentDistance / arcLength * (Math.PI / 2.0);
             double x = this.radius - (Math.cos(alpha) * this.radius);
             double y = (Math.sin(alpha) * this.radius) + (baseLength / 2); // upwards
+
+            if(sideslip) return new Vector(y, -x);
             return new Vector(x, this.reverse ? y : -y);
         } else {
             // straight bit (template extension) horizontally after the arc
             double x = (currentDistance - arcLength) + this.radius;
             double y = this.radius + (baseLength / 2); // upwards
+
+
+            if(sideslip) return new Vector(y, -x);
             return new Vector(x, this.reverse ? y : -y);
         }
     }
@@ -278,12 +283,18 @@ public enum CurvedPaths implements ManeuverPath {
             // go through the base first, straight (template extension)
             double x = 0;
             double y = -(baseLength / 2) + currentDistance; // upwards
+
+
+            if(sideslip) return new Vector(y, -x);
             return new Vector(x, this.reverse ? y : -y);
         } else {
             // second bit, the arc of the turn template
             double alpha = (currentDistance - baseLength) / arcLength * (Math.PI / 2.0);
             double x = this.radius - (Math.cos(alpha) * this.radius);
             double y = (baseLength / 2) + (Math.sin(alpha) * this.radius); // upwards
+
+
+            if(sideslip) return new Vector(y, -x);
             return new Vector(x, this.reverse ? y : -y);
         }
     }
