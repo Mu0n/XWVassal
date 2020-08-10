@@ -13,6 +13,7 @@ import VASSAL.counters.FreeRotator;
 import com.google.common.collect.Lists;
 
 import static mic.Util.logToChat;
+import static mic.Util.logToChatWithoutUndo;
 
 /**
  * Created by amatheny on 2/17/17.
@@ -203,7 +204,7 @@ public enum ManeuverPaths {
         return (int) Math.floor((path.getPathLength() / CurvedPaths.RT3.getPathLength()) * 500);
     }
 
-    private List<PathPart> getTransformedPathPartsInternal(ManeuverPath workingPath, double x, double y, double angleDegrees, int whichSize) {
+    private List<PathPart> getTransformedPathPartsInternal(ManeuverPath workingPath, double x, double y, double angleDegrees, int whichSize, boolean sideslipTurn, boolean sideslipBank, boolean LeftOtherwiseRight) {
         double baseOffset = 56.5;
         if(whichSize==3) baseOffset = 113;
         else if(whichSize==2) baseOffset = 84.75;
@@ -212,11 +213,15 @@ public enum ManeuverPaths {
         List<PathPart> transformed = Lists.newArrayList();
 
         for (PathPart rawPart : rawParts) {
+
+
             Path2D.Double testPath = new Path2D.Double();
+
             testPath.moveTo(rawPart.getX(), rawPart.getY());
             testPath = (Path2D.Double) AffineTransform
                     .getRotateInstance(-angleDegrees * (Math.PI / 180), 0, 0)
                     .createTransformedShape(testPath);
+
 
             double angle = angleDegrees + rawPart.getAngle();
             if (angle > 0) {
@@ -248,9 +253,6 @@ public enum ManeuverPaths {
 
         testPath.moveTo(rawPart.getX(), rawPart.getY() + yOffset);
 
-        //add a tripleChoiceTroll offset to the front or back, then rotate it depending on the left or right troll
-        //TODO
-
             testPath = (Path2D.Double) AffineTransform
                 .getRotateInstance(-(angleDegrees) * (Math.PI / 180), 0, 0)
                 .createTransformedShape(testPath);
@@ -271,8 +273,8 @@ public enum ManeuverPaths {
     public PathPart getTweakedPathPartForTroll(double x, double y, double angleDegrees, int whichSize, boolean LeftOtherwiseRight, int FrontCenterBack) {
         return getTweakedPathPartForTrollInternal(this.path, x, y, angleDegrees, whichSize, LeftOtherwiseRight, FrontCenterBack);
     }
-    public List<PathPart> getTransformedPathParts(double x, double y, double angleDegrees, int whichSize) {
-        return getTransformedPathPartsInternal(this.path, x, y, angleDegrees, whichSize);
+    public List<PathPart> getTransformedPathParts(double x, double y, double angleDegrees, int whichSize, boolean sideslipTurn, boolean sideslipBank, boolean LeftOtherwiseRight) {
+        return getTransformedPathPartsInternal(this.path, x, y, angleDegrees, whichSize, sideslipTurn, sideslipBank, LeftOtherwiseRight);
     }
 
     public static Path2D.Double toPath2D(List<PathPart> parts, double zoom) {

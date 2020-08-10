@@ -17,6 +17,7 @@ import VASSAL.build.widget.PieceSlot;
 import VASSAL.counters.*;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
+import mic.manuvers.ManeuverPath;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -257,13 +258,34 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
             String yourShipName = getShipStringForReports(true, this.getProperty("Pilot Name").toString(), this.getProperty("Craft ID #").toString());
 
 
+            boolean sideslipBank = false, sideslipTurn = false, LeftOtherwiseRight = false;
+
+
+            if(lastManeuver == ManeuverPaths.SideSlipL1Turn || lastManeuver == ManeuverPaths.SideSlipL2Turn || lastManeuver == ManeuverPaths.SideSlipL3Turn){
+                sideslipTurn = true;
+                LeftOtherwiseRight = true;
+            }
+            if(lastManeuver == ManeuverPaths.SideSlipR1Turn || lastManeuver == ManeuverPaths.SideSlipR2Turn || lastManeuver == ManeuverPaths.SideSlipR3Turn) {
+                sideslipTurn = true;
+                LeftOtherwiseRight = false;
+            }
+
+            if(lastManeuver == ManeuverPaths.SideSlipL1Bank || lastManeuver == ManeuverPaths.SideSlipL2Bank || lastManeuver == ManeuverPaths.SideSlipL3Bank) {
+                sideslipBank = true;
+                LeftOtherwiseRight = true;
+            }
+            if(lastManeuver == ManeuverPaths.SideSlipR1Bank || lastManeuver == ManeuverPaths.SideSlipR2Bank || lastManeuver == ManeuverPaths.SideSlipR3Bank) {
+                sideslipBank = true;
+                LeftOtherwiseRight = false;
+            }
+
             //This PathPart list will be used everywhere: moving, bumping, out of boundsing
             //maybe fetch it for both 'c' behavior and movement
             final List<PathPart> parts = path.getTransformedPathParts(
                     this.getCurrentState().x,
                     this.getCurrentState().y,
                     this.getCurrentState().angle,
-                    whichSizeShip(this)
+                    whichSizeShip(this), sideslipTurn, sideslipBank, LeftOtherwiseRight
             );
 
             //this is the final ship position post-move
@@ -273,7 +295,7 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
             if(lastManeuver == ManeuverPaths.TrollL1  || lastManeuver == ManeuverPaths.TrollL2 || lastManeuver == ManeuverPaths.TrollL3
                     || lastManeuver == ManeuverPaths.TrollR1  || lastManeuver == ManeuverPaths.TrollR2 || lastManeuver == ManeuverPaths.TrollR3) {
 
-                boolean LeftOtherwiseRight = true;
+                LeftOtherwiseRight = true;
                 if(lastManeuver == ManeuverPaths.TrollR1  || lastManeuver == ManeuverPaths.TrollR2 || lastManeuver == ManeuverPaths.TrollR3) LeftOtherwiseRight = false;
 
 
@@ -504,18 +526,54 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
             return null;
         }
         Shape rawShape = BumpableWithShape.getRawShape(this);
+
+
+        boolean sideslipBank = false, sideslipTurn = false, LeftOtherwiseRight = false;
+
+
+        if(lastManeuver == ManeuverPaths.SideSlipL1Turn || lastManeuver == ManeuverPaths.SideSlipL2Turn || lastManeuver == ManeuverPaths.SideSlipL3Turn){
+            sideslipTurn = true;
+            LeftOtherwiseRight = true;
+        }
+        if(lastManeuver == ManeuverPaths.SideSlipR1Turn || lastManeuver == ManeuverPaths.SideSlipR2Turn || lastManeuver == ManeuverPaths.SideSlipR3Turn) {
+            sideslipTurn = true;
+            LeftOtherwiseRight = false;
+        }
+
+        if(lastManeuver == ManeuverPaths.SideSlipL1Bank || lastManeuver == ManeuverPaths.SideSlipL2Bank || lastManeuver == ManeuverPaths.SideSlipL3Bank) {
+            sideslipBank = true;
+            LeftOtherwiseRight = true;
+        }
+        if(lastManeuver == ManeuverPaths.SideSlipR1Bank || lastManeuver == ManeuverPaths.SideSlipR2Bank || lastManeuver == ManeuverPaths.SideSlipR3Bank) {
+            sideslipBank = true;
+            LeftOtherwiseRight = false;
+        }
+
         final List<PathPart> parts = this.lastManeuver.getTransformedPathParts(
                 this.prevPosition.x,
                 this.prevPosition.y,
                 this.prevPosition.angle,
-                whichSizeShip(this)
+                whichSizeShip(this), sideslipTurn, sideslipBank, LeftOtherwiseRight
         );
 
         for (int i = parts.size() - 1; i >= 0; i--) {
             PathPart part = parts.get(i);
-            Shape movedShape = AffineTransform
+
+            Shape movedShape = rawShape;
+            double additionalAngleSideSlip = 0.0f;
+            if(sideslipTurn && i != (parts.size() - 1)) {
+                additionalAngleSideSlip = 90.0f;
+                if(LeftOtherwiseRight)additionalAngleSideSlip = -90.0f;
+            }
+            if(sideslipBank && i != (parts.size() - 1)) {
+                additionalAngleSideSlip = 90.0f;
+                if(LeftOtherwiseRight)additionalAngleSideSlip = -90.0f;
+            }
+
+
+            movedShape = AffineTransform
                     .getTranslateInstance(part.getX(), part.getY())
-                    .createTransformedShape(rawShape);
+                    .createTransformedShape(movedShape);
             double roundedAngle = convertAngleToGameLimits(part.getAngle());
             movedShape = AffineTransform
                     .getRotateInstance(Math.toRadians(-roundedAngle), part.getX(), part.getY())
@@ -523,7 +581,7 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
 
             BumpableWithShape bumpedBumpable = findCollidingEntity(movedShape, otherBumpableShapes);
             if (bumpedBumpable == null) {
-                return buildTranslateCommand(part,0.0f);
+                return buildTranslateCommand(part,additionalAngleSideSlip);
             }
         }
 
