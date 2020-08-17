@@ -1,9 +1,5 @@
 package mic;
-/**
- * Created by mjuneau in 2019-01.
- * Allows a dial selection rotation to be sent to other players for the new style of dial spawned with StemDial2e. This command is normally called
- * by StemNuDial2e (a decorator found in that Game Piece)
- */
+
 import VASSAL.build.GameModule;
 import VASSAL.command.Command;
 import VASSAL.command.CommandEncoder;
@@ -15,12 +11,25 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
 
+/**
+ * Created by mjuneau in 2019-01.
+ * Allows a dial selection rotation to be sent to other players for the new style of dial spawned with StemDial2e. This command is normally called
+ * by StemNuDial2e (a decorator found in that Game Piece)
+ */
 public class DialRotateCommand extends Command {
-    GamePiece pieceInCommand;
-    String pieceId;
-    Boolean goingUpAMove; //will +1 a move, otherwise -1 a move
-    boolean showEverything = false;
-    Boolean undoVersion; //used for when you want to trigger the undo of a rotate
+    private GamePiece pieceInCommand;
+    private final String pieceId;
+
+    /**
+     * will +1 a move, otherwise -1 a move
+     */
+    private final Boolean goingUpAMove;
+    private final boolean showEverything;
+
+    /**
+     * used for when you want to trigger the undo of a rotate
+     */
+    private final Boolean undoVersion;
 
     DialRotateCommand(GamePiece piece, Boolean wantGoUpAMove, boolean wantShowEverything, Boolean doItNormally) {
         pieceInCommand = piece;
@@ -38,13 +47,17 @@ public class DialRotateCommand extends Command {
     }
 
     protected void executeCommand() {
-        if(pieceInCommand == null && pieceId != null){
+        if (pieceInCommand == null && pieceId != null) {
             Collection<GamePiece> pieces = GameModule.getGameModule().getGameState().getAllPieces();
             for (GamePiece piece : pieces) {
-                if(piece.getId().equals(pieceId)) {
+                if (piece.getId().equals(pieceId)) {
                     pieceInCommand = piece;
                 }
             }
+        }
+
+        if (pieceInCommand == null) {
+            return;
         }
 
         //Construct the next build string
@@ -52,13 +65,13 @@ public class DialRotateCommand extends Command {
 
         String moveDef = "";
         String moveSpeedLayerString = "";
-        if(undoVersion == true) { //do the hide normally
+        if (undoVersion) { //do the hide normally
             stateString.append(buildStateString(goingUpAMove?1:-1));
             //Get the movement heading layer
             moveDef = getNewMoveDefFromScratch(goingUpAMove?1:-1);
             //get the speed layer to show
             moveSpeedLayerString = getLayerFromScratch(goingUpAMove?1:-1);
-        }else{ //reverse the hide
+        } else { //reverse the hide
             stateString.append(buildStateString(!goingUpAMove?1:-1));
             //Get the movement heading layer
             moveDef = getNewMoveDefFromScratch(!goingUpAMove?1:-1);
@@ -73,15 +86,15 @@ public class DialRotateCommand extends Command {
         Embellishment chosenMoveEmb = (Embellishment)Util.getEmbellishment(pieceInCommand,"Layer - Chosen Move");
         Embellishment chosenSpeedEmb = (Embellishment)Util.getEmbellishment(pieceInCommand, "Layer - Chosen Speed");
 
-        if(Util.getCurrentPlayer().getSide()==ownerInt || showEverything){
+        if (Util.getCurrentPlayer().getSide()==ownerInt || showEverything) {
             chosenMoveEmb.mySetType(stateString.toString());
             chosenMoveEmb.setValue(1);
             chosenSpeedEmb.setValue(Integer.parseInt(moveSpeedLayerString));
-        }else{
+        } else {
             //do nothing!
         }
-            final VASSAL.build.module.Map map = pieceInCommand.getMap();
-            map.repaint();
+        final VASSAL.build.module.Map map = pieceInCommand.getMap();
+        map.repaint();
     }
 
     protected Command myUndoCommand() {
@@ -97,24 +110,26 @@ public class DialRotateCommand extends Command {
         String savedMoveString = pieceInCommand.getProperty("selectedMove").toString();
         int savedMoveStringInt = Integer.parseInt(savedMoveString);
 
-        if(moveModification == 1){ //if you want to shift the selected move 1 up.
+        if (moveModification == 1) { //if you want to shift the selected move 1 up.
             if(savedMoveStringInt == nbOfMoves) savedMoveStringInt = 1; //loop
             else savedMoveStringInt++;
-        } else if(moveModification == -1) //if you want to shift the selected move 1 down
+        } else if (moveModification == -1) //if you want to shift the selected move 1 down
         {
             if (savedMoveStringInt == 1) savedMoveStringInt = nbOfMoves; //loop
             else savedMoveStringInt--;
         }
 
         String moveCode = values[savedMoveStringInt-1];
-        Integer moveSpeedLayerToUse = getLayerFromMoveCode(moveCode);
-        String moveSpeedLayerString = moveSpeedLayerToUse.toString();
+        int moveSpeedLayerToUse = getLayerFromMoveCode(moveCode);
+        String moveSpeedLayerString = Integer.toString(moveSpeedLayerToUse);
 
         return moveSpeedLayerString;
     }
+
     public int getLayerFromMoveCode(String code){
         return Integer.parseInt(code.substring(0,1)) + 1;
     }
+
     private String getNewMoveDefFromScratch(int moveMod) {
         String dialString = pieceInCommand.getProperty("dialstring").toString();
         String[] values = dialString.split(",");
@@ -124,8 +139,8 @@ public class DialRotateCommand extends Command {
         String savedMoveString = pieceInCommand.getProperty("selectedMove").toString();
         int savedMoveStringInt = Integer.parseInt(savedMoveString);
 
-        if(moveMod == 1){ //if you want to shift the selected move 1 up.
-            if(savedMoveStringInt == nbOfMoves) savedMoveStringInt = 1; //loop
+        if (moveMod == 1) { //if you want to shift the selected move 1 up.
+            if (savedMoveStringInt == nbOfMoves) savedMoveStringInt = 1; //loop
             else savedMoveStringInt++;
         } else if(moveMod == -1) //if you want to shift the selected move 1 down
         {
@@ -135,7 +150,8 @@ public class DialRotateCommand extends Command {
 
         return ""+savedMoveStringInt;
     }
-    public String buildStateString(int moveModification){
+
+    public String buildStateString(int moveModification) {
         /*
          * dialString, like: 1BW,1FB,1NW,2TW,2BB,2FB,2NB,2YW,3LR,3TW,3BW,3FW,3NW,3YW,3PR,4FR
          * values, like: [1BW,1FB,1NW,2TW,2BB,2FB,2NB,2YW,3LR,3TW,3BW,3FW,3NW,3YW,3PR,4FR]
@@ -187,25 +203,31 @@ public class DialRotateCommand extends Command {
         moveNamesString.append(moveName).append(" ").append(rawSpeed);
 
         moveImage = StemDial2e.dialHeadingImages.get(moveWithoutSpeed);
-        stateString.append(moveImage);
+        stateString
+            .append(moveImage)
         // add in move names
-        stateString.append(";empty,"+moveNamesString);
-        stateString.append(";false;Chosen Move;;;false;;1;1;true;65,130");
+            .append(";empty,"+moveNamesString)
+            .append(";false;Chosen Move;;;false;;1;1;true;65,130");
 
         return stateString.toString();
     }
+
     public int getRawSpeedFromMoveCode(String code){
         return Integer.parseInt(code.substring(0,1));
     }
+
     public String getMoveCodeWithoutSpeed(String code){
         return code.substring(1,3);
     }
+
     public String getMoveRaw(String code){
         return code.substring(1,2);
     }
 
-    //the following class is used to send the info to the other player whenever a dial generation command is issued, so it can be done locally on all machines playing/watching the game
-    //only the ship XWS string is sent
+    /**
+     * the following class is used to send the info to the other player whenever a dial generation command is issued, so it can be done locally on all machines playing/watching the game
+     * only the ship XWS string is sent
+     */
     public static class Dial2eRotateEncoder implements CommandEncoder {
         private static final Logger logger = LoggerFactory.getLogger(StemNuDial2e.class);
         private static final String commandPrefix = "Dial2eRotateEncoder=";
@@ -214,24 +236,24 @@ public class DialRotateCommand extends Command {
         public static DialRotateCommand.Dial2eRotateEncoder INSTANCE = new DialRotateCommand.Dial2eRotateEncoder();
 
         public Command decode(String command){
-            if(command == null || !command.contains(commandPrefix)) {
+            if (command == null || !command.contains(commandPrefix)) {
                 return null;
             }
 
             command = command.substring(commandPrefix.length());
             String[] parts = command.split(itemDelim);
 
-            try{
+            try {
                 Collection<GamePiece> pieces = GameModule.getGameModule().getGameState().getAllPieces();
                 Boolean doGoUp = Boolean.parseBoolean(parts[1]);
                 Boolean doItNorm = Boolean.parseBoolean(parts[3]);
                 for (GamePiece piece : pieces) {
-                    if(piece.getId().equals(parts[0])) {
+                    if (piece.getId().equals(parts[0])) {
                         return new DialRotateCommand(piece, doGoUp, Boolean.parseBoolean(parts[2]), doItNorm);
                     }
                 }
                 return new DialRotateCommand(parts[0], doGoUp, Boolean.parseBoolean(parts[2]), doItNorm);
-            }catch(Exception e){
+            } catch(Exception e) {
                 logger.error("Error decoding Dial2eRotateEncoder", e);
                 return null;
             }
@@ -241,10 +263,10 @@ public class DialRotateCommand extends Command {
             if (!(c instanceof DialRotateCommand)) {
                 return null;
             }
-            try{
+            try {
                 DialRotateCommand drc = (DialRotateCommand)c;
                 return commandPrefix + Joiner.on(itemDelim).join(drc.pieceId, drc.goingUpAMove.toString(), ""+drc.showEverything, drc.undoVersion.toString());
-            }catch(Exception e) {
+            } catch(Exception e) {
                 logger.error("Error encoding Dial2eRotateEncoder", e);
                 return null;
             }
