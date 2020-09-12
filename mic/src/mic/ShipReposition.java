@@ -525,6 +525,7 @@ public class ShipReposition extends Decorator implements EditablePiece {
         //STEP 4: translation into place
         Command placeCommand = getMap().placeOrMerge(piece, new Point((int)off1x_rot + (int)off2x, (int)off1y_rot + (int)off2y));
 
+logToChat("shiprepo line 528: placeCommand " + placeCommand.getDetails());
         shapeForTemplate = AffineTransform.
                 getTranslateInstance((int)off1x_rot + (int)off2x, (int)off1y_rot + (int)off2y).
                 createTransformedShape(shapeForTemplate);
@@ -1195,6 +1196,7 @@ public class ShipReposition extends Decorator implements EditablePiece {
 
         //Deal with a dropping of a maneuver. only exists for 1.0 now
         RepoManeuver repoTemplateDrop = getKeystrokeTemplateDrop(stroke);
+
         if (is2pointohShip == false && repoTemplateDrop != null && stroke.isOnKeyRelease() == false) {
             Command result = spawnRepoTemplate(repoTemplateDrop);
 
@@ -1222,6 +1224,9 @@ public class ShipReposition extends Decorator implements EditablePiece {
 
         //Deal with ship repositioning, including overlap detection for the templates used, including the triple choice keystrokes that lead to a mouse GUI
         RepoManeuver repoShip = getKeystrokeRepoManeuver(stroke, is2pointohShip);
+
+
+logToChat("shiprepo line 1229 "+ repoShip.toString());
         //Ship reposition requested
         if(repoShip != null  && stroke.isOnKeyRelease() == false) {
             //detect that the ship's final position overlaps a ship or obstacle
