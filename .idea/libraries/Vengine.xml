@@ -1,22 +1,12 @@
 <component name="libraryTable">
   <library name="Vengine">
     <CLASSES>
-      <root url="jar://C:/Program Files/VASSAL-3.3.2/lib/Vengine.jar!/" />
-      <root url="file://C:/javafx-sdk-11.0.2/lib" />
+      <root url="jar://C:/Program Files/VASSAL-3.4.1/lib/Vengine.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES>
-      <root url="jar://$PROJECT_DIR$/mic/lib/VASSAL-3.3.2-src.zip!/" />
-      <root url="file://C:/javafx-sdk-11.0.2/lib" />
-      <root url="jar://C:/javafx-sdk-11.0.2/lib/src.zip!/javafx.base" />
-      <root url="jar://C:/javafx-sdk-11.0.2/lib/src.zip!/javafx.controls" />
-      <root url="jar://C:/javafx-sdk-11.0.2/lib/src.zip!/javafx.fxml" />
-      <root url="jar://C:/javafx-sdk-11.0.2/lib/src.zip!/javafx.graphics" />
-      <root url="jar://C:/javafx-sdk-11.0.2/lib/src.zip!/javafx.media" />
-      <root url="jar://C:/javafx-sdk-11.0.2/lib/src.zip!/javafx.swing" />
-      <root url="jar://C:/javafx-sdk-11.0.2/lib/src.zip!/javafx.web" />
+      <root url="jar://$PROJECT_DIR$/mic/lib/VASSAL-3.3.0-beta3-src.zip!/VASSAL-3.3.0-beta3-src/src" />
+      <root url="jar://$PROJECT_DIR$/mic/lib/VASSAL-3.3.0-beta3-src.zip!/VASSAL-3.3.0-beta3-src/test" />
     </SOURCES>
-    <jarDirectory url="file://C:/javafx-sdk-11.0.2/lib" recursive="false" />
-    <jarDirectory url="file://C:/javafx-sdk-11.0.2/lib" recursive="false" type="SOURCES" />
   </library>
 </component>

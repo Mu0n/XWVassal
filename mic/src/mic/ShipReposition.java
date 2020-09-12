@@ -1226,9 +1226,10 @@ logToChat("shiprepo line 528: placeCommand " + placeCommand.getDetails());
         RepoManeuver repoShip = getKeystrokeRepoManeuver(stroke, is2pointohShip);
 
 
-logToChat("shiprepo line 1229 "+ repoShip.toString());
+logToChat("shiprepo line 1229 "+ stroke.toString());
         //Ship reposition requested
         if(repoShip != null  && stroke.isOnKeyRelease() == false) {
+logToChat("shiprepo line 1232 reposShip detected "+ repoShip.toString());
             //detect that the ship's final position overlaps a ship or obstacle
             Command repoCommand = repositionTheShip(repoShip, is2pointohShip);
             if(repoCommand == null) return piece.keyEvent(stroke); //somehow did not get a programmed reposition command
