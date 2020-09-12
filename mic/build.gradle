@@ -16,11 +16,11 @@ repositories {
     jcenter()
 }
 
-sourceCompatibility = '1.8'
-targetCompatibility = '1.8'
+sourceCompatibility = '11'
+targetCompatibility = '11'
 
 dependencies {
-    compileOnly files('lib/vengine.jar')
+    compileOnly files('lib/Vengine.jar')
     compileOnly 'org.slf4j:slf4j-api:1.7.7'
     compile 'commons-codec:commons-codec:1.6'
     compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.1.5'
