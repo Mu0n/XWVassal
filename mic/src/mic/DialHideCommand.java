@@ -1,9 +1,5 @@
 package mic;
-/**
- * Created by mjuneau in 2019-01.
- * Allows a dial hide command to be sent to other players for the new style of dial spawned with StemDial2e. This command is normally called
- * by StemNuDial2e (a decorator found in that Game Piece)
- */
+
 import VASSAL.build.GameModule;
 import VASSAL.command.Command;
 import VASSAL.command.CommandEncoder;
@@ -15,11 +11,20 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
 
+/**
+ * Created by mjuneau in 2019-01.
+ * Allows a dial hide command to be sent to other players for the new style of dial spawned with StemDial2e. This command is normally called
+ * by StemNuDial2e (a decorator found in that Game Piece)
+ */
 public class DialHideCommand extends Command {
 
-    public GamePiece pieceInCommand;
-    public String pieceId;
-    Boolean undoVersion; //used for when you want to trigger the undo of an hide
+    private GamePiece pieceInCommand;
+    private final String pieceId;
+
+    /**
+     * used for when you want to trigger the undo of an hide
+     */
+    private final Boolean undoVersion;
 
 
     public DialHideCommand(GamePiece piece, Boolean doItNormally) {
@@ -36,13 +41,17 @@ public class DialHideCommand extends Command {
 
     protected void executeCommand() {
 
-        if(pieceInCommand == null && pieceId != null){
+        if (pieceInCommand == null && pieceId != null) {
             Collection<GamePiece> pieces = GameModule.getGameModule().getGameState().getAllPieces();
             for (GamePiece piece : pieces) {
-                if(piece.getId().equals(pieceId)) {
+                if (piece.getId().equals(pieceId)) {
                     pieceInCommand = piece;
                 }
             }
+        }
+
+        if (pieceInCommand == null) {
+            return;
         }
 
         String ownerStr = pieceInCommand.getProperty("owner").toString();
@@ -53,18 +62,18 @@ public class DialHideCommand extends Command {
         Embellishment sideHideEmb = (Embellishment) Util.getEmbellishment(pieceInCommand, "Layer - Side Hide");
         Embellishment centralHideEmb = (Embellishment) Util.getEmbellishment(pieceInCommand, "Layer - Central Hide");
 
-        if(undoVersion == true) {//do the hide normally
-            if(Util.getCurrentPlayer().getSide() == ownerInt){
+        if (undoVersion) {//do the hide normally
+            if (Util.getCurrentPlayer().getSide() == ownerInt) {
                 sideHideEmb.setValue(1);
                 centralHideEmb.setValue(0);
-            }else{
+            } else {
                 chosenMoveEmb.setValue(0); //Hide the maneuver
                 chosenSpeedEmb.setValue(0); //Hide the speed
                 sideHideEmb.setValue(0);
                 centralHideEmb.setValue(1);
             }
             pieceInCommand.setProperty("isHidden", 1);
-        }else {//reverse the hide
+        } else {//reverse the hide
             chosenMoveEmb.setValue(1);
 
             //
@@ -77,7 +86,7 @@ public class DialHideCommand extends Command {
             String savedMoveString = pieceInCommand.getProperty("selectedMove").toString();
             int savedMoveStringInt = Integer.parseInt(savedMoveString);
             String moveCode = values[savedMoveStringInt-1];
-            Integer moveSpeedLayerToUse = Integer.parseInt(moveCode.substring(0,1)) + 1;
+            int moveSpeedLayerToUse = Integer.parseInt(moveCode.substring(0,1)) + 1;
 
             chosenSpeedEmb.setValue(moveSpeedLayerToUse);
             //
@@ -97,8 +106,10 @@ public class DialHideCommand extends Command {
         return new DialHideCommand(pieceId, false);
     }
 
-    //the following class is used to send the info to the other player whenever a dial generation command is issued, so it can be done locally on all machines playing/watching the game
-    //only the ship XWS string is sent
+    /**
+     * the following class is used to send the info to the other player whenever a dial generation command is issued, so it can be done locally on all machines playing/watching the game
+     * only the ship XWS string is sent
+     */
     public static class Dial2eHideEncoder implements CommandEncoder {
         private static final Logger logger = LoggerFactory.getLogger(StemNuDial2e.class);
         private static final String commandPrefix = "Dial2eHideEncoder=";
@@ -113,7 +124,7 @@ public class DialHideCommand extends Command {
             }
             command = command.substring(commandPrefix.length());
             String[] parts = command.split(itemDelim);
-            try{
+            try {
                 Collection<GamePiece> pieces = GameModule.getGameModule().getGameState().getAllPieces();
                 Boolean doItNorm = Boolean.parseBoolean(parts[1]);
                 for (GamePiece piece : pieces) {
@@ -122,7 +133,7 @@ public class DialHideCommand extends Command {
                     }
                 }
                 return new DialHideCommand(parts[0], doItNorm);
-            }catch(Exception e){
+            } catch(Exception e) {
                 logger.info("Error decoding DialHideCommand - exception error");
                 return null;
             }

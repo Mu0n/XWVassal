@@ -1,9 +1,5 @@
 package mic;
-/**
- * Created by mjuneau in 2019-01.
- * Allows a dial reveal command to be sent to other players for the new style of dial spawned with StemDial2e. This command is normally called
- * by StemNuDial2e (a decorator found in that Game Piece)
- */
+
 import VASSAL.build.GameModule;
 import VASSAL.command.Command;
 import VASSAL.command.CommandEncoder;
@@ -15,14 +11,23 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
 
+/**
+ * Created by mjuneau in 2019-01.
+ * Allows a dial reveal command to be sent to other players for the new style of dial spawned with StemDial2e. This command is normally called
+ * by StemNuDial2e (a decorator found in that Game Piece)
+ */
 public class DialRevealCommand extends Command {
 
-    GamePiece pieceInCommand;
-    String pieceId;
-    String moveDef;
-    String speedLayer;
-    String revealerName ="";
-    Boolean undoVersion; //used for when you want to trigger the undo of a reveal
+    private GamePiece pieceInCommand;
+    private final String pieceId;
+    private final String moveDef;
+    private final String speedLayer;
+    private String revealerName ="";
+
+    /**
+     * used for when you want to trigger the undo of a reveal
+     */
+    private final Boolean undoVersion;
 
     DialRevealCommand(GamePiece piece, String requiredMoveDef, String requiredSpeedLayer, String revealerNamePassed, Boolean doItNormally){
         pieceInCommand = piece;
@@ -42,13 +47,17 @@ public class DialRevealCommand extends Command {
     }
 
     protected void executeCommand() {
-        if(pieceInCommand == null && pieceId != null){
+        if (pieceInCommand == null && pieceId != null) {
             Collection<GamePiece> pieces = GameModule.getGameModule().getGameState().getAllPieces();
             for (GamePiece piece : pieces) {
-                if(piece.getId().equals(pieceId)) {
+                if (piece.getId().equals(pieceId)) {
                     pieceInCommand = piece;
                 }
             }
+        }
+
+        if (pieceInCommand == null) {
+            return;
         }
 
         Embellishment chosenMoveEmb = (Embellishment) Util.getEmbellishment(pieceInCommand, "Layer - Chosen Move");
@@ -56,7 +65,7 @@ public class DialRevealCommand extends Command {
         Embellishment sideHideEmb = (Embellishment) Util.getEmbellishment(pieceInCommand, "Layer - Side Hide");
         Embellishment centralHideEmb = (Embellishment) Util.getEmbellishment(pieceInCommand, "Layer - Central Hide");
 
-        if(undoVersion == true){ //do the reveal normally
+        if (undoVersion){ //do the reveal normally
             chosenMoveEmb.mySetType(moveDef);
             chosenMoveEmb.setValue(1); // use the layer that shows the move
             sideHideEmb.setValue(0); //hide the small slashed eye icon
@@ -71,14 +80,14 @@ public class DialRevealCommand extends Command {
 
             if(pieceInCommand.getMap().equals(mapNameCheck) && revealerName.equals(Util.getCurrentPlayer().getName())) Util.logToChat("* - "+ revealerName + " reveals the dial for "
                     + craftIDCheck + " (" + pilotNameCheck + ") = "+ chosenMoveCheck + "*");
-        }else { //reverse the reveal
+        } else { //reverse the reveal
 
             String ownerStr = pieceInCommand.getProperty("owner").toString();
             int ownerInt = Integer.parseInt(ownerStr);
 
-            if(Util.getCurrentPlayer().getSide() == ownerInt){
+            if (Util.getCurrentPlayer().getSide() == ownerInt) {
                 sideHideEmb.setValue(1);
-            }else{
+            } else {
                 centralHideEmb.setValue(1);
                 chosenMoveEmb.setValue(0); // use the layer that shows the move
                 chosenSpeedEmb.setValue(0); //use the right speed layer
@@ -91,6 +100,7 @@ public class DialRevealCommand extends Command {
         final VASSAL.build.module.Map map = pieceInCommand.getMap();
         map.repaint();
     }
+
     protected Command myUndoCommand() {
         return new DialRevealCommand(pieceId, moveDef, speedLayer, revealerName, false);
     }
@@ -103,7 +113,7 @@ public class DialRevealCommand extends Command {
         public static DialRevealCommand.Dial2eRevealEncoder INSTANCE = new DialRevealCommand.Dial2eRevealEncoder();
 
         public Command decode(String command){
-            if(command == null || !command.contains(commandPrefix)) {
+            if (command == null || !command.contains(commandPrefix)) {
                 return null;
             }
 
@@ -114,13 +124,13 @@ public class DialRevealCommand extends Command {
                 Collection<GamePiece> pieces = GameModule.getGameModule().getGameState().getAllPieces();
                 Boolean doItNorm = Boolean.parseBoolean(parts[4]);
                 for (GamePiece piece : pieces) {
-                    if(piece.getId().equals(parts[0])) {
+                    if (piece.getId().equals(parts[0])) {
                         return new DialRevealCommand(piece, parts[1], parts[2],parts[3], doItNorm);
                     }
                 }
                 return new DialRevealCommand(parts[0], parts[1], parts[2],parts[3], doItNorm);
-            }catch(Exception e){
-                logger.info("Error decoding DialRevealCommand - exception error");
+            } catch(Exception e) {
+                logger.info("Error decoding DialRevealCommand", e);
                 return null;
             }
         }
@@ -129,11 +139,11 @@ public class DialRevealCommand extends Command {
             if (!(c instanceof DialRevealCommand)) {
                 return null;
             }
-            try{
+            try {
                 DialRevealCommand drc = (DialRevealCommand) c;
 
                 return commandPrefix + Joiner.on(itemDelim).join(drc.pieceId, drc.moveDef, drc.speedLayer, drc.revealerName, drc.undoVersion.toString());
-            }catch(Exception e) {
+            } catch (Exception e) {
                 logger.error("Error encoding DialRevealCommand", e);
                 return null;
             }
