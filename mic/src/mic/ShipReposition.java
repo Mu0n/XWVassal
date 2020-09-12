@@ -235,60 +235,60 @@ public class ShipReposition extends Decorator implements EditablePiece {
     List<RepositionChoiceVisual> rpcList = Lists.newArrayList();
 
     private static Map<String, RepoManeuver> keyStrokeToDropTemplate = ImmutableMap.<String, RepoManeuver>builder()
-            .put("CTRL R", RepoManeuver.BR1_Left_Mid)
-            .put("ALT R", RepoManeuver.BR1_Right_Mid)
-            .put("J", RepoManeuver.BR2_Left_Mid)
-            .put("K", RepoManeuver.BR2_Right_Mid)
-            .put("CTRL J", RepoManeuver.BR_Bk2_Left_Fwd_Mid)
-            .put("CTRL K", RepoManeuver.BR_Bk2_Right_Fwd_Mid)
-            .put("CTRL SHIFT J", RepoManeuver.BR_Bk2_Left_Bwd_Mid)
-            .put("CTRL SHIFT K", RepoManeuver.BR_Bk2_Right_Bwd_Mid)
-            .put("ALT J", RepoManeuver.BR_Bk1_Left_Fwd_Mid)
-            .put("ALT SHIFT J", RepoManeuver.BR_Bk1_Left_Bwd_Mid)
-            .put("ALT K", RepoManeuver.BR_Bk1_Right_Fwd_Mid)
-            .put("ALT SHIFT K", RepoManeuver.BR_Bk1_Right_Bwd_Mid)
+            .put("CTRL R", RepoManeuver.BR1_Left_Mid) //
+            .put("ALT R", RepoManeuver.BR1_Right_Mid) //
+            .put("J", RepoManeuver.BR2_Left_Mid) //
+            .put("K", RepoManeuver.BR2_Right_Mid) //
+            .put("CTRL J", RepoManeuver.BR_Bk2_Left_Fwd_Mid) //
+            .put("CTRL K", RepoManeuver.BR_Bk2_Right_Fwd_Mid) //
+            .put("CTRL SHIFT J", RepoManeuver.BR_Bk2_Left_Bwd_Mid) //
+            .put("CTRL SHIFT K", RepoManeuver.BR_Bk2_Right_Bwd_Mid) //
+            .put("ALT J", RepoManeuver.BR_Bk1_Left_Fwd_Mid) //
+            .put("ALT SHIFT J", RepoManeuver.BR_Bk1_Left_Bwd_Mid) //
+            .put("ALT K", RepoManeuver.BR_Bk1_Right_Fwd_Mid) //
+            .put("ALT SHIFT K", RepoManeuver.BR_Bk1_Right_Bwd_Mid) //
             .build();
 
     //same stuff, but for 2nd edition. Echo style and SV Mk.2 style present.
     private static Map<String, RepoManeuver> keyStrokeToDropTemplate2e = ImmutableMap.<String, RepoManeuver>builder()
-            .put("CTRL J", RepoManeuver.BR_Bk2_Left_Fwd_Mid)
-            .put("CTRL K", RepoManeuver.BR_Bk2_Right_Fwd_Mid)
-            .put("CTRL SHIFT J", RepoManeuver.BR_Bk2_Left_Bwd_Mid)
-            .put("CTRL SHIFT K", RepoManeuver.BR_Bk2_Right_Bwd_Mid)
-            .put("ALT J", RepoManeuver.BR_Bk1_Left_Fwd_Mid)
-            .put("ALT SHIFT J", RepoManeuver.BR_Bk1_Left_Bwd_Mid)
-            .put("ALT K", RepoManeuver.BR_Bk1_Right_Fwd_Mid)
-            .put("ALT SHIFT K", RepoManeuver.BR_Bk1_Right_Bwd_Mid)
+            .put("74,130", RepoManeuver.BR_Bk2_Left_Fwd_Mid) //CTRL J
+            .put("75,130", RepoManeuver.BR_Bk2_Right_Fwd_Mid) //CTRL K
+            .put("74,195", RepoManeuver.BR_Bk2_Left_Bwd_Mid) //CTRL SHIFT J
+            .put("75,195", RepoManeuver.BR_Bk2_Right_Bwd_Mid) //CTRL SHIFT K
+            .put("74,520", RepoManeuver.BR_Bk1_Left_Fwd_Mid) //ALT J
+            .put("74,585", RepoManeuver.BR_Bk1_Left_Bwd_Mid) //ALT SHIFT J
+            .put("75,520", RepoManeuver.BR_Bk1_Right_Fwd_Mid) //ALT K
+            .put("75,585", RepoManeuver.BR_Bk1_Right_Bwd_Mid) //ALT SHIFT K
             .build();
 
     private static Map<String, RepoManeuver> keyStrokeToRepositionShip = ImmutableMap.<String, RepoManeuver>builder()
-            .put("CTRL 8", RepoManeuver.BR1_Left_AFAP)
-            .put("CTRL SHIFT 8", RepoManeuver.BR1_Left_ABAP)
-            .put("ALT 8", RepoManeuver.BR1_Right_AFAP)
-            .put("ALT SHIFT 8", RepoManeuver.BR1_Right_ABAP)
-            .put("CTRL 9", RepoManeuver.BR2_Left_AFAP)
-            .put("CTRL SHIFT 9", RepoManeuver.BR2_Left_ABAP)
-            .put("ALT 9", RepoManeuver.BR2_Right_AFAP)
-            .put("ALT SHIFT 9", RepoManeuver.BR2_Right_ABAP)
+            .put("56,130", RepoManeuver.BR1_Left_AFAP) //CTRL 8
+            .put("56,195", RepoManeuver.BR1_Left_ABAP) //CTRL SHIFT 8
+            .put("56,520", RepoManeuver.BR1_Right_AFAP) //ALT 8
+            .put("56,585", RepoManeuver.BR1_Right_ABAP) //ALT SHIFT 8
+            .put("57,130", RepoManeuver.BR2_Left_AFAP) //CTRL 9
+            .put("57,195", RepoManeuver.BR2_Left_ABAP) //CTRL SHIFT 9
+            .put("57,520", RepoManeuver.BR2_Right_AFAP) //ALT 9
+            .put("57,585", RepoManeuver.BR2_Right_ABAP) //ALT SHIFT 9
             .build();
 
     //Map for 2e keystrokes
     private static Map<String, RepoManeuver> keyStrokeToRepositionShip_2e = ImmutableMap.<String, RepoManeuver>builder()
-            .put("CTRL 8", RepoManeuver.BR1_Left_AFAP_2E)
-            .put("CTRL R", RepoManeuver.BR1_Left_2E)
-            .put("CTRL SHIFT 8", RepoManeuver.BR1_Left_ABAP_2E)
+            .put("56,130", RepoManeuver.BR1_Left_AFAP_2E) //CTRL 8
+            .put("82,130", RepoManeuver.BR1_Left_2E) //CTRL R
+            .put("56,195", RepoManeuver.BR1_Left_ABAP_2E) //CTRL SHIFT 8
 
-            .put("ALT 8", RepoManeuver.BR1_Right_AFAP_2E)
-            .put("ALT R", RepoManeuver.BR1_Right_2E)
-            .put("ALT SHIFT 8", RepoManeuver.BR1_Right_ABAP_2E)
+            .put("56,520", RepoManeuver.BR1_Right_AFAP_2E) //ALT 8
+            .put("82,520", RepoManeuver.BR1_Right_2E) //ALT R
+            .put("56,585", RepoManeuver.BR1_Right_ABAP_2E) //ALT SHIFT 8
 
-            .put("CTRL 9", RepoManeuver.BR2_Left_AFAP_2E)
-            .put("J", RepoManeuver.BR2_Left_2E)
-            .put("CTRL SHIFT 9", RepoManeuver.BR2_Left_ABAP_2E)
+            .put("57,130", RepoManeuver.BR2_Left_AFAP_2E) //CTRL 9
+            .put("74,0", RepoManeuver.BR2_Left_2E) //J
+            .put("57,195", RepoManeuver.BR2_Left_ABAP_2E) //CTRL SHIFT 9
 
-            .put("ALT 9", RepoManeuver.BR2_Right_AFAP_2E)
-            .put("K", RepoManeuver.BR2_Right_2E)
-            .put("ALT SHIFT 9", RepoManeuver.BR2_Right_ABAP_2E)
+            .put("57,520", RepoManeuver.BR2_Right_AFAP_2E) //ALT 9
+            .put("75,0", RepoManeuver.BR2_Right_2E) //K
+            .put("57,585", RepoManeuver.BR2_Right_ABAP_2E) //ALT SHIFT 9
             .build();
 
     //Latest 2.0: Better map for the multitudes of triple choices for repositioning in 2E
@@ -404,19 +404,19 @@ public class ShipReposition extends Decorator implements EditablePiece {
 
     //Names of the reposition
     private static Map<String, String> keyStrokeToName_2e = ImmutableMap.<String, String>builder()
-            .put("CTRL 8", "Left Barrel Roll as Forward as Possible")
-            .put("CTRL R", "Left Barrel Roll, centered")
-            .put("CTRL SHIFT 8", "Left Barrel Roll as Backward as Possible")
-            .put("ALT 8", "Right Barrel Roll as Forward as Possible")
-            .put("ALT R", "Right Barrel Roll, centered")
-            .put("ALT SHIFT 8", "Right Barrel Roll as Backward as Possible")
-            .put("CTRL 9", "Left Straight Decloak as Forward as Possible")
-            .put("J", "Left Straight Decloak, centered")
-            .put("CTRL SHIFT 9", "Left Straight Decloak as Backward as Possible")
-            .put("ALT 9", "Right Straight Decloak as Forward as Possible")
-            .put("K", "Right Straight Decloak, centered")
-            .put("ALT SHIFT 9", "Right Straight Decloak as Backward as Possible")
-            .put("ALT J", "Left, Forward Bank, centered")
+            .put("CTRL 8", "Left Barrel Roll as Forward as Possible") //
+            .put("CTRL R", "Left Barrel Roll, centered") //
+            .put("CTRL SHIFT 8", "Left Barrel Roll as Backward as Possible") //
+            .put("ALT 8", "Right Barrel Roll as Forward as Possible") //
+            .put("ALT R", "Right Barrel Roll, centered") //
+            .put("ALT SHIFT 8", "Right Barrel Roll as Backward as Possible") //
+            .put("CTRL 9", "Left Straight Decloak as Forward as Possible") //
+            .put("J", "Left Straight Decloak, centered") //
+            .put("CTRL SHIFT 9", "Left Straight Decloak as Backward as Possible") //
+            .put("ALT 9", "Right Straight Decloak as Forward as Possible") //
+            .put("K", "Right Straight Decloak, centered") //
+            .put("ALT SHIFT 9", "Right Straight Decloak as Backward as Possible") //
+            .put("ALT J", "Left, Forward Bank, centered") //
             .build();
 
 
@@ -525,7 +525,6 @@ public class ShipReposition extends Decorator implements EditablePiece {
         //STEP 4: translation into place
         Command placeCommand = getMap().placeOrMerge(piece, new Point((int)off1x_rot + (int)off2x, (int)off1y_rot + (int)off2y));
 
-logToChat("shiprepo line 528: placeCommand " + placeCommand.getDetails());
         shapeForTemplate = AffineTransform.
                 getTranslateInstance((int)off1x_rot + (int)off2x, (int)off1y_rot + (int)off2y).
                 createTransformedShape(shapeForTemplate);
@@ -1316,7 +1315,8 @@ logToChat("shiprepo line 1232 reposShip detected "+ repoShip.toString());
 
     //updated to take into account 2.0 reposition hotkeys with a separate map
     private RepoManeuver getKeystrokeRepoManeuver(KeyStroke keyStroke, boolean is2pointohShip) {
-        String hotKey = HotKeyConfigurer.getString(keyStroke);
+        String hotKey = HotKeyConfigurer.encode(keyStroke);
+ logToChat("repoship line 1319 STRING = " + hotKey);
         if(is2pointohShip==false){
             if (keyStrokeToRepositionShip.containsKey(hotKey)) {
 

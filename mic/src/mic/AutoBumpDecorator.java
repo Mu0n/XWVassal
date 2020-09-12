@@ -60,63 +60,63 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
 
 
     private static Map<String, ManeuverPaths> keyStrokeToManeuver = ImmutableMap.<String, ManeuverPaths>builder()
-            .put("SHIFT 1", ManeuverPaths.Str1)
-            .put("SHIFT 2", ManeuverPaths.Str2)
-            .put("SHIFT 3", ManeuverPaths.Str3)
-            .put("SHIFT 4", ManeuverPaths.Str4)
-            .put("SHIFT 5", ManeuverPaths.Str5)
-            .put("CTRL SHIFT 1", ManeuverPaths.LT1)
-            .put("CTRL SHIFT 2", ManeuverPaths.LT2)
-            .put("CTRL SHIFT 3", ManeuverPaths.LT3)
-            .put("ALT SHIFT 1", ManeuverPaths.RT1)
-            .put("ALT SHIFT 2", ManeuverPaths.RT2)
-            .put("ALT SHIFT 3", ManeuverPaths.RT3)
-            .put("CTRL 1", ManeuverPaths.LBk1)
-            .put("CTRL 2", ManeuverPaths.LBk2)
-            .put("CTRL 3", ManeuverPaths.LBk3)
-            .put("ALT 1", ManeuverPaths.RBk1)
-            .put("ALT 2", ManeuverPaths.RBk2)
-            .put("ALT 3", ManeuverPaths.RBk3)
-            .put("ALT CTRL 1", ManeuverPaths.K1)
-            .put("ALT CTRL 2", ManeuverPaths.K2)
-            .put("ALT CTRL 3", ManeuverPaths.K3)
-            .put("ALT CTRL 4", ManeuverPaths.K4)
-            .put("ALT CTRL 5", ManeuverPaths.K5)
-            .put("CTRL 6", ManeuverPaths.RevLbk1)
-            .put("SHIFT 6", ManeuverPaths.RevStr1)
-            .put("SHIFT 7", ManeuverPaths.RevStr2)
-            .put("ALT 6", ManeuverPaths.RevRbk1)
-            .put("CTRL Q", ManeuverPaths.SloopL1)
-            .put("CTRL W", ManeuverPaths.SloopL2)
-            .put("CTRL E", ManeuverPaths.SloopL3)
-            .put("ALT Q", ManeuverPaths.SloopR1)
-            .put("ALT W", ManeuverPaths.SloopR2)
-            .put("ALT E", ManeuverPaths.SloopR3)
-            .put("CTRL SHIFT E", ManeuverPaths.SloopL3Turn)
-            .put("ALT SHIFT E", ManeuverPaths.SloopR3Turn)
-            .put("CTRL I", ManeuverPaths.TrollL1)
-            .put("CTRL Y", ManeuverPaths.TrollL2)
-            .put("CTRL T", ManeuverPaths.TrollL3)
-            .put("ALT I", ManeuverPaths.TrollR1)
-            .put("ALT Y", ManeuverPaths.TrollR2)
-            .put("ALT T", ManeuverPaths.TrollR3)
+            .put("49,65", ManeuverPaths.Str1) //SHIFT 1
+            .put("50,65", ManeuverPaths.Str2) //SHIFT 2
+            .put("51,65", ManeuverPaths.Str3) //SHIFT 3
+            .put("52,65", ManeuverPaths.Str4) //SHIFT 4
+            .put("53,65", ManeuverPaths.Str5) //SHIFT 5
+            .put("49,195", ManeuverPaths.LT1) //CTRL SHIFT 1
+            .put("50,195", ManeuverPaths.LT2) //CTRL SHIFT 2
+            .put("51,195", ManeuverPaths.LT3) //CTRL SHIFT 3
+            .put("49,585", ManeuverPaths.RT1) //ALT SHIFT 1
+            .put("50,585", ManeuverPaths.RT2) //ALT SHIFT 2
+            .put("51,585", ManeuverPaths.RT3) //ALT SHIFT 3
+            .put("49,130", ManeuverPaths.LBk1) //CTRL 1
+            .put("50,130", ManeuverPaths.LBk2) //CTRL 2
+            .put("51,130", ManeuverPaths.LBk3) //CTRL 3
+            .put("49,520", ManeuverPaths.RBk1) //ALT 1
+            .put("50,520", ManeuverPaths.RBk2) //ALT 2
+            .put("51,520", ManeuverPaths.RBk3) //ALT 3
+            .put("49,650", ManeuverPaths.K1) //ALT CTRL 1
+            .put("50,650", ManeuverPaths.K2) //ALT CTRL 2
+            .put("51,650", ManeuverPaths.K3) //ALT CTRL 3
+            .put("52,650", ManeuverPaths.K4) //ALT CTRL 4
+            .put("53,650", ManeuverPaths.K5) //ALT CTRL 5
+            .put("54,130", ManeuverPaths.RevLbk1) //CTRL 6
+            .put("54,65", ManeuverPaths.RevStr1) //SHIFT 6
+            .put("55,65", ManeuverPaths.RevStr2) //SHIFT 7
+            .put("54,520", ManeuverPaths.RevRbk1) //ALT 6
+            .put("81,130", ManeuverPaths.SloopL1) //CTRL Q
+            .put("87,130", ManeuverPaths.SloopL2) //CTRL W
+            .put("69,130", ManeuverPaths.SloopL3) //CTRL E
+            .put("81,520", ManeuverPaths.SloopR1) //ALT Q
+            .put("87,520", ManeuverPaths.SloopR2) //ALT W - has a conflict with file open dialog
+            .put("69,520", ManeuverPaths.SloopR3) //ALT E
+            .put("69,195", ManeuverPaths.SloopL3Turn) //CTRL SHIFT E
+            .put("69,585", ManeuverPaths.SloopR3Turn) //ALT SHIFT E
+            .put("73,130", ManeuverPaths.TrollL1) //CTRL I
+            .put("89,130", ManeuverPaths.TrollL2) //CTRL Y
+            .put("84,130", ManeuverPaths.TrollL3) //CTRL T
+            .put("73,520", ManeuverPaths.TrollR1) //ALT I
+            .put("89,520", ManeuverPaths.TrollR2) //ALT Y
+            .put("84,520", ManeuverPaths.TrollR3) //ALT T
 
 
-            .put("ALT K", ManeuverPaths.SideSlipL1Turn)
-            .put("CTRL K", ManeuverPaths.SideSlipL2Turn)
-            .put("SHIFT K", ManeuverPaths.SideSlipL3Turn)
+            .put("75,520", ManeuverPaths.SideSlipL1Turn) //ALT K
+            .put("75,130", ManeuverPaths.SideSlipL2Turn) //CTRL K
+            .put("75,65", ManeuverPaths.SideSlipL3Turn) //SHIFT K
 
-            .put("CTRL SHIFT K", ManeuverPaths.SideSlipR1Turn)
-            .put("ALT SHIFT K", ManeuverPaths.SideSlipR2Turn)
-            .put("ALT CTRL K", ManeuverPaths.SideSlipR3Turn)
+            .put("75,195", ManeuverPaths.SideSlipR1Turn) //CTRL SHIFT K
+            .put("75,585", ManeuverPaths.SideSlipR2Turn) //ALT SHIFT K
+            .put("75,650", ManeuverPaths.SideSlipR3Turn) //ALT CTRL K
 
-            .put("ALT O", ManeuverPaths.SideSlipL1Bank)
-            .put("CTRL O", ManeuverPaths.SideSlipL2Bank)
-            .put("SHIFT O", ManeuverPaths.SideSlipL3Bank)
+            .put("79,520", ManeuverPaths.SideSlipL1Bank) //ALT O
+            .put("79,130", ManeuverPaths.SideSlipL2Bank) //CTRL O
+            .put("79,65", ManeuverPaths.SideSlipL3Bank) //SHIFT O
 
-            .put("O", ManeuverPaths.SideSlipR1Bank)
-            .put("ALT SHIFT O", ManeuverPaths.SideSlipR2Bank)
-            .put("ALT CTRL O", ManeuverPaths.SideSlipR3Bank)
+            .put("79,0", ManeuverPaths.SideSlipR1Bank) //O
+            .put("79,585", ManeuverPaths.SideSlipR2Bank) //ALT SHIFT O
+            .put("79,650", ManeuverPaths.SideSlipR3Bank) //ALT CTRL O
             .build();
 
     public AutoBumpDecorator() {
@@ -713,7 +713,7 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
      * @return
      */
     private ManeuverPaths getKeystrokePath(KeyStroke keyStroke) {
-        String hotKey = HotKeyConfigurer.getString(keyStroke);
+        String hotKey = HotKeyConfigurer.encode(keyStroke);
 
         if (keyStrokeToManeuver.containsKey(hotKey)) {
             return keyStrokeToManeuver.get(hotKey);
