@@ -59,64 +59,64 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
     double lastCenteredTRY;
 
 
-    private static Map<String, ManeuverPaths> keyStrokeToManeuver = ImmutableMap.<String, ManeuverPaths>builder()
-            .put("49,65", ManeuverPaths.Str1) //SHIFT 1
-            .put("50,65", ManeuverPaths.Str2) //SHIFT 2
-            .put("51,65", ManeuverPaths.Str3) //SHIFT 3
-            .put("52,65", ManeuverPaths.Str4) //SHIFT 4
-            .put("53,65", ManeuverPaths.Str5) //SHIFT 5
-            .put("49,195", ManeuverPaths.LT1) //CTRL SHIFT 1
-            .put("50,195", ManeuverPaths.LT2) //CTRL SHIFT 2
-            .put("51,195", ManeuverPaths.LT3) //CTRL SHIFT 3
-            .put("49,585", ManeuverPaths.RT1) //ALT SHIFT 1
-            .put("50,585", ManeuverPaths.RT2) //ALT SHIFT 2
-            .put("51,585", ManeuverPaths.RT3) //ALT SHIFT 3
-            .put("49,130", ManeuverPaths.LBk1) //CTRL 1
-            .put("50,130", ManeuverPaths.LBk2) //CTRL 2
-            .put("51,130", ManeuverPaths.LBk3) //CTRL 3
-            .put("49,520", ManeuverPaths.RBk1) //ALT 1
-            .put("50,520", ManeuverPaths.RBk2) //ALT 2
-            .put("51,520", ManeuverPaths.RBk3) //ALT 3
-            .put("49,650", ManeuverPaths.K1) //ALT CTRL 1
-            .put("50,650", ManeuverPaths.K2) //ALT CTRL 2
-            .put("51,650", ManeuverPaths.K3) //ALT CTRL 3
-            .put("52,650", ManeuverPaths.K4) //ALT CTRL 4
-            .put("53,650", ManeuverPaths.K5) //ALT CTRL 5
-            .put("54,130", ManeuverPaths.RevLbk1) //CTRL 6
-            .put("54,65", ManeuverPaths.RevStr1) //SHIFT 6
-            .put("55,65", ManeuverPaths.RevStr2) //SHIFT 7
-            .put("54,520", ManeuverPaths.RevRbk1) //ALT 6
-            .put("81,130", ManeuverPaths.SloopL1) //CTRL Q
-            .put("87,130", ManeuverPaths.SloopL2) //CTRL W
-            .put("69,130", ManeuverPaths.SloopL3) //CTRL E
-            .put("81,520", ManeuverPaths.SloopR1) //ALT Q
-            .put("87,520", ManeuverPaths.SloopR2) //ALT W - has a conflict with file open dialog
-            .put("69,520", ManeuverPaths.SloopR3) //ALT E
-            .put("69,195", ManeuverPaths.SloopL3Turn) //CTRL SHIFT E
-            .put("69,585", ManeuverPaths.SloopR3Turn) //ALT SHIFT E
-            .put("73,130", ManeuverPaths.TrollL1) //CTRL I
-            .put("89,130", ManeuverPaths.TrollL2) //CTRL Y
-            .put("84,130", ManeuverPaths.TrollL3) //CTRL T
-            .put("73,520", ManeuverPaths.TrollR1) //ALT I
-            .put("89,520", ManeuverPaths.TrollR2) //ALT Y
-            .put("84,520", ManeuverPaths.TrollR3) //ALT T
+    private static Map<KeyStroke, ManeuverPaths> keyStrokeToManeuver = ImmutableMap.<KeyStroke, ManeuverPaths>builder()
+            .put(KeyStroke.getKeyStroke(KeyEvent.VK_1, KeyEvent.SHIFT_DOWN_MASK,false), ManeuverPaths.Str1) //SHIFT 1
+            .put(KeyStroke.getKeyStroke(KeyEvent.VK_2, KeyEvent.SHIFT_DOWN_MASK,false), ManeuverPaths.Str2) //SHIFT 2
+            .put(KeyStroke.getKeyStroke(KeyEvent.VK_3, KeyEvent.SHIFT_DOWN_MASK,false), ManeuverPaths.Str3) //SHIFT 3
+            .put(KeyStroke.getKeyStroke(KeyEvent.VK_4, KeyEvent.SHIFT_DOWN_MASK,false), ManeuverPaths.Str4) //SHIFT 4
+            .put(KeyStroke.getKeyStroke(KeyEvent.VK_5, KeyEvent.SHIFT_DOWN_MASK,false), ManeuverPaths.Str5) //SHIFT 5
+            .put(KeyStroke.getKeyStroke(KeyEvent.VK_1, KeyEvent.CTRL_DOWN_MASK+KeyEvent.SHIFT_DOWN_MASK,false), ManeuverPaths.LT1) //CTRL SHIFT 1
+            .put(KeyStroke.getKeyStroke(KeyEvent.VK_2, KeyEvent.CTRL_DOWN_MASK+KeyEvent.SHIFT_DOWN_MASK,false), ManeuverPaths.LT2) //CTRL SHIFT 2
+            .put(KeyStroke.getKeyStroke(KeyEvent.VK_3, KeyEvent.CTRL_DOWN_MASK+KeyEvent.SHIFT_DOWN_MASK,false), ManeuverPaths.LT3) //CTRL SHIFT 3
+            .put(KeyStroke.getKeyStroke(KeyEvent.VK_1, KeyEvent.ALT_DOWN_MASK+KeyEvent.SHIFT_DOWN_MASK,false), ManeuverPaths.RT1) //ALT SHIFT 1
+            .put(KeyStroke.getKeyStroke(KeyEvent.VK_2, KeyEvent.ALT_DOWN_MASK+KeyEvent.SHIFT_DOWN_MASK,false), ManeuverPaths.RT2) //ALT SHIFT 2
+            .put(KeyStroke.getKeyStroke(KeyEvent.VK_3, KeyEvent.ALT_DOWN_MASK+KeyEvent.SHIFT_DOWN_MASK,false), ManeuverPaths.RT3) //ALT SHIFT 3
+            .put(KeyStroke.getKeyStroke(KeyEvent.VK_1, KeyEvent.CTRL_DOWN_MASK,false), ManeuverPaths.LBk1) //CTRL 1
+            .put(KeyStroke.getKeyStroke(KeyEvent.VK_2, KeyEvent.CTRL_DOWN_MASK,false), ManeuverPaths.LBk2) //CTRL 2
+            .put(KeyStroke.getKeyStroke(KeyEvent.VK_3, KeyEvent.CTRL_DOWN_MASK,false), ManeuverPaths.LBk3) //CTRL 3
+            .put(KeyStroke.getKeyStroke(KeyEvent.VK_1, KeyEvent.ALT_DOWN_MASK,false), ManeuverPaths.RBk1) //ALT 1
+            .put(KeyStroke.getKeyStroke(KeyEvent.VK_2, KeyEvent.ALT_DOWN_MASK,false), ManeuverPaths.RBk2) //ALT 2
+            .put(KeyStroke.getKeyStroke(KeyEvent.VK_3, KeyEvent.ALT_DOWN_MASK,false), ManeuverPaths.RBk3) //ALT 3
+            .put(KeyStroke.getKeyStroke(KeyEvent.VK_1, KeyEvent.CTRL_DOWN_MASK+KeyEvent.ALT_DOWN_MASK,false), ManeuverPaths.K1) //ALT CTRL 1
+            .put(KeyStroke.getKeyStroke(KeyEvent.VK_2, KeyEvent.CTRL_DOWN_MASK+KeyEvent.ALT_DOWN_MASK,false), ManeuverPaths.K2) //ALT CTRL 2
+            .put(KeyStroke.getKeyStroke(KeyEvent.VK_3, KeyEvent.CTRL_DOWN_MASK+KeyEvent.ALT_DOWN_MASK,false), ManeuverPaths.K3) //ALT CTRL 3
+            .put(KeyStroke.getKeyStroke(KeyEvent.VK_4, KeyEvent.CTRL_DOWN_MASK+KeyEvent.ALT_DOWN_MASK,false), ManeuverPaths.K4) //ALT CTRL 4
+            .put(KeyStroke.getKeyStroke(KeyEvent.VK_5, KeyEvent.CTRL_DOWN_MASK+KeyEvent.ALT_DOWN_MASK,false), ManeuverPaths.K5) //ALT CTRL 5
+            .put(KeyStroke.getKeyStroke(KeyEvent.VK_6, KeyEvent.CTRL_DOWN_MASK,false), ManeuverPaths.RevLbk1) //CTRL 6
+            .put(KeyStroke.getKeyStroke(KeyEvent.VK_6, KeyEvent.SHIFT_DOWN_MASK,false), ManeuverPaths.RevStr1) //SHIFT 6
+            .put(KeyStroke.getKeyStroke(KeyEvent.VK_7, KeyEvent.SHIFT_DOWN_MASK,false), ManeuverPaths.RevStr2) //SHIFT 7
+            .put(KeyStroke.getKeyStroke(KeyEvent.VK_6, KeyEvent.ALT_DOWN_MASK,false), ManeuverPaths.RevRbk1) //ALT 6
+            .put(KeyStroke.getKeyStroke(KeyEvent.VK_Q, KeyEvent.CTRL_DOWN_MASK,false), ManeuverPaths.SloopL1) //CTRL Q
+            .put(KeyStroke.getKeyStroke(KeyEvent.VK_W, KeyEvent.CTRL_DOWN_MASK,false), ManeuverPaths.SloopL2) //CTRL W
+            .put(KeyStroke.getKeyStroke(KeyEvent.VK_E, KeyEvent.CTRL_DOWN_MASK,false), ManeuverPaths.SloopL3) //CTRL E
+            .put(KeyStroke.getKeyStroke(KeyEvent.VK_Q, KeyEvent.ALT_DOWN_MASK,false), ManeuverPaths.SloopR1) //ALT Q
+            .put(KeyStroke.getKeyStroke(KeyEvent.VK_W, KeyEvent.ALT_DOWN_MASK,false), ManeuverPaths.SloopR2) //ALT W - has a conflict with file open dialog
+            .put(KeyStroke.getKeyStroke(KeyEvent.VK_E, KeyEvent.ALT_DOWN_MASK,false), ManeuverPaths.SloopR3) //ALT E
+            .put(KeyStroke.getKeyStroke(KeyEvent.VK_E, KeyEvent.CTRL_DOWN_MASK+KeyEvent.SHIFT_DOWN_MASK,false), ManeuverPaths.SloopL3Turn) //CTRL SHIFT E
+            .put(KeyStroke.getKeyStroke(KeyEvent.VK_E, KeyEvent.ALT_DOWN_MASK+KeyEvent.SHIFT_DOWN_MASK,false), ManeuverPaths.SloopR3Turn) //ALT SHIFT E
+            .put(KeyStroke.getKeyStroke(KeyEvent.VK_I, KeyEvent.CTRL_DOWN_MASK,false), ManeuverPaths.TrollL1) //CTRL I
+            .put(KeyStroke.getKeyStroke(KeyEvent.VK_Y, KeyEvent.CTRL_DOWN_MASK,false), ManeuverPaths.TrollL2) //CTRL Y
+            .put(KeyStroke.getKeyStroke(KeyEvent.VK_T, KeyEvent.CTRL_DOWN_MASK,false), ManeuverPaths.TrollL3) //CTRL T
+            .put(KeyStroke.getKeyStroke(KeyEvent.VK_I, KeyEvent.ALT_DOWN_MASK,false), ManeuverPaths.TrollR1) //ALT I
+            .put(KeyStroke.getKeyStroke(KeyEvent.VK_Y, KeyEvent.ALT_DOWN_MASK,false), ManeuverPaths.TrollR2) //ALT Y
+            .put(KeyStroke.getKeyStroke(KeyEvent.VK_T, KeyEvent.ALT_DOWN_MASK,false), ManeuverPaths.TrollR3) //ALT T
 
 
-            .put("75,520", ManeuverPaths.SideSlipL1Turn) //ALT K
-            .put("75,130", ManeuverPaths.SideSlipL2Turn) //CTRL K
-            .put("75,65", ManeuverPaths.SideSlipL3Turn) //SHIFT K
+            .put(KeyStroke.getKeyStroke(KeyEvent.VK_K, KeyEvent.ALT_DOWN_MASK,false), ManeuverPaths.SideSlipL1Turn) //ALT K
+            .put(KeyStroke.getKeyStroke(KeyEvent.VK_K, KeyEvent.CTRL_DOWN_MASK,false), ManeuverPaths.SideSlipL2Turn) //CTRL K
+            .put(KeyStroke.getKeyStroke(KeyEvent.VK_K, KeyEvent.SHIFT_DOWN_MASK,false), ManeuverPaths.SideSlipL3Turn) //SHIFT K
 
-            .put("75,195", ManeuverPaths.SideSlipR1Turn) //CTRL SHIFT K
-            .put("75,585", ManeuverPaths.SideSlipR2Turn) //ALT SHIFT K
-            .put("75,650", ManeuverPaths.SideSlipR3Turn) //ALT CTRL K
+            .put(KeyStroke.getKeyStroke(KeyEvent.VK_K, KeyEvent.CTRL_DOWN_MASK+KeyEvent.SHIFT_DOWN_MASK,false), ManeuverPaths.SideSlipR1Turn) //CTRL SHIFT K
+            .put(KeyStroke.getKeyStroke(KeyEvent.VK_K, KeyEvent.ALT_DOWN_MASK+KeyEvent.SHIFT_DOWN_MASK,false), ManeuverPaths.SideSlipR2Turn) //ALT SHIFT K
+            .put(KeyStroke.getKeyStroke(KeyEvent.VK_K, KeyEvent.ALT_DOWN_MASK+KeyEvent.CTRL_DOWN_MASK,false), ManeuverPaths.SideSlipR3Turn) //ALT CTRL K
 
-            .put("79,520", ManeuverPaths.SideSlipL1Bank) //ALT O
-            .put("79,130", ManeuverPaths.SideSlipL2Bank) //CTRL O
-            .put("79,65", ManeuverPaths.SideSlipL3Bank) //SHIFT O
+            .put(KeyStroke.getKeyStroke(KeyEvent.VK_O, KeyEvent.ALT_DOWN_MASK,false), ManeuverPaths.SideSlipL1Bank) //ALT O
+            .put(KeyStroke.getKeyStroke(KeyEvent.VK_O, KeyEvent.CTRL_DOWN_MASK,false), ManeuverPaths.SideSlipL2Bank) //CTRL O
+            .put(KeyStroke.getKeyStroke(KeyEvent.VK_O, KeyEvent.SHIFT_DOWN_MASK,false), ManeuverPaths.SideSlipL3Bank) //SHIFT O
 
-            .put("79,0", ManeuverPaths.SideSlipR1Bank) //O
-            .put("79,585", ManeuverPaths.SideSlipR2Bank) //ALT SHIFT O
-            .put("79,650", ManeuverPaths.SideSlipR3Bank) //ALT CTRL O
+            .put(KeyStroke.getKeyStroke(KeyEvent.VK_O, 0,false), ManeuverPaths.SideSlipR1Bank) //O
+            .put(KeyStroke.getKeyStroke(KeyEvent.VK_O, KeyEvent.ALT_DOWN_MASK+KeyEvent.SHIFT_DOWN_MASK,false), ManeuverPaths.SideSlipR2Bank) //ALT SHIFT O
+            .put(KeyStroke.getKeyStroke(KeyEvent.VK_O, KeyEvent.ALT_DOWN_MASK+KeyEvent.CTRL_DOWN_MASK,false), ManeuverPaths.SideSlipR3Bank) //ALT CTRL O
             .build();
 
     public AutoBumpDecorator() {
@@ -713,10 +713,11 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
      * @return
      */
     private ManeuverPaths getKeystrokePath(KeyStroke keyStroke) {
-        String hotKey = HotKeyConfigurer.encode(keyStroke);
+        //old way
+        // String hotKey = HotKeyConfigurer.encode(keyStroke);
 
-        if (keyStrokeToManeuver.containsKey(hotKey)) {
-            return keyStrokeToManeuver.get(hotKey);
+        if (keyStrokeToManeuver.containsKey(keyStroke)) {
+            return keyStrokeToManeuver.get(keyStroke);
         }
         return null;
     }

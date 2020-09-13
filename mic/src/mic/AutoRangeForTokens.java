@@ -10,6 +10,7 @@ import com.google.common.collect.Lists;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.KeyEvent;
 import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
 import java.util.List;
@@ -100,10 +101,10 @@ public class AutoRangeForTokens extends Decorator implements EditablePiece {
 
     public static final String ID = "RangeForObstacles";
 
-    private static Map<String, Integer> keyStrokeToOptions = ImmutableMap.<String, Integer>builder()
-            .put("CTRL SHIFT L", findObstaclesShips) //find obstacles and ships
-            .put("CTRL SHIFT S", findShips) //find only ships
-            .put("CTRL SHIFT O", findObstacles) //find only obstacles
+    private static Map<KeyStroke, Integer> keyStrokeToOptions = ImmutableMap.<KeyStroke, Integer>builder()
+            .put(KeyStroke.getKeyStroke(KeyEvent.VK_L,KeyEvent.CTRL_DOWN_MASK+KeyEvent.SHIFT_DOWN_MASK,false), findObstaclesShips) //find obstacles and ships
+            .put(KeyStroke.getKeyStroke(KeyEvent.VK_S,KeyEvent.CTRL_DOWN_MASK+KeyEvent.SHIFT_DOWN_MASK,false), findShips) //find only ships
+            .put(KeyStroke.getKeyStroke(KeyEvent.VK_O,KeyEvent.CTRL_DOWN_MASK+KeyEvent.SHIFT_DOWN_MASK,false), findObstacles) //find only obstacles
             .build();
     private static Map<String, ImagesUsedForRanges> pieceNameToImgs = ImmutableMap.<String, ImagesUsedForRanges>builder()
             .put("Asteroid 1", ImagesUsedForRanges.Asteroid1)
@@ -166,9 +167,10 @@ public class AutoRangeForTokens extends Decorator implements EditablePiece {
     }
 
     private int getKeystrokeToOptions(KeyStroke keyStroke) {
-        String hotKey = HotKeyConfigurer.getString(keyStroke);
-        if (keyStrokeToOptions.containsKey(hotKey)) {
-            return keyStrokeToOptions.get(hotKey).intValue();
+        //OLD WAY
+        // String hotKey = HotKeyConfigurer.getString(keyStroke);
+        if (keyStrokeToOptions.containsKey(keyStroke)) {
+            return keyStrokeToOptions.get(keyStroke).intValue();
         }
         return -1;
     }

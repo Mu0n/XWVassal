@@ -138,40 +138,40 @@ public class BombSpawner extends Decorator implements EditablePiece {
     public MapVisualizations previousCollisionVisualization = null;
     private Boolean processingOnlyOneBomb = false;
 
-    private static Map<String, BombManeuver> keyStrokeToManeuver = ImmutableMap.<String, BombManeuver>builder()
-            .put("SHIFT 1", BombManeuver.Back1)
-            .put("SHIFT 2", BombManeuver.Back2)
-            .put("SHIFT 3", BombManeuver.Back3)
-            .put("SHIFT 4", BombManeuver.Back4)
-            .put("SHIFT 5", BombManeuver.Back5)
-            .put("CTRL SHIFT 1", BombManeuver.LT1)
-            .put("ALT SHIFT 1", BombManeuver.RT1)
-            .put("CTRL SHIFT 2", BombManeuver.LT2)
-            .put("ALT SHIFT 2", BombManeuver.RT2)
-            .put("CTRL SHIFT 3", BombManeuver.LT3)
-            .put("ALT SHIFT 3", BombManeuver.RT3)
-            .put("CTRL 1", BombManeuver.LB1)
-            .put("ALT 1", BombManeuver.RB1)
-            .put("CTRL 2", BombManeuver.LB2)
-            .put("ALT 2", BombManeuver.RB2)
-            .put("CTRL 3", BombManeuver.LB3)
-            .put("ALT 3", BombManeuver.RB3)
+    private static Map<KeyStroke, BombManeuver> keyStrokeToManeuver = ImmutableMap.<KeyStroke, BombManeuver>builder()
+            .put(KeyStroke.getKeyStroke(KeyEvent.VK_1, KeyEvent.SHIFT_DOWN_MASK, false), BombManeuver.Back1)
+            .put(KeyStroke.getKeyStroke(KeyEvent.VK_2, KeyEvent.SHIFT_DOWN_MASK, false), BombManeuver.Back2)
+            .put(KeyStroke.getKeyStroke(KeyEvent.VK_3, KeyEvent.SHIFT_DOWN_MASK, false), BombManeuver.Back3)
+            .put(KeyStroke.getKeyStroke(KeyEvent.VK_4, KeyEvent.SHIFT_DOWN_MASK, false), BombManeuver.Back4)
+            .put(KeyStroke.getKeyStroke(KeyEvent.VK_5, KeyEvent.SHIFT_DOWN_MASK, false), BombManeuver.Back5)
+            .put(KeyStroke.getKeyStroke(KeyEvent.VK_1, KeyEvent.CTRL_DOWN_MASK+KeyEvent.SHIFT_DOWN_MASK, false), BombManeuver.LT1)
+            .put(KeyStroke.getKeyStroke(KeyEvent.VK_1, KeyEvent.ALT_DOWN_MASK+KeyEvent.SHIFT_DOWN_MASK, false), BombManeuver.RT1)
+            .put(KeyStroke.getKeyStroke(KeyEvent.VK_2, KeyEvent.CTRL_DOWN_MASK+KeyEvent.SHIFT_DOWN_MASK, false), BombManeuver.LT2)
+            .put(KeyStroke.getKeyStroke(KeyEvent.VK_2, KeyEvent.ALT_DOWN_MASK+KeyEvent.SHIFT_DOWN_MASK, false), BombManeuver.RT2)
+            .put(KeyStroke.getKeyStroke(KeyEvent.VK_3, KeyEvent.CTRL_DOWN_MASK+KeyEvent.SHIFT_DOWN_MASK, false), BombManeuver.LT3)
+            .put(KeyStroke.getKeyStroke(KeyEvent.VK_3, KeyEvent.ALT_DOWN_MASK+KeyEvent.SHIFT_DOWN_MASK, false), BombManeuver.RT3)
+            .put(KeyStroke.getKeyStroke(KeyEvent.VK_1, KeyEvent.CTRL_DOWN_MASK, false), BombManeuver.LB1)
+            .put(KeyStroke.getKeyStroke(KeyEvent.VK_1, KeyEvent.ALT_DOWN_MASK, false), BombManeuver.RB1)
+            .put(KeyStroke.getKeyStroke(KeyEvent.VK_2, KeyEvent.CTRL_DOWN_MASK, false), BombManeuver.LB2)
+            .put(KeyStroke.getKeyStroke(KeyEvent.VK_2, KeyEvent.ALT_DOWN_MASK, false), BombManeuver.RB2)
+            .put(KeyStroke.getKeyStroke(KeyEvent.VK_3, KeyEvent.CTRL_DOWN_MASK, false), BombManeuver.LB3)
+            .put(KeyStroke.getKeyStroke(KeyEvent.VK_3, KeyEvent.ALT_DOWN_MASK, false), BombManeuver.RB3)
             .build();
 
-    private static Map<String, BombToken> keyStrokeToBomb = ImmutableMap.<String, BombToken>builder()
-            .put("CTRL O", BombToken.ConnerNet)
-            .put("CTRL M", BombToken.ProxMine)
-            .put("CTRL L", BombToken.ClusterMineCenter)
-            .put("CTRL I", BombToken.IonBombs)
-            .put("CTRL S", BombToken.SeismicCharge)
-            .put("CTRL P", BombToken.ProtonBomb)
-            .put("CTRL H", BombToken.ThermalDetonator)
-            .put("CTRL B", BombToken.Bomblet)
-            .put("CTRL W", BombToken.BuzzDroidSwarm)
-            .put("CTRL R", BombToken.DRK1ProbeDroid)
-            .put("CTRL G", BombToken.CargoDebris)
-            .put("CTRL A", BombToken.SpareParts)
-            .put("CTRL E", BombToken.ElectroProton)
+    private static Map<KeyStroke, BombToken> keyStrokeToBomb = ImmutableMap.<KeyStroke, BombToken>builder()
+            .put(KeyStroke.getKeyStroke(KeyEvent.VK_O, KeyEvent.CTRL_DOWN_MASK, false), BombToken.ConnerNet)
+            .put(KeyStroke.getKeyStroke(KeyEvent.VK_M, KeyEvent.CTRL_DOWN_MASK, false), BombToken.ProxMine)
+            .put(KeyStroke.getKeyStroke(KeyEvent.VK_L, KeyEvent.CTRL_DOWN_MASK, false), BombToken.ClusterMineCenter)
+            .put(KeyStroke.getKeyStroke(KeyEvent.VK_I, KeyEvent.CTRL_DOWN_MASK, false), BombToken.IonBombs)
+            .put(KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyEvent.CTRL_DOWN_MASK, false), BombToken.SeismicCharge)
+            .put(KeyStroke.getKeyStroke(KeyEvent.VK_P, KeyEvent.CTRL_DOWN_MASK, false), BombToken.ProtonBomb)
+            .put(KeyStroke.getKeyStroke(KeyEvent.VK_H, KeyEvent.CTRL_DOWN_MASK, false), BombToken.ThermalDetonator)
+            .put(KeyStroke.getKeyStroke(KeyEvent.VK_B, KeyEvent.CTRL_DOWN_MASK, false), BombToken.Bomblet)
+            .put(KeyStroke.getKeyStroke(KeyEvent.VK_W, KeyEvent.CTRL_DOWN_MASK, false), BombToken.BuzzDroidSwarm)
+            .put(KeyStroke.getKeyStroke(KeyEvent.VK_R, KeyEvent.CTRL_DOWN_MASK, false), BombToken.DRK1ProbeDroid)
+            .put(KeyStroke.getKeyStroke(KeyEvent.VK_G, KeyEvent.CTRL_DOWN_MASK, false), BombToken.CargoDebris)
+            .put(KeyStroke.getKeyStroke(KeyEvent.VK_A, KeyEvent.CTRL_DOWN_MASK, false), BombToken.SpareParts)
+            .put(KeyStroke.getKeyStroke(KeyEvent.VK_E, KeyEvent.CTRL_DOWN_MASK, false), BombToken.ElectroProton)
             .build();
 
     public BombSpawner() {
@@ -271,17 +271,19 @@ public class BombSpawner extends Decorator implements EditablePiece {
     }
 
     private BombManeuver getKeystrokeBombManeuver(KeyStroke keyStroke) {
-        String hotKey = HotKeyConfigurer.getString(keyStroke);
-        if (keyStrokeToManeuver.containsKey(hotKey)) {
-            return keyStrokeToManeuver.get(hotKey);
+        //old way
+        // String hotKey = HotKeyConfigurer.getString(keyStroke);
+        if (keyStrokeToManeuver.containsKey(keyStroke)) {
+            return keyStrokeToManeuver.get(keyStroke);
         }
         return null;
     }
 
     private BombToken getKeystrokeBomb(KeyStroke keyStroke) {
-        String hotKey = HotKeyConfigurer.getString(keyStroke);
-        if (keyStrokeToBomb.containsKey(hotKey)) {
-            return keyStrokeToBomb.get(hotKey);
+        //OLD WAY
+        // String hotKey = HotKeyConfigurer.getString(keyStroke);
+        if (keyStrokeToBomb.containsKey(keyStroke)) {
+            return keyStrokeToBomb.get(keyStroke);
         }
         return null;
     }

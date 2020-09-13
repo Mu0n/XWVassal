@@ -234,61 +234,61 @@ public class ShipReposition extends Decorator implements EditablePiece {
     Boolean dealingWithClickChoicesDuringReposition = false;
     List<RepositionChoiceVisual> rpcList = Lists.newArrayList();
 
-    private static Map<String, RepoManeuver> keyStrokeToDropTemplate = ImmutableMap.<String, RepoManeuver>builder()
-            .put("CTRL R", RepoManeuver.BR1_Left_Mid) //
-            .put("ALT R", RepoManeuver.BR1_Right_Mid) //
-            .put("J", RepoManeuver.BR2_Left_Mid) //
-            .put("K", RepoManeuver.BR2_Right_Mid) //
-            .put("CTRL J", RepoManeuver.BR_Bk2_Left_Fwd_Mid) //
-            .put("CTRL K", RepoManeuver.BR_Bk2_Right_Fwd_Mid) //
-            .put("CTRL SHIFT J", RepoManeuver.BR_Bk2_Left_Bwd_Mid) //
-            .put("CTRL SHIFT K", RepoManeuver.BR_Bk2_Right_Bwd_Mid) //
-            .put("ALT J", RepoManeuver.BR_Bk1_Left_Fwd_Mid) //
-            .put("ALT SHIFT J", RepoManeuver.BR_Bk1_Left_Bwd_Mid) //
-            .put("ALT K", RepoManeuver.BR_Bk1_Right_Fwd_Mid) //
-            .put("ALT SHIFT K", RepoManeuver.BR_Bk1_Right_Bwd_Mid) //
+    private static Map<KeyStroke, RepoManeuver> keyStrokeToDropTemplate = ImmutableMap.<KeyStroke, RepoManeuver>builder()
+            .put(KeyStroke.getKeyStroke(KeyEvent.VK_R, KeyEvent.CTRL_DOWN_MASK, false), RepoManeuver.BR1_Left_Mid) //
+            .put(KeyStroke.getKeyStroke(KeyEvent.VK_R, KeyEvent.ALT_DOWN_MASK, false), RepoManeuver.BR1_Right_Mid) //
+            .put(KeyStroke.getKeyStroke(KeyEvent.VK_J, 0, false), RepoManeuver.BR2_Left_Mid) //
+            .put(KeyStroke.getKeyStroke(KeyEvent.VK_K, 0, false), RepoManeuver.BR2_Right_Mid) //
+            .put(KeyStroke.getKeyStroke(KeyEvent.VK_J, KeyEvent.CTRL_DOWN_MASK, false), RepoManeuver.BR_Bk2_Left_Fwd_Mid) //
+            .put(KeyStroke.getKeyStroke(KeyEvent.VK_K, KeyEvent.CTRL_DOWN_MASK, false), RepoManeuver.BR_Bk2_Right_Fwd_Mid) //
+            .put(KeyStroke.getKeyStroke(KeyEvent.VK_J, KeyEvent.CTRL_DOWN_MASK+KeyEvent.SHIFT_DOWN_MASK, false), RepoManeuver.BR_Bk2_Left_Bwd_Mid) //
+            .put(KeyStroke.getKeyStroke(KeyEvent.VK_K, KeyEvent.CTRL_DOWN_MASK+KeyEvent.SHIFT_DOWN_MASK, false), RepoManeuver.BR_Bk2_Right_Bwd_Mid) //
+            .put(KeyStroke.getKeyStroke(KeyEvent.VK_J, KeyEvent.ALT_DOWN_MASK, false), RepoManeuver.BR_Bk1_Left_Fwd_Mid) //
+            .put(KeyStroke.getKeyStroke(KeyEvent.VK_J, KeyEvent.ALT_DOWN_MASK+KeyEvent.SHIFT_DOWN_MASK, false), RepoManeuver.BR_Bk1_Left_Bwd_Mid) //
+            .put(KeyStroke.getKeyStroke(KeyEvent.VK_K, KeyEvent.ALT_DOWN_MASK, false), RepoManeuver.BR_Bk1_Right_Fwd_Mid) //
+            .put(KeyStroke.getKeyStroke(KeyEvent.VK_K, KeyEvent.ALT_DOWN_MASK+KeyEvent.SHIFT_DOWN_MASK, false), RepoManeuver.BR_Bk1_Right_Bwd_Mid) //
             .build();
 
     //same stuff, but for 2nd edition. Echo style and SV Mk.2 style present.
-    private static Map<String, RepoManeuver> keyStrokeToDropTemplate2e = ImmutableMap.<String, RepoManeuver>builder()
-            .put("74,130", RepoManeuver.BR_Bk2_Left_Fwd_Mid) //CTRL J
-            .put("75,130", RepoManeuver.BR_Bk2_Right_Fwd_Mid) //CTRL K
-            .put("74,195", RepoManeuver.BR_Bk2_Left_Bwd_Mid) //CTRL SHIFT J
-            .put("75,195", RepoManeuver.BR_Bk2_Right_Bwd_Mid) //CTRL SHIFT K
-            .put("74,520", RepoManeuver.BR_Bk1_Left_Fwd_Mid) //ALT J
-            .put("74,585", RepoManeuver.BR_Bk1_Left_Bwd_Mid) //ALT SHIFT J
-            .put("75,520", RepoManeuver.BR_Bk1_Right_Fwd_Mid) //ALT K
-            .put("75,585", RepoManeuver.BR_Bk1_Right_Bwd_Mid) //ALT SHIFT K
+    private static Map<KeyStroke, RepoManeuver> keyStrokeToDropTemplate2e = ImmutableMap.<KeyStroke, RepoManeuver>builder()
+            .put(KeyStroke.getKeyStroke(KeyEvent.VK_J, KeyEvent.CTRL_DOWN_MASK, false), RepoManeuver.BR_Bk2_Left_Fwd_Mid) //CTRL J
+            .put(KeyStroke.getKeyStroke(KeyEvent.VK_K, KeyEvent.CTRL_DOWN_MASK, false), RepoManeuver.BR_Bk2_Right_Fwd_Mid) //CTRL K
+            .put(KeyStroke.getKeyStroke(KeyEvent.VK_J, KeyEvent.CTRL_DOWN_MASK+KeyEvent.SHIFT_DOWN_MASK, false), RepoManeuver.BR_Bk2_Left_Bwd_Mid) //CTRL SHIFT J
+            .put(KeyStroke.getKeyStroke(KeyEvent.VK_K, KeyEvent.CTRL_DOWN_MASK+KeyEvent.SHIFT_DOWN_MASK, false), RepoManeuver.BR_Bk2_Right_Bwd_Mid) //CTRL SHIFT K
+            .put(KeyStroke.getKeyStroke(KeyEvent.VK_J, KeyEvent.ALT_DOWN_MASK, false), RepoManeuver.BR_Bk1_Left_Fwd_Mid) //ALT J
+            .put(KeyStroke.getKeyStroke(KeyEvent.VK_J, KeyEvent.ALT_DOWN_MASK+KeyEvent.SHIFT_DOWN_MASK, false), RepoManeuver.BR_Bk1_Left_Bwd_Mid) //ALT SHIFT J
+            .put(KeyStroke.getKeyStroke(KeyEvent.VK_K, KeyEvent.ALT_DOWN_MASK, false), RepoManeuver.BR_Bk1_Right_Fwd_Mid) //ALT K
+            .put(KeyStroke.getKeyStroke(KeyEvent.VK_K, KeyEvent.ALT_DOWN_MASK+KeyEvent.SHIFT_DOWN_MASK, false), RepoManeuver.BR_Bk1_Right_Bwd_Mid) //ALT SHIFT K
             .build();
 
-    private static Map<String, RepoManeuver> keyStrokeToRepositionShip = ImmutableMap.<String, RepoManeuver>builder()
-            .put("56,130", RepoManeuver.BR1_Left_AFAP) //CTRL 8
-            .put("56,195", RepoManeuver.BR1_Left_ABAP) //CTRL SHIFT 8
-            .put("56,520", RepoManeuver.BR1_Right_AFAP) //ALT 8
-            .put("56,585", RepoManeuver.BR1_Right_ABAP) //ALT SHIFT 8
-            .put("57,130", RepoManeuver.BR2_Left_AFAP) //CTRL 9
-            .put("57,195", RepoManeuver.BR2_Left_ABAP) //CTRL SHIFT 9
-            .put("57,520", RepoManeuver.BR2_Right_AFAP) //ALT 9
-            .put("57,585", RepoManeuver.BR2_Right_ABAP) //ALT SHIFT 9
+    private static Map<KeyStroke, RepoManeuver> keyStrokeToRepositionShip = ImmutableMap.<KeyStroke, RepoManeuver>builder()
+            .put(KeyStroke.getKeyStroke(KeyEvent.VK_8, KeyEvent.CTRL_DOWN_MASK, false), RepoManeuver.BR1_Left_AFAP) //CTRL 8
+            .put(KeyStroke.getKeyStroke(KeyEvent.VK_8, KeyEvent.CTRL_DOWN_MASK+KeyEvent.SHIFT_DOWN_MASK, false), RepoManeuver.BR1_Left_ABAP) //CTRL SHIFT 8
+            .put(KeyStroke.getKeyStroke(KeyEvent.VK_8, KeyEvent.ALT_DOWN_MASK,false), RepoManeuver.BR1_Right_AFAP) //ALT 8
+            .put(KeyStroke.getKeyStroke(KeyEvent.VK_8, KeyEvent.ALT_DOWN_MASK+KeyEvent.SHIFT_DOWN_MASK,false), RepoManeuver.BR1_Right_ABAP) //ALT SHIFT 8
+            .put(KeyStroke.getKeyStroke(KeyEvent.VK_9, KeyEvent.CTRL_DOWN_MASK, false), RepoManeuver.BR2_Left_AFAP) //CTRL 9
+            .put(KeyStroke.getKeyStroke(KeyEvent.VK_9, KeyEvent.CTRL_DOWN_MASK+KeyEvent.SHIFT_DOWN_MASK, false), RepoManeuver.BR2_Left_ABAP) //CTRL SHIFT 9
+            .put(KeyStroke.getKeyStroke(KeyEvent.VK_9, KeyEvent.ALT_DOWN_MASK,false), RepoManeuver.BR2_Right_AFAP) //ALT 9
+            .put(KeyStroke.getKeyStroke(KeyEvent.VK_9, KeyEvent.ALT_DOWN_MASK+KeyEvent.SHIFT_DOWN_MASK,false), RepoManeuver.BR2_Right_ABAP) //ALT SHIFT 9
             .build();
 
     //Map for 2e keystrokes
-    private static Map<String, RepoManeuver> keyStrokeToRepositionShip_2e = ImmutableMap.<String, RepoManeuver>builder()
-            .put("56,130", RepoManeuver.BR1_Left_AFAP_2E) //CTRL 8
-            .put("82,130", RepoManeuver.BR1_Left_2E) //CTRL R
-            .put("56,195", RepoManeuver.BR1_Left_ABAP_2E) //CTRL SHIFT 8
+    private static Map<KeyStroke, RepoManeuver> keyStrokeToRepositionShip_2e = ImmutableMap.<KeyStroke, RepoManeuver>builder()
+            .put(KeyStroke.getKeyStroke(KeyEvent.VK_8, KeyEvent.CTRL_DOWN_MASK, false), RepoManeuver.BR1_Left_AFAP_2E) //CTRL 8
+            .put(KeyStroke.getKeyStroke(KeyEvent.VK_R, KeyEvent.CTRL_DOWN_MASK, false), RepoManeuver.BR1_Left_2E) //CTRL R
+            .put(KeyStroke.getKeyStroke(KeyEvent.VK_8, KeyEvent.CTRL_DOWN_MASK+KeyEvent.SHIFT_DOWN_MASK, false), RepoManeuver.BR1_Left_ABAP_2E) //CTRL SHIFT 8
 
-            .put("56,520", RepoManeuver.BR1_Right_AFAP_2E) //ALT 8
-            .put("82,520", RepoManeuver.BR1_Right_2E) //ALT R
-            .put("56,585", RepoManeuver.BR1_Right_ABAP_2E) //ALT SHIFT 8
+            .put(KeyStroke.getKeyStroke(KeyEvent.VK_8, KeyEvent.ALT_DOWN_MASK,false), RepoManeuver.BR1_Right_AFAP_2E) //ALT 8
+            .put(KeyStroke.getKeyStroke(KeyEvent.VK_R, KeyEvent.ALT_DOWN_MASK,false), RepoManeuver.BR1_Right_2E) //ALT R
+            .put(KeyStroke.getKeyStroke(KeyEvent.VK_8, KeyEvent.ALT_DOWN_MASK+KeyEvent.SHIFT_DOWN_MASK,false), RepoManeuver.BR1_Right_ABAP_2E) //ALT SHIFT 8
 
-            .put("57,130", RepoManeuver.BR2_Left_AFAP_2E) //CTRL 9
-            .put("74,0", RepoManeuver.BR2_Left_2E) //J
-            .put("57,195", RepoManeuver.BR2_Left_ABAP_2E) //CTRL SHIFT 9
+            .put(KeyStroke.getKeyStroke(KeyEvent.VK_9, KeyEvent.CTRL_DOWN_MASK, false), RepoManeuver.BR2_Left_AFAP_2E) //CTRL 9
+            .put(KeyStroke.getKeyStroke(KeyEvent.VK_J, 0, false), RepoManeuver.BR2_Left_2E) //J
+            .put(KeyStroke.getKeyStroke(KeyEvent.VK_9, KeyEvent.CTRL_DOWN_MASK+KeyEvent.SHIFT_DOWN_MASK, false), RepoManeuver.BR2_Left_ABAP_2E) //CTRL SHIFT 9
 
-            .put("57,520", RepoManeuver.BR2_Right_AFAP_2E) //ALT 9
-            .put("75,0", RepoManeuver.BR2_Right_2E) //K
-            .put("57,585", RepoManeuver.BR2_Right_ABAP_2E) //ALT SHIFT 9
+            .put(KeyStroke.getKeyStroke(KeyEvent.VK_9, KeyEvent.ALT_DOWN_MASK,false), RepoManeuver.BR2_Right_AFAP_2E) //ALT 9
+            .put(KeyStroke.getKeyStroke(KeyEvent.VK_K, 0, false), RepoManeuver.BR2_Right_2E) //K
+            .put(KeyStroke.getKeyStroke(KeyEvent.VK_9, KeyEvent.ALT_DOWN_MASK+KeyEvent.SHIFT_DOWN_MASK,false), RepoManeuver.BR2_Right_ABAP_2E) //ALT SHIFT 9
             .build();
 
     //Latest 2.0: Better map for the multitudes of triple choices for repositioning in 2E
@@ -403,20 +403,20 @@ public class ShipReposition extends Decorator implements EditablePiece {
 
 
     //Names of the reposition
-    private static Map<String, String> keyStrokeToName_2e = ImmutableMap.<String, String>builder()
-            .put("CTRL 8", "Left Barrel Roll as Forward as Possible") //
-            .put("CTRL R", "Left Barrel Roll, centered") //
-            .put("CTRL SHIFT 8", "Left Barrel Roll as Backward as Possible") //
-            .put("ALT 8", "Right Barrel Roll as Forward as Possible") //
-            .put("ALT R", "Right Barrel Roll, centered") //
-            .put("ALT SHIFT 8", "Right Barrel Roll as Backward as Possible") //
-            .put("CTRL 9", "Left Straight Decloak as Forward as Possible") //
-            .put("J", "Left Straight Decloak, centered") //
-            .put("CTRL SHIFT 9", "Left Straight Decloak as Backward as Possible") //
-            .put("ALT 9", "Right Straight Decloak as Forward as Possible") //
-            .put("K", "Right Straight Decloak, centered") //
-            .put("ALT SHIFT 9", "Right Straight Decloak as Backward as Possible") //
-            .put("ALT J", "Left, Forward Bank, centered") //
+    private static Map<KeyStroke, String> keyStrokeToName_2e = ImmutableMap.<KeyStroke, String>builder()
+            .put(KeyStroke.getKeyStroke(KeyEvent.VK_8, KeyEvent.CTRL_DOWN_MASK, false), "Left Barrel Roll as Forward as Possible") //
+            .put(KeyStroke.getKeyStroke(KeyEvent.VK_R, KeyEvent.CTRL_DOWN_MASK, false), "Left Barrel Roll, centered") //
+            .put(KeyStroke.getKeyStroke(KeyEvent.VK_8, KeyEvent.CTRL_DOWN_MASK+KeyEvent.SHIFT_DOWN_MASK, false), "Left Barrel Roll as Backward as Possible") //
+            .put(KeyStroke.getKeyStroke(KeyEvent.VK_8, KeyEvent.ALT_DOWN_MASK, false), "Right Barrel Roll as Forward as Possible") //
+            .put(KeyStroke.getKeyStroke(KeyEvent.VK_R, KeyEvent.ALT_DOWN_MASK, false), "Right Barrel Roll, centered") //
+            .put(KeyStroke.getKeyStroke(KeyEvent.VK_8, KeyEvent.ALT_DOWN_MASK+KeyEvent.SHIFT_DOWN_MASK, false), "Right Barrel Roll as Backward as Possible") //
+            .put(KeyStroke.getKeyStroke(KeyEvent.VK_9, KeyEvent.CTRL_DOWN_MASK, false), "Left Straight Decloak as Forward as Possible") //
+            .put(KeyStroke.getKeyStroke(KeyEvent.VK_J, 0, false), "Left Straight Decloak, centered") //
+            .put(KeyStroke.getKeyStroke(KeyEvent.VK_9, KeyEvent.CTRL_DOWN_MASK+KeyEvent.SHIFT_DOWN_MASK, false), "Left Straight Decloak as Backward as Possible") //
+            .put(KeyStroke.getKeyStroke(KeyEvent.VK_9, KeyEvent.ALT_DOWN_MASK, false), "Right Straight Decloak as Forward as Possible") //
+            .put(KeyStroke.getKeyStroke(KeyEvent.VK_K, 0, false), "Right Straight Decloak, centered") //
+            .put(KeyStroke.getKeyStroke(KeyEvent.VK_9, KeyEvent.ALT_DOWN_MASK+KeyEvent.SHIFT_DOWN_MASK, false), "Right Straight Decloak as Backward as Possible") //
+            .put(KeyStroke.getKeyStroke(KeyEvent.VK_J, KeyEvent.ALT_DOWN_MASK, false), "Left, Forward Bank, centered") //
             .build();
 
 
@@ -1225,10 +1225,8 @@ public class ShipReposition extends Decorator implements EditablePiece {
         RepoManeuver repoShip = getKeystrokeRepoManeuver(stroke, is2pointohShip);
 
 
-logToChat("shiprepo line 1229 "+ stroke.toString());
         //Ship reposition requested
         if(repoShip != null  && stroke.isOnKeyRelease() == false) {
-logToChat("shiprepo line 1232 reposShip detected "+ repoShip.toString());
             //detect that the ship's final position overlaps a ship or obstacle
             Command repoCommand = repositionTheShip(repoShip, is2pointohShip);
             if(repoCommand == null) return piece.keyEvent(stroke); //somehow did not get a programmed reposition command
@@ -1290,24 +1288,26 @@ logToChat("shiprepo line 1232 reposShip detected "+ repoShip.toString());
     }
 
     private RepoManeuver getKeystrokeTemplateDrop(KeyStroke keyStroke) {
-        String hotKey = HotKeyConfigurer.getString(keyStroke);
-            if (keyStrokeToDropTemplate.containsKey(hotKey)) {
-                return keyStrokeToDropTemplate.get(hotKey);
+        //old way
+        // String hotKey = HotKeyConfigurer.getString(keyStroke);
+            if (keyStrokeToDropTemplate.containsKey(keyStroke)) {
+                return keyStrokeToDropTemplate.get(keyStroke);
             }
 
         return null;
     }
 
     private String getRepositionNameMappedToKeyStroke(KeyStroke keyStroke, boolean is2pointohShip) {
-        String hotKey = HotKeyConfigurer.getString(keyStroke);
+        //old way
+        // String hotKey = HotKeyConfigurer.getString(keyStroke);
 
         if(is2pointohShip == false){
             //TODO want this for 1st edition? then add a map for the reposition names. But they're already present in the vassal traits for the pieces
             return "";
         }
         else {
-            if (keyStrokeToName_2e.containsKey(hotKey)) {
-                return keyStrokeToName_2e.get(hotKey);
+            if (keyStrokeToName_2e.containsKey(keyStroke)) {
+                return keyStrokeToName_2e.get(keyStroke);
             }
         }
         return null;
@@ -1315,18 +1315,18 @@ logToChat("shiprepo line 1232 reposShip detected "+ repoShip.toString());
 
     //updated to take into account 2.0 reposition hotkeys with a separate map
     private RepoManeuver getKeystrokeRepoManeuver(KeyStroke keyStroke, boolean is2pointohShip) {
-        String hotKey = HotKeyConfigurer.encode(keyStroke);
- logToChat("repoship line 1319 STRING = " + hotKey);
+        //old way, got broken in Vassal client v3.4
+        //String hotKey = HotKeyConfigurer.encode(keyStroke);
         if(is2pointohShip==false){
-            if (keyStrokeToRepositionShip.containsKey(hotKey)) {
+            if (keyStrokeToRepositionShip.containsKey(keyStroke)) {
 
-                return keyStrokeToRepositionShip.get(hotKey);
+                return keyStrokeToRepositionShip.get(keyStroke);
             }
         }
         else {
-            if (keyStrokeToRepositionShip_2e.containsKey(hotKey)) {
+            if (keyStrokeToRepositionShip_2e.containsKey(keyStroke)) {
 
-                return keyStrokeToRepositionShip_2e.get(hotKey);
+                return keyStrokeToRepositionShip_2e.get(keyStroke);
             }
         }
         return null;

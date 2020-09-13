@@ -78,18 +78,18 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
     private ShipPositionState prevPosition = null;
     private ManeuverPaths lastManeuver = null;
     private FreeRotator myRotator = null;
-    private static Map<String, Integer> keyStrokeToOptions = ImmutableMap.<String, Integer>builder()
-            .put("CTRL SHIFT F", frontArcOption) //primary arc
-            .put("CTRL SHIFT L", turretArcOption) //turret/TL
-            .put("CTRL SHIFT N", frontAuxArcOption) //front pairs of aux arc (YV-666, Auzituck)
-            .put("ALT SHIFT N", backAftArcOption)
-            .put("CTRL SHIFT V", backArcOption) //back aux arc
-            .put("ALT SHIFT F", mobileSideArcOption) //mobile turret arc, must detect which one is selected on the ship
-            .put("CTRL SHIFT X", bullseyeArcOption) //bullseye arc
-            .put("CTRL SHIFT G", leftArcOption) //left arc
-            .put("ALT SHIFT G", rightArcOption) //right arc
-            .put("F5", 12)
-            .put("F6", 15)
+    private static Map<KeyStroke, Integer> keyStrokeToOptions = ImmutableMap.<KeyStroke, Integer>builder()
+            .put(KeyStroke.getKeyStroke(KeyEvent.VK_F,KeyEvent.CTRL_DOWN_MASK+KeyEvent.SHIFT_DOWN_MASK,false), frontArcOption) //primary arc
+            .put(KeyStroke.getKeyStroke(KeyEvent.VK_L,KeyEvent.CTRL_DOWN_MASK+KeyEvent.SHIFT_DOWN_MASK,false), turretArcOption) //turret/TL
+            .put(KeyStroke.getKeyStroke(KeyEvent.VK_N,KeyEvent.CTRL_DOWN_MASK+KeyEvent.SHIFT_DOWN_MASK,false), frontAuxArcOption) //front pairs of aux arc (YV-666, Auzituck)
+            .put(KeyStroke.getKeyStroke(KeyEvent.VK_N,KeyEvent.ALT_DOWN_MASK+KeyEvent.SHIFT_DOWN_MASK,false), backAftArcOption)
+            .put(KeyStroke.getKeyStroke(KeyEvent.VK_V,KeyEvent.CTRL_DOWN_MASK+KeyEvent.SHIFT_DOWN_MASK,false), backArcOption) //back aux arc
+            .put(KeyStroke.getKeyStroke(KeyEvent.VK_F,KeyEvent.ALT_DOWN_MASK+KeyEvent.SHIFT_DOWN_MASK,false), mobileSideArcOption) //mobile turret arc, must detect which one is selected on the ship
+            .put(KeyStroke.getKeyStroke(KeyEvent.VK_X,KeyEvent.CTRL_DOWN_MASK+KeyEvent.SHIFT_DOWN_MASK,false), bullseyeArcOption) //bullseye arc
+            .put(KeyStroke.getKeyStroke(KeyEvent.VK_G,KeyEvent.CTRL_DOWN_MASK+KeyEvent.SHIFT_DOWN_MASK,false), leftArcOption) //left arc
+            .put(KeyStroke.getKeyStroke(KeyEvent.VK_G,KeyEvent.ALT_DOWN_MASK+KeyEvent.SHIFT_DOWN_MASK,false), rightArcOption) //right arc
+            .put(KeyStroke.getKeyStroke(KeyEvent.VK_F5,0,false), 12)
+            .put(KeyStroke.getKeyStroke(KeyEvent.VK_F6,0,false), 15)
             .build();
     private static double RANGE1 = 282.5;
     private static double RANGE2 = 565;
@@ -144,9 +144,10 @@ public class AutoRangeFinder extends Decorator implements EditablePiece {
     }
 
     private int getKeystrokeToOptions(KeyStroke keyStroke) {
-        String hotKey = HotKeyConfigurer.getString(keyStroke);
-        if (keyStrokeToOptions.containsKey(hotKey)) {
-            return keyStrokeToOptions.get(hotKey).intValue();
+        //OLD WAY
+        // String hotKey = HotKeyConfigurer.getString(keyStroke);
+        if (keyStrokeToOptions.containsKey(keyStroke)) {
+            return keyStrokeToOptions.get(keyStroke).intValue();
         }
         return -1;
     }
