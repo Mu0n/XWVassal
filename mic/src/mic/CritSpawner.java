@@ -13,6 +13,7 @@ import VASSAL.counters.KeyCommand;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.KeyEvent;
 
 import static mic.Util.newPiece;
 
@@ -65,11 +66,12 @@ public class CritSpawner extends Decorator implements EditablePiece {
     @Override
     public Command keyEvent(KeyStroke stroke) {
 
-        String hotKey = HotKeyConfigurer.getString(stroke);
+        //old way
+        // String hotKey = HotKeyConfigurer.getString(stroke);
 
         // check to see if the this code needs to respond to the event
-        if(hotKey.equals("ALT CTRL SHIFT T")){
-
+        //if(hotKey.equals("ALT CTRL SHIFT T")){
+            if(stroke.equals(KeyStroke.getKeyStroke(KeyEvent.VK_T, KeyEvent.ALT_DOWN_MASK+KeyEvent.SHIFT_DOWN_MASK+KeyEvent.CTRL_DOWN_MASK,false))){
             // get the text from the damage card
             GamePiece damageCard = getInner();
 
