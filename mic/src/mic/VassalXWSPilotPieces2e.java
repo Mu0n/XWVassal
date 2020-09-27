@@ -33,14 +33,6 @@ public class VassalXWSPilotPieces2e {
     private Map<String, PieceSlot> tokens = Maps.newHashMap();
     private PieceSlot ship;
 
-
-    //Hopefully this doesn't happen often, but this is where you add new remote cards that keep track of remotes' agility, hull and shields. they'll be spawned at the right of condition cards
-    private static Map<String, String> remoteXwsToCardFile = ImmutableMap.<String, String>builder()
-            .put("discordmissiles","R2e_BuzzDroidSwarm.jpg")
-            .put("drk1probedroids","R2e_Drk1ProbeDroid.jpg")
-            .put("sensorbuoysuite","R2e_SensorBuoyBlue.jpg")
-            .build();
-
     public VassalXWSPilotPieces2e() {
 
     }
@@ -60,12 +52,6 @@ public class VassalXWSPilotPieces2e {
         return this.conditions;
     }
 
-    public static String getRemote(String whichXws){
-        if(remoteXwsToCardFile.containsKey(whichXws)){
-            return remoteXwsToCardFile.get(whichXws);
-        }
-        return null;
-    }
 
     public PieceSlot getShip() {
         return ship;

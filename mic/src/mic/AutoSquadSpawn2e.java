@@ -967,7 +967,68 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
             //Generate the Remote cards
             // ======================================================
             int extraXFromRemotes = 0;
-            if(ship.getUpgrades().size()!=0) {
+            if(ship.getUpgrades().size()!=0) { //only do this if you have at least 1 upgrade card
+
+                //do a switch case scenario because the sensor buoy needs 2 cards + 2 tokens spawn commands, the rest needs only a card (for now)
+                //this loads a piece slot so it can be readied up for spawning
+                switch(upgrade.getXwsName()){
+                    case "sensorbuoysuite":
+                        PieceSlot blueBuoySlot = null, redBuoySlot = null, redBuoyCardSlot = null, blueBuoyCardSlot = null;
+                        for(PieceSlot pieceSlot : allSlots)
+                        {
+                            String slotName = pieceSlot.getConfigureName();
+                            switch(slotName)
+                            {
+                                case "Sensor Buoy (Blue) Token":
+                                    if(blueBuoySlot == null) blueBuoySlot = pieceSlot;
+                                    break;
+                                case "Sensor Buoy (Red) Token":
+                                    if(redBuoySlot == null) redBuoySlot = pieceSlot;
+                                    break;
+                                case "Sensor Buoy (Blue)":
+                                    if(blueBuoyCardSlot == null) blueBuoyCardSlot = pieceSlot;
+                                    break;
+                                case "Sensor Buoy (Red)":
+                                    if(redBuoyCardSlot == null) redBuoyCardSlot = pieceSlot;
+                                    break;
+                                default:
+                                continue;
+
+                            }
+                        }
+                        if(blueBuoySlot !=null) {
+                            GamePiece newBuoy = mic.Util.newPiece(blueBuoySlot);
+                            entireSpawnCommand.append(spawnPieceCommand(newBuoy, new Point(
+                                            conditionStartPosition.x + extraXFromConditions,
+                                            conditionStartPosition.y - newBuoy.boundingBox().height/2 - newBuoy.boundingBox().height/2 + 15),
+                                    playerMap));
+                        }
+                        if(redBuoySlot !=null) {
+                            GamePiece newBuoy = mic.Util.newPiece(redBuoySlot);
+                            entireSpawnCommand.append(spawnPieceCommand(newBuoy, new Point(
+                                            conditionStartPosition.x + extraXFromConditions,
+                                            conditionStartPosition.y - newBuoy.boundingBox().height/2 - newBuoy.boundingBox().height/2 + 15),
+                                    playerMap));
+                        }
+                        break;
+                    default:
+                        PieceSlot theSlot = null;
+                        for(PieceSlot pieceSlot : allSlots) {
+                            String slotName = pieceSlot.getConfigureName();
+                        }
+                        break;
+                }
+
+                for(PieceSlot pieceSlot : allSlots )
+                {
+                    String slotName = pieceSlot.getConfigureName();
+                    if(slotName.equals("Charge2e") && chargePieceSlot == null){
+                        chargePieceSlot = pieceSlot;
+                        continue;
+                    }
+                }
+
+
                 for (int i = ship.getUpgrades().size()-1; i > -1; i--) {
                     try {
                         upgrade = ship.getUpgrades().get(i);
