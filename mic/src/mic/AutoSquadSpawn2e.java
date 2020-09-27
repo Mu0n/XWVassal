@@ -709,7 +709,8 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
 
         //related to the pesky condition locations
         Point conditionStartPosition = new Point(0, 0); // gonna be calculated later
-
+        //related to the pesky remote locations
+        Point remoteStartPosition = new Point(0, 0); // gonna be calculated later
 
         //receptors of relative coordinates; refreshed at any time a cluster of those is needed
         List<Point> chargeLocations = Lists.newArrayList(); // list of coordinates to place charge tokens above their pilot or upgrade; if both charge and force are present, gotta play nice together
@@ -962,7 +963,41 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
 
             } //loop to next condition
 
+            // ======================================================
+            //Generate the Remote cards
+            // ======================================================
+            int extraXFromRemotes = 0;
+            if(ship.getUpgrades().size()!=0) {
+                for (int i = ship.getUpgrades().size()-1; i > -1; i--) {
+                    try {
+                        upgrade = ship.getUpgrades().get(i);
+                    } catch (Exception e) {
+                    }
+                    if (upgrade == null) break;
+                    if(VassalXWSPilotPieces2e.getRemote(upgrade.getUpgradeData().getXws()) !=null){
+                    //    GamePiece remotePiece = GamePieceGenerator2e.generateUpgrade(upgrade);
+                    };
 
+                  //  typicalUpgradeWidth = remotePiece.boundingBox().width;
+                }
+                //GamePiece remotePiece = GamePieceGenerator2e.generateCondition(condition);
+
+                remoteStartPosition.x = pilotWidth/2
+                        + typicalUpgradeWidth/2
+                        + extraXFromRemotes
+                        + (countHowManyNonConfigurationUpgrades + howManyConfigUpgradeCards + 1) * (typicalUpgradeWidth - upgradeComeBackLeft);
+                remoteStartPosition.y = pilotStartPosition.y + totalPilotHeight - pilotHeight - 50;
+
+
+                /*entireSpawnCommand.append(spawnPieceCommand(remotePiece, new Point(
+                                conditionStartPosition.x + extraXFromConditions,
+                                conditionStartPosition.y),
+                        playerMap));
+*/
+
+  //              extraXFromRemotes += remotePiece.boundingBox().getWidth();
+
+            } //loop to next condition
 
             // ======================================================
             // Add all of the appropriate tokens

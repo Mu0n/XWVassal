@@ -364,6 +364,8 @@ public class GamePieceGenerator2e
         return newUpgrade;
     }
 
+
+
     public static GamePiece generateCondition(VassalXWSPilotPieces2e.Condition condition)
     {
 
