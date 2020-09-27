@@ -976,17 +976,17 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
                         PieceSlot blueBuoySlot = null, redBuoySlot = null, redBuoyCardSlot = null, blueBuoyCardSlot = null;
                         for (PieceSlot pieceSlot : allSlots) {
                             String slotName = pieceSlot.getConfigureName();
-                            switch (slotName) {
-                                case "Sensor Buoy (Blue) Token":
+                            switch (Canonicalizer.getCleanedName(slotName)) {
+                                case "sensorbuoybluetoken":
                                     if (blueBuoySlot == null) blueBuoySlot = pieceSlot;
                                     break;
-                                case "Sensor Buoy (Red) Token":
+                                case "sensorbuoyredtoken":
                                     if (redBuoySlot == null) redBuoySlot = pieceSlot;
                                     break;
-                                case "Sensor Buoy (Blue)":
+                                case "sensorbuoyblue":
                                     if (blueBuoyCardSlot == null) blueBuoyCardSlot = pieceSlot;
                                     break;
-                                case "Sensor Buoy (Red)":
+                                case "sensorbuoyred":
                                     if (redBuoyCardSlot == null) redBuoyCardSlot = pieceSlot;
                                     break;
                                 default:
