@@ -57,7 +57,8 @@ enum ImagesUsedForRanges {
     ThermalDetonators("Mine_Explosion","Mine_Explosion2","Mine_Explosion3",0 ,0),
     IonBombs("Mine_Explosion","Mine_Explosion2","Mine_Explosion3",0 ,0),
     Bomblet("Mine_Explosion","Mine_Explosion2","Mine_Explosion3",0 ,0),
-    ElectroProton("Mine_Explosion","Mine_Explosion2","Mine_Explosion3",0,0);
+    ElectroProton("Mine_Explosion","Mine_Explosion2","Mine_Explosion3",0,0),
+    Sensorbuoy("Buoy-range1","Buoy-range2","Buoy-range",0,0);
 
     private final String r1Img;
     private final String r2Img;
@@ -142,6 +143,8 @@ public class AutoRangeForTokens extends Decorator implements EditablePiece {
             .put("Ion Bombs", ImagesUsedForRanges.IonBombs)
             .put("Bomblet", ImagesUsedForRanges.Bomblet)
             .put("Electro-Proton Bomb", ImagesUsedForRanges.ElectroProton)
+            .put("Sensor Buoy (Red)",ImagesUsedForRanges.Sensorbuoy)
+            .put("Sensor Buoy (Blue)",ImagesUsedForRanges.Sensorbuoy)
             .build();
 
     public AutoRangeForTokens() {
@@ -219,7 +222,7 @@ public class AutoRangeForTokens extends Decorator implements EditablePiece {
         if(whichOption != -1 && stroke.isOnKeyRelease()==false){
             verifyBasicShapes();
             prepAnnouncementStart();
-            Shape shapeOfPieceItself = getRawShape(this);;
+            Shape shapeOfPieceItself = getRawShape(this);
 
             Shape tShapeR0 = getTransformedShape(shapeOfPieceItself);
             Shape tShapeR1 = getTransformedShape(shapeForRange1);
