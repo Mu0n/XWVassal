@@ -971,94 +971,53 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
 
                 //do a switch case scenario because the sensor buoy needs 2 cards + 2 tokens spawn commands, the rest needs only a card (for now)
                 //this loads a piece slot so it can be readied up for spawning
-                switch(upgrade.getXwsName()){
+                switch (upgrade.getXwsName()) {
                     case "sensorbuoysuite":
                         PieceSlot blueBuoySlot = null, redBuoySlot = null, redBuoyCardSlot = null, blueBuoyCardSlot = null;
-                        for(PieceSlot pieceSlot : allSlots)
-                        {
+                        for (PieceSlot pieceSlot : allSlots) {
                             String slotName = pieceSlot.getConfigureName();
-                            switch(slotName)
-                            {
+                            switch (slotName) {
                                 case "Sensor Buoy (Blue) Token":
-                                    if(blueBuoySlot == null) blueBuoySlot = pieceSlot;
+                                    if (blueBuoySlot == null) blueBuoySlot = pieceSlot;
                                     break;
                                 case "Sensor Buoy (Red) Token":
-                                    if(redBuoySlot == null) redBuoySlot = pieceSlot;
+                                    if (redBuoySlot == null) redBuoySlot = pieceSlot;
                                     break;
                                 case "Sensor Buoy (Blue)":
-                                    if(blueBuoyCardSlot == null) blueBuoyCardSlot = pieceSlot;
+                                    if (blueBuoyCardSlot == null) blueBuoyCardSlot = pieceSlot;
                                     break;
                                 case "Sensor Buoy (Red)":
-                                    if(redBuoyCardSlot == null) redBuoyCardSlot = pieceSlot;
+                                    if (redBuoyCardSlot == null) redBuoyCardSlot = pieceSlot;
                                     break;
                                 default:
-                                continue;
+                                    continue;
 
                             }
                         }
-                        if(blueBuoySlot !=null) {
+                        if (blueBuoySlot != null) {
                             GamePiece newBuoy = mic.Util.newPiece(blueBuoySlot);
                             entireSpawnCommand.append(spawnPieceCommand(newBuoy, new Point(
                                             conditionStartPosition.x + extraXFromConditions,
-                                            conditionStartPosition.y - newBuoy.boundingBox().height/2 - newBuoy.boundingBox().height/2 + 15),
+                                            conditionStartPosition.y - newBuoy.boundingBox().height / 2 - newBuoy.boundingBox().height / 2 + 15),
                                     playerMap));
                         }
-                        if(redBuoySlot !=null) {
+                        if (redBuoySlot != null) {
                             GamePiece newBuoy = mic.Util.newPiece(redBuoySlot);
                             entireSpawnCommand.append(spawnPieceCommand(newBuoy, new Point(
                                             conditionStartPosition.x + extraXFromConditions,
-                                            conditionStartPosition.y - newBuoy.boundingBox().height/2 - newBuoy.boundingBox().height/2 + 15),
+                                            conditionStartPosition.y - newBuoy.boundingBox().height / 2 - newBuoy.boundingBox().height / 2 + 15),
                                     playerMap));
                         }
                         break;
                     default:
                         PieceSlot theSlot = null;
-                        for(PieceSlot pieceSlot : allSlots) {
+                        for (PieceSlot pieceSlot : allSlots) {
                             String slotName = pieceSlot.getConfigureName();
                         }
                         break;
-                }
+                } // end of switch
 
-                for(PieceSlot pieceSlot : allSlots )
-                {
-                    String slotName = pieceSlot.getConfigureName();
-                    if(slotName.equals("Charge2e") && chargePieceSlot == null){
-                        chargePieceSlot = pieceSlot;
-                        continue;
-                    }
-                }
-
-
-                for (int i = ship.getUpgrades().size()-1; i > -1; i--) {
-                    try {
-                        upgrade = ship.getUpgrades().get(i);
-                    } catch (Exception e) {
-                    }
-                    if (upgrade == null) break;
-                    if(VassalXWSPilotPieces2e.getRemote(upgrade.getUpgradeData().getXws()) !=null){
-                    //    GamePiece remotePiece = GamePieceGenerator2e.generateUpgrade(upgrade);
-                    };
-
-                  //  typicalUpgradeWidth = remotePiece.boundingBox().width;
-                }
-                //GamePiece remotePiece = GamePieceGenerator2e.generateCondition(condition);
-
-                remoteStartPosition.x = pilotWidth/2
-                        + typicalUpgradeWidth/2
-                        + extraXFromRemotes
-                        + (countHowManyNonConfigurationUpgrades + howManyConfigUpgradeCards + 1) * (typicalUpgradeWidth - upgradeComeBackLeft);
-                remoteStartPosition.y = pilotStartPosition.y + totalPilotHeight - pilotHeight - 50;
-
-
-                /*entireSpawnCommand.append(spawnPieceCommand(remotePiece, new Point(
-                                conditionStartPosition.x + extraXFromConditions,
-                                conditionStartPosition.y),
-                        playerMap));
-*/
-
-  //              extraXFromRemotes += remotePiece.boundingBox().getWidth();
-
-            } //loop to next condition
+            } //end of dealing with remote stuff
 
             // ======================================================
             // Add all of the appropriate tokens
