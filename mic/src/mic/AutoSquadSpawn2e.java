@@ -977,11 +977,9 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
                     switch (Canonicalizer.getCleanedName(slotName)) {
                         case "sensorbuoybluetoken":
                             if (blueBuoySlot == null) blueBuoySlot = pieceSlot;
-                            logToChat(" found the blue one");
                             break;
                         case "sensorbuoyredtoken":
                             if (redBuoySlot == null) redBuoySlot = pieceSlot;
-                            logToChat(" found the red one");
                             break;
                         case "sensorbuoyblue":
                             if (blueBuoyCardSlot == null) blueBuoyCardSlot = pieceSlot;
@@ -1015,7 +1013,6 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
                 for(VassalXWSPilotPieces2e.Upgrade upgRakeForConditions : ship.getUpgrades()){
                     switch (upgRakeForConditions.getXwsName()) {
                         case "sensorbuoysuite":
-
                             if (blueBuoySlot != null) {
                                 GamePiece newBuoy = mic.Util.newPiece(blueBuoySlot);
                                 entireSpawnCommand.append(spawnPieceCommand(newBuoy, new Point(
@@ -1050,7 +1047,6 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
                             }
                             break;
                         case "discordmissiles":
-                            logToChat("line 1053 found discord cmd");
                             if(discordMissilesSlot !=null){
                                 GamePiece newDiscord = mic.Util.newPiece(discordMissilesSlot);
                                 entireSpawnCommand.append(spawnPieceCommand(newDiscord, new Point(
@@ -1061,8 +1057,6 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
                             }
                             break;
                         case "drk1probedroids":
-
-                            logToChat("line 1065 found drk cmd");
                             if(drk1probeSlot !=null){
                                 GamePiece newDRK1 = mic.Util.newPiece(drk1probeSlot);
                                 entireSpawnCommand.append(spawnPieceCommand(newDRK1, new Point(
