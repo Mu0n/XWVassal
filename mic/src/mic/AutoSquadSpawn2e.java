@@ -989,10 +989,10 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
                         case "sensorbuoyred":
                             if (redBuoyCardSlot == null) redBuoyCardSlot = pieceSlot;
                             break;
-                        case "buzzdroidswarm":
+                        case "buzzdroidswarmcard":
                             if(discordMissilesSlot == null) discordMissilesSlot = pieceSlot;
                             break;
-                        case "drk1probedroid":
+                        case "drk1probedroidcard":
                             if(drk1probeSlot == null) drk1probeSlot = pieceSlot;
                             break;
                         default:
