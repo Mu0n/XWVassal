@@ -969,53 +969,120 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
             int extraXFromRemotes = 0;
             if(ship.getUpgrades().size()!=0) { //only do this if you have at least 1 upgrade card
 
+                //get the slots for good measure, regardless of whether they're in the squad or not. Having 1+ card gives it a chance.
+                PieceSlot blueBuoySlot = null, redBuoySlot = null, redBuoyCardSlot = null, blueBuoyCardSlot = null,
+                        discordMissilesSlot = null,drk1probeSlot = null;
+                for (PieceSlot pieceSlot : allSlots) {
+                    String slotName = pieceSlot.getConfigureName();
+                    switch (Canonicalizer.getCleanedName(slotName)) {
+                        case "sensorbuoybluetoken":
+                            if (blueBuoySlot == null) blueBuoySlot = pieceSlot;
+                            logToChat(" found the blue one");
+                            break;
+                        case "sensorbuoyredtoken":
+                            if (redBuoySlot == null) redBuoySlot = pieceSlot;
+                            logToChat(" found the red one");
+                            break;
+                        case "sensorbuoyblue":
+                            if (blueBuoyCardSlot == null) blueBuoyCardSlot = pieceSlot;
+                            break;
+                        case "sensorbuoyred":
+                            if (redBuoyCardSlot == null) redBuoyCardSlot = pieceSlot;
+                            break;
+                        case "discordmissiles":
+                            if(discordMissilesSlot == null) discordMissilesSlot = pieceSlot;
+                            break;
+                        case "drk1probedroids":
+                            if(drk1probeSlot == null) drk1probeSlot = pieceSlot;
+                            break;
+                        default:
+                            continue;
+
+                    }
+                }
+
+
+                Point remoteCardStartPosition = new Point(0,0);
+                remoteCardStartPosition.x = pilotWidth/2
+                        + typicalUpgradeWidth/2
+                        + (countHowManyNonConfigurationUpgrades + howManyConfigUpgradeCards + 1) * (typicalUpgradeWidth - upgradeComeBackLeft)
+                        + extraXFromConditions;
+                remoteCardStartPosition.y = pilotStartPosition.y + totalPilotHeight - (pilotHeight + 50);
+                int extraFromRemoteCards = 0;
+
                 //do a switch case scenario because the sensor buoy needs 2 cards + 2 tokens spawn commands, the rest needs only a card (for now)
                 //this loads a piece slot so it can be readied up for spawning
-                switch (upgrade.getXwsName()) {
-                    case "sensorbuoysuite":
-                        PieceSlot blueBuoySlot = null, redBuoySlot = null, redBuoyCardSlot = null, blueBuoyCardSlot = null;
-                        for (PieceSlot pieceSlot : allSlots) {
-                            String slotName = pieceSlot.getConfigureName();
-                            switch (Canonicalizer.getCleanedName(slotName)) {
-                                case "sensorbuoybluetoken":
-                                    if (blueBuoySlot == null) blueBuoySlot = pieceSlot;
-                                    break;
-                                case "sensorbuoyredtoken":
-                                    if (redBuoySlot == null) redBuoySlot = pieceSlot;
-                                    break;
-                                case "sensorbuoyblue":
-                                    if (blueBuoyCardSlot == null) blueBuoyCardSlot = pieceSlot;
-                                    break;
-                                case "sensorbuoyred":
-                                    if (redBuoyCardSlot == null) redBuoyCardSlot = pieceSlot;
-                                    break;
-                                default:
-                                    continue;
+                for(VassalXWSPilotPieces2e.Upgrade upgRakeForConditions : ship.getUpgrades()){
+                    switch (upgRakeForConditions.getXwsName()) {
+                        case "sensorbuoysuite":
+
+                            if (blueBuoySlot != null) {
+                                GamePiece newBuoy = mic.Util.newPiece(blueBuoySlot);
+                                entireSpawnCommand.append(spawnPieceCommand(newBuoy, new Point(
+                                                (int)tokensStartPosition.getX() + totalTLWidth,
+                                                (int)tlStartPosition.getY()+(int)(newBuoy.boundingBox().getHeight()/2)),
+                                        playerMap));
+                                totalTLWidth += newBuoy.boundingBox().getWidth();
+                            }
+                            if (redBuoySlot != null) {
+                                GamePiece newBuoy = mic.Util.newPiece(redBuoySlot);
+                                entireSpawnCommand.append(spawnPieceCommand(newBuoy, new Point(
+                                                (int)tokensStartPosition.getX() + totalTLWidth,
+                                                (int)tlStartPosition.getY()+(int)(newBuoy.boundingBox().getHeight()/2)),
+                                        playerMap));
+                                totalTLWidth += newBuoy.boundingBox().getWidth();
+                            }
+                            if(blueBuoyCardSlot !=null){
+                                GamePiece newBuoy = mic.Util.newPiece(blueBuoyCardSlot);
+                                entireSpawnCommand.append(spawnPieceCommand(newBuoy, new Point(
+                                                (int)remoteCardStartPosition.x + extraFromRemoteCards,
+                                                (int)remoteCardStartPosition.y),
+                                        playerMap));
+                                extraFromRemoteCards += newBuoy.boundingBox().getWidth();
+                            }
+                            if(redBuoyCardSlot !=null) {
+                                GamePiece newBuoy = mic.Util.newPiece(redBuoyCardSlot);
+                                entireSpawnCommand.append(spawnPieceCommand(newBuoy, new Point(
+                                                (int)remoteCardStartPosition.x + extraFromRemoteCards,
+                                                (int) remoteCardStartPosition.y),
+                                        playerMap));
+                                extraFromRemoteCards += newBuoy.boundingBox().getWidth();
+                            }
+                            break;
+                        case "discordmissiles":
+                            logToChat("line 1053 found discord cmd");
+                            if(discordMissilesSlot !=null){
+                                GamePiece newDiscord = mic.Util.newPiece(discordMissilesSlot);
+                                entireSpawnCommand.append(spawnPieceCommand(newDiscord, new Point(
+                                                (int)remoteCardStartPosition.x + extraFromRemoteCards,
+                                                (int)remoteCardStartPosition.y),
+                                        playerMap));
+                                extraFromRemoteCards += newDiscord.boundingBox().getWidth();
+                            }
+                            break;
+                        case "drk1probedroids":
+
+                            logToChat("line 1065 found drk cmd");
+                            if(drk1probeSlot !=null){
+                                GamePiece newDRK1 = mic.Util.newPiece(drk1probeSlot);
+                                entireSpawnCommand.append(spawnPieceCommand(newDRK1, new Point(
+                                                (int)remoteCardStartPosition.x + extraFromRemoteCards,
+                                                (int)remoteCardStartPosition.y),
+                                        playerMap));
+                                extraFromRemoteCards += newDRK1.boundingBox().getWidth();
 
                             }
-                        }
-                        if (blueBuoySlot != null) {
-                            GamePiece newBuoy = mic.Util.newPiece(blueBuoySlot);
-                            entireSpawnCommand.append(spawnPieceCommand(newBuoy, new Point(
-                                            conditionStartPosition.x + extraXFromConditions,
-                                            conditionStartPosition.y - newBuoy.boundingBox().height / 2 - newBuoy.boundingBox().height / 2 + 15),
-                                    playerMap));
-                        }
-                        if (redBuoySlot != null) {
-                            GamePiece newBuoy = mic.Util.newPiece(redBuoySlot);
-                            entireSpawnCommand.append(spawnPieceCommand(newBuoy, new Point(
-                                            conditionStartPosition.x + extraXFromConditions,
-                                            conditionStartPosition.y - newBuoy.boundingBox().height / 2 - newBuoy.boundingBox().height / 2 + 15),
-                                    playerMap));
-                        }
-                        break;
-                    default:
-                        PieceSlot theSlot = null;
-                        for (PieceSlot pieceSlot : allSlots) {
-                            String slotName = pieceSlot.getConfigureName();
-                        }
-                        break;
-                } // end of switch
+
+                            break;
+                        default:
+                            PieceSlot theSlot = null;
+                            for (PieceSlot pieceSlot : allSlots) {
+                                String slotName = pieceSlot.getConfigureName();
+                            }
+                            break;
+                    } // end of switch
+                }
+
 
             } //end of dealing with remote stuff
 
