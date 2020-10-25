@@ -84,7 +84,7 @@ public enum ManeuverPaths {
     SideSlipR3Turn(CurvedPaths.SSRT3, "Sideslip Hard Left 3", 3, 90.0f, "523", 180.0f, -198.0f, -113.0f, 0.0f, -0.0f, 0.0f, -0.0f, "3658", -30.0f, -283.0f, 0.0f, -0.0f, 0.0f, -0.0f),
 
 
-
+//the strings appear reversed here because of an early, false assumption into how sideslip worked
     SideSlipL1Bank(CurvedPaths.SSLBk1, "Sideslip Bank Right 1", 1, 270.0f, "517", 90.0f, 146.0f, -29.0f, 0.0f, -0.0f, 0.0f, -0.0f, "3653", 97.0f, -149.0f, 0.0f, -0.0f, 0.0f, -0.0f),
     SideSlipL2Bank(CurvedPaths.SSLBk2, "Sideslip Bank Right 2", 2, 270.0f, "519", 90.0f, 196.0f, -50.0f, 0.0f, -0.0f, 0.0f, -0.0f, "3654", 146.0f, -170.0f, 0.0f, -0.0f, 0.0f, -0.0f),
     SideSlipL3Bank(CurvedPaths.SSLBk3, "Sideslip Bank Right 3", 3, 270.0f, "520", 90.0f, 246.0f, -70.0f, 0.0f, -0.0f, 0.0f, -0.0f, "3655", 196.0f, -190.0f, 0.0f, -0.0f, 0.0f, -0.0f),
