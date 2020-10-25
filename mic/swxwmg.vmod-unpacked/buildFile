@@ -28,6 +28,7 @@
     <VASSAL.build.module.Map allowMultiple="false" backgroundcolor="51,0,0" buttonName="Map" changeFormat="$message$" color="255,255,51" createFormat="" edgeHeight="0" edgeWidth="0" hotkey="" icon="" launch="true" mapName="Contested Sector" markMoved="Never" markUnmovedIcon="/images/unmoved.gif" markUnmovedText="" markUnmovedTooltip="Mark all pieces on this map as not moved" moveKey="" moveToFormat="" moveWithinFormat="" thickness="1">
         <VASSAL.build.module.map.BoardPicker addColumnText="Add column" addRowText="Add row" boardPrompt="Select board" slotHeight="140" slotScale="0.2" slotWidth="350" title="Choose Boards">
             <VASSAL.build.module.map.boardPicker.Board color="0,0,0" height="2583" name="3'x3' - Plain Black" reversible="false" width="2583"/>
+            <VASSAL.build.module.map.boardPicker.Board image="3'x3' - Frog.jpg" name="3'x3' - Frog Squadron" reversible="false"/>
             <VASSAL.build.module.map.boardPicker.Board image="3'x3' - TMC.jpg" name="3'x3' - TMC" reversible="false"/>
             <VASSAL.build.module.map.boardPicker.Board image="3'x3' - Jehda.jpg" name="3'x3' - Jehda" reversible="false"/>
             <VASSAL.build.module.map.boardPicker.Board image="3'x3' - Mustafar.jpg" name="3'x3' - Mustafar" reversible="false"/>
@@ -596,8 +597,8 @@
                     <VASSAL.build.widget.PieceSlot entryName="Unexploded Ordnance" gpid="13144" height="113" width="57">+/null/prototype;Observe	delete;Delete;68,130\	clone;Clone;67,130\\	piece;;;Env-UnexplodedOrdnance.jpg;Unexploded Ordnance/	\	\\	null;0;0;13144;0</VASSAL.build.widget.PieceSlot>
                 </VASSAL.build.widget.TabWidget>
                 <VASSAL.build.widget.ListWidget divider="0" entryName="Remotes" height="0" scale="1.0" width="0">
-                    <VASSAL.build.widget.PieceSlot entryName="Buzz Droid Swarm Card" gpid="13162" height="113" width="57">+/null/prototype;Observe	delete;Delete;68,130\	clone;Clone;67,130\\	piece;;;R2e_BuzzDroidSwarm.jpg;Buzz Droid Swarm Card/	\	\\	null;0;0;;0</VASSAL.build.widget.PieceSlot>
-                    <VASSAL.build.widget.PieceSlot entryName="DRK-1 Probe Droid Card" gpid="13163" height="113" width="57">+/null/prototype;Observe	delete;Delete;68,130\	clone;Clone;67,130\\	piece;;;R2e_Drk1ProbeDroid.jpg;DRK-1 Probe Droid Card/	\	\\	null;0;0;;0</VASSAL.build.widget.PieceSlot>
+                    <VASSAL.build.widget.PieceSlot entryName="Buzz Droid Swarm Card" gpid="13162" height="113" width="57">+/null/prototype;Observe	delete;Delete;68,130\	clone;Clone;67,130\\	piece;;;R2e_BuzzDroidSwarm.jpg;Buzz Droid Swarm Card/	\	\\	null;0;0;13162;0</VASSAL.build.widget.PieceSlot>
+                    <VASSAL.build.widget.PieceSlot entryName="DRK-1 Probe Droid Card" gpid="13163" height="113" width="57">+/null/prototype;Observe	delete;Delete;68,130\	clone;Clone;67,130\\	piece;;;R2e_Drk1ProbeDroid.jpg;DRK-1 Probe Droid Card/	\	\\	null;0;0;13163;0</VASSAL.build.widget.PieceSlot>
                     <VASSAL.build.widget.PieceSlot entryName="Sensor Buoy (Red)" gpid="13164" height="113" width="57">+/null/prototype;Observe	delete;Delete;68,130\	clone;Clone;67,130\\	piece;;;R2e_SensorBuoyRed.jpg;Sensor Buoy (Red)/	\	\\	null;0;0;13164;0</VASSAL.build.widget.PieceSlot>
                     <VASSAL.build.widget.PieceSlot entryName="Sensor Buoy (Blue)" gpid="13165" height="113" width="57">+/null/prototype;Observe	delete;Delete;68,130\	clone;Clone;67,130\\	piece;;;R2e_SensorBuoyBlue.jpg;Sensor Buoy (Blue)/	\	\\	null;0;0;13165;0</VASSAL.build.widget.PieceSlot>
                 </VASSAL.build.widget.ListWidget>
