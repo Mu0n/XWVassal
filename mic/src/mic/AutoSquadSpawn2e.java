@@ -1064,7 +1064,12 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
                                                 (int)remoteCardStartPosition.y),
                                         playerMap));
                                 extraFromRemoteCards += newDRK1.boundingBox().getWidth();
-
+                                GamePiece newDRK1b = mic.Util.newPiece(drk1probeSlot);
+                                entireSpawnCommand.append(spawnPieceCommand(newDRK1b, new Point(
+                                                (int)remoteCardStartPosition.x + extraFromRemoteCards,
+                                                (int)remoteCardStartPosition.y),
+                                        playerMap));
+                                extraFromRemoteCards += newDRK1.boundingBox().getWidth();
                             }
 
                             break;
