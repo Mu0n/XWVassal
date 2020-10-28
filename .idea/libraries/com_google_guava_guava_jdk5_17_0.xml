@@ -3,7 +3,6 @@
     <properties maven-id="com.google.guava:guava-jdk5:17.0" />
     <CLASSES>
       <root url="jar://$PROJECT_DIR$/lib/guava-jdk5-17.0.jar!/" />
-      <root url="jar://$PROJECT_DIR$/lib/guava-bootstrap-jdk5-17.0.jar!/" />
     </CLASSES>
     <JAVADOC>
       <root url="jar://$PROJECT_DIR$/lib/guava-jdk5-17.0-javadoc.jar!/" />

@@ -29,8 +29,21 @@
     </orderEntry>
     <orderEntry type="library" name="com.fasterxml.jackson.core:jackson-databind:2.1.5" level="project" />
     <orderEntry type="library" name="com.google.guava:guava-jdk5:17.0" level="project" />
-    <orderEntry type="library" name="Vengine" level="project" />
     <orderEntry type="library" name="org.slf4j:slf4j-api:1.7.7" level="project" />
     <orderEntry type="library" name="commons-codec:commons-codec:1.6" level="project" />
+    <orderEntry type="library" name="Vengine" level="project" />
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="file://C:/Program Files/VASSAL-3.4.6/lib" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="file://C:/Program Files/VASSAL-3.4.6/lib" />
+        </SOURCES>
+        <jarDirectory url="file://C:/Program Files/VASSAL-3.4.6/lib" recursive="false" />
+        <jarDirectory url="file://C:/Program Files/VASSAL-3.4.6/lib" recursive="false" type="SOURCES" />
+      </library>
+    </orderEntry>
   </component>
 </module>

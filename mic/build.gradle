@@ -14,6 +14,10 @@ sourceSets {
 
 repositories {
     jcenter()
+    mavenCentral()
+    maven {
+        url "http://www.vassalengine.org/maven/"
+    }
 }
 
 sourceCompatibility = '11'
