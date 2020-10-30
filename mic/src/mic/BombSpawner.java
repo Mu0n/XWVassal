@@ -173,6 +173,7 @@ public class BombSpawner extends Decorator implements EditablePiece {
             .put(KeyStroke.getKeyStroke(KeyEvent.VK_G, KeyEvent.CTRL_DOWN_MASK, false), BombToken.CargoDebris)
             .put(KeyStroke.getKeyStroke(KeyEvent.VK_A, KeyEvent.CTRL_DOWN_MASK, false), BombToken.SpareParts)
             .put(KeyStroke.getKeyStroke(KeyEvent.VK_E, KeyEvent.CTRL_DOWN_MASK, false), BombToken.ElectroProton)
+            .put(KeyStroke.getKeyStroke(KeyEvent.VK_N, KeyEvent.CTRL_DOWN_MASK, false), BombToken.Concussion)
             .build();
 
     public BombSpawner() {
