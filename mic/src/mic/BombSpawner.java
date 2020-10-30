@@ -53,7 +53,7 @@ enum BombToken {
     CargoDebris("Cargo", "Debris", "12871", 0.0f, 82.5f),
     SpareParts("Spare Parts", "Debris", "13071", 0.0f, -43.5f),
     ElectroProton("Electro-Proton Bomb","Bomb","13116", 0.0f, 40.0f),
-    Concussion("Concussion", "Mine", "13161", 0.0f, 40.0f);
+    Concussion("Concussion Bomb", "Bomb", "13161", 0.0f, 40.0f);
 
     private final String bombName;
     private final String bombType;
