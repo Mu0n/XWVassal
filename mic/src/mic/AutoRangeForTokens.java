@@ -23,7 +23,7 @@ import static mic.Util.*;
  */
 
 enum ImagesUsedForRanges {
-    ProbeDroid("Probe-range1","Probe-range2","Probe-range", 0, 0),
+    ProbeDroid("Probe-range1","Probe-range2","Probe-range", 0, -50),
     GasCloud1("Gascloud1_r1","Gascloud1_r2","Gascloud1_TL", 0, 0),
     GasCloud2("Gascloud2_r1","Gascloud2_r2","Gascloud2_TL", 0, 0),
     GasCloud3("Gascloud3_r1","Gascloud3_r2","Gascloud3_TL", 0, 0),
@@ -376,12 +376,20 @@ public class AutoRangeForTokens extends Decorator implements EditablePiece {
         //Info Gathering: gets the angle from repoTemplate which deals with degrees, local space with ship at 0,0, pointing up
         double globalShipAngle = getRotator().getAngle(); //ship angle
 
+
         //Step 1: Translation
         double offx = this.getPosition().getX();
         double offy = this.getPosition().getY();
 
 
+
         String pieceName = (Decorator.getInnermost(this)).getName();
+        if(pieceName.equals("DRK-1 Probe Droid")){
+            globalShipAngle-=36.0f;
+            offx+=1.0f;
+            offy-=3.0f;
+        }
+
 
         double off2x = getOffX(pieceName);
         double off2y = getOffY(pieceName);
