@@ -175,6 +175,10 @@ public class AnnouncementOnLog extends AbstractConfigurable {
             panel.add(labelPanel);
 
             DataArchive dataArchive = GameModule.getGameModule().getDataArchive();
+            if(dataArchive==null) {
+                JOptionPane.showMessageDialog(null, "Error: can't manipulate the module and extract content from it. Move the x-wing module file in another location.", "Access Error to the module file", JOptionPane.INFORMATION_MESSAGE);
+                return;
+            }
             JPanel linkPanel = new JPanel();
             linkPanel.setLayout(new BoxLayout(linkPanel, BoxLayout.X_AXIS));
 

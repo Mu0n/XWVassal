@@ -143,8 +143,8 @@ public class AutoRangeForTokens extends Decorator implements EditablePiece {
             .put("Ion Bombs", ImagesUsedForRanges.IonBombs)
             .put("Bomblet", ImagesUsedForRanges.Bomblet)
             .put("Electro-Proton Bomb", ImagesUsedForRanges.ElectroProton)
-            .put("Sensor Buoy (Red)",ImagesUsedForRanges.Sensorbuoy)
-            .put("Sensor Buoy (Blue)",ImagesUsedForRanges.Sensorbuoy)
+            .put("Sensor Buoy (Red) Token",ImagesUsedForRanges.Sensorbuoy)
+            .put("Sensor Buoy (Blue) Token",ImagesUsedForRanges.Sensorbuoy)
             .build();
 
     public AutoRangeForTokens() {
@@ -228,6 +228,10 @@ public class AutoRangeForTokens extends Decorator implements EditablePiece {
             Shape tShapeR1 = getTransformedShape(shapeForRange1);
             Shape tShapeR2 = getTransformedShape(shapeForRange2);
             Shape tShapeR3 = getTransformedShape(shapeForRange3);
+
+            logToChat("line 232 autorange shapes R1null? " + (tShapeR1==null?"null":"not null") +
+                    " R2 null? " + (tShapeR2==null?"null":"not null") +
+                    " R3 null? " + (tShapeR3==null?"null":"not null"));
 
             //add the ships to the detection
             if(whichOption == findShips || whichOption == findObstaclesShips) {
