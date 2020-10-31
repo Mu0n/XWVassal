@@ -229,10 +229,6 @@ public class AutoRangeForTokens extends Decorator implements EditablePiece {
             Shape tShapeR2 = getTransformedShape(shapeForRange2);
             Shape tShapeR3 = getTransformedShape(shapeForRange3);
 
-            logToChat("line 232 autorange shapes R1null? " + (tShapeR1==null?"null":"not null") +
-                    " R2 null? " + (tShapeR2==null?"null":"not null") +
-                    " R3 null? " + (tShapeR3==null?"null":"not null"));
-
             //add the ships to the detection
             if(whichOption == findShips || whichOption == findObstaclesShips) {
 
