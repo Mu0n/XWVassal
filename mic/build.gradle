@@ -18,17 +18,20 @@ repositories {
     maven {
         url "http://www.vassalengine.org/maven/"
     }
+    maven {
+        url "http://maven.geotoolkit.org"
+    }
 }
 
 sourceCompatibility = '11'
 targetCompatibility = '11'
 
 dependencies {
-    compileOnly files('lib/Vengine.jar')
     compileOnly 'org.slf4j:slf4j-api:1.7.7'
     compile 'commons-codec:commons-codec:1.6'
     compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.1.5'
     compile group: 'com.google.guava', name: 'guava-jdk5', version: '17.0'
+    compile group: 'org.vassalengine', name: 'vassal-app', version: '3.4.7'
 }
 
 task unpackVmod(type: Copy) {
