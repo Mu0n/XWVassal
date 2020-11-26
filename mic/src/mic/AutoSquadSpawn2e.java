@@ -940,11 +940,13 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
             for (VassalXWSPilotPieces2e.Condition condition: ship.getConditions()) {
                 GamePiece conditionPiece = GamePieceGenerator2e.generateCondition(condition);
 
+                //hack
+                if(typicalUpgradeWidth == 0) typicalUpgradeWidth = 418;
+
                 conditionStartPosition.x = pilotWidth/2
                         + typicalUpgradeWidth/2
                         + (countHowManyNonConfigurationUpgrades + howManyConfigUpgradeCards + 1) * (typicalUpgradeWidth - upgradeComeBackLeft);
                 conditionStartPosition.y = pilotStartPosition.y + totalPilotHeight - pilotHeight - 50;
-
 
                 entireSpawnCommand.append(spawnPieceCommand(conditionPiece, new Point(
                                 conditionStartPosition.x + extraXFromConditions,
