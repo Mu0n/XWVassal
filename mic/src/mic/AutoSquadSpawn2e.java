@@ -943,7 +943,7 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
                 //xwd2 should yield 2 condition xws entries in the pipeline. Ignore one of them, spawn a special objet for the other
                 if(condition.getXws().equals("youshouldthankme")) continue;
 
-                GamePiece conditionPiece;
+                GamePiece conditionPiece=null;
 
 
                 if(condition.getXws().equals("youdbettermeanbusiness"));
