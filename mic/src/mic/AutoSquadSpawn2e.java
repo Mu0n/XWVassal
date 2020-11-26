@@ -938,7 +938,16 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
 
 
             for (VassalXWSPilotPieces2e.Condition condition: ship.getConditions()) {
-                GamePiece conditionPiece = GamePieceGenerator2e.generateCondition(condition);
+
+                //total hack for Zam Wesell, either pilot or crew card.
+                //xwd2 should yield 2 condition xws entries in the pipeline. Ignore one of them, spawn a special objet for the other
+                if(condition.getXws().equals("youshouldthankme")) continue;
+
+                GamePiece conditionPiece;
+
+
+                if(condition.getXws().equals("youdbettermeanbusiness"));
+                else conditionPiece = GamePieceGenerator2e.generateCondition(condition);
 
                 //hack
                 if(typicalUpgradeWidth == 0) typicalUpgradeWidth = 418;
