@@ -81,9 +81,35 @@ public class TemplateOverlapCheckDecorator extends Decorator implements Editable
         //Any keystroke made on a ship will remove the orange shades
         previousCollisionVisualization = new MapVisualizations();
 
-        //check to see if 'c' was pressed
+        //check to see if 'c' was pressed - should be for obstacle collision (asteroid, debris and gas cloud)
+        //since this'll be often used with collision aides spawned after hitting 'c' after a ship has overlapped a final destination
+        //this has been modified in November 2020 to only pick the real template shape, deduced from the collision aide (which is the same template, but extended with straight 3's on both ends
+
         if(KeyStroke.getKeyStroke(KeyEvent.VK_C, 0, false).equals(stroke)) {
             java.util.List<BumpableWithShape> otherBumpableShapes = getBumpablesWithShapes();
+
+            boolean isCollisionOccuring = findCollidingEntity(getBumpableCompareShape(this), otherBumpableShapes) != null ? true : false;
+            //backtracking requested with a detected bumpable overlap, deal with it
+            if (isCollisionOccuring) {
+                Command innerCommand = piece.keyEvent(stroke);
+
+                //paint the template orange and the culprits too
+                announceBumpAndPaint(otherBumpableShapes);
+
+                //Add all the detected overlapping shapes to the map drawn components here
+                if(this.previousCollisionVisualization != null &&  this.previousCollisionVisualization.getShapes().size() > 0){
+                    innerCommand.append(previousCollisionVisualization);
+                    previousCollisionVisualization.execute();
+                }
+                return innerCommand;
+            }
+            else  logToChatWithTime("This template does not overlap with an obstacle.");
+        }
+
+        //check to see if 's' was pressed - should be for ships (ie Starbird Slash) for cross-a-ship abilities
+        if(KeyStroke.getKeyStroke(KeyEvent.VK_S, 0, false).equals(stroke)) {
+
+            java.util.List<BumpableWithShape> otherBumpableShapes = getBumpablesWithShapesShipEdition();
 
             boolean isCollisionOccuring = findCollidingEntity(getBumpableCompareShape(this), otherBumpableShapes) != null ? true : false;
             //backtracking requested with a detected bumpable overlap, deal with it
@@ -136,6 +162,11 @@ public class TemplateOverlapCheckDecorator extends Decorator implements Editable
                     howManyBumped++;
                 }else if (bumpedBumpable.type.equals("Remote")) {
                     String bumpAlertString = "* --- Overlap detected with your template and a remote.";
+                    logToChatWithTime(bumpAlertString);
+                    this.previousCollisionVisualization.add(bumpedBumpable.shape);
+                    howManyBumped++;
+                }else if (bumpedBumpable.type.equals("Ship")) {
+                    String bumpAlertString = "* --- Overlap detected with your template and " + bumpedBumpable.shipName + ".";
                     logToChatWithTime(bumpAlertString);
                     this.previousCollisionVisualization.add(bumpedBumpable.shape);
                     howManyBumped++;
@@ -238,6 +269,17 @@ public class TemplateOverlapCheckDecorator extends Decorator implements Editable
     private java.util.List<BumpableWithShape> getBumpablesWithShapes() {
         java.util.List<BumpableWithShape> bumpables = Lists.newLinkedList();
         for (BumpableWithShape bumpable : OverlapCheckManager.getBumpablesOnMap(false, null)) {
+            if (getId().equals(bumpable.bumpable.getId())) {
+                continue;
+            }
+            bumpables.add(bumpable);
+        }
+        return bumpables;
+    }
+
+    private java.util.List<BumpableWithShape> getBumpablesWithShapesShipEdition() {
+        java.util.List<BumpableWithShape> bumpables = Lists.newLinkedList();
+        for (BumpableWithShape bumpable : OverlapCheckManager.getBumpablesOnMap(true, null)) {
             if (getId().equals(bumpable.bumpable.getId())) {
                 continue;
             }

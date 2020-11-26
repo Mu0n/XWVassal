@@ -155,6 +155,63 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
         return null;
     }
 
+    //this is similar to spawnRotatedPiece, but uses the real template instead of the collision aide template, triggered by 's' instead of 'c' on a selected ship
+    private Command spawnRotatedPieceRealTemplate(ManeuverPaths theManeuv) {
+        //STEP 1: Collision aide template, centered as in in the image file, centered on 0,0 (upper left corner)
+        GamePiece piece = newPiece(findPieceSlotByID(theManeuv.getTemplateGpID()));
+
+        //Info Gathering: Position of the center of the ship, integers inside a Point
+        double shipx = this.getPosition().getX();
+        double shipy = this.getPosition().getY();
+
+        //use the centered tallon roll choice if it's this move being treated
+        if(lastTRWasNotCentered &&
+                (lastManeuver == ManeuverPaths.TrollL1  || lastManeuver == ManeuverPaths.TrollL2 || lastManeuver == ManeuverPaths.TrollL3
+                        || lastManeuver == ManeuverPaths.TrollR1  || lastManeuver == ManeuverPaths.TrollR2 || lastManeuver == ManeuverPaths.TrollR3)){
+            shipx = lastCenteredTRX;
+            shipy = lastCenteredTRY;
+        }
+
+
+        Point shipPt = new Point((int) shipx, (int) shipy); // these are the center coordinates of the ship, namely, shipPt.x and shipPt.y
+
+        //Info Gathering: offset vector (integers) that's used in local coordinates, right after a rotation found in lastManeuver.getTemplateAngle(), so that it's positioned behind nubs properly
+        double x=0.0, y=0.0;
+        if(whichSizeShip(this)==3){
+            x = theManeuv.getOffsetXLarge();
+            y = theManeuv.getOffsetYLarge();
+        }
+        else if(whichSizeShip(this)==2){
+            x = theManeuv.getOffsetXMedium();
+            y = theManeuv.getOffsetYMedium();
+        }
+        else{
+            x = theManeuv.getOffsetX();
+            y = theManeuv.getOffsetY();
+        }
+        int posx =  (int)x;
+        int posy =  (int)y;
+        Point tOff = new Point(posx, posy); // these are the offsets in local space for the templates, if the ship's center is at 0,0 and pointing up
+
+
+        //Info Gathering: gets the angle from ManeuverPaths which deals with degrees, local space with ship at 0,0, pointing up
+        double tAngle = lastManeuver.getTemplateAngle();
+        double sAngle = this.getRotator().getAngle();
+
+        //STEP 2: rotate the collision aide with both the getTemplateAngle and the ship's final angle,
+        FreeRotator fR = (FreeRotator)Decorator.getDecorator(piece, FreeRotator.class);
+        fR.setAngle(sAngle - tAngle);
+
+        //STEP 3: rotate a double version of tOff to get tOff_rotated
+        double xWork = Math.cos(-Math.PI*sAngle/180.0f)*tOff.getX() - Math.sin(-Math.PI*sAngle/180.0f)*tOff.getY();
+        double yWork = Math.sin(-Math.PI*sAngle/180.0f)*tOff.getX() + Math.cos(-Math.PI*sAngle/180.0f)*tOff.getY();
+        Point tOff_rotated = new Point((int)xWork, (int)yWork);
+
+        //STEP 4: translation into place
+        Command placeCommand = getMap().placeOrMerge(piece, new Point(tOff_rotated.x + shipPt.x, tOff_rotated.y + shipPt.y));
+
+        return placeCommand;
+    }
 
     private Command spawnRotatedPiece(ManeuverPaths theManeuv) {
         //STEP 1: Collision aide template, centered as in in the image file, centered on 0,0 (upper left corner)
@@ -239,6 +296,26 @@ public class AutoBumpDecorator extends Decorator implements EditablePiece {
                 }
             }
             // 'c' keystroke has finished here, leave the method altogether
+
+            //alternatively, check to see if 's' was pressed - spawn the real template instead of the collision aide template
+            else if(KeyStroke.getKeyStroke(KeyEvent.VK_S, 0, false).equals(stroke) && lastManeuver != null) {
+                List<BumpableWithShape> otherShipShapes = getShipsWithShapes();
+
+                if(lastManeuver != null) {
+                    Command placeCollisionAide = spawnRotatedPieceRealTemplate(lastManeuver);
+                    placeCollisionAide.execute();
+                    GameModule.getGameModule().sendAndLog(placeCollisionAide);
+                }
+
+                boolean isCollisionOccuring = findCollidingEntity(BumpableWithShape.getBumpableCompareShape(this), otherShipShapes) != null ? true : false;
+                //backtracking requested with a detected bumpable overlap, deal with it
+                if (isCollisionOccuring) {
+                    Command innerCommand = piece.keyEvent(stroke);
+                    Command bumpResolveCommand = resolveBump(otherShipShapes);
+                    return bumpResolveCommand == null ? innerCommand : innerCommand.append(bumpResolveCommand);
+                }
+            }
+            // 's' keystroke has finished here, leave the method altogether
             return piece.keyEvent(stroke);
         }
 

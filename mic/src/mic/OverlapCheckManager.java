@@ -88,7 +88,14 @@ public class OverlapCheckManager extends AbstractConfigurable {
                 try{
                     testFlipString = ((Decorator) piece).getDecorator(piece,piece.getClass()).getProperty("whichShape").toString();
                 } catch (Exception e) {}
-                bumpables.add(new BumpableWithShape((Decorator)piece, "Ship",false,
+
+                String shipName = "";
+                String pilotName = "";
+                try{
+                    shipName = ((Decorator) piece).getDecorator(piece,piece.getClass()).getProperty("Craft ID #").toString();
+                    pilotName = ((Decorator) piece).getDecorator(piece,piece.getClass()).getProperty("Pilot Name").toString();
+                }catch(Exception e) {}
+                bumpables.add(new BumpableWithShape((Decorator)piece, "Ship", shipName, pilotName,
                             piece.getState().contains("this_is_2pointoh")));
             }
         }
