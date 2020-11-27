@@ -946,7 +946,7 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
                 GamePiece conditionPiece=null;
 
 
-                if(condition.getXws().equals("youdbettermeanbusiness"));
+                if(condition.getXws().equals("youdbettermeanbusiness")) conditionPiece = GamePieceGenerator2e.generateCondition(condition);
                 else conditionPiece = GamePieceGenerator2e.generateCondition(condition);
 
                 //hack
