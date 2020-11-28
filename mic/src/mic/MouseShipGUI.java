@@ -42,10 +42,12 @@ public class MouseShipGUI extends AbstractConfigurable {
 
     public static final int probeDroidGUIOption = 1;
     public static final int buzzSwarmGUIOption = 2;
+    public static final int hyperspaceGUIOption = 3;
 
     private static java.util.Map<String, Integer> remoteNameToGUIOption = ImmutableMap.<String, Integer>builder()
             .put("DRK-1 Probe Droid", probeDroidGUIOption)
             .put("Buzz Droid Swarm", buzzSwarmGUIOption)
+            .put("Hyperspace Marker", hyperspaceGUIOption)
             .build();
 
     public String[] getAttributeNames() {

@@ -218,6 +218,17 @@ public class RemoteRelocation extends Decorator implements EditablePiece {
             case 5: //Probe Droid
                 relos = Lists.newArrayList(ReloManeuverForProbe.Left_5,ReloManeuverForProbe.Fwd_5,ReloManeuverForProbe.Right_5);
                 break;
+            case 11: //Hyperspace Marker
+                relos = Lists.newArrayList();
+                break;
+            case 12: //Hyperspace Marker
+
+                relos = Lists.newArrayList();
+                break;
+            case 13: //Hyperspace Marker
+
+                relos = Lists.newArrayList();
+                break;
             case -77: //Buzz Droid Swarm
                 relos = Lists.newArrayList(ReloManeuverForProbe.BuzzFront, ReloManeuverForProbe.BuzzBack, ReloManeuverForProbe.BuzzBack);
 
