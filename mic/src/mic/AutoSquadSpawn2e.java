@@ -946,7 +946,13 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
                 GamePiece conditionPiece=null;
 
 
-                if(condition.getXws().equals("youdbettermeanbusiness")) conditionPiece = GamePieceGenerator2e.generateCondition(condition);
+
+                if(condition.getXws().equals("youdbettermeanbusiness")) {
+                    //the specialized zam wesell dual state condition card is at gpid: 13168
+                    for(PieceSlot ps : GameModule.getGameModule().getAllDescendantComponentsOf(PieceSlot.class)){
+                        if("13168".equals(ps.getGpId())) conditionPiece =  ps.getPiece();
+                    }
+                }
                 else conditionPiece = GamePieceGenerator2e.generateCondition(condition);
 
                 //hack
