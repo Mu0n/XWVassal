@@ -39,6 +39,8 @@ public class XWCounterFactory extends BasicCommandEncoder {
             piece = new ShipReposition(inner);
         }else if (type.startsWith(RemoteRelocation.ID)) {
             piece = new RemoteRelocation(inner);
+        }else if (type.startsWith(HyperspaceLauncher.ID)) {
+            piece = new HyperspaceLauncher(inner);
         }else if (type.startsWith(EmptyTest.ID)) {
             piece = new EmptyTest(inner);
         }else if (type.startsWith(CritSpawner.ID)) {
