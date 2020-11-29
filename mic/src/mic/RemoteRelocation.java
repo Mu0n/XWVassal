@@ -49,7 +49,11 @@ enum ReloManeuverForProbe {
     Right_5("Bank 2 Right from 5th orientation", "519", 0.0f, 0.0f, 0.0f, 9.0f,  149.0f,  -359.0f, 288.0f),
 
     BuzzFront("Front", "", 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
-    BuzzBack("Back", "", 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f);
+    BuzzBack("Back", "", 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
+
+    HyperFirst("First",  "", 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
+    HyperSecond("Second",  "", 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
+    HyperThird("Third",  "", 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f)    ;
 
     private final String repoName;
     private final String gpID;
@@ -144,6 +148,10 @@ public class RemoteRelocation extends Decorator implements EditablePiece {
             //called by option -77, buzz swarm
             .put(-55, ReloManeuverForProbe.BuzzFront)
             .put(-66, ReloManeuverForProbe.BuzzBack)
+            //called by option -88, hyperspace marker
+            .put(-81, ReloManeuverForProbe.HyperFirst)
+            .put(-82, ReloManeuverForProbe.HyperSecond)
+            .put(-83, ReloManeuverForProbe.HyperThird)
             .build();
     public RemoteRelocation() { this(null); }
 
@@ -218,17 +226,15 @@ public class RemoteRelocation extends Decorator implements EditablePiece {
             case 5: //Probe Droid
                 relos = Lists.newArrayList(ReloManeuverForProbe.Left_5,ReloManeuverForProbe.Fwd_5,ReloManeuverForProbe.Right_5);
                 break;
-            case 11: //Hyperspace Marker
-                relos = Lists.newArrayList();
-                break;
-            case 12: //Hyperspace Marker
+            case -88: //Hyperspace Marker
+                relos = Lists.newArrayList(ReloManeuverForProbe.HyperFirst, ReloManeuverForProbe.HyperSecond, ReloManeuverForProbe.HyperThird);
 
-                relos = Lists.newArrayList();
-                break;
-            case 13: //Hyperspace Marker
-
-                relos = Lists.newArrayList();
-                break;
+                int nbOfIgnoredRedDots = offerTripleChoices(relos, theMap, rpc);
+                logToChatWithoutUndo("Please click on a dot to relocate the ship to a launching point. Click on empty space to cancel this.");
+                if(startIt!=null) startIt.append(logToChatCommand("*-- " + contemplatingPlayerName + " is considering a launching direction for an hyperspace marker."));
+                else startIt = logToChatCommand("*-- " + contemplatingPlayerName + " is considering a launching direction for an hyperspace marker.");
+                if(nbOfIgnoredRedDots==-1) return null; //something wrong happened
+                return startIt;
             case -77: //Buzz Droid Swarm
                 relos = Lists.newArrayList(ReloManeuverForProbe.BuzzFront, ReloManeuverForProbe.BuzzBack, ReloManeuverForProbe.BuzzBack);
 
@@ -366,7 +372,33 @@ public class RemoteRelocation extends Decorator implements EditablePiece {
         //FreeRotator fR = (FreeRotator) Decorator.getDecorator(piece, FreeRotator.class);
             int nbOfRedDots = 0;
 
-            if(rpcInput._option==-77) {//buzz droid swarm case
+            if(rpcInput._option==-88) { //hyperspace marker case
+
+                //Info Gathering (for probe droid): Offset 2 get the center global coordinates of the ship calling this op
+                double offx = _remotePiece.getPosition().getX();
+                double offy = _remotePiece.getPosition().getY();
+                // Info Gathering (for probe droid): gather ship angle and rotator
+                double shipAngle = ((FreeRotator) Decorator.getDecorator(getOutermost(_remotePiece), FreeRotator.class)).getAngle(); //remote angle
+                //(Hyperspace Marker) genereate the 3 directional dots around the marker
+                for(int i=1; i<=3; i++){
+                    float diam = DOT_DIAMETER;
+                    Shape dot = new Ellipse2D.Float(-diam / 2, -diam / 2, diam, diam);
+                    double off2x = 0;
+                    double off2y = -130;
+
+                    double off2x_rot_dot = rotX(off2x, off2y, shipAngle +60+ 120*(i-1));
+                    double off2y_rot_dot = rotY(off2x, off2y, shipAngle +60+ 120*(i-1));
+
+                    dot = AffineTransform.
+                            getTranslateInstance((int) offx + (int) off2x_rot_dot, (int) offy + (int) off2y_rot_dot).
+                            createTransformedShape(dot);
+
+                    RepositionChoiceVisual rpc = new RepositionChoiceVisual(null, dot, false,"",10+i, null, null, 0);
+                    rpcList.add(rpc);
+
+                }
+            }
+            else if(rpcInput._option==-77) {//buzz droid swarm case
                 boolean wantOverlapColor = false;
 
                 List<GamePiece> excludedPieces = Lists.newArrayList();

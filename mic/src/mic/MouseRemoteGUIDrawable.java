@@ -52,28 +52,27 @@ public class MouseRemoteGUIDrawable extends MouseGUIDrawable implements Drawable
         ulY = remotePiece.getPosition().y;
 
         if(option == MouseShipGUI.hyperspaceGUIOption){
-            //Info Gathering (for probe droid): Offset 2 get the center global coordinates of the ship calling this op
-            double offx = _remotePiece.getPosition().getX();
-            double offy = _remotePiece.getPosition().getY();
-            // Info Gathering (for probe droid): gather ship angle and rotator
-            double shipAngle = ((FreeRotator) Decorator.getDecorator(getOutermost(_remotePiece), FreeRotator.class)).getAngle(); //remote angle
-            //(Hyperspace Marker) genereate the 3 directional dots around the marker
-            for(int i=1; i<=3; i++){
-                float diam = DOT_DIAMETER;
-                Shape dot = new Ellipse2D.Float(-diam / 2, -diam / 2, diam, diam);
-                double off2x = 0;
-                double off2y = -80;
 
-                double off2x_rot_dot = rotX(off2x, off2y, shipAngle + 120*(i-1));
-                double off2y_rot_dot = rotY(off2x, off2y, shipAngle + 120*(i-1));
 
-                dot = AffineTransform.
-                        getTranslateInstance((int) offx + (int) off2x_rot_dot, (int) offy + (int) off2y_rot_dot).
-                        createTransformedShape(dot);
+            GamePiece[] pieces = _map.getAllPieces();
+            for (GamePiece piece : pieces) {
+                try{
+                    if(piece.getState().contains("this_is_a_ship")){
+                        float diam = DOT_DIAMETER*4/3;
+                        Shape dot = new Ellipse2D.Float(-diam / 2, -diam / 2, diam, diam);
+                        double offx = piece.getPosition().getX();
+                        double offy = piece.getPosition().getY();
 
-                RepositionChoiceVisual rpc = new RepositionChoiceVisual(null, dot, false,"",10+i, null, null, 0);
-                rpcList.add(rpc);
+                        dot = AffineTransform.
+                                getTranslateInstance((int) offx , (int) offy).
+                                createTransformedShape(dot);
+                        RepositionChoiceVisual rpc = new RepositionChoiceVisual(null, dot, false, "", -88, piece, null, 0);
+                        rpcList.add(rpc);
+                    }
 
+                }catch(Exception e){
+                    continue;
+                }
             }
         }
         if(option == MouseShipGUI.probeDroidGUIOption){
