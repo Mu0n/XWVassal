@@ -308,13 +308,15 @@ public class RemoteRelocation extends Decorator implements EditablePiece {
     }
 
     private Command repositionShipToHyperspaceMarker(ReloManeuverForProbe relo, GamePiece victimShip){
-        boolean wantBack = false;
-        if(relo==ReloManeuverForProbe.BuzzBack) wantBack = true;
+        double choiceDependantAngle = 0.0f;
+        if(relo == ReloManeuverForProbe.HyperFirst) choiceDependantAngle = 60.0f;
+        if(relo == ReloManeuverForProbe.HyperSecond) choiceDependantAngle = 180.0f;
+        if(relo == ReloManeuverForProbe.HyperThird) choiceDependantAngle = 300.0f;
 
-        double globalShipAngle =  ((FreeRotator) Decorator.getDecorator(getOutermost(victimShip), FreeRotator.class)).getAngle();
+        double globalShipAngle =  ((FreeRotator) Decorator.getDecorator(getOutermost(this), FreeRotator.class)).getAngle();
 
-        double off2x = victimShip.getPosition().x;
-        double off2y = victimShip.getPosition().y;
+        double off2x = this.getPosition().getX();
+        double off2y = this.getPosition().getY();
 
         double off1x = 0.0f;
         double off1y = -116.0f;
@@ -323,21 +325,21 @@ public class RemoteRelocation extends Decorator implements EditablePiece {
         if(sizeship==2) off1y = -145.5f;
         else if(sizeship==3) off1y = -173.0f;
 
-        double off1x_rot = rotX(off1x, off1y, globalShipAngle + (wantBack?180.0f:0.0f));
-        double off1y_rot = rotY(off1x, off1y, globalShipAngle + (wantBack?180.0f:0.0f));
+        double off1x_rot = rotX(off1x, off1y, globalShipAngle + choiceDependantAngle);
+        double off1y_rot = rotY(off1x, off1y, globalShipAngle + choiceDependantAngle);
 
         Command bigCommand = null;
         //STEP 11: reposition the remote
         //Set the remote's final angle
         ChangeTracker changeTracker = new ChangeTracker(this);
-        FreeRotator fRShip = (FreeRotator)Decorator.getDecorator(this.piece, FreeRotator.class);
-        fRShip.setAngle(globalShipAngle + (wantBack?180.0f:0.0f));
+        FreeRotator fRShip = (FreeRotator)Decorator.getDecorator(victimShip, FreeRotator.class);
+        fRShip.setAngle(globalShipAngle + choiceDependantAngle);
         Command changeRotationCommand = changeTracker.getChangeCommand();
         if(bigCommand !=null) bigCommand.append(changeRotationCommand);
         else bigCommand = changeRotationCommand;
         //Remote's final translation command
-        if(bigCommand != null) bigCommand.append(getMap().placeOrMerge(Decorator.getOutermost(this), new Point((int)off1x_rot + (int)off2x, (int)off1y_rot + (int)off2y)));
-        else bigCommand = getMap().placeOrMerge(Decorator.getOutermost(this), new Point((int)off1x_rot + (int)off2x, (int)off1y_rot + (int)off2y));
+        if(bigCommand != null) bigCommand.append(getMap().placeOrMerge(Decorator.getOutermost(victimShip), new Point((int)off1x_rot + (int)off2x, (int)off1y_rot + (int)off2y)));
+        else bigCommand = getMap().placeOrMerge(Decorator.getOutermost(victimShip), new Point((int)off1x_rot + (int)off2x, (int)off1y_rot + (int)off2y));
 
         return bigCommand;
 
