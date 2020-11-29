@@ -226,15 +226,37 @@ public class RemoteRelocation extends Decorator implements EditablePiece {
             case 5: //Probe Droid
                 relos = Lists.newArrayList(ReloManeuverForProbe.Left_5,ReloManeuverForProbe.Fwd_5,ReloManeuverForProbe.Right_5);
                 break;
-            case -88: //Hyperspace Marker
-                relos = Lists.newArrayList(ReloManeuverForProbe.HyperFirst, ReloManeuverForProbe.HyperSecond, ReloManeuverForProbe.HyperThird);
+            case -88: //Hyperspace Marker after selecting a ship
+                //Info Gathering (for hyperspace marker): Offset 2 get the center global coordinates of the ship calling this op
+                double offx = this.getPosition().getX();
+                double offy = this.getPosition().getY();
+                // Info Gathering (for probe droid): gather ship angle and rotator
+                double shipAngle = ((FreeRotator) Decorator.getDecorator(getOutermost(this), FreeRotator.class)).getAngle(); //remote angle
+                //(Hyperspace Marker) genereate the 3 directional dots around the marker
+                for(int i=1; i<=3; i++){
+                    float diam = DOT_DIAMETER;
+                    Shape dot = new Ellipse2D.Float(-diam / 2, -diam / 2, diam, diam);
+                    double off2x = 0;
+                    double off2y = -130;
 
+                    double off2x_rot_dot = rotX(off2x, off2y, shipAngle +60+ 120*(i-1));
+                    double off2y_rot_dot = rotY(off2x, off2y, shipAngle +60+ 120*(i-1));
+
+                    dot = AffineTransform.
+                            getTranslateInstance((int) offx + (int) off2x_rot_dot, (int) offy + (int) off2y_rot_dot).
+                            createTransformedShape(dot);
+
+                    rpc = new RepositionChoiceVisual(null, dot, false,"",-(80+i), rpc.associatedTargetPiece, null, 0);
+                    rpcList.add(rpc);
+                }
+                relos = Lists.newArrayList(ReloManeuverForProbe.HyperFirst, ReloManeuverForProbe.HyperSecond, ReloManeuverForProbe.HyperThird);
                 int nbOfIgnoredRedDots = offerTripleChoices(relos, theMap, rpc);
-                logToChatWithoutUndo("Please click on a dot to relocate the ship to a launching point. Click on empty space to cancel this.");
-                if(startIt!=null) startIt.append(logToChatCommand("*-- " + contemplatingPlayerName + " is considering a launching direction for an hyperspace marker."));
-                else startIt = logToChatCommand("*-- " + contemplatingPlayerName + " is considering a launching direction for an hyperspace marker.");
+                logToChatWithoutUndo("Please click on a dot to choose where to attach the ship. Click on empty space to cancel this.");
+                if(startIt!=null) startIt.append(logToChatCommand("*-- " + contemplatingPlayerName + " is considering the attachment position for the ship."));
+                else startIt = logToChatCommand("*-- " + contemplatingPlayerName + " is considering the attachment position for the ship.");
                 if(nbOfIgnoredRedDots==-1) return null; //something wrong happened
                 return startIt;
+
             case -77: //Buzz Droid Swarm
                 relos = Lists.newArrayList(ReloManeuverForProbe.BuzzFront, ReloManeuverForProbe.BuzzBack, ReloManeuverForProbe.BuzzBack);
 
@@ -285,7 +307,41 @@ public class RemoteRelocation extends Decorator implements EditablePiece {
         return shapeForBuzz;
     }
 
+    private Command repositionShipToHyperspaceMarker(ReloManeuverForProbe relo, GamePiece victimShip){
+        boolean wantBack = false;
+        if(relo==ReloManeuverForProbe.BuzzBack) wantBack = true;
 
+        double globalShipAngle =  ((FreeRotator) Decorator.getDecorator(getOutermost(victimShip), FreeRotator.class)).getAngle();
+
+        double off2x = victimShip.getPosition().x;
+        double off2y = victimShip.getPosition().y;
+
+        double off1x = 0.0f;
+        double off1y = -116.0f;
+
+        int sizeship = whichSizeShip((Decorator)Decorator.getOutermost(victimShip), true);
+        if(sizeship==2) off1y = -145.5f;
+        else if(sizeship==3) off1y = -173.0f;
+
+        double off1x_rot = rotX(off1x, off1y, globalShipAngle + (wantBack?180.0f:0.0f));
+        double off1y_rot = rotY(off1x, off1y, globalShipAngle + (wantBack?180.0f:0.0f));
+
+        Command bigCommand = null;
+        //STEP 11: reposition the remote
+        //Set the remote's final angle
+        ChangeTracker changeTracker = new ChangeTracker(this);
+        FreeRotator fRShip = (FreeRotator)Decorator.getDecorator(this.piece, FreeRotator.class);
+        fRShip.setAngle(globalShipAngle + (wantBack?180.0f:0.0f));
+        Command changeRotationCommand = changeTracker.getChangeCommand();
+        if(bigCommand !=null) bigCommand.append(changeRotationCommand);
+        else bigCommand = changeRotationCommand;
+        //Remote's final translation command
+        if(bigCommand != null) bigCommand.append(getMap().placeOrMerge(Decorator.getOutermost(this), new Point((int)off1x_rot + (int)off2x, (int)off1y_rot + (int)off2y)));
+        else bigCommand = getMap().placeOrMerge(Decorator.getOutermost(this), new Point((int)off1x_rot + (int)off2x, (int)off1y_rot + (int)off2y));
+
+        return bigCommand;
+
+    }
     private Command repositionBuzzSwarm(ReloManeuverForProbe relo, GamePiece victimShip){
         boolean wantBack = false;
         if(relo==ReloManeuverForProbe.BuzzBack) wantBack = true;
@@ -372,31 +428,25 @@ public class RemoteRelocation extends Decorator implements EditablePiece {
         //FreeRotator fR = (FreeRotator) Decorator.getDecorator(piece, FreeRotator.class);
             int nbOfRedDots = 0;
 
-            if(rpcInput._option==-88) { //hyperspace marker case
+            if(rpcInput._option==-81 || rpcInput._option==-82 || rpcInput._option==-83) { //hyperspace marker case
 
-                //Info Gathering (for probe droid): Offset 2 get the center global coordinates of the ship calling this op
-                double offx = _remotePiece.getPosition().getX();
-                double offy = _remotePiece.getPosition().getY();
-                // Info Gathering (for probe droid): gather ship angle and rotator
-                double shipAngle = ((FreeRotator) Decorator.getDecorator(getOutermost(_remotePiece), FreeRotator.class)).getAngle(); //remote angle
-                //(Hyperspace Marker) genereate the 3 directional dots around the marker
-                for(int i=1; i<=3; i++){
-                    float diam = DOT_DIAMETER;
-                    Shape dot = new Ellipse2D.Float(-diam / 2, -diam / 2, diam, diam);
-                    double off2x = 0;
-                    double off2y = -130;
+                /*
+                remoteAngle += 60 + (Math.abs(rpcInput._option))*120; //selects the right hyperspace marker port exit
+                double off2x = this.getPosition().getX();
+                double off2y = this.getPosition().getY();
 
-                    double off2x_rot_dot = rotX(off2x, off2y, shipAngle +60+ 120*(i-1));
-                    double off2y_rot_dot = rotY(off2x, off2y, shipAngle +60+ 120*(i-1));
+                double off1x = 0.0f;
+                double off1y = - 120.0f;
 
-                    dot = AffineTransform.
-                            getTranslateInstance((int) offx + (int) off2x_rot_dot, (int) offy + (int) off2y_rot_dot).
-                            createTransformedShape(dot);
+                double off1x_rot = rotX(off1x, off1y, remoteAngle);
+                double off1y_rot = rotY(off1x, off1y, remoteAngle);
 
-                    RepositionChoiceVisual rpc = new RepositionChoiceVisual(null, dot, false,"",10+i, null, null, 0);
-                    rpcList.add(rpc);
+                Point point = new Point((int)(off2x + off1x_rot),(int)( off2y + off1y_rot));
+                */
 
-                }
+                logToChatWithoutUndo("reached the point where one of the 3 hyperspace dot was clicked. Move the ship now?");
+
+
             }
             else if(rpcInput._option==-77) {//buzz droid swarm case
                 boolean wantOverlapColor = false;
@@ -462,7 +512,7 @@ public class RemoteRelocation extends Decorator implements EditablePiece {
                 RepositionChoiceVisual rpc2 = new RepositionChoiceVisual(null, dot2, wantOverlapColor, "", -66, rpcInput.associatedTargetPiece, null, 0);
                 rpcList.add(rpc2);
             }
-        else { // probe droid case
+        else if(rpcInput._option > 0 && rpcInput._option < 21) { // probe droid case
                 //for now, Probe Droid case, the only other case
                 int spreadDotAngleFactor = -1;
                 for(ReloManeuverForProbe reloTemplate : reloTemplates) { //loops over the list of potential repositions
@@ -625,6 +675,17 @@ public class RemoteRelocation extends Decorator implements EditablePiece {
                 if(repoCommand == null) return null; //somehow did not get a programmed reposition command
                 else{
                     repoCommand.append(logToChatCommand("*** The Buzz Swarm Droid has attached to " + rpc.associatedTargetPiece.getProperty("Pilot Name").toString() + " to the " + reloRemote.getRepoName()));
+                    repoCommand.execute();
+                    GameModule.getGameModule().sendAndLog(repoCommand);
+                    return null;
+                }
+            }
+            if(reloRemote==ReloManeuverForProbe.HyperFirst || reloRemote==ReloManeuverForProbe.HyperSecond || reloRemote==ReloManeuverForProbe.HyperThird){
+                Command repoCommand = repositionShipToHyperspaceMarker(reloRemote, rpc.associatedTargetPiece);
+
+                if(repoCommand == null) return null; //somehow did not get a programmed reposition command
+                else{
+                    repoCommand.append(logToChatCommand("*** The Ship "+ rpc.associatedTargetPiece.getProperty("Pilot Name").toString() + " has been attached to the Hyperspace Marker."));
                     repoCommand.execute();
                     GameModule.getGameModule().sendAndLog(repoCommand);
                     return null;

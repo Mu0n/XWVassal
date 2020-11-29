@@ -51,9 +51,7 @@ public class MouseRemoteGUIDrawable extends MouseGUIDrawable implements Drawable
         ulX = remotePiece.getPosition().x;
         ulY = remotePiece.getPosition().y;
 
-        if(option == MouseShipGUI.hyperspaceGUIOption){
-
-
+        if(option == MouseShipGUI.hyperspaceGUIOption){  // first step of the hyperspace marker, offers a dot on all ships
             GamePiece[] pieces = _map.getAllPieces();
             for (GamePiece piece : pieces) {
                 try{
@@ -75,7 +73,7 @@ public class MouseRemoteGUIDrawable extends MouseGUIDrawable implements Drawable
                 }
             }
         }
-        if(option == MouseShipGUI.probeDroidGUIOption){
+        if(option == MouseShipGUI.probeDroidGUIOption){ //first step of the Probe Droid, offers 5 dots for the 5 directions
             //Info Gathering (for probe droid): Offset 2 get the center global coordinates of the ship calling this op
             double offx = _remotePiece.getPosition().getX();
             double offy = _remotePiece.getPosition().getY();
@@ -101,7 +99,7 @@ public class MouseRemoteGUIDrawable extends MouseGUIDrawable implements Drawable
             }
         }
 
-        else if(option == MouseShipGUI.buzzSwarmGUIOption){
+        else if(option == MouseShipGUI.buzzSwarmGUIOption){  //First step of the Buzz Swarm Droid, offers a dot on every ship
 
             GamePiece[] pieces = _map.getAllPieces();
             for (GamePiece piece : pieces) {
