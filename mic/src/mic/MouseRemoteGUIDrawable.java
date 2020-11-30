@@ -51,7 +51,29 @@ public class MouseRemoteGUIDrawable extends MouseGUIDrawable implements Drawable
         ulX = remotePiece.getPosition().x;
         ulY = remotePiece.getPosition().y;
 
-        if(option == MouseShipGUI.probeDroidGUIOption){
+        if(option == MouseShipGUI.hyperspaceGUIOption){  // first step of the hyperspace marker, offers a dot on all ships
+            GamePiece[] pieces = _map.getAllPieces();
+            for (GamePiece piece : pieces) {
+                try{
+                    if(piece.getState().contains("this_is_a_ship")){
+                        float diam = DOT_DIAMETER*4/3;
+                        Shape dot = new Ellipse2D.Float(-diam / 2, -diam / 2, diam, diam);
+                        double offx = piece.getPosition().getX();
+                        double offy = piece.getPosition().getY();
+
+                        dot = AffineTransform.
+                                getTranslateInstance((int) offx , (int) offy).
+                                createTransformedShape(dot);
+                        RepositionChoiceVisual rpc = new RepositionChoiceVisual(null, dot, false, "", -88, piece, null, 0);
+                        rpcList.add(rpc);
+                    }
+
+                }catch(Exception e){
+                    continue;
+                }
+            }
+        }
+        if(option == MouseShipGUI.probeDroidGUIOption){ //first step of the Probe Droid, offers 5 dots for the 5 directions
             //Info Gathering (for probe droid): Offset 2 get the center global coordinates of the ship calling this op
             double offx = _remotePiece.getPosition().getX();
             double offy = _remotePiece.getPosition().getY();
@@ -77,7 +99,7 @@ public class MouseRemoteGUIDrawable extends MouseGUIDrawable implements Drawable
             }
         }
 
-        else if(option == MouseShipGUI.buzzSwarmGUIOption){
+        else if(option == MouseShipGUI.buzzSwarmGUIOption){  //First step of the Buzz Swarm Droid, offers a dot on every ship
 
             GamePiece[] pieces = _map.getAllPieces();
             for (GamePiece piece : pieces) {
