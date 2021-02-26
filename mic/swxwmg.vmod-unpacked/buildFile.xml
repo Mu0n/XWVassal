@@ -1853,7 +1853,7 @@
     <mic.PatreonWindow/>
     <mic.MouseShipGUI/>
     <VASSAL.build.module.KeyNamer/>
-    <VASSAL.build.module.ChessClockControl buttonText="Chess Clocks" buttonTooltip="Tooltip text" icon="chess_clock.png" name="Clock" nextHotkey="" pauseHotkey="" showDays="Auto" showHotkey="" showHours="Always" showSeconds="Always" showTenths="Never">
-        <VASSAL.build.module.chessclockcontrol.ChessClock buttonText="Game Clock" icon="" side="Solitaire" tickingBackgroundColor="0,51,153" tickingFontColor="255,255,255" tockingFontColor="255,255,255"/>
+    <VASSAL.build.module.ChessClockControl buttonText="Clock" buttonTooltip="Click to open timer control." icon="chess_clock.png" name="Clock" nextHotkey="" pauseHotkey="" showDays="Auto" showHotkey="" showHours="Always" showSeconds="Always" showTenths="Never">
+        <VASSAL.build.module.chessclockcontrol.ChessClock buttonText="" icon="" side="Solitaire" tickingBackgroundColor="102,102,255" tickingFontColor="255,255,255" tockingFontColor="255,255,255" tooltip="Click to start/pause/resume"/>
     </VASSAL.build.module.ChessClockControl>
 </VASSAL.build.GameModule>
