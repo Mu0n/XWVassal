@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<VASSAL.build.GameModule ModuleOther1="" ModuleOther2="" VassalVersion="3.5.0" description="" name="Star Wars X-Wing Miniatures Game" nextPieceSlotId="13169" version="9.2.2">
+<VASSAL.build.GameModule ModuleOther1="Released with Vassal 3.5.3" ModuleOther2="" VassalVersion="3.5.3" description="" name="Star Wars X-Wing Miniatures Game" nextPieceSlotId="13169" version="9.2.2">
     <mic.XWCounterFactory/>
     <VASSAL.build.module.Documentation>
         <VASSAL.build.module.documentation.AboutScreen fileName="Splash.PNG" title="About Module"/>
@@ -1853,7 +1853,7 @@
     <mic.PatreonWindow/>
     <mic.MouseShipGUI/>
     <VASSAL.build.module.KeyNamer/>
-    <VASSAL.build.module.ChessClockControl buttonText="Chess Clocks" buttonTooltip="Tooltip text" icon="chess_clock.png" name="Chess Clock Control" nextHotkey="" pauseHotkey="" showDays="Auto" showHotkey="" showHours="Auto" showSeconds="Auto" showTenths="Auto">
-        <VASSAL.build.module.chessclockcontrol.ChessClock buttonText="Clock" icon="" side="Player 1" tickingBackgroundColor="255,255,0" tickingFontColor="51,51,51" tockingFontColor="0,0,0"/>
+    <VASSAL.build.module.ChessClockControl buttonText="Chess Clocks" buttonTooltip="Tooltip text" icon="chess_clock.png" name="Clock" nextHotkey="" pauseHotkey="" showDays="Auto" showHotkey="" showHours="Always" showSeconds="Always" showTenths="Never">
+        <VASSAL.build.module.chessclockcontrol.ChessClock buttonText="Game Clock" icon="" side="Solitaire" tickingBackgroundColor="0,51,153" tickingFontColor="255,255,255" tockingFontColor="255,255,255"/>
     </VASSAL.build.module.ChessClockControl>
 </VASSAL.build.GameModule>
