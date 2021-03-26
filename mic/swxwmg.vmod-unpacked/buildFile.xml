@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<VASSAL.build.GameModule ModuleOther1="Released with Vassal 3.5.3" ModuleOther2="" VassalVersion="3.5.3" description="" name="Star Wars X-Wing Miniatures Game" nextPieceSlotId="13169" version="9.2.3">
+<VASSAL.build.GameModule ModuleOther1="Built with Vassal 3.5.3" ModuleOther2="" VassalVersion="3.5.3" description="" name="Star Wars X-Wing Miniatures Game" nextPieceSlotId="13169" version="9.2.3">
     <mic.XWCounterFactory/>
     <VASSAL.build.module.Documentation>
         <VASSAL.build.module.documentation.AboutScreen fileName="Splash.PNG" title="About Module"/>
@@ -1850,10 +1850,11 @@
     <mic.AutoSquadSpawn/>
     <mic.AnnouncementOnLog/>
     <mic.HelpWindow/>
+    <mic.EventsCalendar/>
     <mic.PatreonWindow/>
     <mic.MouseShipGUI/>
     <VASSAL.build.module.KeyNamer/>
-    <VASSAL.build.module.ChessClockControl buttonText="Clock" buttonTooltip="Click to open timer control." icon="chess_clock.png" name="Clock" nextHotkey="" pauseHotkey="" showDays="Auto" showHotkey="" showHours="Always" showSeconds="Always" showTenths="Never">
-        <VASSAL.build.module.chessclockcontrol.ChessClock buttonText="" icon="" side="Solitaire" tickingBackgroundColor="102,102,255" tickingFontColor="255,255,255" tockingFontColor="255,255,255" tooltip="Click to start/pause/resume"/>
+    <VASSAL.build.module.ChessClockControl buttonText="Clock" buttonTooltip="Tooltip text" icon="chess_clock.png" name="Chess Clock Control" nextHotkey="" pauseHotkey="" showDays="Auto" showHotkey="" showHours="Auto" showSeconds="Always" showTenths="Never">
+        <VASSAL.build.module.chessclockcontrol.ChessClock buttonText="Time Elapsed:" icon="" side="Solitaire" tickingBackgroundColor="255,255,0" tickingFontColor="51,51,51" tockingFontColor="0,0,0"/>
     </VASSAL.build.module.ChessClockControl>
 </VASSAL.build.GameModule>
