@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<VASSAL.build.GameModule ModuleOther1="" ModuleOther2="" VassalVersion="3.5.7" description="" name="Star Wars X-Wing Miniatures Game" nextPieceSlotId="13169" version="9.2.3">
+<VASSAL.build.GameModule ModuleOther1="" ModuleOther2="" VassalVersion="3.5.8" description="" name="Star Wars X-Wing Miniatures Game" nextPieceSlotId="13169" version="9.2.3">
     <mic.XWCounterFactory/>
     <VASSAL.build.module.Documentation>
         <VASSAL.build.module.documentation.AboutScreen fileName="Splash.PNG" title="About Module"/>
@@ -1854,4 +1854,7 @@
     <mic.PatreonWindow/>
     <mic.MouseShipGUI/>
     <VASSAL.build.module.KeyNamer/>
+    <VASSAL.build.module.ChessClockControl allowReset="true" buttonText="Clock Menu" buttonTooltip="Click to Activate Clock Control" icon="chess_clock.png" name="Chess Clock Control" nextHotkey="" pauseHotkey="" showDays="Auto" showHotkey="" showHours="Auto" showSeconds="Auto" showTenths="Never">
+        <VASSAL.build.module.chessclockcontrol.ChessClock buttonText="Time" icon="" side="Solitaire" tickingBackgroundColor="0,51,153" tickingFontColor="255,255,255" tockingFontColor="255,255,255"/>
+    </VASSAL.build.module.ChessClockControl>
 </VASSAL.build.GameModule>
