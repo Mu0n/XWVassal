@@ -54,7 +54,7 @@ enum BombToken {
     SpareParts("Spare Parts", "Debris", "13071", 0.0f, -43.5f),
     ElectroProton("Electro-Proton Bomb","Bomb","13116", 0.0f, 40.0f),
     Concussion("Concussion Bomb", "Bomb", "13161", 0.0f, 40.0f),
-    ElectroChaffCloud("Electro-Chaff Cloud", "Debris","13169",0.0f, 0.0f);
+    ElectroChaffCloud("Electro-Chaff Cloud", "Debris","13169",0.0f, 40.0f);
 
     private final String bombName;
     private final String bombType;
@@ -208,9 +208,11 @@ public class BombSpawner extends Decorator implements EditablePiece {
     }
 
     private PieceSlot findPieceSlotByID(String gpID) {
+        if(Integer.parseInt(gpID)==13169) logToChat("attempting a chaff!");
         for(PieceSlot ps : GameModule.getGameModule().getAllDescendantComponentsOf(PieceSlot.class)){
             if(gpID.equals(ps.getGpId())) return ps;
         }
+        logToChat("couldn't find the token");
         return null;
     }
     private Command spawnBomb(BombToken theBomb, BombManeuver theManeu) {
@@ -301,6 +303,7 @@ public class BombSpawner extends Decorator implements EditablePiece {
 
     @Override
     public Command keyEvent(KeyStroke stroke) {
+        logToChat("keystroke activated " + stroke.toString());
         //Any keystroke made on a ship will remove the orange shades
         previousCollisionVisualization = new MapVisualizations();
 
@@ -311,7 +314,7 @@ public class BombSpawner extends Decorator implements EditablePiece {
             BombToken droppedBomb = getKeystrokeBomb(stroke);
             if(droppedBomb != null && processingOnlyOneBomb == false){
                 processingOnlyOneBomb = true;
-                if("Mine".equals(droppedBomb.getBombType())  || "Remote".equals(droppedBomb.getBombType())) //deal with prox mine, conner net, etc which can trigger an overlap event
+                if("Mine".equals(droppedBomb.getBombType())  || "Remote".equals(droppedBomb.getBombType()) || "Debris".equals(droppedBomb.getBombType()) ) //deal with prox mine, conner net, etc which can trigger an overlap event
                 {
                     List<BumpableWithShape> otherShipShapes = OverlapCheckManager.getShipsOnMap(null);
 
