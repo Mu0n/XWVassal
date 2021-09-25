@@ -53,7 +53,8 @@ enum BombToken {
     CargoDebris("Cargo", "Debris", "12871", 0.0f, 82.5f),
     SpareParts("Spare Parts", "Debris", "13071", 0.0f, -43.5f),
     ElectroProton("Electro-Proton Bomb","Bomb","13116", 0.0f, 40.0f),
-    Concussion("Concussion Bomb", "Bomb", "13161", 0.0f, 40.0f);
+    Concussion("Concussion Bomb", "Bomb", "13161", 0.0f, 40.0f),
+    ElectroChaffCloud("Electro-Chaff Cloud", "Debris","13169",0.0f, 0.0f);
 
     private final String bombName;
     private final String bombType;
@@ -174,6 +175,7 @@ public class BombSpawner extends Decorator implements EditablePiece {
             .put(KeyStroke.getKeyStroke(KeyEvent.VK_A, KeyEvent.CTRL_DOWN_MASK, false), BombToken.SpareParts)
             .put(KeyStroke.getKeyStroke(KeyEvent.VK_E, KeyEvent.CTRL_DOWN_MASK, false), BombToken.ElectroProton)
             .put(KeyStroke.getKeyStroke(KeyEvent.VK_N, KeyEvent.CTRL_DOWN_MASK, false), BombToken.Concussion)
+            .put(KeyStroke.getKeyStroke(KeyEvent.VK_F, KeyEvent.CTRL_DOWN_MASK, false), BombToken.ElectroChaffCloud)
             .build();
 
     public BombSpawner() {
