@@ -197,7 +197,7 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
         builderPanel.add(builderButton);
 
 
-        final JTextArea entryArea_0 = new JTextArea("Enter a valid squad URL from Yet Another Squadron Builder 2.0 or from the official FFG builder (warning, the latter may not work for some squads)");
+        final JTextArea entryArea_0 = new JTextArea("Enter a valid squad URL from Yet Another Squadron Builder 2.0");
         entryArea_0.setAlignmentX(Component.LEFT_ALIGNMENT);
 
         entryArea_0.setPreferredSize(new Dimension(850,50));
@@ -214,7 +214,7 @@ public class AutoSquadSpawn2e extends AbstractConfigurable {
         entryArea.setLineWrap(true);
         entryArea.setAutoscrolls(true);
 
-        JLabel method0Label = new JLabel("Method 1 for spawning a list - Insert a squad URL from YASB2 or the official FFG Builder");
+        JLabel method0Label = new JLabel("Method 1 for spawning a list - Insert a squad URL from YASB2");
         method0Label.setFont(new Font("Dialog", Font.PLAIN, 18));
         JButton clearTextArea_0_Button = new JButton("Clear");
         clearTextArea_0_Button.setAlignmentX(Component.LEFT_ALIGNMENT);

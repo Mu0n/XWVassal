@@ -208,11 +208,9 @@ public class BombSpawner extends Decorator implements EditablePiece {
     }
 
     private PieceSlot findPieceSlotByID(String gpID) {
-        if(Integer.parseInt(gpID)==13169) logToChat("attempting a chaff!");
         for(PieceSlot ps : GameModule.getGameModule().getAllDescendantComponentsOf(PieceSlot.class)){
             if(gpID.equals(ps.getGpId())) return ps;
         }
-        logToChat("couldn't find the token");
         return null;
     }
     private Command spawnBomb(BombToken theBomb, BombManeuver theManeu) {
@@ -303,7 +301,6 @@ public class BombSpawner extends Decorator implements EditablePiece {
 
     @Override
     public Command keyEvent(KeyStroke stroke) {
-        logToChat("keystroke activated " + stroke.toString());
         //Any keystroke made on a ship will remove the orange shades
         previousCollisionVisualization = new MapVisualizations();
 
