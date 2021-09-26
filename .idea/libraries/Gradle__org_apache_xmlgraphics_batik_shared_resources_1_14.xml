@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="Gradle: org.apache.xmlgraphics:batik-shared-resources:1.14">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.apache.xmlgraphics/batik-shared-resources/1.14/42e9d6345952575e8b2f4ee26108b2811c334305/batik-shared-resources-1.14.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.apache.xmlgraphics/batik-shared-resources/1.14/7f9b8b7ea214d01f42782c27d15b82a62d826fb4/batik-shared-resources-1.14-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="Gradle: org.apache.xmlgraphics:batik-gui-util:1.14">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.apache.xmlgraphics/batik-gui-util/1.14/4657a260ef8b6819d135b2d7c15fc0b97fc802c0/batik-gui-util-1.14.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.apache.xmlgraphics/batik-gui-util/1.14/634c4f9a94ed027b683dd5d5161b4252635bf9d2/batik-gui-util-1.14-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

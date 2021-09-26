@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="Gradle: org.apache.xmlgraphics:batik-codec:1.14">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.apache.xmlgraphics/batik-codec/1.14/f63ed1f18412cead069fa97b677fdbda43b6a1af/batik-codec-1.14.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.apache.xmlgraphics/batik-codec/1.14/1531ef4bf4b715de8a14bd7d60a908727fcdc530/batik-codec-1.14-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

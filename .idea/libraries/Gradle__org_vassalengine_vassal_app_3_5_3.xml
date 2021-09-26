@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="Gradle: org.vassalengine:vassal-app:3.5.3">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.vassalengine/vassal-app/3.5.3/d5dd8e1d7c9d35b6d53687a03957256f48fcd774/vassal-app-3.5.3.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.vassalengine/vassal-app/3.5.3/567788d05dd8d389b42877c53b8c9463ce01b8a5/vassal-app-3.5.3-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

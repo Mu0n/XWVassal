@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module external.linked.project.id="mic:test" external.linked.project.path="$MODULE_DIR$/../../mic" external.root.project.path="$MODULE_DIR$/../../mic" external.system.id="GRADLE" external.system.module.group="" external.system.module.type="sourceSet" external.system.module.version="unspecified" type="JAVA_MODULE" version="4">
+  <component name="NewModuleRootManager">
+    <output-test url="file://$MODULE_DIR$/../../mic/build/classes/java/test" />
+    <exclude-output />
+    <content url="file://$MODULE_DIR$/../../mic/src/test" />
+    <orderEntry type="inheritedJdk" />
+    <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="module" module-name="mic.main" />
+    <orderEntry type="library" name="Gradle: org.vassalengine:vassal-app:3.5.3" level="project" />
+    <orderEntry type="library" name="Gradle: commons-codec:commons-codec:1.15" level="project" />
+    <orderEntry type="library" name="Gradle: com.fasterxml.jackson.core:jackson-databind:2.1.5" level="project" />
+    <orderEntry type="library" name="Gradle: com.google.guava:guava-jdk5:17.0" level="project" />
+    <orderEntry type="library" name="Gradle: ch.qos.logback:logback-classic:1.2.3" level="project" />
+    <orderEntry type="library" name="Gradle: com.miglayout:miglayout-swing:5.2" level="project" />
+    <orderEntry type="library" name="Gradle: javazoom:jlayer:1.0.1" level="project" />
+    <orderEntry type="library" name="Gradle: org.apache.xmlgraphics:batik-codec:1.14" level="project" />
+    <orderEntry type="library" name="Gradle: org.apache.xmlgraphics:batik-extension:1.14" level="project" />
+    <orderEntry type="library" name="Gradle: org.apache.xmlgraphics:batik-swing:1.14" level="project" />
+    <orderEntry type="library" name="Gradle: org.apache.xmlgraphics:batik-dom:1.14" level="project" />
+    <orderEntry type="library" name="Gradle: commons-io:commons-io:2.8.0" level="project" />
+    <orderEntry type="library" name="Gradle: gnu.getopt:java-getopt:1.0.13" level="project" />
+    <orderEntry type="library" name="Gradle: org.apache.maven:maven-artifact:3.6.3" level="project" />
+    <orderEntry type="library" name="Gradle: org.apache.commons:commons-lang3:3.11" level="project" />
+    <orderEntry type="library" name="Gradle: org.codehaus.janino:janino:3.1.3" level="project" />
+    <orderEntry type="library" name="Gradle: org.slf4j:slf4j-api:1.7.30" level="project" />
+    <orderEntry type="library" name="Gradle: org.swinglabs.swingx:swingx-all:1.6.5-1" level="project" />
+    <orderEntry type="library" name="Gradle: net.java.dev.timingframework:timingframework:1.0" level="project" />
+    <orderEntry type="library" name="Gradle: org.netbeans:wizard:0.998.1" level="project" />
+    <orderEntry type="library" name="Gradle: net.bytebuddy:byte-buddy:1.10.21" level="project" />
+    <orderEntry type="library" name="Gradle: org.jsoup:jsoup:1.13.1" level="project" />
+    <orderEntry type="library" name="Gradle: com.fasterxml.jackson.core:jackson-annotations:2.1.5" level="project" />
+    <orderEntry type="library" name="Gradle: com.fasterxml.jackson.core:jackson-core:2.1.5" level="project" />
+    <orderEntry type="library" name="Gradle: ch.qos.logback:logback-core:1.2.3" level="project" />
+    <orderEntry type="library" name="Gradle: com.miglayout:miglayout-core:5.2" level="project" />
+    <orderEntry type="library" name="Gradle: org.apache.xmlgraphics:batik-transcoder:1.14" level="project" />
+    <orderEntry type="library" name="Gradle: org.apache.xmlgraphics:batik-bridge:1.14" level="project" />
+    <orderEntry type="library" name="Gradle: org.apache.xmlgraphics:batik-awt-util:1.14" level="project" />
+    <orderEntry type="library" name="Gradle: org.apache.xmlgraphics:batik-util:1.14" level="project" />
+    <orderEntry type="library" name="Gradle: org.apache.xmlgraphics:batik-shared-resources:1.14" level="project" />
+    <orderEntry type="library" name="Gradle: org.apache.xmlgraphics:batik-anim:1.14" level="project" />
+    <orderEntry type="library" name="Gradle: org.apache.xmlgraphics:batik-gvt:1.14" level="project" />
+    <orderEntry type="library" name="Gradle: org.apache.xmlgraphics:batik-svg-dom:1.14" level="project" />
+    <orderEntry type="library" name="Gradle: org.apache.xmlgraphics:batik-parser:1.14" level="project" />
+    <orderEntry type="library" name="Gradle: org.apache.xmlgraphics:batik-css:1.14" level="project" />
+    <orderEntry type="library" name="Gradle: org.apache.xmlgraphics:batik-ext:1.14" level="project" />
+    <orderEntry type="library" name="Gradle: xml-apis:xml-apis-ext:1.3.04" level="project" />
+    <orderEntry type="library" name="Gradle: org.apache.xmlgraphics:batik-script:1.14" level="project" />
+    <orderEntry type="library" name="Gradle: org.apache.xmlgraphics:batik-gui-util:1.14" level="project" />
+    <orderEntry type="library" name="Gradle: org.apache.xmlgraphics:batik-xml:1.14" level="project" />
+    <orderEntry type="library" name="Gradle: xalan:xalan:2.7.2" level="project" />
+    <orderEntry type="library" name="Gradle: xml-apis:xml-apis:1.4.01" level="project" />
+    <orderEntry type="library" name="Gradle: org.codehaus.plexus:plexus-utils:3.2.1" level="project" />
+    <orderEntry type="library" name="Gradle: org.codehaus.janino:commons-compiler:3.1.3" level="project" />
+    <orderEntry type="library" name="Gradle: org.apache.xmlgraphics:batik-svggen:1.14" level="project" />
+    <orderEntry type="library" name="Gradle: org.apache.xmlgraphics:xmlgraphics-commons:2.6" level="project" />
+    <orderEntry type="library" name="Gradle: org.apache.xmlgraphics:batik-constants:1.14" level="project" />
+    <orderEntry type="library" name="Gradle: org.apache.xmlgraphics:batik-i18n:1.14" level="project" />
+    <orderEntry type="library" name="Gradle: xalan:serializer:2.7.2" level="project" />
+    <orderEntry type="library" name="Gradle: commons-logging:commons-logging:1.0.4" level="project" />
+  </component>
+  <component name="TestModuleProperties" production-module="mic.main" />
+</module>

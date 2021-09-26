@@ -3,6 +3,8 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/mic/mic.iml" filepath="$PROJECT_DIR$/mic/mic.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/mic.main.iml" filepath="$PROJECT_DIR$/.idea/modules/mic.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/mic.test.iml" filepath="$PROJECT_DIR$/.idea/modules/mic.test.iml" />
     </modules>
   </component>
 </project>
