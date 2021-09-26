@@ -59,7 +59,7 @@ enum ImagesUsedForRanges {
     Bomblet("Mine_Explosion","Mine_Explosion2","Mine_Explosion3",0 ,0),
     ElectroProton("Mine_Explosion","Mine_Explosion2","Mine_Explosion3",0,0),
     Sensorbuoy("Buoy-range1","Buoy-range2","Buoy-range",0,0),
-    ElectroCloudChaff("Electro-Chaff_Cloud_r1.png", "Electro-Chaff_Cloud_r2.png","Electro-Chaff_Cloud_r3.png",0,0);
+    ElectroCloudChaff("Electro-Chaff_Cloud_r1", "Electro-Chaff_Cloud_r2","Electro-Chaff_Cloud_r3",0,0);
 
     private final String r1Img;
     private final String r2Img;
@@ -146,7 +146,7 @@ public class AutoRangeForTokens extends Decorator implements EditablePiece {
             .put("Electro-Proton Bomb", ImagesUsedForRanges.ElectroProton)
             .put("Sensor Buoy (Red) Token",ImagesUsedForRanges.Sensorbuoy)
             .put("Sensor Buoy (Blue) Token",ImagesUsedForRanges.Sensorbuoy)
-            .put("Electro-Chaff Cloud",ImagesUsedForRanges.ElectroCloudChaff)
+            .put("ElectroChaffCloud",ImagesUsedForRanges.ElectroCloudChaff)
             .build();
 
     public AutoRangeForTokens() {

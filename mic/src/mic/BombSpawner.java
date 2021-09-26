@@ -54,7 +54,7 @@ enum BombToken {
     SpareParts("Spare Parts", "Debris", "13071", 0.0f, -43.5f),
     ElectroProton("Electro-Proton Bomb","Bomb","13116", 0.0f, 40.0f),
     Concussion("Concussion Bomb", "Bomb", "13161", 0.0f, 40.0f),
-    ElectroChaffCloud("ElectroChaffCloud", "Debris","13169",0.0f, 40.0f);
+    ElectroChaffCloud("ElectroChaffCloud", "Debris","13169",0.0f, 50.0f);
 
     private final String bombName;
     private final String bombType;

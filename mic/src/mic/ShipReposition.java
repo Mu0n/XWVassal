@@ -21,8 +21,9 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Ellipse2D;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
+
 import static mic.Util.*;
 import static mic.Util.getBumpableCompareShape;
 
@@ -1159,11 +1160,13 @@ public class ShipReposition extends Decorator implements EditablePiece {
         //Test for 2.0 ship
         boolean is2pointohShip = this.getInner().getState().contains("this_is_2pointoh");
         //Any keystroke made on a ship will remove the orange shades
-        previousCollisionVisualization = new MapVisualizations();
+        previousCollisionVisualization = new mic.MapVisualizations();
 
         //Deal with ALT-C, detect if there's something under the ship creating an overlap
         if (KeyStroke.getKeyStroke(KeyEvent.VK_C, KeyEvent.ALT_DOWN_MASK,false).equals(stroke)){
-            List<BumpableWithShape> BWS = OverlapCheckManager.getBumpablesOnMap(true, null);
+            List<GamePiece> skipItself = Collections.singletonList(this);
+
+            List<BumpableWithShape> BWS = OverlapCheckManager.getBumpablesOnMap(true, skipItself);
             Shape shipShape = getBumpableCompareShape(this);
             List<BumpableWithShape> overlappingObstacles = findCollidingEntities(shipShape, BWS);
             if(overlappingObstacles.size() > 0) {
