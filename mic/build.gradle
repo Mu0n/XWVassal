@@ -1,40 +1,43 @@
 plugins {
-    id "de.undercouch.download" version "3.2.0"
+    id 'java'
+    id 'de.undercouch.download' version '4.1.2'
 }
-
-apply plugin: 'java'
 
 sourceSets {
     main {
         java {
-            srcDirs = ['src/mic'] // Consider moving src/mic to src/main/java
+            srcDirs = ['src']
         }
     }
 }
 
 repositories {
-    jcenter()
     mavenCentral()
     maven {
-        url "http://www.vassalengine.org/maven/"
-    }
-    maven {
-        url "http://maven.geotoolkit.org"
+        url 'https://vassalengine.org/maven/'
     }
 }
 
-sourceCompatibility = '11'
-targetCompatibility = '11'
+compileJava {
+    options.release = 11
+}
+
+configurations {
+    implementation.extendsFrom bundle
+}
 
 dependencies {
-    compileOnly 'org.slf4j:slf4j-api:1.7.7'
-    compile 'commons-codec:commons-codec:1.6'
-    compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.1.5'
-    compile group: 'com.google.guava', name: 'guava-jdk5', version: '17.0'
-    compile group: 'org.vassalengine', name: 'vassal-app', version: '3.5.3'
+    // These depes (and their deps) must be bundled in the module
+    // because they are not provided by Vassal
+    bundle 'com.fasterxml.jackson.core:jackson-annotations:2.1.5'
+    bundle 'com.fasterxml.jackson.core:jackson-databind:2.1.5'
+    bundle 'com.google.guava:guava-jdk5:17.0'
+
+    // These deps are provided by Vassal
+    implementation 'org.vassalengine:vassal-app:3.5.8'
 }
 
-task unpackVmod(type: Copy) {
+tasks.register('unpackVmod', Copy) {
     def outputDir = file("${buildDir}/swxwmg.vmod-unpacked")
 
     from zipTree(file('build/distributions/swxwmg.vmod'))
@@ -43,16 +46,16 @@ task unpackVmod(type: Copy) {
     into outputDir
 }
 
-task buildVmod(type: Zip) {
-    archiveName 'swxwmg.vmod'
+tasks.register('buildVmod', Zip) {
+    archiveFileName.set('swxwmg.vmod')
     duplicatesStrategy 'exclude'
     from 'swxwmg.vmod-unpacked'
     from compileJava
-    for (dependency in (configurations.compile).files) {
+    for (dependency in (configurations.bundle).files) {
         // Need to extract jars so vassal can find classes
         from zipTree(dependency)
     }
-    exclude "**/*.jar"
+    exclude '**/*.jar'
     doLast {
         println "Compiled vmod at ${archivePath}"
     }
