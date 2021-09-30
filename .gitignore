@@ -1,5 +1,4 @@
-# Created by .ignore support plugin (hsz.mobi)
-*/*.gradle
+mic/.gradle*
 mic/build/
 mic/out
 .idea/workspace.xml
