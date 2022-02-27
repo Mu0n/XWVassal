@@ -1,9 +1,0 @@
-<component name="libraryTable">
-  <library name="Vengine">
-    <CLASSES>
-      <root url="jar://$PROJECT_DIR$/mic/lib/Vengine.jar!/" />
-    </CLASSES>
-    <JAVADOC />
-    <SOURCES />
-  </library>
-</component>
