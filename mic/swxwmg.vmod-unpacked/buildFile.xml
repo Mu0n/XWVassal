@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<VASSAL.build.GameModule ModuleOther1="" ModuleOther2="" VassalVersion="3.5.8" description="Wave X Sept 2021." name="Star Wars X-Wing Miniatures Game" nextPieceSlotId="13175" version="9.3.0">
+<VASSAL.build.GameModule ModuleOther1="" ModuleOther2="" VassalVersion="3.5.8" description="Wave XI March 2022" name="Star Wars X-Wing Miniatures Game" nextPieceSlotId="13175" version="9.3.2">
     <mic.XWCounterFactory/>
     <VASSAL.build.module.Documentation>
         <VASSAL.build.module.documentation.AboutScreen fileName="Splash.PNG" title="About Module"/>
