@@ -34,7 +34,7 @@ dependencies {
     bundle 'com.google.guava:guava-jdk5:17.0'
 
     // These deps are provided by Vassal
-    implementation 'org.vassalengine:vassal-app:3.5.8'
+    implementation 'org.vassalengine:vassal-app:3.6.6'
 }
 
 tasks.register('unpackVmod', Copy) {
