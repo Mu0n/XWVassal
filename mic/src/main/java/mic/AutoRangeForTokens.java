@@ -153,12 +153,12 @@ public class AutoRangeForTokens extends Decorator implements EditablePiece {
             .put("Sensor Buoy (Red) Token",ImagesUsedForRanges.Sensorbuoy)
             .put("Sensor Buoy (Blue) Token",ImagesUsedForRanges.Sensorbuoy)
             .put("ElectroChaffCloud",ImagesUsedForRanges.ElectroCloudChaff)
-            .put("Pom Asteroid 1",ImagesUsedForRanges.Pomasteroid1)
-            .put("Pom Asteroid 2",ImagesUsedForRanges.Pomasteroid2)
-            .put("Pom Asteroid 3",ImagesUsedForRanges.Pomasteroid3)
-            .put("Pom Debris 1",ImagesUsedForRanges.Pomdebris1)
-            .put("Pom Debris 2",ImagesUsedForRanges.Pomdebris2)
-            .put("Pom Debris 3",ImagesUsedForRanges.Pomdebris3)
+            .put("PomAsteroid1",ImagesUsedForRanges.Pomasteroid1)
+            .put("PomAsteroid2",ImagesUsedForRanges.Pomasteroid2)
+            .put("PomAsteroid3",ImagesUsedForRanges.Pomasteroid3)
+            .put("PomDebris1",ImagesUsedForRanges.Pomdebris1)
+            .put("PomDebris2",ImagesUsedForRanges.Pomdebris2)
+            .put("PomDebris3",ImagesUsedForRanges.Pomdebris3)
             .build();
 
     public AutoRangeForTokens() {

@@ -28,12 +28,12 @@ public enum Obstacles {
     gascloud4("Gas Cloud 4"),
     gascloud5("Gas Cloud 5"),
     gascloud6("Gas Cloud 6"),
-    pomasteroid1("Pom Asteroid 1"),
-    pomasteroid2("Pom Asteroid 2"),
-    pomasteroid3("Pom Asteroid 3"),
-    pomdebris1("Pom Debris 1"),
-    pomdebris2("Pom Debris 2"),
-    pomdebris3("Pom Debris 3");
+    pomasteroid1("PomAsteroid1"),
+    pomasteroid2("PomAsteroid2"),
+    pomasteroid3("PomAsteroid3"),
+    pomdebris1("PomDebris1"),
+    pomdebris2("PomDebris2"),
+    pomdebris3("PomDebris3");
 
     private final String vassalName;
 
