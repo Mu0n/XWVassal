@@ -27,7 +27,13 @@ public enum Obstacles {
     gascloud3("Gas Cloud 3"),
     gascloud4("Gas Cloud 4"),
     gascloud5("Gas Cloud 5"),
-    gascloud6("Gas Cloud 6");
+    gascloud6("Gas Cloud 6"),
+    pomasteroid1("Pride of Mandalore Asteroid 1"),
+    pomasteroid2("Pride of Mandalore Asteroid 2"),
+    pomasteroid3("Pride of Mandalore Asteroid 3"),
+    pomdebris1("Pride of Mandalore Debris 1"),
+    pomdebris2("Pride of Mandalore Debris 2"),
+    pomdebris3("Pride of Mandalore Debris 3");
 
     private final String vassalName;
 
