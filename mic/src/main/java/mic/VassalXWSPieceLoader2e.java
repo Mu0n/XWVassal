@@ -250,6 +250,9 @@ public class VassalXWSPieceLoader2e {
                 continue;
             }
             String name = chitList.getConfigureName().trim();
+
+            Util.logToChat("name " + name);
+
             if (obstacleTabNames.contains(name)) {
                 loadObstacles(chitList);
             }
@@ -264,6 +267,10 @@ public class VassalXWSPieceLoader2e {
                 continue;
             }
             String obstacleName = tokenSlot.getConfigureName().trim();
+
+
+            Util.logToChat("obstacleName " + obstacleName);
+
             Obstacles obstacle = Obstacles.forVassalName(obstacleName);
             obstaclesPiecesMap.put(obstacle, tokenSlot);
         }
